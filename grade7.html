@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathSpace Grade 7 — Expressions & Equations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sky:#0d1b2e;--sky2:#132338;--sky3:#1a3050;
+  --orange:#ff7d3b;--orange2:#ffaa6e;
+  --teal:#00d4aa;--blue:#4a9eff;
+  --purple:#a78bfa;--green:#4ade80;
+  --red:#ff5252;--amber:#ffb347;
+  --surface:#152035;--surface2:#1c2e45;
+  --border:rgba(255,255,255,.08);
+  --text:#f0f6ff;--muted:#7a9cc0;--faint:#3a5878;
+  --radius:16px;--radius-lg:24px;
+  --shadow:0 8px 32px rgba(0,0,0,.35);
+}
+html{font-size:15px}
+body{font-family:'Nunito Sans',sans-serif;background:var(--sky);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ── Screens ── */
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* ── Entry ── */
+#s-entry{
+  background:var(--sky);
+  align-items:center;justify-content:center;
+  padding:24px;position:relative;overflow:hidden;
+}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;animation:orbFloat ease-in-out infinite}
+.orb1{width:500px;height:500px;background:rgba(255,125,59,.08);top:-150px;right:-100px;animation-duration:14s}
+.orb2{width:400px;height:400px;background:rgba(74,158,255,.07);bottom:-100px;left:-80px;animation-duration:18s;animation-delay:4s}
+.orb3{width:300px;height:300px;background:rgba(167,139,250,.07);top:40%;left:60%;animation-duration:12s;animation-delay:7s}
+@keyframes orbFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
+
+.float-sym{position:absolute;font-family:'Nunito',sans-serif;font-weight:900;color:rgba(255,125,59,.08);pointer-events:none;user-select:none;animation:symFloat linear infinite}
+@keyframes symFloat{0%{transform:translateY(80px) rotate(-4deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-110vh) rotate(6deg);opacity:0}}
+
+.entry-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:48px 44px 44px;
+  width:100%;max-width:460px;
+  box-shadow:var(--shadow);position:relative;z-index:2;
+  animation:popUp .55s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes popUp{from{opacity:0;transform:scale(.88) translateY(24px)}to{opacity:1;transform:none}}
+
+.entry-brand{display:flex;align-items:center;gap:14px;margin-bottom:32px}
+.brand-badge{
+  width:52px;height:52px;border-radius:16px;
+  background:linear-gradient(135deg,var(--orange),var(--amber));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:#fff;
+  box-shadow:0 4px 20px rgba(255,125,59,.4);
+}
+.brand-name{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;color:var(--text);line-height:1}
+.brand-sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+.entry-hi{font-family:'Nunito',sans-serif;font-size:27px;font-weight:900;color:var(--text);margin-bottom:8px}
+.entry-hi span{color:var(--orange)}
+.entry-p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px}
+
+.name-input{
+  width:100%;height:52px;background:var(--sky3);
+  border:2px solid var(--border);border-radius:12px;
+  padding:0 18px;font-size:16px;font-family:'Nunito Sans',sans-serif;
+  color:var(--text);outline:none;transition:all .2s;margin-bottom:14px;
+}
+.name-input:focus{border-color:var(--orange);box-shadow:0 0 0 4px rgba(255,125,59,.12)}
+.name-input::placeholder{color:var(--faint)}
+
+.go-btn{
+  width:100%;height:52px;border:none;border-radius:12px;
+  background:linear-gradient(135deg,var(--orange),var(--amber));
+  color:#fff;font-size:16px;font-weight:900;font-family:'Nunito',sans-serif;
+  cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 4px 20px rgba(255,125,59,.4);
+}
+.go-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,125,59,.5)}
+.teacher-lnk{display:block;text-align:center;margin-top:18px;font-size:12px;color:var(--faint);cursor:pointer;transition:color .15s}
+.teacher-lnk:hover{color:var(--muted)}
+
+/* ── Student App ── */
+#s-student{background:var(--sky);flex-direction:column}
+
+.topbar{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:0 24px;height:62px;
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.tb-brand{font-family:'Nunito',sans-serif;font-size:17px;font-weight:900;color:var(--orange)}
+.tb-center{display:flex;align-items:center;gap:10px;flex:1;justify-content:center;max-width:340px;margin:0 auto}
+.xp-bar-bg{flex:1;height:9px;background:var(--sky3);border-radius:99px;overflow:hidden}
+.xp-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--orange),var(--amber));transition:width .5s cubic-bezier(.34,1.56,.64,1)}
+.xp-label{font-size:12px;font-weight:800;color:var(--amber);font-family:'Nunito',sans-serif;white-space:nowrap}
+.tb-right{display:flex;align-items:center;gap:10px}
+.streak-pill{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(255,179,71,.12);border:1px solid rgba(255,179,71,.25);
+  border-radius:99px;padding:5px 12px;
+  font-size:12px;font-weight:800;color:var(--amber);font-family:'Nunito',sans-serif;
+}
+.hand-btn{
+  width:38px;height:38px;border-radius:10px;
+  background:rgba(255,255,255,.06);border:1px solid var(--border);
+  font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.hand-btn.raised{background:rgba(255,179,71,.2);border-color:var(--amber);animation:hPulse 1.5s infinite}
+@keyframes hPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,179,71,.4)}50%{box-shadow:0 0 0 8px rgba(255,179,71,0)}}
+
+/* Topic tabs */
+.topic-tabs{display:flex;gap:6px;padding:14px 24px 0;overflow-x:auto;flex-shrink:0}
+.topic-tabs::-webkit-scrollbar{display:none}
+.t-tab{
+  display:flex;align-items:center;gap:7px;
+  padding:9px 20px;border-radius:12px 12px 0 0;
+  border:2px solid transparent;border-bottom:none;
+  cursor:pointer;font-size:13px;font-weight:800;font-family:'Nunito',sans-serif;
+  white-space:nowrap;transition:all .18s;
+  background:rgba(255,255,255,.04);color:var(--muted);
+}
+.t-tab:hover{background:rgba(255,255,255,.08);color:var(--text)}
+.t-tab.active{background:var(--surface);color:var(--text);border-color:var(--border)}
+.t-tab .tdot{width:8px;height:8px;border-radius:50%}
+.t-tab .tlock{font-size:11px;opacity:.5}
+
+.content{flex:1;padding:0 24px 40px;overflow-y:auto;max-width:860px;width:100%;margin:0 auto}
+
+/* Topic panel */
+.t-panel{display:none}
+.t-panel.active{display:block}
+
+/* Topic header */
+.topic-hdr{
+  background:var(--surface);border:2px solid var(--border);border-top:none;
+  border-radius:0 0 var(--radius) var(--radius);
+  padding:22px 26px 20px;margin-bottom:20px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.topic-hdr h2{font-family:'Nunito',sans-serif;font-size:21px;font-weight:900;color:var(--text);margin-bottom:4px}
+.topic-hdr p{font-size:13px;color:var(--muted);line-height:1.6;max-width:520px}
+.ring-wrap{position:relative;width:58px;height:58px;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.r-bg{fill:none;stroke:var(--sky3);stroke-width:5}
+.r-fill{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.34,1.56,.64,1)}
+.r-lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--text)}
+
+/* Lesson cards */
+.lessons{display:flex;flex-direction:column;gap:12px}
+.lcard{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .2s,box-shadow .2s}
+.lcard:not(.locked):hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.lcard.locked{opacity:.45;pointer-events:none}
+.lcard.done{border-color:rgba(74,222,128,.3)}
+.lcard-top{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer}
+.lnum{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-size:17px;font-weight:900;flex-shrink:0}
+.linfo{flex:1}
+.ltitle{font-size:15px;font-weight:800;color:var(--text);margin-bottom:2px}
+.lsub{font-size:12px;color:var(--muted)}
+.lstatus{font-size:11px;font-weight:800;font-family:'Nunito',sans-serif;padding:5px 12px;border-radius:99px;white-space:nowrap}
+.st-go{background:rgba(255,125,59,.15);color:var(--orange);border:1px solid rgba(255,125,59,.3)}
+.st-lock{background:rgba(255,255,255,.05);color:var(--faint);border:1px solid var(--border)}
+.st-done{background:rgba(74,222,128,.12);color:var(--green);border:1px solid rgba(74,222,128,.3)}
+
+.lbody{display:none;border-top:2px solid var(--border);padding:24px}
+.lbody.open{display:block}
+
+/* Questions */
+.qblock{margin-bottom:24px;animation:fadeUp .3s ease both}
+.qblock:last-child{margin-bottom:0}
+.qblock.locked{opacity:.3;pointer-events:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.qn{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.qn::before{content:'';width:4px;height:14px;border-radius:2px;background:currentColor}
+.qtxt{font-size:15px;font-weight:700;color:var(--text);line-height:1.6;margin-bottom:10px}
+.qhint{font-size:13px;color:var(--muted);font-style:italic;margin-bottom:10px;padding:9px 14px;background:rgba(255,255,255,.03);border-radius:9px;border-left:3px solid var(--amber)}
+.qcontext{font-size:13px;color:var(--muted);background:rgba(255,125,59,.06);border:1px solid rgba(255,125,59,.15);border-radius:10px;padding:12px 16px;margin-bottom:12px;line-height:1.65}
+.qcontext strong{color:var(--orange);font-weight:800}
+
+.arow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ain{
+  height:44px;padding:0 14px;border-radius:10px;
+  background:var(--sky3);border:2px solid var(--border);
+  font-size:15px;font-weight:700;font-family:'Nunito Sans',sans-serif;
+  color:var(--text);outline:none;min-width:160px;transition:all .2s;
+}
+.ain:focus{border-color:var(--orange)}
+.ain.correct{border-color:var(--green);background:rgba(74,222,128,.08)}
+.ain.wrong{border-color:var(--red);background:rgba(255,82,82,.08);animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.chkbtn{
+  height:44px;padding:0 22px;border-radius:10px;border:none;
+  background:linear-gradient(135deg,var(--orange),var(--amber));
+  color:#fff;font-size:14px;font-weight:800;font-family:'Nunito',sans-serif;
+  cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(255,125,59,.3);
+}
+.chkbtn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,125,59,.4)}
+
+.fb{margin-top:10px;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:600;line-height:1.55;display:none;animation:fadeUp .25s ease both}
+.fb.ok{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);display:block}
+.fb.err{background:rgba(255,82,82,.1);color:#ff8888;border:1px solid rgba(255,82,82,.2);display:block}
+.fb.hint{background:rgba(255,179,71,.1);color:var(--amber);border:1px solid rgba(255,179,71,.2);display:block}
+
+/* Chips */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.chip{
+  padding:9px 20px;border-radius:99px;border:2px solid var(--border);
+  font-size:13px;font-weight:800;font-family:'Nunito',sans-serif;
+  cursor:pointer;transition:all .15s;color:var(--muted);background:rgba(255,255,255,.03);
+}
+.chip:hover{border-color:var(--orange);color:var(--text)}
+.chip.sel{background:rgba(255,125,59,.12);border-color:var(--orange);color:var(--orange)}
+.chip.right{background:rgba(74,222,128,.12);border-color:var(--green);color:var(--green)}
+.chip.wrong{background:rgba(255,82,82,.1);border-color:var(--red);color:#ff8888}
+
+/* Equation display */
+.eqdsp{
+  background:var(--sky3);border:1px solid var(--border);border-radius:12px;
+  padding:14px 22px;font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;
+  color:var(--text);text-align:center;margin:10px 0;
+}
+
+/* Number line */
+.numline-wrap{position:relative;height:64px;margin:16px 0;background:var(--sky3);border-radius:10px;border:1px solid var(--border);overflow:hidden}
+.numline{position:absolute;top:50%;left:5%;right:5%;height:2px;background:var(--border);transform:translateY(-50%)}
+.nl-labels{position:absolute;bottom:6px;left:0;right:0;display:flex;justify-content:space-around;padding:0 5%}
+.nl-label{font-size:11px;color:var(--muted);font-weight:700}
+.nl-point{position:absolute;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;border:2px solid #fff;transition:left .4s cubic-bezier(.34,1.56,.64,1)}
+.nl-arrow{position:absolute;top:50%;height:4px;transform:translateY(-50%);border-radius:2px;transition:all .4s}
+
+/* Slider */
+.srow{display:flex;align-items:center;gap:12px;margin:8px 0}
+.srow label{font-size:13px;font-weight:800;color:var(--muted);min-width:120px}
+.srow input[type=range]{flex:1;accent-color:var(--orange);cursor:pointer}
+.sval{font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;color:var(--orange);min-width:40px;text-align:right}
+
+/* Metrics */
+.metrics{display:flex;gap:10px;margin:12px 0}
+.metric{flex:1;background:var(--sky3);border-radius:10px;padding:12px 14px;border:1px solid var(--border)}
+.mlbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);margin-bottom:4px}
+.mval{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;color:var(--orange)}
+
+/* Celebration */
+.celeb{display:none;position:fixed;inset:0;background:rgba(13,27,46,.88);backdrop-filter:blur(8px);z-index:999;align-items:center;justify-content:center;animation:fadeIn .3s ease}
+.celeb.show{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.celeb-card{background:var(--surface2);border:1px solid rgba(255,255,255,.12);border-radius:var(--radius-lg);padding:48px 44px;text-align:center;max-width:400px;width:90%;animation:popUp .5s cubic-bezier(.34,1.56,.64,1) both}
+.celeb-em{font-size:60px;margin-bottom:14px;display:block;animation:bounce 1s ease infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.celeb-t{font-family:'Nunito',sans-serif;font-size:28px;font-weight:900;color:var(--text);margin-bottom:8px}
+.celeb-m{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:20px}
+.celeb-xp{display:inline-flex;align-items:center;gap:8px;background:rgba(255,179,71,.12);border:1px solid rgba(255,179,71,.25);border-radius:99px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:17px;color:var(--amber);font-weight:900;margin-bottom:24px}
+.celeb-btn{background:linear-gradient(135deg,var(--orange),var(--amber));color:#fff;border:none;border-radius:99px;padding:13px 38px;font-size:16px;font-weight:900;font-family:'Nunito',sans-serif;cursor:pointer;box-shadow:0 4px 20px rgba(255,125,59,.35)}
+
+/* Particle */
+.particle{position:fixed;pointer-events:none;z-index:1001;width:10px;height:10px;border-radius:50%;animation:pFly 1.2s ease-out forwards}
+@keyframes pFly{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+
+/* Toast */
+.toast{display:none;position:fixed;bottom:80px;left:24px;background:var(--amber);color:#1a1f2e;border-radius:14px;padding:12px 18px;max-width:280px;font-size:13px;font-weight:700;line-height:1.5;box-shadow:0 6px 24px rgba(255,179,71,.4);z-index:200;animation:slideIn .3s cubic-bezier(.34,1.2,.64,1)}
+@keyframes slideIn{from{transform:translateX(-120%)}to{transform:none}}
+.toast.show{display:block}
+.toast-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;opacity:.7;margin-bottom:4px}
+.fab{position:fixed;bottom:20px;right:20px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--amber));border:none;font-size:24px;cursor:pointer;box-shadow:0 6px 24px rgba(255,125,59,.4);z-index:150;display:none;align-items:center;justify-content:center;transition:transform .15s}
+.fab.show{display:flex}
+.fab:hover{transform:scale(1.1)}
+.fab.raised{background:linear-gradient(135deg,var(--amber),var(--orange));animation:hPulse 1.5s infinite}
+
+/* Teacher */
+#s-teacher-auth{background:var(--sky);align-items:center;justify-content:center;padding:24px}
+.pw-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px 36px;width:100%;max-width:400px;animation:popUp .4s cubic-bezier(.34,1.56,.64,1) both}
+.pw-card h2{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--text);margin-bottom:6px}
+.pw-card p{font-size:14px;color:var(--muted);margin-bottom:22px;line-height:1.6}
+.pw-in{width:100%;height:50px;background:var(--sky3);border:2px solid var(--border);border-radius:12px;padding:0 16px;color:var(--text);font-size:15px;font-family:'Nunito Sans',sans-serif;outline:none;margin-bottom:12px;transition:border-color .2s}
+.pw-in:focus{border-color:var(--orange)}
+.pw-btn{width:100%;height:50px;background:linear-gradient(135deg,var(--orange),var(--amber));border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:900;font-family:'Nunito',sans-serif;cursor:pointer;margin-top:4px}
+.pw-err{font-size:13px;color:var(--red);margin-top:8px;display:none}
+.back-lnk{display:block;text-align:center;margin-top:16px;font-size:13px;color:var(--faint);cursor:pointer;transition:color .15s}
+.back-lnk:hover{color:var(--muted)}
+
+#s-teacher{background:var(--sky);flex-direction:column}
+.tbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:62px;display:flex;align-items:center;justify-content:space-between}
+.tbar-title{display:flex;align-items:center;gap:10px;font-family:'Nunito',sans-serif;font-size:17px;font-weight:900;color:var(--text)}
+.ldot{width:9px;height:9px;border-radius:50%;background:var(--green);animation:ldBlink 1.5s infinite}
+@keyframes ldBlink{0%,100%{opacity:1}50%{opacity:.3}}
+.tbtn{background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;padding:8px 18px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .15s;font-family:'Nunito',sans-serif}
+.tbtn:hover{background:rgba(255,255,255,.1);color:var(--text)}
+.tbody{flex:1;padding:24px 28px;overflow-y:auto}
+.tstats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.tstat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.tsn{font-family:'Nunito',sans-serif;font-size:30px;font-weight:900;line-height:1;margin-bottom:4px}
+.tsl{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.bc-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;display:flex;gap:12px;align-items:center;margin-bottom:20px}
+.bc-in{flex:1;height:40px;background:var(--sky3);border:1px solid var(--border);border-radius:8px;padding:0 14px;color:var(--text);font-size:13px;font-family:'Nunito Sans',sans-serif;outline:none}
+.bc-btn{height:40px;padding:0 18px;border-radius:8px;background:linear-gradient(135deg,var(--orange),var(--amber));border:none;color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;margin-bottom:24px}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .2s}
+.scard.help{border-color:rgba(255,179,71,.4)}
+.scard.hand{border-color:rgba(167,139,250,.5);animation:cPulse 1.5s infinite}
+@keyframes cPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 20px rgba(167,139,250,.2)}}
+.sctop{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.sav{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:#fff;flex-shrink:0}
+.scname{font-size:14px;font-weight:800;color:var(--text)}
+.sctopic{font-size:12px;color:var(--muted);margin-top:1px}
+.scbadge{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:3px 10px;border-radius:99px}
+.sb-act{background:rgba(74,222,128,.12);color:var(--green)}
+.sb-help{background:rgba(255,179,71,.12);color:var(--amber)}
+.sb-hand{background:rgba(167,139,250,.15);color:var(--purple)}
+.scbody{padding:12px 16px}
+.spl{display:flex;justify-content:space-between;font-size:11px;color:var(--faint);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.spt{height:5px;background:var(--sky3);border-radius:3px;overflow:hidden;margin-bottom:12px}
+.spf{height:100%;border-radius:3px;transition:width .5s}
+.scq{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.scq span{color:var(--text);font-weight:700}
+.sacts{display:flex;gap:8px}
+.sact{flex:1;height:34px;border-radius:8px;border:1px solid var(--border);background:transparent;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s}
+.sact:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.sact.send:hover{background:rgba(255,125,59,.12);border-color:var(--orange);color:var(--orange)}
+
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);z-index:300;align-items:center;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{background:var(--surface2);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-lg);padding:28px;width:90%;max-width:420px;animation:popUp .3s cubic-bezier(.34,1.56,.64,1) both}
+.modal h3{font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;color:var(--text);margin-bottom:14px}
+.modal textarea{width:100%;height:100px;background:var(--sky3);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;font-family:'Nunito Sans',sans-serif;resize:none;outline:none;margin-bottom:14px}
+.modal textarea:focus{border-color:var(--orange)}
+.mbtns{display:flex;gap:10px;justify-content:flex-end}
+.m-c{padding:10px 20px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif}
+.m-s{padding:10px 20px;border-radius:10px;background:var(--orange);border:none;color:#fff;font-size:13px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif}
+
+@media(max-width:600px){
+  .tstats{grid-template-columns:1fr 1fr}
+  .tb-center{display:none}
+  .entry-card{padding:32px 22px}
+}
+</style>
+</head>
+<body>
+
+<!-- ENTRY -->
+<div id="s-entry" class="screen active">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="float-sym" style="font-size:70px;left:6%;bottom:0;animation-duration:20s">px+q=r</div>
+  <div class="float-sym" style="font-size:55px;left:75%;bottom:0;animation-duration:26s;animation-delay:5s">7.EE</div>
+  <div class="float-sym" style="font-size:80px;left:45%;bottom:0;animation-duration:22s;animation-delay:9s">≥</div>
+  <div class="float-sym" style="font-size:50px;left:22%;bottom:0;animation-duration:18s;animation-delay:2s">a+0.05a</div>
+
+  <div class="entry-card">
+    <div class="entry-brand">
+      <div class="brand-badge">7</div>
+      <div>
+        <div class="brand-name">MathSpace Grade 7</div>
+        <div class="brand-sub">Expressions &amp; Equations · 7.EE</div>
+      </div>
+    </div>
+    <div class="entry-hi">Hey! <span>What's your name?</span> ✏️</div>
+    <p class="entry-p">Type your name to start your lessons. Earn XP, unlock new topics, and raise your hand whenever you need your teacher. They can see your progress live!</p>
+    <input class="name-input" id="name-in" type="text" placeholder="Your first name..." maxlength="30" autocomplete="off" onkeydown="if(event.key==='Enter')go()">
+    <button class="go-btn" onclick="go()">
+      Start learning! 🚀
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <span class="teacher-lnk" onclick="showAuth()">Teacher login →</span>
+  </div>
+</div>
+
+<!-- STUDENT APP -->
+<div id="s-student" class="screen">
+  <div class="topbar">
+    <div class="tb-brand">MathSpace G7</div>
+    <div class="tb-center">
+      <span class="xp-label" id="xp-lbl">0 XP</span>
+      <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-bar" style="width:0%"></div></div>
+      <span class="xp-label">500</span>
+    </div>
+    <div class="tb-right">
+      <div class="streak-pill" id="streak-pill">🔥 0</div>
+      <button class="hand-btn" id="hand-hud" onclick="raiseHand()" title="Raise hand">✋</button>
+    </div>
+  </div>
+
+  <!-- Topic tabs -->
+  <div class="topic-tabs">
+    <div class="t-tab active" data-t="a" onclick="switchT('a',this)"><span class="tdot" style="background:#ff7d3b"></span>Topic A</div>
+    <div class="t-tab" data-t="b" onclick="switchT('b',this)" id="tab-b"><span class="tdot" style="background:#4a9eff"></span>Topic B<span class="tlock" id="pl-b">🔒</span></div>
+    <div class="t-tab" data-t="c" onclick="switchT('c',this)" id="tab-c"><span class="tdot" style="background:#a78bfa"></span>Topic C<span class="tlock" id="pl-c">🔒</span></div>
+    <div class="t-tab" data-t="d" onclick="switchT('d',this)" id="tab-d"><span class="tdot" style="background:#4ade80"></span>Topic D<span class="tlock" id="pl-d">🔒</span></div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ TOPIC A · 7.EE.A.1 & 7.EE.A.2 ══ -->
+    <div class="t-panel active" id="panel-a">
+      <div class="topic-hdr">
+        <div>
+          <h2>Equivalent Expressions ✏️</h2>
+          <p>Add, subtract, factor, and expand linear expressions with rational coefficients. Rewrite expressions to reveal hidden relationships. Standard 7.EE.A.1–2</p>
+        </div>
+        <div class="ring-wrap">
+          <svg width="58" height="58" viewBox="0 0 58 58"><circle class="r-bg" cx="29" cy="29" r="24"/><circle class="r-fill" id="ring-a" cx="29" cy="29" r="24" stroke="#ff7d3b" stroke-dasharray="150.8" stroke-dashoffset="150.8"/></svg>
+          <div class="r-lbl" id="rl-a">0%</div>
+        </div>
+      </div>
+
+      <div class="lessons">
+
+        <!-- L1: Combining like terms -->
+        <div class="lcard" id="lc-a1">
+          <div class="lcard-top" onclick="togL('a1')">
+            <div class="lnum" style="background:rgba(255,125,59,.15);color:#ff7d3b">L1</div>
+            <div class="linfo"><div class="ltitle">Combining Like Terms 🧩</div><div class="lsub">Simplify expressions by grouping like terms</div></div>
+            <span class="lstatus st-go" id="ls-a1">▶ Start</span>
+          </div>
+          <div class="lbody" id="lb-a1">
+
+            <div class="qblock" id="q-a1-1">
+              <div class="qn">Question 1 of 4</div>
+              <div class="qtxt">Simplify: 3x + 5x</div>
+              <div class="qhint">💡 Like terms have the same variable. Add the coefficients: 3 + 5 = ?</div>
+              <div class="arow">
+                <input class="ain" id="i-a1-1" placeholder="e.g. 8x" onkeydown="if(event.key==='Enter')chk('a','a1',1)">
+                <button class="chkbtn" onclick="chk('a','a1',1)">Check ✓</button>
+              </div>
+              <div class="fb" id="f-a1-1"></div>
+            </div>
+
+            <div class="qblock locked" id="q-a1-2">
+              <div class="qn">Question 2 of 4</div>
+              <div class="qtxt">Simplify: 7y − 2y + 4</div>
+              <div class="arow">
+                <input class="ain" id="i-a1-2" placeholder="simplified expression" onkeydown="if(event.key==='Enter')chk('a','a1',2)">
+                <button class="chkbtn" onclick="chk('a','a1',2)">Check ✓</button>
+              </div>
+              <div class="fb" id="f-a1-2"></div>
+            </div>
+
+            <div class="qblock locked" id="q-a1-3">
+              <div class="qn">Question 3 of 4</div>
+              <div class="qtxt">Simplify: 4x + 3 − 2x + 7</div>
+              <div class="qhint">💡 Group the x terms together and the numbers together separately.</div>
+              <div class="arow">
+                <input class="ain" id="i-a1-3" placeholder="simplified" onkeydown="if(event.key==='Enter')chk('a','a1',3)">
+                <button class="chkbtn" onclick="chk('a','a1',3)">Check ✓</button>
+              </div>
+              <div class="fb" id="f-a1-3"></div>
+            </div>
+
+            <div class="qblock locked" id="q-a1-4">
+              <div class="qn">Question 4 of 4</div>
+              <div class="qtxt">Simplify: ½x + ¾x</div>
+              <div class="qhint">💡 Find a common denominator: ½ = 2/4, so 2/4 + 3/4 = ?</div>
+              <div class="arow">
+                <input class="ain" id="i-a1-4" placeholder="e.g. (5/4)x" onkeydown="if(event.key==='Enter')chk('a','a1',4)">
+                <button class="chkbtn" onclick="chk('a','a1',4)">Check ✓</button>
+              </div>
+              <div class="fb" id="f-a1-4"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- L2: Distributive property -->
+        <div class="lcard locked" id="lc-a2">
+          <div class="lcard-top" onclick="togL('a2')">
+            <div class="lnum" style="background:rgba(255,125,59,.15);color:#ff7d3b">L2</div>
+            <div class="linfo"><div class="ltitle">Expanding Expressions 📦</div><div class="lsub">Use the distributive property with rational coefficients</div></div>
+            <span class="lstatus st-lock" id="ls-a2">🔒 Locked</span>
+          </div>
+          <div class="lbody" id="lb-a2">
+
+            <div class="qblock" id="q-a2-1">
+              <div class="qn">Question 1 of 3</div>
+              <div class="qtxt">Expand: 3(x + 4)</div>
+              <div class="qhint">💡 Multiply 3 by each term inside the brackets: 3 × x and 3 × 4.</div>
+              <div class="arow">
+                <input class="ain" id="i-a2-1" placeholder="expanded form" onkeydown="if(event.key==='Enter')chk('a','a2',1)">
+                <button class="chkbtn" onclick="chk('a','a2',1)">Check ✓</button>
+              </div>
+              <div class="fb" id="f-a2-1"></div>
+            </div>
+
+            <div class="qblock locked" id="q-a2-2">
+              <div class="qn">Question 2 of 3</div>
+              <div class="qtxt">Expand and simplify: 2(3x − 5) + 4x</div>
+              <div class="arow">
+                <input class="ain" id="i-a2-2" placeholder="simplified" onkeydown="if(event.key==='Enter')chk('a','a2',2)">
+                <button class="chkbtn" onclick="chk('a','a2',2)">Check ✓</button>
+              </div>
+              <div class="fb" id="f-a2-2"></div>
+            </div>
+
+            <div class="qblock locked" id="q-a2-3">
+              <div class="qn">Question 3 of 3 · Real world 🌍</div>
+              <div class="qcontext">A store increases all prices by 5%. The expression <strong>p + 0.05p</strong> gives the new price. Rewrite this as a single term times p.</div>
+              <div class="qtxt">What is the equivalent single expression? (Hint: the answer is like 1.??p)</div>
+              <div class="chips">
+                <div class="chip" onclick="clsfy('a2',3,this,'1.05p')">1.05p</div>
+                <div class="chip" onclick="clsfy('a2',3,this,'0.05p')">0.05p</div>
+                <div class="chip" onclick="clsfy('a2',3,this,'1.5p')">1.5p</div>
+                <div class="chip" onclick="clsfy('a2',3,this,'1.50p')">5p</div>
+              </div>
+              <div class="fb" id="f-a2-3"></div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ TOPIC B · 7.EE.B.3 ══ -->
+    <div class="t-panel" id="panel-b">
+      <div class="topic-hdr" style="border-color:rgba(74,158,255,.2)">
+        <div>
+          <h2>Multi-Step Problems 🧮</h2>
+          <p>Solve real-life problems with positive and negative rational numbers — whole numbers, fractions, and decimals. Standard 7.EE.B.3</p>
+        </div>
+        <div class="ring-wrap">
+          <svg width="58" height="58" viewBox="0 0 58 58"><circle class="r-bg" cx="29" cy="29" r="24"/><circle class="r-fill" id="ring-b" cx="29" cy="29" r="24" stroke="#4a9eff" stroke-dasharray="150.8" stroke-dashoffset="150.8"/></svg>
+          <div class="r-lbl" id="rl-b">0%</div>
+        </div>
+      </div>
+
+      <div class="lessons">
+        <div class="lcard" id="lc-b1">
+          <div class="lcard-top" onclick="togL('b1')">
+            <div class="lnum" style="background:rgba(74,158,255,.15);color:#4a9eff">L3</div>
+            <div class="linfo"><div class="ltitle">Real-World Multi-Step Problems 🌍</div><div class="lsub">Rational numbers in real-life situations</div></div>
+            <span class="lstatus st-go" id="ls-b1">▶ Start</span>
+          </div>
+          <div class="lbody" id="lb-b1">
+
+            <div class="qblock" id="q-b1-1">
+              <div class="qn">Question 1 of 3</div>
+              <div class="qcontext">Layla earns <strong>$12.50 per hour</strong>. She worked <strong>6.5 hours</strong> on Saturday and <strong>4 hours</strong> on Sunday.</div>
+              <div class="qtxt">How much did she earn in total? ($)</div>
+              <div class="arow">
+                <span style="font-size:15px;color:var(--muted);font-weight:700">$</span>
+                <input class="ain" id="i-b1-1" placeholder="amount" style="min-width:110px" onkeydown="if(event.key==='Enter')chk('b','b1',1)">
+                <button class="chkbtn" onclick="chk('b','b1',1)">Check ✓</button>
+              </div>
+              <div class="fb" id="f-b1-1"></div>
+            </div>
+
+            <div class="qblock locked" id="q-b1-2">
+              <div class="qn">Question 2 of 3</div>
+              <div class="qcontext">A recipe needs <strong>2/3 cup of sugar</strong>. Omar wants to make <strong>3 and a half</strong> batches.</div>
+              <div class="qtxt">How many cups of sugar does he need? Write as a decimal.</div>
+              <div class="arow">
+                <input class="ain" id="i-b1-2" placeholder="cups" style="min-width:110px" onkeydown="if(event.key==='Enter')chk('b','b1',2)">
+                <span style="font-size:14px;color:var(--muted);font-weight:700">cups</span>
+                <button class="chkbtn" onclick="chk('b','b1',2)">Check ✓</button>
+              </div>
+              <div class="fb" id="f-b1-2"></div>
+            </div>
+
+            <div class="qblock locked" id="q-b1-3">
+              <div class="qn">Question 3 of 3</div>
+              <div class="qcontext">The temperature was <strong>−3°C</strong> in the morning. By noon it had risen by <strong>11.5°C</strong>, then dropped <strong>4.2°C</strong> in the evening.</div>
+              <div class="qtxt">What was the evening temperature? (°C)</div>
+              <div class="arow">
+                <input class="ain" id="i-b1-3" placeholder="temperature" style="min-width:110px" onkeydown="if(event.key==='Enter')chk('b','b1',3)">
+                <span style="font-size:14px;color:var(--muted);font-weight:700">°C</span>
+                <button class="chkbtn" onclick="chk('b','b1',3)">Check ✓</button>
+              </div>
+              <div class="fb" id="f-b1-3"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TOPIC C · 7.EE.B.4a ══ -->
+    <div class="t-panel" id="panel-c">
+      <div class="topic-hdr" style="border-color:rgba(167,139,250,.2)">
+        <div>
+          <h2>Solving Equations 🔧</h2>
+          <p>Solve word problems using equations of the form px + q = r and p(x + q) = r with rational numbers. Standard 7.EE.B.4a</p>
+        </div>
+        <div class="ring-wrap">
+          <svg width="58" height="58" viewBox="0 0 58 58"><circle class="r-bg" cx="29" cy="29" r="24"/><circle class="r-fill" id="ring-c" cx="29" cy="29" r="24" stroke="#a78bfa" stroke-dasharray="150.8" stroke-dashoffset="150.8"/></svg>
+          <div class="r-lbl" id="rl-c">0%</div>
+        </div>
+      </div>
+
+      <div class="lessons">
+        <div class="lcard" id="lc-c1">
+          <div class="lcard-top" onclick="togL('c1')">
+            <div class="lnum" style="background:rgba(167,139,250,.15);color:#a78bfa">L4</div>
+            <div class="linfo"><div class="ltitle">Equations of the Form px + q = r 📐</div><div class="lsub">Write and solve equations from word problems</div></div>
+            <span class="lstatus st-go" id="ls-c1">▶ Start</span>
+          </div>
+          <div class="lbody" id="lb-c1">
+
+            <div class="qblock" id="q-c1-1">
+              <div class="qn">Question 1 of 4</div>
+              <div class="qcontext">The perimeter of a rectangle is <strong>54 cm</strong>. Its length is <strong>6 cm</strong>. The width is x. The equation is: <strong>2(6 + x) = 54</strong></div>
+              <div class="qtxt">Solve for x — what is the width?</div>
+              <div class="arow">
+                <span style="font-size:15px;color:var(--muted);font-weight:700">x =</span>
+                <input class="ain" id="i-c1-1" placeholder="cm" style="min-width:100px" onkeydown="if(event.key==='Enter')chk('c','c1',1)">
+                <button class="chkbtn" onclick="chk('c','c1',1)">Check ✓</button>
+              </div>
+              <div class="fb" id="f-c1-1"></div>
+            </div>
+
+            <div class="qblock locked" id="q-c1-2">
+              <div class="qn">Question 2 of 4</div>
+              <div class="qcontext">Sara saves <strong>$8 per week</strong>. She already has <strong>$20</strong> saved. She wants <strong>$100</strong> total.</div>
+              <div class="qtxt">Write and solve: 8x + 20 = 100. How many weeks?</div>
+              <div class="arow">
+                <span style="font-size:15px;color:var(--muted);font-weight:700">x =</span>
+                <input class="ain" id="i-c1-2" placeholder="weeks" style="min-width:100px" onkeydown="if(event.key==='Enter')chk('c','c1',2)">
+                <button class="chkbtn" onclick="chk('c','c1',2)">Check ✓</button>
+              </div>
+              <div class="fb" id="f-c1-2"></div>
+            </div>
+
+            <div class="qblock locked" id="q-c1-3">
+              <div class="qn">Question 3 of 4</div>
+              <div class="qtxt">Solve: 3x + 7 = 28</div>
+              <div class="arow">
+                <span style="font-size:15px;color:var(--muted);font-weight:700">x =</span>
+                <input class="ain" id="i-c1-3" placeholder="answer" style="min-width:100px" onkeydown="if(event.key==='Enter')chk('c','c1',3)">
+                <button class="chkbtn" onclick="chk('c','c1',3)">Check ✓</button>
+              </div>
+              <div class="fb" id="f-c1-3"></div>
+            </div>
+
+            <div class="qblock locked" id="q-c1-4">
+              <div class="qn">Question 4 of 4</div>
+              <div class="qtxt">Solve: 5(x − 3) = 20</div>
+              <div class="qhint">💡 Divide both sides by 5 first, then add 3.</div>
+              <div class="arow">
+                <span style="font-size:15px;color:var(--muted);font-weight:700">x =</span>
+                <input class="ain" id="i-c1-4" placeholder="answer" style="min-width:100px" onkeydown="if(event.key==='Enter')chk('c','c1',4)">
+                <button class="chkbtn" onclick="chk('c','c1',4)">Check ✓</button>
+              </div>
+              <div class="fb" id="f-c1-4"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TOPIC D · 7.EE.B.4b ══ -->
+    <div class="t-panel" id="panel-d">
+      <div class="topic-hdr" style="border-color:rgba(74,222,128,.2)">
+        <div>
+          <h2>Inequalities 📊</h2>
+          <p>Solve word problems leading to inequalities. Graph the solution on a number line and interpret the meaning. Standard 7.EE.B.4b</p>
+        </div>
+        <div class="ring-wrap">
+          <svg width="58" height="58" viewBox="0 0 58 58"><circle class="r-bg" cx="29" cy="29" r="24"/><circle class="r-fill" id="ring-d" cx="29" cy="29" r="24" stroke="#4ade80" stroke-dasharray="150.8" stroke-dashoffset="150.8"/></svg>
+          <div class="r-lbl" id="rl-d">0%</div>
+        </div>
+      </div>
+
+      <div class="lessons">
+        <div class="lcard" id="lc-d1">
+          <div class="lcard-top" onclick="togL('d1')">
+            <div class="lnum" style="background:rgba(74,222,128,.15);color:#4ade80">L5</div>
+            <div class="linfo"><div class="ltitle">Writing & Solving Inequalities ≥</div><div class="lsub">Graph solutions on the number line</div></div>
+            <span class="lstatus st-go" id="ls-d1">▶ Start</span>
+          </div>
+          <div class="lbody" id="lb-d1">
+
+            <div class="qblock" id="q-d1-1">
+              <div class="qn">Question 1 of 3</div>
+              <div class="qtxt">Which symbol makes this true: 5 __ 3?</div>
+              <div class="chips">
+                <div class="chip" onclick="clsfy('d1',1,this,'gt')">&gt; (greater than)</div>
+                <div class="chip" onclick="clsfy('d1',1,this,'lt')">&lt; (less than)</div>
+                <div class="chip" onclick="clsfy('d1',1,this,'eq')">=  (equal)</div>
+              </div>
+              <div class="fb" id="f-d1-1"></div>
+            </div>
+
+            <div class="qblock locked" id="q-d1-2">
+              <div class="qn">Question 2 of 3</div>
+              <div class="qcontext">Ahmed needs to save <strong>more than $50</strong> for a game. He has already saved <strong>$18</strong> and saves <strong>$8 per week</strong>. The inequality is: <strong>8x + 18 &gt; 50</strong></div>
+              <div class="qtxt">Solve for x. What is the minimum number of whole weeks he must save?</div>
+              <div class="arow">
+                <span style="font-size:15px;color:var(--muted);font-weight:700">x &gt;</span>
+                <input class="ain" id="i-d1-2" placeholder="weeks" style="min-width:100px" onkeydown="if(event.key==='Enter')chk('d','d1',2)">
+                <button class="chkbtn" onclick="chk('d','d1',2)">Check ✓</button>
+              </div>
+              <div class="fb" id="f-d1-2"></div>
+            </div>
+
+            <div class="qblock locked" id="q-d1-3">
+              <div class="qn">Question 3 of 3</div>
+              <div class="qtxt">Solve and choose the correct number line for: 2x + 3 &lt; 11</div>
+              <div class="qhint">💡 Subtract 3 from both sides, then divide by 2. Which values of x make it true?</div>
+              <div class="chips">
+                <div class="chip" onclick="clsfy('d1',3,this,'x4')">x &lt; 4</div>
+                <div class="chip" onclick="clsfy('d1',3,this,'x7')">x &lt; 7</div>
+                <div class="chip" onclick="clsfy('d1',3,this,'x4g')">x &gt; 4</div>
+                <div class="chip" onclick="clsfy('d1',3,this,'x8')">x &lt; 8</div>
+              </div>
+              <!-- Visual number line -->
+              <div class="numline-wrap" id="nl-wrap" style="margin-top:12px">
+                <div class="numline"></div>
+                <div class="nl-point" id="nl-pt" style="left:50%;background:#ff7d3b;display:none"></div>
+                <div class="nl-arrow" id="nl-arr" style="display:none"></div>
+                <div class="nl-labels">
+                  <span class="nl-label">-2</span><span class="nl-label">-1</span><span class="nl-label">0</span>
+                  <span class="nl-label">1</span><span class="nl-label">2</span><span class="nl-label">3</span>
+                  <span class="nl-label">4</span><span class="nl-label">5</span><span class="nl-label">6</span>
+                </div>
+              </div>
+              <div class="fb" id="f-d1-3"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end content -->
+</div>
+
+<!-- TEACHER AUTH -->
+<div id="s-teacher-auth" class="screen">
+  <div class="pw-card" style="margin:auto">
+    <h2>👩‍🏫 Teacher Access</h2>
+    <p>Enter the teacher password to open the live Grade 7 dashboard.</p>
+    <input class="pw-in" id="pw-in" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')chkPW()">
+    <div class="pw-err" id="pw-err">Wrong password — try again.</div>
+    <button class="pw-btn" onclick="chkPW()">Open Dashboard</button>
+    <span class="back-lnk" onclick="show('entry')">← Back to student login</span>
+  </div>
+</div>
+
+<!-- TEACHER DASHBOARD -->
+<div id="s-teacher" class="screen">
+  <div class="tbar">
+    <div class="tbar-title"><div class="ldot"></div>Grade 7 Live Dashboard</div>
+    <button class="tbtn" onclick="show('entry')">← Exit</button>
+  </div>
+  <div class="tbody">
+    <div class="tstats">
+      <div class="tstat"><div class="tsn" style="color:var(--green)" id="st-act">0</div><div class="tsl">Active</div></div>
+      <div class="tstat"><div class="tsn" style="color:var(--amber)" id="st-help">0</div><div class="tsl">Need help</div></div>
+      <div class="tstat"><div class="tsn" style="color:var(--purple)" id="st-hand">0</div><div class="tsl">Hands up</div></div>
+      <div class="tstat"><div class="tsn" id="st-avg">—</div><div class="tsl">Avg score</div></div>
+    </div>
+    <div class="bc-bar">
+      <span style="font-size:13px;color:var(--muted);font-weight:800;white-space:nowrap">📢 Broadcast:</span>
+      <input class="bc-in" id="bc-in" placeholder="Send a hint to everyone…">
+      <button class="bc-btn" onclick="broadcast()">Send to all</button>
+    </div>
+    <div class="sgrid" id="sgrid"><div style="color:var(--muted);font-size:14px;padding:20px">No students yet — share the app link and they'll appear here.</div></div>
+  </div>
+</div>
+
+<!-- Hint modal -->
+<div class="modal-bg" id="hmodal">
+  <div class="modal">
+    <h3>Send a hint to <span id="hmodal-name">student</span> 💬</h3>
+    <textarea id="hmodal-txt" placeholder="Type something helpful…"></textarea>
+    <div class="mbtns"><button class="m-c" onclick="closeModal()">Cancel</button><button class="m-s" onclick="sendH()">Send ✓</button></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><div class="toast-lbl">✉ Hint from your teacher</div><div id="toast-msg"></div></div>
+<!-- Celebration -->
+<div class="celeb" id="celeb">
+  <div class="celeb-card">
+    <span class="celeb-em" id="celeb-em">🎉</span>
+    <div class="celeb-t" id="celeb-t">Lesson complete!</div>
+    <div class="celeb-m" id="celeb-m">Amazing work — next lesson is unlocked!</div>
+    <div class="celeb-xp" id="celeb-xp">⭐ +50 XP</div>
+    <button class="celeb-btn" onclick="document.getElementById('celeb').classList.remove('show')">Keep going! →</button>
+  </div>
+</div>
+<!-- FAB -->
+<button class="fab" id="fab" onclick="raiseHand()" title="Raise hand">✋</button>
+
+<script>
+const PW='math2024';
+let sName='',handUp=false,xpTotal=0,streakN=0,hTarget=null;
+const solved={},DONE={};
+const PROG={a:{tot:7,done:0},b:{tot:3,done:0},c:{tot:4,done:0},d:{tot:3,done:0}};
+
+const ANS={
+  'a-a1-1':{acc:['8x'],ok:'🎉 Correct! 3x + 5x = 8x. You added the coefficients perfectly.',err:'Add the numbers in front of x: 3 + 5 = ? Then write that number with x.'},
+  'a-a1-2':{acc:['5y+4','5y + 4'],ok:'🎉 Yes! 7y − 2y = 5y, and the +4 stays. So 5y + 4.',err:'Combine the y terms: 7y − 2y = ? The number 4 has no y so it stays alone.'},
+  'a-a1-3':{acc:['2x+10','2x + 10'],ok:'🎉 Excellent! 4x − 2x = 2x and 3 + 7 = 10. So 2x + 10.',err:'Group x terms: (4x − 2x) and numbers: (3 + 7). Simplify each group.'},
+  'a-a1-4':{acc:['5/4x','(5/4)x','1.25x','5x/4'],ok:'🎉 Correct! ½ + ¾ = 2/4 + 3/4 = 5/4. So (5/4)x.',err:'Convert ½ to 2/4. Then 2/4 + 3/4 = ?/4.'},
+  'a-a2-1':{acc:['3x+12','3x + 12'],ok:'🎉 Perfect! 3 × x = 3x and 3 × 4 = 12. So 3x + 12.',err:'Multiply 3 by each term: 3 × x = ? and 3 × 4 = ?'},
+  'a-a2-2':{acc:['10x-10','10x − 10','10x-10'],ok:'🎉 Correct! 2(3x−5) = 6x−10. Then 6x−10+4x = 10x−10.',err:'First expand: 2(3x−5) = 6x−10. Then add 4x to the 6x.'},
+  'b-b1-1':{acc:['131.25','$131.25','131.25'],ok:'🎉 Correct! (6.5 + 4) × 12.50 = 10.5 × 12.50 = $131.25.',err:'Total hours = 6.5 + 4 = 10.5. Then 10.5 × $12.50 = ?'},
+  'b-b1-2':{acc:['2.33','2.333','7/3','2.3'],ok:'🎉 Right! 2/3 × 3.5 = 7/3 ≈ 2.33 cups.',err:'Multiply: 2/3 × 3½ = 2/3 × 7/2 = 14/6 = 7/3. Convert to decimal.'},
+  'b-b1-3':{acc:['4.3','4.30'],ok:'🎉 Correct! −3 + 11.5 = 8.5, then 8.5 − 4.2 = 4.3°C.',err:'Step 1: −3 + 11.5 = ? Step 2: subtract 4.2 from that.'},
+  'c-c1-1':{acc:['21'],ok:'🎉 Correct! 2(6+x)=54 → 6+x=27 → x=21 cm.',err:'Divide both sides by 2: 6+x=27. Then subtract 6.'},
+  'c-c1-2':{acc:['10'],ok:'🎉 Yes! 8x = 80, so x = 10 weeks.',err:'8x + 20 = 100 → 8x = 80 → x = ?'},
+  'c-c1-3':{acc:['7'],ok:'🎉 Correct! 3x = 21, x = 7.',err:'Subtract 7 from both sides: 3x = 21. Then divide by 3.'},
+  'c-c1-4':{acc:['7'],ok:'🎉 Correct! 5(x−3)=20 → x−3=4 → x=7.',err:'Divide both sides by 5 first: x−3=4. Then add 3.'},
+  'd-d1-2':{acc:['4','5'],ok:'🎉 Correct! 8x > 32, so x > 4. He needs at least 5 whole weeks.',err:'8x + 18 > 50 → 8x > 32 → x > 4. Since he needs whole weeks, that means at least 5.'},
+};
+
+const CLS={
+  'a2-3':{c:'1.05p',ok:'🎉 Correct! p + 0.05p = (1 + 0.05)p = 1.05p. A 5% increase means multiply by 1.05!',err:'Factor out p: p(1 + 0.05) = p × 1.05 = ?'},
+  'd1-1':{c:'gt',ok:'🎉 Right! 5 > 3. Five is greater than three.',err:'Think about which number is bigger. 5 is to the right of 3 on the number line.'},
+  'd1-3':{c:'x4',ok:'🎉 Correct! 2x + 3 < 11 → 2x < 8 → x < 4. All values less than 4 are solutions!',err:'Subtract 3: 2x < 8. Then divide by 2: x < ?',nl:true},
+};
+
+function norm(s){return s.toLowerCase().replace(/\s+/g,'').trim()}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const el=document.getElementById('s-'+id);if(el)el.classList.add('active')}
+function showAuth(){document.getElementById('pw-in').value='';document.getElementById('pw-err').style.display='none';show('teacher-auth')}
+
+function go(){
+  const v=document.getElementById('name-in').value.trim();
+  if(!v){document.getElementById('name-in').style.borderColor='var(--red)';setTimeout(()=>document.getElementById('name-in').style.borderColor='',1000);return}
+  sName=v.charAt(0).toUpperCase()+v.slice(1);
+  document.getElementById('fab').classList.add('show');
+  saveMe({name:sName,topic:'A',q:'Q1',score:0,status:'active',hand:false,hints:[],xp:0});
+  show('student');
+  setInterval(chkHints,5000);
+  setInterval(()=>saveMe({}),10000);
+}
+
+function chkPW(){
+  if(document.getElementById('pw-in').value===PW){show('teacher');refreshDash();setInterval(refreshDash,3000)}
+  else{document.getElementById('pw-err').style.display='block';document.getElementById('pw-in').value=''}
+}
+
+function switchT(t,el){
+  document.querySelectorAll('.t-tab').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.t-panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');document.getElementById('panel-'+t).classList.add('active');
+  saveMe({topic:'Topic '+t.toUpperCase()});
+}
+function togL(id){
+  const b=document.getElementById('lb-'+id);if(!b)return;
+  const was=b.classList.contains('open');
+  document.querySelectorAll('.lbody').forEach(x=>x.classList.remove('open'));
+  if(!was)b.classList.add('open');
+}
+
+function chk(topic,lesson,qn){
+  const key=topic+'-'+lesson+'-'+qn;
+  const inp=document.getElementById('i-'+lesson+'-'+qn);
+  const fb=document.getElementById('f-'+lesson+'-'+qn);
+  if(!inp||!fb)return;
+  const v=norm(inp.value);
+  if(!v){showFB(fb,'hint','Type your answer first! ✏️');return}
+  const d=ANS[key];if(!d)return;
+  if(d.acc.includes(v)){
+    inp.classList.add('correct');showFB(fb,'ok',d.ok);
+    gainXP(10);gainStreak();mkSolved(lesson,qn);trkProg(topic,lesson,qn);
+    saveMe({q:'Q'+(qn+1),status:'active'});
+    const nxt=document.getElementById('q-'+lesson+'-'+(qn+1));
+    if(nxt)setTimeout(()=>nxt.classList.remove('locked'),300);
+    else doneLesson(topic,lesson);
+  } else {
+    inp.classList.add('wrong');showFB(fb,'err',d.err);
+    streakN=0;updStreak();saveMe({status:'needs-help'});
+    setTimeout(()=>inp.classList.remove('wrong'),600);
+  }
+}
+
+function clsfy(lesson,qn,el,ans){
+  const key=lesson+'-'+qn;
+  el.closest('.chips').querySelectorAll('.chip').forEach(c=>c.classList.remove('sel','right','wrong'));
+  el.classList.add('sel');
+  const fb=document.getElementById('f-'+lesson+'-'+qn);
+  const d=CLS[key];if(!d||!fb)return;
+  if(ans===d.c){
+    el.classList.remove('sel');el.classList.add('right');
+    showFB(fb,'ok',d.ok);gainXP(10);gainStreak();
+    const topic=lesson.charAt(0);
+    mkSolved(lesson,qn);trkProg(topic,lesson,qn);
+    // show number line if needed
+    if(d.nl){showNumberLine()}
+    const nxt=document.getElementById('q-'+lesson+'-'+(qn+1));
+    if(nxt)setTimeout(()=>nxt.classList.remove('locked'),300);
+    else doneLesson(topic,lesson);
+  } else {
+    el.classList.remove('sel');el.classList.add('wrong');
+    showFB(fb,'err',d.err);streakN=0;updStreak();
+    setTimeout(()=>{el.classList.remove('wrong');el.classList.add('sel')},1200);
+  }
+}
+
+function showNumberLine(){
+  const pt=document.getElementById('nl-pt');
+  const arr=document.getElementById('nl-arr');
+  if(!pt||!arr)return;
+  // x < 4 — point at 4 (open circle), arrow going left
+  pt.style.display='block';
+  pt.style.left='68%'; // position of 4 on our scale
+  pt.style.background='transparent';
+  pt.style.border='2px solid var(--orange)';
+  arr.style.display='block';
+  arr.style.left='5%';arr.style.right='32%';
+  arr.style.top='50%';arr.style.transform='translateY(-50%)';
+  arr.style.background='var(--orange)';arr.style.height='4px';arr.style.position='absolute';
+}
+
+function showFB(el,type,msg){el.className='fb '+type;el.textContent=msg}
+function mkSolved(l,q){solved[l+'-'+q]=true}
+
+function trkProg(topic,lesson,qn){
+  const pd=PROG[topic];if(!pd)return;
+  const key='_c_'+lesson+'-'+qn;
+  if(!solved[key]){pd.done++;solved[key]=true}
+  const pct=Math.min(100,Math.round(pd.done/pd.tot*100));
+  const ring=document.getElementById('ring-'+topic);
+  const lbl=document.getElementById('rl-'+topic);
+  if(ring)ring.style.strokeDashoffset=150.8-(150.8*pct/100);
+  if(lbl)lbl.textContent=pct+'%';
+  const td=Object.values(PROG).reduce((a,t)=>a+t.done,0);
+  const ta=Object.values(PROG).reduce((a,t)=>a+t.tot,0);
+  saveMe({score:Math.round(td/ta*100)});
+}
+
+function doneLesson(topic,lid){
+  if(DONE[lid])return;DONE[lid]=true;
+  gainXP(50);
+  const ls=document.getElementById('ls-'+lid);
+  if(ls){ls.textContent='✓ Done';ls.className='lstatus st-done'}
+  const lc=document.getElementById('lc-'+lid);
+  if(lc)lc.classList.add('done');
+  const order=['a1','a2','b1','c1','d1'];
+  const idx=order.indexOf(lid);
+  if(idx>=0&&idx<order.length-1){
+    const nid=order[idx+1];
+    const nc=document.getElementById('lc-'+nid);
+    if(nc){nc.classList.remove('locked');const ns=document.getElementById('ls-'+nid);if(ns){ns.textContent='▶ Start';ns.className='lstatus st-go'}}
+    if(nid==='b1'){const pl=document.getElementById('pl-b');if(pl)pl.remove()}
+    if(nid==='c1'){const pl=document.getElementById('pl-c');if(pl)pl.remove()}
+    if(nid==='d1'){const pl=document.getElementById('pl-d');if(pl)pl.remove()}
+  }
+  const msgs={
+    a1:{e:'⭐',t:'Lesson 1 done!',m:'You can combine like terms! Lesson 2 is unlocked.',x:50},
+    a2:{e:'🔥',t:'Topic A complete!',m:'Expanding expressions mastered. Topic B is open!',x:100},
+    b1:{e:'🚀',t:'Topic B complete!',m:'Multi-step problems solved. Topic C awaits!',x:100},
+    c1:{e:'🏆',t:'Topic C complete!',m:'Equations mastered! Topic D — Inequalities — is unlocked.',x:100},
+    d1:{e:'🎊',t:'Module complete!',m:'Outstanding! You have finished all of Grade 7 Expressions & Equations!',x:200},
+  };
+  const m=msgs[lid]||{e:'🎉',t:'Lesson complete!',m:'Next lesson unlocked!',x:50};
+  document.getElementById('celeb-em').textContent=m.e;
+  document.getElementById('celeb-t').textContent=m.t;
+  document.getElementById('celeb-m').textContent=m.m;
+  document.getElementById('celeb-xp').textContent='⭐ +'+m.x+' XP';
+  document.getElementById('celeb').classList.add('show');
+  spawnParticles();
+}
+
+function spawnParticles(){
+  const cols=['#ff7d3b','#4a9eff','#ff5252','#ffb347','#a78bfa','#4ade80'];
+  for(let i=0;i<24;i++){
+    const p=document.createElement('div');p.className='particle';
+    const angle=Math.random()*Math.PI*2,dist=100+Math.random()*200;
+    p.style.cssText=`left:50%;top:40%;background:${cols[i%cols.length]};--dx:${Math.cos(angle)*dist}px;--dy:${Math.sin(angle)*dist-80}px;animation-delay:${Math.random()*.3}s;border-radius:${Math.random()>.5?'50%':'4px'}`;
+    document.body.appendChild(p);setTimeout(()=>p.remove(),1500);
+  }
+}
+
+function gainXP(n){
+  xpTotal+=n;
+  const pct=Math.min(100,(xpTotal%500)/5);
+  document.getElementById('xp-bar').style.width=pct+'%';
+  document.getElementById('xp-lbl').textContent=xpTotal+' XP';
+  saveMe({xp:xpTotal});
+}
+function gainStreak(){streakN++;updStreak()}
+function updStreak(){const el=document.getElementById('streak-pill');if(el)el.textContent=(streakN>0?'🔥':'⚡')+' '+streakN}
+
+function raiseHand(){
+  handUp=!handUp;
+  ['hand-hud','fab'].forEach(id=>{const b=document.getElementById(id);if(b)b.classList.toggle('raised',handUp)});
+  saveMe({hand:handUp,status:handUp?'hand-raised':'active'});
+}
+
+function getAll(){try{return JSON.parse(localStorage.getItem('ms_g7')||'{}')}catch(e){return{}}}
+function saveMe(fields){
+  if(!sName)return;
+  const all=getAll();
+  const me=all[sName]||{name:sName,topic:'A',q:'Q1',score:0,status:'active',hand:false,hints:[],xp:0};
+  Object.assign(me,fields,{lastSeen:Date.now()});
+  all[sName]=me;localStorage.setItem('ms_g7',JSON.stringify(all));
+}
+function chkHints(){
+  if(!sName)return;
+  const all=getAll();const me=all[sName];
+  if(!me||!me.hints)return;
+  const unread=me.hints.filter(h=>!h.read);if(!unread.length)return;
+  const h=unread[0];
+  document.getElementById('toast-msg').textContent=h.text;
+  document.getElementById('toast').classList.add('show');
+  h.read=true;all[sName]=me;localStorage.setItem('ms_g7',JSON.stringify(all));
+  setTimeout(()=>document.getElementById('toast').classList.remove('show'),9000);
+}
+
+function refreshDash(){
+  const all=getAll();
+  const ss=Object.values(all).filter(s=>Date.now()-(s.lastSeen||0)<120000);
+  const act=ss.filter(s=>s.status==='active').length;
+  const hlp=ss.filter(s=>s.status==='needs-help').length;
+  const hnd=ss.filter(s=>s.hand).length;
+  const scrs=ss.filter(s=>s.score>0).map(s=>s.score);
+  const avg=scrs.length?Math.round(scrs.reduce((a,b)=>a+b,0)/scrs.length):null;
+  document.getElementById('st-act').textContent=act;
+  document.getElementById('st-help').textContent=hlp;
+  document.getElementById('st-hand').textContent=hnd;
+  document.getElementById('st-avg').textContent=avg!==null?avg+'%':'—';
+  const grid=document.getElementById('sgrid');
+  if(!ss.length){grid.innerHTML='<div style="color:var(--muted);font-size:14px;padding:20px">No students yet.</div>';return}
+  const cols=['#ff7d3b','#a78bfa','#4a9eff','#4ade80','#ffb347','#ff5252'];
+  grid.innerHTML=ss.map((s,i)=>{
+    const ini=s.name.slice(0,2).toUpperCase();const col=cols[i%cols.length];
+    const sc=s.hand?'hand':(s.status==='needs-help'?'help':'');
+    const bc=s.hand?'sb-hand':(s.status==='needs-help'?'sb-help':'sb-act');
+    const bt=s.hand?'✋ Raised':(s.status==='needs-help'?'⚑ Help':'● Active');
+    const score=s.score||0;const pc=score<30?'var(--red)':score<70?'var(--amber)':'var(--green)';
+    return `<div class="scard ${sc}"><div class="sctop"><div class="sav" style="background:${col}">${ini}</div><div><div class="scname">${s.name}</div><div class="sctopic">Topic ${s.topic||'A'} · XP: ${s.xp||0}</div></div><div style="margin-left:auto"><span class="scbadge ${bc}">${bt}</span></div></div><div class="scbody"><div class="spl"><span>Progress</span><span>${score}%</span></div><div class="spt"><div class="spf" style="width:${score}%;background:${pc}"></div></div><div class="scq">On: <span>${s.q||'Q1'}</span></div><div class="sacts"><button class="sact send" onclick="openModal('${s.name}')">✉ Hint</button><button class="sact" onclick="alert('Spotlighting ${s.name}.')">👁 Spotlight</button></div></div></div>`;
+  }).join('');
+}
+
+function openModal(name){hTarget=name;document.getElementById('hmodal-name').textContent=name;document.getElementById('hmodal-txt').value='';document.getElementById('hmodal').classList.add('show')}
+function closeModal(){document.getElementById('hmodal').classList.remove('show');hTarget=null}
+function sendH(){
+  if(!hTarget)return;const txt=document.getElementById('hmodal-txt').value.trim();if(!txt)return;
+  const all=getAll();if(!all[hTarget]){closeModal();return}
+  if(!all[hTarget].hints)all[hTarget].hints=[];
+  all[hTarget].hints.push({text:txt,read:false,ts:Date.now()});
+  localStorage.setItem('ms_g7',JSON.stringify(all));closeModal();
+}
+function broadcast(){
+  const msg=document.getElementById('bc-in').value.trim();if(!msg)return;
+  const all=getAll();Object.keys(all).forEach(n=>{if(!all[n].hints)all[n].hints=[];all[n].hints.push({text:'📢 '+msg,read:false,ts:Date.now()})});
+  localStorage.setItem('ms_g7',JSON.stringify(all));document.getElementById('bc-in').value='';
+}
+</script>
+</body>
+</html>

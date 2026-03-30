@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathSpace — Grade 8</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f1729;--navy2:#1a2540;--navy3:#243058;
+  --coral:#ff6b6b;--coral2:#ff8e8e;
+  --teal:#00d4aa;--teal2:#00f0c0;
+  --amber:#ffb347;--amber2:#ffd080;
+  --purple:#9b72ff;--blue:#4a9eff;
+  --green:#4ade80;--red:#ff5252;
+  --text:#f0f4ff;--muted:#8899bb;--faint:#4a5a80;
+  --card:#1a2540;--card2:#243058;
+  --border:rgba(255,255,255,.08);
+  --r:16px;--r-lg:24px;--r-xl:32px;
+  --shadow:0 8px 32px rgba(0,0,0,.3);
+  --shadow-glow:0 0 40px rgba(0,212,170,.15);
+}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ── Screens ── */
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* ════════════════════════════════
+   ENTRY SCREEN
+════════════════════════════════ */
+#s-entry{
+  background:var(--navy);
+  align-items:center;justify-content:center;
+  padding:24px;position:relative;overflow:hidden;
+}
+/* animated bg orbs */
+.orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;animation:orbFloat ease-in-out infinite}
+.orb1{width:400px;height:400px;background:rgba(0,212,170,.12);top:-100px;right:-80px;animation-duration:12s}
+.orb2{width:300px;height:300px;background:rgba(255,107,107,.10);bottom:-60px;left:-60px;animation-duration:15s;animation-delay:3s}
+.orb3{width:250px;height:250px;background:rgba(155,114,255,.10);top:40%;left:5%;animation-duration:10s;animation-delay:6s}
+@keyframes orbFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-30px) scale(1.05)}}
+
+/* floating math badges */
+.math-badge{
+  position:absolute;background:rgba(255,255,255,.05);backdrop-filter:blur(4px);
+  border:1px solid rgba(255,255,255,.08);border-radius:12px;
+  padding:8px 14px;font-size:14px;font-weight:800;color:rgba(255,255,255,.25);
+  font-family:'Fredoka One',cursive;pointer-events:none;
+  animation:badgeFloat linear infinite;
+}
+@keyframes badgeFloat{0%{transform:translateY(100vh) rotate(-5deg)}100%{transform:translateY(-120px) rotate(5deg)}}
+
+.entry-box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-xl);padding:48px 44px 44px;
+  width:100%;max-width:460px;
+  box-shadow:var(--shadow);
+  position:relative;z-index:2;
+  animation:dropIn .6s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes dropIn{from{opacity:0;transform:translateY(-40px) scale(.92)}to{opacity:1;transform:none}}
+
+.entry-brand{display:flex;align-items:center;gap:14px;margin-bottom:32px}
+.brand-icon{
+  width:52px;height:52px;border-radius:16px;
+  background:linear-gradient(135deg,var(--teal),var(--blue));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;font-size:24px;color:#fff;
+  box-shadow:0 4px 16px rgba(0,212,170,.4);
+}
+.brand-text{font-family:'Fredoka One',cursive}
+.brand-name{font-size:22px;color:var(--text);line-height:1}
+.brand-sub{font-size:13px;color:var(--muted);margin-top:2px}
+
+.entry-hi{font-family:'Fredoka One',cursive;font-size:30px;color:var(--text);margin-bottom:8px}
+.entry-hi span{color:var(--teal)}
+.entry-p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px}
+
+.entry-input{
+  width:100%;height:54px;background:var(--navy3);
+  border:2px solid var(--border);border-radius:14px;
+  padding:0 20px;font-size:16px;font-family:'Nunito',sans-serif;
+  color:var(--text);outline:none;transition:all .2s;margin-bottom:14px;
+}
+.entry-input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(0,212,170,.12)}
+.entry-input::placeholder{color:var(--faint)}
+
+.go-btn{
+  width:100%;height:54px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,var(--teal),var(--blue));
+  color:#fff;font-size:17px;font-weight:900;font-family:'Nunito',sans-serif;
+  cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 4px 20px rgba(0,212,170,.35);
+}
+.go-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,212,170,.45)}
+.go-btn:active{transform:scale(.98)}
+
+.teacher-lnk{display:block;text-align:center;margin-top:18px;font-size:13px;color:var(--faint);cursor:pointer;transition:color .15s}
+.teacher-lnk:hover{color:var(--muted)}
+
+/* ════════════════════════════════
+   STUDENT APP
+════════════════════════════════ */
+#s-student{background:var(--navy);flex-direction:column}
+
+/* Top HUD */
+.hud{
+  background:var(--card);border-bottom:1px solid var(--border);
+  padding:0 24px;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;position:sticky;top:0;z-index:100;
+}
+.hud-brand{font-family:'Fredoka One',cursive;font-size:20px;color:var(--teal)}
+.hud-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center;max-width:320px;margin:0 auto}
+.xp-bar-bg{flex:1;height:10px;background:var(--navy3);border-radius:99px;overflow:hidden}
+.xp-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--teal),var(--blue));transition:width .4s cubic-bezier(.34,1.56,.64,1)}
+.xp-label{font-size:12px;font-weight:800;color:var(--amber);white-space:nowrap;font-family:'Fredoka One',cursive}
+.hud-right{display:flex;align-items:center;gap:10px}
+.streak-badge{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(255,179,71,.12);border:1px solid rgba(255,179,71,.25);
+  border-radius:99px;padding:5px 12px;
+  font-size:13px;font-weight:800;color:var(--amber);font-family:'Fredoka One',cursive;
+}
+.hand-btn{
+  width:40px;height:40px;border-radius:12px;
+  background:rgba(255,255,255,.06);border:1px solid var(--border);
+  font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;color:var(--text);
+}
+.hand-btn:hover{background:rgba(255,255,255,.1)}
+.hand-btn.raised{background:rgba(255,179,71,.2);border-color:var(--amber);animation:hPulse 1.5s infinite}
+@keyframes hPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,179,71,.4)}50%{box-shadow:0 0 0 10px rgba(255,179,71,0)}}
+
+/* Topic pill nav */
+.topic-nav{
+  display:flex;gap:8px;padding:16px 24px 0;
+  overflow-x:auto;flex-shrink:0;
+}
+.topic-nav::-webkit-scrollbar{display:none}
+.t-pill{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 18px;border-radius:99px;
+  border:2px solid transparent;
+  font-size:13px;font-weight:800;font-family:'Nunito',sans-serif;
+  cursor:pointer;white-space:nowrap;transition:all .2s;
+  color:var(--muted);background:rgba(255,255,255,.04);
+}
+.t-pill:hover{color:var(--text);background:rgba(255,255,255,.08)}
+.t-pill.active{background:var(--card2);border-color:rgba(255,255,255,.12);color:var(--text)}
+.t-pill .pdot{width:8px;height:8px;border-radius:50%}
+.t-pill .plock{font-size:11px;margin-left:2px;opacity:.5}
+
+/* Content */
+.content{flex:1;padding:16px 24px 80px;overflow-y:auto;max-width:800px;width:100%;margin:0 auto}
+
+/* Topic header */
+.topic-top{
+  background:var(--card);border:1px solid var(--border);border-top:none;
+  border-radius:0 0 var(--r-lg) var(--r-lg);
+  padding:20px 24px 18px;margin-bottom:20px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.topic-top h2{font-family:'Fredoka One',cursive;font-size:22px;color:var(--text);margin-bottom:4px}
+.topic-top p{font-size:13px;color:var(--muted);line-height:1.6;max-width:500px}
+.ring-wrap{position:relative;width:58px;height:58px;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.r-bg{fill:none;stroke:var(--navy3);stroke-width:5}
+.r-fill{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.34,1.56,.64,1)}
+.r-lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:13px;color:var(--text)}
+
+/* Lesson cards */
+.lessons{display:flex;flex-direction:column;gap:12px}
+
+.lcard{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);overflow:hidden;
+  transition:transform .2s,box-shadow .2s;
+}
+.lcard:not(.locked):hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.lcard.locked{opacity:.45;pointer-events:none}
+.lcard.done{border-color:rgba(74,222,128,.25)}
+
+.lcard-top{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 20px;cursor:pointer;
+}
+.lnum{
+  width:42px;height:42px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;font-size:18px;flex-shrink:0;
+}
+.linfo{flex:1}
+.ltitle{font-size:15px;font-weight:800;color:var(--text);margin-bottom:2px}
+.lsub{font-size:12px;color:var(--muted)}
+.lstatus{
+  font-size:11px;font-weight:800;font-family:'Fredoka One',cursive;
+  padding:5px 12px;border-radius:99px;white-space:nowrap;
+}
+.st-go{background:rgba(0,212,170,.15);color:var(--teal);border:1px solid rgba(0,212,170,.3)}
+.st-lock{background:rgba(255,255,255,.05);color:var(--faint);border:1px solid var(--border)}
+.st-done{background:rgba(74,222,128,.12);color:var(--green);border:1px solid rgba(74,222,128,.3)}
+
+.lbody{display:none;border-top:1px solid var(--border);padding:24px}
+.lbody.open{display:block}
+
+/* Question blocks */
+.qblock{margin-bottom:24px;animation:fadeUp .3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.qblock.locked{opacity:.3;pointer-events:none}
+.qblock:last-child{margin-bottom:0}
+.qn{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:8px;
+}
+.qn::before{content:'';width:4px;height:14px;border-radius:2px;background:currentColor}
+.qtxt{font-size:15px;font-weight:700;color:var(--text);line-height:1.6;margin-bottom:10px}
+.qhint{font-size:13px;color:var(--muted);font-style:italic;margin-bottom:10px;padding:8px 12px;background:rgba(255,255,255,.03);border-radius:8px;border-left:3px solid var(--amber)}
+
+/* Answer input row */
+.arow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ain{
+  height:48px;padding:0 16px;border-radius:12px;
+  background:var(--navy3);border:2px solid var(--border);
+  font-size:15px;font-weight:700;font-family:'Nunito',sans-serif;
+  color:var(--text);outline:none;min-width:160px;
+  transition:all .2s;
+}
+.ain:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(0,212,170,.1)}
+.ain.correct{border-color:var(--green);background:rgba(74,222,128,.08)}
+.ain.wrong{border-color:var(--red);background:rgba(255,82,82,.08);animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.chkbtn{
+  height:48px;padding:0 24px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,var(--teal),var(--blue));
+  color:#fff;font-size:14px;font-weight:800;font-family:'Nunito',sans-serif;
+  cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 16px rgba(0,212,170,.25);
+}
+.chkbtn:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(0,212,170,.35)}
+.chkbtn:active{transform:scale(.97)}
+
+/* Feedback */
+.fb{
+  margin-top:10px;padding:12px 16px;border-radius:12px;
+  font-size:13px;font-weight:600;line-height:1.55;
+  display:none;animation:fadeUp .25s ease both;
+}
+.fb.ok{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2);display:block}
+.fb.err{background:rgba(255,82,82,.1);color:#ff8888;border:1px solid rgba(255,82,82,.2);display:block}
+.fb.hint{background:rgba(255,179,71,.1);color:var(--amber);border:1px solid rgba(255,179,71,.2);display:block}
+
+/* Chips */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.chip{
+  padding:10px 20px;border-radius:99px;
+  border:2px solid var(--border);
+  font-size:13px;font-weight:800;font-family:'Nunito',sans-serif;
+  cursor:pointer;transition:all .15s;color:var(--muted);
+  background:rgba(255,255,255,.03);
+}
+.chip:hover{border-color:var(--teal);color:var(--text);background:rgba(0,212,170,.08)}
+.chip.sel{background:rgba(74,158,255,.12);border-color:var(--blue);color:var(--blue)}
+.chip.right{background:rgba(74,222,128,.12);border-color:var(--green);color:var(--green)}
+.chip.wrong{background:rgba(255,82,82,.1);border-color:var(--red);color:#ff8888}
+
+/* Equation display */
+.eqdsp{
+  background:linear-gradient(135deg,var(--navy3),var(--card2));
+  border:1px solid var(--border);border-radius:14px;
+  padding:16px 24px;font-family:'Fredoka One',cursive;font-size:22px;
+  color:var(--text);text-align:center;margin:12px 0;
+  letter-spacing:.02em;
+}
+
+/* Slider controls */
+.srow{display:flex;align-items:center;gap:12px;margin:8px 0}
+.srow label{font-size:13px;font-weight:800;color:var(--muted);min-width:140px}
+.srow input[type=range]{flex:1;accent-color:var(--teal);cursor:pointer}
+.sval{font-family:'Fredoka One',cursive;font-size:16px;color:var(--teal);min-width:36px;text-align:right}
+
+/* Canvas */
+.cvwrap{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--navy2);margin:12px 0}
+canvas{display:block;width:100%}
+
+/* Metrics row */
+.metrics{display:flex;gap:10px;margin:12px 0}
+.metric{flex:1;background:var(--navy3);border-radius:12px;padding:12px 14px;border:1px solid var(--border)}
+.mlbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);margin-bottom:4px}
+.mval{font-family:'Fredoka One',cursive;font-size:22px;color:var(--teal)}
+
+/* Datatable */
+.dtab{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;border-radius:12px;overflow:hidden}
+.dtab th{background:var(--navy3);color:var(--muted);padding:10px 14px;text-align:center;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.dtab td{padding:10px 14px;text-align:center;border-bottom:1px solid var(--border);color:var(--text);font-weight:600}
+.dtab tr:last-child td{border-bottom:none}
+.dtab tr:hover td{background:rgba(255,255,255,.03)}
+
+/* ════════════════════════════════
+   CELEBRATION OVERLAY
+════════════════════════════════ */
+.celeb{
+  display:none;position:fixed;inset:0;
+  background:rgba(10,15,32,.85);backdrop-filter:blur(8px);
+  z-index:500;align-items:center;justify-content:center;
+  animation:fadeIn .3s ease;
+}
+.celeb.show{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.celeb-card{
+  background:var(--card2);border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--r-xl);padding:48px 44px;
+  text-align:center;max-width:400px;width:90%;
+  animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes popIn{from{opacity:0;transform:scale(.8) translateY(20px)}to{opacity:1;transform:none}}
+.celeb-emoji{font-size:64px;margin-bottom:16px;display:block;animation:bounce 1s ease infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.celeb-title{font-family:'Fredoka One',cursive;font-size:30px;color:var(--text);margin-bottom:8px}
+.celeb-msg{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px}
+.celeb-xp{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,179,71,.12);border:1px solid rgba(255,179,71,.25);
+  border-radius:99px;padding:8px 20px;
+  font-family:'Fredoka One',cursive;font-size:18px;color:var(--amber);
+  margin-bottom:24px;
+}
+.celeb-btn{
+  background:linear-gradient(135deg,var(--teal),var(--blue));
+  color:#fff;border:none;border-radius:99px;
+  padding:14px 40px;font-size:16px;font-weight:900;font-family:'Nunito',sans-serif;
+  cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 20px rgba(0,212,170,.3);
+}
+.celeb-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,212,170,.4)}
+
+/* Particles */
+.particle{
+  position:fixed;pointer-events:none;z-index:501;
+  width:10px;height:10px;border-radius:50%;
+  animation:particle-fly 1.2s ease-out forwards;
+}
+@keyframes particle-fly{
+  0%{transform:translate(0,0) scale(1);opacity:1}
+  100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}
+}
+
+/* Toast */
+.toast{
+  display:none;position:fixed;bottom:80px;right:24px;
+  background:var(--amber);color:var(--navy);
+  border-radius:16px;padding:14px 18px;max-width:280px;
+  font-size:13px;font-weight:700;line-height:1.5;
+  box-shadow:0 8px 32px rgba(255,179,71,.35);z-index:200;
+  animation:slideIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes slideIn{from{transform:translateX(120%)}to{transform:none}}
+.toast.show{display:block}
+.toast-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;opacity:.7;margin-bottom:4px}
+
+/* Raise hand FAB */
+.fab{
+  position:fixed;bottom:20px;right:20px;
+  width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,var(--coral),var(--purple));
+  border:none;font-size:24px;cursor:pointer;
+  box-shadow:0 6px 24px rgba(255,107,107,.35);z-index:150;
+  display:none;align-items:center;justify-content:center;
+  transition:transform .2s;
+}
+.fab.show{display:flex}
+.fab:hover{transform:scale(1.1)}
+.fab.raised{background:linear-gradient(135deg,var(--amber),var(--coral));animation:fabPulse 1.5s infinite}
+@keyframes fabPulse{0%,100%{box-shadow:0 6px 24px rgba(255,179,71,.4)}50%{box-shadow:0 6px 40px rgba(255,179,71,.0)}}
+
+/* ════════════════════════════════
+   TEACHER AUTH
+════════════════════════════════ */
+#s-teacher-auth{background:var(--navy);align-items:center;justify-content:center;padding:24px}
+.pw-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-xl);padding:40px 36px;
+  width:100%;max-width:400px;
+  animation:popIn .4s cubic-bezier(.34,1.56,.64,1) both;
+}
+.pw-card h2{font-family:'Fredoka One',cursive;font-size:26px;color:var(--text);margin-bottom:6px}
+.pw-card p{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+.pw-in{
+  width:100%;height:52px;background:var(--navy3);
+  border:2px solid var(--border);border-radius:14px;
+  padding:0 18px;color:var(--text);font-size:15px;
+  font-family:'Nunito',sans-serif;outline:none;
+  margin-bottom:12px;transition:border-color .2s;
+}
+.pw-in:focus{border-color:var(--teal)}
+.pw-btn{
+  width:100%;height:52px;background:linear-gradient(135deg,var(--teal),var(--blue));
+  border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:900;
+  font-family:'Nunito',sans-serif;cursor:pointer;
+  box-shadow:0 4px 20px rgba(0,212,170,.3);
+}
+.pw-err{font-size:13px;color:var(--coral);margin-top:8px;display:none}
+.back-lnk{display:block;text-align:center;margin-top:16px;font-size:13px;color:var(--faint);cursor:pointer;transition:color .15s}
+.back-lnk:hover{color:var(--muted)}
+
+/* ════════════════════════════════
+   TEACHER DASHBOARD
+════════════════════════════════ */
+#s-teacher{background:var(--navy);flex-direction:column}
+.tbar{
+  background:var(--card);border-bottom:1px solid var(--border);
+  padding:0 28px;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.tbar-title{display:flex;align-items:center;gap:10px;font-family:'Fredoka One',cursive;font-size:20px;color:var(--text)}
+.ldot{width:9px;height:9px;border-radius:50%;background:var(--green);animation:ldBlink 1.5s infinite}
+@keyframes ldBlink{0%,100%{opacity:1}50%{opacity:.3}}
+.tbtn{
+  background:rgba(255,255,255,.06);border:1px solid var(--border);
+  border-radius:10px;padding:8px 18px;font-size:13px;font-weight:700;
+  color:var(--muted);cursor:pointer;transition:all .15s;font-family:'Nunito',sans-serif;
+}
+.tbtn:hover{background:rgba(255,255,255,.1);color:var(--text)}
+
+.tbody{flex:1;padding:24px 28px;overflow-y:auto}
+.tstats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.tstat{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;
+}
+.tsn{font-family:'Fredoka One',cursive;font-size:32px;line-height:1;margin-bottom:4px}
+.tsl{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+
+.bc-bar{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px 18px;display:flex;gap:12px;align-items:center;margin-bottom:20px;
+}
+.bc-in{
+  flex:1;height:42px;background:var(--navy3);border:1px solid var(--border);
+  border-radius:10px;padding:0 14px;color:var(--text);font-size:13px;
+  font-family:'Nunito',sans-serif;outline:none;
+}
+.bc-btn{
+  height:42px;padding:0 20px;border-radius:10px;
+  background:linear-gradient(135deg,var(--teal),var(--blue));
+  border:none;color:#fff;font-size:13px;font-weight:800;cursor:pointer;
+  font-family:'Nunito',sans-serif;
+}
+
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;margin-bottom:24px}
+.scard{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;
+  transition:border-color .2s;
+}
+.scard:hover{border-color:rgba(255,255,255,.15)}
+.scard.help{border-color:rgba(255,179,71,.4)}
+.scard.hand{border-color:rgba(155,114,255,.5);animation:scPulse 1.5s infinite}
+@keyframes scPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 20px rgba(155,114,255,.2)}}
+.sctop{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.sav{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:15px;color:#fff;flex-shrink:0}
+.scname{font-size:14px;font-weight:800;color:var(--text)}
+.sctopic{font-size:12px;color:var(--muted);margin-top:2px}
+.scbadge{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:4px 10px;border-radius:99px}
+.sb-act{background:rgba(74,222,128,.12);color:var(--green)}
+.sb-help{background:rgba(255,179,71,.12);color:var(--amber)}
+.sb-hand{background:rgba(155,114,255,.15);color:var(--purple)}
+.sb-idle{background:rgba(255,255,255,.05);color:var(--faint)}
+.scbody{padding:14px 16px}
+.spl{display:flex;justify-content:space-between;font-size:11px;color:var(--faint);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.spt{height:6px;background:var(--navy3);border-radius:3px;overflow:hidden;margin-bottom:12px}
+.spf{height:100%;border-radius:3px;transition:width .5s}
+.scq{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.scq span{color:var(--text);font-weight:700}
+.sacts{display:flex;gap:8px}
+.sact{
+  flex:1;height:36px;border-radius:8px;border:1px solid var(--border);
+  background:transparent;font-size:12px;font-weight:700;color:var(--muted);
+  cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;
+}
+.sact:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.sact.s:hover{background:rgba(74,158,255,.12);border-color:var(--blue);color:var(--blue)}
+
+.misc-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px}
+.misc-panel h3{font-family:'Fredoka One',cursive;font-size:18px;color:var(--text);margin-bottom:16px}
+.mitem{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.mitem:last-child{border-bottom:none}
+.mcnt{font-family:'Fredoka One',cursive;font-size:24px;min-width:36px}
+.mtext h4{font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px}
+.mtext p{font-size:12px;color:var(--muted);line-height:1.55}
+
+/* Hint modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);z-index:300;align-items:center;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{background:var(--card2);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-lg);padding:30px;width:90%;max-width:420px;animation:popIn .3s cubic-bezier(.34,1.56,.64,1) both}
+.modal h3{font-family:'Fredoka One',cursive;font-size:20px;color:var(--text);margin-bottom:14px}
+.modal textarea{width:100%;height:100px;background:var(--navy3);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;font-family:'Nunito',sans-serif;resize:none;outline:none;margin-bottom:14px}
+.modal textarea:focus{border-color:var(--teal)}
+.mbtns{display:flex;gap:10px;justify-content:flex-end}
+.m-c{padding:10px 20px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif}
+.m-s{padding:10px 20px;border-radius:10px;background:var(--teal);border:none;color:var(--navy);font-size:13px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif}
+
+/* Panels */
+.t-panel{display:none}.t-panel.active{display:block}
+
+/* Responsive */
+@media(max-width:600px){
+  .tstats{grid-template-columns:1fr 1fr}
+  .hud-center{display:none}
+  .entry-box{padding:32px 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════
+     ENTRY
+════════════════════════════════ -->
+<div id="s-entry" class="screen active">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="math-badge" style="left:8%;bottom:5%;animation-duration:20s;animation-delay:0s">y = mx + b</div>
+  <div class="math-badge" style="left:72%;bottom:0%;animation-duration:25s;animation-delay:4s">slope ⚡</div>
+  <div class="math-badge" style="left:40%;bottom:0%;animation-duration:18s;animation-delay:8s">Δy / Δx</div>
+  <div class="math-badge" style="left:20%;bottom:5%;animation-duration:22s;animation-delay:2s">{ 2x + 3y = 30</div>
+
+  <div class="entry-box">
+    <div class="entry-brand">
+      <div class="brand-icon">M</div>
+      <div class="brand-text">
+        <div class="brand-name">MathSpace</div>
+        <div class="brand-sub">Grade 8 · Linear Equations</div>
+      </div>
+    </div>
+    <div class="entry-hi">Hey there! <span>Ready to learn?</span> 🚀</div>
+    <p class="entry-p">Type your name to jump straight into your lessons. Earn XP, unlock new topics, and raise your hand when you need help — your teacher is watching live!</p>
+    <input class="entry-input" id="name-in" type="text" placeholder="What's your first name?" maxlength="30" autocomplete="off" onkeydown="if(event.key==='Enter')go()">
+    <button class="go-btn" onclick="go()">
+      Let's go! 🎯
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <span class="teacher-lnk" onclick="showAuth()">Teacher login →</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     STUDENT APP
+════════════════════════════════ -->
+<div id="s-student" class="screen">
+
+  <!-- HUD -->
+  <div class="hud">
+    <div class="hud-brand">MathSpace</div>
+    <div class="hud-center">
+      <span class="xp-label" id="xp-lbl">0 XP</span>
+      <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-bar" style="width:0%"></div></div>
+      <span class="xp-label">500</span>
+    </div>
+    <div class="hud-right">
+      <div class="streak-badge" id="streak">🔥 0</div>
+      <button class="hand-btn" id="hand-hud" onclick="raiseHand()" title="Raise hand">✋</button>
+    </div>
+  </div>
+
+  <!-- Topic pills -->
+  <div class="topic-nav">
+    <div class="t-pill active" data-t="a" onclick="switchT('a',this)"><span class="pdot" style="background:#4a9eff"></span>Topic A</div>
+    <div class="t-pill" data-t="b" onclick="switchT('b',this)" id="tab-b"><span class="pdot" style="background:#4ade80"></span>Topic B<span class="plock" id="pl-b">🔒</span></div>
+    <div class="t-pill" data-t="c" onclick="switchT('c',this)" id="tab-c"><span class="pdot" style="background:#9b72ff"></span>Topic C<span class="plock" id="pl-c">🔒</span></div>
+    <div class="t-pill" data-t="d" onclick="switchT('d',this)" id="tab-d"><span class="pdot" style="background:#ffb347"></span>Topic D<span class="plock" id="pl-d">🔒</span></div>
+  </div>
+
+  <div class="content">
+
+    <!-- ── TOPIC A ── -->
+    <div class="t-panel active" id="panel-a">
+      <div class="topic-top">
+        <div>
+          <h2>Writing &amp; Solving Equations ✏️</h2>
+          <p>Turn words into equations, solve for x, and discover the three types of solutions. Standard 8.EE.C.7</p>
+        </div>
+        <div class="ring-wrap">
+          <svg width="58" height="58" viewBox="0 0 58 58"><circle class="r-bg" cx="29" cy="29" r="24"/><circle class="r-fill" id="ring-a" cx="29" cy="29" r="24" stroke="#4a9eff" stroke-dasharray="150.8" stroke-dashoffset="150.8"/></svg>
+          <div class="r-lbl" id="rl-a">0%</div>
+        </div>
+      </div>
+
+      <div class="lessons">
+        <!-- L1 -->
+        <div class="lcard" id="lc-a1">
+          <div class="lcard-top" onclick="togL('a1')">
+            <div class="lnum" style="background:rgba(74,158,255,.15);color:#4a9eff">L1</div>
+            <div class="linfo"><div class="ltitle">Writing Equations from Words 📝</div><div class="lsub">Turning language into algebra</div></div>
+            <span class="lstatus st-go" id="ls-a1">▶ Start</span>
+          </div>
+          <div class="lbody" id="lb-a1">
+            <div class="qblock" id="q-a1-1">
+              <div class="qn">Question 1 of 3</div>
+              <div class="qtxt">A number is four more than three times another number. The larger number is 19. Write an equation where x is the smaller number.</div>
+              <div class="arow"><input class="ain" id="i-a1-1" placeholder="e.g. 3x + 4 = 19" onkeydown="if(event.key==='Enter')chk('a','a1',1)"><button class="chkbtn" onclick="chk('a','a1',1)">Check ✓</button></div>
+              <div class="fb" id="f-a1-1"></div>
+            </div>
+            <div class="qblock locked" id="q-a1-2">
+              <div class="qn">Question 2 of 3</div>
+              <div class="qtxt">The sum of two consecutive integers is 47. Let x be the smaller integer. Write the equation.</div>
+              <div class="arow"><input class="ain" id="i-a1-2" placeholder="e.g. x + (x+1) = 47" onkeydown="if(event.key==='Enter')chk('a','a1',2)"><button class="chkbtn" onclick="chk('a','a1',2)">Check ✓</button></div>
+              <div class="fb" id="f-a1-2"></div>
+            </div>
+            <div class="qblock locked" id="q-a1-3">
+              <div class="qn">Question 3 of 3</div>
+              <div class="qtxt">Which of these are <strong>linear</strong> expressions in x? Tap all that apply! 👇</div>
+              <div class="chips" id="lchips">
+                <div class="chip" onclick="togChip(this)">5x + 3</div>
+                <div class="chip" onclick="togChip(this)">x² + 2</div>
+                <div class="chip" onclick="togChip(this)">7x − 1</div>
+                <div class="chip" onclick="togChip(this)">1/x</div>
+                <div class="chip" onclick="togChip(this)">−4x</div>
+              </div>
+              <button class="chkbtn" style="margin-top:8px" onclick="chkLinear()">Check ✓</button>
+              <div class="fb" id="f-a1-3"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- L2 -->
+        <div class="lcard locked" id="lc-a2">
+          <div class="lcard-top" onclick="togL('a2')">
+            <div class="lnum" style="background:rgba(74,158,255,.15);color:#4a9eff">L2</div>
+            <div class="linfo"><div class="ltitle">Solving Linear Equations 🔧</div><div class="lsub">Properties of equality, step by step</div></div>
+            <span class="lstatus st-lock" id="ls-a2">🔒 Locked</span>
+          </div>
+          <div class="lbody" id="lb-a2">
+            <div class="qblock" id="q-a2-1">
+              <div class="qn">Question 1 of 4</div>
+              <div class="qtxt">Solve: x + 13 = 27</div>
+              <div class="arow"><span style="font-size:15px;color:var(--muted);font-weight:700">x =</span><input class="ain" id="i-a2-1" placeholder="answer" style="min-width:100px" onkeydown="if(event.key==='Enter')chk('a','a2',1)"><button class="chkbtn" onclick="chk('a','a2',1)">Check ✓</button></div>
+              <div class="fb" id="f-a2-1"></div>
+            </div>
+            <div class="qblock locked" id="q-a2-2">
+              <div class="qn">Question 2 of 4</div>
+              <div class="qtxt">Solve: 4x − 7 = 29</div>
+              <div class="arow"><span style="font-size:15px;color:var(--muted);font-weight:700">x =</span><input class="ain" id="i-a2-2" placeholder="answer" style="min-width:100px" onkeydown="if(event.key==='Enter')chk('a','a2',2)"><button class="chkbtn" onclick="chk('a','a2',2)">Check ✓</button></div>
+              <div class="fb" id="f-a2-2"></div>
+            </div>
+            <div class="qblock locked" id="q-a2-3">
+              <div class="qn">Question 3 of 4</div>
+              <div class="qtxt">Solve: 2(3x + 5) = 28</div>
+              <div class="qhint">💡 Expand 2(3x + 5) first using the distributive property, then solve.</div>
+              <div class="arow"><span style="font-size:15px;color:var(--muted);font-weight:700">x =</span><input class="ain" id="i-a2-3" placeholder="answer" style="min-width:100px" onkeydown="if(event.key==='Enter')chk('a','a2',3)"><button class="chkbtn" onclick="chk('a','a2',3)">Check ✓</button></div>
+              <div class="fb" id="f-a2-3"></div>
+            </div>
+            <div class="qblock locked" id="q-a2-4">
+              <div class="qn">Question 4 of 4</div>
+              <div class="qtxt">Solve: 5x + 3 = 2x + 18</div>
+              <div class="arow"><span style="font-size:15px;color:var(--muted);font-weight:700">x =</span><input class="ain" id="i-a2-4" placeholder="answer" style="min-width:100px" onkeydown="if(event.key==='Enter')chk('a','a2',4)"><button class="chkbtn" onclick="chk('a','a2',4)">Check ✓</button></div>
+              <div class="fb" id="f-a2-4"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- L3 -->
+        <div class="lcard locked" id="lc-a3">
+          <div class="lcard-top" onclick="togL('a3')">
+            <div class="lnum" style="background:rgba(74,158,255,.15);color:#4a9eff">L3</div>
+            <div class="linfo"><div class="ltitle">Classification Challenge 🏆</div><div class="lsub">One / none / infinitely many solutions</div></div>
+            <span class="lstatus st-lock" id="ls-a3">🔒 Locked</span>
+          </div>
+          <div class="lbody" id="lb-a3">
+            <div class="qblock" id="q-a3-1">
+              <div class="qn">Question 1 of 3</div>
+              <div class="eqdsp">3x + 9 = 3(x + 3)</div>
+              <div class="qtxt">Expand the right side. What kind of equation is this?</div>
+              <div class="chips"><div class="chip" onclick="clsfy('a3',1,this,'inf')">♾️ Infinitely many</div><div class="chip" onclick="clsfy('a3',1,this,'one')">1️⃣ One solution</div><div class="chip" onclick="clsfy('a3',1,this,'none')">🚫 No solution</div></div>
+              <div class="fb" id="f-a3-1"></div>
+            </div>
+            <div class="qblock locked" id="q-a3-2">
+              <div class="qn">Question 2 of 3</div>
+              <div class="eqdsp">2x + 5 = 2x + 11</div>
+              <div class="chips"><div class="chip" onclick="clsfy('a3',2,this,'inf')">♾️ Infinitely many</div><div class="chip" onclick="clsfy('a3',2,this,'one')">1️⃣ One solution</div><div class="chip" onclick="clsfy('a3',2,this,'none')">🚫 No solution</div></div>
+              <div class="fb" id="f-a3-2"></div>
+            </div>
+            <div class="qblock locked" id="q-a3-3">
+              <div class="qn">Question 3 of 3</div>
+              <div class="eqdsp">7x − 4 = 3x + 16</div>
+              <div class="chips"><div class="chip" onclick="clsfy('a3',3,this,'inf')">♾️ Infinitely many</div><div class="chip" onclick="clsfy('a3',3,this,'one')">1️⃣ One solution</div><div class="chip" onclick="clsfy('a3',3,this,'none')">🚫 No solution</div></div>
+              <div class="fb" id="f-a3-3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TOPIC B ── -->
+    <div class="t-panel" id="panel-b">
+      <div class="topic-top" style="border-color:rgba(74,222,128,.2)">
+        <div><h2>Two Variables &amp; Graphs 📈</h2><p>Tables of solutions, coordinate plane graphing, proportional relationships. Standard 8.EE.B.5</p></div>
+        <div class="ring-wrap"><svg width="58" height="58" viewBox="0 0 58 58"><circle class="r-bg" cx="29" cy="29" r="24"/><circle class="r-fill" id="ring-b" cx="29" cy="29" r="24" stroke="#4ade80" stroke-dasharray="150.8" stroke-dashoffset="150.8"/></svg><div class="r-lbl" id="rl-b">0%</div></div>
+      </div>
+      <div class="lessons">
+        <div class="lcard" id="lc-b1">
+          <div class="lcard-top" onclick="togL('b1')">
+            <div class="lnum" style="background:rgba(74,222,128,.12);color:#4ade80">L4</div>
+            <div class="linfo"><div class="ltitle">Paul's Walk — Constant Rate 🚶</div><div class="lsub">Proportional relationships & equations in two variables</div></div>
+            <span class="lstatus st-go" id="ls-b1">▶ Start</span>
+          </div>
+          <div class="lbody" id="lb-b1">
+            <div class="qblock" id="q-b1-1">
+              <div class="qn">Question 1 of 3</div>
+              <div class="qtxt">Paul walks 2 miles in 25 minutes. His equation is <strong>y = 0.08x</strong> (x = mins, y = miles). How many miles can he walk in 100 minutes?</div>
+              <div class="arow"><input class="ain" id="i-b1-1" placeholder="miles" style="min-width:100px" onkeydown="if(event.key==='Enter')chk('b','b1',1)"><span style="font-size:14px;color:var(--muted);font-weight:700">miles</span><button class="chkbtn" onclick="chk('b','b1',1)">Check ✓</button></div>
+              <div class="fb" id="f-b1-1"></div>
+            </div>
+            <div class="qblock locked" id="q-b1-2">
+              <div class="qn">Question 2 of 3</div>
+              <div class="qtxt">Maria walks 3 miles in 45 minutes. What is her speed in miles per minute? Write as a decimal.</div>
+              <div class="arow"><input class="ain" id="i-b1-2" placeholder="miles/min" style="min-width:120px" onkeydown="if(event.key==='Enter')chk('b','b1',2)"><button class="chkbtn" onclick="chk('b','b1',2)">Check ✓</button></div>
+              <div class="fb" id="f-b1-2"></div>
+            </div>
+            <div class="qblock locked" id="q-b1-3">
+              <div class="qn">Question 3 of 3</div>
+              <div class="qtxt">Paul walks at 0.08 mi/min, Maria at 0.067 mi/min. The slope of the graph equals the speed. Who is faster?</div>
+              <div class="chips"><div class="chip" onclick="clsfy('b1',3,this,'paul')">🏃 Paul is faster</div><div class="chip" onclick="clsfy('b1',3,this,'maria')">🏃 Maria is faster</div><div class="chip" onclick="clsfy('b1',3,this,'same')">🤝 Same speed</div></div>
+              <div class="fb" id="f-b1-3"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lcard locked" id="lc-b2">
+          <div class="lcard-top" onclick="togL('b2')">
+            <div class="lnum" style="background:rgba(74,222,128,.12);color:#4ade80">L5</div>
+            <div class="linfo"><div class="ltitle">Graph Explorer — y = mx + b 🎮</div><div class="lsub">Table, graph & equation all in sync</div></div>
+            <span class="lstatus st-lock" id="ls-b2">🔒 Locked</span>
+          </div>
+          <div class="lbody" id="lb-b2">
+            <div class="srow"><label>Slope (m):</label><input type="range" id="bm" min="-3" max="3" step="0.5" value="1" oninput="updGE()"><span class="sval" id="bm-v">1</span></div>
+            <div class="srow"><label>y-intercept (b):</label><input type="range" id="bb" min="-5" max="5" step="1" value="0" oninput="updGE()"><span class="sval" id="bb-v">0</span></div>
+            <div class="eqdsp" id="ge-eq">y = 1x + 0</div>
+            <div class="cvwrap"><canvas id="cv-b2" width="640" height="270"></canvas></div>
+            <div id="ge-tbl"></div>
+            <div class="qblock" style="margin-top:16px" id="q-b2-1">
+              <div class="qn">Quick challenge 🎯</div>
+              <div class="qtxt">Set slope = 2 and intercept = −3 using the sliders above. What is y when x = 4?</div>
+              <div class="arow"><span style="font-size:15px;color:var(--muted);font-weight:700">y =</span><input class="ain" id="i-b2-1" placeholder="answer" style="min-width:100px" onkeydown="if(event.key==='Enter')chk('b','b2',1)"><button class="chkbtn" onclick="chk('b','b2',1)">Check ✓</button></div>
+              <div class="fb" id="f-b2-1"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TOPIC C ── -->
+    <div class="t-panel" id="panel-c">
+      <div class="topic-top" style="border-color:rgba(155,114,255,.2)">
+        <div><h2>Slope &amp; Equations of Lines 📐</h2><p>Steepness, rise over run, slope formula, y = mx + b. Standards 8.EE.B.5–6</p></div>
+        <div class="ring-wrap"><svg width="58" height="58" viewBox="0 0 58 58"><circle class="r-bg" cx="29" cy="29" r="24"/><circle class="r-fill" id="ring-c" cx="29" cy="29" r="24" stroke="#9b72ff" stroke-dasharray="150.8" stroke-dashoffset="150.8"/></svg><div class="r-lbl" id="rl-c">0%</div></div>
+      </div>
+      <div class="lessons">
+        <div class="lcard" id="lc-c1">
+          <div class="lcard-top" onclick="togL('c1')">
+            <div class="lnum" style="background:rgba(155,114,255,.12);color:#9b72ff">L6</div>
+            <div class="linfo"><div class="ltitle">Slope Explorer 🎢</div><div class="lsub">Rise, run, and the steepness of a line</div></div>
+            <span class="lstatus st-go" id="ls-c1">▶ Start</span>
+          </div>
+          <div class="lbody" id="lb-c1">
+            <div class="srow"><label>Rise (Δy):</label><input type="range" id="cr" min="-5" max="5" step="1" value="2" oninput="updSE()"><span class="sval" id="cr-v">2</span></div>
+            <div class="srow"><label>Run (Δx):</label><input type="range" id="cn" min="1" max="5" step="1" value="1" oninput="updSE()"><span class="sval" id="cn-v">1</span></div>
+            <div class="metrics">
+              <div class="metric"><div class="mlbl">Rise</div><div class="mval" id="cm-r">2</div></div>
+              <div class="metric"><div class="mlbl">Run</div><div class="mval" id="cm-n">1</div></div>
+              <div class="metric"><div class="mlbl">Slope</div><div class="mval" id="cm-s">2.00</div></div>
+            </div>
+            <div class="cvwrap"><canvas id="cv-c1" width="640" height="270"></canvas></div>
+            <div class="qblock" style="margin-top:14px" id="q-c1-1">
+              <div class="qn">Question 1 of 2</div>
+              <div class="qtxt">Using m = (y₂ − y₁) / (x₂ − x₁), find the slope through the points (1, 3) and (4, 9).</div>
+              <div class="arow"><span style="font-size:15px;color:var(--muted);font-weight:700">m =</span><input class="ain" id="i-c1-1" placeholder="slope" style="min-width:100px" onkeydown="if(event.key==='Enter')chk('c','c1',1)"><button class="chkbtn" onclick="chk('c','c1',1)">Check ✓</button></div>
+              <div class="fb" id="f-c1-1"></div>
+            </div>
+            <div class="qblock locked" id="q-c1-2">
+              <div class="qn">Question 2 of 2</div>
+              <div class="qtxt">A line has slope m = 3 and passes through the point (2, 7). Find the y-intercept b.</div>
+              <div class="qhint">💡 Substitute x = 2, y = 7, m = 3 into y = mx + b and solve for b.</div>
+              <div class="arow"><span style="font-size:15px;color:var(--muted);font-weight:700">b =</span><input class="ain" id="i-c1-2" placeholder="answer" style="min-width:100px" onkeydown="if(event.key==='Enter')chk('c','c1',2)"><button class="chkbtn" onclick="chk('c','c1',2)">Check ✓</button></div>
+              <div class="fb" id="f-c1-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TOPIC D ── -->
+    <div class="t-panel" id="panel-d">
+      <div class="topic-top" style="border-color:rgba(255,179,71,.2)">
+        <div><h2>Simultaneous Equations 🎯</h2><p>Two equations, one solution — graphically and by substitution. Standard 8.EE.C.8</p></div>
+        <div class="ring-wrap"><svg width="58" height="58" viewBox="0 0 58 58"><circle class="r-bg" cx="29" cy="29" r="24"/><circle class="r-fill" id="ring-d" cx="29" cy="29" r="24" stroke="#ffb347" stroke-dasharray="150.8" stroke-dashoffset="150.8"/></svg><div class="r-lbl" id="rl-d">0%</div></div>
+      </div>
+      <div class="lessons">
+        <div class="lcard" id="lc-d1">
+          <div class="lcard-top" onclick="togL('d1')">
+            <div class="lnum" style="background:rgba(255,179,71,.12);color:#ffb347">L7</div>
+            <div class="linfo"><div class="ltitle">Derek's Basketball Problem 🏀</div><div class="lsub">Introduction to simultaneous equations</div></div>
+            <span class="lstatus st-go" id="ls-d1">▶ Start</span>
+          </div>
+          <div class="lbody" id="lb-d1">
+            <div class="qblock" id="q-d1-1">
+              <div class="qn">Question 1 of 2</div>
+              <div class="qtxt">Derek scored 30 points with two-point and three-point shots, making 5 more two-pointers than three-pointers. System: <strong>{ 2x + 3y = 30 and x = y + 5 }</strong>. Find x (two-pointers).</div>
+              <div class="arow"><span style="font-size:15px;color:var(--muted);font-weight:700">x =</span><input class="ain" id="i-d1-1" placeholder="two-pointers" style="min-width:120px" onkeydown="if(event.key==='Enter')chk('d','d1',1)"><button class="chkbtn" onclick="chk('d','d1',1)">Check ✓</button></div>
+              <div class="fb" id="f-d1-1"></div>
+            </div>
+            <div class="qblock locked" id="q-d1-2">
+              <div class="qn">Question 2 of 2</div>
+              <div class="qtxt">Solve by substitution: <strong>{ y = 3x + 1 and 2x + y = 16 }</strong>. Find x.</div>
+              <div class="qhint">💡 Substitute y = 3x + 1 into 2x + y = 16 and solve for x.</div>
+              <div class="arow"><span style="font-size:15px;color:var(--muted);font-weight:700">x =</span><input class="ain" id="i-d1-2" placeholder="answer" style="min-width:100px" onkeydown="if(event.key==='Enter')chk('d','d1',2)"><button class="chkbtn" onclick="chk('d','d1',2)">Check ✓</button></div>
+              <div class="fb" id="f-d1-2"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lcard locked" id="lc-d2">
+          <div class="lcard-top" onclick="togL('d2')">
+            <div class="lnum" style="background:rgba(255,179,71,.12);color:#ffb347">L8</div>
+            <div class="linfo"><div class="ltitle">Graphical Solution 📊</div><div class="lsub">Find where two lines cross</div></div>
+            <span class="lstatus st-lock" id="ls-d2">🔒 Locked</span>
+          </div>
+          <div class="lbody" id="lb-d2">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px">
+              <div>
+                <div style="font-size:11px;font-weight:800;color:var(--coral);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">🔴 Line 1</div>
+                <div class="srow" style="margin:4px 0"><label style="min-width:70px;font-size:12px">Slope:</label><input type="range" id="dm1" min="-3" max="3" step="0.5" value="1" oninput="updSys()"><span class="sval" id="dm1-v" style="font-size:14px">1</span></div>
+                <div class="srow" style="margin:4px 0"><label style="min-width:70px;font-size:12px">Intercept:</label><input type="range" id="db1" min="-5" max="5" step="1" value="-2" oninput="updSys()"><span class="sval" id="db1-v" style="font-size:14px">-2</span></div>
+              </div>
+              <div>
+                <div style="font-size:11px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">🔵 Line 2</div>
+                <div class="srow" style="margin:4px 0"><label style="min-width:70px;font-size:12px">Slope:</label><input type="range" id="dm2" min="-3" max="3" step="0.5" value="-1" oninput="updSys()"><span class="sval" id="dm2-v" style="font-size:14px">-1</span></div>
+                <div class="srow" style="margin:4px 0"><label style="min-width:70px;font-size:12px">Intercept:</label><input type="range" id="db2" min="-5" max="5" step="1" value="4" oninput="updSys()"><span class="sval" id="db2-v" style="font-size:14px">4</span></div>
+              </div>
+            </div>
+            <div class="cvwrap"><canvas id="cv-d2" width="640" height="270"></canvas></div>
+            <div class="metrics">
+              <div class="metric"><div class="mlbl">Type</div><div class="mval" id="sys-t" style="font-size:14px;line-height:1.3">One solution</div></div>
+              <div class="metric"><div class="mlbl">x</div><div class="mval" id="sys-x">3.0</div></div>
+              <div class="metric"><div class="mlbl">y</div><div class="mval" id="sys-y">1.0</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end content -->
+</div><!-- end s-student -->
+
+<!-- ════════════════════════════════
+     TEACHER AUTH
+════════════════════════════════ -->
+<div id="s-teacher-auth" class="screen">
+  <div class="pw-card" style="margin:auto">
+    <h2>👩‍🏫 Teacher Access</h2>
+    <p>Enter the teacher password to open the live class dashboard.</p>
+    <input class="pw-in" id="pw-in" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')chkPW()">
+    <div class="pw-err" id="pw-err">Wrong password — try again.</div>
+    <button class="pw-btn" onclick="chkPW()">Open Dashboard</button>
+    <span class="back-lnk" onclick="show('entry')">← Back to student login</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     TEACHER DASHBOARD
+════════════════════════════════ -->
+<div id="s-teacher" class="screen">
+  <div class="tbar">
+    <div class="tbar-title"><div class="ldot"></div>Live Dashboard</div>
+    <button class="tbtn" onclick="show('entry')">← Exit</button>
+  </div>
+  <div class="tbody">
+    <div class="tstats">
+      <div class="tstat"><div class="tsn" style="color:var(--green)" id="st-act">0</div><div class="tsl">Active now</div></div>
+      <div class="tstat"><div class="tsn" style="color:var(--amber)" id="st-help">0</div><div class="tsl">Need help</div></div>
+      <div class="tstat"><div class="tsn" style="color:var(--purple)" id="st-hand">0</div><div class="tsl">Hands raised</div></div>
+      <div class="tstat"><div class="tsn" id="st-avg">—</div><div class="tsl">Avg score</div></div>
+    </div>
+    <div class="bc-bar">
+      <span style="font-size:13px;color:var(--muted);font-weight:800;white-space:nowrap">📢 Broadcast:</span>
+      <input class="bc-in" id="bc-in" placeholder="Send a hint to everyone in class…">
+      <button class="bc-btn" onclick="broadcast()">Send to all</button>
+    </div>
+    <div class="sgrid" id="sgrid"><div style="color:var(--muted);font-size:14px;padding:20px">No students yet — share the app link and they'll appear here automatically.</div></div>
+    <div class="misc-panel">
+      <h3>🧠 Common mistakes this session</h3>
+      <div id="misc-list"><div style="color:var(--muted);font-size:13px">Mistakes will surface here as students answer questions.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Hint modal -->
+<div class="modal-bg" id="hmodal">
+  <div class="modal">
+    <h3>Send a hint to <span id="hmodal-name">student</span> 💬</h3>
+    <textarea id="hmodal-txt" placeholder="Type something helpful and encouraging…"></textarea>
+    <div class="mbtns"><button class="m-c" onclick="closeModal()">Cancel</button><button class="m-s" onclick="sendH()">Send ✓</button></div>
+  </div>
+</div>
+
+<!-- Teacher hint toast -->
+<div class="toast" id="toast"><div class="toast-lbl">✉ Hint from your teacher</div><div id="toast-msg"></div></div>
+
+<!-- Celebration -->
+<div class="celeb" id="celeb">
+  <div class="celeb-card">
+    <span class="celeb-emoji" id="celeb-em">🎉</span>
+    <div class="celeb-title" id="celeb-t">Lesson complete!</div>
+    <div class="celeb-msg" id="celeb-m">Great work — keep it up!</div>
+    <div class="celeb-xp" id="celeb-xp">⭐ +50 XP</div>
+    <button class="celeb-btn" onclick="closeCeleb()">Keep going! →</button>
+  </div>
+</div>
+
+<!-- Raise hand FAB -->
+<button class="fab" id="fab" onclick="raiseHand()" title="Raise hand">✋</button>
+
+<script>
+const PW='math2024';
+let sName='',handUp=false,xpTotal=0,streakCount=0,hTarget=null;
+const solved={};
+const miscCounts={};
+const PROG={a:{tot:10,done:0},b:{tot:6,done:0},c:{tot:4,done:0},d:{tot:4,done:0}};
+const DONE={};
+
+const ANS={
+  'a-a1-1':{acc:['3x+4=19','19=3x+4'],ok:'🎉 Spot on! "Four more than three times x" = 3x + 4, and that equals 19.',err:'Think: three times x = 3x. Four more = 3x + 4. Set that equal to 19.'},
+  'a-a1-2':{acc:['x+(x+1)=47','x+x+1=47','2x+1=47'],ok:'🎉 Perfect! Consecutive integers x and x+1 sum to 47.',err:'If the smaller is x, the next integer is x + 1. Their sum equals 47.'},
+  'a-a2-1':{acc:['14'],ok:'🎉 Correct! 27 − 13 = 14.',err:'Subtract 13 from both sides: x = 27 − 13.'},
+  'a-a2-2':{acc:['9'],ok:'🎉 Yes! Add 7 to both sides: 4x = 36. Divide by 4: x = 9.',err:'Step 1: add 7 to both sides (4x = 36). Step 2: divide both sides by 4.'},
+  'a-a2-3':{acc:['3'],ok:'🎉 Correct! 2(3x+5) = 6x+10 = 28 → 6x = 18 → x = 3.',err:'Expand first: 2(3x+5) = 6x + 10. Then 6x + 10 = 28 → 6x = 18.'},
+  'a-a2-4':{acc:['5'],ok:'🎉 Great! Subtract 2x from both sides: 3x + 3 = 18 → x = 5.',err:'Move the x terms: subtract 2x from both sides → 3x + 3 = 18.'},
+  'b-b1-1':{acc:['8','8.0'],ok:'🎉 Nice! y = 0.08 × 100 = 8 miles.',err:'Substitute x = 100 into y = 0.08x.'},
+  'b-b1-2':{acc:['0.067','0.07','0.0667'],ok:'🎉 Right! 3 ÷ 45 ≈ 0.067 miles per minute.',err:'Divide distance by time: 3 ÷ 45.'},
+  'b-b2-1':{acc:['5'],ok:'🎉 Correct! y = 2(4) − 3 = 8 − 3 = 5.',err:'Substitute x = 4, m = 2, b = −3 into y = mx + b.'},
+  'c-c1-1':{acc:['2'],ok:'🎉 Spot on! (9−3) ÷ (4−1) = 6 ÷ 3 = 2.',err:'Slope = (y₂−y₁) ÷ (x₂−x₁) = (9−3) ÷ (4−1).'},
+  'c-c1-2':{acc:['1'],ok:'🎉 Yes! 7 = 3(2) + b → 7 = 6 + b → b = 1.',err:'Substitute: 7 = 3 × 2 + b → 7 = 6 + b → b = ?'},
+  'd-d1-1':{acc:['9'],ok:'🎉 Correct! Substituting x = y + 5 gives y = 4, so x = 9.',err:'Substitute x = y + 5 into 2x + 3y = 30 and solve.'},
+  'd-d1-2':{acc:['3'],ok:'🎉 Perfect! 2x + (3x+1) = 16 → 5x = 15 → x = 3.',err:'Substitute y = 3x + 1 into 2x + y = 16: 5x + 1 = 16.'},
+};
+const CLS={
+  'a3-1':{c:'inf',ok:'♾️ Correct! Both sides equal 3x + 9 — always true for any x. Infinitely many solutions!',err:'Expand: 3(x+3) = 3x+9. Now compare both sides — they\'re identical!'},
+  'a3-2':{c:'none',ok:'🚫 Correct! Subtract 2x: you get 5 = 11 — a false statement. No solution — the lines are parallel.',err:'Subtract 2x from both sides. What constant equation do you get?'},
+  'a3-3':{c:'one',ok:'1️⃣ Correct! 7x − 4 = 3x + 16 → 4x = 20 → x = 5. One unique solution!',err:'Subtract 3x from both sides, then isolate x. You should get one value.'},
+  'b1-3':{c:'paul',ok:'🏃 Paul is faster! His slope (0.08) is greater than Maria\'s (0.067). Bigger slope = faster speed!',err:'The slope of the distance-time graph IS the speed. Compare 0.08 and 0.067.'},
+};
+
+function norm(s){return s.toLowerCase().replace(/\s+/g,'').trim()}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const el=document.getElementById('s-'+id);if(el)el.classList.add('active')}
+function showAuth(){document.getElementById('pw-in').value='';document.getElementById('pw-err').style.display='none';show('teacher-auth')}
+
+function go(){
+  const v=document.getElementById('name-in').value.trim();
+  if(!v){document.getElementById('name-in').style.borderColor='var(--red)';setTimeout(()=>document.getElementById('name-in').style.borderColor='',1000);return}
+  sName=v.charAt(0).toUpperCase()+v.slice(1);
+  document.getElementById('fab').classList.add('show');
+  saveMe({name:sName,topic:'Topic A',lesson:'L1',q:'Q1',score:0,status:'active',hand:false,hints:[],xp:0,streak:0});
+  show('student');
+  initGraphs();
+  setInterval(chkHints,5000);
+  setInterval(()=>saveMe({}),10000);
+}
+
+function chkPW(){
+  if(document.getElementById('pw-in').value===PW){show('teacher');refreshDash();setInterval(refreshDash,3000)}
+  else{document.getElementById('pw-err').style.display='block';document.getElementById('pw-in').value=''}
+}
+
+function switchT(t,el){
+  document.querySelectorAll('.t-pill').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.t-panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-'+t).classList.add('active');
+  saveMe({topic:'Topic '+t.toUpperCase()});
+}
+
+function togL(id){
+  const b=document.getElementById('lb-'+id);if(!b)return;
+  const was=b.classList.contains('open');
+  document.querySelectorAll('.lbody').forEach(x=>x.classList.remove('open'));
+  if(!was)b.classList.add('open');
+}
+
+function chk(topic,lesson,qn){
+  const key=topic+'-'+lesson+'-'+qn;
+  const inp=document.getElementById('i-'+lesson+'-'+qn);
+  const fb=document.getElementById('f-'+lesson+'-'+qn);
+  if(!inp||!fb)return;
+  const v=norm(inp.value);
+  if(!v){showFB(fb,'hint','Type your answer first! ✏️');return}
+  const d=ANS[key];if(!d)return;
+  if(d.acc.includes(v)){
+    inp.classList.add('correct');
+    showFB(fb,'ok',d.ok);
+    gainXP(10);gainStreak();
+    mkSolved(lesson,qn);trkProg(topic,lesson,qn);
+    saveMe({q:'Q'+(qn+1),status:'active'});
+    const nxt=document.getElementById('q-'+lesson+'-'+(qn+1));
+    if(nxt)setTimeout(()=>nxt.classList.remove('locked'),300);
+    else doneLesson(topic,lesson);
+  } else {
+    inp.classList.add('wrong');
+    showFB(fb,'err',d.err);
+    streakCount=0;updStreak();
+    recMistake(lesson+' Q'+qn,d.err);
+    saveMe({status:'needs-help'});
+    setTimeout(()=>inp.classList.remove('wrong'),600);
+  }
+}
+
+function clsfy(lesson,qn,el,ans){
+  const key=lesson+'-'+qn;
+  el.closest('.chips').querySelectorAll('.chip').forEach(c=>c.classList.remove('sel','right','wrong'));
+  el.classList.add('sel');
+  const fb=document.getElementById('f-'+lesson+'-'+qn);
+  const d=CLS[key];if(!d||!fb)return;
+  if(ans===d.c){
+    el.classList.remove('sel');el.classList.add('right');
+    showFB(fb,'ok',d.ok);
+    gainXP(10);gainStreak();
+    const topic=lesson.charAt(0);
+    mkSolved(lesson,qn);trkProg(topic,lesson,qn);
+    const nxt=document.getElementById('q-'+lesson+'-'+(qn+1));
+    if(nxt)setTimeout(()=>nxt.classList.remove('locked'),300);
+    else doneLesson(topic,lesson);
+  } else {
+    el.classList.remove('sel');el.classList.add('wrong');
+    showFB(fb,'err',d.err);
+    streakCount=0;updStreak();
+    saveMe({status:'needs-help'});
+    setTimeout(()=>{el.classList.remove('wrong');el.classList.add('sel')},1200);
+  }
+}
+
+function chkLinear(){
+  const chips=document.querySelectorAll('#lchips .chip');
+  const sel=[...chips].filter(c=>c.classList.contains('sel')).map(c=>c.textContent.trim());
+  const correct=['5x + 3','7x \u2212 1','\u22124x'];
+  const ok=correct.every(c=>sel.includes(c))&&sel.length===correct.length;
+  const fb=document.getElementById('f-a1-3');
+  if(ok){showFB(fb,'ok','\uD83C\uDF89 Correct! Linear = x to the power of 1 only. x\u00B2 and 1/x are non-linear.');gainXP(15);gainStreak();doneLesson('a','a1')}
+  else{showFB(fb,'err','Check again \u2014 linear means x appears only to the power of 1. No squaring, no dividing by x.');streakCount=0;updStreak();saveMe({status:'needs-help'})}
+}
+
+function togChip(el){el.classList.toggle('sel')}
+function showFB(el,type,msg){el.className='fb '+type;el.textContent=msg}
+
+function mkSolved(l,q){solved[l+'-'+q]=true}
+function trkProg(topic,lesson,qn){
+  const pd=PROG[topic];if(!pd)return;
+  const key='_c_'+lesson+'-'+qn;
+  if(!solved[key]){pd.done++;solved[key]=true}
+  const pct=Math.min(100,Math.round(pd.done/pd.tot*100));
+  const ring=document.getElementById('ring-'+topic);
+  const lbl=document.getElementById('rl-'+topic);
+  if(ring)ring.style.strokeDashoffset=150.8-(150.8*pct/100);
+  if(lbl)lbl.textContent=pct+'%';
+  const td=Object.values(PROG).reduce((a,t)=>a+t.done,0);
+  const ta=Object.values(PROG).reduce((a,t)=>a+t.tot,0);
+  saveMe({score:Math.round(td/ta*100)});
+}
+
+function doneLesson(topic,lid){
+  if(DONE[lid])return;DONE[lid]=true;
+  gainXP(50);
+  const ls=document.getElementById('ls-'+lid);
+  if(ls){ls.textContent='✓ Done';ls.className='lstatus st-done'}
+  const lc=document.getElementById('lc-'+lid);
+  if(lc)lc.classList.add('done');
+  const order=['a1','a2','a3','b1','b2','c1','d1','d2'];
+  const idx=order.indexOf(lid);
+  if(idx>=0&&idx<order.length-1){
+    const nid=order[idx+1];
+    const nc=document.getElementById('lc-'+nid);
+    if(nc){nc.classList.remove('locked');const ns=document.getElementById('ls-'+nid);if(ns){ns.textContent='▶ Start';ns.className='lstatus st-go'}}
+    if(nid==='b1'){const pl=document.getElementById('pl-b');if(pl)pl.remove()}
+    if(nid==='c1'){const pl=document.getElementById('pl-c');if(pl)pl.remove()}
+    if(nid==='d1'){const pl=document.getElementById('pl-d');if(pl)pl.remove()}
+  }
+  const msgs={
+    a1:{e:'⭐',t:'Lesson 1 done!',m:'You can turn words into equations. Lesson 2 is now open!',x:50},
+    a2:{e:'🔥',t:'Equations unlocked!',m:'You can solve linear equations step by step. Lesson 3 ready!',x:50},
+    a3:{e:'🏆',t:'Topic A complete!',m:'You understand all three solution types. Topic B is open!',x:100},
+    b1:{e:'🚀',t:'Rate problems done!',m:'Proportional relationships mastered. Keep going!',x:50},
+    b2:{e:'📈',t:'Graph explorer done!',m:'Tables, graphs and equations connected. Topic C awaits!',x:50},
+    c1:{e:'📐',t:'Slope mastered!',m:'You can find slope from any two points. Topic D is unlocked!',x:50},
+    d1:{e:'🎯',t:'Systems introduced!',m:'First simultaneous equations solved. Lesson 8 is open!',x:50},
+    d2:{e:'🎊',t:'Module 4 complete!',m:'Outstanding! You have finished all four topics!',x:200},
+  };
+  const m=msgs[lid]||{e:'🎉',t:'Lesson complete!',m:'The next lesson is unlocked!',x:50};
+  document.getElementById('celeb-em').textContent=m.e;
+  document.getElementById('celeb-t').textContent=m.t;
+  document.getElementById('celeb-m').textContent=m.m;
+  document.getElementById('celeb-xp').textContent='⭐ +'+m.x+' XP';
+  document.getElementById('celeb').classList.add('show');
+  spawnParticles();
+}
+
+function closeCeleb(){document.getElementById('celeb').classList.remove('show')}
+
+function spawnParticles(){
+  const colors=['#00d4aa','#4a9eff','#ff6b6b','#ffb347','#9b72ff','#4ade80'];
+  for(let i=0;i<24;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    const angle=Math.random()*Math.PI*2;
+    const dist=120+Math.random()*200;
+    p.style.cssText=`left:50%;top:40%;background:${colors[i%colors.length]};--dx:${Math.cos(angle)*dist}px;--dy:${Math.sin(angle)*dist-100}px;animation-delay:${Math.random()*.3}s;border-radius:${Math.random()>.5?'50%':'4px'}`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1500);
+  }
+}
+
+function gainXP(n){
+  xpTotal+=n;
+  const max=500;const pct=Math.min(100,(xpTotal%max)/max*100);
+  document.getElementById('xp-bar').style.width=pct+'%';
+  document.getElementById('xp-lbl').textContent=xpTotal+' XP';
+  saveMe({xp:xpTotal});
+}
+function gainStreak(){
+  streakCount++;updStreak();
+}
+function updStreak(){
+  const el=document.getElementById('streak');
+  if(el)el.textContent=(streakCount>0?'🔥':'⚡')+' '+streakCount;
+}
+
+function raiseHand(){
+  handUp=!handUp;
+  ['hand-hud','fab'].forEach(id=>{const b=document.getElementById(id);if(b)b.classList.toggle('raised',handUp)});
+  saveMe({hand:handUp,status:handUp?'hand-raised':'active'});
+}
+
+function recMistake(loc,hint){
+  if(!miscCounts[loc])miscCounts[loc]={count:0,hint};
+  miscCounts[loc].count++;
+  const list=document.getElementById('misc-list');if(!list)return;
+  list.innerHTML=Object.entries(miscCounts).sort((a,b)=>b[1].count-a[1].count).slice(0,5)
+    .map(([loc,d])=>`<div class="mitem"><div class="mcnt" style="color:${d.count>=3?'var(--coral)':'var(--amber)'}">${d.count}</div><div class="mtext"><h4>${loc}</h4><p>${d.hint}</p></div></div>`).join('');
+}
+
+// ── localStorage sync ──
+function getAll(){try{return JSON.parse(localStorage.getItem('ms_stu')||'{}')}catch(e){return{}}}
+function saveMe(fields){
+  if(!sName)return;
+  const all=getAll();
+  const me=all[sName]||{name:sName,topic:'Topic A',lesson:'L1',q:'Q1',score:0,status:'active',hand:false,hints:[],xp:0,streak:0};
+  Object.assign(me,fields,{lastSeen:Date.now()});
+  all[sName]=me;localStorage.setItem('ms_stu',JSON.stringify(all));
+}
+function chkHints(){
+  if(!sName)return;
+  const all=getAll();const me=all[sName];
+  if(!me||!me.hints)return;
+  const unread=me.hints.filter(h=>!h.read);
+  if(!unread.length)return;
+  const h=unread[0];
+  document.getElementById('toast-msg').textContent=h.text;
+  document.getElementById('toast').classList.add('show');
+  h.read=true;all[sName]=me;localStorage.setItem('ms_stu',JSON.stringify(all));
+  setTimeout(()=>document.getElementById('toast').classList.remove('show'),9000);
+}
+
+// ── Teacher dashboard ──
+function refreshDash(){
+  const all=getAll();
+  const ss=Object.values(all).filter(s=>Date.now()-(s.lastSeen||0)<120000);
+  const act=ss.filter(s=>s.status==='active').length;
+  const hlp=ss.filter(s=>s.status==='needs-help').length;
+  const hnd=ss.filter(s=>s.hand).length;
+  const scrs=ss.filter(s=>s.score>0).map(s=>s.score);
+  const avg=scrs.length?Math.round(scrs.reduce((a,b)=>a+b,0)/scrs.length):null;
+  document.getElementById('st-act').textContent=act;
+  document.getElementById('st-help').textContent=hlp;
+  document.getElementById('st-hand').textContent=hnd;
+  document.getElementById('st-avg').textContent=avg!==null?avg+'%':'—';
+  const grid=document.getElementById('sgrid');
+  if(!ss.length){grid.innerHTML='<div style="color:var(--muted);font-size:14px;padding:20px">No students yet — share the app link.</div>';return}
+  const cols=['#4a9eff','#9b72ff','#ff6b6b','#4ade80','#ffb347','#00d4aa','#ff8e8e','#84cc16'];
+  grid.innerHTML=ss.map((s,i)=>{
+    const ini=s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const col=cols[i%cols.length];
+    const sc=s.hand?'hand':(s.status==='needs-help'?'help':'');
+    const bc=s.hand?'sb-hand':(s.status==='needs-help'?'sb-help':'sb-act');
+    const bt=s.hand?'✋ Raised':(s.status==='needs-help'?'⚑ Help':'● Active');
+    const score=s.score||0;
+    const pc=score<30?'var(--coral)':score<70?'var(--amber)':'var(--green)';
+    return `<div class="scard ${sc}"><div class="sctop"><div class="sav" style="background:${col}">${ini}</div><div><div class="scname">${s.name}</div><div class="sctopic">${s.topic||'Topic A'} · XP: ${s.xp||0}</div></div><div style="margin-left:auto"><span class="scbadge ${bc}">${bt}</span></div></div><div class="scbody"><div class="spl"><span>Progress</span><span>${score}%</span></div><div class="spt"><div class="spf" style="width:${score}%;background:${pc}"></div></div><div class="scq">Currently on: <span>${s.q||'Q1'}</span></div><div class="sacts"><button class="sact s" onclick="openModal('${s.name}')">✉ Send hint</button><button class="sact" onclick="alert('Spotlighting ${s.name}\'s work for the class.')">👁 Spotlight</button></div></div></div>`;
+  }).join('');
+}
+
+function openModal(name){hTarget=name;document.getElementById('hmodal-name').textContent=name;document.getElementById('hmodal-txt').value='';document.getElementById('hmodal').classList.add('show')}
+function closeModal(){document.getElementById('hmodal').classList.remove('show');hTarget=null}
+function sendH(){
+  if(!hTarget)return;const txt=document.getElementById('hmodal-txt').value.trim();if(!txt)return;
+  const all=getAll();if(!all[hTarget]){closeModal();return}
+  if(!all[hTarget].hints)all[hTarget].hints=[];
+  all[hTarget].hints.push({text:txt,read:false,ts:Date.now()});
+  localStorage.setItem('ms_stu',JSON.stringify(all));
+  closeModal();
+}
+function broadcast(){
+  const msg=document.getElementById('bc-in').value.trim();if(!msg)return;
+  const all=getAll();
+  Object.keys(all).forEach(n=>{if(!all[n].hints)all[n].hints=[];all[n].hints.push({text:'📢 '+msg,read:false,ts:Date.now()})});
+  localStorage.setItem('ms_stu',JSON.stringify(all));
+  document.getElementById('bc-in').value='';
+}
+
+// ── GRAPHS ──
+function initGraphs(){updGE();updSE();updSys()}
+
+function axes(ctx,W,H){
+  const mx=40,my=20,iw=W-mx*2,ih=H-my*2;
+  const xMin=-6,xMax=6,yMin=-8,yMax=8;
+  const toX=x=>mx+(x-xMin)/(xMax-xMin)*iw;
+  const toY=y=>my+(yMax-y)/(yMax-yMin)*ih;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#141e35';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;
+  for(let x=Math.ceil(xMin);x<=xMax;x++){ctx.beginPath();ctx.moveTo(toX(x),my);ctx.lineTo(toX(x),my+ih);ctx.stroke()}
+  for(let y=Math.ceil(yMin);y<=yMax;y++){ctx.beginPath();ctx.moveTo(mx,toY(y));ctx.lineTo(mx+iw,toY(y));ctx.stroke()}
+  ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(mx,toY(0));ctx.lineTo(mx+iw,toY(0));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(toX(0),my);ctx.lineTo(toX(0),my+ih);ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.35)';ctx.font='10px sans-serif';
+  for(let x=Math.ceil(xMin)+1;x<xMax;x+=2){if(x!==0)ctx.fillText(x,toX(x)-4,toY(0)+14)}
+  for(let y=Math.ceil(yMin)+1;y<yMax;y+=2){if(y!==0)ctx.fillText(y,toX(0)-18,toY(y)+4)}
+  return{toX,toY,xMin,xMax,yMin,yMax}
+}
+
+function updGE(){
+  const m=parseFloat(document.getElementById('bm')?.value||1);
+  const b=parseFloat(document.getElementById('bb')?.value||0);
+  if(document.getElementById('bm-v'))document.getElementById('bm-v').textContent=m;
+  if(document.getElementById('bb-v'))document.getElementById('bb-v').textContent=b;
+  if(document.getElementById('ge-eq'))document.getElementById('ge-eq').textContent='y = '+m+'x '+(b>=0?'+ ':'− ')+Math.abs(b);
+  const c=document.getElementById('cv-b2');if(!c)return;
+  const ctx=c.getContext('2d');const{toX,toY}=axes(ctx,640,270);
+  ctx.strokeStyle='#00d4aa';ctx.lineWidth=2.5;ctx.shadowColor='#00d4aa';ctx.shadowBlur=8;
+  ctx.beginPath();ctx.moveTo(toX(-7),toY(m*-7+b));ctx.lineTo(toX(7),toY(m*7+b));ctx.stroke();ctx.shadowBlur=0;
+  let h='<table class="dtab"><tr><th>x</th><th>y = '+m+'x + '+b+'</th></tr>';
+  for(let x=-3;x<=3;x++)h+=`<tr><td>${x}</td><td>${(m*x+b).toFixed(1)}</td></tr>`;
+  h+='</table>';
+  if(document.getElementById('ge-tbl'))document.getElementById('ge-tbl').innerHTML=h;
+}
+
+function updSE(){
+  const r=parseInt(document.getElementById('cr')?.value||2);
+  const n=parseInt(document.getElementById('cn')?.value||1);
+  if(document.getElementById('cr-v'))document.getElementById('cr-v').textContent=r;
+  if(document.getElementById('cn-v'))document.getElementById('cn-v').textContent=n;
+  const sl=(r/n).toFixed(2);
+  if(document.getElementById('cm-r'))document.getElementById('cm-r').textContent=r;
+  if(document.getElementById('cm-n'))document.getElementById('cm-n').textContent=n;
+  if(document.getElementById('cm-s'))document.getElementById('cm-s').textContent=sl;
+  const c=document.getElementById('cv-c1');if(!c)return;
+  const ctx=c.getContext('2d');const{toX,toY}=axes(ctx,640,270);
+  const m=r/n;
+  ctx.strokeStyle='#9b72ff';ctx.lineWidth=2.5;ctx.shadowColor='#9b72ff';ctx.shadowBlur=8;
+  ctx.beginPath();ctx.moveTo(toX(-7),toY(m*-7));ctx.lineTo(toX(7),toY(m*7));ctx.stroke();ctx.shadowBlur=0;
+  ctx.strokeStyle='#4ade80';ctx.lineWidth=2;ctx.setLineDash([5,4]);
+  ctx.beginPath();ctx.moveTo(toX(0),toY(0));ctx.lineTo(toX(n),toY(0));ctx.stroke();
+  ctx.strokeStyle='#ff6b6b';
+  ctx.beginPath();ctx.moveTo(toX(n),toY(0));ctx.lineTo(toX(n),toY(r));ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#4ade80';ctx.font='bold 11px sans-serif';ctx.fillText('run='+n,toX(n/2)-12,toY(0)+16);
+  ctx.fillStyle='#ff6b6b';ctx.fillText('rise='+r,toX(n)+6,toY(r/2)+4);
+  ctx.beginPath();ctx.arc(toX(0),toY(0),5,0,Math.PI*2);ctx.fillStyle='#9b72ff';ctx.fill();
+  ctx.beginPath();ctx.arc(toX(n),toY(r),5,0,Math.PI*2);ctx.fill();
+}
+
+function updSys(){
+  const m1=parseFloat(document.getElementById('dm1')?.value||1);
+  const b1=parseFloat(document.getElementById('db1')?.value||-2);
+  const m2=parseFloat(document.getElementById('dm2')?.value||-1);
+  const b2=parseFloat(document.getElementById('db2')?.value||4);
+  if(document.getElementById('dm1-v'))document.getElementById('dm1-v').textContent=m1;
+  if(document.getElementById('db1-v'))document.getElementById('db1-v').textContent=b1;
+  if(document.getElementById('dm2-v'))document.getElementById('dm2-v').textContent=m2;
+  if(document.getElementById('db2-v'))document.getElementById('db2-v').textContent=b2;
+  const c=document.getElementById('cv-d2');if(!c)return;
+  const ctx=c.getContext('2d');const{toX,toY}=axes(ctx,640,270);
+  ctx.strokeStyle='#ff6b6b';ctx.lineWidth=2.5;ctx.shadowColor='#ff6b6b';ctx.shadowBlur=6;
+  ctx.beginPath();ctx.moveTo(toX(-7),toY(m1*-7+b1));ctx.lineTo(toX(7),toY(m1*7+b1));ctx.stroke();ctx.shadowBlur=0;
+  ctx.strokeStyle='#4a9eff';ctx.lineWidth=2.5;ctx.shadowColor='#4a9eff';ctx.shadowBlur=6;
+  ctx.beginPath();ctx.moveTo(toX(-7),toY(m2*-7+b2));ctx.lineTo(toX(7),toY(m2*7+b2));ctx.stroke();ctx.shadowBlur=0;
+  let tp;
+  if(m1===m2){
+    tp=b1===b2?'♾️ Infinite solutions':'🚫 No solution (parallel)';
+    if(document.getElementById('sys-x'))document.getElementById('sys-x').textContent='—';
+    if(document.getElementById('sys-y'))document.getElementById('sys-y').textContent='—';
+  } else {
+    const ix=(b2-b1)/(m1-m2),iy=m1*ix+b1;tp='1️⃣ One solution';
+    ctx.beginPath();ctx.arc(toX(ix),toY(iy),9,0,Math.PI*2);
+    ctx.fillStyle='#fff';ctx.fill();
+    ctx.beginPath();ctx.arc(toX(ix),toY(iy),6,0,Math.PI*2);ctx.fillStyle='#ffb347';ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.8)';ctx.font='bold 11px sans-serif';
+    ctx.fillText('('+ix.toFixed(1)+', '+iy.toFixed(1)+')',toX(ix)+12,toY(iy)-8);
+    if(document.getElementById('sys-x'))document.getElementById('sys-x').textContent=ix.toFixed(1);
+    if(document.getElementById('sys-y'))document.getElementById('sys-y').textContent=iy.toFixed(1);
+  }
+  if(document.getElementById('sys-t'))document.getElementById('sys-t').textContent=tp;
+}
+</script>
+</body>
+</html>
