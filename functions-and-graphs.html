@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Functions & Their Graphs — Algebra 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0f1e;--bg2:#111827;--bg3:#1a2235;--bg4:#242f45;
+  --surface:#1e2d42;--surface2:#263348;
+  --lime:#a8ff3e;--lime2:#c4ff6e;
+  --blue:#4f9eff;--coral:#ff6b5b;--amber:#ffbe3d;
+  --teal:#2dd4bf;--pink:#f472b6;--purple:#a78bfa;--green:#4ade80;
+  --text:#f0f4ff;--text2:#b8c4d8;--text3:#6b7fa0;
+  --border:rgba(255,255,255,.1);--border2:rgba(255,255,255,.06);
+  --r:10px;--r-lg:16px;--r-xl:22px;
+}
+html{font-size:16px}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.5}
+h1,h2,h3,h4{font-family:'Outfit',sans-serif;line-height:1.1;letter-spacing:-.02em}
+h1{font-size:clamp(36px,5vw,64px);font-weight:900}
+h2{font-size:clamp(22px,3.2vw,38px);font-weight:800}
+h3{font-size:clamp(16px,2.2vw,22px);font-weight:700}
+p{font-size:15px;color:var(--text2);line-height:1.78}
+
+/* NAV */
+.nav{background:rgba(10,15,30,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border2);height:64px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300}
+.nav-brand{display:flex;align-items:center;gap:12px}
+.nav-logo{width:36px;height:36px;background:var(--lime);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:14px;color:var(--bg)}
+.nav-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:15px}
+.nav-sub{font-size:12px;color:var(--text3);margin-top:1px}
+.nav-back{font-size:13px;font-weight:600;color:var(--text3);text-decoration:none;border:1px solid var(--border);padding:7px 16px;border-radius:99px;transition:all .15s}
+.nav-back:hover{color:var(--text);border-color:rgba(255,255,255,.25)}
+
+/* HERO */
+.hero{background:linear-gradient(160deg,#0f1e3a 0%,#0a0f1e 60%);padding:64px 40px 72px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 80% at 80% 20%,rgba(168,255,62,.07),transparent)}
+.hero-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(168,255,62,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(168,255,62,.04) 1px,transparent 1px);background-size:56px 56px}
+.hero-inner{max-width:760px;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,255,62,.1);border:1px solid rgba(168,255,62,.25);border-radius:99px;padding:6px 16px;font-size:12px;font-weight:700;color:var(--lime);letter-spacing:.06em;text-transform:uppercase;margin-bottom:22px}
+.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--lime);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{color:var(--text);margin-bottom:14px}
+.hero h1 span{color:var(--lime)}
+.hero>div>p{font-size:17px;color:var(--text2);max-width:540px;margin-bottom:28px}
+.hero-tags{display:flex;gap:8px;flex-wrap:wrap}
+.htag{padding:5px 13px;border-radius:99px;font-size:12px;font-weight:600;border:1px solid var(--border);color:var(--text3)}
+
+/* MODULE BAR */
+.mod-bar{background:var(--bg2);border-bottom:1px solid var(--border2);padding:0 28px;display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:64px;z-index:200}
+.mod-bar::-webkit-scrollbar{display:none}
+.mtab{padding:12px 18px;font-size:13px;font-weight:700;color:var(--text2);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s,background .15s;background:transparent;border-top:none;border-left:none;border-right:none;font-family:'Plus Jakarta Sans',sans-serif}
+.mtab:hover{color:#fff;background:rgba(255,255,255,.05)}
+.mtab.on{color:var(--lime);border-bottom-color:var(--lime);background:rgba(168,255,62,.05)}
+.mtab .mn{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.55;display:block;margin-bottom:2px}
+.mtab .md{font-size:10px;font-weight:500;color:var(--text3);display:block;margin-top:2px}
+.mtab.on .md{color:rgba(168,255,62,.6)}
+.mtab:hover{color:var(--text2)}
+.mtab.on{color:var(--lime);border-bottom-color:var(--lime)}
+.mtab .mn{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.5;display:block;margin-bottom:1px}
+
+/* SECTIONS */
+.sec{display:none;max-width:1040px;margin:0 auto;padding:48px 32px 88px}
+.sec.on{display:block}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:'';width:22px;height:2px;background:var(--blue);border-radius:1px;flex-shrink:0}
+.sec h2{color:var(--text);margin-bottom:12px}
+.sec>p{max-width:600px;margin-bottom:28px}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-xl);padding:24px}
+.card h3{margin-bottom:8px;color:var(--text)}
+.card p{font-size:14px}
+
+/* INVEST */
+.invest{background:rgba(79,158,255,.07);border:1.5px solid rgba(79,158,255,.22);border-radius:var(--r-xl);padding:18px 22px;margin-bottom:26px}
+.invest-title{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.invest-title::before{content:'🔍';letter-spacing:0;font-size:13px}
+.invest p{font-size:14px;color:var(--text);font-weight:500;line-height:1.72;margin:0}
+
+/* KEY IDEA */
+.key{background:rgba(168,255,62,.06);border-left:4px solid var(--lime);border-radius:var(--r);padding:16px 20px;margin-top:20px}
+.key-title{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#7ab82a;margin-bottom:6px}
+.key p{font-size:14px;color:#c8e896;font-weight:500;margin:0;line-height:1.68}
+
+/* LAYOUTS */
+.row{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.col{display:flex;flex-direction:column;gap:16px;flex:1;min-width:220px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+
+/* CANVAS */
+.cv-wrap{background:var(--bg);border:1px solid var(--border2);border-radius:var(--r-xl);overflow:hidden;display:inline-block;flex-shrink:0}
+.cv-wrap canvas{display:block}
+
+/* CONTROLS */
+.ctrl-box{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-xl);padding:22px;display:flex;flex-direction:column;gap:18px}
+.cl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;display:block}
+.cr{display:flex;align-items:center;gap:12px}
+.cv{font-family:'Outfit',sans-serif;font-size:20px;font-weight:700;min-width:40px;text-align:right}
+input[type=range]{flex:1;cursor:pointer;height:6px;border-radius:3px;outline:none;border:none}
+
+/* EQ DISPLAY */
+.eq-display{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 20px;font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:var(--lime);letter-spacing:-.01em}
+
+/* BUTTONS */
+.btn{padding:11px 22px;border-radius:99px;font-size:14px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;border:none;transition:all .15s;display:inline-block}
+.btn-lime{background:var(--lime);color:var(--bg)}
+.btn-lime:hover{background:var(--lime2);transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--text2);border:1.5px solid var(--border)}
+.btn-outline:hover{background:var(--surface);color:var(--text);border-color:rgba(255,255,255,.22)}
+.btn-sm{padding:8px 16px;font-size:13px}
+.btn-xs{padding:6px 12px;font-size:12px}
+
+/* TAGS */
+.tag{display:inline-flex;padding:4px 11px;border-radius:99px;font-size:11px;font-weight:700}
+.tag-lime{background:rgba(168,255,62,.15);color:#8ad620;border:1px solid rgba(168,255,62,.3)}
+.tag-blue{background:rgba(79,158,255,.15);color:#6aafff;border:1px solid rgba(79,158,255,.3)}
+.tag-coral{background:rgba(255,107,91,.15);color:#ff9088;border:1px solid rgba(255,107,91,.3)}
+.tag-teal{background:rgba(45,212,191,.15);color:#4dcfbe;border:1px solid rgba(45,212,191,.3)}
+.tag-amber{background:rgba(255,190,61,.15);color:#ffd070;border:1px solid rgba(255,190,61,.3)}
+.tag-pink{background:rgba(244,114,182,.15);color:#f8a8d0;border:1px solid rgba(244,114,182,.3)}
+.tag-purple{background:rgba(167,139,250,.15);color:#c4b0fc;border:1px solid rgba(167,139,250,.3)}
+.tag-green{background:rgba(74,222,128,.15);color:#6ddfa0;border:1px solid rgba(74,222,128,.3)}
+
+/* DATA TABLE */
+.data-tbl{width:100%;border-collapse:collapse;font-size:15px;border-radius:var(--r-lg);overflow:hidden}
+.data-tbl th{background:var(--bg3);color:var(--text2);padding:10px 16px;text-align:center;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700}
+.data-tbl td{padding:9px 16px;text-align:center;border-bottom:1px solid var(--border2);font-weight:500;color:var(--text)}
+.data-tbl .hi{color:var(--lime);font-weight:700;font-family:'Outfit',sans-serif;font-size:16px}
+
+/* MACHINE */
+.machine-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-xl);padding:28px;display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap}
+.m-slot{display:flex;flex-direction:column;align-items:center;gap:10px}
+.m-box{width:88px;height:88px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:28px;font-weight:900;border:2px solid;transition:background .25s}
+.m-rule-box{background:var(--blue);border-radius:var(--r-lg);padding:16px 26px;text-align:center;min-width:170px}
+.m-rule-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:5px}
+.m-rule-eq{font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:#fff}
+.m-slot-label{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.m-arrow{font-size:30px;color:var(--border)}
+.input-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.ibtn{width:52px;height:52px;border-radius:12px;border:2px solid var(--border);background:var(--bg3);color:var(--text);font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;cursor:pointer;transition:all .18s}
+.ibtn:hover{background:var(--lime);color:var(--bg);border-color:var(--lime);transform:translateY(-2px)}
+
+/* PIECEWISE */
+.pw-rule-box{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r-xl);padding:18px 22px}
+.pwr{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border2)}
+.pwr:last-child{border-bottom:none}
+.pwr-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.pwr-expr{font-family:'Outfit',sans-serif;font-size:19px;font-weight:700;min-width:110px}
+.pwr-cond{font-size:14px;font-weight:600;color:var(--text3)}
+
+/* STEP TABLE */
+.step-tbl{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r-xl);overflow:hidden}
+.step-row{display:flex;border-bottom:1px solid var(--border2)}
+.step-row:last-child{border-bottom:none}
+.step-cell{flex:1;padding:12px 16px;font-size:15px;font-weight:600}
+.step-hdr{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);background:rgba(255,255,255,.03)}
+.step-out{color:var(--amber);font-family:'Outfit',sans-serif;font-size:18px;font-weight:800}
+
+/* MATCH */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.match-col-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+.mitem{padding:13px 18px;border-radius:var(--r-lg);border:2px solid var(--border2);background:var(--surface);cursor:pointer;font-size:14px;font-weight:600;color:var(--text2);margin-bottom:10px;transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif}
+.mitem:hover{border-color:var(--blue);color:var(--text)}
+.mitem.sel{border-color:var(--blue);background:rgba(79,158,255,.1);color:#8ac5ff}
+.mitem.ok{border-color:var(--teal);background:rgba(45,212,191,.08);color:var(--teal);cursor:default}
+.mitem.bad{animation:shake .4s}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* COORD BAR */
+.coord-bar{margin-top:10px;padding:10px 16px;border-radius:var(--r);background:var(--bg3);border:1px solid var(--border2);font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;color:var(--text2);text-align:center;min-height:42px;display:flex;align-items:center;justify-content:center}
+
+/* NEXT ROW */
+.next-row{display:flex;justify-content:space-between;align-items:center;margin-top:40px;padding-top:24px;border-top:1px solid var(--border2)}
+.prog{font-size:13px;font-weight:600;color:var(--text3)}
+
+/* FEATURE GRID for families */
+.fam-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-xl);padding:22px;border-top-width:3px}
+
+@media(max-width:820px){.grid2,.grid3,.match-grid{grid-template-columns:1fr}.row{flex-direction:column}.sec{padding:36px 20px 64px}.nav,.mod-bar{padding-left:20px;padding-right:20px}.hero{padding:44px 20px 52px}.m-arrow{display:none}}
+
+/* ── QUIZ ── */
+.quiz-section{margin-top:40px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r-xl);overflow:hidden}
+.quiz-header{background:var(--bg3);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border2)}
+.quiz-header-left{display:flex;align-items:center;gap:12px}
+.quiz-icon{width:38px;height:38px;border-radius:10px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.quiz-title{font-family:'Outfit',sans-serif;font-weight:800;font-size:16px;color:var(--text)}
+.quiz-subtitle{font-size:12px;color:var(--text3);margin-top:2px}
+.quiz-progress-wrap{display:flex;align-items:center;gap:10px}
+.quiz-prog-dots{display:flex;gap:5px}
+.qp-dot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:all .2s}
+.qp-dot.answered{background:var(--blue)}
+.qp-dot.correct{background:var(--green)}
+.qp-dot.wrong{background:var(--coral)}
+.quiz-score-badge{font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;color:var(--text3);background:var(--bg);border:1px solid var(--border2);border-radius:99px;padding:4px 12px}
+.quiz-body{padding:24px}
+.quiz-q-num{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+.quiz-question{font-family:'Outfit',sans-serif;font-size:19px;font-weight:700;color:var(--text);line-height:1.4;margin-bottom:20px}
+.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.qopt{padding:14px 18px;border-radius:var(--r-lg);border:2px solid var(--border);background:var(--surface);cursor:pointer;font-size:14px;font-weight:600;color:var(--text2);transition:all .15s;text-align:left;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.4}
+.qopt:hover:not(:disabled){border-color:var(--blue);color:var(--text);background:rgba(79,158,255,.08)}
+.qopt.selected-correct{border-color:var(--green)!important;background:rgba(74,222,128,.1)!important;color:var(--green)!important}
+.qopt.selected-wrong{border-color:var(--coral)!important;background:rgba(255,107,91,.1)!important;color:var(--coral)!important}
+.qopt.reveal-correct{border-color:var(--green)!important;background:rgba(74,222,128,.06)!important;color:var(--green)!important}
+.qopt:disabled{cursor:default;opacity:.7}
+.quiz-feedback{padding:14px 18px;border-radius:var(--r-lg);font-size:14px;font-weight:600;line-height:1.65;display:none;margin-bottom:14px}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:#6ddfa0}
+.quiz-feedback.wrong{background:rgba(255,107,91,.1);border:1px solid rgba(255,107,91,.3);color:#ff9088}
+.quiz-actions{display:flex;justify-content:flex-end;gap:10px}
+.quiz-footer{padding:20px 24px;background:var(--bg3);border-top:1px solid var(--border2);display:none}
+.quiz-footer.show{display:block}
+.quiz-final-score{font-family:'Outfit',sans-serif;font-size:28px;font-weight:900;color:var(--lime);margin-bottom:6px}
+.quiz-final-msg{font-size:14px;color:var(--text2);margin-bottom:16px}
+.insights-title{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.insights-title::before{content:'💡'}
+.insight-item{background:rgba(255,190,61,.06);border:1px solid rgba(255,190,61,.2);border-radius:var(--r-lg);padding:14px 16px;margin-bottom:8px;font-size:14px;color:var(--text2);line-height:1.65}
+.insight-item strong{color:var(--amber)}
+.insight-item .q-ref{font-size:12px;color:var(--text3);margin-top:4px}
+@media(max-width:600px){.quiz-options{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-brand">
+    <div class="nav-logo">A1</div>
+    <div>
+      <div class="nav-name">Functions &amp; Their Graphs</div>
+      <div class="nav-sub">Algebra 1 · F-IF · F-BF · F-LE</div>
+    </div>
+  </div>
+  <a class="nav-back" href="https://raaziaali.github.io">← Back to portal</a>
+</header>
+
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">🔬 10 interactive modules · Investigation-based</div>
+    <h1>Functions &amp; <span>Their Graphs</span></h1>
+    <p>Explore every Algebra 1 function family through interactive investigation. Build deep conceptual understanding — not just memorisation.</p>
+    <div class="hero-tags">
+      <span class="htag">Linear</span>
+      <span class="htag">Quadratic</span>
+      <span class="htag">Exponential</span>
+      <span class="htag">Absolute Value</span>
+      <span class="htag">Piecewise</span>
+      <span class="htag">Step · Floor · Ceiling</span>
+    </div>
+  </div>
+</div>
+
+<nav class="mod-bar">
+  <button class="mtab on" id="t0" onclick="go(0)"><span class="mn">Module 1</span>What is a Function?<span class="md">Machine · Mapping · VLT · Domain & Range</span></button>
+  <button class="mtab    " id="t1" onclick="go(1)"><span class="mn">Module 2</span>Reading Graphs<span class="md">Intercepts · Max/Min · Increasing · Decreasing</span></button>
+  <button class="mtab    " id="t2" onclick="go(2)"><span class="mn">Module 3</span>Linear Functions<span class="md">Slope · y-intercept · Rate of change</span></button>
+  <button class="mtab    " id="t3" onclick="go(3)"><span class="mn">Module 4</span>Quadratic Functions<span class="md">Parabola · Vertex · Axis of symmetry</span></button>
+  <button class="mtab    " id="t4" onclick="go(4)"><span class="mn">Module 5</span>Exponential Functions<span class="md">Growth · Decay · Asymptote · Base</span></button>
+  <button class="mtab    " id="t5" onclick="go(5)"><span class="mn">Module 6</span>Absolute Value<span class="md">V-shape · Vertex · Distance from zero</span></button>
+  <button class="mtab    " id="t6" onclick="go(6)"><span class="mn">Module 7</span>Piecewise Functions<span class="md">Multiple rules · Continuity · Open/closed dots</span></button>
+  <button class="mtab"    id="t7" onclick="go(7)"><span class="mn">Module 8</span>Floor Function ⌊x⌋<span class="md">Greatest integer ≤ x · Rounds down</span></button>
+  <button class="mtab"    id="t8" onclick="go(8)"><span class="mn">Module 9</span>Ceiling Function ⌈x⌉<span class="md">Least integer ≥ x · Rounds up</span></button>
+  <button class="mtab    " id="t9" onclick="go(9)"><span class="mn">Module 10</span>Function Families<span class="md">Compare · Identify · Match real-world</span></button>
+</nav>
+
+<!-- ══ MODULE 1 — WHAT IS A FUNCTION ══ -->
+<section class="sec on" id="s0">
+  <div class="eyebrow">Module 1</div>
+  <h2>What is a Function?</h2>
+  <p>A function assigns to each input <strong style="color:var(--text)">exactly one</strong> output — every single time. Think of it as a machine: put something in, get exactly one thing out.</p>
+  <div class="invest">
+    <div class="invest-title">Investigation</div>
+    <p>Click any number to feed it into the machine. Watch the output. Could the same input ever give two different outputs from the same function? Why not?</p>
+  </div>
+
+  <div class="machine-wrap">
+    <div class="m-slot">
+      <div class="m-box" id="m-in" style="border-color:var(--lime);color:var(--lime);background:rgba(168,255,62,.08)">?</div>
+      <div class="m-slot-label">Input x</div>
+    </div>
+    <div class="m-arrow">→</div>
+    <div class="m-rule-box">
+      <div class="m-rule-label">Rule</div>
+      <div class="m-rule-eq" id="m-rule">f(x) = 2x + 1</div>
+    </div>
+    <div class="m-arrow">→</div>
+    <div class="m-slot">
+      <div class="m-box" id="m-out" style="border-color:var(--coral);color:var(--coral);background:rgba(255,107,91,.08)">?</div>
+      <div class="m-slot-label">Output f(x)</div>
+    </div>
+  </div>
+  <div class="input-row">
+    <button class="ibtn" onclick="feed(-3)">−3</button>
+    <button class="ibtn" onclick="feed(-2)">−2</button>
+    <button class="ibtn" onclick="feed(-1)">−1</button>
+    <button class="ibtn" onclick="feed(0)">0</button>
+    <button class="ibtn" onclick="feed(1)">1</button>
+    <button class="ibtn" onclick="feed(2)">2</button>
+    <button class="ibtn" onclick="feed(3)">3</button>
+  </div>
+  <div style="text-align:center;margin-top:14px">
+    <button class="btn btn-outline btn-sm" onclick="nextRule()">🔄 Change rule</button>
+  </div>
+
+  <div class="grid2" style="margin-top:28px">
+    <div class="card">
+      <h3>Mapping Diagrams</h3>
+      <p style="margin-bottom:14px">Every input has <strong style="color:var(--text)">exactly one arrow</strong> leaving it in a function.</p>
+      <div class="cv-wrap"><canvas id="cv-map" width="300" height="210"></canvas></div>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="btn btn-outline btn-sm" style="flex:1" onclick="drawMap(true)">✓ Function</button>
+        <button class="btn btn-outline btn-sm" style="flex:1" onclick="drawMap(false)">✗ Not a function</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Vertical Line Test</h3>
+      <p style="margin-bottom:14px">If a vertical line crosses the graph <strong style="color:var(--coral)">more than once</strong>, it is not a function.</p>
+      <div class="cv-wrap"><canvas id="cv-vlt" width="300" height="210" style="cursor:crosshair" onmousemove="vltHover(event)" onmouseleave="vltOut()"></canvas></div>
+      <div id="vlt-msg" style="margin-top:9px;font-size:14px;font-weight:600;color:var(--text3);text-align:center">Move mouse over the graph</div>
+      <div style="display:flex;gap:7px;margin-top:9px">
+        <button class="btn btn-outline btn-xs" style="flex:1" onclick="setVlt('parabola')">y = x²</button>
+        <button class="btn btn-outline btn-xs" style="flex:1" onclick="setVlt('circle')">Circle</button>
+        <button class="btn btn-outline btn-xs" style="flex:1" onclick="setVlt('line')">Line</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:28px">
+    <h3 style="color:var(--text);margin-bottom:18px">Domain &amp; Range Explorer</h3>
+    <div class="row">
+      <div class="cv-wrap"><canvas id="cv-dr" width="460" height="290"></canvas></div>
+      <div class="col">
+        <div class="ctrl-box">
+          <span class="cl">Choose a function</span>
+          <button class="btn btn-outline" onclick="setDR('linear')"  style="text-align:left;justify-content:space-between">f(x) = x + 2 &nbsp;<span class="tag tag-lime">linear</span></button>
+          <button class="btn btn-outline" onclick="setDR('quad')"    style="text-align:left;justify-content:space-between">f(x) = x² &nbsp;<span class="tag tag-blue">quadratic</span></button>
+          <button class="btn btn-outline" onclick="setDR('sqrt')"    style="text-align:left;justify-content:space-between">f(x) = √x &nbsp;<span class="tag tag-teal">square root</span></button>
+          <button class="btn btn-outline" onclick="setDR('recip')"   style="text-align:left;justify-content:space-between">f(x) = 1/x &nbsp;<span class="tag tag-coral">reciprocal</span></button>
+        </div>
+        <div class="card" id="dr-info" style="font-size:14px;line-height:1.9">Select a function to explore its domain and range.</div>
+      </div>
+    </div>
+  </div>
+  <div class="key"><div class="key-title">⭐ Key Idea — F-IF.1</div><p>A <strong>function</strong> assigns each element of the <strong>domain</strong> (all valid inputs) exactly one element of the <strong>range</strong> (all possible outputs). Written f(x), read "f of x".</p></div>
+  
+  <!-- QUIZ 0 -->
+  <div class="quiz-section" id="quiz-s0">
+    <div class="quiz-header">
+      <div class="quiz-header-left">
+        <div class="quiz-icon" style="background:var(--blue)">📝</div>
+        <div>
+          <div class="quiz-title">Quick Check — What is a Function?</div>
+          <div class="quiz-subtitle">5 questions · See insights on mistakes</div>
+        </div>
+      </div>
+      <div class="quiz-progress-wrap">
+        <div class="quiz-prog-dots" id="qdots-s0"></div>
+        <div class="quiz-score-badge" id="qscore-s0">0 / 5</div>
+      </div>
+    </div>
+    <div class="quiz-body" id="qbody-s0">
+      <div class="quiz-q-num" id="qnum-s0">Question 1 of 5</div>
+      <div class="quiz-question" id="qq-s0">Loading...</div>
+      <div class="quiz-options" id="qopts-s0"></div>
+      <div class="quiz-feedback" id="qfb-s0"></div>
+      <div class="quiz-actions">
+        <button class="btn btn-outline btn-sm" id="qnext-s0" style="display:none" onclick="quizNext('s0')">Next question →</button>
+      </div>
+    </div>
+    <div class="quiz-footer" id="qfoot-s0">
+      <div class="quiz-final-score" id="qfinal-s0">5 / 5</div>
+      <div class="quiz-final-msg" id="qfinalmsg-s0"></div>
+      <div id="qinsights-s0"></div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-outline btn-sm" onclick="quizReset('s0')">🔄 Retake quiz</button>
+      </div>
+    </div>
+  </div>
+<div class="next-row"><span class="prog">Module 1 of 10</span><button class="btn btn-lime" onclick="go(1)">Module 2: Reading Graphs →</button></div>
+</section>
+
+<!-- ══ MODULE 2 — READING GRAPHS ══ -->
+<section class="sec" id="s1">
+  <div class="eyebrow">Module 2</div>
+  <h2>Reading &amp; Interpreting Graphs</h2>
+  <p>A graph tells a complete story — intercepts, increasing/decreasing intervals, maxima and minima. Learn to read all of it without needing a formula.</p>
+  <div class="invest">
+    <div class="invest-title">Investigation</div>
+    <p>Hover the graph to read coordinates. Click to pin a point. Can you identify: (a) where f(x) = 0? (b) the highest point? (c) where the function increases vs decreases?</p>
+  </div>
+  <div class="row">
+    <div>
+      <div class="cv-wrap"><canvas id="cv-read" width="500" height="340" style="cursor:crosshair" onmousemove="readHover(event)" onmouseleave="readOut()" onclick="readPin(event)"></canvas></div>
+      <div class="coord-bar" id="read-coord">Hover to read coordinates · Click to pin a point</div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3>Graph Features</h3>
+        <div style="display:flex;flex-direction:column;gap:11px;margin-top:14px;font-size:15px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text3)">x-intercept(s)</span><span id="ri-x" style="font-weight:700;color:var(--purple);font-family:'Outfit',sans-serif;font-size:17px">—</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text3)">y-intercept</span><span id="ri-y" style="font-weight:700;color:var(--coral);font-family:'Outfit',sans-serif;font-size:17px">—</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text3)">Maximum</span><span id="ri-max" style="font-weight:700;color:var(--lime);font-family:'Outfit',sans-serif;font-size:17px">—</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text3)">Increasing on</span><span id="ri-inc" style="font-weight:700;color:var(--teal);font-size:13px">—</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text3)">Decreasing on</span><span id="ri-dec" style="font-weight:700;color:var(--coral);font-size:13px">—</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Choose a graph</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+          <button class="btn btn-outline" onclick="setRG('quad')"   style="text-align:left">f(x) = −x² + 4 &nbsp;<span class="tag tag-blue">quadratic</span></button>
+          <button class="btn btn-outline" onclick="setRG('linear')" style="text-align:left">f(x) = 2x − 3 &nbsp;<span class="tag tag-lime">linear</span></button>
+          <button class="btn btn-outline" onclick="setRG('abs')"    style="text-align:left">f(x) = |x − 1| − 2 &nbsp;<span class="tag tag-coral">abs value</span></button>
+          <button class="btn btn-outline" onclick="setRG('exp')"    style="text-align:left">f(x) = 2ˣ − 4 &nbsp;<span class="tag tag-pink">exponential</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- QUIZ 1 -->
+  <div class="quiz-section" id="quiz-s1">
+    <div class="quiz-header">
+      <div class="quiz-header-left">
+        <div class="quiz-icon" style="background:var(--purple)">📝</div>
+        <div>
+          <div class="quiz-title">Quick Check — Reading Graphs</div>
+          <div class="quiz-subtitle">5 questions · See insights on mistakes</div>
+        </div>
+      </div>
+      <div class="quiz-progress-wrap">
+        <div class="quiz-prog-dots" id="qdots-s1"></div>
+        <div class="quiz-score-badge" id="qscore-s1">0 / 5</div>
+      </div>
+    </div>
+    <div class="quiz-body" id="qbody-s1">
+      <div class="quiz-q-num" id="qnum-s1">Question 1 of 5</div>
+      <div class="quiz-question" id="qq-s1">Loading...</div>
+      <div class="quiz-options" id="qopts-s1"></div>
+      <div class="quiz-feedback" id="qfb-s1"></div>
+      <div class="quiz-actions">
+        <button class="btn btn-outline btn-sm" id="qnext-s1" style="display:none" onclick="quizNext('s1')">Next question →</button>
+      </div>
+    </div>
+    <div class="quiz-footer" id="qfoot-s1">
+      <div class="quiz-final-score" id="qfinal-s1">5 / 5</div>
+      <div class="quiz-final-msg" id="qfinalmsg-s1"></div>
+      <div id="qinsights-s1"></div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-outline btn-sm" onclick="quizReset('s1')">🔄 Retake quiz</button>
+      </div>
+    </div>
+  </div>
+<div class="next-row"><span class="prog">Module 2 of 10</span><button class="btn btn-lime" onclick="go(2)">Module 3: Linear Functions →</button></div>
+</section>
+
+<!-- ══ MODULE 3 — LINEAR ══ -->
+<section class="sec" id="s2">
+  <div class="eyebrow">Module 3</div>
+  <h2>Linear Functions</h2>
+  <p>A linear function has a <strong style="color:var(--text)">constant rate of change</strong>. The slope m tells you how steep the line is. The y-intercept b is where it crosses the y-axis.</p>
+  <div class="invest">
+    <div class="invest-title">Investigation</div>
+    <p>① Drag m from negative to positive — what changes? ② Set m = 0. What kind of line do you get? ③ What does b control? ④ Find settings that make the line pass through (0, 0).</p>
+  </div>
+  <div class="row">
+    <div class="cv-wrap"><canvas id="cv-lin" width="480" height="370"></canvas></div>
+    <div class="col">
+      <div class="eq-display" id="lin-eq">f(x) = 1x + 0</div>
+      <div class="ctrl-box">
+        <div>
+          <span class="cl" style="color:var(--lime)">Slope m</span>
+          <div class="cr"><input type="range" id="sl-m" min="-4" max="4" step="0.5" value="1" style="accent-color:var(--lime)" oninput="drawLin()"><span class="cv" id="v-m" style="color:var(--lime)">1</span></div>
+          <div id="lin-interp" style="font-size:13px;color:var(--text3);margin-top:5px">Rises 1 unit per 1 unit right</div>
+        </div>
+        <div>
+          <span class="cl" style="color:var(--purple)">y-intercept b</span>
+          <div class="cr"><input type="range" id="sl-b" min="-6" max="6" step="1" value="0" style="accent-color:var(--purple)" oninput="drawLin()"><span class="cv" id="v-b" style="color:var(--purple)">0</span></div>
+        </div>
+        <div>
+          <span class="cl">Table of values</span>
+          <table class="data-tbl" id="lin-tbl"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="key"><div class="key-title">Key Idea — F-IF.6</div><p>Slope = Rise ÷ Run = (y₂−y₁)÷(x₂−x₁). A linear function in slope-intercept form is <strong>f(x) = mx + b</strong>. Domain and range are both all real numbers (unless restricted by context).</p></div>
+  
+  <!-- QUIZ 2 -->
+  <div class="quiz-section" id="quiz-s2">
+    <div class="quiz-header">
+      <div class="quiz-header-left">
+        <div class="quiz-icon" style="background:var(--lime)">📝</div>
+        <div>
+          <div class="quiz-title">Quick Check — Linear Functions</div>
+          <div class="quiz-subtitle">5 questions · See insights on mistakes</div>
+        </div>
+      </div>
+      <div class="quiz-progress-wrap">
+        <div class="quiz-prog-dots" id="qdots-s2"></div>
+        <div class="quiz-score-badge" id="qscore-s2">0 / 5</div>
+      </div>
+    </div>
+    <div class="quiz-body" id="qbody-s2">
+      <div class="quiz-q-num" id="qnum-s2">Question 1 of 5</div>
+      <div class="quiz-question" id="qq-s2">Loading...</div>
+      <div class="quiz-options" id="qopts-s2"></div>
+      <div class="quiz-feedback" id="qfb-s2"></div>
+      <div class="quiz-actions">
+        <button class="btn btn-outline btn-sm" id="qnext-s2" style="display:none" onclick="quizNext('s2')">Next question →</button>
+      </div>
+    </div>
+    <div class="quiz-footer" id="qfoot-s2">
+      <div class="quiz-final-score" id="qfinal-s2">5 / 5</div>
+      <div class="quiz-final-msg" id="qfinalmsg-s2"></div>
+      <div id="qinsights-s2"></div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-outline btn-sm" onclick="quizReset('s2')">🔄 Retake quiz</button>
+      </div>
+    </div>
+  </div>
+<div class="next-row"><span class="prog">Module 3 of 10</span><button class="btn btn-lime" onclick="go(3)">Module 4: Quadratic →</button></div>
+</section>
+
+<!-- ══ MODULE 4 — QUADRATIC ══ -->
+<section class="sec" id="s3">
+  <div class="eyebrow">Module 4</div>
+  <h2>Quadratic Functions</h2>
+  <p>A quadratic function creates a <strong style="color:var(--text)">parabola</strong> — a symmetric U-shape with a turning point called the <strong style="color:var(--text)">vertex</strong>. The rate of change is not constant.</p>
+  <div class="invest">
+    <div class="invest-title">Investigation</div>
+    <p>① What does a control? Try a = 2 vs a = 0.5 vs a = −1. ② Where is the vertex? ③ What is the axis of symmetry? ④ When does the parabola open upward vs downward?</p>
+  </div>
+  <div class="row">
+    <div class="cv-wrap"><canvas id="cv-quad" width="480" height="370"></canvas></div>
+    <div class="col">
+      <div class="eq-display" id="quad-eq">f(x) = x²</div>
+      <div class="ctrl-box">
+        <div>
+          <span class="cl" style="color:var(--blue)">Leading coefficient a</span>
+          <div class="cr"><input type="range" id="sl-qa" min="-3" max="3" step="0.5" value="1" style="accent-color:var(--blue)" oninput="drawQuad()"><span class="cv" id="v-qa" style="color:var(--blue)">1</span></div>
+          <div style="font-size:13px;color:var(--text3);margin-top:5px">a &gt; 0 opens up · a &lt; 0 opens down</div>
+        </div>
+        <div>
+          <span class="cl" style="color:var(--teal)">Horizontal shift h</span>
+          <div class="cr"><input type="range" id="sl-qh" min="-4" max="4" step="1" value="0" style="accent-color:var(--teal)" oninput="drawQuad()"><span class="cv" id="v-qh" style="color:var(--teal)">0</span></div>
+        </div>
+        <div>
+          <span class="cl" style="color:var(--amber)">Vertical shift k</span>
+          <div class="cr"><input type="range" id="sl-qk" min="-5" max="5" step="1" value="0" style="accent-color:var(--amber)" oninput="drawQuad()"><span class="cv" id="v-qk" style="color:var(--amber)">0</span></div>
+        </div>
+        <div class="card" id="quad-info" style="font-size:14px;color:var(--text2);line-height:1.8">Vertex: (0, 0) · opens upward · range: y ≥ 0</div>
+      </div>
+    </div>
+  </div>
+  <div class="key"><div class="key-title">Key Idea — F-IF.7a</div><p>Vertex form: <strong>f(x) = a(x − h)² + k</strong>. Vertex at (h, k). If a &gt; 0 range is y ≥ k; if a &lt; 0 range is y ≤ k. Domain is always all real numbers. Axis of symmetry: x = h.</p></div>
+  
+  <!-- QUIZ 3 -->
+  <div class="quiz-section" id="quiz-s3">
+    <div class="quiz-header">
+      <div class="quiz-header-left">
+        <div class="quiz-icon" style="background:var(--blue)">📝</div>
+        <div>
+          <div class="quiz-title">Quick Check — Quadratic Functions</div>
+          <div class="quiz-subtitle">5 questions · See insights on mistakes</div>
+        </div>
+      </div>
+      <div class="quiz-progress-wrap">
+        <div class="quiz-prog-dots" id="qdots-s3"></div>
+        <div class="quiz-score-badge" id="qscore-s3">0 / 5</div>
+      </div>
+    </div>
+    <div class="quiz-body" id="qbody-s3">
+      <div class="quiz-q-num" id="qnum-s3">Question 1 of 5</div>
+      <div class="quiz-question" id="qq-s3">Loading...</div>
+      <div class="quiz-options" id="qopts-s3"></div>
+      <div class="quiz-feedback" id="qfb-s3"></div>
+      <div class="quiz-actions">
+        <button class="btn btn-outline btn-sm" id="qnext-s3" style="display:none" onclick="quizNext('s3')">Next question →</button>
+      </div>
+    </div>
+    <div class="quiz-footer" id="qfoot-s3">
+      <div class="quiz-final-score" id="qfinal-s3">5 / 5</div>
+      <div class="quiz-final-msg" id="qfinalmsg-s3"></div>
+      <div id="qinsights-s3"></div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-outline btn-sm" onclick="quizReset('s3')">🔄 Retake quiz</button>
+      </div>
+    </div>
+  </div>
+<div class="next-row"><span class="prog">Module 4 of 10</span><button class="btn btn-lime" onclick="go(4)">Module 5: Exponential →</button></div>
+</section>
+
+<!-- ══ MODULE 5 — EXPONENTIAL ══ -->
+<section class="sec" id="s4">
+  <div class="eyebrow">Module 5</div>
+  <h2>Exponential Functions</h2>
+  <p>Exponential functions grow (or decay) at a <strong style="color:var(--text)">rate proportional to their current value</strong>. The base b controls whether the function grows (b &gt; 1) or decays (0 &lt; b &lt; 1).</p>
+  <div class="invest">
+    <div class="invest-title">Investigation</div>
+    <p>① Set b = 2. By how much does f(x) multiply each time x increases by 1? ② Try b = 0.5. What happens now? ③ What is the y-intercept always equal to? ④ Can an exponential function ever reach zero?</p>
+  </div>
+  <div class="row">
+    <div class="cv-wrap"><canvas id="cv-exp" width="480" height="370"></canvas></div>
+    <div class="col">
+      <div class="eq-display" id="exp-eq">f(x) = 1 · 2ˣ</div>
+      <div class="ctrl-box">
+        <div>
+          <span class="cl" style="color:var(--pink)">Initial value a</span>
+          <div class="cr"><input type="range" id="sl-ea" min="0.5" max="4" step="0.5" value="1" style="accent-color:var(--pink)" oninput="drawExp()"><span class="cv" id="v-ea" style="color:var(--pink)">1</span></div>
+          <div style="font-size:13px;color:var(--text3);margin-top:5px">f(0) = a · b⁰ = a (the y-intercept)</div>
+        </div>
+        <div>
+          <span class="cl" style="color:var(--coral)">Base b</span>
+          <div class="cr"><input type="range" id="sl-eb" min="0.2" max="3" step="0.1" value="2" style="accent-color:var(--coral)" oninput="drawExp()"><span class="cv" id="v-eb" style="color:var(--coral)">2</span></div>
+          <div id="exp-type" style="font-size:13px;color:var(--text3);margin-top:5px">b &gt; 1 → growth</div>
+        </div>
+        <div>
+          <span class="cl">Table of values</span>
+          <table class="data-tbl" id="exp-tbl"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="key"><div class="key-title">Key Idea — F-LE.1</div><p><strong>f(x) = a · bˣ</strong> where a is the initial value and b is the growth/decay factor. If b &gt; 1: exponential <strong>growth</strong>. If 0 &lt; b &lt; 1: exponential <strong>decay</strong>. Domain: all reals. Range: y &gt; 0 (never touches the x-axis — horizontal asymptote at y = 0).</p></div>
+  
+  <!-- QUIZ 4 -->
+  <div class="quiz-section" id="quiz-s4">
+    <div class="quiz-header">
+      <div class="quiz-header-left">
+        <div class="quiz-icon" style="background:var(--pink)">📝</div>
+        <div>
+          <div class="quiz-title">Quick Check — Exponential Functions</div>
+          <div class="quiz-subtitle">5 questions · See insights on mistakes</div>
+        </div>
+      </div>
+      <div class="quiz-progress-wrap">
+        <div class="quiz-prog-dots" id="qdots-s4"></div>
+        <div class="quiz-score-badge" id="qscore-s4">0 / 5</div>
+      </div>
+    </div>
+    <div class="quiz-body" id="qbody-s4">
+      <div class="quiz-q-num" id="qnum-s4">Question 1 of 5</div>
+      <div class="quiz-question" id="qq-s4">Loading...</div>
+      <div class="quiz-options" id="qopts-s4"></div>
+      <div class="quiz-feedback" id="qfb-s4"></div>
+      <div class="quiz-actions">
+        <button class="btn btn-outline btn-sm" id="qnext-s4" style="display:none" onclick="quizNext('s4')">Next question →</button>
+      </div>
+    </div>
+    <div class="quiz-footer" id="qfoot-s4">
+      <div class="quiz-final-score" id="qfinal-s4">5 / 5</div>
+      <div class="quiz-final-msg" id="qfinalmsg-s4"></div>
+      <div id="qinsights-s4"></div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-outline btn-sm" onclick="quizReset('s4')">🔄 Retake quiz</button>
+      </div>
+    </div>
+  </div>
+<div class="next-row"><span class="prog">Module 5 of 10</span><button class="btn btn-lime" onclick="go(5)">Module 6: Absolute Value →</button></div>
+</section>
+
+<!-- ══ MODULE 6 — ABSOLUTE VALUE ══ -->
+<section class="sec" id="s5">
+  <div class="eyebrow">Module 6</div>
+  <h2>Absolute Value Functions</h2>
+  <p>Absolute value measures <strong style="color:var(--text)">distance from zero</strong> — always non-negative. This creates the iconic V-shape. Parameters a, h, and k transform it in predictable ways.</p>
+  <div class="invest">
+    <div class="invest-title">Investigation</div>
+    <p>① Where is the vertex? ② What happens when a is negative? ③ What is the range when a &lt; 0 vs a &gt; 0? ④ What real-world situations create V-shaped graphs?</p>
+  </div>
+  <div class="row">
+    <div class="cv-wrap"><canvas id="cv-abs" width="480" height="370"></canvas></div>
+    <div class="col">
+      <div class="eq-display" id="abs-eq">f(x) = |x|</div>
+      <div class="ctrl-box">
+        <div>
+          <span class="cl" style="color:var(--coral)">Stretch / flip  a</span>
+          <div class="cr"><input type="range" id="sl-a" min="-3" max="3" step="0.5" value="1" style="accent-color:var(--coral)" oninput="drawAbs()"><span class="cv" id="v-a" style="color:var(--coral)">1</span></div>
+          <div style="font-size:13px;color:var(--text3);margin-top:5px">Negative a flips the V downward</div>
+        </div>
+        <div>
+          <span class="cl" style="color:var(--teal)">Horizontal shift  h</span>
+          <div class="cr"><input type="range" id="sl-h" min="-4" max="4" step="1" value="0" style="accent-color:var(--teal)" oninput="drawAbs()"><span class="cv" id="v-h" style="color:var(--teal)">0</span></div>
+        </div>
+        <div>
+          <span class="cl" style="color:var(--amber)">Vertical shift  k</span>
+          <div class="cr"><input type="range" id="sl-k" min="-4" max="4" step="1" value="0" style="accent-color:var(--amber)" oninput="drawAbs()"><span class="cv" id="v-k" style="color:var(--amber)">0</span></div>
+        </div>
+        <div class="card" id="abs-info" style="font-size:14px;color:var(--text2);line-height:1.8">Vertex: (0, 0) · opens upward · range: y ≥ 0</div>
+      </div>
+    </div>
+  </div>
+  <div class="key"><div class="key-title">Key Idea — F-IF.7c</div><p>Vertex form: <strong>f(x) = a|x − h| + k</strong>. Vertex at (h, k). If a &gt; 0 range is y ≥ k (opens up). If a &lt; 0 range is y ≤ k (opens down). Domain is always all real numbers.</p></div>
+  
+  <!-- QUIZ 5 -->
+  <div class="quiz-section" id="quiz-s5">
+    <div class="quiz-header">
+      <div class="quiz-header-left">
+        <div class="quiz-icon" style="background:var(--coral)">📝</div>
+        <div>
+          <div class="quiz-title">Quick Check — Absolute Value</div>
+          <div class="quiz-subtitle">5 questions · See insights on mistakes</div>
+        </div>
+      </div>
+      <div class="quiz-progress-wrap">
+        <div class="quiz-prog-dots" id="qdots-s5"></div>
+        <div class="quiz-score-badge" id="qscore-s5">0 / 5</div>
+      </div>
+    </div>
+    <div class="quiz-body" id="qbody-s5">
+      <div class="quiz-q-num" id="qnum-s5">Question 1 of 5</div>
+      <div class="quiz-question" id="qq-s5">Loading...</div>
+      <div class="quiz-options" id="qopts-s5"></div>
+      <div class="quiz-feedback" id="qfb-s5"></div>
+      <div class="quiz-actions">
+        <button class="btn btn-outline btn-sm" id="qnext-s5" style="display:none" onclick="quizNext('s5')">Next question →</button>
+      </div>
+    </div>
+    <div class="quiz-footer" id="qfoot-s5">
+      <div class="quiz-final-score" id="qfinal-s5">5 / 5</div>
+      <div class="quiz-final-msg" id="qfinalmsg-s5"></div>
+      <div id="qinsights-s5"></div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-outline btn-sm" onclick="quizReset('s5')">🔄 Retake quiz</button>
+      </div>
+    </div>
+  </div>
+<div class="next-row"><span class="prog">Module 6 of 10</span><button class="btn btn-lime" onclick="go(6)">Module 7: Piecewise →</button></div>
+</section>
+
+<!-- ══ MODULE 7 — PIECEWISE ══ -->
+<section class="sec" id="s6">
+  <div class="eyebrow">Module 7</div>
+  <h2>Piecewise Functions</h2>
+  <p>A piecewise function uses <strong style="color:var(--text)">different formulas for different intervals</strong> of the domain. It's like a function that changes its rule depending on where x is.</p>
+  <div class="invest">
+    <div class="invest-title">Investigation</div>
+    <p>① Hover the graph. Which piece applies at the boundary? ② Is the function continuous (no gaps or jumps)? ③ What do the open and closed dots tell you? ④ Can you construct the absolute value function as a piecewise?</p>
+  </div>
+  <div class="row">
+    <div>
+      <div class="cv-wrap"><canvas id="cv-pw" width="480" height="350" style="cursor:crosshair" onmousemove="pwHover(event)" onmouseleave="pwOut()"></canvas></div>
+      <div class="coord-bar" id="pw-coord">Hover to evaluate the function at any x</div>
+    </div>
+    <div class="col">
+      <div class="pw-rule-box" id="pw-rules"></div>
+      <div class="card">
+        <h3>Examples</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+          <button class="btn btn-outline" onclick="setPW(0)" style="text-align:left">Two linear pieces</button>
+          <button class="btn btn-outline" onclick="setPW(1)" style="text-align:left">Linear + constant (jump)</button>
+          <button class="btn btn-outline" onclick="setPW(2)" style="text-align:left">Absolute value as piecewise</button>
+          <button class="btn btn-outline" onclick="setPW(3)" style="text-align:left">Three pieces</button>
+        </div>
+      </div>
+      <div class="key" style="margin-top:0"><div class="key-title">Open vs Closed Dots</div><p>● filled = that point IS included &nbsp;·&nbsp; ○ open = that point is NOT included. They tell you which piece "owns" the boundary.</p></div>
+    </div>
+  </div>
+  
+  <!-- QUIZ 6 -->
+  <div class="quiz-section" id="quiz-s6">
+    <div class="quiz-header">
+      <div class="quiz-header-left">
+        <div class="quiz-icon" style="background:var(--teal)">📝</div>
+        <div>
+          <div class="quiz-title">Quick Check — Piecewise Functions</div>
+          <div class="quiz-subtitle">5 questions · See insights on mistakes</div>
+        </div>
+      </div>
+      <div class="quiz-progress-wrap">
+        <div class="quiz-prog-dots" id="qdots-s6"></div>
+        <div class="quiz-score-badge" id="qscore-s6">0 / 5</div>
+      </div>
+    </div>
+    <div class="quiz-body" id="qbody-s6">
+      <div class="quiz-q-num" id="qnum-s6">Question 1 of 5</div>
+      <div class="quiz-question" id="qq-s6">Loading...</div>
+      <div class="quiz-options" id="qopts-s6"></div>
+      <div class="quiz-feedback" id="qfb-s6"></div>
+      <div class="quiz-actions">
+        <button class="btn btn-outline btn-sm" id="qnext-s6" style="display:none" onclick="quizNext('s6')">Next question →</button>
+      </div>
+    </div>
+    <div class="quiz-footer" id="qfoot-s6">
+      <div class="quiz-final-score" id="qfinal-s6">5 / 5</div>
+      <div class="quiz-final-msg" id="qfinalmsg-s6"></div>
+      <div id="qinsights-s6"></div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-outline btn-sm" onclick="quizReset('s6')">🔄 Retake quiz</button>
+      </div>
+    </div>
+  </div>
+<div class="next-row"><span class="prog">Module 7 of 10</span><button class="btn btn-lime" onclick="go(7)">Module 8: Floor Function →</button></div>
+</section>
+
+<!-- ══ MODULE 8 — FLOOR FUNCTION ══ -->
+<section class="sec" id="s7">
+  <div class="eyebrow">Module 8</div>
+  <h2>The Floor Function  ⌊x⌋</h2>
+  <p>The floor function returns the <strong style="color:var(--text)">greatest integer less than or equal to x</strong>. Written ⌊x⌋, it always rounds <strong style="color:var(--text)">down</strong> toward negative infinity — never up.</p>
+  <div class="invest">
+    <div class="invest-title">Investigation</div>
+    <p>① Why is ⌊2.9⌋ = 2 and not 3? ② Why is ⌊−0.1⌋ = −1 and not 0? ③ What is the range of the floor function? ④ Why is each step closed on the left and open on the right?</p>
+  </div>
+  <div class="row">
+    <div>
+      <div class="cv-wrap"><canvas id="cv-floor" width="480" height="350" style="cursor:crosshair" onmousemove="floorHover(event)" onmouseleave="floorOut()"></canvas></div>
+      <div class="coord-bar" id="floor-coord">Hover to evaluate ⌊x⌋</div>
+    </div>
+    <div class="col">
+      <div class="step-tbl">
+        <div class="step-row"><div class="step-cell step-hdr">Input x</div><div class="step-cell step-hdr" style="color:var(--lime)">⌊x⌋</div><div class="step-cell step-hdr">Reason</div></div>
+        <div class="step-row"><div class="step-cell" style="color:var(--text)">3.7</div><div class="step-cell step-out" style="color:var(--lime)">3</div><div class="step-cell" style="color:var(--text3);font-size:12px">greatest int ≤ 3.7</div></div>
+        <div class="step-row"><div class="step-cell" style="color:var(--text)">3.0</div><div class="step-cell step-out" style="color:var(--lime)">3</div><div class="step-cell" style="color:var(--text3);font-size:12px">exactly an integer</div></div>
+        <div class="step-row"><div class="step-cell" style="color:var(--text)">−0.1</div><div class="step-cell step-out" style="color:var(--lime)">−1</div><div class="step-cell" style="color:var(--text3);font-size:12px">rounds DOWN to −1</div></div>
+        <div class="step-row"><div class="step-cell" style="color:var(--text)">−2.0</div><div class="step-cell step-out" style="color:var(--lime)">−2</div><div class="step-cell" style="color:var(--text3);font-size:12px">exactly an integer</div></div>
+        <div class="step-row"><div class="step-cell" style="color:var(--text)">−2.9</div><div class="step-cell step-out" style="color:var(--lime)">−3</div><div class="step-cell" style="color:var(--text3);font-size:12px">greatest int ≤ −2.9</div></div>
+      </div>
+      <div class="card">
+        <h3>Properties</h3>
+        <div style="font-size:14px;color:var(--text2);line-height:2;margin-top:8px">
+          <div><strong style="color:var(--text)">Domain:</strong> all real numbers ℝ</div>
+          <div><strong style="color:var(--text)">Range:</strong> all integers ℤ</div>
+          <div><strong style="color:var(--text)">Continuous?</strong> No — jumps at every integer</div>
+          <div><strong style="color:var(--text)">Each step:</strong> closed • on left, open ○ on right</div>
+        </div>
+      </div>
+      <div class="key" style="margin-top:0"><div class="key-title">Real World — Parking Garage 🚗</div><p>A garage charges $3 per hour started. 1.1 hours = 2 hours charged. This uses a <strong>ceiling</strong> function — but if you paid only for completed hours, that would be a floor function.</p></div>
+    </div>
+  </div>
+  
+  <!-- QUIZ 7 -->
+  <div class="quiz-section" id="quiz-s7">
+    <div class="quiz-header">
+      <div class="quiz-header-left">
+        <div class="quiz-icon" style="background:var(--lime)">📝</div>
+        <div>
+          <div class="quiz-title">Quick Check — Floor Function</div>
+          <div class="quiz-subtitle">5 questions · See insights on mistakes</div>
+        </div>
+      </div>
+      <div class="quiz-progress-wrap">
+        <div class="quiz-prog-dots" id="qdots-s7"></div>
+        <div class="quiz-score-badge" id="qscore-s7">0 / 5</div>
+      </div>
+    </div>
+    <div class="quiz-body" id="qbody-s7">
+      <div class="quiz-q-num" id="qnum-s7">Question 1 of 5</div>
+      <div class="quiz-question" id="qq-s7">Loading...</div>
+      <div class="quiz-options" id="qopts-s7"></div>
+      <div class="quiz-feedback" id="qfb-s7"></div>
+      <div class="quiz-actions">
+        <button class="btn btn-outline btn-sm" id="qnext-s7" style="display:none" onclick="quizNext('s7')">Next question →</button>
+      </div>
+    </div>
+    <div class="quiz-footer" id="qfoot-s7">
+      <div class="quiz-final-score" id="qfinal-s7">5 / 5</div>
+      <div class="quiz-final-msg" id="qfinalmsg-s7"></div>
+      <div id="qinsights-s7"></div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-outline btn-sm" onclick="quizReset('s7')">🔄 Retake quiz</button>
+      </div>
+    </div>
+  </div>
+<div class="next-row"><span class="prog">Module 8 of 10</span><button class="btn btn-lime" onclick="go(8)">Module 9: Ceiling Function →</button></div>
+</section>
+
+<!-- ══ MODULE 9 — CEILING FUNCTION ══ -->
+<section class="sec" id="s8">
+  <div class="eyebrow">Module 9</div>
+  <h2>The Ceiling Function  ⌈x⌉</h2>
+  <p>The ceiling function returns the <strong style="color:var(--text)">least integer greater than or equal to x</strong>. Written ⌈x⌉, it always rounds <strong style="color:var(--text)">up</strong> toward positive infinity.</p>
+  <div class="invest">
+    <div class="invest-title">Investigation</div>
+    <p>① Compare ⌈2.1⌉ and ⌊2.1⌋. How do they differ? ② Compare ⌈3.0⌉ and ⌊3.0⌋ — are they the same? ③ On the graph, which end of each step is closed vs open — and why is it the opposite of floor?</p>
+  </div>
+  <div class="row">
+    <div>
+      <div class="cv-wrap"><canvas id="cv-ceil" width="480" height="350" style="cursor:crosshair" onmousemove="ceilHover(event)" onmouseleave="ceilOut()"></canvas></div>
+      <div class="coord-bar" id="ceil-coord">Hover to evaluate ⌈x⌉</div>
+    </div>
+    <div class="col">
+      <div class="step-tbl">
+        <div class="step-row"><div class="step-cell step-hdr">Input x</div><div class="step-cell step-hdr" style="color:var(--purple)">⌈x⌉</div><div class="step-cell step-hdr">Reason</div></div>
+        <div class="step-row"><div class="step-cell" style="color:var(--text)">3.1</div><div class="step-cell step-out" style="color:var(--purple)">4</div><div class="step-cell" style="color:var(--text3);font-size:12px">least int ≥ 3.1</div></div>
+        <div class="step-row"><div class="step-cell" style="color:var(--text)">3.0</div><div class="step-cell step-out" style="color:var(--purple)">3</div><div class="step-cell" style="color:var(--text3);font-size:12px">exactly an integer</div></div>
+        <div class="step-row"><div class="step-cell" style="color:var(--text)">−0.1</div><div class="step-cell step-out" style="color:var(--purple)">0</div><div class="step-cell" style="color:var(--text3);font-size:12px">rounds UP to 0</div></div>
+        <div class="step-row"><div class="step-cell" style="color:var(--text)">−2.0</div><div class="step-cell step-out" style="color:var(--purple)">−2</div><div class="step-cell" style="color:var(--text3);font-size:12px">exactly an integer</div></div>
+        <div class="step-row"><div class="step-cell" style="color:var(--text)">−2.9</div><div class="step-cell step-out" style="color:var(--purple)">−2</div><div class="step-cell" style="color:var(--text3);font-size:12px">least int ≥ −2.9</div></div>
+      </div>
+      <div class="card">
+        <h3>Floor vs Ceiling Comparison</h3>
+        <div style="font-size:14px;color:var(--text2);line-height:2;margin-top:8px">
+          <div><strong style="color:var(--lime)">⌊2.7⌋ = 2</strong> — rounds DOWN</div>
+          <div><strong style="color:var(--purple)">⌈2.7⌉ = 3</strong> — rounds UP</div>
+          <div><strong style="color:var(--lime)">⌊3.0⌋ = 3</strong> — integer → same</div>
+          <div><strong style="color:var(--purple)">⌈3.0⌉ = 3</strong> — integer → same</div>
+          <div style="margin-top:6px;color:var(--text3)">For any integer n: ⌊n⌋ = ⌈n⌉ = n</div>
+        </div>
+      </div>
+      <div class="key" style="margin-top:0"><div class="key-title">Real World — Shipping Cost 📦</div><p>C(w) = $5 · ⌈w⌉. A 2.3 lb package is charged as 3 lbs. The company rounds UP (ceiling) to ensure they never undercharge. Each step is open on the left, closed on the right.</p></div>
+    </div>
+  </div>
+  
+  <!-- QUIZ 8 -->
+  <div class="quiz-section" id="quiz-s8">
+    <div class="quiz-header">
+      <div class="quiz-header-left">
+        <div class="quiz-icon" style="background:var(--purple)">📝</div>
+        <div>
+          <div class="quiz-title">Quick Check — Ceiling Function</div>
+          <div class="quiz-subtitle">5 questions · See insights on mistakes</div>
+        </div>
+      </div>
+      <div class="quiz-progress-wrap">
+        <div class="quiz-prog-dots" id="qdots-s8"></div>
+        <div class="quiz-score-badge" id="qscore-s8">0 / 5</div>
+      </div>
+    </div>
+    <div class="quiz-body" id="qbody-s8">
+      <div class="quiz-q-num" id="qnum-s8">Question 1 of 5</div>
+      <div class="quiz-question" id="qq-s8">Loading...</div>
+      <div class="quiz-options" id="qopts-s8"></div>
+      <div class="quiz-feedback" id="qfb-s8"></div>
+      <div class="quiz-actions">
+        <button class="btn btn-outline btn-sm" id="qnext-s8" style="display:none" onclick="quizNext('s8')">Next question →</button>
+      </div>
+    </div>
+    <div class="quiz-footer" id="qfoot-s8">
+      <div class="quiz-final-score" id="qfinal-s8">5 / 5</div>
+      <div class="quiz-final-msg" id="qfinalmsg-s8"></div>
+      <div id="qinsights-s8"></div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-outline btn-sm" onclick="quizReset('s8')">🔄 Retake quiz</button>
+      </div>
+    </div>
+  </div>
+<div class="next-row"><span class="prog">Module 9 of 10</span><button class="btn btn-lime" onclick="go(9)">Module 10: Function Families →</button></div>
+</section>
+
+<!-- ══ MODULE 10 — FUNCTION FAMILIES ══ -->
+<section class="sec" id="s9">
+  <div class="eyebrow">Module 10</div>
+  <h2>Function Families — Summary &amp; Matching</h2>
+  <p>Every function family has a distinctive shape, equation form, and domain/range. Learn to recognise and compare all of them.</p>
+
+  <div class="grid3" style="margin-bottom:28px">
+    <div class="fam-card" style="border-top-color:var(--lime)"><span class="tag tag-lime" style="margin-bottom:10px;display:inline-block">Linear</span><h3>f(x) = mx + b</h3><p style="margin-top:6px;font-size:13px">Straight line. Constant slope. Domain &amp; range: all reals.</p></div>
+    <div class="fam-card" style="border-top-color:var(--blue)"><span class="tag tag-blue" style="margin-bottom:10px;display:inline-block">Quadratic</span><h3>f(x) = a(x−h)²+k</h3><p style="margin-top:6px;font-size:13px">Parabola. Vertex at (h,k). Domain: all reals. Range: y≥k or y≤k.</p></div>
+    <div class="fam-card" style="border-top-color:var(--pink)"><span class="tag tag-pink" style="margin-bottom:10px;display:inline-block">Exponential</span><h3>f(x) = a · bˣ</h3><p style="margin-top:6px;font-size:13px">Curved. Asymptote at y=0. Domain: all reals. Range: y &gt; 0.</p></div>
+    <div class="fam-card" style="border-top-color:var(--coral)"><span class="tag tag-coral" style="margin-bottom:10px;display:inline-block">Absolute Value</span><h3>f(x) = a|x−h|+k</h3><p style="margin-top:6px;font-size:13px">V-shape. Vertex at (h,k). Domain: all reals. Range: y≥k or y≤k.</p></div>
+    <div class="fam-card" style="border-top-color:var(--teal)"><span class="tag tag-teal" style="margin-bottom:10px;display:inline-block">Piecewise</span><h3>Multiple rules</h3><p style="margin-top:6px;font-size:13px">Different formula per interval. May be continuous or have jumps.</p></div>
+    <div class="fam-card" style="border-top-color:var(--amber)"><span class="tag tag-amber" style="margin-bottom:10px;display:inline-block">Step · Floor · Ceiling</span><h3>⌊x⌋ or ⌈x⌉</h3><p style="margin-top:6px;font-size:13px">Staircase. Jumps at integers. Domain: all reals. Range: integers ℤ.</p></div>
+  </div>
+
+  <div class="card" style="margin-bottom:28px">
+    <h3 style="margin-bottom:16px">All families side by side</h3>
+    <div class="cv-wrap" style="display:block"><canvas id="cv-fam" width="960" height="250" style="display:block;max-width:100%"></canvas></div>
+  </div>
+
+  <div class="eyebrow" style="margin-bottom:8px">Challenge</div>
+  <h3 style="color:var(--text);margin-bottom:8px;font-size:20px">Match the Scenario to the Function Family</h3>
+  <p style="margin-bottom:16px">Click a scenario on the left, then click the correct function family on the right.</p>
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+  <div id="match-score-bar" style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:var(--text3)">0 / 7 matched</div>
+  <button class="btn btn-outline btn-xs" onclick="resetMatch()">Reset</button>
+</div>
+  <div class="match-grid" id="match-game"></div>
+  <div id="match-msg" style="margin-top:14px;font-size:16px;font-weight:700;text-align:center;color:var(--text3)"></div>
+  <div style="text-align:center;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:12px">
+  <button class="btn btn-lime" onclick="resetMatch()" style="font-size:15px;padding:13px 28px">🔄 Play Again</button>
+</div>
+  
+  <!-- QUIZ 9 -->
+  <div class="quiz-section" id="quiz-s9">
+    <div class="quiz-header">
+      <div class="quiz-header-left">
+        <div class="quiz-icon" style="background:var(--amber)">📝</div>
+        <div>
+          <div class="quiz-title">Quick Check — Function Families</div>
+          <div class="quiz-subtitle">5 questions · See insights on mistakes</div>
+        </div>
+      </div>
+      <div class="quiz-progress-wrap">
+        <div class="quiz-prog-dots" id="qdots-s9"></div>
+        <div class="quiz-score-badge" id="qscore-s9">0 / 5</div>
+      </div>
+    </div>
+    <div class="quiz-body" id="qbody-s9">
+      <div class="quiz-q-num" id="qnum-s9">Question 1 of 5</div>
+      <div class="quiz-question" id="qq-s9">Loading...</div>
+      <div class="quiz-options" id="qopts-s9"></div>
+      <div class="quiz-feedback" id="qfb-s9"></div>
+      <div class="quiz-actions">
+        <button class="btn btn-outline btn-sm" id="qnext-s9" style="display:none" onclick="quizNext('s9')">Next question →</button>
+      </div>
+    </div>
+    <div class="quiz-footer" id="qfoot-s9">
+      <div class="quiz-final-score" id="qfinal-s9">5 / 5</div>
+      <div class="quiz-final-msg" id="qfinalmsg-s9"></div>
+      <div id="qinsights-s9"></div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-outline btn-sm" onclick="quizReset('s9')">🔄 Retake quiz</button>
+      </div>
+    </div>
+  </div>
+<div class="next-row"><span class="prog">Module 10 of 10 — Complete! 🎉</span><button class="btn btn-lime" onclick="go(0)">🔁 Start over</button></div>
+</section>
+
+<script>
+// ════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════
+function go(n) {
+  for (var i = 0; i < 10; i++) {
+    document.getElementById('s' + i).classList.toggle('on', i === n);
+    document.getElementById('t' + i).classList.toggle('on', i === n);
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(function() {
+    if (n===0) { drawMap(true); drawVlt(); setDR('linear'); }
+    if (n===1) { setRG('quad'); }
+    if (n===2) { drawLin(); }
+    if (n===3) { drawQuad(); }
+    if (n===4) { drawExp(); }
+    if (n===5) { drawAbs(); }
+    if (n===6) { setPW(0); }
+    if (n===7) { drawFloor(); }
+    if (n===8) { drawCeil(); }
+    if (n===9) { drawFam(); mSel=null; mDone={}; shuffledFams=[]; document.getElementById("match-msg").textContent=""; renderMatch(); }
+  }, 60);
+}
+
+// ════════════════════════════════════════════════════
+// CANVAS HELPERS
+// ════════════════════════════════════════════════════
+function mkAx(ctx, W, H, xMin, xMax, yMin, yMax) {
+  var mx=46, my=22, iw=W-mx-16, ih=H-my-20;
+  ctx.fillStyle='#0a0f1e'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,.07)'; ctx.lineWidth=1;
+  for(var x=Math.ceil(xMin);x<=xMax;x++){ctx.beginPath();ctx.moveTo(TX(x),my);ctx.lineTo(TX(x),my+ih);ctx.stroke();}
+  for(var y=Math.ceil(yMin);y<=yMax;y++){ctx.beginPath();ctx.moveTo(mx,TY(y));ctx.lineTo(mx+iw,TY(y));ctx.stroke();}
+  ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=2;
+  if(xMin<0&&xMax>0){ctx.beginPath();ctx.moveTo(TX(0),my);ctx.lineTo(TX(0),my+ih);ctx.stroke();}
+  if(yMin<0&&yMax>0){ctx.beginPath();ctx.moveTo(mx,TY(0));ctx.lineTo(mx+iw,TY(0));ctx.stroke();}
+  ctx.fillStyle='rgba(255,255,255,.3)'; ctx.font='11px Plus Jakarta Sans';
+  ctx.textAlign='center'; ctx.textBaseline='top';
+  for(var x=Math.ceil(xMin);x<=xMax;x++){if(x!==0&&x%2===0)ctx.fillText(x,TX(x),TY(0)+4);}
+  ctx.textAlign='right'; ctx.textBaseline='middle';
+  for(var y=Math.ceil(yMin);y<=yMax;y++){if(y!==0&&y%2===0)ctx.fillText(y,TX(0)-5,TY(y));}
+  function TX(x){return mx+(x-xMin)/(xMax-xMin)*iw;}
+  function TY(y){return my+(yMax-y)/(yMax-yMin)*ih;}
+  return {TX:TX,TY:TY,mx:mx,my:my,iw:iw,ih:ih};
+}
+
+function plt(ctx,fn,TX,TY,xMin,xMax,color,lw,dash){
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2.5;ctx.setLineDash(dash||[]);
+  ctx.beginPath();var first=true;
+  for(var i=0;i<=600;i++){
+    var x=xMin+i/600*(xMax-xMin),y=fn(x);
+    if(!isFinite(y)||Math.abs(y)>1e5){first=true;continue;}
+    first?(ctx.moveTo(TX(x),TY(y)),first=false):ctx.lineTo(TX(x),TY(y));
+  }
+  ctx.stroke();ctx.setLineDash([]);
+}
+
+function fdot(ctx,x,y,r,fill,stroke){
+  ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.fillStyle=fill;ctx.fill();
+  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2.5;ctx.stroke();}
+}
+function odot(ctx,x,y,r,color){
+  ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.stroke();
+  ctx.fillStyle='#0a0f1e';ctx.fill();ctx.stroke();
+}
+
+// ════════════════════════════════════════════════════
+// MODULE 1
+// ════════════════════════════════════════════════════
+var rules=[
+  {l:'f(x) = 2x + 1',f:function(x){return 2*x+1;}},
+  {l:'f(x) = x² − 3', f:function(x){return x*x-3;}},
+  {l:'f(x) = |x| + 1',f:function(x){return Math.abs(x)+1;}},
+  {l:'f(x) = −x + 5', f:function(x){return -x+5;}},
+];
+var rIdx=0;
+function feed(x){
+  var y=rules[rIdx].f(x);
+  var i=document.getElementById('m-in'),o=document.getElementById('m-out');
+  i.textContent=x; o.textContent=y;
+  i.style.background='rgba(168,255,62,.25)';
+  setTimeout(function(){i.style.background='rgba(168,255,62,.08)';},500);
+}
+function nextRule(){
+  rIdx=(rIdx+1)%rules.length;
+  document.getElementById('m-rule').textContent=rules[rIdx].l;
+  document.getElementById('m-in').textContent='?';
+  document.getElementById('m-out').textContent='?';
+}
+
+function drawMap(isFunc){
+  var cv=document.getElementById('cv-map'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  ctx.fillStyle='#0a0f1e';ctx.fillRect(0,0,W,H);
+  var ins=[1,2,3,4],outs=isFunc?[3,6,1,9]:[3,6,6,9];
+  var map=isFunc?[[0,0],[1,1],[2,2],[3,3]]:[[0,0],[1,1],[2,1],[3,2]];
+  var iX=72,oX=W-72,sp=H/5;
+  map.forEach(function(pair){
+    var sy=sp*(pair[0]+1),ey=sp*(pair[1]+1);
+    var dup=!isFunc&&pair[0]===2;
+    ctx.strokeStyle=dup?'#ff6b5b':'rgba(255,255,255,.2)';ctx.lineWidth=dup?2.5:1.5;
+    ctx.beginPath();ctx.moveTo(iX+16,sy);ctx.lineTo(oX-16,ey);ctx.stroke();
+    var ang=Math.atan2(ey-sy,oX-16-(iX+16));
+    ctx.beginPath();ctx.moveTo(oX-16,ey);
+    ctx.lineTo(oX-16-10*Math.cos(ang-.4),ey-10*Math.sin(ang-.4));
+    ctx.lineTo(oX-16-10*Math.cos(ang+.4),ey-10*Math.sin(ang+.4));
+    ctx.closePath();ctx.fillStyle=dup?'#ff6b5b':'rgba(255,255,255,.2)';ctx.fill();
+  });
+  for(var i=0;i<4;i++){
+    fdot(ctx,iX,sp*(i+1),16,'#1a2235','rgba(168,255,62,.7)');
+    ctx.fillStyle='#a8ff3e';ctx.font='bold 13px Outfit';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(ins[i],iX,sp*(i+1));
+    fdot(ctx,oX,sp*(i+1),16,'#1a2235','rgba(255,107,91,.7)');
+    ctx.fillStyle='#ff9088';ctx.fillText(outs[i],oX,sp*(i+1));
+  }
+  ctx.fillStyle=isFunc?'#a8ff3e':'#ff6b5b';ctx.font='bold 13px Plus Jakarta Sans';ctx.textAlign='center';
+  ctx.fillText(isFunc?'✓ Function':'✗ Not a Function',W/2,H-12);
+  ctx.fillStyle='rgba(255,255,255,.3)';ctx.font='11px Plus Jakarta Sans';
+  ctx.fillText('Domain',iX,H-26);ctx.fillText('Range',oX,H-26);
+}
+
+var vltType='parabola',vltMX=-1;
+function setVlt(t){vltType=t;drawVlt();}
+function vltHover(e){var cv=document.getElementById('cv-vlt'),r=cv.getBoundingClientRect();vltMX=(e.clientX-r.left)/r.width*cv.width;drawVlt();}
+function vltOut(){vltMX=-1;drawVlt();}
+function drawVlt(){
+  var cv=document.getElementById('cv-vlt'),ctx=cv.getContext('2d');
+  var ax=mkAx(ctx,cv.width,cv.height,-5,5,-5,5);
+  if(vltType==='parabola') plt(ctx,function(x){return x*x/2-2;},ax.TX,ax.TY,-5,5,'#a8ff3e',2.5);
+  else if(vltType==='circle'){
+    ctx.strokeStyle='#a78bfa';ctx.lineWidth=2.5;ctx.beginPath();
+    for(var a=0;a<=Math.PI*2+.01;a+=.02)ctx.lineTo(ax.TX(3*Math.cos(a)),ax.TY(3*Math.sin(a)));
+    ctx.stroke();
+  } else plt(ctx,function(x){return .8*x+1;},ax.TX,ax.TY,-5,5,'#2dd4bf',2.5);
+  var msg='Move mouse over the graph',col='var(--text3)';
+  if(vltMX>0){
+    ctx.strokeStyle='rgba(255,107,91,.8)';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(vltMX,0);ctx.lineTo(vltMX,cv.height);ctx.stroke();ctx.setLineDash([]);
+    var xv=-5+(vltMX-ax.mx)/ax.iw*10;
+    var hits=vltType==='circle'?(9-xv*xv>0?2:1):1;
+    msg=hits>1?'✗ Crosses twice — NOT a function':'✓ Crosses once — Function';
+    col=hits>1?'#ff6b5b':'#a8ff3e';
+  }
+  document.getElementById('vlt-msg').textContent=msg;
+  document.getElementById('vlt-msg').style.color=col;
+}
+
+var drType='linear';
+var drDefs={
+  linear:{f:function(x){return x+2;},c:'#a8ff3e',d:'All real numbers (−∞, ∞)',r:'All real numbers (−∞, ∞)',n:'A non-horizontal linear function has no domain or range restrictions.'},
+  quad:  {f:function(x){return x*x;},c:'#4f9eff',d:'All real numbers (−∞, ∞)',r:'y ≥ 0  →  [0, ∞)',n:'The parabola opens upward and never goes below the x-axis.'},
+  sqrt:  {f:function(x){return Math.sqrt(x);},c:'#2dd4bf',d:'x ≥ 0  →  [0, ∞)',r:'y ≥ 0  →  [0, ∞)',n:'Cannot take the square root of a negative number (in the reals).'},
+  recip: {f:function(x){return 1/x;},c:'#ff6b5b',d:'x ≠ 0  →  (−∞,0)∪(0,∞)',r:'y ≠ 0  →  (−∞,0)∪(0,∞)',n:'Division by zero is undefined; asymptotes at x=0 and y=0.'},
+};
+function setDR(t){
+  drType=t;drawDR();
+  var d=drDefs[t];
+  document.getElementById('dr-info').innerHTML=
+    '<div style="margin-bottom:8px"><strong style="color:'+d.c+'">Domain:</strong> '+d.d+'</div>'+
+    '<div style="margin-bottom:8px"><strong style="color:'+d.c+'">Range:</strong> '+d.r+'</div>'+
+    '<div style="font-size:13px;color:var(--text3)">'+d.n+'</div>';
+}
+function drawDR(){
+  var cv=document.getElementById('cv-dr'),ctx=cv.getContext('2d');
+  var ax=mkAx(ctx,cv.width,cv.height,-7,7,-7,7);
+  if(drType==='sqrt'){ctx.fillStyle='rgba(45,212,191,.07)';ctx.fillRect(ax.TX(0),ax.my,ax.TX(7)-ax.TX(0),ax.ih);}
+  plt(ctx,drDefs[drType].f,ax.TX,ax.TY,-7,7,drDefs[drType].c,2.5);
+}
+
+// ════════════════════════════════════════════════════
+// MODULE 2
+// ════════════════════════════════════════════════════
+var rgType='quad',rgPins=[];
+var rgDefs={
+  quad:  {f:function(x){return -x*x+4;},  c:'#4f9eff',xi:'−2, 2',yi:'4', max:'(0, 4)', inc:'(−∞, 0)',dec:'(0, ∞)'},
+  linear:{f:function(x){return 2*x-3;},   c:'#a8ff3e',xi:'1.5',yi:'−3',max:'none',    inc:'(−∞, ∞)',dec:'none'},
+  abs:   {f:function(x){return Math.abs(x-1)-2;},c:'#ff6b5b',xi:'−1, 3',yi:'−1',max:'none',inc:'(1, ∞)',dec:'(−∞, 1)'},
+  exp:   {f:function(x){return Math.pow(2,x)-4;},c:'#f472b6',xi:'2',yi:'−3',max:'none',inc:'(−∞, ∞)',dec:'none'},
+};
+var rgHX=-999;
+function setRG(t){
+  rgType=t;rgPins=[];
+  var d=rgDefs[t];
+  document.getElementById('ri-x').textContent=d.xi;
+  document.getElementById('ri-y').textContent=d.yi;
+  document.getElementById('ri-max').textContent=d.max;
+  document.getElementById('ri-inc').textContent=d.inc;
+  document.getElementById('ri-dec').textContent=d.dec;
+  drawRG();
+}
+function readHover(e){var cv=document.getElementById('cv-read'),r=cv.getBoundingClientRect();rgHX=(e.clientX-r.left)/r.width*cv.width;drawRG();}
+function readOut(){rgHX=-999;drawRG();}
+function readPin(e){
+  var cv=document.getElementById('cv-read'),r=cv.getBoundingClientRect();
+  var px=(e.clientX-r.left)/r.width*cv.width;
+  var ax={mx:46,iw:cv.width-62};
+  var xv=-6+(px-ax.mx)/ax.iw*12,yv=rgDefs[rgType].f(xv);
+  if(isFinite(yv)&&Math.abs(yv)<=7)rgPins.push({x:xv,y:yv});drawRG();
+}
+function drawRG(){
+  var cv=document.getElementById('cv-read'),ctx=cv.getContext('2d');
+  var ax=mkAx(ctx,cv.width,cv.height,-6,6,-6,6);
+  var d=rgDefs[rgType];
+  plt(ctx,d.f,ax.TX,ax.TY,-6,6,d.c,3);
+  if(rgHX>0){
+    var xv=-6+(rgHX-ax.mx)/ax.iw*12,yv=d.f(xv);
+    if(isFinite(yv)&&Math.abs(yv)<=6){
+      ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.moveTo(rgHX,0);ctx.lineTo(rgHX,cv.height);ctx.stroke();ctx.setLineDash([]);
+      fdot(ctx,ax.TX(xv),ax.TY(yv),6,'#fff','#0a0f1e');
+      document.getElementById('read-coord').textContent='x = '+xv.toFixed(2)+'   f(x) = '+yv.toFixed(2);
+    }
+  }
+  rgPins.forEach(function(p){if(Math.abs(p.y)<=6)fdot(ctx,ax.TX(p.x),ax.TY(p.y),7,d.c,'#fff');});
+}
+
+// ════════════════════════════════════════════════════
+// MODULE 3 — LINEAR
+// ════════════════════════════════════════════════════
+function drawLin(){
+  var m=+document.getElementById('sl-m').value;
+  var b=+document.getElementById('sl-b').value;
+  document.getElementById('v-m').textContent=m;
+  document.getElementById('v-b').textContent=b;
+  var bS=b>=0?'+ '+b:'− '+Math.abs(b);
+  document.getElementById('lin-eq').textContent='f(x) = '+m+'x '+bS;
+  document.getElementById('lin-interp').textContent=m===0?'Horizontal line — constant function':
+    (m>0?'Rises ':'Falls ')+Math.abs(m)+' unit'+(Math.abs(m)!==1?'s':'')+' per 1 unit right';
+  var rows=[-3,-2,-1,0,1,2,3].map(function(x){return '<tr><td>'+x+'</td><td class="hi">'+(m*x+b)+'</td></tr>';}).join('');
+  document.getElementById('lin-tbl').innerHTML='<tr><th>x</th><th>f(x)</th></tr>'+rows;
+  var cv=document.getElementById('cv-lin'),ctx=cv.getContext('2d');
+  var ax=mkAx(ctx,cv.width,cv.height,-7,7,-8,8);
+  plt(ctx,function(x){return m*x+b;},ax.TX,ax.TY,-7,7,'#a8ff3e',3);
+  fdot(ctx,ax.TX(0),ax.TY(b),7,'#a78bfa','#fff');
+  if(m!==0){
+    ctx.strokeStyle='rgba(255,107,91,.5)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(ax.TX(0),ax.TY(b));ctx.lineTo(ax.TX(1),ax.TY(b));ctx.lineTo(ax.TX(1),ax.TY(m+b));ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#ff9088';ctx.font='12px Plus Jakarta Sans';ctx.textAlign='center';
+    ctx.fillText('run=1',ax.TX(.5),ax.TY(b)+14);
+    ctx.textAlign='left';ctx.fillText('rise='+m,ax.TX(1)+6,ax.TY(b+m/2));
+  }
+}
+
+// ════════════════════════════════════════════════════
+// MODULE 4 — QUADRATIC
+// ════════════════════════════════════════════════════
+function drawQuad(){
+  var a=+document.getElementById('sl-qa').value;
+  var h=+document.getElementById('sl-qh').value;
+  var k=+document.getElementById('sl-qk').value;
+  document.getElementById('v-qa').textContent=a;
+  document.getElementById('v-qh').textContent=h;
+  document.getElementById('v-qk').textContent=k;
+  var hS=h===0?'':(h>0?' − '+h:' + '+Math.abs(h));
+  var kS=k===0?'':(k>0?' + '+k:' − '+Math.abs(k));
+  var aS=a===1?'':(a===-1?'−':a+'');
+  document.getElementById('quad-eq').textContent='f(x) = '+aS+'(x'+hS+')²'+kS;
+  document.getElementById('quad-info').textContent=
+    'Vertex: ('+h+', '+k+') · opens '+(a>0?'upward':'downward')+
+    ' · axis of symmetry: x = '+h+
+    ' · range: y '+(a>0?'≥':'≤')+' '+k;
+  var cv=document.getElementById('cv-quad'),ctx=cv.getContext('2d');
+  var ax=mkAx(ctx,cv.width,cv.height,-7,7,-6,10);
+  // parent in faint
+  plt(ctx,function(x){return x*x;},ax.TX,ax.TY,-7,7,'rgba(255,255,255,.12)',1.5,[5,4]);
+  plt(ctx,function(x){return a*(x-h)*(x-h)+k;},ax.TX,ax.TY,-7,7,'#4f9eff',3);
+  // vertex
+  fdot(ctx,ax.TX(h),ax.TY(k),8,'#ffbe3d','#fff');
+  // axis of symmetry
+  ctx.strokeStyle='rgba(255,190,61,.3)';ctx.lineWidth=1.5;ctx.setLineDash([6,4]);
+  ctx.beginPath();ctx.moveTo(ax.TX(h),ax.my);ctx.lineTo(ax.TX(h),ax.my+ax.ih);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#ffbe3d';ctx.font='bold 13px Plus Jakarta Sans';ctx.textAlign='left';
+  ctx.fillText('vertex ('+h+','+k+')',ax.TX(h)+10,ax.TY(k)-8);
+}
+
+// ════════════════════════════════════════════════════
+// MODULE 5 — EXPONENTIAL
+// ════════════════════════════════════════════════════
+function drawExp(){
+  var a=+document.getElementById('sl-ea').value;
+  var b=+document.getElementById('sl-eb').value;
+  document.getElementById('v-ea').textContent=a;
+  document.getElementById('v-eb').textContent=b.toFixed(1);
+  document.getElementById('exp-eq').textContent='f(x) = '+a+' · '+b.toFixed(1)+'ˣ';
+  document.getElementById('exp-type').textContent=b>1?'b > 1 → exponential GROWTH':b<1?'0 < b < 1 → exponential DECAY':'b = 1 → constant function';
+  var rows=[-3,-2,-1,0,1,2,3].map(function(x){
+    var y=(a*Math.pow(b,x)).toFixed(2);
+    return '<tr><td>'+x+'</td><td class="hi">'+y+'</td></tr>';
+  }).join('');
+  document.getElementById('exp-tbl').innerHTML='<tr><th>x</th><th>f(x)</th></tr>'+rows;
+  var cv=document.getElementById('cv-exp'),ctx=cv.getContext('2d');
+  var ax=mkAx(ctx,cv.width,cv.height,-5,5,-1,12);
+  // asymptote
+  ctx.strokeStyle='rgba(244,114,182,.3)';ctx.lineWidth=1.5;ctx.setLineDash([6,4]);
+  ctx.beginPath();ctx.moveTo(ax.mx,ax.TY(0));ctx.lineTo(ax.mx+ax.iw,ax.TY(0));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='rgba(244,114,182,.5)';ctx.font='12px Plus Jakarta Sans';ctx.textAlign='left';
+  ctx.fillText('y = 0 (asymptote)',ax.mx+6,ax.TY(0)-12);
+  plt(ctx,function(x){return a*Math.pow(b,x);},ax.TX,ax.TY,-5,5,'#f472b6',3);
+  fdot(ctx,ax.TX(0),ax.TY(a),7,'#ffbe3d','#fff');
+  ctx.fillStyle='#ffbe3d';ctx.font='bold 13px Plus Jakarta Sans';ctx.textAlign='left';
+  ctx.fillText('y-int: (0, '+a+')',ax.TX(0)+10,ax.TY(a)-8);
+}
+
+// ════════════════════════════════════════════════════
+// MODULE 6 — ABSOLUTE VALUE
+// ════════════════════════════════════════════════════
+function drawAbs(){
+  var a=+document.getElementById('sl-a').value;
+  var h=+document.getElementById('sl-h').value;
+  var k=+document.getElementById('sl-k').value;
+  document.getElementById('v-a').textContent=a;
+  document.getElementById('v-h').textContent=h;
+  document.getElementById('v-k').textContent=k;
+  var hS=h===0?'':(h>0?' − '+h:' + '+Math.abs(h));
+  var kS=k===0?'':(k>0?' + '+k:' − '+Math.abs(k));
+  var aS=a===1?'':(a===-1?'−':a+'');
+  document.getElementById('abs-eq').textContent='f(x) = '+aS+'|x'+hS+'|'+kS;
+  document.getElementById('abs-info').textContent=
+    'Vertex: ('+h+', '+k+') · opens '+(a>=0?'upward':'downward')+
+    ' · range: y '+(a>=0?'≥':'≤')+' '+k;
+  var cv=document.getElementById('cv-abs'),ctx=cv.getContext('2d');
+  var ax=mkAx(ctx,cv.width,cv.height,-7,7,-7,7);
+  plt(ctx,function(x){return Math.abs(x);},ax.TX,ax.TY,-7,7,'rgba(255,255,255,.12)',1.5,[5,4]);
+  plt(ctx,function(x){return a*Math.abs(x-h)+k;},ax.TX,ax.TY,-7,7,'#ff6b5b',3);
+  fdot(ctx,ax.TX(h),ax.TY(k),8,'#ffbe3d','#fff');
+  ctx.fillStyle='#ffbe3d';ctx.font='bold 13px Plus Jakarta Sans';ctx.textAlign='left';
+  ctx.fillText('vertex ('+h+','+k+')',ax.TX(h)+10,ax.TY(k)-8);
+}
+
+// ════════════════════════════════════════════════════
+// MODULE 7 — PIECEWISE
+// ════════════════════════════════════════════════════
+var pwDefs=[
+  {ps:[{f:function(x){return x+2;},l:-6,r:1,oL:false,oR:true,c:'#a8ff3e'},{f:function(x){return -x+4;},l:1,r:6,oL:true,oR:false,c:'#a78bfa'}],
+   rules:[{e:'x + 2',cond:'x < 1',c:'#a8ff3e'},{e:'−x + 4',cond:'x ≥ 1',c:'#a78bfa'}]},
+  {ps:[{f:function(x){return 2*x;},l:-6,r:0,oL:false,oR:false,c:'#ff6b5b'},{f:function(x){return 3;},l:0,r:6,oL:true,oR:false,c:'#2dd4bf'}],
+   rules:[{e:'2x',cond:'x ≤ 0',c:'#ff6b5b'},{e:'3',cond:'x > 0',c:'#2dd4bf'}]},
+  {ps:[{f:function(x){return -x;},l:-6,r:0,oL:false,oR:false,c:'#a8ff3e'},{f:function(x){return x;},l:0,r:6,oL:true,oR:false,c:'#a8ff3e'}],
+   rules:[{e:'−x',cond:'x ≤ 0',c:'#a8ff3e'},{e:'x',cond:'x > 0',c:'#a8ff3e'}]},
+  {ps:[{f:function(x){return -2;},l:-6,r:-2,oL:false,oR:true,c:'#ff6b5b'},{f:function(x){return x;},l:-2,r:2,oL:true,oR:true,c:'#a78bfa'},{f:function(x){return 3;},l:2,r:6,oL:false,oR:false,c:'#2dd4bf'}],
+   rules:[{e:'−2',cond:'x < −2',c:'#ff6b5b'},{e:'x',cond:'−2 ≤ x < 2',c:'#a78bfa'},{e:'3',cond:'x ≥ 2',c:'#2dd4bf'}]},
+];
+var pwIdx=0;
+function setPW(i){
+  pwIdx=i;
+  document.getElementById('pw-rules').innerHTML=pwDefs[i].rules.map(function(r){
+    return '<div class="pwr"><div class="pwr-dot" style="background:'+r.c+'"></div><div class="pwr-expr" style="color:'+r.c+'">f(x) = '+r.e+'</div><div class="pwr-cond">if '+r.cond+'</div></div>';
+  }).join('');
+  drawPW();
+}
+function evalPW(x){
+  var def=pwDefs[pwIdx];
+  for(var i=0;i<def.ps.length;i++){
+    var p=def.ps[i];
+    if((p.oL?x>p.l:x>=p.l)&&(p.oR?x<p.r:x<=p.r))return p.f(x);
+  }
+  return null;
+}
+var pwHX=-999;
+function pwHover(e){var cv=document.getElementById('cv-pw'),r=cv.getBoundingClientRect();pwHX=(e.clientX-r.left)/r.width*cv.width;drawPW();}
+function pwOut(){pwHX=-999;drawPW();}
+function drawPW(){
+  var cv=document.getElementById('cv-pw'),ctx=cv.getContext('2d');
+  var ax=mkAx(ctx,cv.width,cv.height,-6,6,-6,6);
+  pwDefs[pwIdx].ps.forEach(function(p){
+    ctx.strokeStyle=p.c;ctx.lineWidth=3;ctx.beginPath();var first=true;
+    for(var i=0;i<=300;i++){var x=p.l+i/300*(p.r-p.l),y=p.f(x);first?(ctx.moveTo(ax.TX(x),ax.TY(y)),first=false):ctx.lineTo(ax.TX(x),ax.TY(y));}
+    ctx.stroke();
+    p.oL?odot(ctx,ax.TX(p.l),ax.TY(p.f(p.l)),6,p.c):fdot(ctx,ax.TX(p.l),ax.TY(p.f(p.l)),6,p.c,'#0a0f1e');
+    p.oR?odot(ctx,ax.TX(p.r),ax.TY(p.f(p.r)),6,p.c):fdot(ctx,ax.TX(p.r),ax.TY(p.f(p.r)),6,p.c,'#0a0f1e');
+  });
+  if(pwHX>0){
+    var xv=-6+(pwHX-ax.mx)/ax.iw*12,yv=evalPW(xv);
+    if(yv!==null&&isFinite(yv)&&Math.abs(yv)<=6){
+      ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.moveTo(pwHX,0);ctx.lineTo(pwHX,cv.height);ctx.stroke();ctx.setLineDash([]);
+      fdot(ctx,ax.TX(xv),ax.TY(yv),6,'#fff','#0a0f1e');
+      document.getElementById('pw-coord').textContent='x = '+xv.toFixed(2)+'   f(x) = '+yv.toFixed(2);
+    }
+  }
+}
+
+// ════════════════════════════════════════════════════
+// MODULE 8 — FLOOR
+// ════════════════════════════════════════════════════
+var floorHX=-999;
+function floorHover(e){var cv=document.getElementById('cv-floor'),r=cv.getBoundingClientRect();floorHX=(e.clientX-r.left)/r.width*cv.width;drawFloor();}
+function floorOut(){floorHX=-999;drawFloor();}
+function drawFloor(){
+  var cv=document.getElementById('cv-floor'),ctx=cv.getContext('2d');
+  var ax=mkAx(ctx,cv.width,cv.height,-5,5,-5,5);
+  for(var n=-5;n<=5;n++){
+    var s=n,e=n+1,cs=Math.max(s,-5),ce=Math.min(e,5);
+    if(cs>=ce)continue;
+    ctx.strokeStyle='#a8ff3e';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(ax.TX(cs),ax.TY(n));ctx.lineTo(ax.TX(ce),ax.TY(n));ctx.stroke();
+    if(cs===s) fdot(ctx,ax.TX(s),ax.TY(n),5,'#a8ff3e','#0a0f1e');
+    if(ce===e) odot(ctx,ax.TX(e),ax.TY(n),5,'#a8ff3e');
+  }
+  if(floorHX>0){
+    var xv=-5+(floorHX-ax.mx)/ax.iw*10,yv=Math.floor(xv);
+    ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(floorHX,0);ctx.lineTo(floorHX,cv.height);ctx.stroke();ctx.setLineDash([]);
+    fdot(ctx,ax.TX(xv),ax.TY(yv),6,'#fff');
+    document.getElementById('floor-coord').textContent='x = '+xv.toFixed(2)+'   ⌊x⌋ = '+yv;
+  }
+}
+
+// ════════════════════════════════════════════════════
+// MODULE 9 — CEILING
+// ════════════════════════════════════════════════════
+var ceilHX=-999;
+function ceilHover(e){var cv=document.getElementById('cv-ceil'),r=cv.getBoundingClientRect();ceilHX=(e.clientX-r.left)/r.width*cv.width;drawCeil();}
+function ceilOut(){ceilHX=-999;drawCeil();}
+function drawCeil(){
+  var cv=document.getElementById('cv-ceil'),ctx=cv.getContext('2d');
+  var ax=mkAx(ctx,cv.width,cv.height,-5,5,-5,5);
+  for(var n=-5;n<=5;n++){
+    var s=n-1,e=n,cs=Math.max(s,-5),ce=Math.min(e,5);
+    if(cs>=ce)continue;
+    ctx.strokeStyle='#a78bfa';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(ax.TX(cs),ax.TY(n));ctx.lineTo(ax.TX(ce),ax.TY(n));ctx.stroke();
+    if(cs===s) odot(ctx,ax.TX(s),ax.TY(n),5,'#a78bfa');
+    if(ce===e) fdot(ctx,ax.TX(e),ax.TY(n),5,'#a78bfa','#0a0f1e');
+  }
+  if(ceilHX>0){
+    var xv=-5+(ceilHX-ax.mx)/ax.iw*10,yv=Math.ceil(xv);
+    ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(ceilHX,0);ctx.lineTo(ceilHX,cv.height);ctx.stroke();ctx.setLineDash([]);
+    fdot(ctx,ax.TX(xv),ax.TY(yv),6,'#fff');
+    document.getElementById('ceil-coord').textContent='x = '+xv.toFixed(2)+'   ⌈x⌉ = '+yv;
+  }
+}
+
+// ════════════════════════════════════════════════════
+// MODULE 10 — FAMILIES
+// ════════════════════════════════════════════════════
+function drawFam(){
+  var cv=document.getElementById('cv-fam'),ctx=cv.getContext('2d');
+  var W=cv.clientWidth||cv.width; cv.width=W;
+  var H=cv.height;
+  var panels=[
+    {l:'Linear',    f:function(x){return x;},            c:'#a8ff3e',e:'f(x)=x',step:false},
+    {l:'Quadratic', f:function(x){return x*x/4-2;},      c:'#4f9eff',e:'f(x)=x²',step:false},
+    {l:'Exponential',f:function(x){return Math.pow(1.7,x)/6;},c:'#f472b6',e:'f(x)=1.7ˣ',step:false},
+    {l:'Abs Value', f:function(x){return Math.abs(x)-2;},c:'#ff6b5b',e:'f(x)=|x|',step:false},
+    {l:'Piecewise', f:function(x){return x<0?-x:x/2+1;},c:'#2dd4bf',e:'multi-rule',step:false},
+    {l:'Floor ⌊x⌋',f:function(x){return Math.floor(x);},c:'#a8ff3e',e:'⌊x⌋',step:true,sfn:'floor'},
+    {l:'Ceiling ⌈x⌉',f:function(x){return Math.ceil(x);},c:'#a78bfa',e:'⌈x⌉',step:true,sfn:'ceil'},
+  ];
+  var pw=Math.floor(W/panels.length);
+  ctx.fillStyle='#0a0f1e';ctx.fillRect(0,0,W,H);
+  panels.forEach(function(p,i){
+    var ox=i*pw;
+    ctx.fillStyle=p.c+'0c';ctx.fillRect(ox,0,pw,H);
+    ctx.strokeStyle=p.c+'1a';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ox,0);ctx.lineTo(ox,H);ctx.stroke();
+    var xMin=-3.5,xMax=3.5,yMin=-3.5,yMax=3.5,mx=5,my=7,iw=pw-mx*2,ih=H-my*2-26;
+    var TX=function(x){return ox+mx+(x-xMin)/(xMax-xMin)*iw;};
+    var TY=function(y){return my+(yMax-y)/(yMax-yMin)*ih;};
+    ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(TX(0),my);ctx.lineTo(TX(0),my+ih);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(ox+mx,TY(0));ctx.lineTo(ox+mx+iw,TY(0));ctx.stroke();
+    if(p.step){
+      var isFloor=p.sfn==='floor';
+      for(var n=-4;n<=4;n++){
+        var s=isFloor?n:n-1,e=isFloor?n+1:n;
+        var cs=Math.max(s,xMin),ce=Math.min(e,xMax);
+        if(cs>=ce||n<yMin||n>yMax)continue;
+        ctx.strokeStyle=p.c;ctx.lineWidth=2.5;
+        ctx.beginPath();ctx.moveTo(TX(cs),TY(n));ctx.lineTo(TX(ce),TY(n));ctx.stroke();
+        if(cs===s){isFloor?fdot(ctx,TX(s),TY(n),3,p.c,'#0a0f1e'):odot(ctx,TX(s),TY(n),3,p.c);}
+        if(ce===e){isFloor?odot(ctx,TX(e),TY(n),3,p.c):fdot(ctx,TX(e),TY(n),3,p.c,'#0a0f1e');}
+      }
+    } else {
+      ctx.strokeStyle=p.c;ctx.lineWidth=2.5;ctx.beginPath();var first=true;
+      for(var j=0;j<=200;j++){
+        var x=xMin+j/200*(xMax-xMin),y=p.f(x);
+        if(!isFinite(y)||Math.abs(y)>yMax+.5){first=true;continue;}
+        first?(ctx.moveTo(TX(x),TY(Math.max(yMin,Math.min(yMax,y)))),first=false):ctx.lineTo(TX(x),TY(Math.max(yMin,Math.min(yMax,y))));
+      }
+      ctx.stroke();
+    }
+    ctx.fillStyle=p.c;ctx.font='bold 11px Outfit,sans-serif';ctx.textAlign='center';ctx.fillText(p.l,ox+pw/2,H-14);
+    ctx.fillStyle='rgba(255,255,255,.3)';ctx.font='9px Plus Jakarta Sans';ctx.fillText(p.e,ox+pw/2,H-3);
+  });
+}
+
+var matchData=[
+  {q:'📱 A taxi charges a flat fee plus $2.50 per mile',        a:'Linear'},
+  {q:'🏀 Height of a basketball after being thrown upward',     a:'Quadratic'},
+  {q:'🦠 Bacteria population doubling every hour',              a:'Exponential'},
+  {q:'📏 Distance from a fixed target on a number line',        a:'Absolute Value'},
+  {q:'💰 Income tax with different rates per bracket',          a:'Piecewise'},
+  {q:'📦 Shipping cost rounds weight up to next whole pound',    a:'Ceiling'},
+  {q:'🎬 Movie streaming: you pay for each full hour watched',   a:'Floor'},
+];
+var matchFams=['Linear','Quadratic','Exponential','Absolute Value','Piecewise','Floor','Ceiling'];
+var mSel=null,mDone={},shuffledFams=[];
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function renderMatch() {
+  // Shuffle families once per game (not on every re-render)
+  if (shuffledFams.length === 0) {
+    shuffledFams = shuffle(matchFams);
+  }
+  var g = document.getElementById('match-game');
+  var scenariosHtml = matchData.map(function(d, i) {
+    var cls = 'mitem' + (mDone[i] ? ' ok' : mSel === i ? ' sel' : '');
+    return '<div class="' + cls + '" onclick="mSelQ(' + i + ')">' + d.q + '</div>';
+  }).join('');
+  var famsHtml = shuffledFams.map(function(f) {
+    var used = Object.values(mDone).indexOf(f) >= 0;
+    var cls = 'mitem' + (used ? ' ok' : '');
+    return '<div class="' + cls + '" onclick="mSelF(\'' + f + '\')">' + f + '</div>';
+  }).join('');
+  g.innerHTML =
+    '<div><div class="match-col-title">Scenarios — click to select</div>' + scenariosHtml + '</div>' +
+    '<div><div class="match-col-title">Function families — click to match</div>' + famsHtml + '</div>';
+  var done = Object.keys(mDone).length;
+  var sb = document.getElementById('match-score-bar');
+  if (sb) {
+    sb.textContent = done + ' / 7 matched' + (done === 7 ? ' — 🎉 All correct!' : '');
+    sb.style.color = done === 7 ? 'var(--lime)' : 'var(--text3)';
+  }
+}
+function mSelQ(i){if(mDone[i])return;mSel=i;renderMatch();}
+function mSelF(f){
+  if(mSel===null)return;
+  if(matchData[mSel].a===f){
+    mDone[mSel]=f;var n=Object.keys(mDone).length;
+    document.getElementById('match-msg').textContent=n===7?'🎉 Perfect! All 7 matched correctly!':'✓ Correct! '+n+' / 7';
+    document.getElementById('match-msg').style.color=n===7?'#a8ff3e':'#2dd4bf';
+  } else {
+    document.getElementById('match-msg').textContent='✗ Not quite. Think about the shape and behaviour of this situation.';
+    document.getElementById('match-msg').style.color='#ff6b5b';
+  }
+  mSel=null;renderMatch();
+}
+function resetMatch() {
+  mSel = null;
+  mDone = {};
+  shuffledFams = []; // reshuffle on every new game
+  document.getElementById('match-msg').textContent = '';
+  var sb = document.getElementById('match-score-bar');
+  if (sb) { sb.textContent = '0 / 7 matched'; sb.style.color = 'var(--text3)'; }
+  renderMatch();
+}
+
+// ════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════
+window.addEventListener('load',function(){
+  drawMap(true); drawVlt(); setDR('linear');
+});
+
+// ════════════════════════════════════════════════════
+// QUIZ ENGINE + DATA
+// ════════════════════════════════════════════════════
+
+var QUIZZES = {
+  's0': {
+    questions: [
+      { q: "A vending machine gives exactly one item per button press. Is this a function?",
+        opts: ["Yes — each input gives exactly one output","No — some buttons might give the same item","Only if all outputs are different","Only if the machine has fewer than 10 items"],
+        ans: 0,
+        insight: "A function requires each input to have exactly ONE output — but different inputs CAN produce the same output. This machine is a perfect function." },
+      { q: "Which mapping diagram represents a function?",
+        opts: ["A: 1→3, 2→5, 3→5 (two inputs share an output)","B: 1→3, 1→5 (one input has two outputs)","C: 1→3, 2→5, 2→7 (input 2 has two outputs)","D: 1→3, 2→4, 3→3 (different inputs share output 3)"],
+        ans: 3,
+        insight: "The rule is: each input must have EXACTLY ONE output. Two different inputs can map to the same output — that is still a function. Only when ONE input points to TWO different outputs does it fail." },
+      { q: "What is the domain of f(x) = √x?",
+        opts: ["All real numbers","x > 0 only (strictly positive)","x ≥ 0 (zero and positive)","All integers"],
+        ans: 2,
+        insight: "√0 = 0, which is defined. So x = 0 IS in the domain. The domain is x ≥ 0, written [0, ∞). Students often forget to include zero." },
+      { q: "The vertical line x = 2 crosses a graph at (2, 3) and (2, −1). What can you conclude?",
+        opts: ["The graph IS a function — vertical lines always work","The graph is NOT a function — x = 2 gives two y-values","The graph has a maximum at y = 3","You need more information to decide"],
+        ans: 1,
+        insight: "The Vertical Line Test: if ANY vertical line crosses the graph more than once, the graph does NOT represent a function. Here x = 2 gives two outputs, so it fails." },
+      { q: "f(3) = 7 means:",
+        opts: ["f times 3 equals 7","When x = 7, the output is 3","When x = 3, the output is 7","The function has slope 7/3"],
+        ans: 2,
+        insight: "f(3) = 7 is read 'f of 3 equals 7'. The number inside the parentheses is always the INPUT (x-value) and the result is the OUTPUT. This notation confuses many students who think f(x) means multiplication." }
+    ]
+  },
+  's1': {
+    questions: [
+      { q: "A function is increasing on an interval when:",
+        opts: ["The y-values decrease as x increases","The y-values increase as x increases","The graph is above the x-axis","The slope equals zero"],
+        ans: 1,
+        insight: "Increasing means: as you move RIGHT (x increases), the graph goes UP (y increases). Many students confuse the direction — always think left-to-right when describing intervals." },
+      { q: "The y-intercept of a function is:",
+        opts: ["Where the graph crosses the x-axis","The highest point on the graph","Where the graph crosses the y-axis","The slope of the function"],
+        ans: 2,
+        insight: "The y-intercept is where x = 0 — the graph crosses the vertical y-axis. The x-intercept is where y = 0 (the horizontal axis). Students often swap these two." },
+      { q: "For f(x) = −x² + 4, the maximum value is:",
+        opts: ["x = 0","y = −4","y = 4","f(x) = 0"],
+        ans: 2,
+        insight: "The maximum VALUE is a y-value — the highest output the function can produce. For this parabola, the vertex is at (0, 4), so the maximum value is y = 4, not the x-coordinate 0." },
+      { q: "A function can have how many y-intercepts?",
+        opts: ["At most one","Exactly two","As many as you like","Zero or one"],
+        ans: 0,
+        insight: "Since a function gives exactly one output for x = 0, it can cross the y-axis AT MOST once. (Some functions like √x don't reach x = 0 if the domain excludes it.)" },
+      { q: "The x-intercepts are also called the:",
+        opts: ["Vertices","Maximums","Zeros or roots of the function","y-values"],
+        ans: 2,
+        insight: "x-intercepts are where f(x) = 0 — the output is zero. These are called the ZEROS or ROOTS of the function. This language appears frequently in Algebra 1 assessments." }
+    ]
+  },
+  's2': {
+    questions: [
+      { q: "What does the slope m represent in f(x) = mx + b?",
+        opts: ["The x-intercept","The y-intercept","The rate of change — how much f(x) changes per unit of x","The maximum value"],
+        ans: 2,
+        insight: "Slope = rise ÷ run = (change in y) ÷ (change in x). It is the RATE OF CHANGE. For every 1 unit increase in x, f(x) changes by exactly m units. This is the defining feature of a linear function." },
+      { q: "A line has slope −3 and passes through (0, 5). Its equation is:",
+        opts: ["f(x) = 3x − 5","f(x) = −3x + 5","f(x) = 5x − 3","f(x) = −5x + 3"],
+        ans: 1,
+        insight: "Slope-intercept form: f(x) = mx + b. Here m = −3 (slope) and b = 5 (y-intercept, the point where x = 0). So f(x) = −3x + 5. Students often mix up which value is m and which is b." },
+      { q: "What is the slope of a horizontal line?",
+        opts: ["Undefined","1","+∞","0"],
+        ans: 3,
+        insight: "A horizontal line has zero rise — it goes nowhere vertically. Rise ÷ Run = 0 ÷ anything = 0. Note: a VERTICAL line has UNDEFINED slope (you'd divide by zero). Students often swap horizontal and vertical." },
+      { q: "Two linear functions have the same slope but different y-intercepts. Their graphs are:",
+        opts: ["Identical lines","Perpendicular lines","Parallel lines — they never intersect","Lines that cross exactly once"],
+        ans: 2,
+        insight: "Same slope means same steepness and direction. Different y-intercepts means they're shifted vertically — they run parallel and never meet. This is the definition of parallel lines in terms of slope." },
+      { q: "If f(x) = 2x − 4, what is f(0)?",
+        opts: ["2","−4","4","0"],
+        ans: 1,
+        insight: "f(0) means plug in x = 0: f(0) = 2(0) − 4 = 0 − 4 = −4. This is also the y-intercept! The y-intercept is always the value of f when x = 0, which equals b in f(x) = mx + b." }
+    ]
+  },
+  's3': {
+    questions: [
+      { q: "In f(x) = a(x − h)² + k, the vertex of the parabola is:",
+        opts: ["(a, k)","(h, k)","(h, a)","(−h, k)"],
+        ans: 1,
+        insight: "The vertex is always at (h, k) in vertex form. The most common mistake is sign confusion: f(x) = (x − 3)² has vertex at x = +3, not −3. The formula subtracts h, so you reverse the sign." },
+      { q: "A parabola opens DOWNWARD when:",
+        opts: ["k is negative","h is positive","a > 0","a < 0"],
+        ans: 3,
+        insight: "The leading coefficient a controls the direction. If a > 0, the parabola opens upward (minimum). If a < 0, it opens downward (maximum). k shifts the vertex up or down but doesn't flip the parabola." },
+      { q: "What is the axis of symmetry for f(x) = 2(x − 3)² + 1?",
+        opts: ["x = 1","x = −3","x = 3","y = 1"],
+        ans: 2,
+        insight: "The axis of symmetry is the vertical line through the vertex: x = h. Here h = 3, so the axis of symmetry is x = 3. The axis of symmetry is always an x-value (a vertical line), not a y-value." },
+      { q: "What is the range of f(x) = −(x − 2)² + 5?",
+        opts: ["y ≥ 5","y ≤ 5","All real numbers","y ≥ −5"],
+        ans: 1,
+        insight: "Since a = −1 < 0, the parabola opens downward. The vertex (2, 5) is the MAXIMUM point. The function can never exceed 5, so the range is y ≤ 5. Students often write y ≥ k even for downward parabolas." },
+      { q: "Which quadratic function has vertex at (−1, 4)?",
+        opts: ["f(x) = (x + 1)² + 4","f(x) = (x − 1)² + 4","f(x) = (x + 4)² − 1","f(x) = (x − 4)² + 1"],
+        ans: 0,
+        insight: "Vertex form: f(x) = a(x − h)² + k with vertex (h, k). For vertex (−1, 4): h = −1 and k = 4. Substituting: f(x) = (x − (−1))² + 4 = (x + 1)² + 4. Watch the double negative!" }
+    ]
+  },
+  's4': {
+    questions: [
+      { q: "In f(x) = a · bˣ, when is the function showing exponential GROWTH?",
+        opts: ["When b < 0","When b > 1","When 0 < b < 1","When a < 0"],
+        ans: 1,
+        insight: "The BASE b controls growth vs decay. If b > 1: each step multiplies by more than 1 → growth. If 0 < b < 1: each step multiplies by a fraction → decay. The initial value a scales the function but doesn't determine growth/decay." },
+      { q: "What is the horizontal asymptote of f(x) = 3 · 2ˣ?",
+        opts: ["y = 3","y = 2","y = 0","There is no asymptote"],
+        ans: 2,
+        insight: "As x → −∞, 2ˣ → 0, so 3 · 2ˣ → 0. The function approaches but never touches y = 0. The x-axis (y = 0) is always the horizontal asymptote for f(x) = a · bˣ when a > 0 and b > 0." },
+      { q: "f(x) = 5 · (0.5)ˣ. As x increases, f(x):",
+        opts: ["Grows without bound","Stays constant at 5","Decreases toward 0 but never reaches it","Eventually becomes negative"],
+        ans: 2,
+        insight: "Since b = 0.5 < 1, this is exponential DECAY. Each step multiplies by 0.5 (halves the value). The function decreases toward the asymptote y = 0 but never reaches or crosses it. It stays positive forever." },
+      { q: "What is the y-intercept of f(x) = 4 · 3ˣ?",
+        opts: ["(0, 3)","(0, 12)","(0, 4)","(4, 0)"],
+        ans: 2,
+        insight: "The y-intercept is f(0) = 4 · 3⁰ = 4 · 1 = 4. So the point is (0, 4). This always equals the initial value a, because b⁰ = 1 for any base b. The initial value IS the y-intercept." },
+      { q: "A population of 100 bacteria triples every hour. Which function models this?",
+        opts: ["f(t) = 100 + 3t","f(t) = 3 · 100ᵗ","f(t) = 100 · 3ᵗ","f(t) = 100 · t³"],
+        ans: 2,
+        insight: "Start with 100 (initial value a = 100), multiply by 3 each hour (base b = 3). So f(t) = 100 · 3ᵗ. A common mistake is writing 3 · 100ᵗ — that makes 100 the base, meaning the growth factor is 100, not 3." }
+    ]
+  },
+  's5': {
+    questions: [
+      { q: "What is f(−3) for f(x) = |x − 1|?",
+        opts: ["2","−4","4","−2"],
+        ans: 2,
+        insight: "f(−3) = |−3 − 1| = |−4| = 4. Remember: absolute value makes any number non-negative. The most common error is forgetting to substitute into the FULL expression before taking absolute value." },
+      { q: "The vertex of f(x) = 2|x + 3| − 1 is:",
+        opts: ["(3, −1)","(−3, 1)","(−3, −1)","(3, 1)"],
+        ans: 2,
+        insight: "In vertex form f(x) = a|x − h| + k, the vertex is at (h, k). Rewrite: |x + 3| = |x − (−3)|, so h = −3 and k = −1. Vertex is (−3, −1). Watch the sign inside the absolute value!" },
+      { q: "What is the range of f(x) = −3|x| + 2?",
+        opts: ["y ≥ 2","y ≤ 2","All real numbers","y ≥ −3"],
+        ans: 1,
+        insight: "Since a = −3 < 0, the V opens downward. The vertex (0, 2) is the MAXIMUM. The function can produce any value ≤ 2, so range is y ≤ 2. The sign of a determines whether the vertex is a max or min." },
+      { q: "Which real-world situation is best modelled by an absolute value function?",
+        opts: ["A ball thrown upward over time","The cost of a taxi ride","The error between a measured value and a target","Population growing over time"],
+        ans: 2,
+        insight: "Absolute value naturally measures DISTANCE from a target — it doesn't matter which direction the error goes. The cost of a taxi is linear; a thrown ball is quadratic; population growth is exponential." },
+      { q: "For f(x) = |x|, which statement is always true?",
+        opts: ["f(x) = x for all x","f(−x) = −f(x)","f(−x) = f(x) — it is an even function","f(x) < 0 for x < 0"],
+        ans: 2,
+        insight: "Since |−x| = |x|, we have f(−x) = f(x). This means f(x) = |x| is an EVEN function — symmetric about the y-axis. This is why the V-shape is perfectly symmetric. f(x) is NEVER negative." }
+    ]
+  },
+  's6': {
+    questions: [
+      { q: "For the piecewise function: f(x) = 2x if x < 1, f(x) = 5 if x ≥ 1. What is f(1)?",
+        opts: ["2","5","3","Undefined"],
+        ans: 1,
+        insight: "x = 1 satisfies the condition x ≥ 1, so we use f(x) = 5. f(1) = 5. Students often apply the wrong piece at boundary values. Always check which condition the boundary point satisfies." },
+      { q: "A closed dot (●) at the end of a piece means:",
+        opts: ["The function continues beyond that point","That point is NOT included","That point IS included in the function","The function has a maximum there"],
+        ans: 2,
+        insight: "Closed (filled) dot = INCLUDED. Open dot = NOT included. These dots are critical at boundary points — they tell you which piece 'owns' the boundary and prevent ambiguity." },
+      { q: "A piecewise function is continuous at x = 2 if:",
+        opts: ["The function equals zero at x = 2","Both pieces give the same output at x = 2","The slope is the same on both sides","There is no rule defined at x = 2"],
+        ans: 1,
+        insight: "Continuity at a boundary means no jump — both pieces must meet at that point (same output). If the left piece gives 3 and the right piece gives 5 at x = 2, there is a jump discontinuity." },
+      { q: "Why is income tax a piecewise function?",
+        opts: ["Because it has a minimum and maximum","Because different income ranges use different tax rate formulas","Because it grows exponentially with income","Because it is always a straight line"],
+        ans: 1,
+        insight: "Each tax bracket applies a different percentage rate. The rate changes at specific income thresholds. This is exactly what a piecewise function models — different rules for different intervals." },
+      { q: "How many pieces does f(x) = |x| have when written as a piecewise function?",
+        opts: ["One","Two","Three","It cannot be written as piecewise"],
+        ans: 1,
+        insight: "f(x) = |x| = x if x ≥ 0, and −x if x < 0. Two pieces! The absolute value function is really a piecewise function in disguise. Understanding this connection deepens understanding of both families." }
+    ]
+  },
+  's7': {
+    questions: [
+      { q: "What is ⌊−2.1⌋?",
+        opts: ["−2","−3","2","3"],
+        ans: 1,
+        insight: "The floor function gives the GREATEST INTEGER LESS THAN OR EQUAL TO the input. Since −3 < −2.1 < −2, the greatest integer ≤ −2.1 is −3. Students often forget that for negatives, 'rounding down' means going further from zero." },
+      { q: "⌊4.0⌋ equals:",
+        opts: ["3","5","4","4.0 (it stays a decimal)"],
+        ans: 2,
+        insight: "When the input is already an integer, the floor function returns that integer unchanged. ⌊4.0⌋ = 4. This is true for both floor and ceiling: if x is an integer, ⌊x⌋ = ⌈x⌉ = x." },
+      { q: "On the graph of ⌊x⌋, each horizontal step has:",
+        opts: ["A closed dot on the right and open dot on the left","An open dot on both ends","A closed dot on the left and open dot on the right","Closed dots on both ends"],
+        ans: 2,
+        insight: "Floor step: closed (●) on LEFT, open (○) on RIGHT. The step from n to n+1 includes x = n (closed) but not x = n+1 (open, because x = n+1 belongs to the NEXT step). The pattern is always closed-left, open-right." },
+      { q: "The range of f(x) = ⌊x⌋ is:",
+        opts: ["All real numbers","All positive integers","All integers (…−2, −1, 0, 1, 2…)","All numbers between 0 and 1"],
+        ans: 2,
+        insight: "The floor function outputs only integers — one integer for each unit interval of input. The range is the set of ALL integers ℤ = {…, −2, −1, 0, 1, 2, …}, not just positives." },
+      { q: "You earn $12/hour and work 3.75 hours. You are paid only for COMPLETED hours. What do you earn?",
+        opts: ["$45.00","$36.00","$42.00","$48.00"],
+        ans: 1,
+        insight: "Completed hours = ⌊3.75⌋ = 3 hours. Earnings = 3 × $12 = $36. This is the floor function: you only count the full hours worked. This is distinct from ceiling (rounding up) used in shipping or parking fees." }
+    ]
+  },
+  's8': {
+    questions: [
+      { q: "What is ⌈−2.1⌉?",
+        opts: ["−3","−2","2","3"],
+        ans: 1,
+        insight: "Ceiling gives the LEAST INTEGER GREATER THAN OR EQUAL TO the input. Since −3 < −2.1 < −2, the least integer ≥ −2.1 is −2. For negatives, ceiling rounds toward zero (less negative), which students often get backwards." },
+      { q: "⌈3.0⌉ equals:",
+        opts: ["2","4","3","3.5"],
+        ans: 2,
+        insight: "When the input is exactly an integer, ceiling returns that same integer. ⌈3.0⌉ = 3. Both floor and ceiling agree at integer inputs: ⌊n⌋ = ⌈n⌉ = n for any integer n." },
+      { q: "On the graph of ⌈x⌉, each step has:",
+        opts: ["A closed dot on the left, open on the right","A closed dot on the right, open on the left","Open dots on both ends","Closed dots on both ends"],
+        ans: 1,
+        insight: "Ceiling step: open (○) on LEFT, closed (●) on RIGHT — the OPPOSITE of floor. The step ending at n includes x = n (closed, right end) but not the start of the previous step (open). This is why ceiling and floor look like mirror images." },
+      { q: "A parking garage charges $4 per hour STARTED. What does a 2.3-hour stay cost?",
+        opts: ["$8 — for 2 hours (floor)","$12 — for 3 hours (ceiling)","$9.20 — exact time × rate","$4 — just the first hour"],
+        ans: 1,
+        insight: "They charge per hour STARTED — even 0.3 of an hour into the 3rd hour triggers a charge. ⌈2.3⌉ = 3 hours × $4 = $12. Any real-world situation that rounds UP to the next whole unit uses the ceiling function." },
+      { q: "For any non-integer x, which is always true?",
+        opts: ["⌊x⌋ > ⌈x⌉","⌊x⌋ = ⌈x⌉","⌊x⌋ < ⌈x⌉ and they differ by exactly 1","⌊x⌋ + ⌈x⌉ = 2x"],
+        ans: 2,
+        insight: "For non-integer x: ⌊x⌋ is the integer just below, ⌈x⌉ is the integer just above — they differ by exactly 1. For example: ⌊2.7⌋ = 2 and ⌈2.7⌉ = 3, difference = 1. Only at integers do they become equal." }
+    ]
+  },
+  's9': {
+    questions: [
+      { q: "A bacteria culture grows from 50 to 400 in 3 hours (doubling each hour). Which family models this?",
+        opts: ["Linear — constant hourly increase","Quadratic — accelerating increase","Exponential — multiplied by the same factor each hour","Step — discrete jumps"],
+        ans: 2,
+        insight: "Exponential growth: the quantity is MULTIPLIED by the same factor each time period (here ×2 each hour). Linear growth would ADD the same amount each hour. Doubling = multiplication = exponential." },
+      { q: "Which function has the graph that is symmetric about a vertical line?",
+        opts: ["f(x) = 3x + 1","f(x) = 2ˣ","f(x) = |x − 2| + 3","f(x) = ⌊x⌋"],
+        ans: 2,
+        insight: "Absolute value functions are symmetric about the vertical line through the vertex (axis of symmetry). The V-shape is a perfect mirror image. Linear and exponential functions are not symmetric; step functions have a staircase shape." },
+      { q: "A function has a horizontal asymptote at y = 0 and is always positive. Which family is it?",
+        opts: ["Linear","Quadratic","Absolute Value","Exponential"],
+        ans: 3,
+        insight: "Exponential functions f(x) = a · bˣ (with a > 0) are always positive and approach y = 0 as an asymptote. No other Algebra 1 function family has a horizontal asymptote. This is an identifying feature of exponentials." },
+      { q: "A function's graph looks like a staircase. What family is it?",
+        opts: ["Piecewise","Absolute Value","Step (Floor or Ceiling)","Quadratic"],
+        ans: 2,
+        insight: "Step functions (floor ⌊x⌋ and ceiling ⌈x⌉) produce the characteristic staircase graph — constant on each unit interval with jumps at integers. Piecewise functions can have many shapes, but the specific staircase pattern identifies a step function." },
+      { q: "Which function family CANNOT have a negative output for any real input?",
+        opts: ["f(x) = x² (quadratic)","f(x) = a·bˣ with a > 0 (exponential)","f(x) = |x| (absolute value)","All three of the above"],
+        ans: 3,
+        insight: "x² ≥ 0 always; a·bˣ > 0 always (when a > 0); |x| ≥ 0 always. All three are always non-negative. However, transformed versions (like x²−5 or |x|−3) CAN be negative. The question asks about the basic parent functions." }
+    ]
+  }
+};
+
+var quizState = {};
+
+function quizInit(sid) {
+  if (quizState[sid]) return; // already initialised
+  quizState[sid] = {
+    current: 0,
+    score: 0,
+    answered: new Array(5).fill(null), // null=unanswered, true=correct, false=wrong
+    mistakes: [] // {qIdx, question, chosen, correct, insight}
+  };
+  quizRender(sid);
+}
+
+function quizRender(sid) {
+  var qs = QUIZZES[sid].questions;
+  var st = quizState[sid];
+  var q  = qs[st.current];
+
+  document.getElementById('qnum-'+sid).textContent =
+    'Question ' + (st.current+1) + ' of 5';
+  document.getElementById('qq-'+sid).textContent = q.q;
+
+  // Options
+  var optsHtml = q.opts.map(function(opt, i) {
+    return '<button class="qopt" onclick="quizAnswer(\''+sid+'\','+i+')" id="qo-'+sid+'-'+i+'">'+opt+'</button>';
+  }).join('');
+  document.getElementById('qopts-'+sid).innerHTML = optsHtml;
+
+  // Clear feedback & next button
+  var fb = document.getElementById('qfb-'+sid);
+  fb.className = 'quiz-feedback';
+  fb.textContent = '';
+  document.getElementById('qnext-'+sid).style.display = 'none';
+
+  // Progress dots
+  var dotsHtml = st.answered.map(function(a, i) {
+    var cls = 'qp-dot';
+    if (i === st.current) cls += ' answered';
+    else if (a === true)  cls += ' correct';
+    else if (a === false) cls += ' wrong';
+    return '<div class="'+cls+'"></div>';
+  }).join('');
+  document.getElementById('qdots-'+sid).innerHTML = dotsHtml;
+  document.getElementById('qscore-'+sid).textContent = st.score + ' / ' + (st.current) ;
+}
+
+function quizAnswer(sid, chosenIdx) {
+  var qs  = QUIZZES[sid].questions;
+  var st  = quizState[sid];
+  var q   = qs[st.current];
+  var isCorrect = chosenIdx === q.ans;
+
+  // Disable all buttons
+  q.opts.forEach(function(_, i) {
+    var el = document.getElementById('qo-'+sid+'-'+i);
+    el.disabled = true;
+    if (i === q.ans) el.classList.add('reveal-correct');
+  });
+
+  // Mark chosen
+  var chosenEl = document.getElementById('qo-'+sid+'-'+chosenIdx);
+  chosenEl.classList.add(isCorrect ? 'selected-correct' : 'selected-wrong');
+
+  // Update state
+  st.answered[st.current] = isCorrect;
+  if (isCorrect) {
+    st.score++;
+  } else {
+    st.mistakes.push({
+      qIdx: st.current,
+      question: q.q,
+      chosen: q.opts[chosenIdx],
+      correct: q.opts[q.ans],
+      insight: q.insight
+    });
+  }
+
+  // Feedback
+  var fb = document.getElementById('qfb-'+sid);
+  fb.className = 'quiz-feedback show ' + (isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = (isCorrect ? '✓ Correct! ' : '✗ Not quite. ') + q.insight;
+
+  // Update dots & score
+  var dotsHtml = st.answered.map(function(a, i) {
+    var cls = 'qp-dot';
+    if (a === true)  cls += ' correct';
+    else if (a === false) cls += ' wrong';
+    else if (i === st.current) cls += ' answered';
+    return '<div class="'+cls+'"></div>';
+  }).join('');
+  document.getElementById('qdots-'+sid).innerHTML = dotsHtml;
+  document.getElementById('qscore-'+sid).textContent = st.score + ' / 5';
+
+  // Show next or finish
+  if (st.current < 4) {
+    document.getElementById('qnext-'+sid).style.display = 'inline-block';
+  } else {
+    setTimeout(function() { quizFinish(sid); }, 800);
+  }
+}
+
+function quizNext(sid) {
+  quizState[sid].current++;
+  quizRender(sid);
+}
+
+function quizFinish(sid) {
+  var st = quizState[sid];
+  document.getElementById('qbody-'+sid).style.display = 'none';
+  var foot = document.getElementById('qfoot-'+sid);
+  foot.className = 'quiz-footer show';
+
+  var score = st.score;
+  var msg = score === 5 ? '🎉 Perfect score! Outstanding work.' :
+            score >= 4 ? '⭐ Great job! Review the one you missed.' :
+            score >= 3 ? '👍 Good effort. Review the insights below.' :
+            '📚 Keep practising — the insights below show exactly what to review.';
+
+  document.getElementById('qfinal-'+sid).textContent = score + ' / 5';
+  document.getElementById('qfinalmsg-'+sid).textContent = msg;
+
+  // Insights on mistakes
+  var insEl = document.getElementById('qinsights-'+sid);
+  if (st.mistakes.length === 0) {
+    insEl.innerHTML = '<div style="color:var(--green);font-size:14px;font-weight:600">✓ No mistakes — perfect conceptual understanding!</div>';
+  } else {
+    var html = '<div class="insights-title">Insights — where to focus</div>';
+    st.mistakes.forEach(function(m) {
+      html += '<div class="insight-item">' +
+        '<strong>Q' + (m.qIdx+1) + ':</strong> ' + m.insight +
+        '<div class="q-ref">You answered: "' + m.chosen + '" &nbsp;·&nbsp; Correct: "' + m.correct + '"</div>' +
+        '</div>';
+    });
+    insEl.innerHTML = html;
+  }
+}
+
+function quizReset(sid) {
+  quizState[sid] = null;
+  document.getElementById('qbody-'+sid).style.display = '';
+  document.getElementById('qfoot-'+sid).className = 'quiz-footer';
+  quizInit(sid);
+}
+
+// Initialise quiz when a module tab is visited
+var origGo = go;
+go = function(n) {
+  origGo(n);
+  var sid = 's' + n;
+  setTimeout(function() { quizInit(sid); }, 120);
+};
+
+// Init quiz 0 on page load
+window.addEventListener('load', function() {
+  setTimeout(function() { quizInit('s0'); }, 200);
+});
+
+</script>
+</body>
+</html>
