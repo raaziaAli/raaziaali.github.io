@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classroom of the Future — Math that feels like a game</title>
+<meta name="description" content="22+ free interactive math tools for Grades 7 & 8. Built by an educator. No ads, no data selling. Just discovery.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F0F23;
+  --bg-lift: #17172E;
+  --bg-card: #1E1E3A;
+  --cyan: #00E5FF;
+  --coral: #FF6B6B;
+  --yellow: #FFD93D;
+  --lavender: #C4B5FD;
+  --text: #F8F9FF;
+  --text-dim: #A5A5C9;
+  --border: rgba(196, 181, 253, 0.15);
+  --glow-cyan: 0 0 40px rgba(0, 229, 255, 0.35);
+  --glow-coral: 0 0 40px rgba(255, 107, 107, 0.35);
+  --glow-yellow: 0 0 40px rgba(255, 217, 61, 0.35);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Grid background pattern */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    linear-gradient(rgba(196, 181, 253, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(196, 181, 253, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Floating math symbols */
+.float-symbols {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+.float-symbols span {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--lavender);
+  opacity: 0.08;
+  font-size: 1.5rem;
+  animation: floatUp 20s linear infinite;
+}
+@keyframes floatUp {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.08; }
+  90% { opacity: 0.08; }
+  100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+}
+
+/* Navigation */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  padding: 1.25rem 2rem;
+  background: rgba(15, 15, 35, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+}
+.logo-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--cyan), #0088aa);
+  position: relative;
+  box-shadow: var(--glow-cyan);
+  animation: pulse 3s ease-in-out infinite;
+}
+.logo-mark::before, .logo-mark::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--bg);
+  border-radius: 50%;
+  top: 12px;
+}
+.logo-mark::before { left: 9px; }
+.logo-mark::after { right: 9px; }
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+.nav-links a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--cyan); }
+.nav-cta {
+  background: var(--cyan);
+  color: var(--bg) !important;
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 700 !important;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.nav-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glow-cyan);
+}
+
+@media (max-width: 768px) {
+  .nav-links { gap: 1rem; }
+  .nav-links a:not(.nav-cta) { display: none; }
+}
+
+/* Main container */
+main { position: relative; z-index: 2; }
+
+/* Hero */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 6rem 2rem 4rem;
+  position: relative;
+}
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  width: 100%;
+}
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  background: rgba(0, 229, 255, 0.1);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 100px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--cyan);
+  margin-bottom: 1.5rem;
+}
+.badge-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 50% { opacity: 0.4; } }
+
+h1.hero-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(2.5rem, 6vw, 4.75rem);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+}
+.hero-title .gradient {
+  background: linear-gradient(135deg, var(--cyan) 0%, var(--lavender) 50%, var(--coral) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+.hero-title .strike-through {
+  position: relative;
+  color: var(--text-dim);
+}
+.hero-title .strike-through::after {
+  content: '';
+  position: absolute;
+  left: -4%; right: -4%;
+  top: 52%;
+  height: 4px;
+  background: var(--coral);
+  transform: rotate(-3deg);
+}
+
+.hero-sub {
+  font-size: 1.15rem;
+  color: var(--text-dim);
+  margin-bottom: 2rem;
+  max-width: 520px;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+.btn-primary, .btn-secondary {
+  padding: 1rem 1.75rem;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-primary {
+  background: var(--cyan);
+  color: var(--bg);
+  box-shadow: var(--glow-cyan);
+}
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 60px rgba(0, 229, 255, 0.6);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.hero-stats {
+  display: flex;
+  gap: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.stat { display: flex; flex-direction: column; }
+.stat-num {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--yellow);
+}
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Pi mascot */
+.pi-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 460px;
+  margin: 0 auto;
+}
+.pi-mascot {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 180px; height: 180px;
+  transform: translate(-50%, -50%);
+  animation: bob 4s ease-in-out infinite;
+  z-index: 3;
+}
+@keyframes bob {
+  0%, 100% { transform: translate(-50%, -50%); }
+  50% { transform: translate(-50%, -54%); }
+}
+.pi-body {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 25%, #5EEAFF, var(--cyan) 40%, #0088aa);
+  box-shadow:
+    0 0 80px rgba(0, 229, 255, 0.5),
+    inset -20px -20px 40px rgba(0,0,0,0.2);
+  position: relative;
+}
+.pi-eye {
+  position: absolute;
+  width: 28px; height: 34px;
+  background: var(--bg);
+  border-radius: 50%;
+  top: 55px;
+  animation: blinkPi 5s infinite;
+}
+.pi-eye.left { left: 50px; }
+.pi-eye.right { right: 50px; }
+.pi-eye::after {
+  content: '';
+  position: absolute;
+  width: 10px; height: 10px;
+  background: var(--text);
+  border-radius: 50%;
+  top: 8px; right: 4px;
+}
+@keyframes blinkPi {
+  0%, 94%, 100% { height: 34px; }
+  96%, 98% { height: 3px; }
+}
+.pi-smile {
+  position: absolute;
+  width: 40px; height: 20px;
+  border: 3px solid var(--bg);
+  border-top: none;
+  border-radius: 0 0 40px 40px;
+  bottom: 55px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.pi-antenna {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px; height: 22px;
+  background: var(--bg);
+}
+.pi-antenna::after {
+  content: '';
+  position: absolute;
+  top: -8px; left: -5px;
+  width: 13px; height: 13px;
+  background: var(--yellow);
+  border-radius: 50%;
+  box-shadow: var(--glow-yellow);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Orbiting symbols around Pi */
+.orbit {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 320px; height: 320px;
+  transform: translate(-50%, -50%);
+  animation: rotate 20s linear infinite;
+}
+.orbit-2 {
+  width: 400px; height: 400px;
+  animation: rotate 30s linear infinite reverse;
+}
+@keyframes rotate {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.orbit-item {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--lavender);
+}
+.orbit-item.c1 { top: 0; left: 50%; transform: translateX(-50%); color: var(--cyan); border-color: rgba(0, 229, 255, 0.4); }
+.orbit-item.c2 { bottom: 0; left: 50%; transform: translateX(-50%); color: var(--coral); border-color: rgba(255, 107, 107, 0.4); }
+.orbit-item.c3 { top: 50%; left: 0; transform: translateY(-50%); color: var(--yellow); border-color: rgba(255, 217, 61, 0.4); }
+.orbit-item.c4 { top: 50%; right: 0; transform: translateY(-50%); color: var(--lavender); border-color: rgba(196, 181, 253, 0.4); }
+
+/* Section styling */
+section { padding: 6rem 2rem; position: relative; }
+.container { max-width: 1200px; margin: 0 auto; }
+.section-head { text-align: center; margin-bottom: 4rem; }
+.section-kicker {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--cyan);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 1rem;
+}
+.section-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+.section-sub {
+  color: var(--text-dim);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Try-first zone */
+.try-zone { background: var(--bg-lift); }
+.try-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+@media (max-width: 900px) { .try-grid { grid-template-columns: 1fr; } }
+
+.try-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  transition: all 0.3s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.try-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--cyan);
+  box-shadow: var(--glow-cyan);
+}
+.try-card h3 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.try-card p {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Mini-interactive demos */
+.demo-box {
+  height: 160px;
+  background: var(--bg);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  margin-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Slider demo */
+.pizza-demo { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; }
+.pizza-visual { font-size: 3rem; transition: transform 0.3s; }
+.pizza-slider {
+  width: 80%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  outline: none;
+}
+.pizza-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  background: var(--cyan);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: var(--glow-cyan);
+}
+.pizza-slider::-moz-range-thumb {
+  width: 20px; height: 20px;
+  background: var(--cyan);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+/* Triangle demo */
+.triangle-demo svg { width: 100%; height: 100%; }
+.triangle-demo text { font-family: 'JetBrains Mono', monospace; fill: var(--yellow); font-size: 14px; font-weight: 600; }
+.triangle-demo .tri-line { stroke: var(--cyan); stroke-width: 2; fill: rgba(0, 229, 255, 0.1); }
+.triangle-demo .vertex { fill: var(--coral); cursor: grab; }
+
+/* Graph demo */
+.graph-demo svg { width: 100%; height: 100%; }
+.graph-demo .grid-line { stroke: var(--border); stroke-width: 1; }
+.graph-demo .axis { stroke: var(--text-dim); stroke-width: 1.5; }
+.graph-demo .line-path { stroke: var(--cyan); stroke-width: 3; fill: none; filter: drop-shadow(0 0 6px var(--cyan)); }
+
+.try-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--cyan);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+/* Three paths */
+.paths-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+@media (max-width: 900px) { .paths-grid { grid-template-columns: 1fr; } }
+
+.path-card {
+  padding: 2.5rem 2rem;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--text);
+  transition: transform 0.3s;
+  border: 1px solid var(--border);
+}
+.path-card:hover { transform: translateY(-6px); }
+
+.path-student {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(0, 229, 255, 0.02));
+  border-color: rgba(0, 229, 255, 0.3);
+}
+.path-parent {
+  background: linear-gradient(135deg, rgba(255, 217, 61, 0.15), rgba(255, 217, 61, 0.02));
+  border-color: rgba(255, 217, 61, 0.3);
+}
+.path-teacher {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(255, 107, 107, 0.02));
+  border-color: rgba(255, 107, 107, 0.3);
+}
+
+.path-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+.path-card h3 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.4rem;
+  margin-bottom: 0.75rem;
+}
+.path-card p {
+  color: var(--text-dim);
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+.path-card .arrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+}
+.path-student .arrow { color: var(--cyan); }
+.path-parent .arrow { color: var(--yellow); }
+.path-teacher .arrow { color: var(--coral); }
+
+/* Tools section */
+.tools-section { background: var(--bg-lift); }
+.filter-bar {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+.filter-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 0.5rem 1rem;
+  border-radius: 100px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.filter-btn:hover, .filter-btn.active {
+  background: var(--cyan);
+  color: var(--bg);
+  border-color: var(--cyan);
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.tool-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.tool-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--cyan);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+.tool-card:hover { transform: translateY(-4px); border-color: var(--cyan); }
+.tool-card:hover::before { transform: scaleX(1); }
+
+.tool-emoji { font-size: 2rem; margin-bottom: 0.75rem; }
+.tool-tag {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.6rem;
+  background: rgba(0, 229, 255, 0.12);
+  color: var(--cyan);
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.tool-tag.new { background: rgba(255, 217, 61, 0.12); color: var(--yellow); }
+.tool-tag.extension { background: rgba(196, 181, 253, 0.12); color: var(--lavender); }
+
+.tool-card h4 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+.tool-card p {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: 1rem;
+  flex: 1;
+}
+.tool-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Trust/parent section */
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+@media (max-width: 900px) { .trust-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .trust-grid { grid-template-columns: 1fr; } }
+
+.trust-item {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+.trust-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+.trust-item h4 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+}
+.trust-item p {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+/* Save progress banner */
+.save-banner {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  max-width: 340px;
+  background: linear-gradient(135deg, var(--cyan), #00a8c9);
+  color: var(--bg);
+  padding: 1.25rem 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 229, 255, 0.4);
+  z-index: 50;
+  transform: translateY(200%);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.save-banner.show { transform: translateY(0); }
+.save-banner h4 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.05rem;
+  margin-bottom: 0.25rem;
+}
+.save-banner p {
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  opacity: 0.85;
+}
+.save-banner-btns { display: flex; gap: 0.5rem; }
+.save-banner button {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+.save-yes { background: var(--bg); color: var(--cyan); }
+.save-no { background: transparent; color: var(--bg); }
+.save-close {
+  position: absolute;
+  top: 0.5rem; right: 0.75rem;
+  background: transparent;
+  border: none;
+  color: var(--bg);
+  font-size: 1.25rem;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+@media (max-width: 500px) {
+  .save-banner { right: 1rem; left: 1rem; max-width: none; bottom: 1rem; }
+}
+
+/* Footer */
+footer {
+  padding: 4rem 2rem 2rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+@media (max-width: 768px) { .footer-inner { grid-template-columns: 1fr 1fr; gap: 2rem; } }
+
+.footer-brand p {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  max-width: 320px;
+}
+.footer-col h5 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  color: var(--cyan);
+}
+.footer-col a {
+  display: block;
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  transition: color 0.2s;
+}
+.footer-col a:hover { color: var(--text); }
+
+.footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Fade in animation */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s, transform 0.8s;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Floating math symbols background -->
+<div class="float-symbols" id="floatSymbols"></div>
+
+<!-- Navigation -->
+<nav>
+  <div class="logo">
+    <div class="logo-mark"></div>
+    <span>Classroom of the Future</span>
+  </div>
+  <div class="nav-links">
+    <a href="#tools">Tools</a>
+    <a href="#parents">For Parents</a>
+    <a href="#teachers">For Teachers</a>
+    <a href="#" class="nav-cta" onclick="showSaveBanner(event)">Sign In</a>
+  </div>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          <span>22+ tools · live now</span>
+        </div>
+        <h1 class="hero-title">
+          Math that feels<br>
+          <span class="strike-through">like homework</span><br>
+          <span class="gradient">like a game.</span>
+        </h1>
+        <p class="hero-sub">
+          Free interactive tools for Grades 7 &amp; 8. Drag shapes, solve puzzles, earn XP.
+          Built by an educator who actually teaches this stuff.
+        </p>
+        <div class="hero-cta">
+          <a href="#try" class="btn-primary">🚀 Try a tool now</a>
+          <a href="#tools" class="btn-secondary">Browse all 22+</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-num">22+</span>
+            <span class="stat-label">Tools</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">6</span>
+            <span class="stat-label">Topics</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">100%</span>
+            <span class="stat-label">Free</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">0</span>
+            <span class="stat-label">Ads</span>
+          </div>
+        </div>
+      </div>
+      <div class="pi-stage">
+        <div class="orbit orbit-2">
+          <div class="orbit-item c1">y=mx+b</div>
+          <div class="orbit-item c2">π r²</div>
+          <div class="orbit-item c3">∠ABC</div>
+          <div class="orbit-item c4">Δy/Δx</div>
+        </div>
+        <div class="pi-mascot">
+          <div class="pi-body">
+            <div class="pi-antenna"></div>
+            <div class="pi-eye left"></div>
+            <div class="pi-eye right"></div>
+            <div class="pi-smile"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRY ZONE -->
+  <section class="try-zone" id="try">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker">// try before you sign up</div>
+        <h2 class="section-title">Play with real math — right here.</h2>
+        <p class="section-sub">
+          Three tiny demos. Drag, slide, explore. No signup needed. When you're hooked, we'll save your progress.
+        </p>
+      </div>
+      <div class="try-grid">
+        <!-- Pizza ratio demo -->
+        <div class="try-card">
+          <div class="demo-box pizza-demo">
+            <div class="pizza-visual" id="pizzaVisual">🍕🧀</div>
+            <input type="range" min="1" max="8" value="2" class="pizza-slider" id="pizzaSlider" oninput="updatePizza()">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--yellow);">
+              <span id="pizzaText">2 slices · 1 cheese</span>
+            </div>
+          </div>
+          <h3>Keep the Ratio</h3>
+          <p>Slide to scale the pizza — cheese always keeps up. That's proportion.</p>
+          <a href="https://raaziaali.github.io/math-interactives/MeatLoversPizza.html" class="try-cta">Open full tool →</a>
+        </div>
+
+        <!-- Triangle demo -->
+        <div class="try-card">
+          <div class="demo-box triangle-demo">
+            <svg viewBox="0 0 280 160">
+              <polygon class="tri-line" points="140,30 50,130 230,130" id="triPoly"/>
+              <text x="140" y="55" text-anchor="middle">60°</text>
+              <text x="75" y="125" text-anchor="middle">60°</text>
+              <text x="205" y="125" text-anchor="middle">60°</text>
+              <text x="140" y="155" text-anchor="middle" style="fill: var(--cyan); font-size: 12px;">sum = 180°</text>
+            </svg>
+          </div>
+          <h3>Triangle Angle Sum</h3>
+          <p>No matter the shape, three angles always add to 180°. Always.</p>
+          <a href="https://raaziaali.github.io/math-interactives/AngleSum.html" class="try-cta">Open full tool →</a>
+        </div>
+
+        <!-- Graph demo -->
+        <div class="try-card">
+          <div class="demo-box graph-demo">
+            <svg viewBox="0 0 280 160">
+              <line class="grid-line" x1="70" y1="20" x2="70" y2="140"/>
+              <line class="grid-line" x1="140" y1="20" x2="140" y2="140"/>
+              <line class="grid-line" x1="210" y1="20" x2="210" y2="140"/>
+              <line class="grid-line" x1="20" y1="50" x2="260" y2="50"/>
+              <line class="grid-line" x1="20" y1="110" x2="260" y2="110"/>
+              <line class="axis" x1="20" y1="80" x2="260" y2="80"/>
+              <line class="axis" x1="140" y1="20" x2="140" y2="140"/>
+              <path class="line-path" id="linePath" d="M 20 140 L 260 20"/>
+            </svg>
+          </div>
+          <h3>Graph a Line</h3>
+          <p>Watch y = mx + b come alive. Slope and intercept, visualized.</p>
+          <a href="https://raaziaali.github.io/math-interactives/SimultaneousEquations.html" class="try-cta">Open full tool →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THREE PATHS -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker">// pick your path</div>
+        <h2 class="section-title">Who are you?</h2>
+        <p class="section-sub">Different needs, different homepages. Start where you belong.</p>
+      </div>
+      <div class="paths-grid">
+        <a href="#tools" class="path-card path-student">
+          <div class="path-icon">🎮</div>
+          <h3>I'm a Student</h3>
+          <p>Level up through math. Earn XP, beat challenges, climb the leaderboard. It's learning, but it doesn't feel like it.</p>
+          <span class="arrow">Start playing →</span>
+        </a>
+        <a href="#parents" class="path-card path-parent">
+          <div class="path-icon">👨‍👩‍👧</div>
+          <h3>I'm a Parent</h3>
+          <p>See what your child is learning, aligned to Common Core. Zero ads, zero data selling, zero cost. Built by a real teacher.</p>
+          <span class="arrow">Learn more →</span>
+        </a>
+        <a href="#teachers" class="path-card path-teacher">
+          <div class="path-icon">👩‍🏫</div>
+          <h3>I'm a Teacher</h3>
+          <p>Live classroom dashboards, XP systems, instant polls, and 22+ ready-to-use tools. Works with Google Classroom.</p>
+          <span class="arrow">Explore tools →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOOLS SECTION -->
+  <section class="tools-section" id="tools">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker">// the full arsenal</div>
+        <h2 class="section-title">Every tool. One place.</h2>
+        <p class="section-sub">22+ interactive tools across 6 topics. Click any card to launch.</p>
+      </div>
+
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="mathspace">🚀 MathSpace</button>
+        <button class="filter-btn" data-filter="algebra">📈 Algebra</button>
+        <button class="filter-btn" data-filter="geometry">📐 Geometry</button>
+        <button class="filter-btn" data-filter="ratios">🍕 Ratios</button>
+        <button class="filter-btn" data-filter="stats">📊 Statistics</button>
+        <button class="filter-btn" data-filter="teacher">👩‍🏫 Teacher</button>
+      </div>
+
+      <div class="tools-grid" id="toolsGrid">
+        <!-- Tools will be injected here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- PARENT TRUST SECTION -->
+  <section id="parents">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker">// for parents</div>
+        <h2 class="section-title">Built with your family in mind.</h2>
+        <p class="section-sub">
+          Your child's time and privacy matter. Here's how we respect both.
+        </p>
+      </div>
+      <div class="trust-grid">
+        <div class="trust-item">
+          <div class="trust-icon">🎯</div>
+          <h4>Common Core aligned</h4>
+          <p>Every tool is mapped to 7.EE, 7.RP, 7.SP, 8.EE, 8.G, or 8.F standards.</p>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">🚫</div>
+          <h4>Zero ads, ever</h4>
+          <p>No banners, no popups, no distractions. Just learning.</p>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">🔒</div>
+          <h4>Privacy-first</h4>
+          <p>We don't sell data. First names only. No tracking pixels.</p>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">👩‍🏫</div>
+          <h4>Made by an educator</h4>
+          <p>Built classroom-by-classroom by a practicing middle school math teacher.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section style="text-align: center; padding-bottom: 8rem;">
+    <div class="container">
+      <h2 class="section-title">Ready to make math click?</h2>
+      <p class="section-sub" style="margin-bottom: 2rem;">22+ tools. Free forever. Start with one.</p>
+      <a href="#tools" class="btn-primary">🚀 Pick your first tool</a>
+    </div>
+  </section>
+</main>
+
+<!-- Save progress banner -->
+<div class="save-banner" id="saveBanner">
+  <button class="save-close" onclick="hideSaveBanner()">×</button>
+  <h4>🎉 Nice work!</h4>
+  <p>Want to save your XP, streaks, and progress? Create a free account in 10 seconds.</p>
+  <div class="save-banner-btns">
+    <button class="save-yes" onclick="signupFlow()">Save my progress</button>
+    <button class="save-no" onclick="hideSaveBanner()">Maybe later</button>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo">
+        <div class="logo-mark"></div>
+        <span>Classroom of the Future</span>
+      </div>
+      <p>Interactive math learning for Grades 7 &amp; 8. Built by Raazia Ali. Free forever, no ads.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Students</h5>
+      <a href="https://raaziaali.github.io/mathspace.html">MathSpace G8</a>
+      <a href="https://raaziaali.github.io/grade7.html">MathSpace G7</a>
+      <a href="https://raaziaali.github.io/Algebra-1/mathquest.html">MathQuest RPG</a>
+      <a href="#tools">All tools</a>
+    </div>
+    <div class="footer-col">
+      <h5>Resources</h5>
+      <a href="#parents">For Parents</a>
+      <a href="#teachers">For Teachers</a>
+      <a href="https://raaziaali.github.io/privacy.html">Privacy</a>
+    </div>
+    <div class="footer-col">
+      <h5>Connect</h5>
+      <a href="https://github.com/raaziaAli">GitHub</a>
+      <a href="https://chromewebstore.google.com/search/MathSpace%20Grade%208%20Classroom">Chrome Extension</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2026 Classroom of the Future · Made with ❤️ by Raazia Ali
+  </div>
+</footer>
+
+<script>
+// ============================
+// TOOLS DATA
+// ============================
+const tools = [
+  { emoji: '📐', tag: 'Live', tagClass: '', title: 'MathSpace — Grade 8', desc: 'Full platform: equations, slope, graphing, simultaneous equations. XP system + live teacher dashboard.', meta: 'Grade 8 · 8.EE', url: 'https://raaziaali.github.io/mathspace.html', cat: 'mathspace' },
+  { emoji: '7️⃣', tag: 'New', tagClass: 'new', title: 'MathSpace — Grade 7', desc: 'Combining like terms, expanding expressions, multi-step problems, px+q=r, inequalities.', meta: 'Grade 7 · 7.EE', url: 'https://raaziaali.github.io/grade7.html', cat: 'mathspace' },
+  { emoji: '📈', tag: 'Live', tagClass: '', title: 'Functions & Their Graphs', desc: '10 investigation modules: linear, quadratic, exponential, absolute value, piecewise. With quizzes.', meta: 'Algebra 1 · F-IF · F-BF', url: 'https://raaziaali.github.io/Algebra-1/functions-and-graphs.html', cat: 'algebra' },
+  { emoji: '🚀', tag: 'Live', tagClass: '', title: 'Function Explorers — M3', desc: 'Deep-space review across 5 zones. 12 missions with hints and AI personal report.', meta: 'Algebra 1 · 115 XP', url: 'https://raaziaali.github.io/Algebra-1/m3-review.html', cat: 'algebra' },
+  { emoji: '⚔️', tag: 'Live', tagClass: '', title: 'MathQuest RPG', desc: 'RPG-style maths adventure. Earn XP, level up, compete on the live class leaderboard.', meta: 'Algebra 1 · 4 topics', url: 'https://raaziaali.github.io/Algebra-1/mathquest.html', cat: 'algebra' },
+  { emoji: '🔌', tag: 'Extension', tagClass: 'extension', title: 'MathSpace Chrome Extension', desc: 'Classroom toolbar for any webpage. Whiteboard, polls, raise-hand, class chat, teacher dashboard.', meta: 'Chrome · Google Classroom', url: 'https://chromewebstore.google.com/search/MathSpace%20Grade%208%20Classroom', cat: 'mathspace' },
+  { emoji: '📈', tag: 'Live', tagClass: '', title: 'Simultaneous Equations', desc: 'Enter two equations in standard form and watch both lines plot. See where they intersect.', meta: 'Grade 8 · 8.EE.C.8', url: 'https://raaziaali.github.io/math-interactives/SimultaneousEquations.html', cat: 'algebra' },
+  { emoji: '🔧', tag: 'Live', tagClass: '', title: 'Solving Equations', desc: 'Step-by-step visual guide. Builds understanding of inverse operations and the balance model.', meta: 'Grade 7–8 · Equations', url: 'https://raaziaali.github.io/math-interactives/SolvingEquations.html', cat: 'algebra' },
+  { emoji: '📝', tag: 'Live', tagClass: '', title: 'Translating Words to Equations', desc: 'Bridges word problems and algebra. Match verbal descriptions to their algebraic form.', meta: 'Grade 7–8 · Word Problems', url: 'https://raaziaali.github.io/math-interactives/TranslatingWords-Equations.html', cat: 'algebra' },
+  { emoji: '🔢', tag: 'Live', tagClass: '', title: 'Scientific Notation — Drag & Drop', desc: 'Match multiplication steps to their correct descriptions. Superscripts displayed clearly.', meta: 'Grade 8 · 8.EE.A.3–4', url: 'https://raaziaali.github.io/math-interactives/MultiplyingNumbersinSN.html', cat: 'algebra' },
+  { emoji: '🔬', tag: 'Live', tagClass: '', title: 'SN — Drag & Drop Exercise', desc: 'Match each step in a scientific notation calculation to its correct description.', meta: 'Grade 8 · 8.EE', url: 'https://raaziaali.github.io/math-interactives/SN-Exercise.html', cat: 'algebra' },
+  { emoji: '📦', tag: 'Live', tagClass: '', title: 'Volume Calculator — 3D Canvas', desc: 'Interactive 3D visualisation. See how changing length, width, and height affects volume.', meta: 'Grade 7–8 · Geometry', url: 'https://raaziaali.github.io/math-interactives/Volume_Calculator.html', cat: 'geometry' },
+  { emoji: '💯', tag: 'Live', tagClass: '', title: 'Percent, Fraction & Decimal', desc: 'Visual explorer showing the relationship between percents, fractions, and decimals.', meta: 'Grade 6–7 · Number Sense', url: 'https://raaziaali.github.io/math-interactives/Percent-fraction-decimal.html', cat: 'ratios' },
+  { emoji: '%', tag: 'Live', tagClass: '', title: 'Percents Interactive', desc: 'Hands-on percent exploration. Find percent of a quantity, increase/decrease, real-world problems.', meta: 'Grade 6–7 · Percents', url: 'https://raaziaali.github.io/math-interactives/Percents.html', cat: 'ratios' },
+  { emoji: '½', tag: 'Live', tagClass: '', title: 'Fractions — Conceptual', desc: 'Deep conceptual understanding using visual models. Equivalence, comparison, operations.', meta: 'Grade 6–7 · Fractions', url: 'https://raaziaali.github.io/math-interactives/Fractions-ConceptualUnderstanding.html', cat: 'ratios' },
+  { emoji: '🍕', tag: 'Live', tagClass: '', title: 'Meat Lovers Pizza', desc: 'Use sliders to maintain the correct ratio of toppings while scaling the recipe.', meta: 'Grade 7 · 7.RP', url: 'https://raaziaali.github.io/math-interactives/MeatLoversPizza.html', cat: 'ratios' },
+  { emoji: '🧀', tag: 'Live', tagClass: '', title: 'Mac & Cheese Ratios', desc: 'Maintain the 4:1:5 noodle-cheese-pan ratio using simple interactive sliders.', meta: 'Grade 7 · 7.RP', url: 'https://raaziaali.github.io/math-interactives/Noodle-Cheese-Pan.html', cat: 'ratios' },
+  { emoji: '📋', tag: 'Live', tagClass: '', title: 'Interactive Recipe Worksheet', desc: 'Scale a recipe up or down while keeping all ingredient ratios correct.', meta: 'Grade 7 · 7.RP', url: 'https://raaziaali.github.io/math-interactives/Pizza.html', cat: 'ratios' },
+  { emoji: '🚄', tag: 'Live', tagClass: '', title: 'Bullet vs Regular Train', desc: 'Physics-meets-maths simulation comparing speed and air resistance between train types.', meta: 'Grade 7–8 · STEM', url: 'https://raaziaali.github.io/math-interactives/Train-simulation4.html', cat: 'ratios' },
+  { emoji: '🔄', tag: 'Live', tagClass: '', title: 'Investigate Transformations', desc: 'Explore rotations, reflections, translations on a coordinate grid.', meta: 'Grade 8 · 8.G', url: 'https://raaziaali.github.io/Congruence-and-Similarity/Investigate-Transformations.html', cat: 'geometry' },
+  { emoji: '↔️', tag: 'Live', tagClass: '', title: 'Sequencing Transformations', desc: 'Apply multiple transformations in sequence and discover how order matters.', meta: 'Grade 8 · 8.G.A', url: 'https://raaziaali.github.io/Congruence-and-Similarity/Sequencing_Transformations.html', cat: 'geometry' },
+  { emoji: '🪞', tag: 'Live', tagClass: '', title: 'Transformation Explorer', desc: 'Visual deep-dive: reflections, rotations, translations with before/after comparison.', meta: 'Grade 8 · 8.G', url: 'https://raaziaali.github.io/Congruence-and-Similarity/Transformation-Visual.html', cat: 'geometry' },
+  { emoji: '📐', tag: 'Live', tagClass: '', title: 'Transversal & Angles', desc: 'Parallel lines cut by a transversal. See alternate, corresponding, co-interior pairs light up.', meta: 'Grade 8 · 8.G', url: 'https://raaziaali.github.io/math-interactives/Angle-Rellationships.html', cat: 'geometry' },
+  { emoji: '△', tag: 'Live', tagClass: '', title: 'Triangle Angle Sum', desc: 'Drag vertices and watch the three angles always sum to 180°. Visual proof.', meta: 'Grade 7–8 · Geometry', url: 'https://raaziaali.github.io/math-interactives/AngleSum.html', cat: 'geometry' },
+  { emoji: 'σ', tag: 'Live', tagClass: '', title: 'Standard Deviation', desc: 'Adjust data sets and immediately see how spread affects the standard deviation value.', meta: 'Grade 7–8 · 7.SP', url: 'https://raaziaali.github.io/Descriptive-Statistics/Standard%20Deviation%20and%20Variability.html', cat: 'stats' },
+  { emoji: '📦', tag: 'Live', tagClass: '', title: 'SD & Box Plots', desc: 'Connects standard deviation to box plot visualisation with five-number summary.', meta: 'Grade 7–8 · Box Plots', url: 'https://raaziaali.github.io/Descriptive-Statistics/Standard%20Deviations%20and%20Box%20Plots.html', cat: 'stats' },
+  { emoji: '👁', tag: 'Live', tagClass: '', title: 'SD & Box Plot — Quick Look', desc: 'Rapid visual reference tool. Perfect for quick revision before a test.', meta: 'Grade 7–8 · Revision', url: 'https://raaziaali.github.io/Descriptive-Statistics/SD-Boxplot-Quicklook.html', cat: 'stats' },
+  { emoji: '📊', tag: 'Live', tagClass: '', title: 'SD & Histogram — Quick Look', desc: 'Standard deviation shown alongside a histogram. Connect distribution shape with spread.', meta: 'Grade 7–8 · Histograms', url: 'https://raaziaali.github.io/Descriptive-Statistics/SD-Histogram-Quicklookhtml.html', cat: 'stats' },
+  { emoji: '↕️', tag: 'Live', tagClass: '', title: 'IQR & Variability', desc: 'Interquartile range as a measure of variability for skewed distributions.', meta: 'Grade 7–8 · 7.SP.B.4', url: 'https://raaziaali.github.io/Descriptive-Statistics/IQR-Variabilityy-NonSymmetricData.html', cat: 'stats' },
+  { emoji: '🏫', tag: 'New', tagClass: 'new', title: 'Classroom Layout Generator', desc: 'Paste student names, set tables, generate a randomised seating plan. Export as PNG.', meta: 'Teacher · Seating', url: 'https://raaziaali.github.io/Dynamic-Classroom-Layout-Generator/classroom-layout.html', cat: 'teacher' },
+  { emoji: '🧬', tag: 'Live', tagClass: '', title: 'DNA Inventory Tool', desc: 'Digital classroom inventory and tracking tool for teachers.', meta: 'Teacher · Management', url: 'https://raaziaali.github.io/Self-Regulation-Teacher-Tools/DNA-Inventory.html', cat: 'teacher' },
+  { emoji: '⭐', tag: 'Live', tagClass: '', title: 'Effort Tracker', desc: 'Track and record student effort levels across the class.', meta: 'Teacher · Wellbeing', url: 'https://raaziaali.github.io/Self-Regulation-Teacher-Tools/Effort-Tracker.html', cat: 'teacher' },
+  { emoji: '💚', tag: 'Live', tagClass: '', title: 'Hope Survey', desc: 'Student wellbeing check-in tool based on hope theory research.', meta: 'Teacher · SEL', url: 'https://raaziaali.github.io/Self-Regulation-Teacher-Tools/Hope-Survey.html', cat: 'teacher' }
+];
+
+// Render tools
+function renderTools(filter = 'all') {
+  const grid = document.getElementById('toolsGrid');
+  const filtered = filter === 'all' ? tools : tools.filter(t => t.cat === filter);
+  grid.innerHTML = filtered.map(t => `
+    <a href="${t.url}" class="tool-card">
+      <div class="tool-emoji">${t.emoji}</div>
+      <span class="tool-tag ${t.tagClass}">${t.tag}</span>
+      <h4>${t.title}</h4>
+      <p>${t.desc}</p>
+      <div class="tool-meta">${t.meta}</div>
+    </a>
+  `).join('');
+}
+
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTools(btn.dataset.filter);
+  });
+});
+
+// Pizza demo
+function updatePizza() {
+  const val = parseInt(document.getElementById('pizzaSlider').value);
+  const cheese = Math.max(1, Math.round(val / 2));
+  document.getElementById('pizzaVisual').textContent = '🍕'.repeat(val) + '🧀'.repeat(cheese);
+  document.getElementById('pizzaText').textContent = `${val} slices · ${cheese} cheese`;
+}
+
+// Floating math symbols
+const symbols = ['π', 'Σ', '√', '∞', 'Δ', '∠', 'y=mx+b', 'x²', 'sin θ', 'cos θ', '½', '¾', '7.EE', '8.G', 'f(x)'];
+const floatContainer = document.getElementById('floatSymbols');
+for (let i = 0; i < 14; i++) {
+  const span = document.createElement('span');
+  span.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+  span.style.left = Math.random() * 100 + '%';
+  span.style.animationDelay = Math.random() * 20 + 's';
+  span.style.animationDuration = (15 + Math.random() * 15) + 's';
+  span.style.fontSize = (1 + Math.random() * 1.5) + 'rem';
+  floatContainer.appendChild(span);
+}
+
+// Save banner logic — show after 45s OR after clicking a try-tool
+let saveBannerShown = false;
+function showSaveBanner(e) {
+  if (e) e.preventDefault();
+  if (saveBannerShown) return;
+  document.getElementById('saveBanner').classList.add('show');
+  saveBannerShown = true;
+}
+function hideSaveBanner() {
+  document.getElementById('saveBanner').classList.remove('show');
+}
+function signupFlow() {
+  alert('Signup coming soon! We\'re building this next. For now, bookmark the site and your teacher can create your account.');
+  hideSaveBanner();
+}
+
+// Show save banner after interacting with a try-demo
+document.querySelectorAll('.try-card').forEach(card => {
+  card.addEventListener('click', () => {
+    setTimeout(() => showSaveBanner(), 1500);
+  });
+});
+document.getElementById('pizzaSlider').addEventListener('change', () => {
+  setTimeout(() => showSaveBanner(), 2500);
+});
+
+// Fade-in on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('section').forEach(s => {
+  s.classList.add('fade-in');
+  observer.observe(s);
+});
+
+// Initial render
+renderTools('all');
+</script>
+</body>
+</html>
