@@ -78,7 +78,9 @@ nav { position: fixed; top: 0; left: 0; right: 0; padding: 1.25rem 2rem;
   border-bottom: 1px solid var(--border); z-index: 100;
   display: flex; align-items: center; justify-content: space-between; }
 .logo { display: flex; align-items: center; gap: 0.75rem;
-  font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 1.05rem; letter-spacing: -0.02em; }
+  font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 1.05rem; letter-spacing: -0.02em;
+  color: inherit; text-decoration: none; cursor: pointer; transition: opacity 0.2s; }
+.logo:hover { opacity: 0.85; }
 .logo-mark { width: 36px; height: 36px; border-radius: 50%;
   background: radial-gradient(circle at 30% 30%, var(--cyan), #0088aa);
   position: relative; box-shadow: var(--glow-cyan); animation: pulse 3s ease-in-out infinite; flex-shrink: 0; }
@@ -462,10 +464,10 @@ footer { padding: 3rem 2rem 2rem; border-top: 1px solid var(--border); backgroun
 <div class="starfield"></div>
 
 <nav>
-  <div class="logo">
+  <a href="#" class="logo" aria-label="Back to top of Mrs. Ali's Classroom">
     <div class="logo-mark"></div>
     <span>Mrs. Ali's Classroom</span>
-  </div>
+  </a>
   <div class="nav-links">
     <a href="#try">Try</a>
     <a href="#games">Games</a>
@@ -655,10 +657,10 @@ footer { padding: 3rem 2rem 2rem; border-top: 1px solid var(--border); backgroun
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <div class="logo">
+      <a href="#" class="logo" aria-label="Back to top">
         <div class="logo-mark"></div>
         <span>Mrs. Ali's Classroom</span>
-      </div>
+      </a>
       <p>Interactive middle school math learning. Built by Raazia Ali, a practicing middle school math teacher. Free forever, no ads.</p>
     </div>
     <div class="footer-col">
