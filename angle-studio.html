@@ -1,0 +1,1184 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Angle Studio — Geometry M1, Topic B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA8C0B; --corr:#0284C7; --alt:#059669; --same:#DB2777;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top}
+  table.facts .ab{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  table.facts .st{color:#DDDDF2}
+  table.facts .st i{display:block;color:var(--dim);font-style:normal;font-size:13px;margin-top:4px}
+  .cathead{padding-top:18px!important;padding-bottom:6px!important;font-family:var(--display);font-weight:600;
+    font-size:13px;letter-spacing:.02em;color:var(--yellow);border-bottom:none!important}
+  .chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-right:9px}
+  .chip.assume{background:rgba(255,217,61,.18);color:var(--yellow)}
+  .chip.proved{background:rgba(94,234,212,.16);color:var(--mint)}
+  ol.chain{margin:0;padding:6px 20px 18px 38px;font-size:15px;color:#CFCFEA}
+  ol.chain li{padding:8px 0} ol.chain li::marker{color:var(--accent);font-weight:700}
+  ol.chain li b{color:#fff}
+
+  .steps{width:100%;border-collapse:collapse;font-size:15px}
+  .steps td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:middle}
+  .steps .stmt{font-family:var(--mono);font-size:14px;font-weight:600;color:#fff;white-space:nowrap}
+  .steps .why{width:56%}
+  .steps tr.right .stmt{color:var(--mint)}
+  .steps tr.right select{border-color:rgba(94,234,212,.6)}
+  .steps tr.wrong select{border-color:var(--coral)}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.8;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.4;fill:none;stroke-dasharray:9 6}
+  .wedge{stroke-width:2.4;fill-opacity:.17;cursor:pointer}
+  .wedge.flat{cursor:default}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Angle <em>Studio</em></h1>
+    <div class="eyebrow">Geometry · Module 1 · Topic B · Lessons 6–11</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+  <div class="stage">
+    <section class="board">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Angle figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every figure is live and every measure is computed from the drawing — drag a point and the facts follow. Wording of reasons matches Eureka Math / EngageNY Geometry M1.</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+
+const D2R=Math.PI/180;
+const norm=d=>((d%360)+360)%360;
+const PT=(c,r,deg)=>[c[0]+r*Math.cos(deg*D2R), c[1]-r*Math.sin(deg*D2R)];
+const angOf=(c,p)=>norm(Math.atan2(-(p[1]-c[1]), p[0]-c[0])/D2R);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const r1=v=>Math.round(v*10)/10;
+const fmt=v=>{const s=r1(v); return (Math.abs(s-Math.round(s))<0.05? String(Math.round(s)) : s.toFixed(1));};
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+function bg(){
+  const d=E("defs");
+  d.innerHTML='<pattern id="g" width="32" height="32" patternUnits="userSpaceOnUse">'+
+    '<path d="M32 0H0V32" fill="none" stroke="var(--grid)" stroke-width="1" opacity="0.75"/></pattern>'+
+    '<clipPath id="fr"><rect width="'+VW+'" height="'+VH+'"/></clipPath>';
+  cv.appendChild(d);
+  cv.appendChild(E("rect",{width:VW,height:VH,fill:"url(#g)"}));
+  const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
+}
+// full line through c at angle a
+function fullLine(g,c,a,cls){
+  const p=PT(c,2000,a), q=PT(c,2000,a+180);
+  g.appendChild(E("line",{x1:p[0],y1:p[1],x2:q[0],y2:q[1],class:cls||"line"}));
+}
+function ray(g,c,a,len,cls){
+  const p=PT(c,len,a);
+  g.appendChild(E("line",{x1:c[0],y1:c[1],x2:p[0],y2:p[1],class:cls||"line"}));
+}
+function seg(g,p,q,cls){ g.appendChild(E("line",{x1:p[0],y1:p[1],x2:q[0],y2:q[1],class:cls||"line"})); }
+function dot(g,p){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:5,class:"dot"})); }
+function txt(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"mk","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("fill",color);
+  t.textContent=s; g.appendChild(t); return t;
+}
+function grab(g,p,id){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:16,class:"grab","data-drag":id})); dot(g,p); }
+// wedge from a1 counter-clockwise to a2
+function wedge(g,c,a1,a2,r,color,opts){
+  opts=opts||{};
+  const s=PT(c,r,a1), e=PT(c,r,a2), sw=norm(a2-a1);
+  const d="M "+c[0]+" "+c[1]+" L "+s[0]+" "+s[1]+" A "+r+" "+r+" 0 "+(sw>180?1:0)+" 0 "+e[0]+" "+e[1]+" Z";
+  const p=E("path",{d:d,class:"wedge"+(opts.flat?" flat":""),stroke:color,fill:color});
+  if(opts.dim){p.setAttribute("fill-opacity",.05);p.setAttribute("opacity",.5);}
+  if(opts.id)p.setAttribute("data-ang",opts.id);
+  g.appendChild(p);
+  if(opts.label!==undefined&&opts.label!==null){
+    const lp=PT(c,r+26,a1+sw/2);
+    txt(g,lp,opts.label,opts.labelClass||"num",color);
+  }
+  return p;
+}
+function rightMark(g,c,a,size){
+  size=size||13;
+  const p1=PT(c,size,a), p3=PT(c,size,a+90);
+  const p2=[p1[0]+(p3[0]-c[0]), p1[1]+(p3[1]-c[1])];
+  g.appendChild(E("polyline",{points:[p1,p2,p3].map(p=>p.join(",")).join(" "),class:"rt"}));
+}
+// classify the 4 regions made by a line (angle L) and a transversal (angle T) at a point
+function regions(L,T){
+  const bounds=[norm(L),norm(L+180),norm(T),norm(T+180)].sort((a,b)=>a-b);
+  const out={};
+  const u=[Math.cos(T*D2R),Math.sin(T*D2R)];      // transversal, math coords
+  const v=[Math.cos(L*D2R),Math.sin(L*D2R)];      // line, math coords
+  for(let i=0;i<4;i++){
+    const a1=bounds[i], a2=(i===3? bounds[0]+360 : bounds[i+1]);
+    const m=(a1+a2)/2, p=[Math.cos(m*D2R),Math.sin(m*D2R)];
+    const leftOfT = (u[0]*p[1]-u[1]*p[0])>0;      // left of transversal
+    const above   = (v[0]*p[1]-v[1]*p[0])>0;      // above the line
+    out[(above?"n":"s")+(leftOfT?"w":"e")]=[a1,a2];
+  }
+  return out;
+}
+const spanOf=r=>norm(r[1]-r[0]);
+
+/* ══════════════════════ the fact bank ══════════════════════ */
+const FACTS=[
+ {id:"given", cat:"Setup", ab:"", st:"Given"},
+ {id:"constr",cat:"Setup", ab:"", st:"Construction"},
+ {id:"vert",  cat:"Angles at a point", ab:"vert. ∠s", st:"Vertical angles are equal in measure.", short:"Vertical angles"},
+ {id:"add",   cat:"Angles at a point", ab:"∠s add",  st:"Angle addition postulate", short:"Angle addition"},
+ {id:"line",  cat:"Angles at a point", ab:"∠s on a line", st:"Linear pairs form supplementary angles.", short:"Linear pair"},
+ {id:"lineN", cat:"Angles at a point", ab:"∠s on a line", st:"Consecutive adjacent angles on a line sum to 180°.", short:"Angles on a line"},
+ {id:"point", cat:"Angles at a point", ab:"∠s at a point", st:"Angles at a point sum to 360°.", short:"Angles at a point"},
+ {id:"supDef",cat:"Angles at a point", ab:"", st:"Definition of supplementary angles"},
+ {id:"sum",   cat:"Triangles", ab:"∠ sum of △", st:"The sum of the angle measures in a triangle is 180°.", short:"Triangle sum"},
+ {id:"rtSum", cat:"Triangles", ab:"∠ sum of rt. △", st:"Acute angles in a right triangle sum to 90°."},
+ {id:"ext",   cat:"Triangles", ab:"ext. ∠ of △", st:"The exterior angle of a triangle equals the sum of the two opposite interior angles.", short:"Exterior angle"},
+ {id:"isos",  cat:"Triangles", ab:"base ∠s of isos. △", st:"Base angles of an isosceles triangle are equal in measure."},
+ {id:"equil", cat:"Triangles", ab:"equilat. △", st:"All angles in an equilateral triangle have equal measure."},
+ {id:"corr",  cat:"Parallel lines", ab:"corr. ∠s", st:"If parallel lines are cut by a transversal, then corresponding angles are equal in measure.", short:"Corresponding angles"},
+ {id:"alt",   cat:"Parallel lines", ab:"alt. ∠s",  st:"If parallel lines are cut by a transversal, then alternate interior angles are equal in measure.", short:"Alternate interior angles"},
+ {id:"int",   cat:"Parallel lines", ab:"int. ∠s",  st:"If parallel lines are cut by a transversal, then interior angles on the same side are supplementary.", short:"Same-side interior angles"},
+ {id:"corrC", cat:"Converses (proving lines parallel)", ab:"corr. ∠s converse", st:"If two lines are cut by a transversal such that a pair of corresponding angles are equal in measure, then the lines are parallel."},
+ {id:"altC",  cat:"Converses (proving lines parallel)", ab:"alt. ∠s converse",  st:"If two lines are cut by a transversal such that a pair of alternate interior angles are equal in measure, then the lines are parallel."},
+ {id:"intC",  cat:"Converses (proving lines parallel)", ab:"int. ∠s converse",  st:"If two lines are cut by a transversal such that a pair of interior angles on the same side are supplementary, then the lines are parallel."},
+ {id:"perp90",cat:"Perpendicular", ab:"", st:"Perpendicular lines form 90° angles."},
+ {id:"perpDef",cat:"Perpendicular",ab:"", st:"If two lines intersect to form a right angle, then the two lines are perpendicular."},
+ {id:"refl",  cat:"Properties of equality", ab:"", st:"Reflexive property"},
+ {id:"trans", cat:"Properties of equality", ab:"", st:"Transitive property"},
+ {id:"symm",  cat:"Properties of equality", ab:"", st:"Symmetric property"},
+ {id:"addP",  cat:"Properties of equality", ab:"", st:"Addition property of equality"},
+ {id:"subP",  cat:"Properties of equality", ab:"", st:"Subtraction property of equality"},
+ {id:"mulP",  cat:"Properties of equality", ab:"", st:"Multiplication property of equality"},
+ {id:"divP",  cat:"Properties of equality", ab:"", st:"Division property of equality"},
+ {id:"subst", cat:"Properties of equality", ab:"", st:"Substitution property of equality"},
+ {id:"part",  cat:"Properties of equality", ab:"", st:"Partition property (a whole equals the sum of its parts)"}
+];
+const FACT={}; FACTS.forEach(f=>FACT[f.id]=f);
+const SOLVE_REASONS=["vert","line","lineN","point","sum","ext","corr","alt","int","isos","add"];
+
+function reasonSelect(ids,value,cls){
+  const s=document.createElement("select"); if(cls)s.className=cls;
+  const o0=document.createElement("option"); o0.value=""; o0.textContent="— choose the reason —"; s.appendChild(o0);
+  const cats=[];
+  ids.forEach(id=>{const f=FACT[id]; if(cats.indexOf(f.cat)<0)cats.push(f.cat);});
+  cats.forEach(c=>{
+    const g=document.createElement("optgroup"); g.label=c;
+    ids.forEach(id=>{const f=FACT[id]; if(f.cat!==c)return;
+      const o=document.createElement("option"); o.value=id; o.textContent=f.st; g.appendChild(o);});
+    s.appendChild(g);
+  });
+  if(value)s.value=value;
+  return s;
+}
+
+/* ══════════════════════ shared figure pieces ══════════════════════ */
+// rays from one point; spec.rays = [{a, full}], spec.marks = [{from,to,text,color,r}]
+function drawPointFigure(g,c,spec){
+  (spec.rays||[]).forEach(rr=>{ rr.full? fullLine(g,c,rr.a) : ray(g,c,rr.a,rr.len||190); });
+  (spec.marks||[]).forEach(m=>{
+    wedge(g,c,m.from,m.to,m.r||46,m.color||"var(--graphite)",{label:m.text,flat:true,labelClass:m.cls||"num"});
+  });
+  dot(g,c);
+}
+// two parallel lines + transversal, honest to theta
+function transversalFrame(g,opt){
+  const y1=opt.y1||140, y2=opt.y2||330, th=opt.theta, tilt=opt.tilt||0;
+  const Q=[opt.tx||350,(y1+y2)/2];
+  const t=[Math.cos(th*D2R),-Math.sin(th*D2R)];
+  const P1=[Q[0]+(Q[1]-y1)/Math.sin(th*D2R)*Math.cos(th*D2R), y1];
+  // second line: through (350,y2) with direction tilt
+  const L2p=[350,y2], d2=[Math.cos(tilt*D2R),-Math.sin(tilt*D2R)];
+  // intersect transversal (through P1 dir t) with line 2
+  const den=t[0]*d2[1]-t[1]*d2[0];
+  const w=[L2p[0]-P1[0],L2p[1]-P1[1]];
+  const s=(w[0]*d2[1]-w[1]*d2[0])/den;
+  const P2=[P1[0]+t[0]*s, P1[1]+t[1]*s];
+  fullLine(g,[350,y1],0); fullLine(g,L2p,tilt); fullLine(g,P1,th);
+  return {P1:P1,P2:P2,th:th,tilt:tilt,y1:y1,y2:y2};
+}
+// triangle from base BC and interior angles at B and C
+function triangleFromAngles(B,C,angB,angC){
+  const base=Math.atan2(-(C[1]-B[1]),C[0]-B[0])/D2R;
+  const dB=base+angB, dC=base+180-angC;
+  const u=[Math.cos(dB*D2R),-Math.sin(dB*D2R)], v=[Math.cos(dC*D2R),-Math.sin(dC*D2R)];
+  const den=u[0]*v[1]-u[1]*v[0], w=[C[0]-B[0],C[1]-B[1]];
+  const s=(w[0]*v[1]-w[1]*v[0])/den;
+  return [B[0]+u[0]*s, B[1]+u[1]*s];
+}
+// build a triangle with the given base angles, scaled to fit a box
+function fitTriangle(angB,angC,opt){
+  opt=opt||{};
+  const b0=[0,0], c0=[100,0];
+  const a0=triangleFromAngles(b0,c0,angB,angC);
+  const pts=[b0,c0,a0];
+  if(opt.ext)pts.push([c0[0]+34,0]);
+  const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+  const w=Math.max.apply(null,xs)-Math.min.apply(null,xs);
+  const h=Math.max.apply(null,ys)-Math.min.apply(null,ys);
+  const s=Math.min((opt.w||420)/w,(opt.h||250)/h);
+  const cx=(Math.max.apply(null,xs)+Math.min.apply(null,xs))/2;
+  const by=Math.max.apply(null,ys);
+  const ox=(opt.cx||350), oy=(opt.baseY||350);
+  const M=p=>[ox+(p[0]-cx)*s, oy+(p[1]-by)*s];
+  return {A:M(a0),B:M(b0),C:M(c0)};
+}
+function interiorAngle(V,P,Q){ // angle at V in triangle, returns [a1,a2] ccw and measure
+  const a=angOf(V,P), b=angOf(V,Q);
+  const d=norm(b-a);
+  return d<=180? {from:a,to:b,m:d} : {from:b,to:a,m:360-d};
+}
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null, dragHandler=null;
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag; if(!id)return;
+  dragId=id; cv.setPointerCapture(e.pointerId); e.preventDefault();
+});
+cv.addEventListener("pointermove",e=>{
+  if(!dragId||!dragHandler)return;
+  const r=cv.getBoundingClientRect();
+  dragHandler(dragId,[(e.clientX-r.left)*VW/r.width,(e.clientY-r.top)*VH/r.height]);
+});
+["pointerup","pointercancel"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+cv.addEventListener("click",e=>{
+  const a=e.target.dataset&&e.target.dataset.ang;
+  if(a&&window.__angClick)window.__angClick(a);
+});
+
+/* ══════════════════════ MODULE 1 · angles at a point ══════════════════════ */
+const M1={
+  tab:"Angles at a point", lesson:"Lesson 6", accent:"var(--yellow)",
+  title:()=>({line:"Consecutive adjacent angles on a line",
+              point:"Angles at a point",
+              vert:"Vertical angles"}[M1.s.mode]),
+  s:{mode:"line", line:[62,118], point:[35,110,205,290], vert:[0,58]},
+  bar(){
+    const seg=document.createElement("div"); seg.className="seg";
+    [["line","On a line"],["point","At a point"],["vert","Vertical"]].forEach(([k,lab])=>{
+      const b=document.createElement("button"); b.textContent=lab;
+      b.setAttribute("aria-pressed",M1.s.mode===k);
+      b.onclick=()=>{M1.s.mode=k;render();};
+      seg.appendChild(b);
+    });
+    bar.appendChild(seg);
+    const sp=document.createElement("span"); sp.className="spacer"; sp.textContent="Drag the amber points";
+    bar.appendChild(sp);
+  },
+  draw(){
+    const g=bg(), m=M1.s.mode;
+    if(m==="line"){
+      const c=[350,320], a=M1.s.line.slice().sort((x,y)=>x-y);
+      fullLine(g,c,0);
+      ray(g,c,a[0],185); ray(g,c,a[1],185);
+      const cols=["var(--lin)","var(--vert)","var(--corr)"], rr=[46,68,46];
+      const bnds=[0,a[0],a[1],180];
+      for(let i=0;i<3;i++) wedge(g,c,bnds[i],bnds[i+1],rr[i],cols[i],{label:fmt(bnds[i+1]-bnds[i])+"°",flat:true});
+      txt(g,[c[0]-215,c[1]-14],"A","mk"); txt(g,[c[0]+215,c[1]-14],"B","mk");
+      M1.s.line.forEach((x,i)=>grab(g,PT(c,185,x),String(i)));
+      dot(g,c); txt(g,[c[0]-4,c[1]+22],"O","mk");
+    } else if(m==="point"){
+      const c=[350,235], a=M1.s.point.slice().sort((x,y)=>x-y);
+      a.forEach(x=>ray(g,c,x,175));
+      const cols=["var(--lin)","var(--vert)","var(--corr)","var(--alt)"], rr=[44,64,44,64];
+      for(let i=0;i<4;i++){
+        const f=a[i], t=(i===3? a[0]+360 : a[i+1]);
+        wedge(g,c,f,t,rr[i],cols[i],{label:fmt(t-f)+"°",flat:true});
+      }
+      M1.s.point.forEach((x,i)=>grab(g,PT(c,175,x),String(i)));
+      dot(g,c);
+    } else {
+      const c=[350,235], t=M1.s.vert;
+      fullLine(g,c,t[0]); fullLine(g,c,t[1]);
+      const R=regions(t[0],t[1]);
+      // pair opposite regions by colour
+      wedge(g,c,R.ne[0],R.ne[1],56,"var(--vert)",{label:fmt(spanOf(R.ne))+"°",flat:true});
+      wedge(g,c,R.sw[0],R.sw[1],56,"var(--vert)",{label:fmt(spanOf(R.sw))+"°",flat:true});
+      wedge(g,c,R.nw[0],R.nw[1],56,"var(--alt)",{label:fmt(spanOf(R.nw))+"°",flat:true});
+      wedge(g,c,R.se[0],R.se[1],56,"var(--alt)",{label:fmt(spanOf(R.se))+"°",flat:true});
+      grab(g,PT(c,190,t[0]),"0"); grab(g,PT(c,190,t[1]),"1");
+      dot(g,c);
+    }
+  },
+  drag(id,p){
+    const m=M1.s.mode, i=+id;
+    if(m==="line"){
+      const c=[350,320]; let a=clamp(Math.round(angOf(c,p)),14,166);
+      const other=M1.s.line[1-i];
+      if(i===0)a=Math.min(a,other-20); else a=Math.max(a,other+20);
+      M1.s.line[i]=clamp(a,14,166);
+    } else if(m==="point"){
+      const c=[350,235]; const a=norm(Math.round(angOf(c,p)));
+      const arr=M1.s.point;
+      for(let j=0;j<4;j++){ if(j===i)continue;
+        const d=norm(a-arr[j]); if(d<18||d>342)return; }
+      arr[i]=a;
+    } else {
+      const c=[350,235]; let a=Math.round(angOf(c,p))%180; a=norm(a)%180;
+      const other=M1.s.vert[1-i];
+      if(Math.abs(a-other)<12||Math.abs(a-other)>168)return;
+      M1.s.vert[i]=a;
+    }
+    render();
+  },
+  panel(){
+    const m=M1.s.mode; let h="";
+    if(m==="line"){
+      const a=M1.s.line.slice().sort((x,y)=>x-y);
+      const p=[a[0],a[1]-a[0],180-a[1]].map(fmt);
+      h+=`<div class="panel"><h3>What the figure shows</h3><div class="pad">
+        <div class="eq">${p[0]}° + ${p[1]}° + ${p[2]}° = 180°
+        <small>${FACT.lineN.st}</small></div>
+        <p>The three angles sit side by side with no gaps and no overlaps, and the first and last rays together form the straight line <i>AB</i>. That is exactly the condition in the fact.</p>
+        <p><b>Push on it:</b> drag until one angle is 90°. The other two now sum to 90° — they are <span class="term">complementary</span>. Drag one ray until two angles are left: that pair is a <span class="term">linear pair</span>, and they are <span class="term">supplementary</span>.</p>
+      </div></div>`;
+      h+=`<div class="panel"><h3>Careful</h3><div class="pad"><p>Supplementary and complementary describe <b>measures only</b>. Two angles in different corners of the room can be supplementary. They do <b>not</b> have to be adjacent — but a linear pair always is.</p></div></div>`;
+    } else if(m==="point"){
+      const a=M1.s.point.slice().sort((x,y)=>x-y);
+      const p=[a[1]-a[0],a[2]-a[1],a[3]-a[2],360-(a[3]-a[0])].map(fmt);
+      h+=`<div class="panel"><h3>What the figure shows</h3><div class="pad">
+        <div class="eq">${p[0]}° + ${p[1]}° + ${p[2]}° + ${p[3]}° = 360°
+        <small>${FACT.point.st}</small></div>
+        <p>Four rays leave the same vertex and their interiors do not overlap, so the four angles fill the whole turn.</p>
+        <p><b>Push on it:</b> drag two rays until they line up into a straight line. The 360° splits into 180° + 180° — the "angles at a point" fact contains the "angles on a line" fact.</p>
+      </div></div>`;
+    } else {
+      const t=M1.s.vert, R=regions(t[0],t[1]);
+      const A=fmt(spanOf(R.ne)), B=fmt(spanOf(R.nw));
+      h+=`<div class="panel"><h3>What the figure shows</h3><div class="pad">
+        <div class="eq">${A}° = ${A}°   and   ${B}° = ${B}°
+        <small>${FACT.vert.st}</small></div>
+        <p>Two angles are <span class="term">vertical</span> when their sides form two pairs of opposite rays. Drag either line: the equality never breaks.</p>
+        <p><b>Why it is true</b> — and this is the proof you will write in Lesson 9:</p>
+        <div class="eq">${A}° + ${B}° = 180°   (linear pair)
+${B}° + ${A}° = 180°   (linear pair)
+∴ the two ${A}° angles are equal
+        <small>Both are what is left over from 180° after removing the same angle.</small></div>
+      </div></div>`;
+    }
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ MODULE 2 · transversals ══════════════════════ */
+const M2={
+  tab:"Transversals", lesson:"Lesson 7", accent:"var(--cyan)",
+  title:()=>"Two lines cut by a transversal",
+  s:{parallel:true, theta:62, tilt:0, sel:"c"},
+  bar(){
+    const l=document.createElement("label"); l.className="chk";
+    const c=document.createElement("input"); c.type="checkbox"; c.checked=M2.s.parallel;
+    c.onchange=()=>{M2.s.parallel=c.checked; if(c.checked)M2.s.tilt=0; else if(M2.s.tilt===0)M2.s.tilt=-13; render();};
+    l.appendChild(c); l.appendChild(document.createTextNode("Lines are parallel"));
+    bar.appendChild(l);
+    const b=document.createElement("button"); b.textContent="Reset";
+    b.onclick=()=>{M2.s.theta=62;M2.s.tilt=M2.s.parallel?0:-13;render();};
+    bar.appendChild(b);
+    const sp=document.createElement("span"); sp.className="spacer";
+    sp.textContent="Tap any angle to inspect it";
+    bar.appendChild(sp);
+  },
+  geom(){
+    const y1=140,y2=330,th=M2.s.theta,tilt=M2.s.parallel?0:M2.s.tilt;
+    const P1=[350+(235-y1)/Math.sin(th*D2R)*Math.cos(th*D2R), y1];
+    const t=[Math.cos(th*D2R),-Math.sin(th*D2R)];
+    const L2p=[350,y2], d2=[Math.cos(tilt*D2R),-Math.sin(tilt*D2R)];
+    const den=t[0]*d2[1]-t[1]*d2[0], w=[L2p[0]-P1[0],L2p[1]-P1[1]];
+    const s=(w[0]*d2[1]-w[1]*d2[0])/den;
+    const P2=[P1[0]+t[0]*s,P1[1]+t[1]*s];
+    const R1=regions(0,th), R2=regions(tilt,th);
+    const A={a:{c:P1,r:R1.nw},b:{c:P1,r:R1.ne},c:{c:P1,r:R1.sw},d:{c:P1,r:R1.se},
+             e:{c:P2,r:R2.nw},f:{c:P2,r:R2.ne},g:{c:P2,r:R2.sw},h:{c:P2,r:R2.se}};
+    for(const k in A)A[k].m=spanOf(A[k].r);
+    return {P1:P1,P2:P2,th:th,tilt:tilt,y1:y1,y2:y2,A:A,L2p:L2p};
+  },
+  draw(){
+    const g=bg(), G=M2.geom(), A=G.A, sel=M2.s.sel;
+    fullLine(g,[350,G.y1],0); fullLine(g,G.L2p,G.tilt); fullLine(g,G.P1,G.th);
+    // parallel arrow marks
+    if(M2.s.parallel){
+      [[G.y1,0],[G.y2,0]].forEach(([y,a])=>{
+        [-1,1].forEach(k=>{
+          const c=[350+k*150,y];
+          g.appendChild(E("polyline",{points:(c[0]-7)+","+(c[1]-6)+" "+(c[0]+5)+","+c[1]+" "+(c[0]-7)+","+(c[1]+6),class:"rt"}));
+        });
+      });
+    }
+    const rel=M2.related(sel);
+    const colOf=k=>{
+      if(k===sel)return "var(--hand)";
+      const r=rel[k]; if(!r)return "var(--graphite)";
+      return {vert:"var(--vert)",lin:"var(--lin)",corr:"var(--corr)",alt:"var(--alt)",same:"var(--same)"}[r]||"var(--graphite)";
+    };
+    ["a","b","c","d","e","f","g","h"].forEach(k=>{
+      const o=A[k], col=colOf(k), on=(k===sel||rel[k]);
+      wedge(g,o.c,o.r[0],o.r[1],k===sel?46:38,col,{label:k+" = "+fmt(o.m)+"°",id:k,dim:!on});
+    });
+    dot(g,G.P1); dot(g,G.P2);
+    const y2at=x=>G.y2+(x-350)*Math.tan(-G.tilt*D2R);
+    txt(g,[70,G.y1-18],"A","mk"); txt(g,[640,G.y1-18],"B","mk");
+    txt(g,[70,y2at(70)+24],"C","mk"); txt(g,[640,y2at(640)+24],"D","mk");
+    // handles: transversal angle + slide, and tilt when not parallel
+    grab(g,PT(G.P1,150,G.th),"th");
+    if(!M2.s.parallel)grab(g,[560,y2at(560)],"tilt");
+  },
+  drag(id,p){
+    const G=M2.geom();
+    if(id==="th"){ let a=Math.round(angOf(G.P1,p)); if(a>180)a-=180; M2.s.theta=clamp(a,25,155); }
+    else if(id==="tilt"){ const a=Math.round(Math.atan2(-(p[1]-G.y2),210)/D2R); M2.s.tilt=clamp(a,-24,24)||1; }
+    render();
+  },
+  related(k){
+    const V={a:"d",d:"a",b:"c",c:"b",e:"h",h:"e",f:"g",g:"f"};
+    const C={a:"e",e:"a",b:"f",f:"b",c:"g",g:"c",d:"h",h:"d"};
+    const ALT={c:"f",f:"c",d:"e",e:"d"};
+    const SAME={c:"e",e:"c",d:"f",f:"d"};
+    const LIN={a:["b","c"],b:["a","d"],c:["a","d"],d:["b","c"],e:["f","g"],f:["e","h"],g:["e","h"],h:["f","g"]};
+    const out={}; out[V[k]]="vert"; out[C[k]]="corr";
+    if(ALT[k])out[ALT[k]]="alt"; if(SAME[k])out[SAME[k]]="same";
+    LIN[k].forEach(x=>{ if(!out[x])out[x]="lin"; });
+    delete out[k]; return out;
+  },
+  panel(){
+    const G=M2.geom(), A=G.A, k=M2.s.sel, rel=M2.related(k), par=M2.s.parallel;
+    const meta={vert:{n:"Vertical angles",f:"vert",col:"var(--vert)",need:false,eq:"equal"},
+                lin:{n:"Linear pair",f:"line",col:"var(--lin)",need:false,eq:"sum180"},
+                corr:{n:"Corresponding angles",f:"corr",col:"var(--corr)",need:true,eq:"equal"},
+                alt:{n:"Alternate interior angles",f:"alt",col:"var(--alt)",need:true,eq:"equal"},
+                same:{n:"Same-side interior angles",f:"int",col:"var(--same)",need:true,eq:"sum180"}};
+    let rows="";
+    ["vert","lin","corr","alt","same"].forEach(t=>{
+      Object.keys(rel).forEach(o=>{
+        if(rel[o]!==t)return;
+        const M=meta[t], v1=A[k].m, v2=A[o].m;
+        const holds=M.eq==="equal"? Math.abs(v1-v2)<0.05 : Math.abs(v1+v2-180)<0.05;
+        const val=M.eq==="equal"? fmt(v1)+"° , "+fmt(v2)+"°" : fmt(v1)+"° + "+fmt(v2)+"° = "+fmt(v1+v2)+"°";
+        rows+=`<div class="rel"><span class="dot" style="background:${M.col}"></span>
+          <span class="nm">∠${k} and ∠${o} <em>${M.n}</em></span>
+          <span class="val ${holds?"ok":"no"}">${val} ${holds?"✓":"✗"}</span></div>`;
+      });
+    });
+    let note;
+    if(par){
+      note=`<p>The lines are parallel, so all five relationships hold. Every ✓ above is a fact you may cite by name.</p>`;
+    } else {
+      note=`<p><b>The lines are not parallel.</b> Vertical angles and linear pairs still hold — they only need one point. Corresponding, alternate interior, and same-side interior have <b>failed</b>. Those three facts are not about position; they are about <span class="term">parallel</span>, and without it they say nothing.</p>
+      <p>This is why a proof must state <i>AB ∥ CD</i> as <b>Given</b> before using them.</p>`;
+    }
+    side.innerHTML=`
+      <div class="panel"><h3>∠${k} = ${fmt(A[k].m)}° — its partners</h3>${rows}</div>
+      <div class="panel"><h3>Reading the figure</h3><div class="pad">${note}
+        <p><b>Interior</b> angles are the four between the two lines: <i>c</i>, <i>d</i>, <i>e</i>, <i>f</i>. <b>Alternate</b> means on opposite sides of the transversal; <b>same-side</b> means the same side.</p>
+      </div></div>
+      <div class="panel"><h3>Converse — the other direction</h3><div class="pad">
+        <p>Uncheck "parallel" and drag the tilt handle until a corresponding pair reads equal again. The moment they match, the lines are parallel.</p>
+        <p class="term">${FACT.corrC.st}</p>
+        <p>Use the plain versions when you know the lines are parallel; use the converses when parallel is what you are trying to prove.</p>
+      </div></div>`;
+  }
+};
+
+/* ══════════════════════ MODULE 3 · triangles ══════════════════════ */
+const M3={
+  tab:"Triangles", lesson:"Lesson 8", accent:"var(--mint)",
+  title:()=>"Angles in a triangle",
+  s:{A:[300,110],B:[170,350],C:[540,350],ext:false,aux:false},
+  bar(){
+    [["ext","Extend BC to D (exterior angle)"],["aux","Auxiliary line through A ∥ BC"]].forEach(([k,lab])=>{
+      const l=document.createElement("label"); l.className="chk";
+      const c=document.createElement("input"); c.type="checkbox"; c.checked=M3.s[k];
+      c.onchange=()=>{M3.s[k]=c.checked;render();};
+      l.appendChild(c); l.appendChild(document.createTextNode(lab)); bar.appendChild(l);
+    });
+    const sp=document.createElement("span"); sp.className="spacer"; sp.textContent="Drag A, B, C";
+    bar.appendChild(sp);
+  },
+  ang(){
+    const {A,B,C}=M3.s;
+    return {A:interiorAngle(A,B,C),B:interiorAngle(B,C,A),C:interiorAngle(C,A,B)};
+  },
+  draw(){
+    const g=bg(), {A,B,C}=M3.s, an=M3.ang();
+    if(M3.s.ext){
+      const d=[C[0]+(C[0]-B[0]),C[1]+(C[1]-B[1])];
+      const u=[(d[0]-B[0]),(d[1]-B[1])], L=Math.hypot(u[0],u[1]);
+      const D=[B[0]+u[0]/L*(L+90), B[1]+u[1]/L*(L+90)];
+      seg(g,B,D,"line"); txt(g,[D[0]+16,D[1]+6],"D","mk");
+    } else seg(g,B,C,"line");
+    seg(g,A,B,"line"); seg(g,B,C,"line"); seg(g,C,A,"line");
+    if(M3.s.aux){
+      const dir=angOf(B,C);
+      const p=PT(A,320,dir), q=PT(A,320,dir+180);
+      seg(g,q,p,"aux");
+      txt(g,[q[0]+14,q[1]-14],"J","mk","var(--corr)"); txt(g,[p[0]-14,p[1]-14],"K","mk","var(--corr)");
+      // d, a, e on the line at A
+      const toB=angOf(A,B), toC=angOf(A,C);
+      wedge(g,A,dir+180,toB,34,"var(--alt)",{label:"d",flat:true,labelClass:"mk"});
+      wedge(g,A,toC,dir,34,"var(--same)",{label:"e",flat:true,labelClass:"mk"});
+    }
+    wedge(g,A,an.A.from,an.A.to,40,"var(--corr)",{label:M3.s.aux?"a":fmt(an.A.m)+"°",flat:true,labelClass:M3.s.aux?"mk":"num"});
+    wedge(g,B,an.B.from,an.B.to,40,"var(--alt)",{label:M3.s.aux?"b":fmt(an.B.m)+"°",flat:true,labelClass:M3.s.aux?"mk":"num"});
+    wedge(g,C,an.C.from,an.C.to,40,"var(--same)",{label:M3.s.aux?"c":fmt(an.C.m)+"°",flat:true,labelClass:M3.s.aux?"mk":"num"});
+    if(M3.s.ext){
+      const dir=angOf(B,C);
+      wedge(g,C,dir,angOf(C,A),58,"var(--unk)",{label:fmt(180-an.C.m)+"°",flat:true});
+    }
+    grab(g,A,"A"); grab(g,B,"B"); grab(g,C,"C");
+    txt(g,[A[0],A[1]-26],"A","mk"); txt(g,[B[0]-22,B[1]+16],"B","mk"); txt(g,[C[0]+22,C[1]+16],"C","mk");
+  },
+  drag(id,p){ M3.s[id]=[clamp(p[0],40,660),clamp(p[1],40,420)]; render(); },
+  panel(){
+    const an=M3.ang(), a=an.A.m,b=an.B.m,c=an.C.m;
+    const da=r1(a), db=r1(b), dc=r1(180-da-db);
+    let kind = (Math.max(a,b,c)>90.5)?"obtuse":(Math.abs(Math.max(a,b,c)-90)<0.6?"right":"acute");
+    let h=`<div class="panel"><h3>Live measures</h3><div class="pad">
+      <div class="eq">m∠A + m∠B + m∠C
+= ${fmt(da)}° + ${fmt(db)}° + ${fmt(dc)}° = 180°
+      <small>${FACT.sum.st}</small></div>
+      <p>Drag any vertex anywhere — the sum never moves. This triangle is <b>${kind}</b>.</p></div></div>`;
+    if(M3.s.ext){
+      h+=`<div class="panel"><h3>Exterior angle</h3><div class="pad">
+        <div class="eq">m∠A + m∠B = ${fmt(da)}° + ${fmt(db)}° = ${fmt(180-r1(c))}°
+exterior ∠ at C = ${fmt(180-r1(c))}°
+        <small>${FACT.ext.st}</small></div>
+        <p>The exterior angle and the interior angle at <i>C</i> are a <b>linear pair</b>, so the exterior angle is 180° − m∠C. The three interior angles also sum to 180°. Subtract, and the exterior angle is left equal to the other two interior angles. The angles <i>A</i> and <i>B</i> are called the <span class="term">remote interior</span> angles.</p></div></div>`;
+    }
+    if(M3.s.aux){
+      h+=`<div class="panel"><h3>Why the sum is 180°</h3><div class="pad">
+        <p>The dashed line <i>JK</i> through <i>A</i> is drawn parallel to <i>BC</i>. It is not given — you <b>construct</b> it, and that is a legal proof step.</p>
+        <div class="eq">d + a + e = 180    ${FACT.lineN.ab}
+d = b              alt. ∠s, JK ∥ BC
+e = c              alt. ∠s, JK ∥ BC
+∴ a + b + c = 180  substitution
+        <small>Angles d and b are alternate interior angles for the transversal AB; e and c for AC.</small></div>
+        <p>Right now <b>d = ${fmt(db)}° = b</b> and <b>e = ${fmt(dc)}° = c</b>. Drag a vertex and watch both equalities survive.</p></div></div>`;
+    } else {
+      h+=`<div class="panel"><h3>Try this</h3><div class="pad"><p>Tick the auxiliary line box. The triangle sum is not an assumption — it is a short proof that uses only the parallel line facts from Lesson 7. You will write it in Lesson 11.</p></div></div>`;
+    }
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ MODULE 4 · solve with reasons ══════════════════════ */
+const TEMPLATES=[
+ // each returns {fig, ask, ans, reason, work}
+ function linearPair(){
+   const g=rnd(25,155), x=180-g;
+   return {fig:{k:"point",cy:320,rays:[{a:0,full:true},{a:g}],marks:[
+      {from:0,to:g,text:g+"°",color:"var(--graphite)"},
+      {from:g,to:180,text:"x°",color:"var(--unk)"}]},
+     ask:"Find the value of x.", ans:x, reason:"line",
+     work:g+"° + x° = 180°, so x = 180 − "+g+" = "+x+"."};
+ },
+ function threeOnLine(){
+   const a=rnd(28,70), b=rnd(28,70), x=180-a-b;
+   return {fig:{k:"point",cy:320,rays:[{a:0,full:true},{a:a},{a:a+b}],marks:[
+      {from:0,to:a,text:a+"°",color:"var(--graphite)"},
+      {from:a,to:a+b,text:b+"°",color:"var(--graphite)"},
+      {from:a+b,to:180,text:"x°",color:"var(--unk)"}]},
+     ask:"Find the value of x.", ans:x, reason:"lineN",
+     work:a+"° + "+b+"° + x° = 180°, so x = 180 − "+a+" − "+b+" = "+x+"."};
+ },
+ function atPoint(){
+   const a=rnd(55,105), b=rnd(55,105), c=rnd(55,105), x=360-a-b-c;
+   if(x<40||x>150)return null;
+   return {fig:{k:"point",cy:235,rays:[{a:0},{a:a},{a:a+b},{a:a+b+c}],marks:[
+      {from:0,to:a,text:a+"°",color:"var(--graphite)"},
+      {from:a,to:a+b,text:b+"°",color:"var(--graphite)"},
+      {from:a+b,to:a+b+c,text:c+"°",color:"var(--graphite)"},
+      {from:a+b+c,to:360,text:"x°",color:"var(--unk)"}]},
+     ask:"Find the value of x.", ans:x, reason:"point",
+     work:a+"° + "+b+"° + "+c+"° + x° = 360°, so x = "+x+"."};
+ },
+ function verticalPair(){
+   const a=rnd(28,152);
+   return {fig:{k:"point",cy:260,rays:[{a:0,full:true},{a:a,full:true}],marks:[
+      {from:0,to:a,text:a+"°",color:"var(--graphite)"},
+      {from:180,to:180+a,text:"x°",color:"var(--unk)"}]},
+     ask:"Find the value of x.", ans:a, reason:"vert",
+     work:"The two angles are vertical, so x = "+a+"."};
+ },
+ function corrAngles(){
+   const t=rnd(35,145);
+   return {fig:{k:"trans",theta:t,labels:{b:t+"°",f:"x°"},unk:"f"},
+     ask:"Find the value of x.", ans:t, reason:"corr",
+     work:"The marked angles are corresponding angles on parallel lines, so x = "+t+"."};
+ },
+ function altAngles(){
+   const t=rnd(35,145);
+   return {fig:{k:"trans",theta:t,labels:{d:(180-t)+"°",e:"x°"},unk:"e"},
+     ask:"Find the value of x.", ans:180-t, reason:"alt",
+     work:"The marked angles are alternate interior angles on parallel lines, so x = "+(180-t)+"."};
+ },
+ function sameSide(){
+   const t=rnd(35,145);
+   return {fig:{k:"trans",theta:t,labels:{c:t+"°",e:"x°"},unk:"e"},
+     ask:"Find the value of x.", ans:180-t, reason:"int",
+     work:t+"° + x° = 180° (same-side interior angles on parallel lines), so x = "+(180-t)+"."};
+ },
+ function triSum(){
+   const B=rnd(35,75), C=rnd(35,75), x=180-B-C;
+   return {fig:{k:"tri",B:B,C:C,labels:{B:B+"°",C:C+"°",A:"x°"},unk:"A"},
+     ask:"Find the value of x.", ans:x, reason:"sum",
+     work:B+"° + "+C+"° + x° = 180°, so x = "+x+"."};
+ },
+ function extAngle(){
+   const B=rnd(35,70), A=rnd(35,70);
+   return {fig:{k:"tri",B:B,C:180-A-B,labels:{B:B+"°",A:A+"°",ext:"x°"},ext:true,unk:"ext"},
+     ask:"Find the value of x.", ans:A+B, reason:"ext",
+     work:"x = "+A+" + "+B+" = "+(A+B)+" (the exterior angle equals the two remote interior angles)."};
+ },
+ function algLinear(){
+   const x=rnd(8,28), a=rnd(2,4), c=rnd(2,5);
+   const b=rnd(4,40), d=180-a*x-c*x-b, v1=a*x+b;
+   if(d<4||v1<25||v1>155)return null;
+   const s1="("+a+"x + "+b+")°", s2="("+c+"x + "+d+")°";
+   return {fig:{k:"point",cy:320,rays:[{a:0,full:true},{a:v1}],marks:[
+      {from:0,to:v1,text:s1,color:"var(--unk)"},
+      {from:v1,to:180,text:s2,color:"var(--unk)"}]},
+     ask:"Find the value of x.", ans:x, reason:"line",
+     work:s1+" + "+s2+" = 180°  →  "+(a+c)+"x + "+(b+d)+" = 180  →  x = "+x+"."};
+ },
+ function algVertical(){
+   const x=rnd(10,40), a=rnd(2,4), b=rnd(5,40);
+   const val=a*x+b, d=val-x;
+   if(val<28||val>150||d<5)return null;
+   return {fig:{k:"point",cy:260,rays:[{a:0,full:true},{a:val,full:true}],marks:[
+      {from:0,to:val,text:"("+a+"x + "+b+")°",color:"var(--unk)"},
+      {from:180,to:180+val,text:"(x + "+d+")°",color:"var(--unk)"}]},
+     ask:"Find the value of x.", ans:x, reason:"vert",
+     work:"Vertical angles are equal: "+a+"x + "+b+" = x + "+d+"  →  x = "+x+"."};
+ }
+];
+function newProblem(){
+  for(let i=0;i<40;i++){
+    const p=pick(TEMPLATES)();
+    if(p)return p;
+  }
+  return TEMPLATES[0]();
+}
+function drawFigureSpec(g,f){
+  if(f.k==="point"){
+    const c=[350,f.cy||300];
+    drawPointFigure(g,c,f);
+    if(f.rays[0]&&f.rays[0].full){ txt(g,[c[0]-215,c[1]-16],"A","mk"); txt(g,[c[0]+215,c[1]-16],"B","mk"); }
+  } else if(f.k==="trans"){
+    const th=f.theta, y1=150,y2=330;
+    const P1=[350+(240-y1)/Math.sin(th*D2R)*Math.cos(th*D2R),y1];
+    const t=[Math.cos(th*D2R),-Math.sin(th*D2R)];
+    const s=(y2-P1[1])/t[1], P2=[P1[0]+t[0]*s,y2];
+    fullLine(g,[350,y1],0); fullLine(g,[350,y2],0); fullLine(g,P1,th);
+    [[350-150,y1],[350+150,y1],[350-150,y2],[350+150,y2]].forEach(c=>{
+      g.appendChild(E("polyline",{points:(c[0]-7)+","+(c[1]-6)+" "+(c[0]+5)+","+c[1]+" "+(c[0]-7)+","+(c[1]+6),class:"rt"}));
+    });
+    const R=regions(0,th);
+    const map={a:[P1,R.nw],b:[P1,R.ne],c:[P1,R.sw],d:[P1,R.se],
+               e:[P2,R.nw],f:[P2,R.ne],g:[P2,R.sw],h:[P2,R.se]};
+    for(const k in f.labels){
+      const [c,rr]=map[k];
+      wedge(g,c,rr[0],rr[1],40,k===f.unk?"var(--unk)":"var(--graphite)",{label:f.labels[k],flat:true});
+    }
+    dot(g,P1); dot(g,P2);
+  } else if(f.k==="tri"){
+    const T=fitTriangle(f.B,f.C,{ext:f.ext,w:400,h:240,baseY:360});
+    const A=T.A,B=T.B,C=T.C;
+    if(f.ext){
+      const D=[C[0]+(C[0]-B[0])*0.34,C[1]];
+      seg(g,B,D,"line"); txt(g,[D[0]+16,D[1]+4],"D","mk");
+    }
+    seg(g,A,B,"line"); seg(g,B,C,"line"); seg(g,C,A,"line");
+    const an={A:interiorAngle(A,B,C),B:interiorAngle(B,C,A),C:interiorAngle(C,A,B)};
+    const put=(V,o,lab)=>wedge(g,V,o.from,o.to,40,lab===f.labels[f.unk]?"var(--unk)":"var(--graphite)",{label:lab,flat:true});
+    if(f.labels.A)put(A,an.A,f.labels.A);
+    if(f.labels.B)put(B,an.B,f.labels.B);
+    if(f.labels.C)put(C,an.C,f.labels.C);
+    if(f.labels.ext){
+      wedge(g,C,angOf(C,[C[0]+1,C[1]]),angOf(C,A),56,"var(--unk)",{label:f.labels.ext,flat:true});
+    }
+    txt(g,[A[0],A[1]-24],"A","mk"); txt(g,[B[0]-22,B[1]+16],"B","mk"); txt(g,[C[0]+18,C[1]+18],"C","mk");
+    dot(g,A);dot(g,B);dot(g,C);
+  }
+}
+const M4={
+  tab:"Solve with reasons", lesson:"Lessons 6–8", accent:"var(--magenta)",
+  title:()=>"Find the unknown angle — and name the fact",
+  s:{p:null,checked:false,score:{n:0,val:0,why:0}},
+  bar(){
+    const b=document.createElement("button"); b.className="primary"; b.textContent="New problem";
+    b.onclick=()=>{M4.s.p=newProblem();M4.s.checked=false;render();};
+    bar.appendChild(b);
+    const sp=document.createElement("span"); sp.className="spacer";
+    const s=M4.s.score;
+    sp.textContent="attempted "+s.n+" · value right "+s.val+" · reason right "+s.why;
+    bar.appendChild(sp);
+  },
+  draw(){
+    if(!M4.s.p)M4.s.p=newProblem();
+    const g=bg(); drawFigureSpec(g,M4.s.p.fig);
+  },
+  panel(){
+    const p=M4.s.p;
+    side.innerHTML=`<div class="panel"><h3>${p.ask}</h3>
+      <label class="fld">Value of x</label><div class="fldwrap"><input type="number" id="ansV" step="any" placeholder="degrees"></div>
+      <label class="fld">Reason — cite it exactly</label><div class="fldwrap" id="whyWrap"></div>
+      <div class="fldwrap" style="margin:16px 0 4px"><button class="go" id="chk">Check my answer</button></div>
+      <div id="fb"></div></div>
+      <div class="panel"><h3>How to write it up</h3><div class="pad">
+        <p>On paper your answer has two lines, every time:</p>
+        <div class="eq">m∠x = ___°
+<i>the fact, stated in words</i></div>
+        <p>A number with no reason is only half an answer — and from Lesson 9 on, the reason <b>is</b> the answer.</p>
+      </div></div>`;
+    const sel=reasonSelect(SOLVE_REASONS,"");
+    sel.id="ansR";
+    document.getElementById("whyWrap").appendChild(sel);
+    document.getElementById("chk").onclick=()=>{
+      const v=parseFloat(document.getElementById("ansV").value);
+      const r=document.getElementById("ansR").value;
+      if(isNaN(v)||!r){document.getElementById("fb").innerHTML='<div class="verdict bad">Give both a value and a reason.</div>';return;}
+      const okV=Math.abs(v-p.ans)<0.05, okR=(r===p.reason);
+      if(!M4.s.checked){M4.s.checked=true;M4.s.score.n++;if(okV)M4.s.score.val++;if(okR)M4.s.score.why++;
+        const s=M4.s.score;
+        bar.querySelector(".spacer").textContent="attempted "+s.n+" · value right "+s.val+" · reason right "+s.why;}
+      let h="";
+      if(okV&&okR)h=`<div class="verdict good"><b>Both right.</b> x = ${p.ans}. ${p.work}</div>`;
+      else if(okV&&!okR)h=`<div class="verdict bad"><b>Value right, reason wrong.</b> x = ${p.ans} is correct, but the step is justified by:<br><br><b>${FACT[p.reason].st}</b><br><br>${p.work}</div>`;
+      else if(!okV&&okR)h=`<div class="verdict bad"><b>Right fact, wrong arithmetic.</b> ${p.work}</div>`;
+      else h=`<div class="verdict bad"><b>Not yet.</b> x = ${p.ans}, because: <b>${FACT[p.reason].st}</b><br><br>${p.work}</div>`;
+      document.getElementById("fb").innerHTML=h;
+    };
+  }
+};
+
+/* ══════════════════════ MODULE 5 · proof builder ══════════════════════ */
+const PROOFS=[
+ {id:"vert", name:"Vertical angles are equal in measure",
+  given:"Angles on a line sum to 180°.", prove:"m∠w = m∠y",
+  fig:{k:"cross",labels:{nw:"w",ne:"x",se:"y",sw:"z"}},
+  plan:"∠w and ∠x are a linear pair. So are ∠y and ∠x. Both pairs make 180° — so what must be true of ∠w and ∠y?",
+  steps:[{s:"m∠w + m∠x = 180°",r:"line"},
+         {s:"m∠y + m∠x = 180°",r:"line"},
+         {s:"m∠w + m∠x = m∠y + m∠x",r:"subst"},
+         {s:"∴ m∠w = m∠y",r:"subP"}]},
+ {id:"ext", name:"The exterior angle equals the two remote interior angles",
+  given:"The angles of a triangle sum to 180°.", prove:"x + y = z",
+  fig:{k:"triProof",B:52,C:64,labels:{B:"x",A:"y",Cin:"w",ext:"z"}},
+  plan:"Label the interior angle next to z as w. The triangle gives one equation; the straight line at that vertex gives another. Line them up.",
+  steps:[{s:"m∠x + m∠y + m∠w = 180°",r:"sum"},
+         {s:"m∠w + m∠z = 180°",r:"line"},
+         {s:"m∠x + m∠y + m∠w = m∠w + m∠z",r:"subst"},
+         {s:"∴ m∠x + m∠y = m∠z",r:"subP"}]},
+ {id:"tri", name:"The angles of a triangle sum to 180°",
+  given:"The parallel line facts of Lesson 7.", prove:"a + b + c = 180",
+  fig:{k:"triProof",B:58,C:50,labels:{A:"a",B:"b",C:"c"},aux:true},
+  plan:"Draw JK through A parallel to BC. Now three angles sit on the straight line JK — and two of them are alternate interior angles with the base angles of the triangle.",
+  steps:[{s:"JK ∥ BC",r:"constr"},
+         {s:"d + a + e = 180",r:"lineN"},
+         {s:"d = b",r:"alt"},
+         {s:"e = c",r:"alt"},
+         {s:"∴ a + b + c = 180",r:"subst"}]},
+ {id:"same", name:"Same-side interior angles are supplementary",
+  given:"AB ∥ CD, transversal EF.", prove:"m∠BGH + m∠DHG = 180°",
+  fig:{k:"trans2",theta:58,labels:{d:"∠BGH",c:"∠AGH",f:"∠DHG"}},
+  plan:"You already have alternate interior angles. Pair one of them with a linear pair on the top line.",
+  steps:[{s:"AB ∥ CD",r:"given"},
+         {s:"m∠BGH + m∠AGH = 180°",r:"line"},
+         {s:"m∠AGH = m∠DHG",r:"alt"},
+         {s:"∴ m∠BGH + m∠DHG = 180°",r:"subst"}]},
+ {id:"corr", name:"Corresponding angles are equal in measure",
+  given:"AB ∥ CD; vertical angles and alternate interior angles are equal.", prove:"x = w",
+  fig:{k:"trans2",theta:64,labels:{c:"x",f:"z",g:"w"}},
+  plan:"You cannot reach x and w in one hop. Go through z: one step is vertical angles, the other is alternate interior angles.",
+  steps:[{s:"AB ∥ CD",r:"given"},
+         {s:"w = z",r:"vert"},
+         {s:"z = x",r:"alt"},
+         {s:"∴ x = w",r:"subst"}]},
+ {id:"perp", name:"Two lines perpendicular to the same line are parallel",
+  given:"AB ⊥ EF and CD ⊥ EF", prove:"AB ∥ CD",
+  fig:{k:"perp"},
+  plan:"Both right angles measure 90°, so they are equal to each other. Where they sit makes them a corresponding pair — now run a converse.",
+  steps:[{s:"AB ⊥ EF, CD ⊥ EF",r:"given"},
+         {s:"m∠AGH = 90°, m∠CHF = 90°",r:"perp90"},
+         {s:"m∠AGH = m∠CHF",r:"trans"},
+         {s:"∴ AB ∥ CD",r:"corrC"}]}
+];
+const PROOF_REASONS=["given","constr","vert","line","lineN","point","add","sum","ext","corr","alt","int","corrC","altC","intC","perp90","perpDef","trans","subst","subP","addP","part"];
+
+function drawProofFigure(g,f){
+  if(f.k==="cross"){
+    const c=[350,230];
+    fullLine(g,c,20); fullLine(g,c,115);
+    const R=regions(20,115);
+    wedge(g,c,R.nw[0],R.nw[1],46,"var(--vert)",{label:f.labels.nw,flat:true,labelClass:"mk"});
+    wedge(g,c,R.ne[0],R.ne[1],46,"var(--lin)",{label:f.labels.ne,flat:true,labelClass:"mk"});
+    wedge(g,c,R.se[0],R.se[1],46,"var(--vert)",{label:f.labels.se,flat:true,labelClass:"mk"});
+    wedge(g,c,R.sw[0],R.sw[1],46,"var(--lin)",{label:f.labels.sw,flat:true,labelClass:"mk"});
+    dot(g,c);
+  } else if(f.k==="triProof"){
+    const T=fitTriangle(f.B,f.C,{ext:!!f.labels.ext,w:380,h:210,baseY:345});
+    const A=T.A,B=T.B,C=T.C;
+    if(f.labels.ext){
+      const D=[C[0]+(C[0]-B[0])*0.36,C[1]];
+      seg(g,B,D,"line"); txt(g,[D[0]+16,D[1]+4],"D","mk");
+    }
+    seg(g,A,B,"line"); seg(g,B,C,"line"); seg(g,C,A,"line");
+    const an={A:interiorAngle(A,B,C),B:interiorAngle(B,C,A),C:interiorAngle(C,A,B)};
+    if(f.aux){
+      const p=[650,A[1]], q=[50,A[1]];
+      seg(g,q,p,"aux");
+      txt(g,[q[0]-4,q[1]-16],"J","mk","var(--corr)"); txt(g,[p[0]+4,p[1]-16],"K","mk","var(--corr)");
+      wedge(g,A,dir+180,angOf(A,B),32,"var(--alt)",{label:"d",flat:true,labelClass:"mk"});
+      wedge(g,A,angOf(A,C),dir,32,"var(--same)",{label:"e",flat:true,labelClass:"mk"});
+    }
+    if(f.labels.A)wedge(g,A,an.A.from,an.A.to,40,"var(--corr)",{label:f.labels.A,flat:true,labelClass:"mk"});
+    if(f.labels.B)wedge(g,B,an.B.from,an.B.to,40,"var(--alt)",{label:f.labels.B,flat:true,labelClass:"mk"});
+    if(f.labels.C)wedge(g,C,an.C.from,an.C.to,40,"var(--same)",{label:f.labels.C,flat:true,labelClass:"mk"});
+    if(f.labels.Cin)wedge(g,C,an.C.from,an.C.to,40,"var(--same)",{label:f.labels.Cin,flat:true,labelClass:"mk"});
+    if(f.labels.ext)wedge(g,C,angOf(C,[C[0]+1,C[1]]),angOf(C,A),58,"var(--unk)",{label:f.labels.ext,flat:true,labelClass:"mk"});
+    txt(g,[A[0],A[1]-24],"A","mk"); txt(g,[B[0]-22,B[1]+16],"B","mk"); txt(g,[C[0]-4,C[1]+24],"C","mk");
+  } else if(f.k==="trans2"){
+    const th=f.theta,y1=150,y2=330;
+    const P1=[350+(240-y1)/Math.sin(th*D2R)*Math.cos(th*D2R),y1];
+    const t=[Math.cos(th*D2R),-Math.sin(th*D2R)];
+    const s=(y2-P1[1])/t[1], P2=[P1[0]+t[0]*s,y2];
+    fullLine(g,[350,y1],0); fullLine(g,[350,y2],0); fullLine(g,P1,th);
+    [[200,y1],[500,y1],[200,y2],[500,y2]].forEach(c=>{
+      g.appendChild(E("polyline",{points:(c[0]-7)+","+(c[1]-6)+" "+(c[0]+5)+","+c[1]+" "+(c[0]-7)+","+(c[1]+6),class:"rt"}));
+    });
+    const R=regions(0,th);
+    const map={a:[P1,R.nw,"var(--corr)"],b:[P1,R.ne,"var(--corr)"],c:[P1,R.sw,"var(--alt)"],d:[P1,R.se,"var(--lin)"],
+               e:[P2,R.nw,"var(--alt)"],f:[P2,R.ne,"var(--vert)"],g:[P2,R.sw,"var(--corr)"],h:[P2,R.se,"var(--same)"]};
+    for(const k in f.labels){const [c,rr,col]=map[k];
+      wedge(g,c,rr[0],rr[1],40,col,{label:f.labels[k],flat:true,labelClass:"mk"});}
+    dot(g,P1);dot(g,P2);
+    txt(g,[74,y1-16],"A","mk");txt(g,[630,y1-16],"B","mk");
+    txt(g,[74,y2+22],"C","mk");txt(g,[630,y2+22],"D","mk");
+    txt(g,[P1[0]+Math.cos(th*D2R)*120-14,P1[1]-Math.sin(th*D2R)*120-8],"E","mk");
+    txt(g,[P2[0]-Math.cos(th*D2R)*110+8,P2[1]+Math.sin(th*D2R)*110+12],"F","mk");
+    txt(g,[P1[0]-16,P1[1]+18],"G","mk"); txt(g,[P2[0]-16,P2[1]+20],"H","mk");
+  } else if(f.k==="perp"){
+    const y=250, x1=270, x2=470;
+    fullLine(g,[350,y],0);
+    fullLine(g,[x1,y],90); fullLine(g,[x2,y],90);
+    rightMark(g,[x1,y],0,14); rightMark(g,[x2,y],0,14);
+    dot(g,[x1,y]); dot(g,[x2,y]);
+    txt(g,[x1,60],"A","mk"); txt(g,[x1,442],"B","mk");
+    txt(g,[x2,60],"C","mk"); txt(g,[x2,442],"D","mk");
+    txt(g,[70,y-18],"E","mk"); txt(g,[636,y-18],"F","mk");
+    txt(g,[x1-16,y+20],"G","mk"); txt(g,[x2-16,y+20],"H","mk");
+    txt(g,[x1+52,y-34],"∠AGH","num","var(--corr)"); txt(g,[x2+52,y-34],"∠CHF","num","var(--corr)");
+  }
+}
+const M5={
+  tab:"Proof builder", lesson:"Lessons 9–11", accent:"var(--lavender)",
+  title:()=>"Give a reason for every step",
+  s:{i:0,checked:false,reveal:false},
+  bar(){
+    const sel=document.createElement("select");
+    
+    PROOFS.forEach((p,i)=>{const o=document.createElement("option");o.value=i;o.textContent=(i+1)+". "+p.name;sel.appendChild(o);});
+    sel.value=M5.s.i;
+    sel.onchange=()=>{M5.s.i=+sel.value;M5.s.checked=false;M5.s.reveal=false;render();};
+    bar.appendChild(sel);
+    const b=document.createElement("button"); b.textContent="Clear";
+    b.onclick=()=>{M5.s.checked=false;M5.s.reveal=false;render();};
+    bar.appendChild(b);
+  },
+  draw(){ const g=bg(); drawProofFigure(g,PROOFS[M5.s.i].fig); },
+  panel(){
+    const p=PROOFS[M5.s.i];
+    side.innerHTML=`<div class="panel"><h3>Given / Prove</h3><div class="pad">
+        <p><b>Given:</b> ${p.given}</p><p><b>Prove:</b> ${p.prove}</p>
+        <p style="margin-top:12px"><b style="color:var(--accent)">Make a plan.</b> ${p.plan}</p></div></div>
+      <div class="panel"><h3>The proof</h3><table class="steps" id="tbl"></table>
+        <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px">
+          <button id="ck" class="go" style="flex:1">Check reasons</button>
+          <button id="rv" class="ghost">Reveal</button>
+        </div><div id="fb2"></div></div>`;
+    const tbl=document.getElementById("tbl");
+    p.steps.forEach((st,i)=>{
+      const tr=document.createElement("tr");
+      const td1=document.createElement("td"); td1.className="stmt"; td1.textContent=st.s;
+      const td2=document.createElement("td"); td2.className="why";
+      td2.appendChild(reasonSelect(PROOF_REASONS, M5.s.reveal? st.r : ""));
+      tr.appendChild(td1); tr.appendChild(td2); tbl.appendChild(tr);
+    });
+    document.getElementById("rv").onclick=()=>{M5.s.reveal=true;render();};
+    document.getElementById("ck").onclick=()=>{
+      const rows=tbl.querySelectorAll("tr"); let right=0;
+      p.steps.forEach((st,i)=>{
+        const sel=rows[i].querySelector("select");
+        const ok=sel.value===st.r;
+        rows[i].className=sel.value? (ok?"right":"wrong") : "";
+        if(ok)right++;
+      });
+      const all=right===p.steps.length;
+      document.getElementById("fb2").innerHTML= all
+        ? `<div class="verdict good"><b>Every step is justified.</b> That is a complete proof — no gaps, nothing assumed that was not already established. You may now add "${p.name}" to your list of known facts and use it in later proofs.</div>`
+        : `<div class="verdict bad"><b>${right} of ${p.steps.length} reasons correct.</b> Look again at the rows outlined in red. Ask of each one: which single fact makes this line follow from the one above it?</div>`;
+    };
+  }
+};
+
+/* ══════════════════════ MODULE 6 · fact bank ══════════════════════ */
+const M6={
+  tab:"Fact bank", lesson:"Reference", accent:"var(--coral)",
+  title:()=>"What you may assume, and what you must prove",
+  s:{},
+  bar(){ const sp=document.createElement("span"); sp.className="spacer";
+    sp.textContent="These are the exact words to cite in a proof"; bar.appendChild(sp); },
+  draw(){
+    const g=bg();
+    const cell=(cx,cy,cap,fn)=>{ fn([cx,cy]); txt(g,[cx,cy+92],cap,"num","var(--graphite)"); };
+    // 1 · vertical angles
+    cell(128,120,"vert. ∠s  ·  equal",c=>{
+      const R=regions(20,118);
+      fullLine(g,c,20); fullLine(g,c,118);
+      wedge(g,c,R.nw[0],R.nw[1],24,"var(--vert)",{flat:true});
+      wedge(g,c,R.se[0],R.se[1],24,"var(--vert)",{flat:true});
+      dot(g,c);
+    });
+    // 2 · angles on a line
+    cell(350,120,"∠s on a line  ·  180°",c=>{
+      fullLine(g,c,0); ray(g,c,52,74); ray(g,c,118,74);
+      wedge(g,c,0,52,22,"var(--lin)",{flat:true});
+      wedge(g,c,52,118,34,"var(--lin)",{flat:true});
+      wedge(g,c,118,180,22,"var(--lin)",{flat:true});
+      dot(g,c);
+    });
+    // 3 · angles at a point
+    cell(572,120,"∠s at a point  ·  360°",c=>{
+      [18,96,182,268].forEach(a=>ray(g,c,a,66));
+      [[18,96],[96,182],[182,268],[268,378]].forEach((q,i)=>
+        wedge(g,c,q[0],q[1],i%2?30:22,"var(--same)",{flat:true}));
+      dot(g,c);
+    });
+    // 4 · triangle sum
+    cell(128,330,"∠ sum of △  ·  180°",c=>{
+      const T=fitTriangle(62,54,{w:150,h:96,cx:c[0],baseY:c[1]+48});
+      seg(g,T.A,T.B,"line");seg(g,T.B,T.C,"line");seg(g,T.C,T.A,"line");
+      const an={A:interiorAngle(T.A,T.B,T.C),B:interiorAngle(T.B,T.C,T.A),C:interiorAngle(T.C,T.A,T.B)};
+      wedge(g,T.A,an.A.from,an.A.to,18,"var(--corr)",{flat:true});
+      wedge(g,T.B,an.B.from,an.B.to,18,"var(--alt)",{flat:true});
+      wedge(g,T.C,an.C.from,an.C.to,18,"var(--same)",{flat:true});
+    });
+    // 5 · parallel lines cut by a transversal
+    cell(350,330,"alt. ∠s · corr. ∠s · int. ∠s",c=>{
+      const th=62, dy=44;
+      const dx=dy/Math.tan(th*Math.PI/180);
+      const P1=[c[0]+dx,c[1]-dy], P2=[c[0]-dx,c[1]+dy];
+      seg(g,[c[0]-95,c[1]-dy],[c[0]+95,c[1]-dy],"line");
+      seg(g,[c[0]-95,c[1]+dy],[c[0]+95,c[1]+dy],"line");
+      seg(g,PT(P1,88,th),PT(P2,88,th+180),"line");
+      const R=regions(0,th);
+      wedge(g,P1,R.sw[0],R.sw[1],19,"var(--alt)",{flat:true});
+      wedge(g,P2,R.ne[0],R.ne[1],19,"var(--alt)",{flat:true});
+      wedge(g,P1,R.se[0],R.se[1],30,"var(--corr)",{flat:true});
+      wedge(g,P2,R.se[0],R.se[1],30,"var(--corr)",{flat:true});
+      dot(g,P1);dot(g,P2);
+      [[c[0]-60,c[1]-dy],[c[0]-60,c[1]+dy]].forEach(q=>
+        g.appendChild(E("polyline",{points:(q[0]-6)+","+(q[1]-5)+" "+(q[0]+4)+","+q[1]+" "+(q[0]-6)+","+(q[1]+5),class:"rt"})));
+    });
+    // 6 · exterior angle
+    cell(572,330,"ext. ∠ of △  ·  remote sum",c=>{
+      const T=fitTriangle(56,60,{w:130,h:90,cx:c[0]-16,baseY:c[1]+48});
+      seg(g,T.A,T.B,"line");seg(g,T.B,T.C,"line");seg(g,T.C,T.A,"line");
+      seg(g,T.C,[T.C[0]+52,T.C[1]],"line");
+      const an={A:interiorAngle(T.A,T.B,T.C),B:interiorAngle(T.B,T.C,T.A)};
+      wedge(g,T.A,an.A.from,an.A.to,16,"var(--corr)",{flat:true});
+      wedge(g,T.B,an.B.from,an.B.to,16,"var(--alt)",{flat:true});
+      wedge(g,T.C,0,angOf(T.C,T.A),24,"var(--unk)",{flat:true});
+    });
+    txt(g,[350,32],"The facts you may cite by name","num","var(--graphite)");
+  },
+  panel(){
+    let h=`<div class="panel"><h3>Build order — Lesson 11's big question</h3><div class="pad">
+      <p>"What is the absolute shortest list of facts from which all other facts can be derived?" Here is the chain this course builds:</p></div>
+      <ol class="chain">
+        <li><span class="chip assume">assume</span><b>Angles on a line sum to 180°</b> and <b>angles at a point sum to 360°</b>, plus angle addition.</li>
+        <li><span class="chip assume">assume</span><b>The parallel postulate</b> — if parallel lines are cut by a transversal, corresponding angles are equal.</li>
+        <li><span class="chip proved">proved</span><b>Vertical angles are equal</b> — from two linear pairs (Lesson 9).</li>
+        <li><span class="chip proved">proved</span><b>Alternate interior angles are equal</b> — corresponding + vertical.</li>
+        <li><span class="chip proved">proved</span><b>Same-side interior angles are supplementary</b> — alternate interior + linear pair.</li>
+        <li><span class="chip proved">proved</span><b>Triangle sum is 180°</b> — auxiliary parallel line + alternate interior (Lesson 11).</li>
+        <li><span class="chip proved">proved</span><b>Exterior angle theorem</b> — triangle sum + linear pair.</li>
+      </ol>
+      <div class="pad"><p>Each proved fact may be cited freely once it is proved. That is the whole point of building the list in order: you never use a fact to prove itself.</p></div></div>`;
+    let cur="";
+    h+=`<div class="panel"><h3>Cite it in these words</h3><table class="facts">`;
+    FACTS.forEach(f=>{
+      if(f.cat!==cur){cur=f.cat;h+=`<tr><td colspan="2" class="cathead">${f.cat}</td></tr>`;}
+      h+=`<tr><td class="ab">${f.ab||"&nbsp;"}</td><td class="st">${f.st}${f.short?'<i>short name: '+f.short+'</i>':''}</td></tr>`;
+    });
+    h+=`</table></div>`;
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+let cur=0;
+function render(){
+  const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  clear(); M.draw();
+  bar.innerHTML=""; M.bar();
+  M.panel();
+  dragHandler=M.drag? M.drag : null;
+  window.__angClick = (M===M2)? (k=>{M2.s.sel=k;render();}) : null;
+  [...tabsEl.children].forEach((b,i)=>b.setAttribute("aria-selected",i===cur));
+}
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.setAttribute("role","tab");
+  b.innerHTML='<span class="n">'+(i+1)+'</span>'+M.tab;
+  b.onclick=()=>{cur=i;render();};
+  tabsEl.appendChild(b);
+});
+render();
+})();
+</script>
