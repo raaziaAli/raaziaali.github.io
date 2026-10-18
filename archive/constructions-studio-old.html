@@ -1,0 +1,932 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compass &amp; Straightedge Studio — Geometry M1</title>
+<style>
+  :root{
+    --shell:#0E1B24;
+    --shell-2:#14252F;
+    --rule:#27414F;
+    --vellum:#F4F0E6;
+    --grid:#D9D2C0;
+    --ink:#16303F;
+    --graphite:#2B3F4A;
+    --arc:#4E8FA8;
+    --amber:#D9902B;
+    --violet:#7A5AA6;
+    --green:#2F7D5C;
+    --s1:#1F6FB2;
+    --s2:#B03A6B;
+    --s3:#6D4C9F;
+    --paper-text:#3A4A53;
+    --shell-text:#DCE6EB;
+    --muted:#8AA3B0;
+    --display:"Palatino Linotype","Book Antiqua",Palatino,"URW Palladio L",Georgia,serif;
+    --ui:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--shell);
+    color:var(--shell-text);
+    font-family:var(--ui);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
+
+  header.masthead{
+    display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+    border-bottom:1px solid var(--rule);padding-bottom:14px;margin-bottom:18px;
+  }
+  .mark{
+    font-family:var(--display);font-size:clamp(22px,3.2vw,31px);
+    letter-spacing:.01em;color:#F1E7D3;margin:0;font-weight:400;
+  }
+  .mark em{font-style:italic;color:var(--amber)}
+  .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--muted);
+  }
+  .masthead .eyebrow{margin-left:auto;text-align:right}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:13px;letter-spacing:.01em;
+    background:transparent;color:var(--muted);
+    border:1px solid var(--rule);border-radius:2px;
+    padding:8px 13px;cursor:pointer;transition:color .15s,border-color .15s,background .15s;
+  }
+  nav.tabs button:hover{color:#EAF2F6;border-color:#3D6479}
+  nav.tabs button[aria-selected="true"]{
+    color:var(--shell);background:var(--amber);border-color:var(--amber);font-weight:600;
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:11px;opacity:.65;margin-right:7px}
+  nav.tabs button[aria-selected="true"] .n{opacity:.75}
+  nav.tabs button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:20px;align-items:start}
+  @media (max-width:880px){.stage{grid-template-columns:1fr}}
+
+  .board{
+    background:var(--vellum);border-radius:3px;overflow:hidden;
+    box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 14px 34px rgba(0,0,0,.42);
+  }
+  .board-head{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 14px;border-bottom:1px solid var(--grid);
+    background:#EDE8DA;color:var(--paper-text);
+  }
+  .board-head h2{font-family:var(--display);font-size:17px;margin:0;color:var(--ink);font-weight:400}
+  .board-head .hint{margin-left:auto;font-size:11.5px;color:#7C8891;font-family:var(--mono)}
+  svg.canvas{display:block;width:100%;height:auto;background:var(--vellum);touch-action:none;cursor:default}
+
+  .controls{
+    display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+    padding:11px 14px;border-top:1px solid var(--grid);background:#EDE8DA;
+  }
+  .controls button{
+    font-family:var(--ui);font-size:13px;font-weight:600;
+    border:1px solid #C3BAA3;background:#F8F5EC;color:var(--ink);
+    padding:7px 14px;border-radius:2px;cursor:pointer;transition:background .15s,border-color .15s,opacity .15s;
+  }
+  .controls button:hover:not(:disabled){background:#fff;border-color:#8FA6AF}
+  .controls button:disabled{opacity:.38;cursor:default}
+  .controls button.primary{background:var(--ink);color:#F6F2E7;border-color:var(--ink)}
+  .controls button.primary:hover:not(:disabled){background:#0C242F}
+  .controls button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .counter{margin-left:auto;font-family:var(--mono);font-size:12px;color:#7C8891}
+
+  aside.notes{min-width:0}
+  .panel{border:1px solid var(--rule);border-radius:3px;background:var(--shell-2);margin-bottom:14px}
+  .panel h3{
+    margin:0;padding:11px 14px;border-bottom:1px solid var(--rule);
+    font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--muted);font-weight:500;
+  }
+  ol.steps{list-style:none;margin:0;padding:4px 0}
+  ol.steps li{
+    display:grid;grid-template-columns:26px 1fr;gap:10px;
+    padding:9px 14px;font-size:13.5px;color:#7E97A4;
+    border-left:2px solid transparent;transition:color .2s,background .2s,border-color .2s;
+  }
+  ol.steps li .num{font-family:var(--mono);font-size:11px;padding-top:2px;color:#5C7986}
+  ol.steps li.done{color:#B7C9D2}
+  ol.steps li.now{
+    color:#FDF6E7;background:rgba(217,144,43,.12);border-left-color:var(--amber);
+  }
+  ol.steps li.now .num{color:var(--amber)}
+  ol.steps li i{font-style:italic;color:inherit}
+  .prose{padding:12px 14px;font-size:13.5px;color:#AFC2CC}
+  .prose p{margin:0 0 9px}
+  .prose p:last-child{margin-bottom:0}
+  .prose b{color:#F1E7D3;font-weight:600}
+  .prose .term{font-family:var(--display);font-style:italic;color:var(--amber)}
+
+  .toggles{padding:6px 14px 12px}
+  .toggles label{
+    display:flex;align-items:center;gap:9px;padding:7px 0;font-size:13.5px;color:#B7C9D2;cursor:pointer;
+  }
+  .toggles input{width:15px;height:15px;accent-color:var(--amber);cursor:pointer}
+  .swatch{width:13px;height:3px;border-radius:2px;margin-left:auto}
+  .readout{
+    padding:10px 14px 14px;font-family:var(--mono);font-size:12px;color:#8AA3B0;
+    border-top:1px solid var(--rule);
+  }
+  .readout div{display:flex;justify-content:space-between;padding:3px 0}
+  .readout b{color:#F1E7D3;font-weight:500}
+  .verdict{margin-top:8px;color:var(--amber);font-size:11.5px;line-height:1.45}
+
+  /* ---- drawing classes ---- */
+  .given{stroke:var(--graphite);stroke-width:2.1;fill:none;stroke-linecap:round}
+  .arc{stroke:var(--arc);stroke-width:1.35;fill:none;opacity:.9}
+  .result{stroke:var(--amber);stroke-width:2.6;fill:none;stroke-linecap:round}
+  .aux{stroke:var(--arc);stroke-width:1.35;fill:none;stroke-dasharray:5 5;opacity:.75}
+  .perp{stroke:var(--violet);stroke-width:2.1;fill:none;stroke-linecap:round}
+  .bis{stroke:var(--green);stroke-width:2.1;fill:none;stroke-linecap:round}
+  .circum{stroke:var(--violet);stroke-width:1.6;fill:none;opacity:.55;stroke-dasharray:6 5}
+  .incirc{stroke:var(--green);stroke-width:1.6;fill:none;opacity:.55;stroke-dasharray:6 5}
+  .equal{stroke:var(--amber);stroke-width:1.5;fill:none;stroke-dasharray:4 4}
+  .arc1{stroke:var(--s1);stroke-width:1.35;fill:none;opacity:.8}
+  .arc2{stroke:var(--s2);stroke-width:1.35;fill:none;opacity:.8}
+  .arc3{stroke:var(--s3);stroke-width:1.35;fill:none;opacity:.8}
+  .bis1{stroke:var(--s1);stroke-width:2.4;fill:none;stroke-linecap:round}
+  .bis2{stroke:var(--s2);stroke-width:2.4;fill:none;stroke-linecap:round}
+  .bis3{stroke:var(--s3);stroke-width:2.4;fill:none;stroke-linecap:round}
+  .dot.s1{fill:var(--s1)} .dot.s2{fill:var(--s2)} .dot.s3{fill:var(--s3)}
+  .lbl.c1{fill:var(--s1)} .lbl.c2{fill:var(--s2)} .lbl.c3{fill:var(--s3)}
+  .arm{stroke:var(--arc);stroke-width:1;opacity:.55}
+  .dot{fill:var(--ink);stroke:var(--vellum);stroke-width:1.5}
+  .dot.node{fill:var(--amber);stroke:#7A5416;stroke-width:1.2}
+  .dot.hot{fill:var(--violet)}
+  .dot.hot2{fill:var(--green)}
+  .lbl{font-family:var(--display);font-size:16px;font-style:italic;fill:var(--ink);paint-order:stroke;stroke:var(--vellum);stroke-width:3.4;stroke-linejoin:round}
+  .lbl.acc{fill:#9A6210}
+  .lbl.vio{fill:#5E4184}
+  .lbl.grn{fill:#1F5E43}
+  .handle{fill:rgba(78,143,168,.16);stroke:var(--arc);stroke-width:1.2;stroke-dasharray:3 3;cursor:grab}
+  .handle:active{cursor:grabbing}
+  .draw{transition:stroke-dashoffset 760ms cubic-bezier(.32,.72,.36,1)}
+  .pop{transition:opacity 300ms ease,transform 300ms cubic-bezier(.3,1.5,.5,1);transform-box:fill-box;transform-origin:center}
+  @media (prefers-reduced-motion:reduce){
+    .draw,.pop{transition:none!important}
+  }
+  footer.foot{
+    margin-top:26px;padding-top:14px;border-top:1px solid var(--rule);
+    font-size:12px;color:#5C7986;display:flex;gap:16px;flex-wrap:wrap;
+  }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Compass &amp; Straightedge <em>Studio</em></h1>
+    <div class="eyebrow">Geometry · Module 1 · Lessons 1–5</div>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+
+  <div class="stage">
+    <section class="board">
+      <div class="board-head">
+        <h2 id="boardTitle">—</h2>
+        <span class="hint" id="boardHint">Drag the amber points</span>
+      </div>
+      <svg class="canvas" id="canvas" viewBox="0 0 700 480" role="img" aria-label="Construction canvas"></svg>
+      <div class="controls" id="controls"></div>
+    </section>
+
+    <aside class="notes">
+      <div class="panel" id="stepPanel">
+        <h3 id="stepPanelTitle">Steps</h3>
+        <ol class="steps" id="stepList"></ol>
+      </div>
+      <div class="panel" id="whyPanel">
+        <h3>Why it works</h3>
+        <div class="prose" id="whyText"></div>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="foot">
+    <span>Every figure is live — drag the amber points to re-run the construction on a new figure.</span>
+    <span>Steps follow Eureka Math / EngageNY Geometry M1, Topic A.</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================ geometry ============================ */
+const V = {w:700, h:480};
+const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]];
+const add=(a,b)=>[a[0]+b[0],a[1]+b[1]];
+const mul=(a,k)=>[a[0]*k,a[1]*k];
+const len=a=>Math.hypot(a[0],a[1]);
+const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
+const unit=a=>{const L=len(a)||1;return [a[0]/L,a[1]/L];};
+const mid=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
+const perp=a=>[-a[1],a[0]];
+const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+
+// intersections of two circles -> [p1,p2] or []
+function circleCircle(c1,r1,c2,r2){
+  const d=dist(c1,c2);
+  if(d===0||d>r1+r2||d<Math.abs(r1-r2)) return [];
+  const a=(r1*r1-r2*r2+d*d)/(2*d);
+  const h=Math.sqrt(Math.max(0,r1*r1-a*a));
+  const u=unit(sub(c2,c1));
+  const m=add(c1,mul(u,a));
+  const p=perp(u);
+  return [add(m,mul(p,h)), add(m,mul(p,-h))];
+}
+// intersection of ray (P + t*dir, t>0) with circle -> nearest positive t point
+function rayCircle(P,dir,c,r){
+  const u=unit(dir), f=sub(P,c);
+  const b=2*(f[0]*u[0]+f[1]*u[1]);
+  const cc=f[0]*f[0]+f[1]*f[1]-r*r;
+  const disc=b*b-4*cc;
+  if(disc<0) return null;
+  const s=Math.sqrt(disc);
+  const ts=[(-b-s)/2,(-b+s)/2].filter(t=>t>0.0001).sort((x,y)=>x-y);
+  if(!ts.length) return null;
+  return add(P,mul(u,ts[0]));
+}
+function footOnLine(P,a,b){
+  const ab=sub(b,a), t=((P[0]-a[0])*ab[0]+(P[1]-a[1])*ab[1])/(ab[0]*ab[0]+ab[1]*ab[1]);
+  return add(a,mul(ab,t));
+}
+function circumcenter(A,B,C){
+  const d=2*(A[0]*(B[1]-C[1])+B[0]*(C[1]-A[1])+C[0]*(A[1]-B[1]));
+  if(Math.abs(d)<1e-9) return null;
+  const a2=A[0]*A[0]+A[1]*A[1], b2=B[0]*B[0]+B[1]*B[1], c2=C[0]*C[0]+C[1]*C[1];
+  return [(a2*(B[1]-C[1])+b2*(C[1]-A[1])+c2*(A[1]-B[1]))/d,
+          (a2*(C[0]-B[0])+b2*(A[0]-C[0])+c2*(B[0]-A[0]))/d];
+}
+function incenter(A,B,C){
+  const a=dist(B,C), b=dist(C,A), c=dist(A,B), s=a+b+c;
+  return [(a*A[0]+b*B[0]+c*C[0])/s,(a*A[1]+b*B[1]+c*C[1])/s];
+}
+// pick the intersection farther from / nearer to a reference point
+const farther=(pair,ref)=> pair.length? (dist(pair[0],ref)>=dist(pair[1],ref)?pair[0]:pair[1]) : null;
+const nearer =(pair,ref)=> pair.length? (dist(pair[0],ref)< dist(pair[1],ref)?pair[0]:pair[1]) : null;
+// pick the intersection on a chosen side of directed line a->b
+function sideOf(pair,a,b,sign){
+  if(!pair.length) return null;
+  const cr=p=>(b[0]-a[0])*(p[1]-a[1])-(b[1]-a[1])*(p[0]-a[0]);
+  return (Math.sign(cr(pair[0]))===sign)?pair[0]:pair[1];
+}
+
+/* ======================= element constructors ===================== */
+let KEY=0;
+const C  =(s,c,r,cls)=>({step:s,type:'circle',c,r,cls:cls||'arc'});
+const SEG=(s,a,b,cls)=>({step:s,type:'seg',a,b,cls:cls||'given'});
+const RAY=(s,a,b,cls)=>({step:s,type:'ray',a,b,cls:cls||'given'});
+const LIN=(s,a,b,cls)=>({step:s,type:'line',a,b,cls:cls||'given'});
+const PT =(s,p,label,cls,ref)=>({step:s,type:'point',p,label,cls:cls||'',ref:ref||[V.w/2,V.h/2]});
+const HND=(s,p,id,label,ref)=>({step:s,type:'point',p,label,cls:'node',drag:id,ref:ref||[V.w/2,V.h/2]});
+const RA =(s,at,d1,d2)=>({step:s,type:'rightangle',at,d1,d2});
+const POLY=(s,pts,cls)=>({step:s,type:'poly',pts,cls:cls||'result'});
+
+/* ============================= modules ============================ */
+const MODULES = [];
+
+/* --- 1. Equilateral triangle (Euclid, Proposition 1) --- */
+MODULES.push({
+  id:'equilateral',
+  tab:'Equilateral triangle',
+  title:'Construct an equilateral triangle',
+  hint:'Drag J or S',
+  pts:{J:[215,330], S:[440,330]},
+  why:`<p>Both circles are drawn with the <b>same radius</b>, <i>JS</i>.</p>
+       <p><i>JM</i> is a radius of circle <i>J</i>, so <i>JM</i> = <i>JS</i>. <i>SM</i> is a radius of circle <i>S</i>, so <i>SM</i> = <i>SJ</i>.</p>
+       <p>Two segments equal to the same segment are equal to each other, so <i>JS</i> = <i>JM</i> = <i>SM</i> — the triangle is equilateral no matter where you drag <i>J</i> and <i>S</i>.</p>`,
+  build(P){
+    const J=P.J, S=P.S, r=dist(J,S);
+    const ix=circleCircle(J,r,S,r);
+    const M=ix.length? (ix[0][1]<ix[1][1]?ix[0]:ix[1]) : null;
+    const ctr=mid(J,S);
+    const st=[];
+    st.push({t:'Draw circle <i>J</i>: center <i>J</i>, radius <i>JS</i>.', els:[C(0,J,r)]});
+    st.push({t:'Draw circle <i>S</i>: center <i>S</i>, radius <i>SJ</i>.', els:[C(1,S,r)]});
+    st.push({t:'Label one intersection as <i>M</i>.', els: M?[PT(2,M,'M','',ctr)]:[]});
+    st.push({t:'Join <i>S</i>, <i>J</i>, <i>M</i>.', els: M?[POLY(3,[J,S,M])]:[]});
+    const base=[HND(0,J,'J','J',[V.w/2,V.h+120]), HND(0,S,'S','S',[V.w/2,V.h+120])];
+    return {steps:st, base};
+  }
+});
+
+/* --- 2. Angle bisector --- */
+MODULES.push({
+  id:'bisect',
+  tab:'Bisect an angle',
+  title:'Construct an angle bisector',
+  hint:'Drag A or either arm',
+  pts:{A:[110,400], H1:[380,95], H2:[640,375]},
+  why:`<p>Circle <i>A</i> forces <i>AB</i> = <i>AC</i>. Circles <i>B</i> and <i>C</i> share the radius <i>BC</i>, so <i>BD</i> = <i>CD</i>.</p>
+       <p>Triangles <i>ABD</i> and <i>ACD</i> therefore have three pairs of equal sides, so the two halves of the angle are equal.</p>
+       <p><b>Key fact for Lesson 5:</b> every point on the bisector is <span class="term">equidistant</span> from the two rays of the angle.</p>`,
+  build(P){
+    const A=P.A;
+    const d1=sub(P.H1,A), d2=sub(P.H2,A);
+    const r=clamp(Math.min(len(d1),len(d2))*0.55,60,185);
+    const B=add(A,mul(unit(d1),r)), Cp=add(A,mul(unit(d2),r));
+    const rr=dist(B,Cp);
+    const D=farther(circleCircle(B,rr,Cp,rr),A);
+    const st=[];
+    st.push({t:'Label the vertex of the angle as <i>A</i>.', els:[PT(0,A,'A','',[V.w,V.h])]});
+    st.push({t:'Draw circle <i>A</i>: center <i>A</i>, any size radius.', els:[C(1,A,r)]});
+    st.push({t:'Label the intersections of circle <i>A</i> with the rays of the angle as <i>B</i> and <i>C</i>.',
+             els:[PT(2,B,'B','',A), PT(2,Cp,'C','',A)]});
+    st.push({t:'Draw circle <i>B</i>: center <i>B</i>, radius <i>BC</i>.', els:[C(3,B,rr)]});
+    st.push({t:'Draw circle <i>C</i>: center <i>C</i>, radius <i>CB</i>.', els:[C(4,Cp,rr)]});
+    st.push({t:'At least one of the two intersection points of circle <i>B</i> and circle <i>C</i> lies in the angle. Label that point <i>D</i>.',
+             els: D?[PT(5,D,'D','',A)]:[]});
+    st.push({t:'Draw ray <i>AD</i>.', els: D?[RAY(6,A,D,'result')]:[]});
+    const base=[
+      SEG(0,A,P.H1,'given'), SEG(0,A,P.H2,'given'),
+      HND(0,P.H1,'H1','',A), HND(0,P.H2,'H2','',A), HND(0,A,'A','',[V.w,V.h])
+    ];
+    return {steps:st, base};
+  }
+});
+
+/* --- 3. Copy an angle --- */
+MODULES.push({
+  id:'copy',
+  tab:'Copy an angle',
+  title:'Copy an angle onto a new ray',
+  hint:'Drag any amber point',
+  pts:{B:[95,360], H1:[275,140], H2:[330,395], E:[400,375], G:[665,330]},
+  why:`<p>Circle <i>E</i> is drawn with radius <i>BA</i>, so <i>EF</i> = <i>BA</i> and <i>ED</i> = <i>BA</i> = <i>BC</i>.</p>
+       <p>Circle <i>F</i> is drawn with radius <i>CA</i>, so <i>FD</i> = <i>CA</i>.</p>
+       <p>Triangle <i>EFD</i> has the same three side lengths as triangle <i>BAC</i>, so the copied angle at <i>E</i> equals the original angle at <i>B</i>.</p>`,
+  build(P){
+    const B=P.B, E=P.E, G=P.G;
+    const d1=sub(P.H1,B), d2=sub(P.H2,B);
+    const r=clamp(Math.min(len(d1),len(d2))*0.62,50,140);
+    const A=add(B,mul(unit(d1),r)), Cp=add(B,mul(unit(d2),r));
+    const F=add(E,mul(unit(sub(G,E)),r));
+    const rr=dist(Cp,A);
+    // keep the copy opening on the same side as the original
+    const crossOrig=Math.sign((Cp[0]-B[0])*(A[1]-B[1])-(Cp[1]-B[1])*(A[0]-B[0]))||1;
+    const D=sideOf(circleCircle(E,r,F,rr),E,F,crossOrig);
+    const st=[];
+    st.push({t:'Label the vertex of the original angle as <i>B</i>.', els:[PT(0,B,'B','',[V.w,V.h])]});
+    st.push({t:'Draw ray <i>EG</i> as one side of the angle to be drawn.', els:[RAY(1,E,G,'given'),PT(1,E,'E','',[E[0],E[1]+60]),PT(1,G,'G','',E)]});
+    st.push({t:'Draw circle <i>B</i>: center <i>B</i>, any radius.', els:[C(2,B,r)]});
+    st.push({t:'Label the intersections of circle <i>B</i> with the sides of the angle as <i>A</i> and <i>C</i>.',
+             els:[PT(3,A,'A','',B), PT(3,Cp,'C','',B)]});
+    st.push({t:'Draw circle <i>E</i>: center <i>E</i>, radius <i>BA</i>.', els:[C(4,E,r)]});
+    st.push({t:'Label the intersection of circle <i>E</i> with ray <i>EG</i> as <i>F</i>.', els:[PT(5,F,'F','',[F[0],F[1]+55])]});
+    st.push({t:'Draw circle <i>F</i>: center <i>F</i>, radius <i>CA</i>.', els:[C(6,F,rr)]});
+    st.push({t:'Label either intersection of circle <i>E</i> and circle <i>F</i> as <i>D</i>.', els: D?[PT(7,D,'D','',E)]:[]});
+    st.push({t:'Draw ray <i>ED</i>.', els: D?[RAY(8,E,D,'result')]:[]});
+    const base=[
+      SEG(0,B,P.H1,'given'), SEG(0,B,P.H2,'given'),
+      HND(0,P.H1,'H1','',B), HND(0,P.H2,'H2','',B), HND(0,B,'B','',[V.w,V.h]),
+      HND(1,E,'E','',[E[0],E[1]+60]), HND(1,G,'G','',E)
+    ];
+    return {steps:st, base};
+  }
+});
+
+/* --- 4. Perpendicular bisector of a segment --- */
+MODULES.push({
+  id:'perpbis',
+  tab:'Perpendicular bisector',
+  title:'Construct the perpendicular bisector of a segment',
+  hint:'Drag A, B, or the point P on the line',
+  pts:{A:[255,175], B:[400,300], Pt:[300,330]},
+  why:`<p><i>C</i> and <i>D</i> are each the same distance from <i>A</i> as from <i>B</i>, so both lie on the set of points equidistant from <i>A</i> and <i>B</i> — and that set is a line.</p>
+       <p>Drag <i>P</i> along the finished line: <b>PA</b> and <b>PB</b> stay equal.</p>
+       <p><b>Key fact for Lesson 5:</b> every point on the perpendicular bisector is <span class="term">equidistant</span> from the two endpoints.</p>`,
+  build(P){
+    const A=P.A, B=P.B, r=dist(A,B);
+    const ix=circleCircle(A,r,B,r);
+    const st=[]; const base=[SEG(0,A,B,'given'), HND(0,A,'A','A',B), HND(0,B,'B','B',A)];
+    st.push({t:'Draw circle <i>A</i>: center <i>A</i>, radius <i>AB</i>.', els:[C(0,A,r)]});
+    st.push({t:'Draw circle <i>B</i>: center <i>B</i>, radius <i>BA</i>.', els:[C(1,B,r)]});
+    if(ix.length){
+      const Cp=ix[0], D=ix[1], M=mid(A,B);
+      st.push({t:'Label the two intersections as <i>C</i> and <i>D</i>.', els:[PT(2,Cp,'C','',M),PT(2,D,'D','',M)]});
+      st.push({t:'Draw line <i>CD</i> — the perpendicular bisector of <i>AB</i>.',
+               els:[LIN(3,Cp,D,'result'), RA(3,M,unit(sub(B,A)),unit(sub(D,Cp))), PT(3,M,'','',M)]});
+      // draggable explorer point, snapped onto the line
+      const Q=footOnLine(P.Pt,Cp,D);
+      st.push({t:'Drag <i>P</i> along the line: <i>PA</i> always equals <i>PB</i>.',
+               els:[SEG(4,Q,A,'equal'), SEG(4,Q,B,'equal'),
+                    {step:4,type:'measure',p:Q,a:A,b:B},
+                    HND(4,Q,'Pt','P',mid(A,B))]});
+    }
+    return {steps:st, base};
+  }
+});
+
+/* --- 5. Perpendicular to a line through a point on it --- */
+MODULES.push({
+  id:'perp',
+  tab:'Perpendicular through a point',
+  title:'Construct a perpendicular to line \u2113 through point A',
+  hint:'Drag A along the line',
+  pts:{A:[330,300]},
+  why:`<p>Circle <i>A</i> makes <i>AB</i> = <i>AC</i>, so <i>A</i> is the midpoint of <i>BC</i>.</p>
+       <p>Circles <i>B</i> and <i>C</i> share the radius <i>BC</i>, so <i>D</i> is equidistant from <i>B</i> and <i>C</i>.</p>
+       <p>Line <i>AD</i> is therefore the perpendicular bisector of <i>BC</i> — a perpendicular to \u2113 that passes through <i>A</i>.</p>`,
+  build(P){
+    const yline=300;
+    const A=[clamp(P.A[0],150,550),yline];
+    const r=95;
+    const B=[A[0]-r,yline], Cp=[A[0]+r,yline], rr=2*r;
+    const ix=circleCircle(B,rr,Cp,rr);
+    const D=ix.length? (ix[0][1]<ix[1][1]?ix[0]:ix[1]) : null;
+    const st=[];
+    st.push({t:'Draw circle <i>A</i>: center <i>A</i>, with a radius so that circle <i>A</i> intersects line \u2113 in two points.', els:[C(0,A,r)]});
+    st.push({t:'Label the two points of intersection as <i>B</i> and <i>C</i>.', els:[PT(1,B,'B','',[A[0],A[1]+50]),PT(1,Cp,'C','',[A[0],A[1]+50])]});
+    st.push({t:'Draw circle <i>B</i>: center <i>B</i>, radius <i>BC</i>.', els:[C(2,B,rr)]});
+    st.push({t:'Draw circle <i>C</i>: center <i>C</i>, radius <i>CB</i>.', els:[C(3,Cp,rr)]});
+    st.push({t:'Label one of the unlabeled intersections of circle <i>B</i> and circle <i>C</i> as <i>D</i>.', els: D?[PT(4,D,'D','',A)]:[]});
+    st.push({t:'Draw line <i>AD</i>.', els: D?[LIN(5,A,D,'result'), RA(5,A,[1,0],[0,-1])]:[]});
+    const base=[
+      LIN(0,[0,yline],[V.w,yline],'given'),
+      {step:0,type:'text',p:[46,yline-16],text:'\u2113',cls:'lbl'},
+      HND(0,A,'A','A',[A[0],A[1]+60])
+    ];
+    return {steps:st, base};
+  }
+});
+
+/* --- 6. Circumscribed circle --- */
+MODULES.push({
+  id:'circumcircle',
+  tab:'Circumscribed circle',
+  title:'Circumscribe a circle about \u25B3ABC',
+  hint:'Drag A, B, or C',
+  pts:{A:[185,315], B:[335,82], C:[520,280]},
+  why:`<p>The center has to be the same distance from all three vertices, so it must lie on the perpendicular bisector of every side.</p>
+       <p>Two bisectors are enough to pin it down: <i>P</i> is equidistant from <i>A</i> and <i>B</i>, and from <i>B</i> and <i>C</i>. That forces <i>PA</i> = <i>PB</i> = <i>PC</i>, so the third bisector passes through <i>P</i> as well.</p>
+       <p>Since all three vertices are the same distance from <i>P</i>, one circle centered at <i>P</i> passes through all of them. <i>P</i> is the <span class="term">circumcenter</span>.</p>
+       <p><b>Try it:</b> drag <i>B</i> low and wide until the triangle is obtuse — <i>P</i> leaves the triangle, but the circle still catches all three vertices.</p>
+       <p>Each bisector is color-coded: its arcs, its labeled points, and its line all share one color, so students can tell which marks belong to which side.</p>`,
+  build(P){
+    const A=P.A,B=P.B,Cc=P.C;
+    const r1=0.80*dist(A,B), r2=0.88*dist(B,Cc);
+    const i1=circleCircle(A,r1,B,r1), i2=circleCircle(B,r2,Cc,r2);
+    const O=circumcenter(A,B,Cc);
+    const mAB=mid(A,B), mBC=mid(B,Cc), ctr=[(A[0]+B[0]+Cc[0])/3,(A[1]+B[1]+Cc[1])/3];
+    const st=[];
+    const K1='var(--s1)', K2='var(--s2)', KA='var(--amber)';
+    st.push({t:'Draw circle <i>A</i>: center <i>A</i>, with a radius greater than half of <i>AB</i>.', col:K1, els:[C(0,A,r1,'arc1')]});
+    st.push({t:'Draw circle <i>B</i>: center <i>B</i>, same radius. Label the intersections <i>E</i> and <i>F</i>.', col:K1,
+             els: i1.length?[C(1,B,r1,'arc1'),PT(1,i1[0],'E','s1',mAB),PT(1,i1[1],'F','s1',mAB)]:[C(1,B,r1,'arc1')]});
+    st.push({t:'Draw line <i>EF</i> — the perpendicular bisector of <i>AB</i>.', col:K1,
+             els: i1.length?[LIN(2,i1[0],i1[1],'bis1'),RA(2,mAB,unit(sub(B,A)),unit(sub(i1[0],mAB)))]:[]});
+    st.push({t:'Draw circle <i>B</i>: center <i>B</i>, with a radius greater than half of <i>BC</i>.', col:K2, els:[C(3,B,r2,'arc2')]});
+    st.push({t:'Draw circle <i>C</i>: center <i>C</i>, same radius. Label the intersections <i>G</i> and <i>H</i>.', col:K2,
+             els: i2.length?[C(4,Cc,r2,'arc2'),PT(4,i2[0],'G','s2',mBC),PT(4,i2[1],'H','s2',mBC)]:[C(4,Cc,r2,'arc2')]});
+    st.push({t:'Draw line <i>GH</i> — the perpendicular bisector of <i>BC</i>.', col:K2,
+             els: i2.length?[LIN(5,i2[0],i2[1],'bis2'),RA(5,mBC,unit(sub(Cc,B)),unit(sub(i2[0],mBC)))]:[]});
+    st.push({t:'Label the point where the two bisectors meet as <i>P</i>. Check: <i>PA</i> = <i>PB</i> = <i>PC</i>.', col:'var(--violet)',
+             els: O?[SEG(6,O,A,'equal'),SEG(6,O,B,'equal'),SEG(6,O,Cc,'equal'),PT(6,O,'P','hot',ctr)]:[]});
+    st.push({t:'Draw circle <i>P</i>: center <i>P</i>, radius <i>PA</i>. It passes through all three vertices — the <b>circumscribed circle</b>.', col:KA,
+             els: O?[C(7,O,dist(O,A),'result')]:[]});
+    const base=[POLY(0,[A,B,Cc],'given'),
+      HND(0,A,'A','A',mid(B,Cc)),HND(0,B,'B','B',mid(A,Cc)),HND(0,Cc,'C','C',mid(A,B))];
+    return {steps:st, base};
+  }
+});
+
+/* --- 7. Inscribed circle --- */
+MODULES.push({
+  id:'incircle',
+  tab:'Inscribed circle',
+  title:'Inscribe a circle in \u25B3ABC',
+  hint:'Drag A, B, or C',
+  pts:{A:[135,400], B:[335,105], C:[585,370]},
+  why:`<p>The center has to be the same distance from all three <b>sides</b>, so it must lie on the bisector of every angle.</p>
+       <p>Two bisectors locate it: <i>Q</i> is equidistant from the sides of angle <i>A</i>, and from the sides of angle <i>B</i>. So it is equidistant from all three sides and the third bisector passes through it too. <i>Q</i> is the <span class="term">incenter</span>.</p>
+       <p><b>Watch the radius.</b> Distance to a side means <i>perpendicular</i> distance — that is why steps 8–10 drop a perpendicular from <i>Q</i> to <i>AB</i> instead of just measuring to a vertex. Using <i>QA</i> would overshoot and the circle would cut through the sides.</p>
+       <p>Three color-coded sets of marks: the bisector of angle <i>A</i>, the bisector of angle <i>B</i>, and the perpendicular that measures the radius.</p>`,
+  build(P){
+    const A=P.A,B=P.B,Cc=P.C;
+    const st=[];
+    // angle bisector at A
+    const ra=clamp(0.30*Math.min(dist(A,B),dist(A,Cc)),40,130);
+    const D=add(A,mul(unit(sub(B,A)),ra)), E=add(A,mul(unit(sub(Cc,A)),ra));
+    const rde=dist(D,E), F=farther(circleCircle(D,rde,E,rde),A);
+    // angle bisector at B
+    const rb=clamp(0.42*Math.min(dist(B,A),dist(B,Cc)),50,170);
+    const G=add(B,mul(unit(sub(A,B)),rb)), H=add(B,mul(unit(sub(Cc,B)),rb));
+    const rgh=dist(G,H), K=farther(circleCircle(G,rgh,H,rgh),B);
+    const Q=incenter(A,B,Cc);
+    // perpendicular from Q to AB
+    const s=(dist(B,Cc)+dist(Cc,A)+dist(A,B))/2;
+    const area=Math.abs((B[0]-A[0])*(Cc[1]-A[1])-(Cc[0]-A[0])*(B[1]-A[1]))/2;
+    const inr=area/s;
+    const T=footOnLine(Q,A,B), rq=inr*1.35, u=unit(sub(B,A));
+    const half=Math.sqrt(Math.max(1,rq*rq-inr*inr));
+    const M=add(T,mul(u,-half)), N=add(T,mul(u,half));
+    const rmn=0.66*dist(M,N);
+    const R=farther(circleCircle(M,rmn,N,rmn),Q);
+    st.push({t:'Bisect angle <i>A</i>. Draw circle <i>A</i>, any radius; label the intersections with the sides <i>D</i> and <i>E</i>.', col:'var(--s1)',
+             els:[C(0,A,ra,'arc1'),PT(0,D,'D','s1',A),PT(0,E,'E','s1',A)]});
+    st.push({t:'Draw circle <i>D</i>: radius <i>DE</i>, and circle <i>E</i>: radius <i>ED</i>. Label the intersection inside the angle <i>F</i>.', col:'var(--s1)',
+             els: F?[C(1,D,rde,'arc1'),C(1,E,rde,'arc1'),PT(1,F,'F','s1',A)]:[]});
+    st.push({t:'Draw ray <i>AF</i> — the bisector of angle <i>A</i>.', col:'var(--s1)', els: F?[RAY(2,A,F,'bis1')]:[]});
+    st.push({t:'Bisect angle <i>B</i> the same way. Circle <i>B</i> meets the sides at <i>G</i> and <i>H</i>.', col:'var(--s2)',
+             els:[C(3,B,rb,'arc2'),PT(3,G,'G','s2',B),PT(3,H,'H','s2',B)]});
+    st.push({t:'Draw circle <i>G</i> and circle <i>H</i>, each with radius <i>GH</i>. Label the intersection inside the angle <i>K</i>.', col:'var(--s2)',
+             els: K?[C(4,G,rgh,'arc2'),C(4,H,rgh,'arc2'),PT(4,K,'K','s2',B)]:[]});
+    st.push({t:'Draw ray <i>BK</i> — the bisector of angle <i>B</i>.', col:'var(--s2)', els: K?[RAY(5,B,K,'bis2')]:[]});
+    st.push({t:'Label the point where the bisectors meet as <i>Q</i>. This is the incenter.', col:'var(--green)',
+             els:[PT(6,Q,'Q','hot2',mid(A,B))]});
+    st.push({t:'The radius is the distance to a <i>side</i>, so drop a perpendicular. Draw circle <i>Q</i> crossing <i>AB</i> at <i>M</i> and <i>N</i>.', col:'var(--s3)',
+             els:[C(7,Q,rq,'arc3'),PT(7,M,'M','s3',Q),PT(7,N,'N','s3',Q)]});
+    st.push({t:'Draw circle <i>M</i> and circle <i>N</i>, each with a radius greater than half of <i>MN</i>. Label an intersection <i>R</i>.', col:'var(--s3)',
+             els: R?[C(8,M,rmn,'arc3'),C(8,N,rmn,'arc3'),PT(8,R,'R','s3',Q)]:[]});
+    st.push({t:'Draw line <i>QR</i>. It is perpendicular to <i>AB</i>; label the point where it meets <i>AB</i> as <i>T</i>.', col:'var(--s3)',
+             els: R?[SEG(9,Q,R,'bis3'),PT(9,T,'T','s3',Q),RA(9,T,u,unit(sub(Q,T)))]:[]});
+    st.push({t:'Draw circle <i>Q</i>: center <i>Q</i>, radius <i>QT</i>. It just touches all three sides — the <b>inscribed circle</b>.', col:'var(--amber)',
+             els:[C(10,Q,inr,'result'),
+                  SEG(10,Q,footOnLine(Q,B,Cc),'equal'),SEG(10,Q,footOnLine(Q,Cc,A),'equal')]});
+    const base=[POLY(0,[A,B,Cc],'given'),
+      HND(0,A,'A','A',mid(B,Cc)),HND(0,B,'B','B',mid(A,Cc)),HND(0,Cc,'C','C',mid(A,B))];
+    return {steps:st, base};
+  }
+});
+
+/* --- 8. Points of concurrency (Lesson 5) --- */
+MODULES.push({
+  id:'concurrency',
+  tab:'Lesson 5 · Points of concurrency',
+  title:'Circumcenter and incenter of \u25B3ABC',
+  hint:'Drag A, B, or C',
+  live:true,
+  pts:{A:[130,405], B:[400,85], C:[590,330]},
+  why:`<p>Three or more lines that meet in a single point are <span class="term">concurrent</span>; the shared point is the <span class="term">point of concurrency</span>.</p>
+       <p><b>Circumcenter <i>P</i>.</b> <i>P</i> is equidistant from <i>A</i> and <i>B</i> because it lies on the perpendicular bisector of <i>AB</i>, and equidistant from <i>B</i> and <i>C</i> for the same reason. So <i>PA</i> = <i>PB</i> = <i>PC</i>, and <i>P</i> also lies on the third bisector. It is the center of the circle that <b>circumscribes</b> the triangle.</p>
+       <p><b>Incenter <i>Q</i>.</b> Every point on an angle bisector is equidistant from the two rays of that angle, so <i>Q</i> is the same distance from all three sides. It is the center of the circle <b>inscribed</b> in the triangle.</p>
+       <p>Drag <i>B</i> to make an obtuse triangle and watch the circumcenter leave the triangle — the incenter never does.</p>`,
+  options:[
+    {id:'perpb', label:'Perpendicular bisectors', on:true, color:'var(--violet)'},
+    {id:'circ',  label:'Circumscribed circle',    on:true, color:'var(--violet)'},
+    {id:'angb',  label:'Angle bisectors',         on:false,color:'var(--green)'},
+    {id:'inc',   label:'Inscribed circle',        on:false,color:'var(--green)'},
+    {id:'meas',  label:'Show equal distances',    on:false,color:'var(--amber)'}
+  ],
+  build(P,opt){
+    const A=P.A,B=P.B,Cc=P.C, els=[];
+    els.push(POLY(0,[A,B,Cc],'given'));
+    const O=circumcenter(A,B,Cc), I=incenter(A,B,Cc);
+    const mAB=mid(A,B), mBC=mid(B,Cc), mCA=mid(Cc,A);
+    if(opt.perpb && O){
+      [[A,B,mAB],[B,Cc,mBC],[Cc,A,mCA]].forEach(([p,q,m])=>{
+        const dir=perp(unit(sub(q,p)));
+        els.push(LIN(0,add(m,mul(dir,-900)),add(m,mul(dir,900)),'perp'));
+        els.push(RA(0,m,unit(sub(q,p)),dir));
+      });
+      els.push(PT(0,O,'P','hot',I));
+    }
+    if(opt.circ && O) els.push(C(0,O,dist(O,A),'circum'));
+    if(opt.angb){
+      [[A,B,Cc],[B,Cc,A],[Cc,A,B]].forEach(([v,x,y])=>{
+        const dir=unit(add(unit(sub(x,v)),unit(sub(y,v))));
+        els.push(SEG(0,v,add(v,mul(dir,1200)),'bis'));
+      });
+      els.push(PT(0,I,'Q','hot2',O||[V.w/2,V.h/2]));
+    }
+    if(opt.inc){
+      const s=(dist(B,Cc)+dist(Cc,A)+dist(A,B))/2;
+      const area=Math.abs((B[0]-A[0])*(Cc[1]-A[1])-(Cc[0]-A[0])*(B[1]-A[1]))/2;
+      els.push(C(0,I,area/s,'incirc'));
+    }
+    if(opt.meas){
+      if(opt.perpb && O) [A,B,Cc].forEach(p=>els.push(SEG(0,O,p,'equal')));
+      if(opt.angb) [[A,B],[B,Cc],[Cc,A]].forEach(([p,q])=>els.push(SEG(0,I,footOnLine(I,p,q),'equal')));
+    }
+    els.push(HND(0,A,'A','A',mid(B,Cc)),HND(0,B,'B','B',mid(A,Cc)),HND(0,Cc,'C','C',mid(A,B)));
+    return {steps:[{t:'',els:els}], base:[], data:{O,I,A,B,C:Cc}};
+  }
+});
+
+/* ============================== render ============================ */
+const svgNS='http://www.w3.org/2000/svg';
+const canvas=document.getElementById('canvas');
+const tabsEl=document.getElementById('tabs');
+const controlsEl=document.getElementById('controls');
+const stepListEl=document.getElementById('stepList');
+const whyEl=document.getElementById('whyText');
+const titleEl=document.getElementById('boardTitle');
+const hintEl=document.getElementById('boardHint');
+const panelTitle=document.getElementById('stepPanelTitle');
+
+let modIndex=0, step=-1, drawn=new Set(), playing=null, drag=null;
+const state=MODULES.map(m=>({pts:JSON.parse(JSON.stringify(m.pts)),
+  opt:(m.options||[]).reduce((o,x)=>(o[x.id]=x.on,o),{})}));
+
+function extend(a,b,both){
+  const u=unit(sub(b,a)), L=2200;
+  return both? [add(a,mul(u,-L)), add(a,mul(u,L))] : [a, add(a,mul(u,L))];
+}
+
+function build(){
+  const m=MODULES[modIndex], s=state[modIndex];
+  return m.build(s.pts, s.opt);
+}
+
+function keyOf(e,i){
+  return [e.type,e.cls||'',e.label||'',e.drag||'',i].join('|');
+}
+
+function render(animate){
+  const m=MODULES[modIndex];
+  const res=build();
+  const els=[...res.base];
+  res.steps.forEach((st,i)=>{ if(m.live||i<=step) els.push(...st.els); });
+
+  canvas.innerHTML='';
+  const defs=document.createElementNS(svgNS,'defs');
+  defs.innerHTML='<clipPath id="frame"><rect x="0" y="0" width="'+V.w+'" height="'+V.h+'"/></clipPath>'+
+    '<pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">'+
+    '<path d="M28 0H0V28" fill="none" stroke="var(--grid)" stroke-width="0.6" opacity="0.5"/></pattern>';
+  canvas.appendChild(defs);
+  const bg=document.createElementNS(svgNS,'rect');
+  bg.setAttribute('width',V.w);bg.setAttribute('height',V.h);bg.setAttribute('fill','url(#grid)');
+  canvas.appendChild(bg);
+
+  const g=document.createElementNS(svgNS,'g');
+  g.setAttribute('clip-path','url(#frame)');
+  canvas.appendChild(g);
+
+  const fresh=[];
+  els.forEach((e,i)=>{
+    const k=keyOf(e,i);
+    const isNew=animate && !drawn.has(k);
+    const nodes=drawEl(e,g);
+    nodes.forEach(n=>{ if(isNew) fresh.push({n,e}); });
+    drawn.add(k);
+  });
+
+  fresh.forEach(({n,e})=>{
+    if(n.dataset.anim==='stroke'){
+      n.classList.add('draw');
+      n.style.strokeDashoffset='100';
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{n.style.strokeDashoffset='0';}));
+      if(e.type==='circle') compassArm(g,e,n);
+    }else if(n.dataset.anim==='pop'){
+      n.classList.add('pop');
+      n.style.opacity='0'; n.style.transform='scale(.2)';
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{n.style.opacity='1';n.style.transform='scale(1)';}));
+    }
+  });
+}
+
+function compassArm(g,e,src){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const arm=document.createElementNS(svgNS,'line');
+  arm.setAttribute('class','arm');
+  if(src) arm.style.stroke=getComputedStyle(src).stroke;
+  arm.setAttribute('x1',e.c[0]); arm.setAttribute('y1',e.c[1]);
+  g.appendChild(arm);
+  const t0=performance.now(), T=760;
+  (function tick(now){
+    const p=Math.min(1,(now-t0)/T), a=p*Math.PI*2;
+    arm.setAttribute('x2',e.c[0]+e.r*Math.cos(a));
+    arm.setAttribute('y2',e.c[1]+e.r*Math.sin(a));
+    if(p<1) requestAnimationFrame(tick);
+    else arm.remove();
+  })(performance.now());
+}
+
+function drawEl(e,g){
+  const made=[];
+  const mk=(tag,attrs,anim)=>{
+    const n=document.createElementNS(svgNS,tag);
+    for(const k in attrs) n.setAttribute(k,attrs[k]);
+    if(anim){n.setAttribute('pathLength',100);n.style.strokeDasharray='100';n.dataset.anim='stroke';}
+    g.appendChild(n); made.push(n); return n;
+  };
+  if(e.type==='circle'){
+    mk('circle',{cx:e.c[0],cy:e.c[1],r:Math.max(1,e.r),class:e.cls},true);
+  }else if(e.type==='seg'){
+    mk('line',{x1:e.a[0],y1:e.a[1],x2:e.b[0],y2:e.b[1],class:e.cls},true);
+  }else if(e.type==='ray'||e.type==='line'){
+    const [p,q]=extend(e.a,e.b,e.type==='line');
+    mk('line',{x1:p[0],y1:p[1],x2:q[0],y2:q[1],class:e.cls},true);
+  }else if(e.type==='poly'){
+    const pts=e.pts.map(p=>p.join(',')).join(' ');
+    mk('polygon',{points:pts,class:e.cls,fill:e.cls==='result'?'rgba(217,144,43,.10)':'rgba(43,63,74,.05)'},true);
+  }else if(e.type==='rightangle'){
+    const s=13, a=mul(unit(e.d1),s), b=mul(unit(e.d2),s);
+    const p1=add(e.at,a), p2=add(add(e.at,a),b), p3=add(e.at,b);
+    mk('polyline',{points:[p1,p2,p3].map(p=>p.join(',')).join(' '),
+      fill:'none',stroke:'var(--graphite)','stroke-width':1.3,opacity:.85});
+  }else if(e.type==='text'){
+    const n=document.createElementNS(svgNS,'text');
+    n.setAttribute('x',e.p[0]);n.setAttribute('y',e.p[1]);n.setAttribute('class',e.cls||'lbl');
+    n.textContent=e.text; g.appendChild(n); made.push(n);
+  }else if(e.type==='measure'){
+    const put=(from,to,txt)=>{
+      const m=mid(from,to), n=document.createElementNS(svgNS,'text');
+      n.setAttribute('x',m[0]+8);n.setAttribute('y',m[1]-6);
+      n.setAttribute('class','lbl acc');n.setAttribute('font-size','12.5');n.setAttribute('font-style','normal');
+      n.textContent=txt; g.appendChild(n); made.push(n);
+    };
+    put(e.p,e.a,'PA = '+Math.round(dist(e.p,e.a)));
+    put(e.p,e.b,'PB = '+Math.round(dist(e.p,e.b)));
+  }else if(e.type==='point'){
+    if(e.drag){
+      const h=document.createElementNS(svgNS,'circle');
+      h.setAttribute('cx',e.p[0]);h.setAttribute('cy',e.p[1]);h.setAttribute('r',14);
+      h.setAttribute('class','handle');h.dataset.drag=e.drag;
+      g.appendChild(h);
+    }
+    const d=document.createElementNS(svgNS,'circle');
+    d.setAttribute('cx',e.p[0]);d.setAttribute('cy',e.p[1]);d.setAttribute('r',e.drag?5:4.6);
+    d.setAttribute('class','dot '+(e.cls||''));
+    d.dataset.anim='pop';
+    g.appendChild(d); made.push(d);
+    if(e.label){
+      let u=unit(sub(e.p,e.ref));
+      if(!isFinite(u[0])||!isFinite(u[1])||(u[0]===0&&u[1]===0)) u=[0,-1];
+      const L=add(e.p,mul(u,22));
+      const t=document.createElementNS(svgNS,'text');
+      t.setAttribute('x',L[0]);t.setAttribute('y',L[1]+5);
+      t.setAttribute('text-anchor','middle');
+      const LC={hot:'vio',hot2:'grn',node:'acc',s1:'c1',s2:'c2',s3:'c3'};
+      t.setAttribute('class','lbl '+(LC[e.cls]||''));
+      t.textContent=e.label; g.appendChild(t);
+    }
+  }
+  return made;
+}
+
+/* ============================ interface =========================== */
+function renderTabs(){
+  tabsEl.innerHTML='';
+  MODULES.forEach((m,i)=>{
+    const b=document.createElement('button');
+    b.setAttribute('role','tab');
+    b.setAttribute('aria-selected',i===modIndex);
+    b.innerHTML='<span class="n">'+(i+1)+'</span>'+m.tab;
+    b.onclick=()=>{modIndex=i;reset();};
+    tabsEl.appendChild(b);
+  });
+}
+
+function renderPanel(){
+  const m=MODULES[modIndex], s=state[modIndex];
+  titleEl.textContent=m.title;
+  hintEl.textContent=m.hint;
+  whyEl.innerHTML=m.why;
+
+  if(m.live){
+    panelTitle.textContent='Show on the figure';
+    document.getElementById('stepList').outerHTML='<div class="toggles" id="stepList"></div>';
+    const box=document.getElementById('stepList');
+    m.options.forEach(o=>{
+      const l=document.createElement('label');
+      const c=document.createElement('input');
+      c.type='checkbox'; c.checked=s.opt[o.id];
+      c.onchange=()=>{s.opt[o.id]=c.checked;render(false);readout();};
+      l.appendChild(c);
+      l.appendChild(document.createTextNode(o.label));
+      const sw=document.createElement('span');
+      sw.className='swatch'; sw.style.background=o.color;
+      l.appendChild(sw);
+      box.appendChild(l);
+    });
+    let r=document.getElementById('readout');
+    if(!r){ r=document.createElement('div'); r.className='readout'; r.id='readout';
+      document.getElementById('stepPanel').appendChild(r); }
+  }else{
+    const r=document.getElementById('readout'); if(r) r.remove();
+    panelTitle.textContent='Steps';
+    const holder=document.getElementById('stepList');
+    holder.outerHTML='<ol class="steps" id="stepList"></ol>';
+    const ol=document.getElementById('stepList');
+    build().steps.forEach((st,i)=>{
+      const li=document.createElement('li');
+      li.className=i<step?'done':i===step?'now':'';
+      li.innerHTML='<span class="num">'+(i+1)+'</span><span>'+st.t+'</span>';
+      if(st.col) li.querySelector('.num').style.color=st.col;
+      li.onclick=()=>{step=i;drawn=new Set();render(true);renderPanel();renderControls();};
+      li.style.cursor='pointer';
+      ol.appendChild(li);
+    });
+  }
+}
+
+function readout(){
+  const m=MODULES[modIndex]; if(!m.live) return;
+  const box=document.getElementById('readout'); if(!box) return;
+  const {O,I,A,B,C:Cc}=build().data;
+  const s=state[modIndex].opt;
+  let h='';
+  if(s.perpb&&O){
+    h+='<div><span>PA</span><b>'+dist(O,A).toFixed(1)+'</b></div>'+
+       '<div><span>PB</span><b>'+dist(O,B).toFixed(1)+'</b></div>'+
+       '<div><span>PC</span><b>'+dist(O,Cc).toFixed(1)+'</b></div>';
+  }
+  if(s.angb&&I){
+    const d1=dist(I,footOnLine(I,A,B)),d2=dist(I,footOnLine(I,B,Cc)),d3=dist(I,footOnLine(I,Cc,A));
+    h+='<div><span>Q to AB</span><b>'+d1.toFixed(1)+'</b></div>'+
+       '<div><span>Q to BC</span><b>'+d2.toFixed(1)+'</b></div>'+
+       '<div><span>Q to CA</span><b>'+d3.toFixed(1)+'</b></div>';
+  }
+  // classify the triangle
+  const sides=[dist(B,Cc),dist(Cc,A),dist(A,B)].sort((x,y)=>x-y);
+  const t=sides[2]*sides[2]-(sides[0]*sides[0]+sides[1]*sides[1]);
+  const kind=Math.abs(t)<180?'right':t>0?'obtuse':'acute';
+  const where=kind==='obtuse'?'outside the triangle':kind==='right'?'on the hypotenuse':'inside the triangle';
+  h+='<div class="verdict">Triangle is '+kind+' — the circumcenter sits '+where+'. The incenter is always inside.</div>';
+  box.innerHTML=h;
+}
+
+function renderControls(){
+  const m=MODULES[modIndex];
+  controlsEl.innerHTML='';
+  if(m.live){
+    const b=document.createElement('button');
+    b.textContent='Reset triangle';
+    b.onclick=()=>{state[modIndex].pts=JSON.parse(JSON.stringify(m.pts));render(false);readout();};
+    controlsEl.appendChild(b);
+    const note=document.createElement('span');
+    note.className='counter'; note.textContent='Drag A, B or C';
+    controlsEl.appendChild(note);
+    return;
+  }
+  const total=build().steps.length;
+  const mkBtn=(label,fn,cls,dis)=>{
+    const b=document.createElement('button');
+    b.textContent=label; b.onclick=fn; if(cls)b.className=cls; b.disabled=!!dis;
+    controlsEl.appendChild(b); return b;
+  };
+  mkBtn('Next step',()=>go(step+1),'primary',step>=total-1);
+  mkBtn('Back',()=>go(step-1),'',step<0);
+  mkBtn(playing?'Pause':'Play all',togglePlay);
+  mkBtn('Start over',()=>{stop();step=-1;drawn=new Set();render(false);renderPanel();renderControls();});
+  const c=document.createElement('span');
+  c.className='counter';
+  c.textContent = step<0 ? 'Given figure' : 'Step '+(step+1)+' of '+total;
+  controlsEl.appendChild(c);
+}
+
+function go(i){
+  const total=build().steps.length;
+  const next=clamp(i,-1,total-1);
+  if(next<step){ drawn=new Set(); step=next; render(false); }
+  else { step=next; render(true); }
+  renderPanel(); renderControls();
+  if(step>=total-1) stop();
+}
+function togglePlay(){
+  if(playing){stop();renderControls();return;}
+  if(step>=build().steps.length-1){step=-1;drawn=new Set();render(false);}
+  playing=setInterval(()=>{
+    const total=build().steps.length;
+    if(step>=total-1){stop();renderControls();return;}
+    go(step+1);
+  },1150);
+  go(step+1);
+  renderControls();
+}
+function stop(){ if(playing){clearInterval(playing);playing=null;} }
+
+function reset(){
+  stop(); step=-1; drawn=new Set();
+  renderTabs(); renderPanel(); renderControls();
+  render(false);
+  if(MODULES[modIndex].live) readout();
+}
+
+/* ============================= dragging =========================== */
+function svgPoint(evt){
+  const r=canvas.getBoundingClientRect();
+  return [ (evt.clientX-r.left)*V.w/r.width, (evt.clientY-r.top)*V.h/r.height ];
+}
+canvas.addEventListener('pointerdown',e=>{
+  const id=e.target.dataset && e.target.dataset.drag;
+  if(!id) return;
+  drag=id; canvas.setPointerCapture(e.pointerId); stop();
+  e.preventDefault();
+});
+canvas.addEventListener('pointermove',e=>{
+  if(!drag) return;
+  const p=svgPoint(e), s=state[modIndex];
+  s.pts[drag]=[clamp(p[0],14,V.w-14),clamp(p[1],14,V.h-14)];
+  render(false);
+  if(MODULES[modIndex].live) readout();
+});
+canvas.addEventListener('pointerup',()=>{drag=null;});
+canvas.addEventListener('pointercancel',()=>{drag=null;});
+
+document.addEventListener('keydown',e=>{
+  if(MODULES[modIndex].live) return;
+  if(e.key==='ArrowRight'){go(step+1);e.preventDefault();}
+  if(e.key==='ArrowLeft'){go(step-1);e.preventDefault();}
+});
+
+reset();
+})();
+</script>
