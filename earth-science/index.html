@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earth Science Classroom — Classrooms of the Future</title>
+<meta name="description" content="Seismic imaging, rocks and minerals, and well logs, with live simulations. For schools, universities and subsurface professionals.">
+<meta property="og:title" content="Earth Science Classroom">
+<meta property="og:description" content="Read the ground beneath your feet: seismic and well-log simulations and a course from surface to reservoir.">
+<meta property="og:site_name" content="Classrooms of the Future">
+<meta name="theme-color" content="#EEF3EC">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231D2B31'/%3E%3Cpath d='M0 12h32M0 19h32M0 25h32' stroke='%23C9973F' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..700&family=Spectral:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #EEF3EC; --grid: #DCE6D8; --card: #FFFFFF;
+  --slate: #1D2B31; --slate-2: #4A5A60; --rule: #C9D3C6;
+  --ochre: #C9973F; --ochre-deep: #8A6420; --sand: #F1E3C4; --shale: #9AA5A0; --shale-soft: #D9DFDC;
+  --blue: #1F5A8A; --blue-soft: #DCE7F0; --green: #2F6B4F;
+  --serif: 'Spectral', Georgia, serif; --sans: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { color: var(--slate); font-family: var(--sans); font-size: 1.0625rem; line-height: 1.6; -webkit-font-smoothing: antialiased;
+  background-color: var(--paper);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px; }
+a { color: var(--blue); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; border-radius: 3px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 2rem; }
+@media (max-width: 640px) { .wrap { padding: 0 1rem; } }
+h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -.015em; line-height: 1.1; }
+
+.top { position: sticky; top: 0; z-index: 10; background: rgba(238,243,236,.95); border-bottom: 1px solid var(--rule); backdrop-filter: blur(6px); }
+.top .wrap { height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.crumb { display: flex; align-items: center; gap: .6rem; color: var(--slate); text-decoration: none; font-family: var(--serif); font-weight: 700; font-size: 1.12rem; white-space: nowrap; }
+.crumb small { font-family: var(--sans); font-weight: 500; font-size: .9rem; color: var(--slate-2); }
+.crumb svg { width: 30px; height: 30px; flex: none; }
+.top nav { display: flex; gap: 1.4rem; align-items: center; }
+.top nav a { color: var(--slate-2); text-decoration: none; font-weight: 500; font-size: .95rem; }
+.top nav a:hover { color: var(--slate); }
+.top nav .switch { color: var(--slate); border: 1.5px solid var(--slate); padding: .35rem .85rem; border-radius: 6px; font-weight: 600; }
+@media (max-width: 820px) { .top nav a:not(.switch) { display: none; } .crumb small { display: none; } }
+
+/* hero */
+.hero { padding: 3.5rem 0 3rem; }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 3rem; align-items: center; }
+.room { display: inline-block; font-weight: 700; color: var(--ochre-deep); margin-bottom: .6rem; }
+.hero h1 { font-size: clamp(2.6rem, 5.6vw, 4.3rem); font-weight: 700; }
+.hero p { margin-top: 1.2rem; font-size: 1.15rem; color: var(--slate-2); max-width: 32rem; }
+.btns { margin-top: 1.8rem; display: flex; gap: .8rem; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 0 1.4rem; border-radius: 6px; font: 700 1rem var(--sans); text-decoration: none; border: 2px solid var(--slate); }
+.btn-dark { background: var(--slate); color: #fff; }
+.btn-dark:hover { background: #0F1A1F; }
+.btn-line { background: var(--card); color: var(--slate); }
+.btn-line:hover { background: var(--paper); }
+.map { background: var(--card); border: 1px solid var(--rule); border-radius: 6px; padding: .6rem; box-shadow: 4px 4px 0 var(--rule); transform: rotate(1.2deg); }
+.map svg { display: block; width: 100%; height: auto; }
+.map figcaption { font-size: .82rem; color: var(--slate-2); padding: .4rem .2rem 0; display: flex; justify-content: space-between; }
+@media (max-width: 900px) { .hero .wrap { grid-template-columns: 1fr; } .map { transform: none; } }
+
+.section { padding: 4.5rem 0; }
+.head { max-width: 44rem; margin-bottom: 2.5rem; }
+.head h2 { font-size: clamp(2rem, 3.8vw, 2.8rem); font-weight: 700; }
+.head p { margin-top: .8rem; color: var(--slate-2); font-size: 1.1rem; }
+
+/* course as strata */
+.strata { list-style: none; background: var(--card); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.layer { display: grid; grid-template-columns: 120px minmax(0, 1fr) auto; gap: 1.5rem; align-items: center; border-bottom: 1px solid var(--rule); padding-right: 1.25rem; }
+.layer:last-child { border-bottom: 0; }
+.rock { align-self: stretch; min-height: 92px; position: relative; border-right: 2px solid var(--slate); }
+.rock span { position: absolute; left: .55rem; top: .5rem; font: 700 .78rem var(--sans); color: var(--slate); background: rgba(255,255,255,.8); padding: .05rem .4rem; border-radius: 3px; }
+.l-soil { background: repeating-linear-gradient(45deg, #A7B79A 0 6px, #B9C7AD 6px 12px); }
+.l-sand { background-color: var(--sand); background-image: radial-gradient(#C9973F 1px, transparent 1.4px); background-size: 9px 9px; }
+.l-shale { background: repeating-linear-gradient(0deg, #9AA5A0 0 3px, #B7C0BB 3px 9px); }
+.l-lime { background-color: #DDE3E6; background-image: linear-gradient(#9AA5A0 1px, transparent 1px), linear-gradient(90deg, #9AA5A0 1px, transparent 1px); background-size: 28px 14px; }
+.l-sand2 { background-color: #E9D29E; background-image: radial-gradient(#8A6420 1px, transparent 1.4px); background-size: 7px 7px; }
+.l-salt { background: repeating-linear-gradient(135deg, #E8EEF2 0 8px, #CBD8E0 8px 10px); }
+.l-res { background-color: #E2C27A; background-image: radial-gradient(#5A4210 1.2px, transparent 1.6px); background-size: 8px 8px; }
+.l-base { background: repeating-linear-gradient(60deg, #7E8B86 0 10px, #95A19C 10px 14px, #6E7A75 14px 22px); }
+.layer h3 { font-size: 1.3rem; }
+.layer p { color: var(--slate-2); font-size: .97rem; margin-top: .2rem; }
+.layer .lvl { font-size: .85rem; color: var(--slate-2); margin-top: .3rem; }
+.badge { font-size: .8rem; font-weight: 700; padding: .25rem .6rem; border-radius: 4px; white-space: nowrap; }
+.badge.ready { background: var(--blue-soft); color: var(--blue); text-decoration: none; }
+.badge.ready:hover { text-decoration: underline; }
+.badge.soon { background: var(--shale-soft); color: var(--slate-2); }
+@media (max-width: 640px) { .layer { grid-template-columns: 64px minmax(0, 1fr); padding: 0 1rem 0 0; } .layer .badge { grid-column: 2; justify-self: start; margin-bottom: 1rem; } .rock span { display: none; } .layer > div:nth-child(2) { padding-top: 1rem; } }
+
+/* labs */
+.labs { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+.lab { background: var(--card); border: 1px solid var(--rule); border-radius: 6px; padding: 1.5rem; display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 2rem; align-items: start; box-shadow: 4px 4px 0 var(--rule); }
+.lab-copy .tag { font-weight: 700; color: var(--ochre-deep); font-size: .9rem; }
+.lab-copy h3 { font-size: 1.7rem; margin-top: .3rem; }
+.lab-copy p { color: var(--slate-2); margin-top: .7rem; }
+.lab-copy ol { margin: .9rem 0 0 1.2rem; color: var(--slate); }
+.lab-copy li { margin-top: .3rem; }
+.lab svg.plot { display: block; width: 100%; height: auto; }
+.control { display: grid; grid-template-columns: 9rem 1fr 5rem; gap: .9rem; align-items: center; margin-top: .7rem; }
+.control label { font-size: .9rem; font-weight: 700; }
+.control output { font-variant-numeric: tabular-nums; font-weight: 700; text-align: right; }
+input[type=range] { width: 100%; accent-color: var(--ochre); height: 28px; }
+.readout { margin-top: .8rem; padding: .85rem 1rem; background: var(--paper); border-left: 3px solid var(--ochre); font-size: .95rem; color: var(--slate-2); min-height: 4.4em; }
+.readout strong { color: var(--slate); }
+.scores { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin-top: .8rem; }
+.score { background: var(--paper); padding: .7rem .8rem; border-radius: 4px; }
+.score b { display: block; font-family: var(--serif); font-size: 1.6rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.score span { font-size: .8rem; color: var(--slate-2); }
+.score.best b { color: var(--green); }
+.legend { display: flex; gap: 1.1rem; flex-wrap: wrap; font-size: .8rem; color: var(--slate-2); margin-top: .4rem; }
+.legend i { display: inline-block; width: 14px; height: 10px; margin-right: .35rem; vertical-align: -1px; border-radius: 2px; }
+@media (max-width: 900px) { .lab { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .control { grid-template-columns: 1fr 4.5rem; } .control label { grid-column: 1 / -1; margin-bottom: -.6rem; } .scores { grid-template-columns: 1fr 1fr 1fr; gap: .4rem; } .score b { font-size: 1.25rem; } }
+
+/* industry */
+.industry { background: var(--slate); color: #fff; border-radius: 6px; padding: 2.5rem; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 2.5rem; }
+.industry h2 { font-size: clamp(1.8rem, 3.4vw, 2.5rem); }
+.industry p { color: #C3CDD0; margin-top: .8rem; }
+.industry ul { list-style: none; display: grid; gap: .6rem; }
+.industry li { padding: .8rem 1rem; border: 1px solid #3A4C54; border-radius: 4px; }
+.industry li b { display: block; }
+.industry li span { color: #C3CDD0; font-size: .92rem; }
+.industry .btn { margin-top: 1.5rem; background: var(--ochre); border-color: var(--ochre); color: var(--slate); }
+@media (max-width: 860px) { .industry { grid-template-columns: 1fr; padding: 1.75rem; } }
+
+.foot { border-top: 1px solid var(--rule); padding: 2rem 0; font-size: .92rem; color: var(--slate-2); background: var(--paper); }
+.foot .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.foot nav { display: flex; gap: 1.4rem; flex-wrap: wrap; }
+.foot a { color: var(--slate-2); }
+@media (max-width: 480px) { .crumb { font-size: .98rem; gap: .45rem; } .crumb svg { width: 26px; height: 26px; } .top nav .switch { white-space: nowrap; font-size: .85rem; padding: .3rem .65rem; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="crumb" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#1D2B31"/><path d="M0 12h32M0 19h32M0 25h32" stroke="#C9973F" stroke-width="3"/></svg>Earth Science Classroom <small>· Classrooms of the Future</small></a>
+    <nav aria-label="Earth Science Classroom">
+      <a href="#course">Course</a>
+      <a href="#labs">Labs</a>
+      <a href="#industry">For industry</a>
+      <a class="switch" href="/">All classrooms</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="room">Earth Science Classroom</span>
+        <h1>Read the ground beneath your feet.</h1>
+        <p>How do geoscientists see rock kilometres down, or know which layer holds water, oil or gas? Learn it the way they work: with sound waves, well logs and real data.</p>
+        <div class="btns"><a class="btn btn-dark" href="#labs">Try the labs</a><a class="btn btn-line" href="#course">See the course</a></div>
+      </div>
+      <figure class="map" aria-label="Field map with contour lines and a well location">
+        <svg viewBox="0 0 440 300" aria-hidden="true">
+          <rect width="440" height="300" fill="#F7F9F5"/>
+          <g fill="none" stroke="#B48A3C" stroke-width="1.2" opacity=".8">
+            <path d="M210 150 m-30 0 a30 20 0 1 0 60 0 a30 20 0 1 0 -60 0"/>
+            <path d="M150 152 C150 110 270 105 272 150 S160 200 150 152Z"/>
+            <path d="M110 150 C105 80 310 70 315 148 S300 230 200 228 S112 205 110 150Z"/>
+            <path d="M70 152 C60 50 350 40 360 150 S330 268 200 266 S78 230 70 152Z"/>
+            <path d="M30 150 C20 20 400 10 410 148 S380 300 210 298 S38 260 30 150Z"/>
+          </g>
+          <g fill="#8A6420" font-family="Archivo, sans-serif" font-size="10"><text x="204" y="154">500</text><text x="276" y="118">400</text><text x="338" y="94">300</text></g>
+          <path d="M0 250 C80 230 120 270 200 262 S330 230 440 246" fill="none" stroke="#1F5A8A" stroke-width="3"/>
+          <line x1="40" y1="40" x2="400" y2="260" stroke="#1D2B31" stroke-width="2" stroke-dasharray="8 5"/>
+          <text x="46" y="34" font-family="Archivo, sans-serif" font-size="11" font-weight="700" fill="#1D2B31">A</text>
+          <text x="404" y="276" font-family="Archivo, sans-serif" font-size="11" font-weight="700" fill="#1D2B31">A′</text>
+          <g transform="translate(250 150)"><circle r="7" fill="none" stroke="#1D2B31" stroke-width="2"/><path d="M-11 0 H11 M0 -11 V11" stroke="#1D2B31" stroke-width="2"/></g>
+          <text x="262" y="168" font-family="Archivo, sans-serif" font-size="11" font-weight="700" fill="#1D2B31">Well A-1</text>
+          <g transform="translate(400 30)"><path d="M0 14 L0 -12 M-6 -4 L0 -14 L6 -4" stroke="#1D2B31" stroke-width="2" fill="none"/><text x="-4" y="28" font-family="Archivo, sans-serif" font-size="11" font-weight="700" fill="#1D2B31">N</text></g>
+        </svg>
+        <figcaption><span>Field map: seismic line A–A′ and Well A-1</span><span>Contours in metres</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="course">
+    <div class="wrap">
+      <div class="head">
+        <h2>The course, from surface to reservoir</h2>
+        <p>Eight modules stacked like the rocks they describe. Start at the top for the foundations, or drill straight down to the professional skills.</p>
+      </div>
+      <ol class="strata">
+        <li class="layer"><div class="rock l-soil"><span>1</span></div><div><h3>Earth's structure and plate tectonics</h3><p>Crust, mantle and core, and how moving plates build mountains and basins.</p><div class="lvl">Schools</div></div><span class="badge soon">Coming soon</span></li>
+        <li class="layer"><div class="rock l-sand"><span>2</span></div><div><h3>Rocks and minerals</h3><p>Igneous, sedimentary and metamorphic rocks, and what minerals reveal about their history.</p><div class="lvl">Schools and university</div></div><span class="badge soon">Coming soon</span></li>
+        <li class="layer"><div class="rock l-shale"><span>3</span></div><div><h3>Seismic waves</h3><p>P- and S-waves, velocity, reflection, and why sound can see underground.</p><div class="lvl">Schools to university</div></div><a class="badge ready" href="#lab-seismic">Lab ready</a></li>
+        <li class="layer"><div class="rock l-lime"><span>4</span></div><div><h3>Seismic imaging and interpretation</h3><p>Wavelets, resolution and tuning, and picking horizons on a seismic section.</p><div class="lvl">University and industry</div></div><a class="badge ready" href="#lab-seismic">Lab ready</a></li>
+        <li class="layer"><div class="rock l-sand2"><span>5</span></div><div><h3>Well logs</h3><p>Gamma ray, resistivity, density and neutron logs, and how to read them together.</p><div class="lvl">University and industry</div></div><a class="badge ready" href="#lab-log">Lab ready</a></li>
+        <li class="layer"><div class="rock l-salt"><span>6</span></div><div><h3>Petrophysics</h3><p>Shale volume, porosity and water saturation from logs.</p><div class="lvl">Industry</div></div><span class="badge soon">Coming soon</span></li>
+        <li class="layer"><div class="rock l-res"><span>7</span></div><div><h3>Subsurface data with Python</h3><p>Loading LAS and SEG-Y files, and plotting and quality-checking real datasets.</p><div class="lvl">University and industry</div></div><span class="badge soon">Coming soon</span></li>
+        <li class="layer"><div class="rock l-base"><span>8</span></div><div><h3>Machine learning for facies</h3><p>Classifying rock types from logs, and how to tell when a model is fooling you.</p><div class="lvl">Industry</div></div><span class="badge soon">Coming soon</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="labs">
+    <div class="wrap">
+      <div class="head">
+        <h2>Field labs</h2>
+        <p>Two simulations built on the same physics geoscientists use every day.</p>
+      </div>
+      <div class="labs">
+        <article class="lab" id="lab-seismic">
+          <div class="lab-copy">
+            <span class="tag">Modules 3 and 4</span>
+            <h3>How thin a layer can sound see?</h3>
+            <p>A sand layer thins from left to right inside shale. Each wiggly line is a recording of the echo above one point.</p>
+            <ol><li>Drag the frequency down. Where do the top and base echoes merge?</li><li>Drag it up. How thin a layer can you now see?</li></ol>
+          </div>
+          <div>
+            <svg class="plot" id="seis" viewBox="0 0 560 300" role="img" aria-label="Synthetic seismic section over a sand wedge that thins from left to right."></svg>
+            <div class="control"><label for="freq">Wavelet frequency</label><input id="freq" type="range" min="10" max="80" step="1" value="30"><output id="freqOut" for="freq">30 Hz</output></div>
+            <div class="legend" aria-hidden="true"><span><i style="background:#F1E3C4;border:1px solid #C9973F"></i>Sand</span><span><i style="background:#E3E7E5"></i>Shale</span><span><i style="background:#1F5A8A"></i>Positive amplitude</span></div>
+            <p class="readout" id="seisReadout" aria-live="polite"></p>
+          </div>
+        </article>
+
+        <article class="lab" id="lab-log">
+          <div class="lab-copy">
+            <span class="tag">Module 5</span>
+            <h3>Find the sand on a gamma-ray log</h3>
+            <p>Shale is naturally more radioactive than clean sand, so a gamma-ray log reads high in shale and low in sand. Geologists pick a cutoff value: below it is sand, above it is shale.</p>
+            <ol><li>Drag the cutoff and watch the sand (yellow) appear on the log.</li><li>Compare your answer with the core taken from the well. Can you score above 95%?</li></ol>
+          </div>
+          <div>
+            <svg class="plot" id="grlog" viewBox="0 0 560 360" role="img" aria-label="A gamma-ray log from 1500 to 1620 metres depth with an adjustable cutoff, next to the true core lithology."></svg>
+            <div class="control"><label for="cut">Gamma-ray cutoff</label><input id="cut" type="range" min="20" max="140" step="1" value="100"><output id="cutOut" for="cut">100 API</output></div>
+            <div class="scores">
+              <div class="score"><b id="netSand">0 m</b><span>Net sand (your pick)</span></div>
+              <div class="score"><b id="ntg">0%</b><span>Net-to-gross</span></div>
+              <div class="score" id="accBox"><b id="acc">0%</b><span>Match with core</span></div>
+            </div>
+            <p class="readout" id="logReadout" aria-live="polite"></p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="industry">
+    <div class="wrap">
+      <div class="industry">
+        <div>
+          <h2>Training for subsurface teams</h2>
+          <p>Short, practical modules for geoscientists, petrophysicists and engineers who want to work faster with their own data. Built and taught by a geophysicist.</p>
+          <a class="btn" href="/#contact">Discuss training for your team</a>
+        </div>
+        <ul>
+          <li><b>Well-log analysis with Python</b><span>Load, clean and plot LAS files; build log displays</span></li>
+          <li><b>Seismic data handling</b><span>SEG-Y basics, wavelets, resolution and synthetic seismograms</span></li>
+          <li><b>Petrophysics fundamentals</b><span>Shale volume, porosity and saturation workflows</span></li>
+          <li><b>Machine learning for facies</b><span>Building, validating and explaining classification models</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>Earth Science Classroom, part of <a href="/">Classrooms of the Future</a></span>
+    <nav aria-label="Other classrooms"><a href="/math/">Mrs. Ali's Classroom</a><a href="/photography/">Photography Classroom</a><a href="/privacy.html">Privacy</a></nav>
+  </div>
+</footer>
+
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+function el(n, a, t) { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (t != null) e.textContent = t; return e; }
+const FONT = { 'font-family': 'Archivo, sans-serif', fill: '#4A5A60', 'font-size': 11 };
+
+/* ---------- Seismic wedge ---------- */
+(function () {
+  const svg = document.getElementById('seis'), slider = document.getElementById('freq');
+  const out = document.getElementById('freqOut'), readout = document.getElementById('seisReadout');
+  const W = 560, H = 300, padL = 44, padR = 12, padT = 10, padB = 28;
+  const NTR = 30, T0 = 0.03, T1 = 0.19, TOP = 0.08, MAXTH = 0.05, V = 2500;
+  const plotW = W - padL - padR, plotH = H - padT - padB, dx = plotW / NTR;
+  const tToY = t => padT + (t - T0) / (T1 - T0) * plotH;
+  const ricker = (t, f) => { const a = Math.PI * Math.PI * f * f * t * t; return (1 - 2 * a) * Math.exp(-a); };
+  svg.appendChild(el('rect', { x: padL, y: padT, width: plotW, height: plotH, fill: '#E3E7E5' }));
+  svg.appendChild(el('path', { d: `M${padL},${tToY(TOP)} L${padL + plotW},${tToY(TOP)} L${padL},${tToY(TOP + MAXTH)} Z`, fill: '#F1E3C4', stroke: '#C9973F' }));
+  for (let ms = 40; ms <= 180; ms += 20) {
+    const y = tToY(ms / 1000);
+    svg.appendChild(el('line', { x1: padL - 4, x2: padL, y1: y, y2: y, stroke: '#4A5A60' }));
+    svg.appendChild(el('text', Object.assign({ x: padL - 8, y: y + 4, 'text-anchor': 'end' }, FONT), ms));
+  }
+  svg.appendChild(el('text', Object.assign({ x: 12, y: padT + plotH / 2, transform: `rotate(-90 12 ${padT + plotH / 2})`, 'text-anchor': 'middle' }, FONT), 'Two-way time (ms)'));
+  svg.appendChild(el('text', Object.assign({ x: padL + plotW / 2, y: H - 7, 'text-anchor': 'middle' }, FONT), 'Sand thins from left to right'));
+  const traces = el('g', {}), marker = el('g', {}); svg.append(traces, marker);
+  function draw(f) {
+    traces.textContent = ''; marker.textContent = '';
+    for (let i = 0; i < NTR; i++) {
+      const x0 = padL + dx * (i + 0.5), base = TOP + MAXTH * (1 - i / (NTR - 1));
+      let line = '', fill = `M${x0},${tToY(T0)}`;
+      for (let k = 0; k <= 160; k++) {
+        const t = T0 + k * (T1 - T0) / 160, a = -0.5 * ricker(t - TOP, f) + 0.5 * ricker(t - base, f);
+        const x = x0 + a * dx * 1.4, y = tToY(t);
+        line += (k ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1); fill += 'L' + Math.max(x0, x).toFixed(1) + ',' + y.toFixed(1);
+      }
+      traces.appendChild(el('path', { d: fill + `L${x0},${tToY(T1)}Z`, fill: '#1F5A8A', opacity: .9 }));
+      traces.appendChild(el('path', { d: line, fill: 'none', stroke: '#1D2B31', 'stroke-width': .7 }));
+    }
+    const iTune = (1 - (1 / (2.31 * f)) / MAXTH) * (NTR - 1), metres = Math.round(V / (4 * f));
+    if (iTune >= 0) {
+      const x = padL + dx * (iTune + 0.5);
+      marker.appendChild(el('line', { x1: x, x2: x, y1: padT, y2: padT + plotH, stroke: '#C9973F', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }));
+      readout.innerHTML = `At ${f} Hz, sand thinner than about <strong>${metres} m</strong> blurs into one reflection (right of the dashed line). That limit, a quarter of a wavelength, is called the <strong>tuning thickness</strong>.`;
+    } else readout.innerHTML = `At ${f} Hz the wavelet is so long that nothing in this wedge is resolved: anything under about <strong>${metres} m</strong> blurs together. Raise the frequency.`;
+    out.textContent = f + ' Hz';
+  }
+  slider.addEventListener('input', () => draw(+slider.value)); draw(+slider.value);
+})();
+
+/* ---------- Gamma-ray log with cutoff ---------- */
+(function () {
+  const svg = document.getElementById('grlog'), slider = document.getElementById('cut');
+  const TOPD = 1500, BOTD = 1620, STEP = 0.5;
+  // true lithology from the core: [top, base, type, base GR]
+  const BEDS = [[1500, 1512, 'shale', 108], [1512, 1527, 'sand', 38], [1527, 1534, 'shale', 102], [1534, 1541, 'sand', 46],
+                [1541, 1556, 'shale', 112], [1556, 1561, 'sand', 58], [1561, 1572, 'shale', 98], [1572, 1596, 'sand', 34],
+                [1596, 1604, 'shale', 106], [1604, 1609, 'sand', 62], [1609, 1620, 'shale', 110]];
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const samples = [];
+  for (let d = TOPD; d <= BOTD; d += STEP) {
+    const bed = BEDS.find(b => d >= b[0] && d < b[1]) || BEDS[BEDS.length - 1];
+    // smooth across bed boundaries (the tool averages about a metre of rock)
+    let g = 0, w = 0;
+    for (let k = -4; k <= 4; k++) {
+      const dd = d + k * 0.5, bb = BEDS.find(b => dd >= b[0] && dd < b[1]) || bed, ww = 1 - Math.abs(k) / 5;
+      g += bb[3] * ww; w += ww;
+    }
+    samples.push({ d, sand: bed[2] === 'sand', gr: g / w + (rnd() - 0.5) * 14 });
+  }
+  const W = 560, H = 360, padT = 34, padB = 12, plotH = H - padT - padB;
+  const trackX = 70, trackW = 300, coreX = 400, coreW = 50, GRMAX = 150;
+  const dToY = d => padT + (d - TOPD) / (BOTD - TOPD) * plotH, gToX = g => trackX + Math.max(0, Math.min(GRMAX, g)) / GRMAX * trackW;
+  svg.appendChild(el('rect', { x: trackX, y: padT, width: trackW, height: plotH, fill: '#FFFFFF', stroke: '#1D2B31' }));
+  for (let g = 0; g <= 150; g += 30) {
+    svg.appendChild(el('line', { x1: gToX(g), x2: gToX(g), y1: padT, y2: padT + plotH, stroke: '#DCE6D8' }));
+    svg.appendChild(el('text', Object.assign({ x: gToX(g), y: padT - 6, 'text-anchor': 'middle' }, FONT), g));
+  }
+  svg.appendChild(el('text', Object.assign({ x: trackX + trackW / 2, y: 12, 'text-anchor': 'middle', 'font-weight': 700, fill: '#1D2B31' }, FONT), 'Gamma ray (API)'));
+  for (let d = TOPD; d <= BOTD; d += 20) {
+    svg.appendChild(el('line', { x1: trackX - 5, x2: trackX, y1: dToY(d), y2: dToY(d), stroke: '#1D2B31' }));
+    svg.appendChild(el('text', Object.assign({ x: trackX - 9, y: dToY(d) + 4, 'text-anchor': 'end' }, FONT), d));
+  }
+  svg.appendChild(el('text', Object.assign({ x: 14, y: padT + plotH / 2, transform: `rotate(-90 14 ${padT + plotH / 2})`, 'text-anchor': 'middle' }, FONT), 'Depth (m)'));
+  // core column
+  svg.appendChild(el('text', Object.assign({ x: coreX + coreW / 2, y: 12, 'text-anchor': 'middle', 'font-weight': 700, fill: '#1D2B31' }, FONT), 'Core'));
+  svg.appendChild(el('text', Object.assign({ x: coreX + coreW / 2, y: padT - 6, 'text-anchor': 'middle' }, FONT), '(truth)'));
+  BEDS.forEach(([a, b, t]) => svg.appendChild(el('rect', { x: coreX, y: dToY(a), width: coreW, height: dToY(b) - dToY(a), fill: t === 'sand' ? '#F1E3C4' : '#9AA5A0', stroke: '#1D2B31', 'stroke-width': .6 })));
+  svg.appendChild(el('text', Object.assign({ x: coreX + coreW + 50, y: 12, 'text-anchor': 'middle', 'font-weight': 700, fill: '#1D2B31' }, FONT), 'Your pick'));
+  const pickG = el('g', {}), fillG = el('g', {}); svg.append(fillG);
+  const curve = samples.map((s, i) => (i ? 'L' : 'M') + gToX(s.gr).toFixed(1) + ',' + dToY(s.d).toFixed(1)).join('');
+  svg.appendChild(el('path', { d: curve, fill: 'none', stroke: '#2F6B4F', 'stroke-width': 1.6 }));
+  const cutLine = el('line', { y1: padT, y2: padT + plotH, stroke: '#B3261E', 'stroke-width': 2, 'stroke-dasharray': '6 4' }); svg.appendChild(cutLine);
+  svg.appendChild(pickG);
+  let best = 0;
+  function draw(cut) {
+    fillG.textContent = ''; pickG.textContent = '';
+    let sandCount = 0, right = 0;
+    for (let i = 0; i < samples.length - 1; i++) {
+      const s = samples[i], isSand = s.gr < cut, y = dToY(s.d), h = dToY(samples[i + 1].d) - y + .3;
+      if (isSand) { fillG.appendChild(el('rect', { x: gToX(s.gr), y, width: Math.max(0, gToX(cut) - gToX(s.gr)), height: h, fill: '#E9C46A', opacity: .85 })); sandCount++; }
+      pickG.appendChild(el('rect', { x: coreX + coreW + 25, y, width: 50, height: h, fill: isSand ? '#F1E3C4' : '#9AA5A0' }));
+      if (isSand === s.sand) right++;
+    }
+    pickG.appendChild(el('rect', { x: coreX + coreW + 25, y: padT, width: 50, height: plotH, fill: 'none', stroke: '#1D2B31' }));
+    cutLine.setAttribute('x1', gToX(cut)); cutLine.setAttribute('x2', gToX(cut));
+    const n = samples.length - 1, net = sandCount * STEP, acc = Math.round(right / n * 100);
+    best = Math.max(best, acc);
+    document.getElementById('cutOut').textContent = cut + ' API';
+    document.getElementById('netSand').textContent = net.toFixed(0) + ' m';
+    document.getElementById('ntg').textContent = Math.round(sandCount / n * 100) + '%';
+    document.getElementById('acc').textContent = acc + '%';
+    document.getElementById('accBox').classList.toggle('best', acc >= 95);
+    const r = document.getElementById('logReadout');
+    if (acc >= 95) r.innerHTML = `<strong>Excellent pick.</strong> Your cutoff of ${cut} API matches the core ${acc}% of the time. Notice the thin sands near 1558 m and 1606 m read higher than the clean sands: thin beds and a little clay push the reading up.`;
+    else if (cut > 85) r.innerHTML = `With the cutoff at ${cut} API you're calling some <strong>shale</strong> sand. Move it lower.`;
+    else if (cut < 45) r.innerHTML = `At ${cut} API you're missing sand that is slightly radioactive. Move the cutoff higher.`;
+    else r.innerHTML = `Close: ${acc}% match with the core. Fine-tune the cutoff to catch the thinner sands without letting in shale.`;
+  }
+  slider.addEventListener('input', () => draw(+slider.value)); draw(+slider.value);
+})();
+</script>
+</body>
+</html>

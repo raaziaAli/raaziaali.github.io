@@ -1,28 +1,22 @@
-# Classroom of the Future
+# Classrooms of the Future
 
-Interactive learning in **Mathematics, Earth Sciences and Photography** for middle school,
-high school and university — simulations, notebooks and games by Raazia Ali (Mrs. Ali).
-
-Live site: https://raaziaali.github.io
-
-## How this repository is organised
+Three classrooms for learning by doing, by Raazia Ali. Live site: https://raaziaali.github.io
 
 | Path | What it is |
 |------|------------|
-| `index.html` | Main site: learning paths for schools, university and industry; wedge-model demo; contact form |
-| `schools/index.html` | Schools classroom: 40+ math tools, games, tools by audience (students, teachers, parents) |
-| `Grade6.html`, `Grade7.html`, `Grade8.html` | Middle school math lessons |
-| `functions-and-graphs.html`, `constructions-studio.html`, `angle-studio.html` | High school algebra & geometry |
-| `chalkline.html` | Teacher tool: first-day check-in |
+| `index.html` | Landing page: classroom tour (math, photography, earth science), daily challenge, path finder, contact form |
+| `math/` | **Mrs. Ali's Classroom** (mathematics): the original interactive math hub, 40+ tools and games |
+| `photography/` | **Photography Classroom**: virtual camera, lens lab, lesson roadmap, stops cheat sheet |
+| `earth-science/` | **Earth Science Classroom**: course as rock layers, seismic wedge lab, gamma-ray log lab, industry training |
+| `Grade6.html` … `functions-and-graphs.html` | Math lessons and tools linked from Mrs. Ali's Classroom |
 | `privacy.html` | Privacy policy |
-| `*.pdf` | Worksheets and answer keys |
-| `archive/` | Older versions of pages, kept for reference (not linked from the site) |
+| `archive/` | Older versions of pages, kept for reference (not linked) |
 
-Other tools live in their own repositories and appear under the same site, e.g.
-`/math-interactives/`, `/Algebra-1/`, `/mathquest/`, `/Descriptive-Statistics/`.
+Other tools live in their own repositories and appear under the same site
+(`/math-interactives/`, `/Algebra-1/`, `/mathquest/`, `/Descriptive-Statistics/` …).
 
-## Adding a new tool
-
-1. Put the tool's HTML file in this repo (or in its own repo with GitHub Pages turned on).
-2. Add one line to the `TOOLS` list near the bottom of `schools/index.html`, in the right category.
-3. Use links that start with `/` (e.g. `/math-interactives/Pizza.html`) so they work on the custom domain.
+## Adding things
+- **A math tool:** add a line to the `TOOLS` list near the bottom of `math/index.html`.
+- **A daily-challenge question:** add it to the `BANK` list in `index.html` (subject `earth`, `math` or `photo`).
+- **A photography or earth science lesson:** change its status from "Coming soon" to "Lab ready" and link it in that classroom's page.
+- Use links that start with `/` so they work on the custom domain.

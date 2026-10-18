@@ -3,328 +3,506 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Classroom of the Future — Interactive learning in earth science and mathematics</title>
-<meta name="description" content="Interactive simulations, notebooks and guided practice in earth science, mathematics and imaging — for schools, universities and oil and gas professionals.">
+<title>Classrooms of the Future — Mathematics, photography and earth science, learned by doing</title>
+<meta name="description" content="Hands-on simulations, games and a daily challenge in earth science, mathematics and photography. Free, no sign-up. From Grade 6 to university and industry.">
 <meta name="author" content="Raazia Ali">
-<meta property="og:title" content="Classroom of the Future">
-<meta property="og:description" content="Interactive learning in earth science and mathematics for schools, universities and industry professionals.">
+<meta property="og:title" content="Classrooms of the Future">
+<meta property="og:description" content="Three classrooms, mathematics, photography and earth science, with live simulations and a daily challenge.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://raaziaali.github.io">
-<meta property="og:site_name" content="Classroom of the Future">
-<meta name="theme-color" content="#F2F4F2">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231D2B31'/%3E%3Cpath d='M6 22h20M6 16c3-6 5 6 8 0s5 6 8 0 3-3 4-2' stroke='%23F2F4F2' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta property="og:site_name" content="Classrooms of the Future">
+<meta name="theme-color" content="#0D1B2A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230D1B2A'/%3E%3Cpath d='M6 21c3-9 5 5 8-3s5 7 8-1 3-4 4-3' stroke='%23FFB547' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..700&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --limestone: #F2F4F2;
+  --night: #0D1B2A;
+  --night-2: #16283B;
+  --night-3: #22384F;
+  --ink: #13202E;
+  --ink-2: #4B5B6B;
   --paper: #FFFFFF;
-  --slate: #1D2B31;
-  --slate-2: #4A5A60;
-  --rule: #D3D9D6;
-  --seismic: #1F5A8A;
-  --seismic-soft: #DCE7F0;
-  --sand: #C9973F;
-  --sand-soft: #F1E3C4;
-  --shale: #E3E7E5;
-  --focus: #1F5A8A;
-  --serif: 'Spectral', Georgia, 'Times New Roman', serif;
+  --mist: #F3F5F7;
+  --rule: #DCE2E8;
+  --earth: #FFB547;     /* sand / amber */
+  --earth-deep: #9A5B00;
+  --earth-tint: #FFF1DA;
+  --math: #4C7CFF;      /* electric blue */
+  --math-deep: #2449B8;
+  --math-tint: #E6EDFF;
+  --photo: #FF6B81;     /* coral */
+  --photo-deep: #B3263D;
+  --photo-tint: #FFE6EA;
+  --good: #1F7A53; --good-soft: #DDF2E8;
+  --bad: #B3261E;  --bad-soft: #FBE3E1;
+  --display: 'Bricolage Grotesque', 'Archivo', 'Helvetica Neue', Arial, sans-serif;
   --sans: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
-  --measure: 34rem;
-  --wrap: 1180px;
+  --wrap: 1200px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-body { background: var(--limestone); color: var(--slate); font-family: var(--sans);
-  font-size: 1.0625rem; line-height: 1.6; -webkit-font-smoothing: antialiased; }
-a { color: var(--seismic); text-underline-offset: 3px; }
-a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-  outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 2px; }
+body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 1.0625rem; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+a { color: var(--math-deep); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--math); outline-offset: 3px; border-radius: 4px; }
 .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 2rem; }
 @media (max-width: 640px) { .wrap { padding: 0 1rem; } }
+h1, h2, h3 { font-family: var(--display); letter-spacing: -.02em; line-height: 1.05; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- buttons ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 52px; padding: 0 1.5rem;
+  border-radius: 999px; font: 700 1.02rem var(--sans); text-decoration: none; cursor: pointer; border: 2px solid transparent; transition: transform .15s, background .15s; }
+.btn:active { transform: translateY(1px); }
+.btn-hot { background: var(--earth); color: var(--night); box-shadow: 0 4px 0 #C98316; }
+.btn-hot:hover { background: #FFC266; }
+.btn-ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.4); }
+.btn-ghost:hover { border-color: #fff; background: rgba(255,255,255,.06); }
+.btn-dark { background: var(--night); color: #fff; }
+.btn-dark:hover { background: var(--night-3); }
+.btn-line { background: var(--paper); color: var(--ink); border-color: var(--ink); }
+.btn-line:hover { background: var(--mist); }
 
 /* ---------- header ---------- */
-.site-header { border-bottom: 1px solid var(--rule); background: var(--limestone); position: sticky; top: 0; z-index: 10; }
+.site-header { position: sticky; top: 0; z-index: 20; background: var(--night); color: #fff; border-bottom: 1px solid rgba(255,255,255,.08); }
 .site-header .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 1rem; }
-.wordmark { display: flex; align-items: center; gap: .65rem; color: var(--slate); text-decoration: none;
-  font-family: var(--serif); font-size: 1.2rem; font-weight: 600; letter-spacing: -.01em; }
-.wordmark svg { width: 30px; height: 30px; flex: none; }
-.site-nav { display: flex; gap: 1.75rem; }
-.site-nav a { color: var(--slate-2); text-decoration: none; font-size: .95rem; font-weight: 500; }
-.site-nav a:hover { color: var(--slate); text-decoration: underline; }
-@media (max-width: 820px) { .site-nav a:not(.nav-contact) { display: none; } }
+.wordmark { display: flex; align-items: center; gap: .6rem; color: #fff; text-decoration: none; font-family: var(--display); font-weight: 800; font-size: 1.15rem; letter-spacing: -.01em; white-space: nowrap; }
+.wordmark svg { width: 32px; height: 32px; flex: none; }
+.site-nav { display: flex; align-items: center; gap: 1.5rem; }
+.site-nav a { color: #C9D4DF; text-decoration: none; font-weight: 500; font-size: .95rem; }
+.site-nav a:hover { color: #fff; }
+.streak-pill { display: inline-flex; align-items: center; gap: .4rem; padding: .45rem .9rem; border-radius: 999px; background: rgba(255,181,71,.16); color: var(--earth) !important; font-weight: 700 !important; white-space: nowrap; }
+.streak-pill svg { width: 16px; height: 16px; }
+@media (max-width: 900px) { .site-nav a:not(.keep) { display: none; } }
+@media (max-width: 440px) { .site-header .wrap { gap: .5rem; } .wordmark { font-size: .95rem; gap: .45rem; } .wordmark svg { width: 26px; height: 26px; } .streak-pill { padding: .35rem .65rem; font-size: .8rem !important; } .streak-pill svg { display: none; } }
 
 /* ---------- hero ---------- */
-.hero { padding: 4.5rem 0 4rem; }
-.hero .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 4rem; align-items: center; }
-.hero h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(2.4rem, 4.6vw, 3.6rem);
-  line-height: 1.08; letter-spacing: -.02em; max-width: 13ch; }
-.hero-lede { margin-top: 1.5rem; max-width: var(--measure); color: var(--slate-2); font-size: 1.15rem; }
-.hero-actions { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: .75rem; }
-.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 1.4rem;
-  border-radius: 6px; font: 600 1rem var(--sans); text-decoration: none; cursor: pointer; border: 1.5px solid var(--slate); }
-.btn-primary { background: var(--slate); color: var(--limestone); }
-.btn-primary:hover { background: #0F1A1F; }
-.btn-secondary { background: transparent; color: var(--slate); }
-.btn-secondary:hover { background: var(--paper); }
-@media (max-width: 960px) { .hero .wrap { grid-template-columns: 1fr; gap: 2.5rem; } .hero { padding-top: 3rem; } }
+.hero { background: var(--night); color: #fff; padding: 4.5rem 0 5rem; position: relative; overflow: hidden; }
+.hero::before { content: ""; position: absolute; inset: 0; background:
+  radial-gradient(600px 400px at 85% 20%, rgba(76,124,255,.22), transparent 70%),
+  radial-gradient(500px 360px at 70% 90%, rgba(255,107,129,.16), transparent 70%),
+  radial-gradient(500px 400px at 5% 100%, rgba(255,181,71,.12), transparent 70%); pointer-events: none; }
+.hero .wrap { position: relative; display: grid; grid-template-columns: minmax(0, 11fr) minmax(0, 10fr); gap: 3rem; align-items: center; }
+.hero h1 { font-size: clamp(2.6rem, 6vw, 4.6rem); font-weight: 800; }
+.hero h1 .hl { color: var(--earth); }
+.hero-sub { margin-top: 1.25rem; font-size: clamp(1.1rem, 1.6vw, 1.3rem); color: #C9D4DF; max-width: 33rem; }
+.hero-cta { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: .9rem; }
+.trust { margin-top: 2.25rem; display: flex; flex-wrap: wrap; gap: 1.25rem 1.75rem; }
+.trust div { white-space: nowrap; }
+.trust div { display: flex; align-items: center; gap: .6rem; color: #C9D4DF; font-size: .95rem; }
+.trust b { color: #fff; font-family: var(--display); font-size: 1.5rem; font-weight: 800; }
+@media (max-width: 960px) { .hero .wrap { grid-template-columns: 1fr; } .hero { padding: 3rem 0 3.5rem; } }
 
-/* ---------- seismic instrument ---------- */
-.instrument { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 1.25rem 1.25rem 1rem; }
-.instrument-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-bottom: .75rem; }
-.instrument-title { font-family: var(--serif); font-size: 1.15rem; font-weight: 600; }
-.instrument-note { font-size: .85rem; color: var(--slate-2); }
-#seis { display: block; width: 100%; height: auto; }
-.control { display: grid; grid-template-columns: auto 1fr auto; gap: 1rem; align-items: center; margin-top: .9rem; }
-.control label { font-size: .9rem; font-weight: 600; }
-.control output { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 4.5ch; text-align: right; }
-input[type=range] { width: 100%; accent-color: var(--seismic); height: 28px; }
-.readout { margin-top: .75rem; padding-top: .75rem; border-top: 1px solid var(--rule); font-size: .9rem; color: var(--slate-2);
-  font-variant-numeric: tabular-nums; }
-.readout strong { color: var(--slate); }
-.legend { display: flex; gap: 1.25rem; font-size: .8rem; color: var(--slate-2); margin-top: .5rem; flex-wrap: wrap; }
-.legend span { display: inline-flex; align-items: center; gap: .4rem; }
-.legend i { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
+.windows { position: relative; height: 470px; }
+.win { position: absolute; width: 64%; background: var(--night-2); border: 1px solid rgba(255,255,255,.1); border-radius: 18px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.45); }
+.win-bar { display: flex; align-items: center; gap: .5rem; padding: .6rem .9rem; font-size: .85rem; font-weight: 600; color: #fff; border-bottom: 1px solid rgba(255,255,255,.08); }
+.win-dot { width: 10px; height: 10px; border-radius: 50%; }
+.win svg { display: block; width: 100%; height: auto; }
+.win-earth { top: 0; left: 0; transform: rotate(-3deg); }
+.win-math { top: 140px; right: 0; transform: rotate(2.5deg); z-index: 2; }
+.win-photo { bottom: 0; left: 10%; transform: rotate(-1deg); z-index: 3; width: 56%; }
+.win a { position: absolute; inset: 0; z-index: 1; }
+@media (max-width: 960px) { .windows { height: 420px; max-width: 560px; } }
+@media (max-width: 520px) { .windows { height: 330px; } .win { width: 74%; } .win-photo { width: 64%; left: 4%; } .win-math { top: 105px; } }
 
 /* ---------- sections ---------- */
-section.band { padding: 5rem 0; border-top: 1px solid var(--rule); }
-section.band.white { background: var(--paper); }
-.section-intro { max-width: 40rem; margin-bottom: 3rem; }
-.section-intro h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(1.9rem, 3.2vw, 2.5rem); line-height: 1.15; letter-spacing: -.015em; }
-.section-intro p { margin-top: 1rem; color: var(--slate-2); font-size: 1.1rem; }
-@media (max-width: 640px) { section.band { padding: 3.5rem 0; } }
+.section { padding: 5.5rem 0; }
+.section.mist { background: var(--mist); }
+.head { max-width: 46rem; margin-bottom: 2.75rem; }
+.head.center { margin-left: auto; margin-right: auto; text-align: center; }
+.head h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; }
+.head p { margin-top: .9rem; color: var(--ink-2); font-size: 1.15rem; }
+@media (max-width: 640px) { .section { padding: 3.75rem 0; } }
 
-/* pathways: columns separated by rules */
-.pathways { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 2px solid var(--slate); }
-.pathway { padding: 1.75rem 2rem 0 0; display: flex; flex-direction: column; }
-.pathway + .pathway { padding-left: 2rem; border-left: 1px solid var(--rule); }
-.pathway h3 { font-family: var(--serif); font-size: 1.6rem; font-weight: 600; letter-spacing: -.01em; }
-.pathway .who { color: var(--slate-2); margin-top: .25rem; font-size: .95rem; }
-.pathway p.desc { margin-top: 1rem; }
-.modules { list-style: none; margin-top: 1.5rem; border-top: 1px solid var(--rule); flex: 1; }
-.modules li { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem 0; border-bottom: 1px solid var(--rule); font-size: .95rem; }
-.status { flex: none; font-size: .8rem; font-weight: 600; padding: .1rem .55rem; border-radius: 4px; align-self: center; white-space: nowrap; }
-.status.on { background: var(--seismic-soft); color: var(--seismic); }
-.status.dev { background: var(--shale); color: var(--slate-2); }
-.pathway .go { margin-top: 1.5rem; font-weight: 600; }
-.pathway .go.muted { color: var(--slate-2); font-weight: 500; }
-@media (max-width: 900px) {
-  .pathways { grid-template-columns: 1fr; }
-  .pathway, .pathway + .pathway { padding: 2rem 0; border-left: 0; }
-  .pathway + .pathway { border-top: 1px solid var(--rule); }
-}
+/* subject cards */
+.subjects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.scard { border-radius: 22px; overflow: hidden; display: flex; flex-direction: column; background: var(--paper); border: 1px solid var(--rule); transition: transform .2s, box-shadow .2s; }
+.scard:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(13,27,42,.12); }
+.scard-art { aspect-ratio: 16 / 10; display: block; width: 100%; }
+.scard-body { padding: 1.5rem 1.5rem 1.6rem; display: flex; flex-direction: column; gap: .75rem; flex: 1; }
+.scard h3 { font-size: 1.75rem; font-weight: 800; }
+.scard p { color: var(--ink-2); }
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.chips span { font-size: .82rem; font-weight: 600; padding: .3rem .7rem; border-radius: 999px; }
+.s-earth .chips span { background: var(--earth-tint); color: var(--earth-deep); }
+.s-math .chips span { background: var(--math-tint); color: var(--math-deep); }
+.s-photo .chips span { background: var(--photo-tint); color: var(--photo-deep); }
+.scard-foot { margin-top: auto; padding-top: .5rem; display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+.scard-status { font-size: .88rem; font-weight: 600; color: var(--ink-2); }
+.scard .btn { min-height: 46px; padding: 0 1.2rem; }
+.s-earth .btn { background: var(--earth); color: var(--night); }
+.s-math .btn { background: var(--math); color: #fff; }
+.s-photo .btn { background: var(--photo); color: var(--night); }
+@media (max-width: 960px) { .subjects { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; } }
 
-/* method: genuine sequence */
-.method { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; counter-reset: step; }
-.step { border-top: 1px solid var(--slate); padding-top: 1.25rem; }
-.step-n { font-family: var(--serif); font-size: 2.2rem; line-height: 1; color: var(--seismic); }
-.step h3 { font-size: 1.05rem; font-weight: 700; margin-top: .9rem; }
-.step p { color: var(--slate-2); margin-top: .5rem; font-size: .97rem; }
-.step.later .step-n { color: var(--slate-2); }
-.step.later h3::after { content: " (coming)"; font-weight: 500; color: var(--slate-2); }
-@media (max-width: 900px) { .method { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 560px) { .method { grid-template-columns: 1fr; } }
+/* path finder */
+.finder { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 3rem; align-items: start; }
+.finder-card { background: var(--paper); border-radius: 22px; padding: 2rem; box-shadow: 0 10px 40px rgba(13,27,42,.08); border: 1px solid var(--rule); }
+.finder-steps { display: flex; gap: .4rem; margin-bottom: 1.25rem; }
+.finder-steps i { height: 6px; flex: 1; border-radius: 3px; background: var(--rule); }
+.finder-steps i.on { background: var(--math); }
+.finder-q { font-family: var(--display); font-size: 1.6rem; font-weight: 700; line-height: 1.15; }
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin-top: 1.25rem; }
+.choice { appearance: none; font: inherit; text-align: left; padding: 1rem; border-radius: 14px; border: 2px solid var(--rule); background: var(--paper); cursor: pointer; display: flex; gap: .75rem; align-items: center; min-height: 64px; color: var(--ink); font-weight: 600; }
+.choice:hover { border-color: var(--math); background: var(--math-tint); }
+.choice .ico { font-size: 1.5rem; line-height: 1; flex: none; }
+.finder-back { margin-top: 1rem; background: none; border: 0; font: 600 .95rem var(--sans); color: var(--ink-2); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.result h3 { font-size: 1.8rem; font-weight: 800; }
+.result p { color: var(--ink-2); margin-top: .6rem; }
+.result-links { list-style: none; margin-top: 1.25rem; display: grid; gap: .6rem; }
+.result-links a { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .95rem 1.1rem; border-radius: 14px; background: var(--mist); color: var(--ink); text-decoration: none; font-weight: 600; border: 2px solid transparent; }
+.result-links a:hover { border-color: var(--math); }
+.result-links small { color: var(--ink-2); font-weight: 500; }
+@media (max-width: 900px) { .finder { grid-template-columns: 1fr; gap: 1.75rem; } }
+@media (max-width: 520px) { .choices { grid-template-columns: 1fr; } .finder-card { padding: 1.4rem; } }
 
-/* subjects */
-.subjects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
-.subject h3 { font-family: var(--serif); font-size: 1.35rem; font-weight: 600; }
-.subject p { margin-top: .6rem; color: var(--slate-2); }
-.subject svg { width: 100%; height: 56px; display: block; margin-bottom: 1rem; }
-@media (max-width: 800px) { .subjects { grid-template-columns: 1fr; } }
+/* labs */
+.subject-tabs { display: inline-flex; gap: .4rem; padding: .35rem; background: var(--paper); border: 1px solid var(--rule); border-radius: 999px; margin-bottom: 1.75rem; flex-wrap: wrap; }
+.subject-tab { appearance: none; border: 0; background: none; font: 700 1rem var(--sans); padding: .7rem 1.25rem; border-radius: 999px; cursor: pointer; color: var(--ink-2); }
+.subject-tab:hover { color: var(--ink); }
+.subject-tab[aria-selected="true"][data-subject="earth"] { background: var(--earth); color: var(--night); }
+.subject-tab[aria-selected="true"][data-subject="math"] { background: var(--math); color: #fff; }
+.subject-tab[aria-selected="true"][data-subject="photo"] { background: var(--photo); color: var(--night); }
+.subject-panel { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 3rem; align-items: start; }
+.subject-panel[hidden] { display: none; }
+.panel-copy h3 { font-size: 2rem; font-weight: 800; }
+.panel-copy p { color: var(--ink-2); margin-top: .75rem; font-size: 1.08rem; }
+.panel-copy .try-list { margin-top: 1.25rem; padding-left: 1.2rem; color: var(--ink); }
+.panel-copy .try-list li { margin-top: .35rem; }
+.panel-copy .btn { margin-top: 1.5rem; }
+@media (max-width: 960px) { .subject-panel { grid-template-columns: 1fr; gap: 1.5rem; } .lab { order: -1; } }
+.lab { background: var(--paper); border: 1px solid var(--rule); border-radius: 18px; padding: 1.25rem; box-shadow: 0 10px 30px rgba(13,27,42,.06); }
+.lab-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-bottom: .6rem; }
+.lab-title { font-family: var(--display); font-size: 1.25rem; font-weight: 700; }
+.lab-note { font-size: .85rem; color: var(--ink-2); }
+.lab svg.plot { display: block; width: 100%; height: auto; border-radius: 8px; }
+.control { display: grid; grid-template-columns: 9rem 1fr 4.5rem; gap: .9rem; align-items: center; margin-top: .6rem; }
+.control label { font-size: .92rem; font-weight: 700; }
+.control output { font-variant-numeric: tabular-nums; font-weight: 700; text-align: right; }
+input[type=range] { width: 100%; accent-color: var(--math); height: 28px; }
+#panel-earth input[type=range] { accent-color: #E29A2B; }
+#panel-photo input[type=range] { accent-color: var(--photo-deep); }
+.readout { margin-top: .75rem; padding: .85rem 1rem; border-radius: 10px; background: var(--mist); font-size: .95rem; color: var(--ink-2); min-height: 4.6em; }
+.readout strong { color: var(--ink); }
+.legend { display: flex; gap: 1.25rem; font-size: .8rem; color: var(--ink-2); margin-top: .4rem; flex-wrap: wrap; }
+.legend span { display: inline-flex; align-items: center; gap: .4rem; }
+.legend i { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
+@media (max-width: 520px) { .control { grid-template-columns: 1fr 4rem; } .control label { grid-column: 1 / -1; margin-bottom: -.6rem; } }
 
-/* about */
-.about { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 4rem; }
-.about h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(1.9rem, 3.2vw, 2.5rem); line-height: 1.15; }
-.about-body p { font-family: var(--serif); font-size: 1.2rem; line-height: 1.7; max-width: 38rem; }
-.about-body p + p { margin-top: 1rem; }
-.principles { margin-top: 2rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; font-size: .95rem; }
-.principles strong { display: block; }
-.principles span { color: var(--slate-2); }
-@media (max-width: 860px) { .about { grid-template-columns: 1fr; gap: 1.5rem; } .principles { grid-template-columns: 1fr; } }
+/* daily challenge */
+.challenge-band { background: linear-gradient(135deg, #2449B8, #4C7CFF); color: #fff; padding: 5rem 0; }
+.challenge { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 3.5rem; align-items: start; }
+.challenge h2 { font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; }
+.challenge .lede { margin-top: 1rem; color: #E1E8FF; max-width: 28rem; font-size: 1.1rem; }
+.stats { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 2rem; margin-top: 2rem; }
+.stat-n { font-family: var(--display); font-weight: 800; font-size: 2.8rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat-l { font-size: .9rem; color: #E1E8FF; margin-top: .35rem; }
+.week { display: flex; gap: .45rem; margin-top: 1.75rem; }
+.week span { width: 34px; height: 34px; border-radius: 10px; background: rgba(255,255,255,.14); display: grid; place-items: center; font-size: .78rem; font-weight: 700; color: #E1E8FF; }
+.week span.done { background: var(--earth); color: var(--night); }
+.week span.today { outline: 2px solid #fff; outline-offset: 2px; }
+.quiz { background: var(--paper); color: var(--ink); border-radius: 22px; padding: 1.9rem; box-shadow: 0 20px 50px rgba(13,27,42,.25); }
+.quiz-top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.1rem; }
+.quiz-progress { display: flex; gap: .35rem; }
+.quiz-progress i { width: 34px; height: 6px; border-radius: 3px; background: var(--rule); }
+.quiz-progress i.on { background: var(--ink); }
+.quiz-progress i.right { background: var(--good); }
+.quiz-progress i.wrong { background: var(--bad); }
+.quiz-subject { font-size: .9rem; font-weight: 700; color: var(--ink-2); }
+.quiz-q { font-family: var(--display); font-size: 1.5rem; font-weight: 700; line-height: 1.25; letter-spacing: -.01em; }
+.options { display: grid; gap: .6rem; margin-top: 1.25rem; }
+.opt { appearance: none; text-align: left; font: inherit; font-weight: 600; padding: .85rem 1rem; min-height: 54px; border-radius: 14px; border: 2px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; display: flex; gap: .75rem; align-items: center; }
+.opt:hover:not(:disabled) { border-color: var(--math); background: var(--math-tint); }
+.opt .key { flex: none; width: 28px; height: 28px; border-radius: 8px; border: 2px solid var(--rule); display: grid; place-items: center; font-size: .8rem; font-weight: 800; color: var(--ink-2); }
+.opt:disabled { cursor: default; }
+.opt.correct { border-color: var(--good); background: var(--good-soft); }
+.opt.correct .key { background: var(--good); border-color: var(--good); color: #fff; }
+.opt.incorrect { border-color: var(--bad); background: var(--bad-soft); }
+.opt.incorrect .key { background: var(--bad); border-color: var(--bad); color: #fff; }
+.explain { margin-top: 1.1rem; padding: 1rem; border-radius: 12px; background: var(--mist); font-size: .97rem; }
+.explain strong { display: block; margin-bottom: .2rem; }
+.quiz-foot { margin-top: 1.25rem; display: flex; justify-content: flex-end; }
+.quiz .btn-primary { background: var(--night); color: #fff; border-color: var(--night); border-radius: 999px; }
+.quiz .btn-secondary { background: var(--paper); color: var(--ink); border-color: var(--ink); border-radius: 999px; }
+.done-view h3 { font-size: 1.9rem; font-weight: 800; }
+.done-view p { color: var(--ink-2); margin-top: .6rem; }
+.recap { list-style: none; margin-top: 1.25rem; border-top: 1px solid var(--rule); }
+.recap li { display: flex; gap: .75rem; padding: .65rem 0; border-bottom: 1px solid var(--rule); font-size: .95rem; }
+.recap .mark { flex: none; font-weight: 800; width: 1.2rem; }
+.recap .mark.r { color: var(--good); } .recap .mark.w { color: var(--bad); }
+.countdown { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
+.share-row { margin-top: 1.25rem; display: flex; gap: .75rem; flex-wrap: wrap; align-items: center; }
+#shareStatus { font-size: .9rem; color: var(--good); }
+@media (max-width: 900px) { .challenge { grid-template-columns: 1fr; gap: 2rem; } }
+@media (max-width: 520px) { .quiz { padding: 1.25rem; } .quiz-q { font-size: 1.28rem; } .stats { gap: 1.25rem; } .challenge-band { padding: 3.75rem 0; } }
+
+/* why */
+.why { display: grid; gap: 4.5rem; }
+.why-row { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+.why-row:nth-child(even) .why-art { order: 2; }
+.why-art { border-radius: 22px; overflow: hidden; }
+.why-art svg { display: block; width: 100%; height: auto; }
+.why-copy h3 { font-size: clamp(1.7rem, 3vw, 2.3rem); font-weight: 800; }
+.why-copy p { margin-top: .9rem; color: var(--ink-2); font-size: 1.12rem; max-width: 32rem; }
+@media (max-width: 860px) { .why-row { grid-template-columns: 1fr; gap: 1.5rem; } .why-row:nth-child(even) .why-art { order: 0; } .why { gap: 3rem; } }
+
+/* audiences */
+.audiences { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+.aud { background: var(--paper); border-radius: 20px; padding: 1.6rem; border: 1px solid var(--rule); display: flex; flex-direction: column; gap: .6rem; }
+.aud .ico { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; font-size: 1.5rem; }
+.aud h3 { font-size: 1.35rem; font-weight: 800; }
+.aud p { color: var(--ink-2); font-size: .98rem; flex: 1; }
+.aud a { font-weight: 700; }
+@media (max-width: 960px) { .audiences { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .audiences { grid-template-columns: 1fr; } }
+
+/* founder */
+.founder { display: grid; grid-template-columns: auto 1fr; gap: 2.5rem; align-items: center; max-width: 900px; margin: 0 auto; }
+.founder-mark { width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(var(--earth) 0 33%, var(--math) 0 66%, var(--photo) 0); display: grid; place-items: center; }
+.founder-mark span { width: 100px; height: 100px; border-radius: 50%; background: var(--night); color: #fff; display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 2.1rem; }
+.founder blockquote { font-family: var(--display); font-size: clamp(1.4rem, 2.6vw, 1.9rem); font-weight: 600; line-height: 1.3; letter-spacing: -.01em; }
+.founder cite { display: block; margin-top: 1rem; font-style: normal; color: var(--ink-2); }
+.founder cite b { color: var(--ink); }
+.principles { margin-top: 1.25rem; display: flex; flex-wrap: wrap; gap: .5rem; }
+.principles span { font-size: .85rem; font-weight: 600; padding: .35rem .8rem; border-radius: 999px; background: var(--mist); }
+@media (max-width: 640px) { .founder { grid-template-columns: 1fr; text-align: left; gap: 1.25rem; } .founder-mark { width: 88px; height: 88px; } .founder-mark span { width: 72px; height: 72px; font-size: 1.5rem; } }
+
+/* final cta */
+.final { background: var(--night); color: #fff; text-align: center; padding: 5rem 0; position: relative; overflow: hidden; }
+.final h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 800; max-width: 18ch; margin: 0 auto; }
+.final p { color: #C9D4DF; margin: 1rem auto 0; max-width: 32rem; font-size: 1.15rem; }
+.final .hero-cta { justify-content: center; }
 
 /* contact */
 .contact { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 4rem; }
-.contact h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(1.9rem, 3.2vw, 2.5rem); line-height: 1.15; }
-.contact .lede { margin-top: 1rem; color: var(--slate-2); max-width: 30rem; }
+.contact h2 { font-size: clamp(2rem, 3.6vw, 2.7rem); font-weight: 800; }
+.contact .lede { margin-top: 1rem; color: var(--ink-2); max-width: 30rem; font-size: 1.08rem; }
 form.enquiry { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .field { display: flex; flex-direction: column; gap: .35rem; }
 .field.full { grid-column: 1 / -1; }
-.field label { font-size: .9rem; font-weight: 600; }
-.field .hint { font-weight: 400; color: var(--slate-2); }
-.field input, .field select, .field textarea { font: inherit; font-size: 1rem; padding: .7rem .8rem; border: 1px solid #B9C2BE;
-  border-radius: 6px; background: var(--paper); color: var(--slate); min-height: 48px; }
+.field label { font-size: .92rem; font-weight: 700; }
+.field input, .field select, .field textarea { font: inherit; font-size: 1rem; padding: .75rem .9rem; border: 2px solid var(--rule); border-radius: 12px; background: var(--paper); color: var(--ink); min-height: 50px; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--math); outline: none; }
 .field textarea { min-height: 130px; resize: vertical; }
 .form-foot { grid-column: 1 / -1; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-#formStatus { font-size: .95rem; }
 @media (max-width: 860px) { .contact { grid-template-columns: 1fr; gap: 2rem; } }
 @media (max-width: 520px) { form.enquiry { grid-template-columns: 1fr; } }
 
-/* footer */
-.site-footer { border-top: 1px solid var(--rule); padding: 2.5rem 0; font-size: .9rem; color: var(--slate-2); }
+.site-footer { background: var(--night); color: #9FB0C1; padding: 2.5rem 0; font-size: .92rem; border-top: 1px solid rgba(255,255,255,.08); }
 .site-footer .wrap { display: flex; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
 .site-footer nav { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-.site-footer a { color: var(--slate-2); }
+.site-footer a { color: #C9D4DF; }
+
+@media (prefers-reduced-motion: reduce) { .scard, .btn { transition: none; } }
+
+/* ===== Landing: classroom tour ===== */
+.hero { padding: 2rem 0 3.5rem; }
+.hero .wrap { display: block; }
+.hero-top { display: flex; justify-content: space-between; align-items: end; gap: 1rem 2.5rem; flex-wrap: wrap; margin-bottom: 1.4rem; }
+.hero h1 { font-size: clamp(2rem, 3.9vw, 3.2rem); max-width: 19ch; }
+.hero-sub { max-width: 27rem; margin-top: 0; font-size: 1.05rem !important; }
+.tour-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
+.tour-tab { appearance: none; text-align: left; font: inherit; color: #C9D4DF; background: var(--night-2); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 16px; padding: 1rem 1.2rem 1.1rem; cursor: pointer; position: relative; overflow: hidden; }
+.tour-tab .tt-kicker { display: block; font-size: .85rem; font-weight: 600; }
+.tour-tab .tt-name { display: block; font-family: var(--display); font-weight: 800; font-size: clamp(1.2rem, 2.2vw, 1.6rem); color: #fff; letter-spacing: -.01em; margin-top: .15rem; }
+.tour-tab .tt-bar { position: absolute; left: 0; bottom: 0; height: 4px; width: 0; background: var(--tab-c); }
+.tour-tab[aria-selected="true"] { background: #1E3550; border-color: var(--tab-c); }
+.tour-tab[aria-selected="true"] .tt-kicker { color: var(--tab-c); }
+.tour-tab:hover { border-color: rgba(255,255,255,.3); }
+.tour-tab[data-k="math"] { --tab-c: var(--math); }
+.tour-tab[data-k="photo"] { --tab-c: var(--photo); }
+.tour-tab[data-k="earth"] { --tab-c: var(--earth); }
+@media (max-width: 640px) { .tour-tab .tt-kicker { display: none; } .tour-tab { padding: .8rem .6rem 1rem; text-align: center; } .tour-tab .tt-name { font-size: .98rem; } .tour-tabs { gap: .4rem; } }
+
+.stage { margin-top: 1rem; background: var(--night-2); border: 1px solid rgba(255,255,255,.1); border-radius: 22px; overflow: hidden;
+  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); }
+.stage-copy { padding: 1.6rem 1.75rem; display: flex; flex-direction: column; gap: .75rem; }
+.stage-copy .room { font-weight: 700; color: var(--tab-c); }
+.stage-copy h2 { font-size: clamp(1.5rem, 2.4vw, 2rem); font-weight: 800; color: #fff; }
+.stage-copy p { color: #C9D4DF; }
+.stage-control { margin-top: .5rem; }
+.stage-control label { display: flex; justify-content: space-between; font-size: .92rem; font-weight: 700; color: #fff; }
+.stage-control output { font-variant-numeric: tabular-nums; color: var(--tab-c); }
+.stage-control input { width: 100%; accent-color: var(--tab-c); height: 30px; }
+.stage-readout { font-size: .95rem; color: #C9D4DF; min-height: 3em; }
+.stage-actions { margin-top: auto; display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; padding-top: .5rem; }
+.stage-enter { background: var(--tab-c); color: var(--night); }
+.stage-enter:hover { filter: brightness(1.08); }
+.tour-toggle { appearance: none; background: none; border: 1px solid rgba(255,255,255,.3); color: #fff; border-radius: 999px; min-height: 44px; padding: 0 1rem; font: 600 .9rem var(--sans); cursor: pointer; display: inline-flex; gap: .45rem; align-items: center; }
+.tour-toggle:hover { border-color: #fff; }
+.stage-sim { position: relative; background: #0F2133; min-height: 100%; display: flex; align-items: center; }
+.stage-sim svg { display: block; width: 100%; height: auto; }
+.stage[data-k="math"] { --tab-c: var(--math); }
+.stage[data-k="photo"] { --tab-c: var(--photo); }
+.stage[data-k="earth"] { --tab-c: var(--earth); }
+@media (max-width: 960px) { .stage { grid-template-columns: 1fr; } .stage-sim { order: -1; } .stage-copy { padding: 1.5rem; } }
+
+/* classroom doors */
+.doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.door { border-radius: 22px; overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); border: 1px solid var(--rule); background: var(--paper); transition: transform .2s, box-shadow .2s; }
+.door:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(13,27,42,.12); }
+.door-art { aspect-ratio: 16 / 9; display: block; width: 100%; }
+.door-body { padding: 1.5rem; display: flex; flex-direction: column; gap: .6rem; flex: 1; }
+.door .room-label { font-size: .88rem; font-weight: 700; }
+.door h3 { font-size: 1.7rem; font-weight: 800; }
+.door p { color: var(--ink-2); flex: 1; }
+.door .go { font-weight: 700; margin-top: .4rem; }
+.d-math .room-label, .d-math .go { color: var(--math-deep); }
+.d-photo .room-label, .d-photo .go { color: var(--photo-deep); }
+.d-earth .room-label, .d-earth .go { color: var(--earth-deep); }
+@media (max-width: 960px) { .doors { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; } }
+
 </style>
 </head>
 <body>
-
 <header class="site-header">
   <div class="wrap">
-    <a class="wordmark" href="/" aria-label="Classroom of the Future, home">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#1D2B31"/><path d="M6 22h20M6 16c3-6 5 6 8 0s5 6 8 0 3-3 4-2" stroke="#F2F4F2" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>
-      Classroom of the Future
+    <a class="wordmark" href="/" aria-label="Classrooms of the Future, home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#22384F"/><path d="M6 21c3-9 5 5 8-3s5 7 8-1 3-4 4-3" stroke="#FFB547" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>
+      Classrooms of the Future
     </a>
     <nav class="site-nav" aria-label="Main">
-      <a href="#pathways">Schools</a>
-      <a href="#pathways">University</a>
-      <a href="#pathways">Industry</a>
-      <a href="#about">About</a>
-      <a href="#contact" class="nav-contact">Contact</a>
+      <a href="/math/">Mathematics</a>
+      <a href="/photography/">Photography</a>
+      <a href="/earth-science/">Earth science</a>
+      <a href="#contact">Contact</a>
+      <a href="#challenge" class="streak-pill keep" aria-label="Today's challenge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-3-1-6 1-9z"/></svg><span id="navStreakText">Daily challenge</span></a>
     </nav>
   </div>
 </header>
 
 <main>
-  <section class="hero">
+  <!-- ============ HERO + CLASSROOM TOUR ============ -->
+  <section class="hero" aria-labelledby="heroTitle">
     <div class="wrap">
+      <div class="hero-top">
+        <h1 id="heroTitle">Three classrooms. <span class="hl">One way to learn: by doing.</span></h1>
+        <p class="hero-sub">Step into mathematics, photography and earth science through live simulations you can control. Free, no sign-up, from Grade 6 to industry.</p>
+      </div>
+
+      <div class="tour-tabs" role="tablist" aria-label="Classrooms">
+        <button class="tour-tab" role="tab" id="tt-math" data-k="math" aria-controls="stage" aria-selected="true"><span class="tt-kicker">Mrs. Ali's Classroom</span><span class="tt-name">Mathematics</span><span class="tt-bar"></span></button>
+        <button class="tour-tab" role="tab" id="tt-photo" data-k="photo" aria-controls="stage" aria-selected="false" tabindex="-1"><span class="tt-kicker">Photography Classroom</span><span class="tt-name">Photography</span><span class="tt-bar"></span></button>
+        <button class="tour-tab" role="tab" id="tt-earth" data-k="earth" aria-controls="stage" aria-selected="false" tabindex="-1"><span class="tt-kicker">Earth Science Classroom</span><span class="tt-name">Earth science</span><span class="tt-bar"></span></button>
+      </div>
+
+      <div class="stage" id="stage" role="tabpanel" aria-labelledby="tt-math" data-k="math">
+        <div class="stage-copy">
+          <span class="room" id="stRoom"></span>
+          <h2 id="stTitle"></h2>
+          <p id="stText"></p>
+          <div class="stage-control">
+            <label for="stSlider"><span id="stLabel"></span><output id="stOut" for="stSlider"></output></label>
+            <input id="stSlider" type="range">
+          </div>
+          <p class="stage-readout" id="stReadout" aria-live="polite"></p>
+          <div class="stage-actions">
+            <a class="btn stage-enter" id="stEnter" href="/math/"></a>
+            <button class="tour-toggle" id="tourToggle" type="button" aria-pressed="false"><span aria-hidden="true" id="tourIcon">❚❚</span><span id="tourText">Pause tour</span></button>
+          </div>
+        </div>
+        <div class="stage-sim"><svg id="stSvg" viewBox="0 0 560 330" role="img" aria-label="Live simulation"></svg></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLASSROOM DOORS ============ -->
+  <section class="section" id="classrooms">
+    <div class="wrap">
+      <div class="head center">
+        <h2>Choose your classroom</h2>
+        <p>Each classroom has its own teacher's approach, its own labs and its own path from beginner to expert.</p>
+      </div>
+      <div class="doors">
+        <a class="door d-math" href="/math/">
+          <svg class="door-art" viewBox="0 0 400 225" aria-hidden="true"><rect width="400" height="225" fill="#E6EDFF"/><g stroke="#B9C9FF"><path d="M0 45H400M0 90H400M0 135H400M0 180H400M50 0V225M100 0V225M150 0V225M200 0V225M250 0V225M300 0V225M350 0V225"/></g><circle cx="110" cy="112" r="56" fill="none" stroke="#4C7CFF" stroke-width="3"/><line x1="110" y1="112" x2="150" y2="72" stroke="#2449B8" stroke-width="3"/><circle cx="150" cy="72" r="6" fill="#2449B8"/><path d="M200 72 C220 42 245 42 262 72 S300 172 322 152 S360 62 400 82" fill="none" stroke="#2449B8" stroke-width="4" stroke-linecap="round"/><path d="M265 200 l18 -36 l18 36z" fill="#FF6B81"/><rect x="320" y="170" width="34" height="34" fill="#FFB547" transform="rotate(12 337 187)"/></svg>
+          <div class="door-body"><span class="room-label">Mrs. Ali's Classroom</span><h3>Mathematics</h3><p>40+ interactive tools, grade-level lessons from Grade 6 to Algebra 1 and Geometry, and full games like the MathQuest RPG.</p><span class="go">Enter Mrs. Ali's Classroom</span></div>
+        </a>
+        <a class="door d-photo" href="/photography/">
+          <svg class="door-art" viewBox="0 0 400 225" aria-hidden="true"><rect width="400" height="225" fill="#1A1A1F"/><g fill="#2A2A31"><rect x="0" y="14" width="400" height="22"/><rect x="0" y="189" width="400" height="22"/></g><g fill="#1A1A1F"><rect x="12" y="20" width="14" height="10" rx="2"/><rect x="52" y="20" width="14" height="10" rx="2"/><rect x="92" y="20" width="14" height="10" rx="2"/><rect x="132" y="20" width="14" height="10" rx="2"/><rect x="172" y="20" width="14" height="10" rx="2"/><rect x="212" y="20" width="14" height="10" rx="2"/><rect x="252" y="20" width="14" height="10" rx="2"/><rect x="292" y="20" width="14" height="10" rx="2"/><rect x="332" y="20" width="14" height="10" rx="2"/><rect x="372" y="20" width="14" height="10" rx="2"/><rect x="12" y="195" width="14" height="10" rx="2"/><rect x="52" y="195" width="14" height="10" rx="2"/><rect x="92" y="195" width="14" height="10" rx="2"/><rect x="132" y="195" width="14" height="10" rx="2"/><rect x="172" y="195" width="14" height="10" rx="2"/><rect x="212" y="195" width="14" height="10" rx="2"/><rect x="252" y="195" width="14" height="10" rx="2"/><rect x="292" y="195" width="14" height="10" rx="2"/><rect x="332" y="195" width="14" height="10" rx="2"/><rect x="372" y="195" width="14" height="10" rx="2"/></g><rect x="30" y="50" width="160" height="125" fill="#8DB3D4"/><path d="M30 140 C80 110 130 130 190 115 V175 H30Z" fill="#7F9B7B"/><circle cx="160" cy="78" r="12" fill="#F7E2A8"/><rect x="210" y="50" width="160" height="125" fill="#FF6B81"/><circle cx="290" cy="112" r="44" fill="#1A1A1F"/><circle cx="290" cy="112" r="20" fill="#FFE6EA"/></svg>
+          <div class="door-body"><span class="room-label">Photography Classroom</span><h3>Photography</h3><p>Exposure, light, lenses and composition, learned with a virtual camera before you ever touch a real one.</p><span class="go">Enter the Photography Classroom</span></div>
+        </a>
+        <a class="door d-earth" href="/earth-science/">
+          <svg class="door-art" viewBox="0 0 400 225" aria-hidden="true"><rect width="400" height="225" fill="#FFF1DA"/><path d="M0 60 C80 45 160 75 240 60 S360 45 400 56 V225 H0Z" fill="#FFD48A"/><path d="M0 105 C90 90 170 122 260 102 S350 90 400 100 V225 H0Z" fill="#F5B451"/><path d="M0 150 C100 138 190 166 280 146 S360 140 400 148 V225 H0Z" fill="#C98316"/><path d="M0 192 C110 183 200 205 300 189 S370 185 400 191 V225 H0Z" fill="#7A4A0C"/><rect x="196" y="16" width="8" height="190" fill="#13202E"/><path d="M190 16 h20 l-10 -12z" fill="#13202E"/><g fill="none" stroke="#13202E" stroke-width="2"><path d="M240 26 q20 10 0 20 q-20 10 0 20" opacity=".5"/><path d="M262 22 q28 14 0 28 q-28 14 0 28" opacity=".35"/></g></svg>
+          <div class="door-body"><span class="room-label">Earth Science Classroom</span><h3>Earth science</h3><p>Seismic imaging, rocks and minerals, and well logs, from first principles in school to skills for subsurface professionals.</p><span class="go">Enter the Earth Science Classroom</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DAILY CHALLENGE ============ -->
+  <section class="challenge-band" id="challenge">
+    <div class="wrap challenge">
       <div>
-        <h1>Learn the subsurface by working with it.</h1>
-        <p class="hero-lede">Interactive simulations, notebooks and guided practice in earth science and mathematics — for schools, universities and oil and gas professionals.</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#pathways">Find your learning path</a>
-          <a class="btn btn-secondary" href="#contact">Work with us</a>
+        <h2>Three questions a day, one from each classroom. Keep your streak.</h2>
+        <p class="lede">New questions every day at midnight. Every answer comes with a short explanation, so you learn something even when you miss.</p>
+        <div class="stats">
+          <div><div class="stat-n" id="statStreak">0</div><div class="stat-l">Day streak</div></div>
+          <div><div class="stat-n" id="statBest">0</div><div class="stat-l">Best streak</div></div>
+          <div><div class="stat-n" id="statCorrect">0</div><div class="stat-l">Correct answers</div></div>
         </div>
+        <div class="week" id="week" aria-label="Last 7 days"></div>
       </div>
-
-      <figure class="instrument" aria-labelledby="seisTitle">
-        <div class="instrument-head">
-          <span class="instrument-title" id="seisTitle">Wedge model: seismic tuning</span>
-          <span class="instrument-note">Try it: drag the frequency</span>
-        </div>
-        <svg id="seis" viewBox="0 0 560 320" role="img" aria-label="Synthetic seismic section over a sand wedge that thins from left to right. Changing the wavelet frequency changes where the top and base of the sand can be told apart."></svg>
-        <div class="control">
-          <label for="freq">Wavelet frequency</label>
-          <input id="freq" type="range" min="10" max="80" step="1" value="30">
-          <output id="freqOut" for="freq">30 Hz</output>
-        </div>
-        <div class="legend" aria-hidden="true">
-          <span><i style="background:var(--sand-soft);border:1px solid var(--sand)"></i>Sand (lower impedance)</span>
-          <span><i style="background:var(--shale)"></i>Shale</span>
-          <span><i style="background:var(--seismic)"></i>Positive amplitude</span>
-        </div>
-        <p class="readout" id="readout" aria-live="polite"></p>
-      </figure>
+      <div class="quiz" id="quiz" aria-live="polite"></div>
     </div>
   </section>
 
-  <section class="band white" id="pathways">
+  <!-- ============ PATH FINDER ============ -->
+  <section class="section mist" id="finder">
+    <div class="wrap finder">
+      <div class="head">
+        <h2>Not sure where to start?</h2>
+        <p>Answer three quick questions and we'll point you to the classroom, lessons and labs that fit you best. It takes about 15 seconds.</p>
+      </div>
+      <div class="finder-card" id="finderCard" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ============ AUDIENCES ============ -->
+  <section class="section" id="audiences">
     <div class="wrap">
-      <div class="section-intro">
-        <h2>Three learning paths, one way of teaching.</h2>
-        <p>Each path starts from the same idea: you understand a concept faster when you can change it and watch what happens.</p>
-      </div>
-      <div class="pathways">
-        <div class="pathway">
-          <h3>Schools</h3>
-          <div class="who">Grades 6–12, for students, teachers and parents</div>
-          <p class="desc">Over 40 interactive math tools, guided grade-level lessons and game-based practice, built and tested in a real classroom.</p>
-          <ul class="modules">
-            <li>Grade 6–8 mathematics <span class="status on">Available</span></li>
-            <li>Algebra 1 and geometry <span class="status on">Available</span></li>
-            <li>Statistics and data <span class="status on">Available</span></li>
-            <li>Earth science for schools <span class="status dev">In development</span></li>
-          </ul>
-          <a class="go" href="/schools/">Open the schools classroom</a>
-        </div>
-        <div class="pathway">
-          <h3>University</h3>
-          <div class="who">Undergraduate geoscience and mathematics</div>
-          <p class="desc">Simulations and notebooks that connect the mathematics to the physics: waves, convolution, sampling and statistics on real geoscience data.</p>
-          <ul class="modules">
-            <li>Waves, wavelets and convolution <span class="status dev">In development</span></li>
-            <li>Statistics for geoscience data <span class="status dev">In development</span></li>
-            <li>Mineralogy and petrology <span class="status dev">In development</span></li>
-            <li>Optics and digital imaging <span class="status dev">In development</span></li>
-          </ul>
-          <span class="go muted">Register interest below</span>
-        </div>
-        <div class="pathway">
-          <h3>Industry</h3>
-          <div class="who">Oil and gas and subsurface professionals</div>
-          <p class="desc">Practical, data-first modules for upskilling teams: working with well logs and seismic in Python, and applying machine learning with care.</p>
-          <ul class="modules">
-            <li>Well-log analysis with Python <span class="status dev">In development</span></li>
-            <li>Petrophysics fundamentals <span class="status dev">In development</span></li>
-            <li>Seismic data and SEG-Y handling <span class="status dev">In development</span></li>
-            <li>Machine learning for facies <span class="status dev">In development</span></li>
-          </ul>
-          <a class="go" href="#contact">Discuss training for your team</a>
-        </div>
+      <div class="head center"><h2>Made for every kind of learner</h2></div>
+      <div class="audiences">
+        <div class="aud"><div class="ico" style="background:var(--math-tint)">🎒</div><h3>Students</h3><p>Lessons, games and quests for Grades 6–12. Earn XP in MathQuest and keep your daily streak going.</p><a href="/math/">Start in Mrs. Ali's Classroom</a></div>
+        <div class="aud"><div class="ico" style="background:var(--earth-tint)">🍎</div><h3>Teachers &amp; parents</h3><p>Ready-to-use classroom tools, worksheets and check-ins. Free, with no student accounts to manage.</p><a href="/math/">Browse classroom tools</a></div>
+        <div class="aud"><div class="ico" style="background:var(--photo-tint)">🎓</div><h3>Universities</h3><p>Simulations and notebooks for geoscience, mathematics and imaging courses, built around real data.</p><a href="#contact">Register your interest</a></div>
+        <div class="aud"><div class="ico" style="background:#E3E8EE">🛢️</div><h3>Industry teams</h3><p>Upskilling in well logs, seismic data, petrophysics and machine learning for subsurface teams.</p><a href="/earth-science/">See the Earth Science Classroom</a></div>
       </div>
     </div>
   </section>
 
-  <section class="band" id="method">
+  <!-- ============ FOUNDER ============ -->
+  <section class="section mist" id="about">
     <div class="wrap">
-      <div class="section-intro">
-        <h2>How a module works</h2>
-        <p>Every topic moves from intuition to real data in the same order.</p>
-      </div>
-      <div class="method">
-        <div class="step"><div class="step-n">1</div><h3>Explore a simulation</h3><p>Change one parameter at a time and see its effect, like the wedge model above.</p></div>
-        <div class="step"><div class="step-n">2</div><h3>Work through a notebook</h3><p>Reproduce the result step by step in code, with the reasoning written alongside.</p></div>
-        <div class="step"><div class="step-n">3</div><h3>Apply it to real data</h3><p>Use public datasets — well logs, seismic surveys, field measurements — to answer a real question.</p></div>
-        <div class="step later"><div class="step-n">4</div><h3>Check with an AI tutor</h3><p>An assistant that gives hints instead of answers and adapts to the learner's level.</p></div>
+      <div class="founder">
+        <div class="founder-mark" aria-hidden="true"><span>RA</span></div>
+        <div>
+          <blockquote>Every tool here started in a real classroom, built so that an idea moves under your hand until it clicks.</blockquote>
+          <cite>Founded by <b>Raazia Ali</b>, geophysicist and mathematics teacher</cite>
+          <div class="principles"><span>Free to use</span><span>No ads</span><span>No tracking</span><span>Tested in real classrooms</span></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="band white" id="subjects">
+  <!-- ============ FINAL CTA ============ -->
+  <section class="final">
     <div class="wrap">
-      <div class="section-intro">
-        <h2>Subjects</h2>
-      </div>
-      <div class="subjects">
-        <div class="subject">
-          <svg viewBox="0 0 300 56" aria-hidden="true"><rect y="0" width="300" height="14" fill="#E3E7E5"/><rect y="14" width="300" height="12" fill="#F1E3C4"/><rect y="26" width="300" height="16" fill="#D3D9D6"/><rect y="42" width="300" height="14" fill="#F1E3C4"/></svg>
-          <h3>Earth science</h3>
-          <p>Geophysics, geology and petrophysics, taught by a working geoscientist.</p>
-        </div>
-        <div class="subject">
-          <svg viewBox="0 0 300 56" aria-hidden="true"><path d="M0 50 C60 50 90 6 150 6 S240 50 300 50" stroke="#1F5A8A" stroke-width="2" fill="none"/><line x1="0" y1="50" x2="300" y2="50" stroke="#B9C2BE"/></svg>
-          <h3>Mathematics</h3>
-          <p>From ratios and algebra in middle school to the calculus and statistics behind real measurements.</p>
-        </div>
-        <div class="subject">
-          <svg viewBox="0 0 300 56" aria-hidden="true"><circle cx="150" cy="28" r="26" fill="none" stroke="#1D2B31" stroke-width="2"/><circle cx="150" cy="28" r="12" fill="none" stroke="#1D2B31" stroke-width="2"/><line x1="0" y1="28" x2="110" y2="28" stroke="#C9973F" stroke-width="2"/><line x1="190" y1="28" x2="300" y2="28" stroke="#C9973F" stroke-width="2"/></svg>
-          <h3>Photography and imaging</h3>
-          <p>Light, exposure and optics — and how the same ideas apply to imaging the subsurface.</p>
-        </div>
-      </div>
+      <h2>Your first streak starts with three questions.</h2>
+      <p>It takes two minutes. No sign-up. Come back tomorrow for three more.</p>
+      <div class="hero-cta"><a class="btn btn-hot" href="#challenge">Play today's challenge</a><a class="btn btn-ghost" href="#finder">Find my starting point</a></div>
     </div>
   </section>
 
-  <section class="band" id="about">
-    <div class="wrap about">
-      <h2>About</h2>
-      <div class="about-body">
-        <p>Classroom of the Future was founded by Raazia Ali, a geophysicist and mathematics teacher. It began as a set of interactive tools for her own middle and high school classes and is growing into a single place to learn earth science and mathematics at every level.</p>
-        <div class="principles">
-          <div><strong>Free to use</strong><span>No ads, and no paywall on core learning.</span></div>
-          <div><strong>Private by design</strong><span>No accounts or tracking. <a href="/privacy.html">Privacy policy</a></span></div>
-          <div><strong>Built from practice</strong><span>Tested with real students and real data.</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="band white" id="contact">
+  <!-- ============ CONTACT ============ -->
+  <section class="section" id="contact">
     <div class="wrap contact">
       <div>
-        <h2>Bring this to your school, department or team</h2>
-        <p class="lede">Ask about classroom use, university modules or training for your company. You'll get a reply by email.</p>
+        <h2>Bring it to your school, department or team</h2>
+        <p class="lede">Ask about classroom use, university modules or company training, or ask to be told when new lessons open. You'll get a reply by email.</p>
       </div>
       <form class="enquiry" id="enquiry" novalidate>
         <div class="field">
@@ -338,22 +516,10 @@ form.enquiry { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
             <option>Other</option>
           </select>
         </div>
-        <div class="field">
-          <label for="name">Name</label>
-          <input id="name" name="name" autocomplete="name" required>
-        </div>
-        <div class="field full">
-          <label for="email">Email</label>
-          <input id="email" name="email" type="email" autocomplete="email" required>
-        </div>
-        <div class="field full">
-          <label for="message">Message</label>
-          <textarea id="message" name="message" required></textarea>
-        </div>
-        <div class="form-foot">
-          <button class="btn btn-primary" type="submit" id="sendBtn">Send message</button>
-          <span id="formStatus" role="status"></span>
-        </div>
+        <div class="field"><label for="name">Name</label><input id="name" name="name" autocomplete="name" required></div>
+        <div class="field full"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+        <div class="field full"><label for="message">Message</label><textarea id="message" name="message" required></textarea></div>
+        <div class="form-foot"><button class="btn btn-dark" type="submit" id="sendBtn">Send message</button><span id="formStatus" role="status"></span></div>
       </form>
     </div>
   </section>
@@ -361,94 +527,398 @@ form.enquiry { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
 <footer class="site-footer">
   <div class="wrap">
-    <span>© 2026 Classroom of the Future, Raazia Ali</span>
-    <nav aria-label="Footer">
-      <a href="/schools/">Schools classroom</a>
-      <a href="/privacy.html">Privacy</a>
-      <a href="https://github.com/raaziaAli">GitHub</a>
-    </nav>
+    <span>© 2026 Classrooms of the Future, Raazia Ali</span>
+    <nav aria-label="Footer"><a href="/math/">Mrs. Ali's Classroom</a><a href="/photography/">Photography Classroom</a><a href="/earth-science/">Earth Science Classroom</a><a href="/privacy.html">Privacy</a></nav>
   </div>
 </footer>
 
 <script>
-/* ---------- Wedge model: synthetic seismic ---------- */
+const NS = 'http://www.w3.org/2000/svg';
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function el(name, attrs, text) { const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; }
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+
+/* =================== Classroom tour: math → photography → earth science =================== */
 (function () {
-  const svg = document.getElementById('seis');
-  const slider = document.getElementById('freq');
-  const out = document.getElementById('freqOut');
-  const readout = document.getElementById('readout');
-  const NS = 'http://www.w3.org/2000/svg';
-  const W = 560, H = 320, padL = 44, padR = 12, padT = 14, padB = 30;
-  const NTR = 30;                 // traces
-  const T0 = 0.03, T1 = 0.19;      // seconds shown
-  const TOP = 0.08;                // top of sand (s, two-way time)
-  const MAXTH = 0.05;              // wedge thickness at left (s, TWT)
-  const V = 2500;                  // interval velocity, m/s
-  const plotW = W - padL - padR, plotH = H - padT - padB;
-  const dx = plotW / NTR;
-  const tToY = t => padT + (t - T0) / (T1 - T0) * plotH;
-  const ricker = (t, f) => { const a = Math.PI * Math.PI * f * f * t * t; return (1 - 2 * a) * Math.exp(-a); };
-  const thick = i => MAXTH * (1 - i / (NTR - 1));
+  const svg = document.getElementById('stSvg'), stage = document.getElementById('stage');
+  const slider = document.getElementById('stSlider'), out = document.getElementById('stOut');
+  const readout = document.getElementById('stReadout');
+  const tabs = [...document.querySelectorAll('.tour-tab')];
+  const toggle = document.getElementById('tourToggle');
+  const W = 560, H = 330, DURATION = 10000;
+  const F = { 'font-family': 'Archivo, sans-serif' };
 
-  function el(name, attrs) { const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
-
-  // static background: geology + axis
-  const bg = el('g', {});
-  bg.appendChild(el('rect', { x: padL, y: padT, width: plotW, height: plotH, fill: '#E3E7E5' }));
-  const wedge = `M${padL},${tToY(TOP)} L${padL + plotW},${tToY(TOP)} L${padL},${tToY(TOP + MAXTH)} Z`;
-  bg.appendChild(el('path', { d: wedge, fill: '#F1E3C4', stroke: '#C9973F', 'stroke-width': 1 }));
-  for (let ms = 40; ms <= 180; ms += 20) {
-    const y = tToY(ms / 1000);
-    bg.appendChild(el('line', { x1: padL - 4, x2: padL, y1: y, y2: y, stroke: '#4A5A60' }));
-    const tx = el('text', { x: padL - 8, y: y + 4, 'text-anchor': 'end', 'font-size': 11, fill: '#4A5A60', 'font-family': 'Archivo, sans-serif' });
-    tx.textContent = ms; bg.appendChild(tx);
-  }
-  const yl = el('text', { x: 12, y: padT + plotH / 2, 'font-size': 11, fill: '#4A5A60', 'font-family': 'Archivo, sans-serif',
-    transform: `rotate(-90 12 ${padT + plotH / 2})`, 'text-anchor': 'middle' });
-  yl.textContent = 'Two-way time (ms)'; bg.appendChild(yl);
-  const xl = el('text', { x: padL + plotW / 2, y: H - 8, 'font-size': 11, fill: '#4A5A60', 'font-family': 'Archivo, sans-serif', 'text-anchor': 'middle' });
-  xl.textContent = 'Sand thins from left to right'; bg.appendChild(xl);
-  svg.appendChild(bg);
-  const traces = el('g', {}); svg.appendChild(traces);
-  const marker = el('g', {}); svg.appendChild(marker);
-
-  function draw(f) {
-    traces.textContent = ''; marker.textContent = '';
-    const N = 160, dt = (T1 - T0) / N, gain = dx * 1.4;
-    for (let i = 0; i < NTR; i++) {
-      const x0 = padL + dx * (i + 0.5);
-      const base = TOP + thick(i);
-      let line = '', fill = `M${x0},${tToY(T0)}`;
-      for (let k = 0; k <= N; k++) {
-        const t = T0 + k * dt;
-        // top: shale -> softer sand (negative), base: sand -> shale (positive)
-        const a = -0.5 * ricker(t - TOP, f) + 0.5 * ricker(t - base, f);
-        const x = x0 + a * gain, y = tToY(t);
-        line += (k ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1);
-        fill += 'L' + Math.max(x0, x).toFixed(1) + ',' + y.toFixed(1);
+  /* ---------- Mathematics: Fourier circles draw a square wave ---------- */
+  const math = {
+    room: "Mrs. Ali's Classroom", title: 'Draw a square wave with spinning circles',
+    text: 'Stack circles of shrinking size and the tip traces a square wave. The same idea, Fourier series, sits behind MP3s, JPEGs and medical scans.',
+    label: 'Circles', min: 1, max: 15, step: 1, enter: "Enter Mrs. Ali's Classroom", href: '/math/',
+    fmt: v => v, auto: p => 1 + Math.floor(p * 12.99),
+    setup() { this.g = el('g', {}); svg.append(el('rect', { width: W, height: H, fill: '#0F2133' }), this.g); this.phase = 0; },
+    frame(n, dt) {
+      this.phase += dt * 1.4;
+      const g = this.g; g.textContent = '';
+      let x = 130, y = 165; const R = 70;
+      for (let j = 0; j < n; j++) {
+        const k = 2 * j + 1, r = R * 4 / (Math.PI * k);
+        const nx = x + r * Math.cos(k * this.phase), ny = y - r * Math.sin(k * this.phase);
+        g.appendChild(el('circle', { cx: x, cy: y, r, fill: 'none', stroke: '#4C7CFF', 'stroke-opacity': .35 }));
+        g.appendChild(el('line', { x1: x, y1: y, x2: nx, y2: ny, stroke: '#9DB8FF', 'stroke-width': 1.6 }));
+        x = nx; y = ny;
       }
-      fill += `L${x0},${tToY(T1)}Z`;
-      traces.appendChild(el('path', { d: fill, fill: '#1F5A8A', opacity: .9 }));
-      traces.appendChild(el('path', { d: line, fill: 'none', stroke: '#1D2B31', 'stroke-width': .7 }));
-    }
-    // tuning thickness (Kallweit & Wood): ~ 1 / (2.31 f) seconds TWT
-    const tuneT = 1 / (2.31 * f);
-    const iTune = (1 - tuneT / MAXTH) * (NTR - 1);
-    const metres = Math.round(V / (4 * f));
-    if (iTune >= 0 && iTune <= NTR - 1) {
-      const x = padL + dx * (iTune + 0.5);
-      marker.appendChild(el('line', { x1: x, x2: x, y1: padT, y2: padT + plotH, stroke: '#C9973F', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }));
-      readout.innerHTML = `Beds thinner than about <strong>${metres} m</strong> (a quarter wavelength at ${V} m/s) can't be resolved at ${f} Hz: right of the dashed line, the top and base reflections merge into one.`;
-    } else {
-      readout.innerHTML = `At ${f} Hz the tuning thickness is about <strong>${metres} m</strong>, thicker than this whole wedge, so top and base are never resolved. Raise the frequency.`;
-    }
-    out.textContent = f + ' Hz';
+      const X0 = 265;
+      g.appendChild(el('line', { x1: x, y1: y, x2: X0, y2: y, stroke: '#fff', 'stroke-dasharray': '3 3', 'stroke-opacity': .6 }));
+      let d = '';
+      for (let i = 0; i <= 280; i++) {
+        const t = this.phase - i * 0.035; let v = 0;
+        for (let j = 0; j < n; j++) { const k = 2 * j + 1; v += Math.sin(k * t) / k; }
+        d += (i ? 'L' : 'M') + (X0 + i) + ',' + (165 - R * 4 / Math.PI * v).toFixed(1);
+      }
+      g.appendChild(el('path', { d, fill: 'none', stroke: '#4C7CFF', 'stroke-width': 3.2, 'stroke-linejoin': 'round' }));
+      g.appendChild(el('circle', { cx: x, cy: y, r: 4.5, fill: '#fff' }));
+      g.appendChild(el('text', Object.assign({ x: 20, y: 310, fill: '#C9D4DF', 'font-size': 13 }, F), n + (n === 1 ? ' circle' : ' circles') + ', frequencies 1, 3, 5…'));
+    },
+    say(n) { return n === 1 ? 'One circle draws a plain sine wave. Add more and watch the corners sharpen.' : n < 6 ? `${n} circles: the wave is getting squarer. Each new circle spins ${2 * n - 1} times faster than the first.` : `${n} circles: almost square, but notice the small spike at each corner. It never disappears (the Gibbs phenomenon).`; }
+  };
+
+  /* ---------- Photography: aperture vs depth of field, exposure kept correct ---------- */
+  const STOPS = [1.8, 2.8, 4, 5.6, 8, 11, 16];
+  const photo = {
+    room: 'Photography Classroom', title: 'Open the aperture, soften the background',
+    text: 'A wide aperture blurs the background and lets in light, so the shutter must get faster. A narrow one keeps everything sharp, but needs a slower shutter.',
+    label: 'Aperture', min: 0, max: 6, step: 1, enter: 'Enter the Photography Classroom', href: '/photography/',
+    fmt: v => 'f/' + STOPS[v], auto: p => Math.round((0.5 - 0.5 * Math.cos(p * Math.PI * 2)) * 6),
+    setup() {
+      const defs = el('defs', {});
+      defs.innerHTML = '<linearGradient id="tSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8DB3D4"/><stop offset="1" stop-color="#DCE7F0"/></linearGradient><filter id="tBlur" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="2"/></filter>';
+      svg.appendChild(defs);
+      this.blurNode = defs.querySelector('feGaussianBlur');
+      const bg = el('g', { filter: 'url(#tBlur)' });
+      bg.innerHTML = '<rect width="560" height="330" fill="url(#tSky)"/><circle cx="470" cy="64" r="26" fill="#F7E2A8"/><path d="M0 215 C90 160 170 185 250 170 S420 130 560 180 V330 H0Z" fill="#9DB39A"/><path d="M0 245 C120 215 240 240 330 220 S480 205 560 230 V330 H0Z" fill="#7F9B7B"/><g fill="#5E7A60"><circle cx="70" cy="229" r="14"/><circle cx="92" cy="223" r="18"/><circle cx="420" cy="211" r="15"/><circle cx="440" cy="205" r="12"/></g>';
+      const fg = el('g', {});
+      fg.innerHTML = '<path d="M0 288 C150 276 330 294 560 278 V330 H0Z" fill="#6B8A64"/><path d="M226 292 L238 150 H262 L274 292Z" fill="#F2F4F2" stroke="#1D2B31" stroke-width="2"/><rect x="244" y="252" width="14" height="40" fill="#4A5A60"/>';
+      this.blades = el('g', {});
+      const hub = el('circle', { cx: 250, cy: 150, r: 7, fill: '#1D2B31' });
+      const hud = el('g', {});
+      hud.appendChild(el('rect', { x: 14, y: 14, width: 250, height: 30, rx: 6, fill: 'rgba(13,27,42,.75)' }));
+      this.hud = el('text', Object.assign({ x: 26, y: 34, fill: '#fff', 'font-size': 14, 'font-weight': 700 }, F));
+      hud.appendChild(this.hud);
+      // corner viewfinder marks
+      const vf = el('path', { d: 'M20 60 V20 H60 M500 20 H540 V60 M540 270 V310 H500 M60 310 H20 V270', fill: 'none', stroke: '#fff', 'stroke-width': 2, opacity: .7 });
+      svg.append(bg, fg, this.blades, hub, vf, hud);
+      this.angle = 0;
+    },
+    frame(i, dt) {
+      const N = STOPS[i], t = (1 / 500) * Math.pow(N / 8, 2);   // keep exposure constant (f/8, 1/500 at ISO 100)
+      this.angle = (this.angle + 540 * dt) % 360;
+      this.blurNode.setAttribute('stdDeviation', Math.max(0, 14 / N - 0.6).toFixed(2));
+      const sweep = 540 * t, K = sweep < 1.5 ? 1 : Math.min(12, Math.ceil(sweep / 3));
+      this.blades.textContent = '';
+      for (let k = 0; k < K; k++) {
+        const g = el('g', { transform: `rotate(${(this.angle + (K === 1 ? 0 : sweep * k / (K - 1))).toFixed(1)} 250 150)`, opacity: K === 1 ? 1 : Math.min(1, 1.8 / K) });
+        for (let b = 0; b < 4; b++) g.appendChild(el('path', { d: 'M250 150 L244 76 L250 68 L262 76 Z', fill: '#1D2B31', transform: `rotate(${b * 90} 250 150)` }));
+        this.blades.appendChild(g);
+      }
+      const sh = t >= 1 / 30 ? '1/' + Math.round(1 / t) : '1/' + Math.round(1 / t / 5) * 5;
+      const STD = [8000, 6400, 5000, 4000, 3200, 2500, 2000, 1600, 1250, 1000, 800, 640, 500, 400, 320, 250, 200, 160, 125, 100, 80, 60];
+      this.shd = STD.reduce((a, b) => Math.abs(Math.log(b * t)) < Math.abs(Math.log(a * t)) ? b : a);
+      this.hud.textContent = `f/${N}   1/${this.shd} s   ISO 100`;
+      this.t = t;
+    },
+    say(i) { const N = STOPS[i], s = this.shd; return N <= 2.8 ? `f/${N} at 1/${s} s: the background melts away and the blades freeze. Perfect for portraits.` : N >= 11 ? `f/${N} at 1/${s} s: hills and windmill are all sharp, but the slower shutter starts to blur the spinning blades.` : `f/${N} at 1/${s} s: a balance between a sharp scene and frozen motion.`; }
+  };
+
+  /* ---------- Earth science: seismic wedge, frequency sweeping ---------- */
+  const earth = {
+    room: 'Earth Science Classroom', title: 'How thin a layer can sound waves see?',
+    text: 'Geoscientists image rock kilometres down with sound. Low frequencies blur a thin sand layer into one echo; high frequencies separate its top and base.',
+    label: 'Wavelet frequency', min: 10, max: 80, step: 1, enter: 'Enter the Earth Science Classroom', href: '/earth-science/',
+    fmt: v => v + ' Hz', auto: p => Math.round(15 + 55 * (0.5 - 0.5 * Math.cos(p * Math.PI * 2))),
+    setup() {
+      const padL = 46, padT = 14, plotW = W - padL - 14, plotH = H - padT - 34;
+      Object.assign(this, { padL, padT, plotW, plotH, NTR: 30, T0: 0.03, T1: 0.19, TOP: 0.08, MAXTH: 0.05 });
+      const tToY = t => padT + (t - this.T0) / (this.T1 - this.T0) * plotH; this.tToY = tToY;
+      svg.appendChild(el('rect', { width: W, height: H, fill: '#0F2133' }));
+      svg.appendChild(el('rect', { x: padL, y: padT, width: plotW, height: plotH, fill: '#22384F' }));
+      svg.appendChild(el('path', { d: `M${padL},${tToY(this.TOP)} L${padL + plotW},${tToY(this.TOP)} L${padL},${tToY(this.TOP + this.MAXTH)} Z`, fill: '#7A5A22', stroke: '#FFB547' }));
+      for (let ms = 40; ms <= 180; ms += 20) {
+        const y = tToY(ms / 1000);
+        svg.appendChild(el('text', Object.assign({ x: padL - 8, y: y + 4, 'text-anchor': 'end', fill: '#9FB0C1', 'font-size': 11 }, F), ms));
+      }
+      svg.appendChild(el('text', Object.assign({ x: padL + plotW / 2, y: H - 10, 'text-anchor': 'middle', fill: '#9FB0C1', 'font-size': 12 }, F), 'Sand layer thins from left to right   (time in ms)'));
+      this.g = el('g', {}); svg.appendChild(this.g);
+      this.last = null;
+    },
+    frame(f) {
+      if (this.last === f) return; this.last = f;
+      const { padL, padT, plotW, plotH, NTR, T0, T1, TOP, MAXTH, tToY } = this;
+      const dx = plotW / NTR, rk = (t, f) => { const a = (Math.PI * f * t) ** 2; return (1 - 2 * a) * Math.exp(-a); };
+      this.g.textContent = '';
+      for (let i = 0; i < NTR; i++) {
+        const x0 = padL + dx * (i + .5), base = TOP + MAXTH * (1 - i / (NTR - 1));
+        let line = '', fill = `M${x0},${tToY(T0)}`;
+        for (let k = 0; k <= 140; k++) {
+          const t = T0 + k * (T1 - T0) / 140, a = -0.5 * rk(t - TOP, f) + 0.5 * rk(t - base, f);
+          const x = x0 + a * dx * 1.4, y = tToY(t);
+          line += (k ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1); fill += 'L' + Math.max(x0, x).toFixed(1) + ',' + y.toFixed(1);
+        }
+        this.g.appendChild(el('path', { d: fill + `L${x0},${tToY(T1)}Z`, fill: '#FFB547', opacity: .9 }));
+        this.g.appendChild(el('path', { d: line, fill: 'none', stroke: '#F3E7D0', 'stroke-width': .7 }));
+      }
+      const iTune = (1 - (1 / (2.31 * f)) / MAXTH) * (NTR - 1);
+      if (iTune >= 0) { const x = padL + dx * (iTune + .5); this.g.appendChild(el('line', { x1: x, x2: x, y1: padT, y2: padT + plotH, stroke: '#fff', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' })); }
+    },
+    say(f) { const m = Math.round(2500 / (4 * f)); return `At ${f} Hz, sand thinner than about ${m} m blurs into a single echo${f >= 24 ? ' (right of the dashed line)' : ''}. Higher frequencies see thinner layers, but fade faster with depth.`; }
+  };
+
+  const SIMS = { math, photo, earth }, ORDER = ['math', 'photo', 'earth'];
+  let cur = null, sim = null, value = 0, auto = !REDUCED, manual = false, started = 0, last = 0, visible = true, rafOn = false;
+
+  function show(k, keepAuto) {
+    cur = k; sim = SIMS[k];
+    tabs.forEach(t => { const on = t.dataset.k === k; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; t.querySelector('.tt-bar').style.width = '0'; });
+    stage.dataset.k = k; stage.setAttribute('aria-labelledby', 'tt-' + k);
+    document.getElementById('stRoom').textContent = sim.room;
+    document.getElementById('stTitle').textContent = sim.title;
+    document.getElementById('stText').textContent = sim.text;
+    document.getElementById('stLabel').textContent = sim.label;
+    const enter = document.getElementById('stEnter'); enter.textContent = sim.enter; enter.href = sim.href;
+    Object.assign(slider, { min: sim.min, max: sim.max, step: sim.step });
+    svg.textContent = ''; svg.setAttribute('aria-label', sim.title); sim.setup();
+    manual = false; started = performance.now();
+    value = sim.auto(0); if (REDUCED) value = Math.round((sim.min + sim.max) / 2);
+    paint(0);
   }
-  slider.addEventListener('input', () => draw(+slider.value));
-  draw(+slider.value);
+  function paint(dt) {
+    slider.value = value; out.textContent = sim.fmt(value);
+    sim.frame(value, dt);
+    readout.textContent = sim.say(value);
+  }
+  function loop(ts) {
+    if (!visible) { rafOn = false; return; }
+    const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0; last = ts;
+    if (auto && !manual) {
+      const p = (ts - started) / DURATION;
+      tabs.find(t => t.dataset.k === cur).querySelector('.tt-bar').style.width = Math.min(100, p * 100) + '%';
+      if (p >= 1) { show(ORDER[(ORDER.indexOf(cur) + 1) % 3]); }
+      else value = sim.auto(p);
+    }
+    paint(dt);
+    if (!REDUCED) requestAnimationFrame(loop); else rafOn = false;
+  }
+  function setAuto(on) {
+    auto = on;
+    toggle.setAttribute('aria-pressed', String(!on));
+    document.getElementById('tourIcon').textContent = on ? '❚❚' : '▶';
+    document.getElementById('tourText').textContent = on ? 'Pause tour' : 'Play tour';
+    if (on) { manual = false; started = performance.now() - (tabs.find(t => t.dataset.k === cur).querySelector('.tt-bar').style.width.replace('%', '') || 0) / 100 * DURATION; }
+  }
+  slider.addEventListener('input', () => { manual = true; value = +slider.value; tabs.forEach(t => t.querySelector('.tt-bar').style.width = '0'); if (auto) setAuto(false); paint(0); });
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => { show(t.dataset.k); if (auto) setAuto(false); });
+    t.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault(); const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : 2)) % 3];
+      n.click(); n.focus();
+    });
+  });
+  toggle.addEventListener('click', () => setAuto(!auto));
+  if (REDUCED) setAuto(false);
+  show('math');
+  const kick = () => { if (!REDUCED && !rafOn) { rafOn = true; last = 0; requestAnimationFrame(loop); } };
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) kick(); }).observe(stage);
+  kick();
+})();
+/* =================== Daily challenge =================== */
+const BANK = {
+  earth: [
+    { q: 'Which seismic waves cannot travel through liquids?', o: ['P-waves', 'S-waves', 'Surface waves', 'All of them can'], a: 1, e: 'S-waves shear the material they pass through, and liquids cannot resist shear. That is how we know Earth\'s outer core is liquid.' },
+    { q: 'Which mineral group is the most abundant in Earth\'s crust?', o: ['Quartz', 'Calcite', 'Feldspars', 'Micas'], a: 2, e: 'Feldspars make up roughly half of the crust. Quartz is common, but comes second.' },
+    { q: 'On a well log, a high gamma-ray reading usually means the rock is…', o: ['Clean sandstone', 'Shale', 'Limestone', 'Full of gas'], a: 1, e: 'Shales contain clay minerals rich in naturally radioactive potassium, thorium and uranium, so they read high on gamma-ray logs.' },
+    { q: 'Roughly how fast do P-waves (sound) travel through water?', o: ['340 m/s', '1,500 m/s', '5,000 m/s', '300,000 km/s'], a: 1, e: 'About 1,500 m/s, more than four times faster than sound in air (about 340 m/s).' },
+    { q: 'Magma that cools slowly underground forms coarse crystals. Which rock is it?', o: ['Basalt', 'Obsidian', 'Granite', 'Pumice'], a: 2, e: 'Granite is intrusive: slow cooling gives crystals time to grow large. Basalt, obsidian and pumice cool quickly at the surface.' },
+    { q: 'A seismic wavelet can resolve a thin bed down to about what fraction of its wavelength?', o: ['One half', 'One quarter', 'One tenth', 'Any thickness'], a: 1, e: 'About a quarter wavelength, the tuning thickness. Thinner than that, the top and base reflections merge. Try it in the Earth Science Classroom.' },
+    { q: 'Porosity describes…', o: ['How easily fluid flows through rock', 'The fraction of rock volume that is empty space', 'How hard the rock is', 'The rock\'s density'], a: 1, e: 'Porosity is the pore volume divided by total volume. How easily fluid flows is permeability, a different property.' },
+    { q: 'Which mineral is 10 on the Mohs hardness scale?', o: ['Quartz', 'Topaz', 'Corundum', 'Diamond'], a: 3, e: 'Diamond is 10. Corundum (ruby and sapphire) is 9, topaz 8 and quartz 7.' },
+    { q: 'Sedimentary rocks made mostly of sand-sized grains are called…', o: ['Shale', 'Sandstone', 'Marble', 'Gneiss'], a: 1, e: 'Sandstone. Shale is made of much finer clay and silt; marble and gneiss are metamorphic.' }
+  ],
+  math: [
+    { q: 'A shirt costs $40 after a 20% discount. What was the original price?', o: ['$48', '$50', '$60', '$32'], a: 1, e: '$40 is 80% of the original, so the original is 40 ÷ 0.8 = $50. Adding 20% to $40 gives $48, a common trap.' },
+    { q: 'What comes next: 1, 1, 2, 3, 5, 8, …?', o: ['11', '12', '13', '16'], a: 2, e: 'Each term is the sum of the two before it (5 + 8 = 13). This is the Fibonacci sequence.' },
+    { q: 'What is the slope of the line through (1, 2) and (3, 8)?', o: ['2', '3', '4', '6'], a: 1, e: 'Slope = change in y ÷ change in x = (8 − 2) ÷ (3 − 1) = 6 ÷ 2 = 3.' },
+    { q: 'If you double the radius of a circle, its area becomes…', o: ['2 times as large', '3 times as large', '4 times as large', 'π times as large'], a: 2, e: 'Area = πr². Doubling r gives π(2r)² = 4πr², four times the area.' },
+    { q: 'Two angles of a triangle are 35° and 75°. What is the third?', o: ['60°', '70°', '80°', '110°'], a: 1, e: 'The angles of a triangle add to 180°, so 180 − 35 − 75 = 70°.' },
+    { q: 'What is the mean of 4, 8, 15, 16, 23 and 42?', o: ['15.5', '16', '18', '21'], a: 2, e: 'The sum is 108 and there are 6 numbers, so the mean is 108 ÷ 6 = 18. (15.5 is the median.)' },
+    { q: 'Which frequencies do you add to build a square wave from sine waves?', o: ['All whole multiples', 'Only odd multiples', 'Only even multiples', 'Only powers of 2'], a: 1, e: 'Only odd multiples: 1, 3, 5, 7… of the base frequency. Watch it happen in the tour on the home page.' },
+    { q: 'What is 2 to the power of 10?', o: ['20', '100', '512', '1,024'], a: 3, e: '2¹⁰ = 1,024. That is why a kilobyte was traditionally 1,024 bytes.' },
+    { q: 'Solve for x: 3x + 7 = 22', o: ['3', '5', '7', '15'], a: 1, e: 'Subtract 7 from both sides: 3x = 15. Divide by 3: x = 5.' }
+  ],
+  photo: [
+    { q: 'Changing the aperture from f/2.8 to f/5.6 lets in how much light?', o: ['Twice as much', 'Half as much', 'A quarter as much', 'The same'], a: 2, e: 'f/2.8 to f/5.6 is two stops. Each stop halves the light, so a quarter as much reaches the sensor.' },
+    { q: 'A very fast shutter speed, such as 1/2000 s, mainly…', o: ['Freezes motion', 'Brightens the photo', 'Blurs the background', 'Reduces grain'], a: 0, e: 'A short exposure freezes moving subjects. It also lets in less light, so the photo gets darker unless you compensate.' },
+    { q: 'A wide aperture (small f-number, like f/1.8) gives…', o: ['More of the scene in focus', 'A shallow depth of field', 'Less light', 'Sharper corners'], a: 1, e: 'Wide apertures give a shallow depth of field: a sharp subject against a soft background. Try f/1.8 in the Photography Classroom.' },
+    { q: 'Raising ISO from 100 to 200 makes the photo…', o: ['One stop brighter', 'Two stops brighter', 'Sharper', 'Darker'], a: 0, e: 'Doubling ISO is one stop brighter. Higher ISO also adds more visible noise, or grain.' },
+    { q: 'The "rule of thirds" suggests placing your subject…', o: ['Dead centre', 'Along lines that divide the frame into thirds', 'At the very edge', 'In the bottom third only'], a: 1, e: 'Imagine a 3 × 3 grid over the frame. Placing key subjects on the lines or where they cross usually feels more balanced than centring.' },
+    { q: 'When is the photographers\' "golden hour"?', o: ['Midday', 'Shortly after sunrise and before sunset', 'Midnight', 'During a storm'], a: 1, e: 'When the sun is low, light travels through more atmosphere and turns warm, soft and directional.' },
+    { q: 'An underexposed photo is…', o: ['Too bright', 'Too dark', 'Out of focus', 'Too colourful'], a: 1, e: 'Underexposed means too little light reached the sensor, so the image is too dark.' },
+    { q: 'Which change makes a photo brighter?', o: ['f/4 to f/8', '1/250 s to 1/1000 s', 'ISO 400 to ISO 1600', 'ISO 800 to ISO 200'], a: 2, e: 'ISO 400 to 1600 is two stops brighter. The other three changes all reduce brightness.' },
+    { q: 'A lens labelled 200 mm, compared with 50 mm, gives…', o: ['A wider view', 'A narrower, more magnified view', 'More light', 'A deeper depth of field'], a: 1, e: 'Longer focal lengths narrow the field of view and magnify distant subjects. That makes them telephoto lenses.' }
+  ]
+};
+const ORDER = [['earth', 'Earth science'], ['math', 'Mathematics'], ['photo', 'Photography']];
+
+(function () {
+  const quiz = document.getElementById('quiz');
+  const pad = n => String(n).padStart(2, '0');
+  const dayKey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const dayNum = d => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+  const now = new Date(), today = dayKey(now), todayN = dayNum(now);
+  const questions = ORDER.map(([k, label], i) => {
+    const bank = BANK[k];
+    return Object.assign({ subject: label }, bank[(todayN * 7 + i * 3) % bank.length]);
+  });
+
+  let state = store.get('cotf-challenge', { days: {}, best: 0, correct: 0 });
+  if (!state.days) state = { days: {}, best: 0, correct: 0 };
+  let entry = state.days[today] || { answers: [] };
+
+  function streak() {
+    let s = 0; const d = new Date(now);
+    if (!(state.days[dayKey(d)] && state.days[dayKey(d)].answers.length === 3)) d.setDate(d.getDate() - 1);
+    while (state.days[dayKey(d)] && state.days[dayKey(d)].answers.length === 3) { s++; d.setDate(d.getDate() - 1); }
+    return s;
+  }
+  function renderStats() {
+    const s = streak();
+    state.best = Math.max(state.best || 0, s);
+    document.getElementById('statStreak').textContent = s;
+    document.getElementById('statBest').textContent = state.best;
+    document.getElementById('statCorrect').textContent = state.correct || 0;
+    document.getElementById('navStreakText').textContent = s > 0 ? `${s}-day streak` : 'Daily challenge';
+    const week = document.getElementById('week'); week.textContent = '';
+    const names = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now); d.setDate(d.getDate() - i);
+      const done = state.days[dayKey(d)] && state.days[dayKey(d)].answers.length === 3;
+      const sp = document.createElement('span');
+      sp.textContent = names[d.getDay()];
+      sp.className = (done ? 'done' : '') + (i === 0 ? ' today' : '');
+      sp.title = d.toDateString() + (done ? ': completed' : '');
+      week.appendChild(sp);
+    }
+  }
+  function save() { state.days[today] = entry; store.set('cotf-challenge', state); }
+
+  function progressBar(current) {
+    const wrap = document.createElement('div'); wrap.className = 'quiz-progress'; wrap.setAttribute('aria-hidden', 'true');
+    questions.forEach((q, i) => {
+      const b = document.createElement('i');
+      if (i < entry.answers.length) b.className = entry.answers[i] === q.a ? 'right' : 'wrong';
+      else if (i === current) b.className = 'on';
+      wrap.appendChild(b);
+    });
+    return wrap;
+  }
+
+  function showQuestion(i) {
+    const q = questions[i];
+    quiz.innerHTML = '';
+    const top = document.createElement('div'); top.className = 'quiz-top';
+    const subj = document.createElement('span'); subj.className = 'quiz-subject'; subj.textContent = `${q.subject}, question ${i + 1} of 3`;
+    top.append(subj, progressBar(i));
+    const h = document.createElement('p'); h.className = 'quiz-q'; h.textContent = q.q; h.tabIndex = -1;
+    const opts = document.createElement('div'); opts.className = 'options';
+    q.o.forEach((text, j) => {
+      const b = document.createElement('button'); b.className = 'opt'; b.type = 'button';
+      b.innerHTML = `<span class="key">${'ABCD'[j]}</span><span></span>`;
+      b.lastChild.textContent = text;
+      b.addEventListener('click', () => answer(i, j, opts));
+      opts.appendChild(b);
+    });
+    quiz.append(top, h, opts);
+    return h;
+  }
+
+  function answer(i, j, opts) {
+    const q = questions[i], right = j === q.a;
+    entry.answers.push(j);
+    if (right) state.correct = (state.correct || 0) + 1;
+    save();
+    [...opts.children].forEach((b, k) => {
+      b.disabled = true;
+      if (k === q.a) b.classList.add('correct');
+      else if (k === j) b.classList.add('incorrect');
+    });
+    quiz.querySelector('.quiz-progress').replaceWith(progressBar(i + 1));
+    const ex = document.createElement('div'); ex.className = 'explain';
+    ex.innerHTML = `<strong>${right ? 'Correct.' : 'Not quite. The answer is ' + q.o[q.a] + '.'}</strong>`;
+    ex.appendChild(document.createTextNode(q.e));
+    const foot = document.createElement('div'); foot.className = 'quiz-foot';
+    const next = document.createElement('button'); next.className = 'btn btn-primary'; next.type = 'button';
+    next.textContent = i < 2 ? 'Next question' : 'See today\'s result';
+    next.addEventListener('click', () => { if (i < 2) showQuestion(i + 1).focus(); else showDone(true); });
+    foot.appendChild(next);
+    quiz.append(ex, foot);
+    renderStats();
+    next.focus();
+  }
+
+  let timer = null;
+  function showDone(focus) {
+    const score = entry.answers.filter((a, i) => a === questions[i].a).length;
+    const s = streak();
+    quiz.innerHTML = '';
+    const v = document.createElement('div'); v.className = 'done-view';
+    const h = document.createElement('h3'); h.tabIndex = -1;
+    h.textContent = score === 3 ? 'Three out of three. Well done.' : `You got ${score} out of 3 today.`;
+    const p = document.createElement('p');
+    p.innerHTML = `${s > 1 ? `That's a <strong>${s}-day streak</strong>. ` : s === 1 ? 'Day one of your streak. ' : ''}New questions in <span class="countdown" id="countdown"></span>.`;
+    const ul = document.createElement('ul'); ul.className = 'recap';
+    questions.forEach((q, i) => {
+      const ok = entry.answers[i] === q.a;
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="mark ${ok ? 'r' : 'w'}" aria-label="${ok ? 'Correct' : 'Incorrect'}">${ok ? '✓' : '✗'}</span><span></span>`;
+      li.lastChild.textContent = `${q.subject}: ${q.q}`;
+      ul.appendChild(li);
+    });
+    const row = document.createElement('div'); row.className = 'share-row';
+    const share = document.createElement('button'); share.className = 'btn btn-secondary'; share.type = 'button'; share.textContent = 'Share my result';
+    const msg = document.createElement('span'); msg.id = 'shareStatus'; msg.setAttribute('role', 'status');
+    const explore = document.createElement('a'); explore.className = 'btn btn-primary'; explore.href = '#subjects'; explore.textContent = 'Keep exploring the labs';
+    share.addEventListener('click', async () => {
+      const marks = questions.map((q, i) => entry.answers[i] === q.a ? '🟩' : '⬜').join('');
+      const text = `Classrooms of the Future daily challenge, ${today}\n${marks} ${score}/3${s > 1 ? `, ${s}-day streak` : ''}\n${location.origin}${location.pathname}`;
+      try {
+        if (navigator.share) { await navigator.share({ text }); }
+        else { await navigator.clipboard.writeText(text); msg.textContent = 'Result copied. Paste it anywhere.'; }
+      } catch (e) { if (e && e.name !== 'AbortError') msg.textContent = 'Copy didn\'t work in this browser.'; }
+    });
+    row.append(explore, share, msg);
+    v.append(h, p, ul, row);
+    quiz.appendChild(v);
+    tickCountdown();
+    clearInterval(timer); timer = setInterval(tickCountdown, 1000);
+    if (focus) h.focus();
+  }
+  function tickCountdown() {
+    const c = document.getElementById('countdown'); if (!c) return;
+    const n = new Date(), mid = new Date(n); mid.setHours(24, 0, 0, 0);
+    let s = Math.max(0, Math.floor((mid - n) / 1000));
+    if (s === 0) { location.reload(); return; }
+    c.textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s % 3600 / 60))}:${pad(s % 60)}`;
+  }
+
+  renderStats();
+  if (entry.answers.length >= 3) showDone(false);
+  else if (entry.answers.length > 0) showQuestion(entry.answers.length);
+  else showQuestion(0);
 })();
 
-/* ---------- Enquiry form (same inbox as the schools feedback form) ---------- */
+/* =================== Enquiry form (same inbox as the schools feedback form) =================== */
 const FEEDBACK_URL = "https://script.google.com/macros/s/AKfycbyC6Ax3SAe5GsQrHMngARXTWdI0FTKvD9np3Jc_Gu7kw0PJxQJxts34CzPyq_X1-fs2/exec";
 document.getElementById('enquiry').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -463,11 +933,88 @@ document.getElementById('enquiry').addEventListener('submit', async (e) => {
   try {
     await fetch(FEEDBACK_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ role: form.role.value, name: form.name.value, email: form.email.value, message: form.message.value, page: location.href }) });
-    status.style.color = '#1F5A8A'; status.textContent = 'Message sent. We\'ll reply by email.'; form.reset();
+    status.style.color = '#2F6B4F'; status.textContent = 'Message sent. We\'ll reply by email.'; form.reset();
   } catch (err) {
     status.style.color = '#9B2C2C'; status.textContent = 'Message not sent. Check your connection and try again.';
   } finally { btn.disabled = false; btn.textContent = 'Send message'; }
 });
+
+/* =================== Find my starting point =================== */
+(function () {
+  const card = document.getElementById('finderCard');
+  const STEPS = [
+    { q: 'Who are you?', key: 'who', options: [
+      ['middle', '🎒', 'Middle school student'], ['high', '📐', 'High school student'],
+      ['uni', '🎓', 'University student'], ['teach', '🍎', 'Teacher or parent'],
+      ['pro', '🛢️', 'Working professional'], ['curious', '✨', 'Just curious'] ] },
+    { q: 'What sounds most interesting?', key: 'topic', options: [
+      ['earth', '🌋', 'What\'s under our feet'], ['math', '➗', 'Numbers, shapes and patterns'],
+      ['photo', '📷', 'Light and photography'], ['any', '🎲', 'Surprise me'] ] },
+    { q: 'What would you like to get out of it?', key: 'goal', options: [
+      ['understand', '💡', 'Finally understand it'], ['grades', '📈', 'Better grades or exams'],
+      ['career', '💼', 'Skills for my work'], ['fun', '🎮', 'Have fun learning'] ] }
+  ];
+  const L = {
+    g6: ['/Grade6.html', 'Grade 6 lessons', 'Ratios, number sense and expressions'],
+    g7: ['/Grade7.html', 'Grade 7 lessons', 'Expressions and equations'],
+    g8: ['/Grade8.html', 'Grade 8 lessons', 'Linear equations'],
+    quest: ['/mathquest/', 'MathQuest RPG', 'Earn XP and level up'],
+    func: ['/Algebra-1/functions-and-graphs.html', 'Functions and their graphs', 'Algebra 1, 10 modules'],
+    geo: ['/constructions-studio.html', 'Compass and straightedge studio', 'High school geometry'],
+    angle: ['/angle-studio.html', 'Angle Studio', 'Unknown angles and proofs'],
+    schools: ['/math/', "Mrs. Ali's Classroom", '40+ math tools by grade and topic'],
+    chalk: ['/chalkline.html', 'Chalkline check-in', 'First-day class check-in tool'],
+    labEarth: ['/earth-science/#labs', 'Earth Science Classroom labs', 'Seismic and well-log simulations'],
+    labMath: ['/math/', "Mrs. Ali's Classroom", 'Interactive tools and games'],
+    labPhoto: ['/photography/#labs', 'Photography Classroom labs', 'Virtual camera and lens simulations'],
+    daily: ['#challenge', 'Today\'s challenge', 'Three questions, keep your streak'],
+    notify: ['#contact', 'Get notified about new courses', 'One email when modules open']
+  };
+  function recommend(a) {
+    const t = a.topic === 'any' ? ({ pro: 'earth', uni: 'math' }[a.who] || 'math') : a.topic;
+    if (a.who === 'teach') return { title: 'Your classroom toolkit', text: 'Start in Mrs. Ali\'s Classroom: lessons and tools sorted by grade, ready to project or share. No student accounts needed.', links: [L.schools, L.chalk, L.daily] };
+    if (t === 'math') {
+      if (a.who === 'middle') return { title: 'Your path: middle school math', text: a.goal === 'fun' ? 'Jump into MathQuest and learn by levelling up, then try the grade lessons.' : 'Start with the lessons for your grade, then test yourself in MathQuest.', links: a.goal === 'fun' ? [L.quest, L.g7, L.g8] : [L.g6, L.g7, L.g8, L.quest] };
+      if (a.who === 'high') return { title: 'Your path: algebra and geometry', text: 'Work through functions and graphs, then build proofs in the geometry studios.', links: [L.func, L.geo, L.angle] };
+      return { title: 'Your path: mathematics in motion', text: 'Explore the interactive tools in Mrs. Ali\'s Classroom, from functions to statistics, then keep sharp with the daily challenge.', links: [L.labMath, L.daily, L.notify] };
+    }
+    if (t === 'earth') return { title: a.who === 'pro' || a.goal === 'career' ? 'Your path: subsurface skills' : 'Your path: earth science', text: a.who === 'pro' || a.goal === 'career' ? 'Start with the seismic and well-log labs in the Earth Science Classroom, then tell us about your team. Industry modules on well logs, seismic data and petrophysics are in development.' : 'See how geoscientists image rock underground in the Earth Science Classroom, then test yourself daily.', links: [L.labEarth, L.daily, L.notify] };
+    return { title: 'Your path: photography', text: 'Learn the exposure triangle with the virtual camera in the Photography Classroom, then keep learning with the daily challenge.', links: [L.labPhoto, L.daily, L.notify] };
+  }
+  let answers = {}, step = 0;
+  function bar(n) { return `<div class="finder-steps" aria-hidden="true">${STEPS.map((_, i) => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</div>`; }
+  function render(focus) {
+    if (step < STEPS.length) {
+      const s = STEPS[step];
+      card.innerHTML = `${bar(step)}<p class="finder-q" tabindex="-1">${s.q}</p><span class="visually-hidden">Question ${step + 1} of ${STEPS.length}</span><div class="choices"></div>`;
+      const box = card.querySelector('.choices');
+      s.options.forEach(([v, ico, label]) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'choice';
+        b.innerHTML = `<span class="ico" aria-hidden="true">${ico}</span><span></span>`; b.lastChild.textContent = label;
+        b.addEventListener('click', () => { answers[s.key] = v; step++; render(true); });
+        box.appendChild(b);
+      });
+      if (step > 0) { const back = document.createElement('button'); back.type = 'button'; back.className = 'finder-back'; back.textContent = 'Back'; back.addEventListener('click', () => { step--; render(true); }); card.appendChild(back); }
+      if (focus) card.querySelector('.finder-q').focus();
+    } else {
+      const r = recommend(answers);
+      store.set('cotf-path', { answers, at: Date.now() });
+      card.innerHTML = `${bar(STEPS.length)}<div class="result"><h3 tabindex="-1"></h3><p></p><ul class="result-links"></ul><button type="button" class="finder-back">Start again</button></div>`;
+      card.querySelector('h3').textContent = r.title; card.querySelector('p').textContent = r.text;
+      const ul = card.querySelector('.result-links');
+      r.links.forEach(([href, title, sub, open]) => {
+        const li = document.createElement('li'), a = document.createElement('a');
+        a.href = href; a.innerHTML = '<span><span></span><br><small></small></span><span aria-hidden="true">›</span>';
+        a.querySelector('span span').textContent = title; a.querySelector('small').textContent = sub;
+        if (open) { a.dataset.open = open; a.addEventListener('click', e => { e.preventDefault(); document.getElementById('tab-' + open).click(); document.getElementById('labs').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); }); }
+        li.appendChild(a); ul.appendChild(li);
+      });
+      card.querySelector('.finder-back').addEventListener('click', () => { answers = {}; step = 0; render(true); });
+      if (focus) card.querySelector('h3').focus();
+    }
+  }
+  render(false);
+})();
 </script>
 </body>
 </html>
