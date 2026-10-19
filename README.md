@@ -16,7 +16,7 @@ Other tools live in their own repositories and appear under the same site
 (`/math-interactives/`, `/Algebra-1/`, `/mathquest/`, `/Descriptive-Statistics/` …).
 
 ## Adding things
-- **A math tool:** add a line to the `TOOLS` list near the bottom of `math/index.html`.
+- **A math tool:** add a line to the `TOOLS` list near the bottom of `math/index.html`. The five course tabs (Middle School Math, Gamified Classroom, Geometry, Algebra, Trigonometry & Calculus) are set in the `SUBJECTS` list just below it: each tab is a list of groups, and a group with no tools shows a "Coming soon" card. Link straight to a tab with `/math/#algebra`, `/math/#trig-calculus`, etc.
 - **A daily-challenge question:** add it to the `BANK` list in `index.html` (subject `earth`, `math` or `photo`).
 - **A photography or earth science lesson:** change its status from "Coming soon" to "Lab ready" and link it in that classroom's page.
 - Use links that start with `/` so they work on the custom domain.

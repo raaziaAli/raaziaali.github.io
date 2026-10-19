@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mrs. Ali's Classroom — Interactive Middle School Math</title>
-<meta name="description" content="30+ free interactive middle school math tools. Built by Mrs. Ali, a practicing middle school math teacher. No ads, no data selling. Just discovery.">
+<title>Mrs. Ali's Classroom — Interactive Math, Middle School to Calculus</title>
+<meta name="description" content="Free interactive math simulations organised by course: middle school math, gamified classroom, geometry, algebra, trigonometry and calculus. Built by Mrs. Ali, a practicing math teacher. No ads, no data selling.">
 <meta name="author" content="Raazia Ali">
 <meta property="og:title" content="Mrs. Ali's Classroom — Interactive Middle School Math">
 <meta property="og:description" content="30+ free interactive math tools built by a real middle school math teacher. No ads, no data selling.">
@@ -326,6 +326,45 @@ section { padding: 4rem 2rem; position: relative; }
 .trust-icon-wrap svg { width: 28px; height: 28px; stroke: var(--yellow); }
 .trust-item h4 { font-family: 'Unbounded', sans-serif; font-size: 1rem; margin-bottom: 0.5rem; }
 .trust-item p { color: var(--text-dim); font-size: 0.88rem; }
+
+
+/* SUBJECT TABS — main navigation of the math hub */
+.hero-jump { display: inline-block; margin: 0 0 1.5rem; padding: 0.7rem 1.3rem;
+  border-radius: 100px; background: var(--cyan); color: var(--bg); font-weight: 700;
+  text-decoration: none; box-shadow: var(--glow-cyan); transition: transform 0.2s; }
+.hero-jump:hover { transform: translateY(-2px); }
+.subjects-section { background: var(--bg-lift); scroll-margin-top: 70px; }
+.subject-tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem;
+  margin: 0 auto 2.5rem; max-width: 1100px; }
+@media (max-width: 1000px) { .subject-tabs { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px) { .subject-tabs { grid-template-columns: 1fr 1fr; } .subject-tab:last-child { grid-column: 1 / -1; } }
+.subject-tab { display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+  padding: 1.1rem 0.75rem; border-radius: 16px; background: var(--bg-card);
+  border: 2px solid var(--border); color: var(--text); cursor: pointer;
+  font-family: 'Unbounded', sans-serif; text-align: center; transition: all 0.2s; }
+.subject-tab svg { width: 26px; height: 26px; stroke: var(--cyan); }
+.subject-tab-label { font-size: 0.9rem; font-weight: 700; line-height: 1.25; }
+.subject-tab-sub { font-family: 'DM Sans', sans-serif; font-size: 0.75rem; color: var(--text-dim); }
+.subject-tab:hover { transform: translateY(-3px); border-color: rgba(0,229,255,0.5); }
+.subject-tab:focus-visible { outline: 2px solid var(--yellow); outline-offset: 3px; }
+.subject-tab[aria-selected="true"] { border-color: var(--cyan); box-shadow: var(--glow-cyan);
+  background: linear-gradient(180deg, rgba(0,229,255,0.12), var(--bg-card)); }
+.subject-panel { scroll-margin-top: 90px; }
+.panel-intro { text-align: center; margin-bottom: 2rem; }
+.panel-intro h3 { font-family: 'Unbounded', sans-serif; font-size: 1.5rem; margin-bottom: 0.4rem; }
+.panel-intro p { color: var(--text-dim); }
+.subgroup { margin-bottom: 2.75rem; }
+.subgroup-title { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan);
+  margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+.coming-soon { max-width: 640px; margin: 0 auto; text-align: center; padding: 2.5rem 1.5rem;
+  border: 2px dashed var(--border); border-radius: 18px; color: var(--text-dim); }
+.coming-soon h4 { font-family: 'Unbounded', sans-serif; color: var(--text); margin-bottom: 0.5rem; }
+.coming-soon ul { list-style: none; display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 0.5rem; margin-top: 1.25rem; padding: 0; }
+.coming-soon li { padding: 0.35rem 0.8rem; border-radius: 100px; background: var(--bg-card);
+  border: 1px solid var(--border); font-size: 0.85rem; }
+.trust-section { padding-top: 4rem; }
 
 /* TOOLS GRID & CARDS */
 .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
@@ -653,9 +692,11 @@ footer { padding: 3rem 2rem 2rem; border-top: 1px solid var(--border); backgroun
     <span>Mrs. Ali's Classroom</span>
   </a>
   <div class="nav-links">
-    <a href="#try">Try</a>
-    <a href="#games">Games</a>
-    <a href="#explore">Explore</a>
+    <a href="#middle-school">Middle School</a>
+    <a href="#gamified">Gamified</a>
+    <a href="#geometry">Geometry</a>
+    <a href="#algebra">Algebra</a>
+    <a href="#trig-calculus">Trig &amp; Calculus</a>
   </div>
 </nav>
 
@@ -669,7 +710,8 @@ footer { padding: 3rem 2rem 2rem; border-top: 1px solid var(--border); backgroun
           <span>30+ tools · live now</span>
         </div>
         <h1 class="hero-title">Welcome to<br><span class="brand">Mrs. Ali's Classroom.</span></h1>
-        <p class="hero-sub">Interactive middle school math. Built by a real classroom teacher. No ads, no signups, no personal data — just tools.</p>
+        <p class="hero-sub">Interactive math simulations, from middle school to calculus. Built by a real classroom teacher. No ads, no signups, no personal data — just tools.</p>
+        <a href="#subjects" class="hero-jump">Choose a course ↓</a>
         <div class="hero-meta">
           <div class="hero-meta-item"><span class="hero-meta-num">30+</span><span class="hero-meta-label">Tools</span></div>
           <div class="hero-meta-item"><span class="hero-meta-num">100%</span><span class="hero-meta-label">Free</span></div>
@@ -689,6 +731,124 @@ footer { padding: 3rem 2rem 2rem; border-top: 1px solid var(--border); backgroun
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- SUBJECT TABS — the main way into the tools -->
+  <section class="subjects-section" id="subjects">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker">// explore by course</div>
+        <h2 class="section-title">Pick a course.</h2>
+        <p class="section-sub">Every simulation, organised by where it fits in the curriculum.</p>
+      </div>
+      <div class="subject-tabs" role="tablist" aria-label="Courses">
+        <button class="subject-tab" role="tab" id="tab-middle-school" data-subject="middle-school" aria-controls="panel-middle-school" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#i-rocket"/></svg>
+          <span class="subject-tab-label">Middle School Math</span>
+          <span class="subject-tab-sub">Grades 6–8</span>
+        </button>
+        <button class="subject-tab" role="tab" id="tab-gamified" data-subject="gamified" aria-controls="panel-gamified" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#i-gamepad"/></svg>
+          <span class="subject-tab-label">Gamified Classroom</span>
+          <span class="subject-tab-sub">Games, XP &amp; class tools</span>
+        </button>
+        <button class="subject-tab" role="tab" id="tab-geometry" data-subject="geometry" aria-controls="panel-geometry" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#i-angle"/></svg>
+          <span class="subject-tab-label">Geometry</span>
+          <span class="subject-tab-sub">High school</span>
+        </button>
+        <button class="subject-tab" role="tab" id="tab-algebra" data-subject="algebra" aria-controls="panel-algebra" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#i-function"/></svg>
+          <span class="subject-tab-label">Algebra</span>
+          <span class="subject-tab-sub">High school</span>
+        </button>
+        <button class="subject-tab" role="tab" id="tab-trig-calculus" data-subject="trig-calculus" aria-controls="panel-trig-calculus" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#i-trophy"/></svg>
+          <span class="subject-tab-label">Trigonometry &amp; Calculus</span>
+          <span class="subject-tab-sub">Coming soon</span>
+        </button>
+      </div>
+      <div class="subject-panels">
+        <div class="subject-panel" role="tabpanel" id="panel-middle-school" aria-labelledby="tab-middle-school" hidden>
+          <div class="panel-intro"><h3>Middle School Math</h3><p>Grade-level lessons and simulations for grades 6–8, grouped by strand.</p></div>
+          <div data-groups="middle-school"></div>
+        </div>
+
+        <div class="subject-panel" role="tabpanel" id="panel-gamified" aria-labelledby="tab-gamified" hidden>
+          <div class="panel-intro"><h3>Gamified Classroom</h3><p>Full game experiences with XP, quests and leaderboards — plus tools for running the room.</p></div>
+          <div class="subgroup">
+            <h4 class="subgroup-title">Featured games</h4>
+    <div class="games-grid">
+            <a href="/mathquest/" class="game-card game-featured">
+              <div class="game-badge">★ FLAGSHIP</div>
+              <div class="game-hero-scene"><svg viewBox="0 0 200 140" width="100%" height="100%"><use href="#scene-mathquest-hero"/></svg></div>
+              <h3>MathQuest RPG</h3>
+              <p class="game-tagline">The ultimate math adventure.</p>
+              <p class="game-desc">Slope, linear equations, graphing, and simultaneous equations — but as an RPG. Build your character, earn XP, level up, compete live.</p>
+              <div class="game-features">
+                <span class="game-feature"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#i-gamepad"/></svg>4 topics</span>
+                <span class="game-feature"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#i-zap"/></svg>XP system</span>
+                <span class="game-feature"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#i-trophy"/></svg>Live leaderboard</span>
+              </div>
+              <span class="game-cta">Start your quest →</span>
+            </a>
+            <div class="game-secondary-wrap">
+              <a href="/Function-Junction/" class="game-card game-small">
+                <div class="game-small-scene"><svg viewBox="0 0 80 80" width="100%" height="100%" fill="none" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><use href="#scene-junction"/></svg></div>
+                <div class="game-small-body">
+                  <h4>Function Junction</h4>
+                  <p>Game-style practice arena for functions.</p>
+                  <span class="game-tag-new">NEW</span>
+                </div>
+              </a>
+              <a href="/Geometry-Adventures/" class="game-card game-small">
+                <div class="game-small-scene"><svg viewBox="0 0 80 80" width="100%" height="100%" fill="none" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><use href="#scene-geoadv"/></svg></div>
+                <div class="game-small-body">
+                  <h4>Geometry Adventures</h4>
+                  <p>Quest-style geometry challenges.</p>
+                  <span class="game-tag-new">NEW</span>
+                </div>
+              </a>
+              <a href="/Algebra-1/m3-review.html" class="game-card game-small">
+                <div class="game-small-scene"><svg viewBox="0 0 80 80" width="100%" height="100%" fill="none" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><use href="#scene-m3rev"/></svg></div>
+                <div class="game-small-body">
+                  <h4>Function Explorers — M3</h4>
+                  <p>Deep-space review. 12 missions, 115 XP.</p>
+                </div>
+              </a>
+            </div>
+          </div>
+          </div>
+          <div data-groups="gamified"></div>
+        </div>
+
+        <div class="subject-panel" role="tabpanel" id="panel-geometry" aria-labelledby="tab-geometry" hidden>
+          <div class="panel-intro"><h3>Geometry</h3><p>High school geometry studios: constructions, angles and proof.</p></div>
+          <div data-groups="geometry"></div>
+        </div>
+
+        <div class="subject-panel" role="tabpanel" id="panel-algebra" aria-labelledby="tab-algebra" hidden>
+          <div class="panel-intro"><h3>Algebra</h3><p>High school algebra: functions, their graphs and practice arenas.</p></div>
+          <div data-groups="algebra"></div>
+        </div>
+
+        <div class="subject-panel" role="tabpanel" id="panel-trig-calculus" aria-labelledby="tab-trig-calculus" hidden>
+          <div class="panel-intro"><h3>Trigonometry &amp; Calculus</h3><p>Simulations for trigonometry and calculus will appear here.</p></div>
+          <div data-groups="trig-calculus"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY TRUST IT (was the parent tab) -->
+  <section class="trust-section" id="about">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker">// for parents &amp; schools</div>
+        <h2 class="section-title">Safe to share with students.</h2>
+      </div>
+      <div class="trust-grid" id="trustGrid"></div>
     </div>
   </section>
 
@@ -748,94 +908,6 @@ footer { padding: 3rem 2rem 2rem; border-top: 1px solid var(--border); backgroun
     </div>
   </section>
 
-  <!-- FEATURED GAMES -->
-  <section class="games-section" id="games">
-    <div class="container">
-      <div class="section-head">
-        <div class="section-kicker">// featured games</div>
-        <h2 class="section-title">Math, but make it <span class="epic">epic</span>.</h2>
-        <p class="section-sub">Full game experiences with XP, quests, and leaderboards.</p>
-      </div>
-      <div class="games-grid">
-        <a href="/mathquest/" class="game-card game-featured">
-          <div class="game-badge">★ FLAGSHIP</div>
-          <div class="game-hero-scene"><svg viewBox="0 0 200 140" width="100%" height="100%"><use href="#scene-mathquest-hero"/></svg></div>
-          <h3>MathQuest RPG</h3>
-          <p class="game-tagline">The ultimate math adventure.</p>
-          <p class="game-desc">Slope, linear equations, graphing, and simultaneous equations — but as an RPG. Build your character, earn XP, level up, compete live.</p>
-          <div class="game-features">
-            <span class="game-feature"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#i-gamepad"/></svg>4 topics</span>
-            <span class="game-feature"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#i-zap"/></svg>XP system</span>
-            <span class="game-feature"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#i-trophy"/></svg>Live leaderboard</span>
-          </div>
-          <span class="game-cta">Start your quest →</span>
-        </a>
-        <div class="game-secondary-wrap">
-          <a href="/Function-Junction/" class="game-card game-small">
-            <div class="game-small-scene"><svg viewBox="0 0 80 80" width="100%" height="100%" fill="none" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><use href="#scene-junction"/></svg></div>
-            <div class="game-small-body">
-              <h4>Function Junction</h4>
-              <p>Game-style practice arena for functions.</p>
-              <span class="game-tag-new">NEW</span>
-            </div>
-          </a>
-          <a href="/Geometry-Adventures/" class="game-card game-small">
-            <div class="game-small-scene"><svg viewBox="0 0 80 80" width="100%" height="100%" fill="none" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><use href="#scene-geoadv"/></svg></div>
-            <div class="game-small-body">
-              <h4>Geometry Adventures</h4>
-              <p>Quest-style geometry challenges.</p>
-              <span class="game-tag-new">NEW</span>
-            </div>
-          </a>
-          <a href="/Algebra-1/m3-review.html" class="game-card game-small">
-            <div class="game-small-scene"><svg viewBox="0 0 80 80" width="100%" height="100%" fill="none" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><use href="#scene-m3rev"/></svg></div>
-            <div class="game-small-body">
-              <h4>Function Explorers — M3</h4>
-              <p>Deep-space review. 12 missions, 115 XP.</p>
-            </div>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- AUDIENCE + CATEGORY TABS -->
-  <section class="audience-section" id="explore">
-    <div class="container">
-      <div class="section-head">
-        <div class="section-kicker">// explore by audience</div>
-        <h2 class="section-title">Who are you?</h2>
-        <p class="section-sub">Pick your path. The tools will be filtered to what's most useful for you.</p>
-      </div>
-
-      <!-- AUDIENCE TABS -->
-      <div class="audience-tabs">
-        <button class="audience-tab" data-audience="student" onclick="selectAudience('student')">
-          <div class="tab-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#i-gamepad"/></svg></div>
-          <h3>I'm a Student</h3>
-          <span class="tab-sub">Level up. Earn XP. Learn math.</span>
-        </button>
-        <button class="audience-tab active" data-audience="teacher" onclick="selectAudience('teacher')">
-          <div class="tab-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#i-teacher"/></svg></div>
-          <h3>I'm a Teacher</h3>
-          <span class="tab-sub">Lessons, tools &amp; classroom dashboards.</span>
-        </button>
-        <button class="audience-tab" data-audience="parent" onclick="selectAudience('parent')">
-          <div class="tab-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#i-parent"/></svg></div>
-          <h3>I'm a Parent</h3>
-          <span class="tab-sub">See what your child is learning.</span>
-        </button>
-      </div>
-
-      <!-- CATEGORY TABS + TOOLS (dynamic based on audience) -->
-      <div id="categoryContainer">
-        <!-- Category tabs (populated by JS) -->
-        <div class="category-tabs" id="categoryTabs"></div>
-        <!-- Tool panels (populated by JS) -->
-        <div id="toolPanels"></div>
-      </div>
-    </div>
-  </section>
 </main>
 
 <footer>
@@ -845,7 +917,7 @@ footer { padding: 3rem 2rem 2rem; border-top: 1px solid var(--border); backgroun
         <div class="logo-mark"></div>
         <span>Mrs. Ali's Classroom</span>
       </a>
-      <p>Interactive middle school math learning. Built by Raazia Ali, a practicing middle school math teacher. Free forever, no ads.</p>
+      <p>Interactive math learning, from middle school to calculus. Built by Raazia Ali, a practicing middle school math teacher. Free forever, no ads.</p>
     </div>
     <div class="footer-col">
       <h5>Popular</h5>
@@ -853,12 +925,12 @@ footer { padding: 3rem 2rem 2rem; border-top: 1px solid var(--border); backgroun
       <a href="/Grade8.html">Grade 8 Lessons</a>
       <a href="/Grade7.html">Grade 7 Lessons</a>
       <a href="/Grade6.html">Grade 6 Lessons</a>
-      <a href="#explore">All tools</a>
+      <a href="#subjects">All courses</a>
     </div>
     <div class="footer-col">
       <h5>Resources</h5>
-      <a href="#explore">For Parents</a>
-      <a href="#explore">For Teachers</a>
+      <a href="#about">For Parents</a>
+      <a href="#gamified">Classroom Tools</a>
       <a href="/privacy.html">Privacy</a>
     </div>
     <div class="footer-col">
@@ -928,51 +1000,61 @@ const TOOLS = {
   ]
 };
 
-// Categories available per audience
-const AUDIENCE_CATEGORIES = {
-  student:  [
-    { key: 'algebra',      label: 'Algebra',    icon: 'i-function' },
-    { key: 'geometry',     label: 'Geometry',   icon: 'i-compass' },
-    { key: 'hsGeometry',   label: 'High School Geometry', icon: 'i-angle' },
-    { key: 'ratios',       label: 'Ratios',     icon: 'i-pizza-cat' },
-    { key: 'stats',        label: 'Statistics', icon: 'i-bars-cat' }
-  ],
-  teacher: [
-    { key: 'lessons',      label: 'Lessons',      icon: 'i-rocket' },
-    { key: 'algebra',      label: 'Algebra',      icon: 'i-function' },
-    { key: 'geometry',     label: 'Geometry',     icon: 'i-compass' },
-    { key: 'hsGeometry',   label: 'High School Geometry', icon: 'i-angle' },
-    { key: 'ratios',       label: 'Ratios',       icon: 'i-pizza-cat' },
-    { key: 'stats',        label: 'Statistics',   icon: 'i-bars-cat' },
-    { key: 'teacherTools', label: 'Teacher Tools', icon: 'i-teacher' }
-  ],
-  parent: [
-    { key: 'forParents',   label: 'For Parents', icon: 'i-parent' },
-    { key: 'algebra',      label: 'Algebra',     icon: 'i-function' },
-    { key: 'geometry',     label: 'Geometry',    icon: 'i-compass' },
-    { key: 'hsGeometry',   label: 'High School Geometry', icon: 'i-angle' },
-    { key: 'ratios',       label: 'Ratios',      icon: 'i-pizza-cat' },
-    { key: 'stats',        label: 'Statistics',  icon: 'i-bars-cat' }
+// Extra tools that live in more than one place
+const EXTRA = {
+  algebraPractice: [
+    { url: '/Algebra-1/m3-review.html', scene: 'scene-m3rev', vb: '0 0 80 80', accent: 'green', tag: 'Live', title: 'Function Explorers — M3 Review', meta: 'Algebra 1 · Module 3 · 12 missions' },
+    { url: '/Function-Junction/', scene: 'scene-junction', vb: '0 0 80 80', accent: 'green', tag: 'New', tagClass: 'new', title: 'Function Junction', meta: 'Algebra 1 · Functions practice arena' }
   ]
 };
 
-// Parent trust cards content
+// Middle school algebra = everything in TOOLS.algebra except the high school functions course
+const MS_ALGEBRA = TOOLS.algebra.filter(t => !t.url.includes('functions-and-graphs'));
+const HS_ALGEBRA = TOOLS.algebra.filter(t => t.url.includes('functions-and-graphs'));
+
+// =============================================================
+// SUBJECTS — one entry per tab. Add a tool by adding it to TOOLS above
+// (or straight into a group's list here).
+// =============================================================
+const SUBJECTS = {
+  'middle-school': [
+    { title: 'Grade-level lessons',              tools: TOOLS.lessons },
+    { title: 'Ratios, percents & fractions',     tools: TOOLS.ratios },
+    { title: 'Expressions & equations',          tools: MS_ALGEBRA },
+    { title: 'Geometry · Grades 7–8',            tools: TOOLS.geometry },
+    { title: 'Statistics',                       tools: TOOLS.stats }
+  ],
+  'gamified': [
+    { title: 'Classroom tools',                  tools: TOOLS.teacherTools }
+  ],
+  'geometry': [
+    { title: 'Module 1 · Congruence, proof & constructions', tools: TOOLS.hsGeometry }
+  ],
+  'algebra': [
+    { title: 'Functions & graphs',               tools: HS_ALGEBRA },
+    { title: 'Practice & review',                tools: EXTRA.algebraPractice }
+  ],
+  'trig-calculus': [
+    { title: 'Trigonometry', tools: [], soon: 'Trigonometry simulations are on the way.' },
+    { title: 'Calculus',     tools: [], soon: 'Calculus simulations are on the way.' }
+  ]
+};
+const SUBJECT_KEYS = Object.keys(SUBJECTS);
+
+// Trust cards (formerly the "I'm a Parent" tab)
 const PARENT_TRUST = [
-  { icon: 'i-target', title: 'Common Core aligned', desc: 'Every tool maps to 7.EE, 7.RP, 7.SP, 8.EE, 8.G, or 8.F standards.' },
+  { icon: 'i-target', title: 'Standards aligned',   desc: 'Every tool is tagged with the Common Core standard it supports.' },
   { icon: 'i-ban',    title: 'Zero ads, ever',      desc: 'No banners, no popups, no distractions. Just learning.' },
   { icon: 'i-lock',   title: 'Privacy-first',       desc: 'We don\'t sell data. First names only. No tracking pixels.' },
   { icon: 'i-teacher',title: 'Made by an educator', desc: 'Built classroom-by-classroom by a practicing teacher.' }
 ];
-
-let currentAudience = 'teacher';
-let currentCategory = 'lessons';
 
 // ========== RENDER FUNCTIONS ==========
 function renderToolCard(tool) {
   const targetAttr = tool.external ? ' target="_blank" rel="noopener"' : '';
   return `
     <a href="${tool.url}" class="tool-card accent-${tool.accent}"${targetAttr}>
-      <div class="tool-scene"><svg viewBox="0 0 120 120" fill="none" stroke="var(--${tool.accent})"><use href="#${tool.scene}"/></svg></div>
+      <div class="tool-scene"><svg viewBox="${tool.vb || '0 0 120 120'}" fill="none" stroke="var(--${tool.accent})"><use href="#${tool.scene}"/></svg></div>
       <div class="tool-content">
         <span class="tool-tag ${tool.tagClass || ''}">${tool.tag}</span>
         <h4>${tool.title}</h4>
@@ -981,61 +1063,65 @@ function renderToolCard(tool) {
     </a>`;
 }
 
-function renderCategoryPanel(categoryKey) {
-  // Special handling for 'forParents'
-  if (categoryKey === 'forParents') {
-    return `
-      <div class="info-panel">
-        <p style="color: var(--text-dim); margin-bottom: 2rem;">Here's what matters when your child uses this site.</p>
-      </div>
-      <div class="trust-grid">
-        ${PARENT_TRUST.map(item => `
-          <div class="trust-item">
-            <div class="trust-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#${item.icon}"/></svg></div>
-            <h4>${item.title}</h4>
-            <p>${item.desc}</p>
-          </div>
-        `).join('')}
-      </div>`;
-  }
-
-  const tools = TOOLS[categoryKey] || [];
-  if (!tools.length) return `<p style="text-align:center; color:var(--text-dim);">No tools in this category yet.</p>`;
-  return `<div class="tools-grid">${tools.map(renderToolCard).join('')}</div>`;
+function renderGroup(group) {
+  const body = group.tools.length
+    ? `<div class="tools-grid">${group.tools.map(renderToolCard).join('')}</div>`
+    : `<div class="coming-soon"><h4>Coming soon</h4><p>${group.soon || 'New simulations are being built.'}</p></div>`;
+  return `<div class="subgroup"><h4 class="subgroup-title">${group.title}</h4>${body}</div>`;
 }
 
-function renderCategoryTabs(audience) {
-  const cats = AUDIENCE_CATEGORIES[audience];
-  const tabsHtml = cats.map((cat, i) => `
-    <button class="category-tab ${i === 0 ? 'active' : ''}" data-category="${cat.key}" onclick="selectCategory('${cat.key}')">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#${cat.icon}"/></svg>
-      <span>${cat.label}</span>
-    </button>
-  `).join('');
-  document.getElementById('categoryTabs').innerHTML = tabsHtml;
-  currentCategory = cats[0].key;
-  document.getElementById('toolPanels').innerHTML = renderCategoryPanel(currentCategory);
-}
-
-// ========== SELECT HANDLERS ==========
-function selectAudience(audience) {
-  currentAudience = audience;
-  document.querySelectorAll('.audience-tab').forEach(tab => {
-    tab.classList.toggle('active', tab.dataset.audience === audience);
+function renderSubjects() {
+  document.querySelectorAll('[data-groups]').forEach(el => {
+    el.innerHTML = (SUBJECTS[el.dataset.groups] || []).map(renderGroup).join('');
   });
-  renderCategoryTabs(audience);
+  document.getElementById('trustGrid').innerHTML = PARENT_TRUST.map(item => `
+    <div class="trust-item">
+      <div class="trust-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><use href="#${item.icon}"/></svg></div>
+      <h4>${item.title}</h4>
+      <p>${item.desc}</p>
+    </div>`).join('');
 }
 
-function selectCategory(categoryKey) {
-  currentCategory = categoryKey;
-  document.querySelectorAll('.category-tab').forEach(tab => {
-    tab.classList.toggle('active', tab.dataset.category === categoryKey);
+// ========== TAB SWITCHING (with #hash deep links) ==========
+function selectSubject(key, scroll) {
+  if (!SUBJECT_KEYS.includes(key)) key = SUBJECT_KEYS[0];
+  document.querySelectorAll('.subject-tab').forEach(tab => {
+    const on = tab.dataset.subject === key;
+    tab.setAttribute('aria-selected', on);
+    tab.tabIndex = on ? 0 : -1;
   });
-  document.getElementById('toolPanels').innerHTML = renderCategoryPanel(categoryKey);
+  document.querySelectorAll('.subject-panel').forEach(p => { p.hidden = p.id !== 'panel-' + key; });
+  try { localStorage.setItem('mathSubject', key); } catch (e) {}
+  if (scroll) document.getElementById('subjects').scrollIntoView({ behavior: 'smooth' });
 }
+
+document.querySelectorAll('.subject-tab').forEach((tab, i, all) => {
+  tab.addEventListener('click', () => {
+    history.replaceState(null, '', '#' + tab.dataset.subject);
+    selectSubject(tab.dataset.subject, false);
+  });
+  tab.addEventListener('keydown', e => {
+    const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+    if (!d) return;
+    const next = all[(i + d + all.length) % all.length];
+    next.focus(); next.click();
+  });
+});
+
+function fromHash(scroll) {
+  const h = location.hash.slice(1);
+  if (SUBJECT_KEYS.includes(h)) { selectSubject(h, scroll); return true; }
+  return false;
+}
+window.addEventListener('hashchange', () => fromHash(true));
 
 // ========== INIT ==========
-renderCategoryTabs('teacher');
+renderSubjects();
+if (!fromHash(true)) {
+  let saved = null;
+  try { saved = localStorage.getItem('mathSubject'); } catch (e) {}
+  selectSubject(saved || 'middle-school', false);
+}
 
 // ========== PIZZA DEMO ==========
 function updatePizza() {
