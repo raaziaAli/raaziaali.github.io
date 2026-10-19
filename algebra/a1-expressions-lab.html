@@ -1395,7 +1395,7 @@ const M6={
   panel(full){
     const pr=P6.pr;
     if(!full&&$("chk6"))return;
-    side.innerHTML=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob6" data-kind="${pr.kind}" data-src="${esc(pr.src||"")}" data-x="${pr.x!=null?pr.x:""}" data-y="${pr.y!=null?pr.y:""}" data-ans="${esc(pr.kind==="words"?pr.it.ans:(pr.ans!=null?String(pr.ans):polyAns(pr)))}">${pr.q}</p></div>
+    side.innerHTML=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob6" data-kind="${pr.kind}" data-src="${esc(pr.src||"")}" data-x="${pr.x!=null?pr.x:""}" data-y="${pr.y!=null?pr.y:""}">${pr.q}</p></div>
       <div class="ansrow"><div><label class="fld" for="ans6">Your answer</label><input type="text" id="ans6" autocomplete="off" spellcheck="false" placeholder="${esc(pr.ph)}"><div class="hint">${pr.fmt}</div></div></div>
       <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
         <button id="chk6" class="go" type="button" style="flex:1 1 140px">Check answer</button>
