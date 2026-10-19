@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trigonometry & Calculus — Mrs. Ali's Classroom</title>
+<meta name="description" content="Free interactive trigonometry and calculus simulations: right-triangle trig, the unit circle, trig graphs, identities, laws of sines and cosines, polar and complex numbers, inverse trig, limits, derivatives and their applications, integrals, integration techniques and applications, and infinite series.">
+<meta name="author" content="Raazia Ali">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M5 50 Q27 5 50 50 T95 50' fill='none' stroke='%2300E5FF' stroke-width='10' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;position:relative}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  a{color:var(--cyan)}
+  .wrap{max-width:1180px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  .top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:46px}
+  .top a.back{font-family:var(--mono);font-size:13px;font-weight:600;text-decoration:none;color:var(--dim);
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+  .top a.back:hover{color:#fff}
+  .top nav{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .top nav a{font-size:14px;font-weight:600;color:var(--dim);text-decoration:none;padding:7px 12px;border-radius:100px}
+  .top nav a:hover{color:#fff;background:rgba(255,255,255,.06)}
+
+  .hero{display:grid;grid-template-columns:1.3fr 1fr;gap:30px;align-items:center;margin-bottom:56px}
+  @media (max-width:860px){.hero{grid-template-columns:1fr}.hero svg{max-width:340px;margin:0 auto}}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+  h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,6vw,62px);line-height:1.05;margin:10px 0 18px;letter-spacing:-.02em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:18px;color:#CFCFEA;max-width:560px;margin:0 0 22px}
+  .stats{display:flex;gap:28px;flex-wrap:wrap}
+  .stats div{display:flex;flex-direction:column}
+  .stats b{font-family:var(--display);font-size:28px;color:#fff}
+  .stats span{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+
+  .unitnav{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:56px}
+  @media (max-width:860px){.unitnav{grid-template-columns:1fr 1fr}}
+  .unitnav a{display:block;text-decoration:none;color:var(--text);background:var(--card);border:1px solid var(--edge);
+    border-radius:16px;padding:16px 18px;transition:.18s}
+  .unitnav a:hover{transform:translateY(-3px);border-color:var(--u)}
+  .unitnav .n{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--u)}
+  .unitnav .t{display:block;font-family:var(--display);font-weight:600;font-size:14.5px;line-height:1.35;margin-top:4px}
+
+  section.unit{margin-bottom:64px;scroll-margin-top:20px}
+  .unit-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--edge);padding-bottom:14px;margin-bottom:22px}
+  .unit-head .num{font-family:var(--display);font-weight:800;font-size:56px;line-height:.85;color:var(--u);opacity:.9}
+  .unit-head h2{font-family:var(--display);font-weight:600;font-size:clamp(20px,3vw,28px);margin:0;line-height:1.2}
+  .unit-head p{margin:4px 0 0;color:var(--dim);font-size:15px}
+  .unit-head .codes{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--u);text-align:right}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px}
+  @media (max-width:400px){.grid{grid-template-columns:1fr}}
+  .studio{background:var(--card);border:1px solid var(--edge);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:.2s}
+  .studio:hover{border-color:var(--u);box-shadow:0 0 30px -10px var(--u);transform:translateY(-3px)}
+  .studio .art{background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);height:150px;display:flex;align-items:center;justify-content:center}
+  .studio .art svg{height:120px;width:auto}
+  .studio .body{padding:18px 20px 20px;display:flex;flex-direction:column;flex:1}
+  .studio .tag{align-self:flex-start;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    padding:3px 10px;border-radius:100px;margin-bottom:10px}
+  .tag.new{background:rgba(255,217,61,.15);color:var(--yellow);border:1px solid rgba(255,217,61,.4)}
+  .tag.live{background:rgba(94,234,212,.12);color:var(--mint);border:1px solid rgba(94,234,212,.35)}
+  .studio h3{font-family:var(--display);font-weight:600;font-size:18px;margin:0 0 6px;line-height:1.3}
+  .studio .std{font-family:var(--mono);font-size:12px;color:var(--u);margin-bottom:12px}
+  .studio ol{margin:0 0 16px;padding-left:22px;color:#CFCFEA;font-size:14.5px}
+  .studio ol li{padding:2px 0}
+  .studio ol li::marker{color:var(--u);font-weight:700;font-family:var(--mono);font-size:12px}
+  .studio .acts{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .btn{font-family:var(--ui);font-size:14.5px;font-weight:700;text-decoration:none;cursor:pointer;
+    padding:10px 18px;border-radius:100px;border:1px solid var(--edge);background:rgba(255,255,255,.06);color:var(--text);transition:.16s}
+  .btn:hover{background:rgba(255,255,255,.13)}
+  .btn.go{background:var(--u);border-color:var(--u);color:#0A0A1F}
+  .btn.go:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .btn:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+
+  .embed-box{background:var(--card);border:1px solid var(--edge);border-radius:18px;padding:22px 24px;margin-bottom:40px}
+  .embed-box h2{font-family:var(--display);font-weight:600;font-size:20px;margin:0 0 8px}
+  .embed-box p{color:#CFCFEA;margin:0 0 12px}
+  pre{font-family:var(--mono);font-size:13px;background:#0F0F26;border:1px solid var(--edge);border-left:4px solid var(--cyan);
+    border-radius:0 12px 12px 0;padding:14px 16px;overflow-x:auto;color:#fff;margin:0 0 12px;white-space:pre-wrap;word-break:break-all}
+  .copied{font-family:var(--mono);font-size:13px;color:var(--mint);margin-left:10px}
+
+  dialog{border:1px solid var(--edge);border-radius:18px;background:var(--bg-lift);color:var(--text);padding:0;width:min(1100px,96vw);max-height:94vh}
+  dialog::backdrop{background:rgba(5,5,18,.75)}
+  dialog .dh{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--edge)}
+  dialog .dh b{font-family:var(--display);font-weight:600;font-size:15px}
+  dialog .dh .btn{margin-left:auto;padding:7px 14px}
+  dialog iframe{display:block;width:100%;height:min(80vh,820px);border:0;background:var(--bg)}
+
+  .coursepick{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px}
+  @media (max-width:600px){.coursepick{grid-template-columns:1fr}}
+  .coursepick button{font-family:var(--display);font-weight:800;font-size:clamp(18px,3vw,26px);text-align:left;cursor:pointer;
+    background:var(--card);border:2px solid var(--edge);color:var(--text);border-radius:18px;padding:18px 22px;transition:.18s}
+  .coursepick button span{display:block;font-family:var(--ui);font-weight:500;font-size:14px;color:var(--dim);margin-top:4px}
+  .coursepick button:hover{transform:translateY(-3px)}
+  .coursepick button[aria-selected="true"]{border-color:var(--u);box-shadow:0 0 30px -8px var(--u);background:linear-gradient(180deg,rgba(255,255,255,.05),var(--card))}
+  .coursepick button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+  .unitnav{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+  .course-head{margin:0 0 30px}
+  .course-head h2{font-family:var(--display);font-weight:800;font-size:clamp(26px,4vw,40px);margin:0 0 6px;color:var(--u)}
+  .course-head p{color:#CFCFEA;margin:0;max-width:760px}
+  footer{border-top:1px solid var(--edge);padding-top:20px;color:var(--dim);font-size:14px;display:flex;gap:18px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="back" href="/math/#trig-calculus">← Mrs. Ali's Classroom</a>
+    <nav aria-label="Units">
+      <a href="#trigonometry">Trigonometry</a><a href="#calculus">Calculus</a><a href="#embed">Embed</a>
+    </nav>
+  </div>
+
+  <header class="hero">
+    <div>
+      <div class="eyebrow">// Precalculus trigonometry · AP Calculus AB/BC</div>
+      <h1>Trigonometry &amp; Calculus.</h1>
+      <p class="lede">Two courses, one studio per unit, every graph live. Drag a point along a curve and watch the slope, the area and the series follow. Each studio ends with endless practice problems.</p>
+      <div class="stats" id="stats"></div>
+    </div>
+    <svg viewBox="0 0 320 240" role="img" aria-label="A sine curve with a tangent line and shaded area beneath it">
+      <defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#00E5FF"/><stop offset=".55" stop-color="#C4B5FD"/><stop offset="1" stop-color="#FF3D8A"/></linearGradient></defs>
+      <line x1="16" y1="140" x2="304" y2="140" stroke="#A5A5C9" stroke-width="2"/><line x1="40" y1="20" x2="40" y2="220" stroke="#A5A5C9" stroke-width="2"/>
+      <path d="M 40 140 C 70 60, 100 60, 130 100 S 190 200, 220 160 S 270 70, 300 90 L 300 140 L 220 140 Z" fill="rgba(196,181,253,.10)"/>
+      <path d="M 130 140 L 130 100 S 190 200, 220 160 L 220 140 Z" fill="rgba(0,229,255,.28)"/>
+      <path d="M 40 140 C 70 60, 100 60, 130 100 S 190 200, 220 160 S 270 70, 300 90" fill="none" stroke="url(#hg)" stroke-width="4" stroke-linecap="round"/>
+      <line x1="60" y1="40" x2="170" y2="150" stroke="#FFD93D" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="113" cy="93" r="7" fill="#FFD93D"/>
+      <text x="150" y="40" font-family="JetBrains Mono" font-size="14" font-weight="700" fill="#FFD93D">f′(a)</text>
+      <text x="150" y="200" font-family="JetBrains Mono" font-size="14" font-weight="700" fill="#00E5FF">∫ f(x) dx</text>
+    </svg>
+  </header>
+
+  <div class="coursepick" id="coursepick" role="tablist" aria-label="Course"></div>
+  <div class="unitnav" id="unitnav"></div>
+  <div id="units"></div>
+
+  <section class="embed-box" id="embed">
+    <h2>Embed a studio</h2>
+    <p>Every studio runs on its own page. Add <code>?embed=1</code> to hide its header for a clean fit inside a Google Site, LMS page or slide, and add <code>#tab-3</code> to open a specific lesson tab.</p>
+    <pre id="embedCode"></pre>
+    <label for="embedPick" style="font-size:14px;color:var(--dim)">Studio:</label>
+    <select id="embedPick" style="max-width:100%;font-family:var(--ui);font-size:14px;background:#0F0F26;color:#fff;border:1px solid var(--edge);border-radius:10px;padding:8px 10px;margin:0 8px 0 4px"></select>
+    <button class="btn" id="copyEmbed" style="--u:var(--cyan)">Copy code</button><span class="copied" id="copiedMsg" aria-live="polite"></span>
+  </section>
+
+  <footer>
+    <span>Built by Raazia Ali, a practicing math teacher. Free, no ads, no sign-ups.</span>
+    <a href="/math/">Mrs. Ali's Classroom</a>
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+</div>
+
+<dialog id="preview" aria-label="Studio preview">
+  <div class="dh"><b id="pvTitle"></b><a class="btn" id="pvOpen" href="#" style="--u:var(--cyan)">Open full page ↗</a><button class="btn" id="pvClose" style="margin-left:0">Close</button></div>
+  <iframe id="pvFrame" title="Studio preview" loading="lazy"></iframe>
+</dialog>
+
+<script>
+(function(){
+"use strict";
+/* ─────────── Course data: add a studio by adding an entry here ─────────── */
+const ART = {
+  tri:`<polygon points="15,105 115,105 115,30" fill="rgba(0,229,255,.12)" stroke="#22314F" stroke-width="4" stroke-linejoin="round"/><path d="M50 105 A35 35 0 0 0 44 84" fill="none" stroke="#E11D48" stroke-width="4"/><rect x="103" y="93" width="12" height="12" fill="none" stroke="#22314F" stroke-width="2.5"/><text x="58" y="96" font-family="JetBrains Mono" font-size="14" font-weight="700" fill="#E11D48">θ</text>`,
+  circle:`<circle cx="62" cy="62" r="44" fill="none" stroke="#22314F" stroke-width="3"/><line x1="18" y1="62" x2="106" y2="62" stroke="#A5A5C9" stroke-width="1.5"/><line x1="62" y1="18" x2="62" y2="106" stroke="#A5A5C9" stroke-width="1.5"/><line x1="62" y1="62" x2="93" y2="31" stroke="#7C3AED" stroke-width="3.5"/><circle cx="93" cy="31" r="5.5" fill="#DB2777"/><path d="M78 62 A16 16 0 0 0 73 51" fill="none" stroke="#EA580C" stroke-width="3"/>`,
+  wave:`<line x1="8" y1="62" x2="122" y2="62" stroke="#A5A5C9" stroke-width="1.5"/><path d="M8 62 Q22 14 36 62 T64 62 T92 62 T120 62" fill="none" stroke="#DB2777" stroke-width="4"/><path d="M8 40 Q22 84 36 40 T64 40 T92 40 T120 40" fill="none" stroke="#0284C7" stroke-width="3" stroke-dasharray="6 4"/>`,
+  ident:`<text x="65" y="52" text-anchor="middle" font-family="JetBrains Mono" font-size="17" font-weight="700" fill="#22314F">sin²θ+cos²θ</text><text x="65" y="84" text-anchor="middle" font-family="JetBrains Mono" font-size="22" font-weight="700" fill="#7C3AED">= 1</text>`,
+  oblique:`<polygon points="12,100 112,100 44,26" fill="rgba(5,150,105,.14)" stroke="#059669" stroke-width="4" stroke-linejoin="round"/><path d="M34 100 A22 22 0 0 0 26 84" fill="none" stroke="#EA580C" stroke-width="3"/><text x="18" y="70" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#22314F">b</text><text x="80" y="58" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#22314F">a</text><text x="60" y="116" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#22314F">c</text>`,
+  inverse:`<line x1="10" y1="62" x2="120" y2="62" stroke="#A5A5C9" stroke-width="1.5"/><line x1="65" y1="10" x2="65" y2="115" stroke="#A5A5C9" stroke-width="1.5"/><line x1="18" y1="20" x2="112" y2="104" stroke="#A5A5C9" stroke-width="1.5" stroke-dasharray="4 4"/><path d="M15 110 Q40 108 52 80 Q65 46 78 44 Q90 16 115 14" fill="none" stroke="#7C3AED" stroke-width="4"/>`,
+  limit:`<line x1="10" y1="100" x2="120" y2="100" stroke="#A5A5C9" stroke-width="1.5"/><path d="M12 90 Q50 80 65 50 Q80 20 118 14" fill="none" stroke="#0284C7" stroke-width="4"/><circle cx="65" cy="50" r="6" fill="#fff" stroke="#0284C7" stroke-width="3"/><line x1="65" y1="56" x2="65" y2="100" stroke="#EA580C" stroke-width="2" stroke-dasharray="4 4"/><text x="58" y="116" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#EA580C">a</text>`,
+  deriv:`<path d="M10 100 Q60 100 75 60 T118 14" fill="none" stroke="#7C3AED" stroke-width="4"/><line x1="30" y1="112" x2="118" y2="20" stroke="#EA580C" stroke-width="3"/><circle cx="72" cy="68" r="6" fill="#DB2777"/>`,
+  optimize:`<line x1="10" y1="104" x2="120" y2="104" stroke="#A5A5C9" stroke-width="1.5"/><path d="M12 100 Q40 10 65 30 T118 100" fill="none" stroke="#059669" stroke-width="4"/><line x1="38" y1="26" x2="80" y2="26" stroke="#EA580C" stroke-width="3"/><circle cx="58" cy="27" r="6" fill="#DB2777"/>`,
+  integral:`<line x1="10" y1="104" x2="120" y2="104" stroke="#A5A5C9" stroke-width="1.5"/><g fill="rgba(2,132,199,.25)" stroke="#0284C7" stroke-width="1.5"><rect x="22" y="70" width="16" height="34"/><rect x="38" y="52" width="16" height="52"/><rect x="54" y="40" width="16" height="64"/><rect x="70" y="36" width="16" height="68"/><rect x="86" y="42" width="16" height="62"/></g><path d="M14 86 Q50 30 80 34 T118 56" fill="none" stroke="#DB2777" stroke-width="3.5"/>`,
+  technique:`<text x="18" y="82" font-family="Unbounded" font-size="58" font-weight="800" fill="#7C3AED">∫</text><text x="56" y="60" font-family="JetBrains Mono" font-size="15" font-weight="700" fill="#22314F">u dv</text><text x="56" y="88" font-family="JetBrains Mono" font-size="15" font-weight="700" fill="#EA580C">= uv−∫v du</text>`,
+  solid:`<ellipse cx="65" cy="28" rx="40" ry="12" fill="rgba(0,229,255,.18)" stroke="#22314F" stroke-width="3"/><path d="M25 28 Q30 70 50 96 A16 6 0 0 0 80 96 Q100 70 105 28" fill="rgba(0,229,255,.08)" stroke="#22314F" stroke-width="3"/><ellipse cx="65" cy="62" rx="31" ry="9" fill="rgba(234,88,12,.25)" stroke="#EA580C" stroke-width="2.5"/>`,
+  series:`<line x1="10" y1="104" x2="120" y2="104" stroke="#A5A5C9" stroke-width="1.5"/><path d="M10 96 Q60 90 70 50 T120 10" fill="none" stroke="#A5A5C9" stroke-width="3" stroke-dasharray="5 4"/><path d="M10 96 L70 50" stroke="#0284C7" stroke-width="2.5"/><path d="M10 96 Q55 92 70 50 Q78 30 98 26" fill="none" stroke="#DB2777" stroke-width="3.5"/><path d="M10 96 Q60 88 72 48 Q84 16 116 10" fill="none" stroke="#059669" stroke-width="3"/>`
+};
+
+const COURSES = [
+  { id:'trigonometry', title:'Trigonometry', color:'var(--yellow)', tagline:'Triangles, the unit circle, periodic functions, identities and the geometry beyond right triangles.',
+    units:[
+      { n:'01', title:'Right Triangle Trigonometry', sub:'SOH CAH TOA, all six ratios, and solving for unknown sides and angles.', codes:'G-SRT.C.6–8',
+        studio:{ url:'/trig-calculus/t1-right-triangle-lab.html', art:'tri', title:'Right Triangle Trig Lab', std:'G-SRT.C.6 · G-SRT.C.7 · G-SRT.C.8',
+          lessons:['SOH CAH TOA','Reciprocal functions','Solving for sides','Solving for angles','Applications','Challenge'] } },
+      { n:'02', title:'The Unit Circle & Angles', sub:'Radians and degrees, arc length, linear/angular speed, coterminal and reference angles, exact values.', codes:'F-TF.A.1–3 · G-C.B.5',
+        studio:{ url:'/trig-calculus/t2-unit-circle-lab.html', art:'circle', title:'Unit Circle & Angles Lab', std:'F-TF.A.1 · F-TF.A.2 · F-TF.A.3',
+          lessons:['Radians & degrees','Arc length & sector area','Linear & angular speed','Coterminal & reference angles','Exact values','Challenge'] } },
+      { n:'03', title:'Trigonometric Functions & Graphs', sub:'Periodic behavior, amplitude, frequency, phase shift, midline, and all six graphs.', codes:'F-TF.B.5 · F-IF.C.7e · F-BF.B.3',
+        studio:{ url:'/trig-calculus/t3-trig-graphs-lab.html', art:'wave', title:'Trig Graphs Lab', std:'F-TF.A.2 · F-TF.B.5 · F-IF.C.7e',
+          lessons:['Periodic behavior','Amplitude & period','Phase shift & midline','Tangent & cotangent','Secant & cosecant','Modeling','Challenge'] } },
+      { n:'04', title:'Identities & Equations', sub:'Pythagorean identities, sum/difference and double-angle formulas, solving trig equations.', codes:'F-TF.C.8–9 · F-TF.B.7',
+        studio:{ url:'/trig-calculus/t4-identities-equations-lab.html', art:'ident', title:'Identities & Equations Lab', std:'F-TF.C.8 · F-TF.C.9 · F-TF.B.7',
+          lessons:['Pythagorean identities','Verifying identities','Sum & difference','Double-angle','Solving trig equations','Challenge'] } },
+      { n:'05', title:'Non-Right Triangles & Advanced Geometry', sub:'Law of Sines, Law of Cosines, polar coordinates, complex numbers in trig form.', codes:'G-SRT.D.9–11 · N-CN.B.4–6',
+        studio:{ url:'/trig-calculus/t5-oblique-polar-lab.html', art:'oblique', title:'Laws, Polar & Complex Lab', std:'G-SRT.D.10–11 · N-CN.B.4–6',
+          lessons:['Law of Sines','The ambiguous case','Law of Cosines','Polar coordinates','Complex numbers in trig form','Challenge'] } },
+      { n:'06', title:'Inverse Trigonometric Functions', sub:'Domains, ranges and principal branches of arcsin, arccos and arctan.', codes:'F-TF.B.6–7 · F-BF.B.4',
+        studio:{ url:'/trig-calculus/t6-inverse-trig-lab.html', art:'inverse', title:'Inverse Trig Lab', std:'F-TF.B.6 · F-TF.B.7 · F-BF.B.4',
+          lessons:['Why restrict the domain?','arcsin, arccos, arctan','Exact values','Compositions','Solving with inverses','Challenge'] } }
+    ]},
+  { id:'calculus', title:'Calculus', color:'var(--mint)', tagline:'Single-variable calculus: limits, derivatives, integrals and infinite series, aligned to AP Calculus AB/BC.',
+    units:[
+      { n:'01', title:'Limits and Continuity', sub:'Graphical and algebraic limits, one-sided limits, asymptotes and the Intermediate Value Theorem.', codes:'AP Unit 1',
+        studio:{ url:'/trig-calculus/c1-limits-lab.html', art:'limit', title:'Limits & Continuity Lab', std:'AP 1.2–1.16',
+          lessons:['Limits graphically','Limits algebraically','Infinite limits & asymptotes','Epsilon–delta','Continuity & IVT','Challenge'] } },
+      { n:'02', title:'Derivatives & Differentiation', sub:'The limit definition, the rules, transcendental functions, implicit and higher-order derivatives.', codes:'AP Units 2–3',
+        studio:{ url:'/trig-calculus/c2-derivatives-lab.html', art:'deriv', title:'Derivatives Lab', std:'AP 2.1–2.10 · AP 3.1–3.6',
+          lessons:['Secant to tangent','The derivative function','Rules','Transcendental derivatives','Implicit & higher-order','Challenge'] } },
+      { n:'03', title:'Applications of Differentiation', sub:'Related rates, optimization, curve sketching, Mean Value Theorem, L’Hôpital’s Rule.', codes:'AP Units 4–5',
+        studio:{ url:'/trig-calculus/c3-derivative-applications-lab.html', art:'optimize', title:'Applying Derivatives Lab', std:'AP 4.4–4.7 · AP 5.1–5.12',
+          lessons:['Related rates','Optimization','Curve sketching','Mean Value Theorem','L’Hôpital’s Rule','Linearization','Challenge'] } },
+      { n:'04', title:'Integrals & the Fundamental Theorem', sub:'Riemann sums, definite and indefinite integrals, the Fundamental Theorem of Calculus.', codes:'AP Unit 6',
+        studio:{ url:'/trig-calculus/c4-integrals-ftc-lab.html', art:'integral', title:'Integrals & FTC Lab', std:'AP 6.1–6.8',
+          lessons:['Riemann sums','The definite integral','Accumulation & FTC 1','FTC 2 & antiderivatives','Slope fields','Challenge'] } },
+      { n:'05', title:'Methods of Integration', sub:'Substitution, integration by parts, trigonometric substitution and partial fractions.', codes:'AP 6.9–6.13',
+        studio:{ url:'/trig-calculus/c5-integration-techniques-lab.html', art:'technique', title:'Integration Techniques Lab', std:'AP 6.9–6.13',
+          lessons:['u-substitution','Integration by parts','Trig integrals & substitution','Partial fractions','Choosing a method','Challenge'] } },
+      { n:'06', title:'Applications of Integration', sub:'Area between curves, volumes of revolution, arc length, average value, differential equations.', codes:'AP Units 7–8',
+        studio:{ url:'/trig-calculus/c6-integration-applications-lab.html', art:'solid', title:'Applying Integrals Lab', std:'AP 7.1–7.7 · AP 8.1–8.13',
+          lessons:['Area between curves','Disks & washers','Shells & cross-sections','Arc length','Average value','Differential equations','Challenge'] } },
+      { n:'07', title:'Infinite Sequences & Series', sub:'Convergence tests, power series, Taylor and Maclaurin series.', codes:'AP Unit 10 (BC)',
+        studio:{ url:'/trig-calculus/c7-series-lab.html', art:'series', title:'Infinite Series Lab', std:'AP 10.1–10.15',
+          lessons:['Sequences & partial sums','Convergence tests I','Convergence tests II','Choosing a test','Power series','Taylor & Maclaurin','Challenge'] } }
+    ]}
+];
+
+/* ─────────── render ─────────── */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let nStudios = 0, nLessons = 0;
+COURSES.forEach(c => c.units.forEach(u => { nStudios++; nLessons += u.studio.lessons.length; }));
+document.getElementById('stats').innerHTML =
+  `<div><b>2</b><span>Courses</span></div><div><b>${nStudios}</b><span>Studios</span></div><div><b>${nLessons}</b><span>Lessons</span></div><div><b>∞</b><span>Practice</span></div>`;
+
+function card(s, u, color, tag){
+  return `
+      <article class="studio" style="--u:${color}">
+        <div class="art"><svg viewBox="0 0 130 120" aria-hidden="true">${ART[s.art]}</svg></div>
+        <div class="body">
+          <span class="tag ${tag}">${u ? 'Unit ' + u.n + ' · ' + esc(u.title) : 'Live'}</span>
+          <h3>${esc(s.title)}</h3>
+          <div class="std">${esc(s.std)}</div>
+          ${u ? `<p style="margin:0 0 10px;color:var(--dim);font-size:14px">${esc(u.sub)}</p>` : ''}
+          <ol>${s.lessons.map(l => `<li>${esc(l)}</li>`).join('')}</ol>
+          <div class="acts">
+            <a class="btn go" href="${s.url}">Open studio →</a>
+            ${u ? `<button class="btn" data-preview="${s.url}" data-title="${esc(s.title)}">Preview</button>` : ''}
+          </div>
+        </div>
+      </article>`;
+}
+
+document.getElementById('coursepick').innerHTML = COURSES.map(c =>
+  `<button role="tab" data-course="${c.id}" style="--u:${c.color}" aria-selected="false">${c.title}<span>${c.units.length} units · ${esc(c.tagline)}</span></button>`).join('');
+
+document.getElementById('units').innerHTML = COURSES.map(c => `
+  <div class="course" id="${c.id}" style="--u:${c.color}" hidden>
+    <div class="course-head"><h2>${c.title}</h2><p>${esc(c.tagline)}</p></div>
+    <section class="unit" style="--u:${c.color}">
+      <div class="unit-head"><div><h2>${c.units.length} units · one studio each</h2><p>Open a studio, or preview it here first.</p></div><div class="codes">${c.title}</div></div>
+      <div class="grid">${c.units.map(u => `<div id="${c.id}-unit-${+u.n}" style="display:contents">${card(u.studio, u, c.color, 'new')}</div>`).join('')}</div>
+    </section>
+    ${c.earlier ? `
+    <section class="unit" style="--u:${c.color}">
+      <div class="unit-head"><div><h2>More ${c.title} tools</h2><p>Earlier interactives and games that pair with these units.</p></div></div>
+      <div class="grid">${c.earlier.map(s => card(s, null, c.color, 'live')).join('')}</div>
+    </section>` : ''}
+  </div>`).join('');
+
+function showCourse(id, scroll){
+  const c = COURSES.find(x => x.id === id) || COURSES[0];
+  document.querySelectorAll('#coursepick button').forEach(b => b.setAttribute('aria-selected', b.dataset.course === c.id));
+  document.querySelectorAll('.course').forEach(el => el.hidden = el.id !== c.id);
+  document.getElementById('unitnav').innerHTML = c.units.map(u =>
+    `<a href="#${c.id}-unit-${+u.n}" style="--u:${c.color}"><span class="n">UNIT ${u.n}</span><span class="t">${esc(u.title)}</span></a>`).join('');
+  if (scroll) document.getElementById('coursepick').scrollIntoView({behavior:'smooth'});
+}
+document.getElementById('coursepick').addEventListener('click', e => {
+  const b = e.target.closest('button[data-course]'); if (!b) return;
+  history.replaceState(null, '', '#' + b.dataset.course); showCourse(b.dataset.course, false);
+});
+function fromHash(scroll){
+  const h = location.hash.slice(1);
+  const c = COURSES.find(x => h === x.id || h.startsWith(x.id + '-'));
+  showCourse(c ? c.id : 'trigonometry', scroll && !!c);
+  if (c && h !== c.id) { const el = document.getElementById(h); if (el && el.firstElementChild) el.firstElementChild.scrollIntoView(); }
+}
+window.addEventListener('hashchange', () => fromHash(true));
+fromHash(false);
+
+/* ─────────── preview dialog ─────────── */
+const dlg = document.getElementById('preview'), frame = document.getElementById('pvFrame');
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-preview]');
+  if (!b) return;
+  document.getElementById('pvTitle').textContent = b.dataset.title;
+  document.getElementById('pvOpen').href = b.dataset.preview;
+  frame.src = b.dataset.preview + '?embed=1';
+  if (dlg.showModal) dlg.showModal(); else location.href = b.dataset.preview;
+});
+document.getElementById('pvClose').onclick = () => dlg.close();
+dlg.addEventListener('close', () => { frame.src = 'about:blank'; });
+dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+
+/* ─────────── embed code helper ─────────── */
+const pick = document.getElementById('embedPick'), code = document.getElementById('embedCode');
+COURSES.forEach(c => c.units.forEach(u => pick.insertAdjacentHTML('beforeend', `<option value="${u.studio.url}">${c.title} · ${esc(u.studio.title)}</option>`)));
+function snippet(){
+  return `<iframe src="https://raaziaali.github.io${pick.value}?embed=1" width="100%" height="820" style="border:0;border-radius:12px" loading="lazy" title="${pick.options[pick.selectedIndex].text.replace(/"/g,'')}"></iframe>`;
+}
+function showCode(){ code.textContent = snippet(); }
+pick.onchange = showCode; showCode();
+document.getElementById('copyEmbed').onclick = async () => {
+  const msg = document.getElementById('copiedMsg');
+  try { await navigator.clipboard.writeText(snippet()); msg.textContent = 'Copied!'; }
+  catch (e) { msg.textContent = 'Select the code above and copy it.'; }
+  setTimeout(() => msg.textContent = '', 2500);
+};
+})();
+</script>
+</body>
+</html>
