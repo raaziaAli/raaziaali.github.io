@@ -1,0 +1,1269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Area Lab — Geometry Unit 4</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230A0A1F'/%3E%3Cpath d='M6 24 L12 8 L26 8 L20 24 Z' fill='%2300E5FF' fill-opacity='.35' stroke='%2300E5FF' stroke-width='2.4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none;
+    -webkit-user-select:none;user-select:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px;padding:9px 12px;border-radius:100px}
+  .bar .rng{display:inline-flex;align-items:center;gap:10px;font-size:14px;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:6px 15px}
+  .bar .rng input{accent-color:var(--accent);width:150px;max-width:38vw}
+  .bar .rng output{font-family:var(--mono);font-weight:700;font-size:13.5px;min-width:3.4em;color:#fff}
+  .bar button:focus-visible,.seg button:focus-visible,.go:focus-visible,.ghost:focus-visible,
+  .bar label.chk:focus-within,.bar .rng:focus-within{outline:3px solid var(--yellow);outline-offset:2px}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .ansrow{display:flex;gap:8px}
+  .ansrow .ghost{padding:10px 16px;font-size:17px;flex:none}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+  .verdict .w{display:block;margin-top:8px;font-family:var(--mono);font-size:13.5px;white-space:pre-wrap}
+
+  table.tbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}
+  table.tbl th{font-weight:700;color:var(--accent);text-align:right;padding:9px 14px;border-bottom:1px solid var(--edge);font-size:12px;letter-spacing:.04em}
+  table.tbl td{text-align:right;padding:7px 14px;border-bottom:1px solid rgba(196,181,253,.10);color:#DDDDF2;white-space:nowrap}
+  table.tbl th:first-child,table.tbl td:first-child{text-align:left}
+  table.tbl tr.hi td{background:rgba(255,255,255,.08);color:#fff;font-weight:700;box-shadow:inset 3px 0 0 var(--accent)}
+  .tblwrap{overflow-x:auto}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;padding:0 20px 16px}
+  .grid2 label.fld{margin:12px 0 6px;font-size:11px}
+  .grid2 input,.grid2 select{padding:10px 11px}
+  .sub{font-family:var(--display);font-size:12.5px;font-weight:600;color:var(--yellow);padding:14px 20px 0;letter-spacing:.02em}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.6;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.2;fill:none;stroke-dasharray:8 6}
+  .ghost-s{fill:none;stroke:#8A94B0;stroke-width:1.8;stroke-dasharray:6 5}
+  .mk{font-family:var(--display);font-weight:600;font-size:18px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .sm{font-family:var(--mono);font-weight:600;font-size:13px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .cap{font-family:var(--ui);font-weight:500;font-size:14.5px;fill:var(--graphite);paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ban{font-family:var(--mono);font-weight:700;font-size:16.5px;fill:var(--ink);paint-order:stroke;stroke:#fff;stroke-width:6;stroke-linejoin:round}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim);
+    display:flex;gap:18px;flex-wrap:wrap}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot a:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  @media (max-width:520px){
+    .wrap{padding:18px 12px 50px}
+    .bar{padding:12px}
+    .bar .spacer{margin-left:0;width:100%}
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .board-head .lsn{margin-left:0;white-space:normal}
+    .grid2{grid-template-columns:1fr 1fr}
+    table.tbl th,table.tbl td{padding:7px 9px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Area <em>Lab</em></h1>
+    <div class="eyebrow">Geometry · Unit 4 · Area &amp; Volume</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Area figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">
+    <span>Every figure is live — drag the amber handles and every length, area and cost is recomputed from the drawing.</span>
+    <a href="/geometry/">← Geometry course</a>
+    <a href="/math/#geometry">Mrs. Ali's Classroom</a>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg", VW=700, VH=460, PI=Math.PI;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+const BLUE="#0284C7", ORANGE="#EA580C", GREEN="#059669", VIOLET="#7C3AED", PINK="#DB2777", RED="#DC2626", INK="#22314F", TEAL="#0891B2";
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const ease=u=>u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;
+const hyp=(a,b)=>Math.hypot(a,b);
+function fmt(v,d){ if(d===undefined)d=1; const m=Math.pow(10,d); let x=Math.round(v*m)/m; if(Math.abs(x)<1e-12)x=0;
+  return x.toLocaleString("en-US",{maximumFractionDigits:d}).replace("-","−"); }
+const fp=(v,d)=>v<0?"("+fmt(v,d)+")":fmt(v,d);
+const money=v=>"$"+v.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function E(tag,a,par){const n=document.createElementNS(NS,tag); if(a)for(const k in a)n.setAttribute(k,a[k]); if(par)par.appendChild(n); return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+function root(){const g=E("g",{},cv); return g;}
+function T(g,x,y,s,o){o=o||{};
+  if(o.fit){const w=String(s).length*(o.size||13)*0.62, an=o.a||"middle";
+    if(an==="end")x=clamp(x,w+4,VW-4); else if(an==="start")x=clamp(x,4,VW-w-4); else x=clamp(x,w/2+4,VW-w/2-4);
+    y=clamp(y,12,VH-10);}
+  const t=E("text",{x:x.toFixed(1),y:y.toFixed(1),class:o.cls||"num","text-anchor":o.a||"middle","dominant-baseline":"middle"},g);
+  if(o.c)t.setAttribute("fill",o.c); if(o.size)t.style.fontSize=o.size+"px";
+  if(o.rot!==undefined)t.setAttribute("transform","rotate("+o.rot+" "+x.toFixed(1)+" "+y.toFixed(1)+")");
+  t.textContent=s; return t;}
+const ptsAttr=pts=>pts.map(p=>p[0].toFixed(2)+","+p[1].toFixed(2)).join(" ");
+function P(g,pts,a){a=Object.assign({},a||{}); a.points=ptsAttr(pts); return E("polygon",a,g);}
+function fillP(g,pts,col,op,extra){return P(g,pts,Object.assign({fill:col,"fill-opacity":op===undefined?.22:op,stroke:col,"stroke-width":2.6,"stroke-linejoin":"round"},extra||{}));}
+function Ln(g,p,q,cls,extra){const a={x1:p[0].toFixed(2),y1:p[1].toFixed(2),x2:q[0].toFixed(2),y2:q[1].toFixed(2)};
+  if(cls!=="")a.class=cls||"line"; const n=E("line",a,g); let st="";
+  for(const k in (extra||{})){ if(cls==="")n.setAttribute(k,extra[k]); else st+=k+":"+extra[k]+";"; }
+  if(st)n.setAttribute("style",st); return n;}
+function dot(g,p,r){E("circle",{cx:p[0],cy:p[1],r:r||4.5,class:"dot"},g);}
+function grab(g,p,id){E("circle",{cx:p[0],cy:p[1],r:16,class:"grab","data-drag":id},g); dot(g,p);}
+function rtMark(g,c,u,v,sz){sz=sz||12;
+  const a=[c[0]+u[0]*sz,c[1]+u[1]*sz], b=[a[0]+v[0]*sz,a[1]+v[1]*sz], d=[c[0]+v[0]*sz,c[1]+v[1]*sz];
+  E("polyline",{points:ptsAttr([a,b,d]),class:"rt"},g);}
+// dimension line: positive off is to the right of travel direction in screen coords (below for left→right)
+function dimLine(g,p,q,label,off,o){o=o||{};
+  const dx=q[0]-p[0], dy=q[1]-p[1], L=hyp(dx,dy)||1, nx=-dy/L, ny=dx/L;
+  const a=[p[0]+nx*off,p[1]+ny*off], b=[q[0]+nx*off,q[1]+ny*off], col=o.c||INK;
+  Ln(g,a,b,"thin",{stroke:col,"stroke-width":1.5});
+  [a,b].forEach(r=>Ln(g,[r[0]-nx*6,r[1]-ny*6],[r[0]+nx*6,r[1]+ny*6],"thin",{stroke:col,"stroke-width":1.5}));
+  const s=off>=0?1:-1, lo=o.lo===undefined?15:o.lo;
+  const m=[(a[0]+b[0])/2+nx*lo*s,(a[1]+b[1])/2+ny*lo*s];
+  T(g,m[0],m[1],label,{cls:o.cls||"num",c:o.tc||col,size:o.size});
+}
+function banner(g,s,y){T(g,18,y||28,s,{cls:"ban",a:"start"});}
+function gridLines(g,U,ox,oy,box,col){
+  box=box||{x0:0,y0:0,x1:VW,y1:VH};
+  const st={stroke:col||"#DCE6F7","stroke-width":1};
+  for(let x=ox-Math.floor((ox-box.x0)/U)*U; x<=box.x1+0.01; x+=U) Ln(g,[x,box.y0],[x,box.y1],"",st);
+  for(let y=oy-Math.floor((oy-box.y0)/U)*U; y<=box.y1+0.01; y+=U) Ln(g,[box.x0,y],[box.x1,y],"",st);
+}
+function centroid(pts){let x=0,y=0;pts.forEach(p=>{x+=p[0];y+=p[1];});return [x/pts.length,y/pts.length];}
+function signedArea(pts){let s=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];s+=a[0]*b[1]-b[0]*a[1];}return s/2;}
+function perimeter(pts){let s=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];s+=hyp(b[0]-a[0],b[1]-a[1]);}return s;}
+// labels at side midpoints pushed away from the centroid (screen px points)
+function sideLabels(g,px,labels,o){o=o||{}; const c=centroid(px), off=o.off||16;
+  for(let i=0;i<px.length;i++){ if(labels[i]===null||labels[i]===undefined)continue;
+    const a=px[i], b=px[(i+1)%px.length], m=[(a[0]+b[0])/2,(a[1]+b[1])/2];
+    const dx=b[0]-a[0], dy=b[1]-a[1], L=hyp(dx,dy)||1; let nx=-dy/L, ny=dx/L;
+    if((m[0]-c[0])*nx+(m[1]-c[1])*ny<0){nx=-nx;ny=-ny;}
+    T(g,m[0]+nx*off,m[1]+ny*off,labels[i],{cls:o.cls||"sm",c:o.c||INK});
+  }}
+function simplifyRoot(n){let out=1,inn=n;for(let f=2;f*f<=inn;f++){while(inn%(f*f)===0){inn/=f*f;out*=f;}}return [out,inn];}
+function radical(d2){ // exact-ish string for √d2 when d2 integer
+  const r=Math.sqrt(d2);
+  if(Math.abs(d2-Math.round(d2))>1e-9) return "≈ "+fmt(r);
+  const n=Math.round(d2); if(Math.abs(r-Math.round(r))<1e-9) return fmt(r,0);
+  const [o,i]=simplifyRoot(n); return (o>1?o:"")+"√"+i+" ≈ "+fmt(r);
+}
+function segX(p1,p2,p3,p4){
+  const o=(a,b,c)=>{const v=(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);return Math.abs(v)<1e-9?0:(v>0?1:-1);};
+  const on=(a,b,c)=>Math.min(a[0],b[0])-1e-9<=c[0]&&c[0]<=Math.max(a[0],b[0])+1e-9&&Math.min(a[1],b[1])-1e-9<=c[1]&&c[1]<=Math.max(a[1],b[1])+1e-9;
+  const d1=o(p1,p2,p3),d2=o(p1,p2,p4),d3=o(p3,p4,p1),d4=o(p3,p4,p2);
+  if(d1!==d2&&d3!==d4&&d1&&d2&&d3&&d4)return true;
+  if(d1===0&&on(p1,p2,p3))return true; if(d2===0&&on(p1,p2,p4))return true;
+  if(d3===0&&on(p3,p4,p1))return true; if(d4===0&&on(p3,p4,p2))return true;
+  return false;
+}
+function isSimple(pts){const n=pts.length;
+  for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){ if(pts[i][0]===pts[j][0]&&pts[i][1]===pts[j][1])return false; }
+  for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+    if(j===i+1||(i===0&&j===n-1))continue;
+    if(segX(pts[i],pts[(i+1)%n],pts[j],pts[(j+1)%n]))return false;}
+  if(Math.abs(signedArea(pts))<1e-9)return false;
+  return true;}
+function isConvex(pts,strict){let sg=0;const n=pts.length;
+  for(let i=0;i<n;i++){const a=pts[i],b=pts[(i+1)%n],c=pts[(i+2)%n];
+    const cr=(b[0]-a[0])*(c[1]-b[1])-(b[1]-a[1])*(c[0]-b[0]);
+    if(Math.abs(cr)<1e-9){if(strict)return false;continue;}
+    const s=cr>0?1:-1; if(!sg)sg=s; else if(s!==sg)return false;}
+  return true;}
+
+/* ── ui builders ── */
+function segCtl(opts,val,on){const s=document.createElement("div");s.className="seg";
+  opts.forEach(([k,lab])=>{const b=document.createElement("button");b.type="button";b.textContent=lab;
+    b.setAttribute("aria-pressed",String(k===val));b.onclick=()=>on(k);s.appendChild(b);});
+  bar.appendChild(s);return s;}
+function btn(lab,on,cls){const b=document.createElement("button");b.type="button";b.textContent=lab;if(cls)b.className=cls;b.onclick=on;bar.appendChild(b);return b;}
+function chk(lab,val,on){const l=document.createElement("label");l.className="chk";
+  const i=document.createElement("input");i.type="checkbox";i.checked=!!val;i.onchange=()=>on(i.checked);
+  l.appendChild(i);l.appendChild(document.createTextNode(lab));bar.appendChild(l);return i;}
+function rng(lab,min,max,step,val,on,f){const l=document.createElement("label");l.className="rng";
+  const sp=document.createElement("span");sp.textContent=lab;
+  const i=document.createElement("input");i.type="range";i.min=min;i.max=max;i.step=step;i.value=val;i.setAttribute("aria-label",lab);
+  const o=document.createElement("output");f=f||(v=>String(v));o.textContent=f(+val);
+  i.oninput=()=>{o.textContent=f(+i.value);on(+i.value);};
+  l.appendChild(sp);l.appendChild(i);l.appendChild(o);bar.appendChild(l);
+  return {i:i,o:o,set(v){i.value=v;o.textContent=f(+v);}};}
+function spacer(t){const s=document.createElement("span");s.className="spacer";s.textContent=t;bar.appendChild(s);return s;}
+const rel=(col,nm,sub,val)=>`<div class="rel"><span class="dot" style="background:${col}"></span><span class="nm">${nm}${sub?"<em>"+sub+"</em>":""}</span><span class="val">${val}</span></div>`;
+const panel=(h,body)=>`<div class="panel"><h3>${h}</h3>${body}</div>`;
+const pad=s=>`<div class="pad">${s}</div>`;
+
+/* ── animation ── */
+let animId=0;
+function tween(get,set,to,ms){const id=++animId, from=get(), t0=performance.now();
+  if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)ms=Math.min(ms,250);
+  function step(now){if(id!==animId)return; const u=Math.min(1,(now-t0)/ms); set(from+(to-from)*ease(u)); redraw(); if(u<1)requestAnimationFrame(step);}
+  requestAnimationFrame(step);}
+
+/* ══════════════════════ TAB 1 · decomposition ══════════════════════ */
+const S1={mode:"para",snap:true,t:0,
+  para:{b:7,h:4,s:2}, tri:{b:8,h:5,s:3}, trap:{b1:9,b2:4,h:5,s:2,view:"double"}, kite:{d1:10,d2:10,a:3.5,rh:false}};
+const U1=30, O1=[105,400];
+const u1=(x,y)=>[O1[0]+x*U1,O1[1]-y*U1];
+const pu1=p=>[(p[0]-O1[0])/U1,(O1[1]-p[1])/U1];
+const UK=26, OK=[350,236];
+const uk=(x,y)=>[OK[0]+x*UK,OK[1]-y*UK];
+const puk=p=>[(p[0]-OK[0])/UK,(OK[1]-p[1])/UK];
+const sn1=v=>S1.snap?Math.round(v):Math.round(v*10)/10;
+const sn1h=v=>S1.snap?Math.round(v*2)/2:Math.round(v*10)/10;
+const M1={
+  tab:"Decompose & rearrange", lesson:"G-GMD.A.1 · 6.G.A.1", accent:"var(--yellow)",
+  aria:"Polygon cut into pieces and rearranged",
+  title(){return {para:"Parallelogram → rectangle",tri:"Triangle = half a parallelogram",trap:S1.trap.view==="split"?"Trapezoid = two triangles":"Trapezoid, doubled",kite:"Kite & rhombus by diagonals"}[S1.mode];},
+  playLab(){return {para:"Cut & slide",tri:"Rotate a copy",trap:S1.trap.view==="split"?"Pull apart":"Double it",kite:"Fold corners in"}[S1.mode];},
+  bar(){
+    segCtl([["para","Parallelogram"],["tri","Triangle"],["trap","Trapezoid"],["kite","Kite & rhombus"]],S1.mode,k=>{S1.mode=k;S1.t=0;render();});
+    if(S1.mode==="trap")segCtl([["split","Two triangles"],["double","Doubled"]],S1.trap.view,k=>{S1.trap.view=k;S1.t=0;render();});
+    if(S1.mode==="kite")chk("Rhombus",S1.kite.rh,v=>{const K=S1.kite;K.rh=v;if(v){const m=clamp(Math.round((K.a+(K.d2-K.a))/2*2)/2,1,6.5);K.a=m;K.d2=2*m;}redraw();});
+    M1.pb=btn("▶ "+M1.playLab(),()=>tween(()=>S1.t,v=>{S1.t=v;},S1.t<0.5?1:0,1500),"primary");
+    M1.tr=rng("Step",0,1,0.01,S1.t,v=>{animId++;S1.t=v;redraw();},v=>Math.round(v*100)+"%");
+    chk("Snap to grid",S1.snap,v=>{S1.snap=v;});
+  },
+  sync(){ if(M1.tr)M1.tr.set(S1.t); if(M1.pb)M1.pb.textContent=S1.t>0.5?"↺ Put it back":"▶ "+M1.playLab(); },
+  draw(){
+    const g=root(); gridLines(g,S1.mode==="kite"?UK:U1,S1.mode==="kite"?OK[0]:O1[0],S1.mode==="kite"?OK[1]:O1[1]);
+    M1["d_"+S1.mode](g);
+  },
+  d_para(g){
+    const {b,h,s}=S1.para, t=S1.t;
+    let piece,rest,cx;
+    if(s>=0){piece=[[0,0],[s,0],[s,h]];rest=[[s,0],[b,0],[b+s,h],[s,h]];cx=s;}
+    else{piece=[[0,0],[0,h],[s,h]];rest=[[0,0],[b,0],[b+s,h],[0,h]];cx=0;}
+    const sh=t*b;
+    if(t>0.001)P(g,[[0,0],[b,0],[b+s,h],[s,h]].map(q=>u1(q[0],q[1])),{class:"ghost-s"});
+    fillP(g,rest.map(q=>u1(q[0],q[1])),BLUE,.2);
+    if(Math.abs(s)>1e-9)fillP(g,piece.map(q=>u1(q[0]+sh,q[1])),ORANGE,.3);
+    const c0=u1(cx,0),c1=u1(cx,h);
+    Ln(g,c0,c1,"aux"); rtMark(g,c0,[1,0],[0,-1],12);
+    T(g,c0[0]+10,(c0[1]+c1[1])/2,"h = "+fmt(h),{a:"start",c:BLUE});
+    dimLine(g,u1(0,0),u1(b,0),"b = "+fmt(b),20);
+    if(Math.abs(s)>0.05&&t<0.5){const L=hyp(s,h), m=u1(s/2,h/2);
+      T(g,m[0]-h/L*30,m[1]-s/L*30,"≈ "+fmt(L),{cls:"sm",c:"#6B7690"});}
+    if(t>0.98)T(g,u1(cx+b/2,h)[0],u1(0,h)[1]-18,"rectangle: same b, same h",{cls:"cap"});
+    banner(g,"A = b · h = "+fmt(b)+" · "+fmt(h)+" = "+fmt(b*h)+" square units");
+    grab(g,u1(b,0),"pB"); grab(g,u1(s,h),"pD");
+  },
+  d_tri(g){
+    const {b,h,s}=S1.tri, t=S1.t, M=[(b+s)/2,h/2], th=PI*t, c=Math.cos(th), sn=Math.sin(th);
+    const rot=q=>[M[0]+(q[0]-M[0])*c-(q[1]-M[1])*sn, M[1]+(q[0]-M[0])*sn+(q[1]-M[1])*c];
+    const A=[0,0],B=[b,0],C=[s,h];
+    if(t>0.001)fillP(g,[A,B,C].map(rot).map(q=>u1(q[0],q[1])),VIOLET,.18,{"stroke-dasharray":"7 5"});
+    fillP(g,[A,B,C].map(q=>u1(q[0],q[1])),BLUE,.24);
+    const f=u1(s,0);
+    if(s<0)Ln(g,f,u1(0,0),"ghost-s"); if(s>b)Ln(g,u1(b,0),f,"ghost-s");
+    if(Math.abs(s)>1e-9) {Ln(g,f,u1(s,h),"aux"); rtMark(g,f,[s<b?1:-1,0],[0,-1],12);}
+    T(g,f[0]+(s<b?-10:10),u1(0,h/2)[1],"h = "+fmt(h),{a:s<b?"end":"start",c:BLUE});
+    dimLine(g,u1(0,0),u1(b,0),"b = "+fmt(b),20);
+    if(t>0.98){const m=u1(b+s,h);T(g,m[0]+6,m[1]-16,"copy",{cls:"cap",a:"start"});
+      banner(g,"parallelogram b·h = "+fmt(b*h)+"  →  triangle = ½ of it = "+fmt(b*h/2),58);}
+    banner(g,"A = ½ · b · h = ½ · "+fmt(b)+" · "+fmt(h)+" = "+fmt(b*h/2)+" square units");
+    grab(g,u1(b,0),"tB"); grab(g,u1(s,h),"tC");
+  },
+  d_trap(g){
+    const Z=S1.trap, {b1,b2,h,s}=Z, t=S1.t;
+    const A=[0,0],B=[b1,0],C=[s+b2,h],D=[s,h];
+    let hx; if(s>=0&&s<=b1)hx=s; else if(s+b2>=0&&s+b2<=b1)hx=s+b2; else hx=s;
+    if(Z.view==="split"){
+      const up=t*1.4;
+      fillP(g,[A,B,D].map(q=>u1(q[0],q[1])),BLUE,.24);
+      fillP(g,[B,C,D].map(q=>u1(q[0],q[1]+up)),ORANGE,.26);
+      if(t<0.02)Ln(g,u1(b1,0),u1(s,h),"aux",{stroke:INK});
+      const cA=centroid([A,B,D]), cB=centroid([B,C,D]);
+      T(g,u1(cA[0],cA[1])[0],u1(cA[0],cA[1])[1],"½·"+fmt(b1)+"·"+fmt(h),{cls:"sm",c:BLUE});
+      T(g,u1(cB[0],cB[1]+up)[0],u1(cB[0],cB[1]+up)[1],"½·"+fmt(b2)+"·"+fmt(h),{cls:"sm",c:ORANGE});
+      dimLine(g,u1(s,h+up),u1(s+b2,h+up),"b₂ = "+fmt(b2),-20);
+    } else {
+      const M=[(B[0]+C[0])/2,(B[1]+C[1])/2], th=PI*t, c=Math.cos(th), sn=Math.sin(th);
+      const rot=q=>[M[0]+(q[0]-M[0])*c-(q[1]-M[1])*sn, M[1]+(q[0]-M[0])*sn+(q[1]-M[1])*c];
+      if(t>0.001)fillP(g,[A,B,C,D].map(rot).map(q=>u1(q[0],q[1])),VIOLET,.18,{"stroke-dasharray":"7 5"});
+      fillP(g,[A,B,C,D].map(q=>u1(q[0],q[1])),BLUE,.24);
+      dimLine(g,u1(s,h),u1(s+b2,h),"b₂ = "+fmt(b2),-20);
+      if(t>0.98){dimLine(g,u1(b1,0),u1(b1+b2,0),"b₂",20,{c:VIOLET});
+        dimLine(g,u1(s+b2,h),u1(s+b2+b1,h),"b₁",-20,{c:VIOLET});
+        banner(g,"parallelogram (b₁+b₂)·h = "+fmt((b1+b2)*h)+"  →  half = "+fmt((b1+b2)*h/2),58);}
+    }
+    const f=u1(hx,0);
+    if(hx<0)Ln(g,f,u1(0,0),"ghost-s"); if(hx>b1)Ln(g,u1(b1,0),f,"ghost-s");
+    Ln(g,f,u1(hx,h),"aux",{stroke:INK}); rtMark(g,f,[hx<b1?1:-1,0],[0,-1],11);
+    T(g,f[0]+(hx<b1/2?10:-10),u1(0,h/2)[1],"h = "+fmt(h),{a:hx<b1/2?"start":"end",c:INK});
+    dimLine(g,u1(0,0),u1(b1,0),"b₁ = "+fmt(b1),20);
+    banner(g,"A = ½(b₁ + b₂)h = ½("+fmt(b1)+" + "+fmt(b2)+")("+fmt(h)+") = "+fmt((b1+b2)*h/2)+" square units");
+    grab(g,u1(b1,0),"zB"); grab(g,u1(s+b2,h),"zC"); grab(g,u1(s,h),"zD");
+  },
+  d_kite(g){
+    const K=S1.kite, d1=K.d1, a=K.a, c=K.d2-K.a, w=d1/2, t=S1.t;
+    const Tp=[0,a],R=[w,0],Bt=[0,-c],Lf=[-w,0],X=[0,0];
+    const inner=[[Tp,X,R,BLUE],[R,X,Bt,ORANGE],[Bt,X,Lf,GREEN],[Lf,X,Tp,VIOLET]];
+    const corners=[[w,a],[w,-c],[-w,-c],[-w,a]];
+    const rect=corners.map(q=>uk(q[0],q[1]));
+    P(g,[rect[3],rect[0],rect[1],rect[2]],{class:"ghost-s"});
+    inner.forEach((tr,i)=>{
+      const cc=corners[i], m=[lerp(cc[0],0,t),lerp(cc[1],0,t)];
+      const oth=i===0?[Tp,m,R]:i===1?[R,m,Bt]:i===2?[Bt,m,Lf]:[Lf,m,Tp];
+      fillP(g,oth.map(q=>uk(q[0],q[1])),tr[3],.10,{"stroke-dasharray":"5 4","stroke-width":1.6});
+    });
+    inner.forEach(tr=>fillP(g,[tr[0],tr[1],tr[2]].map(q=>uk(q[0],q[1])),tr[3],.28,{"stroke-width":1.4}));
+    P(g,[Tp,R,Bt,Lf].map(q=>uk(q[0],q[1])),{fill:"none",stroke:INK,"stroke-width":3,"stroke-linejoin":"round"});
+    Ln(g,uk(0,a),uk(0,-c),"thin"); Ln(g,uk(-w,0),uk(w,0),"thin");
+    rtMark(g,uk(0,0),[1,0],[0,-1],11);
+    T(g,uk(w/2,0)[0],uk(0,0)[1]-13,"d₁ = "+fmt(d1),{cls:"sm",c:INK});
+    T(g,uk(0,0)[0]+8,uk(0,-c/2)[1],"d₂ = "+fmt(K.d2),{cls:"sm",c:INK,a:"start"});
+    T(g,uk(w,-c)[0],uk(w,-c)[1]+16,"rectangle d₁ × d₂ = "+fmt(d1*K.d2),{cls:"sm",c:"#6B7690",a:"end"});
+    banner(g,"A = ½ · d₁ · d₂ = ½ · "+fmt(d1)+" · "+fmt(K.d2)+" = "+fmt(d1*K.d2/2)+" square units");
+    grab(g,uk(w,0),"kR"); grab(g,uk(0,a),"kT"); grab(g,uk(0,-c),"kB");
+  },
+  drag(id,p){
+    const q=pu1(p);
+    if(id[0]==="p"){const Z=S1.para;
+      if(id==="pB"){Z.b=clamp(sn1(q[0]),2,12);}
+      else {Z.h=clamp(sn1(q[1]),1,11); Z.s=sn1(q[0]);}
+      Z.s=clamp(Z.s,Math.max(-3,-(Z.b-1)),Math.min(Z.b-1,19-Z.b));}
+    else if(id[0]==="t"){const Z=S1.tri;
+      if(id==="tB")Z.b=clamp(sn1(q[0]),2,Math.min(12,19-Math.max(Z.s,0)));
+      else{Z.h=clamp(sn1(q[1]),1,11);Z.s=clamp(sn1(q[0]),-3,19-Z.b);}}
+    else if(id[0]==="z"){const Z=S1.trap, sp=()=>Math.max(Z.s,0);
+      if(id==="zB")Z.b1=clamp(sn1(q[0]),2,Math.min(10,19-Z.b2-sp()));
+      else if(id==="zC"){Z.h=clamp(sn1(q[1]),1,10);Z.b2=clamp(sn1(q[0]-Z.s),1,Math.min(8,19-Z.b1-sp()));}
+      else {Z.h=clamp(sn1(q[1]),1,10);Z.s=clamp(sn1(q[0]),-3,Math.min(8,19-Z.b1-Z.b2));}}
+    else {const K=S1.kite, k=puk(p);
+      if(id==="kR")K.d1=2*clamp(sn1h(k[0]),1,12);
+      else if(id==="kT"){const a=clamp(sn1(k[1]),1,6.5); if(K.rh){K.a=a;K.d2=2*a;} else {const c=K.d2-K.a; K.a=a; K.d2=a+c;}}
+      else {const c=clamp(sn1(-k[1]),1,K.rh?6.5:7); if(K.rh){K.a=c;K.d2=2*c;} else K.d2=K.a+c;}}
+  },
+  panel(){
+    const m=S1.mode; let h="";
+    if(m==="para"){const {b,h:hh,s}=S1.para, L=hyp(s,hh);
+      h+=panel("Measurements",rel(BLUE,"base b","",fmt(b))+rel(BLUE,"height h","perpendicular to the base",fmt(hh))+rel("#8A94B0","slanted side","not used for area",fmt(L))+rel(ORANGE,"area","b · h",fmt(b*hh))+rel(GREEN,"perimeter","2b + 2·(slanted side)",fmt(2*b+2*L)));
+      h+=panel("Why it works",pad(`<p>Cut along the <span class="term">height</span> — straight down from a top vertex to the base. Slide the cut-off right triangle to the other end. It fits exactly, because opposite sides of a parallelogram are parallel and congruent.</p>
+        <p>Nothing was added or thrown away, so the area is unchanged: a rigid motion preserves area, and the whole is the sum of its parts. The new shape is a rectangle with the <b>same base and the same height</b>.</p>
+        <div class="eq">A = b · h
+  = ${fmt(b)} · ${fmt(hh)}
+  = ${fmt(b*hh)} square units<small>The slanted side (≈ ${fmt(L)}) never appears in the formula.</small></div>`));
+      h+=panel("Try this",pad(`<p>Keep the height at ${fmt(hh)} and drag the top-left corner sideways so the parallelogram leans more and more. The slanted side gets longer and the perimeter grows — what happens to the area? Press <b>Cut &amp; slide</b> at a steep lean to see why.</p>`));
+    } else if(m==="tri"){const {b,h:hh,s}=S1.tri;
+      const AC=hyp(s,hh), BC=hyp(b-s,hh), kind=(s<0||s>b)?"obtuse — the height falls outside":Math.abs(s)<1e-9||Math.abs(s-b)<1e-9?"right triangle — a leg is the height":"height falls inside";
+      h+=panel("Measurements",rel(BLUE,"base b","",fmt(b))+rel(BLUE,"height h",kind,fmt(hh))+rel("#8A94B0","other sides","not used for area",fmt(AC)+", "+fmt(BC))+rel(VIOLET,"parallelogram","b · h",fmt(b*hh))+rel(ORANGE,"triangle area","½ · b · h",fmt(b*hh/2)));
+      h+=panel("Why it works",pad(`<p>Rotate a copy of the triangle 180° about the <span class="term">midpoint</span> of one side. The copy and the original fit together into a parallelogram with the same base b and height h.</p>
+        <p>Two congruent triangles make the parallelogram, so each one is exactly half of it.</p>
+        <div class="eq">A = ½ · b · h
+  = ½ · ${fmt(b)} · ${fmt(hh)}
+  = ${fmt(b*hh/2)} square units</div>
+        <p>Drag the top vertex past the end of the base: the height falls <b>outside</b> the triangle. It is still the perpendicular distance from the vertex to the line containing the base.</p>`));
+      h+=panel("Try this",pad(`<p>Keep b and h fixed and drag the top vertex left and right along the same horizontal line. Which of those triangles has the greatest area? Explain with the formula.</p>`));
+    } else if(m==="trap"){const Z=S1.trap,{b1,b2,h:hh}=Z, A=(b1+b2)*hh/2;
+      h+=panel("Measurements",rel(BLUE,"bottom base b₁","",fmt(b1))+rel(ORANGE,"top base b₂","",fmt(b2))+rel(INK,"height h","distance between the parallel bases",fmt(hh))+rel(GREEN,"area","½(b₁ + b₂)h",fmt(A)));
+      h+=panel("Why it works",pad(Z.view==="split"?`<p>Draw a <span class="term">diagonal</span>. It cuts the trapezoid into two triangles with the <b>same height</b> h (the bases are parallel). One triangle has base b₁, the other has base b₂.</p>
+        <div class="eq">A = ½·b₁·h + ½·b₂·h
+  = ½(b₁ + b₂)h
+  = ½(${fmt(b1)} + ${fmt(b2)})(${fmt(hh)})
+  = ${fmt(A)} square units</div><p>Press <b>Pull apart</b> to separate the two triangles.</p>`:
+        `<p>Rotate a copy 180° about the midpoint of a leg. The copy turns upside down and the two trapezoids form a <span class="term">parallelogram</span> whose base is b₁ + b₂ and whose height is still h.</p>
+        <div class="eq">parallelogram = (b₁ + b₂)·h = ${fmt((b1+b2)*hh)}
+trapezoid     = ½(b₁ + b₂)h
+              = ½(${fmt(b1)} + ${fmt(b2)})(${fmt(hh)}) = ${fmt(A)}</div>`));
+      h+=panel("Try this",pad(`<p>Drag the top base until b₂ = b₁. What shape is it now, and does the trapezoid formula still give the right area? Then shrink b₂ toward 1 — which shape is the trapezoid becoming, and what does the formula turn into?</p>`));
+    } else {const K=S1.kite, A=K.d1*K.d2/2, c=K.d2-K.a, w=K.d1/2;
+      const side1=hyp(w,K.a), side2=hyp(w,c), isRh=Math.abs(K.a-c)<1e-9, isSq=isRh&&Math.abs(w-K.a)<1e-9;
+      h+=panel("Measurements",rel(INK,"diagonal d₁","",fmt(K.d1))+rel(INK,"diagonal d₂","split "+fmt(K.a)+" + "+fmt(c),fmt(K.d2))+rel("#8A94B0","sides",isSq?"a square!":isRh?"all four congruent — a rhombus":"two pairs of adjacent congruent sides",isRh?fmt(side1)+" ×4":fmt(side1)+", "+fmt(side2))+rel(VIOLET,"rectangle","d₁ · d₂",fmt(K.d1*K.d2))+rel(ORANGE,"area","½ · d₁ · d₂",fmt(A)));
+      h+=panel("Why it works",pad(`<p>The diagonals of a kite are <span class="term">perpendicular</span>, and they cut it into four right triangles. Draw the rectangle around the kite: its sides are d₁ and d₂.</p>
+        <p>Every right triangle inside the kite has a congruent twin outside it (same color). So the kite is exactly <b>half</b> the rectangle. Press <b>Fold corners in</b> to watch the outside triangles land on the inside ones.</p>
+        <div class="eq">A = ½ · d₁ · d₂
+  = ½ · ${fmt(K.d1)} · ${fmt(K.d2)}
+  = ${fmt(A)} square units<small>A rhombus is a kite whose diagonals bisect each other, so the same formula works. For a square, d₁ = d₂.</small></div>`));
+      h+=panel("Try this",pad(`<p>Make d₁ = 6 and d₂ = 8 and predict the area before you look. Then find a <b>different</b> kite with exactly the same area. Turn on <b>Rhombus</b>: can you also make a square with that area?</p>`));
+    }
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ TAB 2 · circle ══════════════════════ */
+const S2={mode:"sectors",n:16,r:4,t:0,pn:6,pr:6,cn:6,cr:4};
+const U2=25;
+const M2={
+  tab:"Area of a circle", lesson:"G-GMD.A.1", accent:"var(--cyan)",
+  aria:"Circle cut into sectors and polygons",
+  title(){return {sectors:"Slice it, rearrange it: A = πr²",poly:"Inscribed polygons approach the circle",circ:"Circumference as a limit of perimeters"}[S2.mode];},
+  bar(){
+    segCtl([["sectors","Sectors → rectangle"],["poly","Inscribed polygons"],["circ","Circumference"]],S2.mode,k=>{S2.mode=k;render();});
+    const m=S2.mode;
+    if(m==="sectors"){
+      M2.nr=rng("n",4,64,2,S2.n,v=>{S2.n=v;redraw();});
+      M2.pb=btn("▶ Rearrange",()=>tween(()=>S2.t,v=>{S2.t=v;},S2.t<0.5?1:0,1700),"primary");
+      M2.tr=rng("Step",0,1,0.01,S2.t,v=>{animId++;S2.t=v;redraw();},v=>Math.round(v*100)+"%");
+    } else {
+      const key=m==="poly"?"pn":"cn";
+      M2.nr=rng("n sides",3,64,1,S2[key],v=>{S2[key]=v;redraw();});
+      btn("n × 2",()=>{S2[key]=Math.min(64,S2[key]*2);M2.nr.set(S2[key]);redraw();});
+    }
+    spacer("drag the amber handle to change r");
+  },
+  sync(){ if(S2.mode==="sectors"){ if(M2.tr)M2.tr.set(S2.t); if(M2.pb)M2.pb.textContent=S2.t>0.5?"↺ Back to the circle":"▶ Rearrange"; } },
+  draw(){
+    const g=root(); M2["d_"+S2.mode](g);
+  },
+  d_sectors(g){
+    const n=S2.n, r=S2.r, R=r*U2, w=2*PI/n, t=ease(clamp(S2.t,0,1)), c=[150,165];
+    const hc=R*Math.sin(w/2), base=418, x0=470-(n+1)*hc/2, topY=base-R*Math.cos(w/2);
+    if(S2.t>0.001)E("circle",{cx:c[0],cy:c[1],r:R,class:"ghost-s"},g);
+    for(let k=0;k<n;k++){
+      let j,fb,ax,ay;
+      if(k%2===0){j=n/2-1-k/2;fb=PI/2;ay=base;} else {j=n/2+(k-1)/2;fb=3*PI/2;ay=topY;}
+      ax=x0+hc+k*hc;
+      const th=(j+0.5)*w, bis=lerp(th,fb,t), apx=lerp(c[0],ax,t), apy=lerp(c[1],ay,t);
+      const e1=[apx+R*Math.cos(bis-w/2),apy-R*Math.sin(bis-w/2)], e2=[apx+R*Math.cos(bis+w/2),apy-R*Math.sin(bis+w/2)];
+      const top=j<n/2, col=top?BLUE:ORANGE;
+      E("path",{d:`M${apx.toFixed(2)} ${apy.toFixed(2)} L${e1[0].toFixed(2)} ${e1[1].toFixed(2)} A${R} ${R} 0 0 0 ${e2[0].toFixed(2)} ${e2[1].toFixed(2)} Z`,
+        fill:col,"fill-opacity":(j%2? .5:.3),stroke:col,"stroke-width":1.2,"stroke-linejoin":"round"},g);
+    }
+    if(S2.t<0.02){
+      E("circle",{cx:c[0],cy:c[1],r:R,fill:"none",stroke:INK,"stroke-width":2.6},g);
+      Ln(g,c,[c[0]+R,c[1]],"line",{"stroke-width":2.2});
+      T(g,c[0]+R/2,c[1]-13,"r = "+fmt(r),{cls:"sm"});
+      T(g,c[0],c[1]-R-16,"top half",{cls:"cap",c:BLUE}); T(g,c[0],c[1]+R+18,"bottom half",{cls:"cap",c:ORANGE});
+    }
+    dot(g,c,3.5);
+    if(S2.t>0.97){
+      const xe=x0+(n+1)*hc;
+      dimLine(g,[x0+hc/2,base-R],[xe-hc/2,base-R],"½ · 2πr = πr ≈ "+fmt(PI*r,2),-14,{c:BLUE});
+      dimLine(g,[x0-4,base],[x0-4,base-R],"r",-16,{c:INK});
+      T(g,470,base-R-48,"≈ rectangle πr × r",{cls:"cap"});
+    }
+    banner(g,"A ≈ πr · r = π("+fmt(r)+")² ≈ "+fmt(PI*r*r,2)+" square units");
+    T(g,682,62,"n = "+n+" sectors",{a:"end",cls:"num",c:INK});
+    grab(g,[c[0]+R,c[1]],"r");
+  },
+  plot(g,box,yr,series,curN,ref,refLab,ylab){
+    E("rect",{x:box.x,y:box.y,width:box.w,height:box.h,fill:"#fff",stroke:"#C9D4EA","stroke-width":1.2,rx:6},g);
+    const X=n=>box.x+(n-3)/61*box.w, Y=v=>box.y+box.h-(clamp(v,yr[0],yr[1])-yr[0])/(yr[1]-yr[0])*box.h;
+    Ln(g,[box.x,Y(ref)],[box.x+box.w,Y(ref)],"",{stroke:GREEN,"stroke-width":1.6,"stroke-dasharray":"6 4"});
+    T(g,box.x+box.w-4,Y(ref)-11,refLab,{cls:"sm",c:GREEN,a:"end"});
+    [3,16,32,48,64].forEach(n=>{Ln(g,[X(n),box.y+box.h],[X(n),box.y+box.h+5],"thin");T(g,X(n),box.y+box.h+16,String(n),{cls:"sm",size:11.5});});
+    [yr[0],yr[1]].forEach(v=>T(g,box.x-5,Y(v),fmt(v,2),{cls:"sm",size:11.5,a:"end"}));
+    T(g,box.x+box.w/2,box.y+box.h+33,"number of sides n",{cls:"cap",size:13});
+    T(g,box.x,box.y-14,ylab,{cls:"sm",a:"start"});
+    series.forEach(s=>{const pts=[];for(let n=3;n<=64;n++)pts.push([X(n),Y(s.f(n))]);
+      E("polyline",{points:ptsAttr(pts),fill:"none",stroke:s.c,"stroke-width":1.8},g);
+      const cp=[X(curN),Y(s.f(curN))]; E("circle",{cx:cp[0],cy:cp[1],r:5.5,fill:s.c,stroke:"#fff","stroke-width":2},g);
+      T(g,cp[0]+(curN>40?-8:8),cp[1]+(s.lo||-14),fmt(s.f(curN),s.d||3),{cls:"sm",c:s.c,a:curN>40?"end":"start"});});
+  },
+  d_poly(g){
+    const n=S2.pn, r=S2.pr, R=r*U2, c=[215,232];
+    E("circle",{cx:c[0],cy:c[1],r:R,fill:GREEN,"fill-opacity":.07,stroke:GREEN,"stroke-width":2.2},g);
+    const V=[];for(let i=0;i<n;i++){const a=PI/2+2*PI*i/n;V.push([c[0]+R*Math.cos(a),c[1]-R*Math.sin(a)]);}
+    for(let i=0;i<n;i++)fillP(g,[c,V[i],V[(i+1)%n]],BLUE,i%2?.30:.16,{"stroke-width":1.2});
+    P(g,V,{fill:"none",stroke:INK,"stroke-width":2.4,"stroke-linejoin":"round"});
+    const mid=[(V[0][0]+V[1][0])/2,(V[0][1]+V[1][1])/2];
+    Ln(g,c,mid,"aux",{stroke:ORANGE,"stroke-width":2.4});
+    const ux=(mid[0]-c[0])/(hyp(mid[0]-c[0],mid[1]-c[1])||1), uy=(mid[1]-c[1])/(hyp(mid[0]-c[0],mid[1]-c[1])||1);
+    if(n<=24){rtMark(g,mid,[-ux,-uy],[V[0][0]-mid[0],V[0][1]-mid[1]].map(v=>v/(hyp(V[0][0]-mid[0],V[0][1]-mid[1])||1)),9);
+      T(g,(c[0]+mid[0])/2+uy*14,(c[1]+mid[1])/2-ux*14,"a",{cls:"num",c:ORANGE});}
+    Ln(g,c,[c[0]+R,c[1]],"thin"); T(g,c[0]+R*0.6,c[1]+13,"r = "+fmt(r),{cls:"sm"});
+    dot(g,c,3.5);
+    const ap=r*Math.cos(PI/n), sd=2*r*Math.sin(PI/n), A=0.5*n*sd*ap;
+    banner(g,"A(n-gon) = ½·a·P = "+fmt(A,2)+"   πr² = "+fmt(PI*r*r,2));
+    M2.plot(g,{x:478,y:78,w:200,h:300},[0.4,1.0],[{f:k=>k*Math.sin(2*PI/k)/(2*PI),c:BLUE,lo:16}],n,1,"πr² (100%)","Area ÷ πr²");
+    grab(g,[c[0]+R,c[1]],"r");
+  },
+  d_circ(g){
+    const n=S2.cn, r=S2.cr, R=r*U2, c=[215,240];
+    const Ro=R/Math.cos(PI/n);
+    const Vi=[],Vo=[];for(let i=0;i<n;i++){const a=PI/2+2*PI*i/n+PI/n;Vi.push([c[0]+R*Math.cos(a),c[1]-R*Math.sin(a)]);
+      const b=PI/2+2*PI*i/n; Vo.push([c[0]+Ro*Math.cos(b+PI/n),c[1]-Ro*Math.sin(b+PI/n)]);}
+    // circumscribed: vertices at angles offset so that sides are tangent: use same vertex angles as inscribed (scaled by 1/cos)
+    P(g,Vo,{fill:ORANGE,"fill-opacity":.08,stroke:ORANGE,"stroke-width":2.4,"stroke-linejoin":"round"});
+    E("circle",{cx:c[0],cy:c[1],r:R,fill:"#fff",stroke:GREEN,"stroke-width":2.6},g);
+    P(g,Vi,{fill:BLUE,"fill-opacity":.12,stroke:BLUE,"stroke-width":2.4,"stroke-linejoin":"round"});
+    Ln(g,c,[c[0]+R,c[1]],"thin"); T(g,c[0]+R*0.55,c[1]+13,"r = "+fmt(r),{cls:"sm"});
+    dot(g,c,3.5);
+    const Pi=2*n*r*Math.sin(PI/n), Po=2*n*r*Math.tan(PI/n);
+    banner(g,fmt(Pi,2)+" < C = 2πr ≈ "+fmt(2*PI*r,2)+" < "+fmt(Po,2));
+    T(g,18,58,"inside: inscribed",{cls:"sm",c:BLUE,a:"start"}); T(g,160,58,"outside: circumscribed",{cls:"sm",c:ORANGE,a:"start"});
+    M2.plot(g,{x:478,y:78,w:200,h:300},[2.5,5.3],[{f:k=>k*Math.sin(PI/k),c:BLUE,lo:16,d:4},{f:k=>k*Math.tan(PI/k),c:ORANGE,lo:-14,d:4}],n,PI,"π ≈ 3.1416","Perimeter ÷ diameter");
+    grab(g,[c[0]+R,c[1]],"r");
+  },
+  drag(id,p){
+    if(S2.mode==="sectors"){const c=[150,165]; S2.r=clamp(Math.round(hyp(p[0]-c[0],p[1]-c[1])/U2*2)/2,2,4);}
+    else if(S2.mode==="poly"){const c=[215,232]; S2.pr=clamp(Math.round(hyp(p[0]-c[0],p[1]-c[1])/U2*2)/2,2,8);}
+    else {const c=[215,240]; S2.cr=clamp(Math.round(hyp(p[0]-c[0],p[1]-c[1])/U2*2)/2,2,4.5);}
+  },
+  panel(){
+    const m=S2.mode; let h="";
+    if(m==="sectors"){const n=S2.n,r=S2.r;
+      const rows=[4,8,16,32,64]; if(rows.indexOf(n)<0){rows.push(n);rows.sort((a,b)=>a-b);}
+      let tb=`<div class="tblwrap"><table class="tbl"><tr><th>n</th><th>lean of ends</th><th>bump height</th><th>wavy edge</th></tr>`;
+      rows.forEach(k=>{tb+=`<tr class="${k===n?"hi":""}"><td>${k}</td><td>${fmt(r*Math.sin(PI/k),3)}</td><td>${fmt(r*(1-Math.cos(PI/k)),3)}</td><td>${fmt(PI*r,3)}</td></tr>`;});
+      tb+=`<tr><td>∞</td><td>0</td><td>0</td><td>πr</td></tr></table></div>`;
+      h+=panel("Why it works",pad(`<p>Cut the circle into n equal <span class="term">sectors</span> and line them up, alternating point-down and point-up. The top half's arcs form the top edge; the bottom half's arcs form the bottom edge.</p>
+        <p>Each wavy edge is half the circumference: ½ · 2πr = <b>πr</b>. The height of the shape is the radius <b>r</b>. The pieces are the same pieces, so the area is still the circle's area.</p>
+        <div class="eq">A ≈ (½ · C) · r
+  = πr · r = πr²
+  = π(${fmt(r)})² ≈ ${fmt(PI*r*r,2)}</div>`));
+      h+=panel("The limit argument",pad(`<p>For small n the shape is lumpy and leans. As n grows, the slanted ends stand up and the bumps flatten — both shrink toward 0, while the wavy edge stays exactly πr. In the <b>limit</b> the shape <i>is</i> a rectangle πr by r.</p>`)+tb);
+      h+=panel("Try this",pad(`<p>Set n = 4 and press <b>Rearrange</b>: it barely looks like a parallelogram. Now try n = 64. Read the table: how big must n be before the bumps are less than 0.01 tall for this radius?</p>`));
+    } else if(m==="poly"){const n=S2.pn,r=S2.pr, ap=r*Math.cos(PI/n), sd=2*r*Math.sin(PI/n), Pm=n*sd, A=ap*Pm/2, C=PI*r*r;
+      const rows=[3,4,5,6,8,12,24,48,96,1000]; if(rows.indexOf(n)<0){rows.push(n);rows.sort((a,b)=>a-b);}
+      let tb=`<div class="tblwrap"><table class="tbl"><tr><th>n</th><th>area</th><th>% of πr²</th></tr>`;
+      rows.forEach(k=>{const a=0.5*k*r*r*Math.sin(2*PI/k);tb+=`<tr class="${k===n?"hi":""}"><td>${k}</td><td>${fmt(a,3)}</td><td>${fmt(100*a/C,2)}%</td></tr>`;});
+      tb+=`<tr><td>circle</td><td>${fmt(C,3)}</td><td>100%</td></tr></table></div>`;
+      h+=panel("Why it works",pad(`<p>A regular n-gon inscribed in the circle splits into n congruent isosceles triangles meeting at the center. Each has base s (a side) and height a (the <span class="term">apothem</span>), so the polygon's area is n · ½ · s · a = ½ · a · P.</p>
+        <div class="eq">s = 2r·sin(180°/n) = ${fmt(sd,3)}
+a = r·cos(180°/n) = ${fmt(ap,3)}
+P = n·s = ${fmt(Pm,3)}
+A = ½·a·P = ${fmt(A,3)}   (${fmt(100*A/C,2)}% of πr²)</div>
+        <p>As n grows, a → r and P → 2πr, so ½·a·P → ½ · r · 2πr = <b>πr²</b>.</p>`));
+      h+=panel("Live table · r = "+fmt(r),tb);
+      h+=panel("Try this",pad(`<p>How many sides does the polygon need before its area is within 1% of the circle's? Within 0.1%? Does your answer change if you drag r bigger? Why not?</p>`));
+    } else {const n=S2.cn,r=S2.cr, Pi=2*n*r*Math.sin(PI/n), Po=2*n*r*Math.tan(PI/n);
+      const rows=[6,12,24,48,96,1000]; if(rows.indexOf(n)<0){rows.push(n);rows.sort((a,b)=>a-b);}
+      let tb=`<div class="tblwrap"><table class="tbl"><tr><th>n</th><th>P(in) ÷ d</th><th>P(out) ÷ d</th></tr>`;
+      rows.forEach(k=>{tb+=`<tr class="${k===n?"hi":""}"><td>${k}</td><td>${(k*Math.sin(PI/k)).toFixed(5)}</td><td>${(k*Math.tan(PI/k)).toFixed(5)}</td></tr>`;});
+      tb+=`<tr><td>π</td><td>${PI.toFixed(5)}</td><td>${PI.toFixed(5)}</td></tr></table></div>`;
+      h+=panel("Why it works",pad(`<p>The circle is trapped between an <span class="term">inscribed</span> polygon (inside) and a <span class="term">circumscribed</span> polygon (outside). Its circumference must be longer than the inside perimeter and shorter than the outside one.</p>
+        <div class="eq">P(in)  = 2nr·sin(180°/n) = ${fmt(Pi,3)}
+C      = 2πr            ≈ ${fmt(2*PI*r,3)}
+P(out) = 2nr·tan(180°/n) = ${fmt(Po,3)}</div>
+        <p>Divide by the diameter and both perimeters squeeze in on the same number, <b>π ≈ 3.14159</b>. The ratio C ÷ d is the same for every circle (all circles are similar), so C = πd = 2πr.</p>`));
+      h+=panel("The squeeze",tb+pad(`<p>Archimedes used 96-gons to prove 3<sup>10</sup>⁄<sub>71</sub> &lt; π &lt; 3<sup>1</sup>⁄<sub>7</sub>.</p>`));
+      h+=panel("Try this",pad(`<p>Set n = 6. Why is the inscribed perimeter exactly 6r? (Hint: what kind of triangles make a regular hexagon?) Then double n until both perimeters agree to two decimal places.</p>`));
+    }
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ TAB 3 · coordinate area ══════════════════════ */
+const S3={pts:[[-6,-3],[5,-5],[7,2],[1,5],[-4,3]],method:"box",snap:true};
+const U3=32, O3=[350,230];
+const u3=(x,y)=>[O3[0]+x*U3,O3[1]-y*U3];
+const pu3=p=>[(p[0]-O3[0])/U3,(O3[1]-p[1])/U3];
+const NAMES="ABCDEFGH";
+function boxPieces(pts0){
+  const pts=signedArea(pts0)<0?pts0.slice().reverse():pts0.slice(), n=pts.length;
+  const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+  const xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);
+  const best=(f)=>{let bi=0;for(let i=1;i<n;i++)if(f(pts[i],pts[bi]))bi=i;return bi;};
+  const iR=best((a,b)=>a[0]>b[0]||(a[0]===b[0]&&a[1]>b[1]));
+  const iT=best((a,b)=>a[1]>b[1]||(a[1]===b[1]&&a[0]<b[0]));
+  const iL=best((a,b)=>a[0]<b[0]||(a[0]===b[0]&&a[1]<b[1]));
+  const iB=best((a,b)=>a[1]<b[1]||(a[1]===b[1]&&a[0]>b[0]));
+  const chains=[[iR,iT,[xmax,ymax]],[iT,iL,[xmin,ymax]],[iL,iB,[xmin,ymin]],[iB,iR,[xmax,ymin]]];
+  const pieces=[];
+  chains.forEach(([s,e,cn])=>{
+    let i=s, guard=0;
+    while(i!==e&&guard++<20){
+      const a=pts[i], b=pts[(i+1)%n];
+      if(Math.abs(a[1]-b[1])>1e-9){
+        const pA=Math.abs(a[0]-cn[0])<=Math.abs(b[0]-cn[0]);
+        const p=pA?a:b, q=pA?b:a;
+        if(Math.abs(a[0]-b[0])>1e-9){const w=Math.abs(a[0]-b[0]),h=Math.abs(a[1]-b[1]);
+          pieces.push({type:"tri",pts:[q,p,[p[0],q[1]]],w:w,h:h,area:w*h/2});}
+        if(Math.abs(p[0]-cn[0])>1e-9){const w=Math.abs(p[0]-cn[0]),h=Math.abs(a[1]-b[1]), x0=Math.min(p[0],cn[0]),y0=Math.min(a[1],b[1]);
+          pieces.push({type:"rect",pts:[[x0,y0],[x0+w,y0],[x0+w,y0+h],[x0,y0+h]],w:w,h:h,area:w*h});}
+      }
+      i=(i+1)%n;
+    }
+  });
+  return {xmin,xmax,ymin,ymax,W:xmax-xmin,H:ymax-ymin,pieces};
+}
+function randPoly(){
+  for(let tries=0;tries<400;tries++){
+    const n=rnd(3,6), angs=[]; for(let i=0;i<n;i++)angs.push(Math.random()*2*PI); angs.sort((a,b)=>a-b);
+    const pts=angs.map(a=>{const R=3+Math.random()*3.5;return [clamp(Math.round(R*Math.cos(a)*1.45),-9,9),clamp(Math.round(R*Math.sin(a)),-5,5)];});
+    if(!isSimple(pts)||!isConvex(pts,true))continue;
+    if(Math.abs(signedArea(pts))<10)continue;
+    return pts;
+  }
+  return [[-5,-3],[4,-4],[6,3],[-2,5]];
+}
+const M3={
+  tab:"Coordinate area", lesson:"G-GPE.B.7", accent:"var(--mint)",
+  aria:"Polygon on a coordinate grid",
+  title(){return {per:"Perimeter with the distance formula",box:"Area by box-and-subtract",shoe:"Area by the shoelace formula"}[S3.method];},
+  bar(){
+    segCtl([["per","Perimeter"],["box","Box & subtract"],["shoe","Shoelace"]],S3.method,k=>{S3.method=k;render();});
+    btn("+ Vertex",()=>{const p=S3.pts,n=p.length; if(n>=8)return; let bi=0,bl=-1;
+      for(let i=0;i<n;i++){const a=p[i],b=p[(i+1)%n],l=hyp(b[0]-a[0],b[1]-a[1]);if(l>bl){bl=l;bi=i;}}
+      const a=p[bi],b=p[(bi+1)%n]; let m=[(a[0]+b[0])/2,(a[1]+b[1])/2]; if(S3.snap)m=m.map(Math.round);
+      p.splice(bi+1,0,m); redraw();});
+    btn("− Vertex",()=>{if(S3.pts.length>3){S3.pts.pop();redraw();}});
+    btn("New polygon",()=>{S3.pts=randPoly();redraw();},"primary");
+    chk("Snap to grid",S3.snap,v=>{S3.snap=v;});
+  },
+  draw(){
+    const g=root(), pts=S3.pts, n=pts.length, px=pts.map(p=>u3(p[0],p[1]));
+    gridLines(g,U3,O3[0],O3[1]);
+    Ln(g,[0,O3[1]],[VW,O3[1]],"thin",{stroke:"#7D8AA8"}); Ln(g,[O3[0],0],[O3[0],VH],"thin",{stroke:"#7D8AA8"});
+    for(let x=-10;x<=10;x+=2){if(!x)continue;T(g,u3(x,0)[0],O3[1]+13,fmt(x,0),{cls:"sm",size:11,c:"#7D8AA8"});}
+    for(let y=-6;y<=6;y+=2){if(!y)continue;T(g,O3[0]-6,u3(0,y)[1],fmt(y,0),{cls:"sm",size:11,c:"#7D8AA8",a:"end"});}
+    const simple=isSimple(pts), convex=isConvex(pts,false);
+    const m=S3.method;
+    if(m==="box"&&simple){
+      const B=boxPieces(pts), r0=u3(B.xmin,B.ymax);
+      E("rect",{x:r0[0],y:r0[1],width:B.W*U3,height:B.H*U3,fill:"#FFF7E8",stroke:ORANGE,"stroke-width":2,"stroke-dasharray":"7 5"},g);
+      if(convex){ let ti=0;
+        B.pieces.forEach(pc=>{const pp=pc.pts.map(q=>u3(q[0],q[1])); const col=pc.type==="rect"?VIOLET:(ti++%2?PINK:ORANGE);
+          fillP(g,pp,col,.22,{"stroke-width":1.4}); const c=centroid(pc.type==="rect"?pp:pp);
+          if(pc.area>0.01&&(pc.w*U3>18&&pc.h*U3>14))T(g,c[0],c[1],fmt(pc.area),{cls:"sm",c:col,size:12});});
+      } else {
+        E("path",{d:"M"+ptsAttr([[r0[0],r0[1]],[r0[0]+B.W*U3,r0[1]],[r0[0]+B.W*U3,r0[1]+B.H*U3],[r0[0],r0[1]+B.H*U3]]).replace(/ /g," L")+" Z M"+ptsAttr(px).replace(/ /g," L")+" Z","fill-rule":"evenodd",fill:ORANGE,"fill-opacity":.18},g);
+      }
+      dimLine(g,u3(B.xmin,B.ymin),u3(B.xmax,B.ymin),fmt(B.W),14,{c:ORANGE,cls:"sm"});
+      dimLine(g,u3(B.xmax,B.ymax),u3(B.xmax,B.ymin),fmt(B.H),-14,{c:ORANGE,cls:"sm"});
+    }
+    P(g,px,{fill:simple?BLUE:RED,"fill-opacity":m==="box"?.16:.2,stroke:simple?BLUE:RED,"stroke-width":2.8,"stroke-linejoin":"round"});
+    if(m==="per"){
+      const labs=[];for(let i=0;i<n;i++){const a=pts[i],b=pts[(i+1)%n];labs.push(radical((b[0]-a[0])**2+(b[1]-a[1])**2));}
+      sideLabels(g,px,labs,{off:15,c:GREEN});
+    }
+    if(m==="shoe"){
+      const dir=signedArea(pts)>=0;
+      for(let i=0;i<n;i++){const a=px[i],b=px[(i+1)%n],mm=[(a[0]+b[0])/2,(a[1]+b[1])/2],L=hyp(b[0]-a[0],b[1]-a[1])||1,ux=(b[0]-a[0])/L,uy=(b[1]-a[1])/L;
+        P(g,[[mm[0]+ux*7,mm[1]+uy*7],[mm[0]-ux*5-uy*6,mm[1]-uy*5+ux*6],[mm[0]-ux*5+uy*6,mm[1]-uy*5-ux*6]],{fill:BLUE});}
+      T(g,682,26,dir?"order: counterclockwise":"order: clockwise",{cls:"sm",a:"end",c:BLUE});
+    }
+    const cc=centroid(px);
+    pts.forEach((p,i)=>{const q=px[i],dx=q[0]-cc[0],dy=q[1]-cc[1],L=hyp(dx,dy)||1;
+      const lx=q[0]+dx/L*24, ly=q[1]+dy/L*20;
+      T(g,lx,ly,NAMES[i]+"("+fmt(p[0])+", "+fmt(p[1])+")",{cls:"sm",c:INK,fit:true,a:Math.abs(dx/L)<0.35?"middle":(dx>0?"start":"end")});});
+    if(!simple)T(g,350,24,"Sides cross or touch — not a simple polygon",{cls:"num",c:RED});
+    else {const A=Math.abs(signedArea(pts)); banner(g,(m==="per"?"P ≈ "+fmt(perimeter(pts),2):"A = "+fmt(A)+" square units"),24);}
+    px.forEach((q,i)=>grab(g,q,"v"+i));
+  },
+  drag(id,p){const i=+id.slice(1), q=pu3(p);
+    let x=clamp(q[0],-10,10), y=clamp(q[1],-6.5,6.5);
+    if(S3.snap){x=Math.round(x);y=Math.round(y);} else {x=Math.round(x*10)/10;y=Math.round(y*10)/10;}
+    S3.pts[i]=[x,y];},
+  panel(){
+    const pts=S3.pts,n=pts.length, simple=isSimple(pts), convex=isConvex(pts,false), m=S3.method;
+    const sa=signedArea(pts), A=Math.abs(sa), Pm=perimeter(pts);
+    let h="";
+    if(!simple){h+=`<div class="panel"><h3>Not a simple polygon</h3><div class="verdict bad"><b>Two sides cross or a vertex repeats.</b> Area formulas need a simple polygon — one whose sides meet only at their endpoints. Drag a vertex to untangle it.</div></div>`;}
+    if(m==="per"){
+      let rows="";
+      for(let i=0;i<n;i++){const a=pts[i],b=pts[(i+1)%n],dx=b[0]-a[0],dy=b[1]-a[1],d2=dx*dx+dy*dy;
+        rows+=`${NAMES[i]}${NAMES[(i+1)%n]} = √(${fmt(dx)}² + ${fmt(dy)}²) = √${fmt(d2,2)}${Math.abs(Math.sqrt(d2)-Math.round(Math.sqrt(d2)))<1e-9?" = "+fmt(Math.sqrt(d2)):" ≈ "+fmt(Math.sqrt(d2),2)}\n`;}
+      h+=panel("Distance formula, side by side",pad(`<p>Each side is the hypotenuse of a right triangle with legs |Δx| and |Δy|. By the Pythagorean theorem:</p>
+        <div class="eq">d = √((x₂ − x₁)² + (y₂ − y₁)²)</div>
+        <div class="eq">${rows}P ≈ ${fmt(Pm,2)} units</div>`));
+    } else if(m==="box"){
+      if(simple&&convex){const B=boxPieces(pts); let rows="", sub=0;
+        B.pieces.forEach(pc=>{sub+=pc.area; rows+=pc.type==="tri"?`− ½·${fmt(pc.w)}·${fmt(pc.h)} = ${fmt(pc.area,2)}\n`:`− ${fmt(pc.w)}·${fmt(pc.h)} = ${fmt(pc.area,2)}   (rectangle)\n`;});
+        h+=panel("Box and subtract",pad(`<p>Draw the smallest <span class="term">bounding rectangle</span> with horizontal and vertical sides. The space between the box and the polygon breaks into right triangles (and sometimes rectangles) whose legs you can count on the grid.</p>
+          <div class="eq">box     = ${fmt(B.W)} · ${fmt(B.H)} = ${fmt(B.W*B.H,2)}
+${rows}area    = ${fmt(B.W*B.H,2)} − ${fmt(sub,2)} = ${fmt(B.W*B.H-sub,2)}</div>`));
+      } else if(simple){
+        h+=panel("Box and subtract",`<div class="note"><b>This polygon has a dent</b> (it is not convex), so the leftover region is not just corner triangles. You can still subtract — box ${fmt(boxPieces(pts).W*boxPieces(pts).H)} minus the shaded region — but the shoelace formula handles every simple polygon directly.</div>`);
+      }
+    } else {
+      let rows="", sum=0;
+      for(let i=0;i<n;i++){const a=pts[i],b=pts[(i+1)%n],t=a[0]*b[1]-b[0]*a[1];sum+=t;
+        rows+=`<tr><td>${NAMES[i]}→${NAMES[(i+1)%n]}</td><td>${fp(a[0])}${fp(b[1])} − ${fp(b[0])}${fp(a[1])}</td><td>${fmt(t,2)}</td></tr>`;}
+      h+=panel("Shoelace formula",pad(`<p>List the vertices in order around the polygon. For each side multiply "down-right" minus "up-right": x₁y₂ − x₂y₁. Add them up and take half the absolute value.</p>
+        <div class="eq">A = ½ |Σ (xᵢ·yᵢ₊₁ − xᵢ₊₁·yᵢ)|</div>`)+`<div class="tblwrap"><table class="tbl"><tr><th>side</th><th>xᵢyᵢ₊₁ − xᵢ₊₁yᵢ</th><th>term</th></tr>${rows}<tr class="hi"><td>sum</td><td></td><td>${fmt(sum,2)}</td></tr></table></div>`+
+        pad(`<div class="eq">A = ½ · |${fmt(sum,2)}| = ${fmt(Math.abs(sum)/2,2)}<small>A negative sum just means you went around clockwise.</small></div>`));
+    }
+    if(simple){let bx="—"; if(convex){const B=boxPieces(pts);let s=0;B.pieces.forEach(pc=>s+=pc.area);bx=fmt(B.W*B.H-s,2);}
+      h+=panel("Compare the methods",rel(ORANGE,"box & subtract",convex?"":"needs a convex polygon",bx)+rel(BLUE,"shoelace","",fmt(A,2))+rel(GREEN,"perimeter","distance formula",fmt(Pm,2))+
+        `<div class="verdict ${convex&&Math.abs(+bx.replace(/,/g,"")-A)<0.01?"good":"bad"}" style="${convex?"":"display:none"}">${convex&&Math.abs(+bx.replace(/,/g,"")-A)<0.01?"<b>They agree.</b> Two different methods, the same area — a good way to check your work.":"Check the pieces."}</div>`);}
+    h+=panel("Try this",pad(`<p>Make a triangle with vertices (−4, −2), (5, −2) and (1, 4). Predict its area with ½bh, then check with both methods. Next, drag one vertex inward to make a dent — which method still works?</p>`));
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ TAB 4 · scaling ══════════════════════ */
+const S4={shape:"tri",k:3,tile:true,tri:{b:3,s:1,h:2},rect:{w:3,h:2},para:{b:3,s:1,h:2}};
+const M4={
+  tab:"Scaling & area", lesson:"G-SRT.A.1 · G-MG.A.1", accent:"var(--magenta)",
+  aria:"Original figure and its scaled image",
+  title(){return "Scale lengths by k, area scales by k²";},
+  geo(){const k=S4.k, U=Math.min(28,80/k), Oi=[232,400], Oo=[232-Math.ceil(5+25/U)*U,400];
+    return {k,U,Oi,Oo,uo:(x,y)=>[Oo[0]+x*U,Oo[1]-y*U],ui:(x,y)=>[Oi[0]+x*U,Oi[1]-y*U]};},
+  pts(){const s=S4.shape;
+    if(s==="tri"){const t=S4.tri;return [[0,0],[t.b,0],[t.s,t.h]];}
+    if(s==="rect"){const r=S4.rect;return [[0,0],[r.w,0],[r.w,r.h],[0,r.h]];}
+    const p=S4.para;return [[0,0],[p.b,0],[p.b+p.s,p.h],[p.s,p.h]];},
+  bar(){
+    segCtl([["tri","Triangle"],["rect","Rectangle"],["para","Parallelogram"]],S4.shape,k=>{S4.shape=k;render();});
+    M4.kr=rng("k",0.5,4,0.25,S4.k,v=>{S4.k=v;redraw();},v=>fmt(v,2));
+    [1,2,3,4].forEach(k=>btn("k = "+k,()=>{S4.k=k;M4.kr.set(k);redraw();}));
+    chk("Tile with copies",S4.tile,v=>{S4.tile=v;redraw();});
+  },
+  draw(){
+    const g=root(), G=M4.geo(), {k,U}=G, pts=M4.pts();
+    gridLines(g,U,G.Oi[0],G.Oi[1],{x0:0,y0:44,x1:VW,y1:400});
+    Ln(g,[0,400],[VW,400],"thin",{stroke:"#B8C4DC"});
+    const po=pts.map(p=>G.uo(p[0],p[1])), pi=pts.map(p=>G.ui(p[0]*k,p[1]*k));
+    const ki=Math.abs(k-Math.round(k))<1e-9?Math.round(k):0;
+    if(S4.tile&&ki>=1){
+      if(S4.shape==="tri"){const u=[pts[1][0],pts[1][1]], v=[pts[2][0],pts[2][1]];
+        const L=(i,j)=>G.ui(i*u[0]+j*v[0],i*u[1]+j*v[1]);
+        for(let i=0;i<ki;i++)for(let j=0;i+j<ki;j++){
+          fillP(g,[L(i,j),L(i+1,j),L(i,j+1)],BLUE,.22,{"stroke-width":1.3});
+          if(i+j<=ki-2)fillP(g,[L(i+1,j),L(i+1,j+1),L(i,j+1)],ORANGE,.26,{"stroke-width":1.3});}
+      } else {const u=[pts[1][0],0], v=[pts[3][0],pts[3][1]];
+        for(let i=0;i<ki;i++)for(let j=0;j<ki;j++){const o=[i*u[0]+j*v[0],j*v[1]];
+          fillP(g,pts.map(p=>G.ui(p[0]+o[0],p[1]+o[1])),(i+j)%2?ORANGE:BLUE,(i+j)%2?.26:.22,{"stroke-width":1.3});}}
+      P(g,pi,{fill:"none",stroke:PINK,"stroke-width":3.2,"stroke-linejoin":"round"});
+    } else fillP(g,pi,PINK,.18,{"stroke-width":3.2});
+    fillP(g,po,BLUE,.24);
+    const Ls=[];for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];Ls.push(hyp(b[0]-a[0],b[1]-a[1]));}
+    const show=(arr,f)=>arr.map((L,i)=>S4.shape==="rect"&&i>1?null:f(L));
+    sideLabels(g,po,show(Ls,L=>fmt(L)),{off:13,c:BLUE});
+    sideLabels(g,pi,show(Ls,L=>fmt(k*L)),{off:15,c:PINK});
+    const A=Math.abs(signedArea(pts)), Pm=perimeter(pts);
+    T(g,(G.Oo[0]+G.uo(5,0)[0])/2,442,"original",{cls:"cap",c:BLUE});
+    T(g,G.Oi[0]+5*k*U/2,442,"image, k = "+fmt(k,2)+(S4.tile&&ki>=1?" · "+ki*ki+" copies":""),{cls:"cap",c:PINK});
+    banner(g,"P' = k·P = "+fmt(k,2)+" · "+fmt(Pm,2)+" = "+fmt(k*Pm,2)+"     A' = k²·A = "+fmt(k*k,4)+" · "+fmt(A,2)+" = "+fmt(k*k*A,2),24);
+    if(S4.shape==="tri"){grab(g,po[1],"B");grab(g,po[2],"C");}
+    else if(S4.shape==="rect")grab(g,po[2],"C");
+    else {grab(g,po[1],"B");grab(g,po[3],"D");}
+  },
+  drag(id,p){const G=M4.geo(), x=Math.round((p[0]-G.Oo[0])/G.U*2)/2, y=Math.round((G.Oo[1]-p[1])/G.U*2)/2;
+    const s=S4.shape;
+    if(s==="tri"){const t=S4.tri; if(id==="B")t.b=clamp(x,1,5); else {t.s=clamp(x,0,5);t.h=clamp(y,0.5,4);}}
+    else if(s==="rect"){S4.rect.w=clamp(x,1,5);S4.rect.h=clamp(y,0.5,4);}
+    else {const q=S4.para; if(id==="B")q.b=clamp(x,1,5-q.s); else {q.s=clamp(x,0,5-q.b);q.h=clamp(y,0.5,4);}}
+  },
+  panel(){
+    const k=S4.k, pts=M4.pts(), A=Math.abs(signedArea(pts)), Pm=perimeter(pts);
+    const ki=Math.abs(k-Math.round(k))<1e-9?Math.round(k):0;
+    let tb=`<div class="tblwrap"><table class="tbl"><tr><th></th><th>original</th><th>image</th><th>ratio</th></tr>`;
+    for(let i=0;i<pts.length;i++){ if(S4.shape==="rect"&&i>1)break; const a=pts[i],b=pts[(i+1)%pts.length],L=hyp(b[0]-a[0],b[1]-a[1]);
+      tb+=`<tr><td>side ${i+1}</td><td>${fmt(L,2)}</td><td>${fmt(k*L,2)}</td><td>${fmt(k,2)}</td></tr>`;}
+    tb+=`<tr class="hi"><td>perimeter</td><td>${fmt(Pm,2)}</td><td>${fmt(k*Pm,2)}</td><td>k = ${fmt(k,2)}</td></tr>`;
+    tb+=`<tr class="hi"><td>area</td><td>${fmt(A,2)}</td><td>${fmt(k*k*A,2)}</td><td>k² = ${fmt(k*k,4)}</td></tr></table></div>`;
+    let h=panel("Original vs. image",tb);
+    h+=panel("Why it works",pad(`<p>A <span class="term">dilation</span> with scale factor k multiplies <b>every</b> length by k — sides, heights, the whole perimeter. So the perimeter scales by k.</p>
+      <p>Area is two-dimensional: the base is multiplied by k <i>and</i> the height is multiplied by k, so the area is multiplied by k · k = <b>k²</b>.</p>
+      <div class="eq">P' = k · P  = ${fmt(k,2)} · ${fmt(Pm,2)} = ${fmt(k*Pm,2)}
+A' = k² · A = ${fmt(k,2)}² · ${fmt(A,2)} = ${fmt(k*k*A,2)}</div>
+      <p>${ki>=1?`With k = ${ki} you can <b>see</b> it: exactly ${ki}² = ${ki*ki} copies of the original tile the image${S4.shape==="tri"?" (the orange copies are rotated 180°)":""}.`:`k = ${fmt(k,2)} is not a whole number, so the copies don't fit neatly — but the rule A' = k²·A still holds (k² = ${fmt(k*k,4)}).`}</p>`));
+    h+=panel("Try this",pad(`<p>Predict before you slide: if k = 2, how many copies tile the image? k = 3? Now set k = 0.5 — what fraction of the area is left? A scale model of a room is built with k = 1/50: how many times smaller is its floor area?</p>`));
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ TAB 5 · modeling ══════════════════════ */
+const S5={sc:"pop",
+  pop:{pts:[[2,2],[10,1],[18,4],[19,10],[11,12],[3,9]],people:184000,mi:5},
+  floor:{W:18,D:12,nw:6,nd:4,rb:2.5,tp:38,tc:12,tw:10,H:8,cov:350,coats:2,gp:32},
+  piz:{A:{d:12,price:11,q:2},B:{d:18,price:19,q:1}}};
+const U5=30,O5=[45,425], UF=24, OF=[118,412], UP=13;
+const u5=(x,y)=>[O5[0]+x*U5,O5[1]-y*U5], uf=(x,y)=>[OF[0]+x*UF,OF[1]-y*UF];
+const PIZ={A:[178,236],B:[522,236]};
+function floorCalc(){const F=S5.floor, A=F.W*F.D-F.nw*F.nd+PI*F.rb*F.rb/2, Pm=2*F.W+2*F.D-2*F.rb+PI*F.rb;
+  const boxes=Math.ceil(A*(1+F.tw/100)/F.tc-1e-9), wall=Pm*F.H, gal=Math.ceil(wall*F.coats/F.cov-1e-9);
+  return {A,Pm,boxes,tileCost:boxes*F.tp,wall,gal,paintCost:gal*F.gp};}
+const M5={
+  tab:"Modeling with area", lesson:"G-MG.A.1 · A.2 · A.3", accent:"var(--lavender)",
+  aria:"Area modeling scenario",
+  title(){return {pop:"Population density = people ÷ area",floor:"Floor plan: tiles and paint",pizza:"Pizza value per square inch"}[S5.sc];},
+  bar(){
+    segCtl([["pop","Population density"],["floor","Floor plan cost"],["pizza","Pizza value"]],S5.sc,k=>{S5.sc=k;render();});
+    if(S5.sc==="pop")btn("Reset map",()=>{S5.pop.pts=[[2,2],[10,1],[18,4],[19,10],[11,12],[3,9]];redraw();});
+    if(S5.sc==="pizza")btn("Classic: two 12″ vs one 18″",()=>{S5.piz={A:{d:12,price:11,q:2},B:{d:18,price:19,q:1}};render();});
+    spacer("drag the amber handles · type in the panel");
+  },
+  draw(){const g=root(); M5["d_"+S5.sc](g);},
+  d_pop(g){
+    const Z=S5.pop, pts=Z.pts, px=pts.map(p=>u5(p[0],p[1]));
+    gridLines(g,U5,O5[0],O5[1],{x0:O5[0],y0:u5(0,13)[1],x1:u5(21,0)[0],y1:O5[1]});
+    E("rect",{x:O5[0],y:u5(0,13)[1],width:21*U5,height:13*U5,fill:"none",stroke:"#B8C4DC"},g);
+    const simple=isSimple(pts), sq=Math.abs(signedArea(pts)), area=sq*Z.mi*Z.mi, dens=area>0?Z.people/area:0;
+    const op=clamp(0.08+Math.log10(1+dens)/4*0.5,0.08,0.6);
+    P(g,px,{fill:simple?VIOLET:RED,"fill-opacity":op,stroke:simple?VIOLET:RED,"stroke-width":2.8,"stroke-linejoin":"round"});
+    const c=centroid(px);
+    if(simple){T(g,c[0],c[1]-22,Z.people.toLocaleString("en-US")+" people",{cls:"num",c:INK});
+      T(g,c[0],c[1],"÷ "+fmt(area,0)+" sq mi",{cls:"num",c:INK});
+      T(g,c[0],c[1]+24,"≈ "+fmt(dens,1)+" people / sq mi",{cls:"num",c:VIOLET});}
+    else T(g,350,240,"Boundary crosses itself — untangle it",{cls:"num",c:RED});
+    T(g,O5[0],20,"1 grid square = "+fmt(Z.mi,2)+" mi × "+fmt(Z.mi,2)+" mi = "+fmt(Z.mi*Z.mi,2)+" sq mi",{cls:"sm",a:"start"});
+    px.forEach((q,i)=>grab(g,q,"m"+i));
+  },
+  d_floor(g){
+    const F=S5.floor, W=F.W,D=F.D,nw=F.nw,nd=F.nd,rb=F.rb;
+    const pts=[[0,0],[W,0],[W,D-nd],[W-nw,D-nd],[W-nw,D],[0,D],[0,D/2+rb]].map(q=>uf(q[0],q[1]));
+    const a2=uf(0,D/2-rb);
+    let d="M"+pts.map(p=>p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" L");
+    d+= rb>0? ` A${(rb*UF).toFixed(1)} ${(rb*UF).toFixed(1)} 0 0 0 ${a2[0].toFixed(1)} ${a2[1].toFixed(1)} Z` : " Z";
+    const defs=E("defs",{},g), cp=E("clipPath",{id:"roomclip"},defs); E("path",{d:d},cp);
+    E("path",{d:d,fill:"#F6E7CF"},g);
+    const gt=E("g",{"clip-path":"url(#roomclip)"},g);
+    gridLines(gt,UF,OF[0],OF[1],{x0:OF[0]-4*UF,y0:OF[1]-D*UF-2,x1:OF[0]+W*UF+2,y1:OF[1]+2},"#D9BF95");
+    E("path",{d:d,fill:"none",stroke:INK,"stroke-width":4.5,"stroke-linejoin":"round"},g);
+    if(rb>0)Ln(g,uf(0,D/2+rb),uf(0,D/2-rb),"",{stroke:INK,"stroke-width":1.2,"stroke-dasharray":"4 4"});
+    if(nw>0&&nd>0)P(g,[[W-nw,D-nd],[W,D-nd],[W,D],[W-nw,D]].map(q=>uf(q[0],q[1])),{fill:"none",stroke:"#9AA5BF","stroke-width":1.5,"stroke-dasharray":"5 4"});
+    dimLine(g,uf(0,0),uf(W,0),fmt(W)+" ft",18,{cls:"sm"});
+    const lx=uf(-Math.max(rb,0)-0.9,0)[0];
+    Ln(g,[lx,uf(0,D)[1]],[lx,uf(0,0)[1]],"thin",{"stroke-width":1.4});
+    T(g,lx-12,uf(0,D/2)[1],fmt(D)+" ft",{cls:"sm",rot:-90});
+    if(nw>0)T(g,uf(W-nw/2,D-nd)[0],uf(0,D-nd)[1]-12,fmt(nw)+" ft",{cls:"sm",c:"#5B6683"});
+    if(nd>0)T(g,uf(W,0)[0]+8,uf(0,D-nd/2)[1],fmt(nd)+" ft",{cls:"sm",c:"#5B6683",a:"start"});
+    if(W-nw>0)T(g,uf((W-nw)*0.4,D)[0],uf(0,D)[1]-14,fmt(W-nw)+" ft",{cls:"sm"});
+    if(D-nd>0)T(g,uf(W,0)[0]+8,uf(0,(D-nd)*0.62)[1],fmt(D-nd)+" ft",{cls:"sm",a:"start"});
+    if(rb>0){Ln(g,uf(0,D/2),uf(-rb,D/2),"",{stroke:VIOLET,"stroke-width":1.6});T(g,uf(0,0)[0]+6,uf(0,D/2)[1],"r = "+fmt(rb),{cls:"sm",size:12,c:VIOLET,a:"start"});}
+    const C=floorCalc();
+    banner(g,"Floor ≈ "+fmt(C.A,1)+" sq ft    Walls: P ≈ "+fmt(C.Pm,1)+" ft",24);
+    grab(g,uf(W,(D-nd)*0.22),"fW"); grab(g,uf((W-nw)*0.8,D),"fD"); grab(g,uf(W-nw,D-nd),"fN"); grab(g,uf(-rb,D/2),"fR");
+  },
+  pizza(g,key,lab){
+    const Z=S5.piz[key], c=PIZ[key], R=Z.d/2*UP;
+    for(let q=Z.q-1;q>=0;q--){const cx=c[0]+q*12, cy=c[1]+q*12;
+      E("circle",{cx:cx,cy:cy,r:R,fill:"#E9A955",stroke:"#B9772E","stroke-width":2},g);
+      E("circle",{cx:cx,cy:cy,r:R*0.87,fill:"#FBD77B"},g);
+      if(q===0)[[0.2,0.3],[-0.45,0.15],[0.5,-0.2],[-0.15,-0.55],[0.05,0.62],[-0.6,-0.3],[0.62,0.35],[-0.25,0.5],[0.3,-0.6],[0,0]].forEach(p=>
+        E("circle",{cx:cx+p[0]*R,cy:cy+p[1]*R,r:R*0.085,fill:"#C0392B","fill-opacity":.9},g));}
+    Ln(g,[c[0]-R,c[1]],[c[0]+R,c[1]],"",{stroke:INK,"stroke-width":2,"stroke-dasharray":"6 4"});
+    T(g,c[0],c[1]-14,Z.d+" in",{cls:"num"});
+    const A=PI*(Z.d/2)**2;
+    T(g,c[0],c[1]-R-38,lab+": "+(Z.q>1?Z.q+" × ":"")+Z.d+"-inch · "+money(Z.price)+(Z.q>1?" each":""),{cls:"cap",c:INK});
+    T(g,c[0],c[1]-R-18,fmt(Z.q*A,1)+" sq in · "+fmt(100*Z.q*Z.price/(Z.q*A),2)+"¢ per sq in",{cls:"sm",c:key==="A"?BLUE:ORANGE});
+    grab(g,[c[0]+R,c[1]],"z"+key);
+  },
+  d_pizza(g){M5.pizza(g,"A","A");M5.pizza(g,"B","B");
+    T(g,350,446,"drawn to the same scale",{cls:"cap",size:13,c:"#6B7690"});},
+  drag(id,p){
+    if(S5.sc==="pop"){const i=+id.slice(1);S5.pop.pts[i]=[clamp(Math.round((p[0]-O5[0])/U5),0,21),clamp(Math.round((O5[1]-p[1])/U5),0,13)];}
+    else if(S5.sc==="floor"){const F=S5.floor, x=Math.round((p[0]-OF[0])/UF*2)/2, y=Math.round((OF[1]-p[1])/UF*2)/2;
+      if(id==="fW"){F.W=clamp(x,8,21);F.nw=clamp(F.nw,0,F.W-3);}
+      else if(id==="fD"){F.D=clamp(y,6,13);F.nd=clamp(F.nd,0,F.D-3);F.rb=clamp(F.rb,0,Math.min(3,F.D/2-0.5));}
+      else if(id==="fN"){F.nw=clamp(F.W-x,0,F.W-3);F.nd=clamp(F.D-y,0,F.D-3);}
+      else F.rb=clamp(-x,0,Math.min(3,F.D/2-0.5));}
+    else {const key=id.slice(1), c=PIZ[key]; S5.piz[key].d=clamp(Math.round((p[0]-c[0])/UP*2),6,20);}
+  },
+  panel(){
+    const sc=S5.sc; let h="";
+    const inp=(id,lab,val,step,min)=>`<div><label class="fld" for="${id}">${lab}</label><input type="number" id="${id}" value="${val}" step="${step||"any"}" min="${min===undefined?0:min}"></div>`;
+    if(sc==="pop"){const Z=S5.pop;
+      h+=panel("Your region",`<div class="grid2">${inp("i_people","population",Z.people,1000)}${inp("i_mi","miles per grid square",Z.mi,0.5,0.5)}</div><div id="out"></div>`);
+      h+=panel("Why it works",pad(`<p><span class="term">Population density</span> is a rate: how many people per unit of area. It lets you compare regions of very different sizes.</p>
+        <div class="eq">density = population ÷ area</div>
+        <p>The area of the region in grid squares comes from the shoelace formula. Each square is s miles by s miles, so it covers <b>s²</b> square miles. If the map scale doubles, the area is multiplied by 4 (k² again!) and the density drops to a quarter.</p>
+        <p>For reference, the 2020 U.S. Census gives the whole country about 94 people per square mile; New Jersey about 1,260; Alaska about 1.3.</p>`));
+      h+=panel("Try this",pad(`<p>With 184,000 people and 5-mile squares, reshape the county so its density is close to the U.S. average of 94 people per square mile. About how many grid squares did you need? Check: 184,000 ÷ 94 ÷ 25 ≈ ?</p>`));
+    } else if(sc==="floor"){const F=S5.floor;
+      h+=panel("Cost inputs",`<div class="sub">Floor tile</div><div class="grid2">${inp("i_tp","$ per box",F.tp,0.5)}${inp("i_tc","sq ft per box",F.tc,0.5,1)}${inp("i_tw","waste %",F.tw,1)}</div>
+        <div class="sub">Wall paint</div><div class="grid2">${inp("i_H","wall height (ft)",F.H,0.5,1)}${inp("i_coats","coats",F.coats,1,1)}${inp("i_cov","sq ft per gallon",F.cov,10,1)}${inp("i_gp","$ per gallon",F.gp,0.5)}</div>`);
+      h+=`<div id="out"></div>`;
+      h+=panel("Why it works",pad(`<p>Break the composite floor into shapes you know: the big rectangle, <b>minus</b> the missing corner, <b>plus</b> the half-circle bay window (½πr²).</p>
+        <p><b>Tiles</b> cover floor <i>area</i> (square feet). <b>Paint</b> covers wall area = perimeter × wall height. Buy whole boxes and whole gallons — always round <b>up</b>.</p>`));
+      h+=panel("Try this",pad(`<p>Drag the notch corner to make the missing corner bigger. The tile cost drops — but does the paint cost change? Explain why the two short walls of the notch add up to exactly what was removed. (Doors and windows are ignored here.)</p>`));
+    } else {const Z=S5.piz;
+      const pz=k=>`<div class="sub">Pizza ${k}</div><div class="grid2">${inp("i_d"+k,"diameter (in)",Z[k].d,1,6)}${inp("i_p"+k,"price each ($)",Z[k].price,0.5)}<div><label class="fld" for="i_q${k}">how many</label><select id="i_q${k}">${[1,2,3].map(q=>`<option ${q===Z[k].q?"selected":""}>${q}</option>`).join("")}</select></div></div>`;
+      h+=panel("The deals",pz("A")+pz("B"));
+      h+=`<div id="out"></div>`;
+      h+=panel("Why it works",pad(`<p>Pizzas are named by <b>diameter</b>, but you eat <b>area</b>: A = π(d/2)². Divide price by area to compare fairly — cents per square inch.</p>
+        <p>An 18-inch pizza is 1.5 times as wide as a 12-inch, so it has 1.5² = <b>2.25 times</b> the area — more than two 12-inch pizzas put together.</p>`));
+      h+=panel("Try this",pad(`<p>Keep the prices. Drag pizza B smaller, one inch at a time. At what diameter does one pizza B stop being the better deal?</p>`));
+    }
+    side.innerHTML=h;
+    side.querySelectorAll("input,select").forEach(el=>{
+      el.addEventListener("input",()=>{const v=parseFloat(el.value); if(!isFinite(v)||v<0)return; const id=el.id.slice(2);
+        if(sc==="pop"){if(id==="people")S5.pop.people=Math.round(v); if(id==="mi"&&v>0)S5.pop.mi=v;}
+        else if(sc==="floor"){if(["tc","cov","H","coats"].indexOf(id)>=0&&v<=0)return; S5.floor[id]=id==="coats"?Math.max(1,Math.round(v)):v;}
+        else {const k=id.slice(-1), f=id.slice(0,-1); if(f==="d")S5.piz[k].d=clamp(v,6,20); else if(f==="p")S5.piz[k].price=v; else S5.piz[k].q=clamp(Math.round(v),1,3);}
+        redraw();});
+    });
+  },
+  live(){
+    const out=document.getElementById("out"); if(!out)return; const sc=S5.sc;
+    if(sc==="pop"){const Z=S5.pop, sq=Math.abs(signedArea(Z.pts)), area=sq*Z.mi*Z.mi, dens=area>0?Z.people/area:0, ok=isSimple(Z.pts);
+      out.innerHTML=ok?rel(VIOLET,"area in grid squares","shoelace formula",fmt(sq,1))+rel(VIOLET,"area in sq mi",fmt(sq,1)+" × "+fmt(Z.mi,2)+"²",fmt(area,0))+rel(GREEN,"density","people per sq mi",fmt(dens,1))+
+        pad(`<div class="eq">density = ${Z.people.toLocaleString("en-US")} ÷ ${fmt(area,0)}
+        ≈ ${fmt(dens,1)} people per sq mi</div><p>${dens>94?"More crowded":"Less crowded"} than the U.S. average (≈ 94).</p>`):`<div class="verdict bad">The boundary crosses itself, so its area is not defined. Drag a vertex to fix it.</div>`;}
+    else if(sc==="floor"){const F=S5.floor, C=floorCalc();
+      out.innerHTML=panel("Floor area",pad(`<div class="eq">rectangle  ${fmt(F.W)} × ${fmt(F.D)} = ${fmt(F.W*F.D,2)}
+− corner   ${fmt(F.nw)} × ${fmt(F.nd)} = ${fmt(F.nw*F.nd,2)}
++ bay      ½π(${fmt(F.rb)})² ≈ ${fmt(PI*F.rb*F.rb/2,2)}
+= ${fmt(C.A,2)} sq ft</div>`)+rel(ORANGE,"tile boxes",fmt(C.A,1)+" × "+fmt(1+F.tw/100,2)+" ÷ "+fmt(F.tc)+", rounded up",C.boxes+" boxes")+rel(ORANGE,"tile cost",C.boxes+" × "+money(F.tp),money(C.tileCost)))+
+        panel("Wall paint",pad(`<div class="eq">P = 2(${fmt(F.W)}) + 2(${fmt(F.D)}) − 2(${fmt(F.rb)}) + π(${fmt(F.rb)})
+  ≈ ${fmt(C.Pm,2)} ft
+wall area = P × ${fmt(F.H)} ≈ ${fmt(C.wall,1)} sq ft</div>`)+rel(BLUE,"gallons",fmt(C.wall,0)+" × "+F.coats+" coats ÷ "+fmt(F.cov)+", rounded up",C.gal+" gal")+rel(BLUE,"paint cost",C.gal+" × "+money(F.gp),money(C.paintCost))+rel(GREEN,"total","tile + paint",money(C.tileCost+C.paintCost)));}
+    else {const Z=S5.piz, r=k=>{const z=Z[k],a=PI*(z.d/2)**2;return {a:a,ta:z.q*a,cost:z.q*z.price,cpi:z.price/a*100};};
+      const A=r("A"),B=r("B");
+      ["A","B"].forEach(k=>{const el=document.getElementById("i_d"+k); if(el&&document.activeElement!==el&&+el.value!==Z[k].d)el.value=Z[k].d;});
+      const better=Math.abs(A.cpi-B.cpi)<0.005?null:(A.cpi<B.cpi?"A":"B");
+      out.innerHTML=panel("Compare",rel(BLUE,"A: area each","π("+fmt(Z.A.d/2)+")²",fmt(A.a,1)+" in²")+rel(BLUE,"A: total",Z.A.q+" pizza"+(Z.A.q>1?"s":"")+" · "+money(A.cost),fmt(A.ta,1)+" in²")+rel(BLUE,"A: price per sq in","",fmt(A.cpi,2)+"¢")+
+        rel(ORANGE,"B: area each","π("+fmt(Z.B.d/2)+")²",fmt(B.a,1)+" in²")+rel(ORANGE,"B: total",Z.B.q+" pizza"+(Z.B.q>1?"s":"")+" · "+money(B.cost),fmt(B.ta,1)+" in²")+rel(ORANGE,"B: price per sq in","",fmt(B.cpi,2)+"¢")+
+        `<div class="verdict good">${better?`<b>Deal ${better} is better</b> — ${fmt(Math.min(A.cpi,B.cpi),2)}¢ vs ${fmt(Math.max(A.cpi,B.cpi),2)}¢ per square inch.`:"<b>It's a tie</b> — same price per square inch."} One ${Z.B.d}-inch pizza has (${Z.B.d}/${Z.A.d})² = ${fmt((Z.B.d/Z.A.d)**2,2)} times the area of one ${Z.A.d}-inch.</div>`);}
+  }
+};
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+const S6={p:null,kind:"mix",score:{n:0,right:0,streak:0,best:0},checked:false};
+const UNITS=["cm","in","ft","m"];
+function fitMap(pts,box){box=box||{x:70,y:78,w:560,h:310};
+  const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]), mnx=Math.min(...xs),mxx=Math.max(...xs),mny=Math.min(...ys),mxy=Math.max(...ys);
+  const s=Math.min(box.w/Math.max(mxx-mnx,1e-6),box.h/Math.max(mxy-mny,1e-6),48);
+  const cx=box.x+box.w/2-(mnx+mxx)/2*s, cy=box.y+box.h/2+(mny+mxy)/2*s;
+  return q=>[cx+q[0]*s,cy-q[1]*s];}
+function genPoly(){
+  const u=pick(UNITS), U2s=u+"²", kind=pick(["tri","tri","para","trap"]);
+  if(kind==="tri"){const b=rnd(4,16),h=rnd(3,12),k=pick(["in","in","out","right"]);
+    const s=k==="in"?rnd(1,b-1):k==="out"?b+rnd(2,4):0, side=hyp(b-s,h), ans=b*h/2;
+    return {ask:"Find the area of the triangle.",ans,unit:U2s,
+      work:`A = ½ · b · h = ½ · ${b} · ${h} = ${fmt(ans,2)} ${U2s}`+(k==="out"?"\nThe height is outside the triangle, measured to the line containing the base.":""),
+      traps:[{v:b*h,m:"That is b · h — the whole parallelogram. A triangle is half of it."},{v:b*side/2,m:"You used the slanted side. The height must be perpendicular to the base."}],
+      draw(g){const M=fitMap([[0,0],[b,0],[s,h],[Math.max(b,s),0]]),A=M([0,0]),B=M([b,0]),C=M([s,h]),F=M([s,0]);
+        fillP(g,[A,B,C],BLUE,.2); if(s>b)Ln(g,B,F,"ghost-s");
+        if(s!==0){Ln(g,C,F,"aux");rtMark(g,F,[s<b?1:-1,0],[0,-1],11);} else rtMark(g,A,[1,0],[0,-1],13);
+        dimLine(g,A,B,b+" "+u,22); T(g,F[0]+(s>b||s===0?-12:12),(C[1]+F[1])/2,h+" "+u,{a:s>b||s===0?"end":"start",c:BLUE});
+        const m=[(B[0]+C[0])/2,(B[1]+C[1])/2]; T(g,m[0]+16,m[1]-6,fmt(side)+" "+u,{cls:"sm",a:"start",c:"#5B6683"});}};}
+  if(kind==="para"){const b=rnd(5,14),h=rnd(3,9),s=pick([1,2,3,4,-2,-3]), side=hyp(s,h), ans=b*h;
+    return {ask:"Find the area of the parallelogram.",ans,unit:U2s,work:`A = b · h = ${b} · ${h} = ${ans} ${U2s}\nThe slanted side (${fmt(side)}) is not the height.`,
+      traps:[{v:b*side,m:"You multiplied by the slanted side. Use the perpendicular height."},{v:b*h/2,m:"No ½ for a parallelogram — that's for triangles."}],
+      draw(g){const M=fitMap([[0,0],[b,0],[b+s,h],[s,h],[Math.min(0,s),0]]),A=M([0,0]),B=M([b,0]),C=M([b+s,h]),D=M([s,h]),F=M([s,0]);
+        fillP(g,[A,B,C,D],BLUE,.2); if(s<0)Ln(g,F,A,"ghost-s"); Ln(g,D,F,"aux"); rtMark(g,F,[1,0],[0,-1],11);
+        dimLine(g,A,B,b+" "+u,22); T(g,F[0]+10,(D[1]+F[1])/2,h+" "+u,{a:"start",c:BLUE});
+        const m=[(B[0]+C[0])/2,(B[1]+C[1])/2]; T(g,m[0]+14,m[1],fmt(side)+" "+u,{cls:"sm",a:"start",c:"#5B6683"});}};}
+  const b1=rnd(6,16),b2=rnd(3,b1-1),h=rnd(3,10),s=rnd(0,b1-b2), ans=(b1+b2)*h/2;
+  return {ask:"Find the area of the trapezoid.",ans,unit:U2s,work:`A = ½(b₁ + b₂)h = ½(${b1} + ${b2})(${h}) = ${fmt(ans,2)} ${U2s}`,
+    traps:[{v:(b1+b2)*h,m:"You forgot the ½ — (b₁ + b₂)h is the doubled parallelogram."},{v:b1*h,m:"Use the average of both bases, not just the longer one."}],
+    draw(g){const M=fitMap([[0,0],[b1,0],[s+b2,h],[s,h]]),A=M([0,0]),B=M([b1,0]),C=M([s+b2,h]),D=M([s,h]),F=M([s,0]);
+      fillP(g,[A,B,C,D],BLUE,.2); if(s>0){Ln(g,D,F,"aux");rtMark(g,F,[1,0],[0,-1],11);} else rtMark(g,A,[1,0],[0,-1],13);
+      dimLine(g,A,B,b1+" "+u,22); dimLine(g,D,C,b2+" "+u,-20); T(g,F[0]+10,(D[1]+F[1])/2,h+" "+u,{a:"start",c:BLUE});}};
+}
+function genComp(){
+  const u=pick(["ft","m","cm"]), U2s=u+"²", kind=pick(["house","L","semi"]);
+  if(kind==="house"){const W=rnd(6,14),H=rnd(4,9),t=rnd(2,6), ans=W*H+W*t/2;
+    return {ask:"Find the total area of the figure (a rectangle with a triangle on top).",ans,unit:U2s,work:`rectangle ${W} · ${H} = ${W*H}\ntriangle  ½ · ${W} · ${t} = ${fmt(W*t/2,2)}\ntotal     ${fmt(ans,2)} ${U2s}`,
+      traps:[{v:W*H+W*t,m:"The roof is a triangle — remember the ½."},{v:W*(H+t)/2,m:"Split the figure into a rectangle and a triangle and add their areas."}],
+      draw(g){const M=fitMap([[0,0],[W,0],[W,H+t],[0,H+t]]),q=p=>M(p);
+        fillP(g,[q([0,0]),q([W,0]),q([W,H]),q([0,H])],BLUE,.2); fillP(g,[q([0,H]),q([W,H]),q([W/2,H+t])],ORANGE,.24);
+        Ln(g,q([W/2,H+t]),q([W/2,H]),"aux"); rtMark(g,q([W/2,H]),[1,0],[0,-1],10);
+        dimLine(g,q([0,0]),q([W,0]),W+" "+u,22); dimLine(g,q([0,H]),q([0,0]),H+" "+u,22);
+        T(g,q([W/2,H])[0]+10,q([0,H+t/2])[1],t+" "+u,{a:"start",c:BLUE});}};}
+  if(kind==="L"){const W=rnd(8,15),D=rnd(6,12),nw=rnd(2,W-3),nd=rnd(2,D-3), ans=W*D-nw*nd;
+    return {ask:"Find the area of the L-shaped figure. All corners are right angles.",ans,unit:U2s,work:`Whole rectangle ${W} · ${D} = ${W*D}\nMissing corner ${nw} · ${nd} = ${nw*nd}   (${W} − ${W-nw} = ${nw}, ${D} − ${D-nd} = ${nd})\nArea = ${W*D} − ${nw*nd} = ${ans} ${U2s}`,
+      traps:[{v:W*D,m:"That's the whole rectangle — subtract the missing corner."},{v:(W-nw)*(D-nd),m:"Find the missing corner's sides by subtraction, then subtract its area from the full rectangle."}],
+      draw(g){const pts=[[0,0],[W,0],[W,D-nd],[W-nw,D-nd],[W-nw,D],[0,D]],M=fitMap(pts),px=pts.map(M);
+        fillP(g,px,BLUE,.2); P(g,[[W-nw,D-nd],[W,D-nd],[W,D],[W-nw,D]].map(M),{class:"ghost-s"});
+        dimLine(g,px[0],px[1],W+" "+u,22); dimLine(g,px[5],px[0],D+" "+u,22);
+        dimLine(g,px[4],px[5],(W-nw)+" "+u,22); dimLine(g,px[1],px[2],(D-nd)+" "+u,22);}};}
+  const W=pick([4,6,8,10,12]),H=rnd(3,9), r=W/2, ans=W*H+PI*r*r/2;
+  return {ask:"Find the area of the figure (a rectangle with a semicircle on top). Round to the nearest tenth.",ans,unit:U2s,tol:Math.max(0.15,0.004*ans),
+    work:`rectangle ${W} · ${H} = ${W*H}\nsemicircle ½ · π · ${r}² = ${fmt(r*r/2,2)}π ≈ ${fmt(PI*r*r/2,2)}\ntotal ≈ ${fmt(ans,1)} ${U2s}`,
+    traps:[{v:W*H+PI*r*r,m:"A semicircle is half a circle — take ½ of πr²."},{v:W*H+PI*W*W/2,m:"The radius is half the width: r = "+r+"."}],
+    draw(g){const M=fitMap([[0,0],[W,0],[W,H+r],[0,H+r]]),A=M([0,0]),B=M([W,0]),C=M([W,H]),D=M([0,H]),R=hyp(C[0]-D[0],C[1]-D[1])/2;
+      fillP(g,[A,B,C,D],BLUE,.2);
+      E("path",{d:`M${C[0]} ${C[1]} A${R} ${R} 0 0 0 ${D[0]} ${D[1]} Z`,fill:ORANGE,"fill-opacity":.24,stroke:ORANGE,"stroke-width":2.6},g);
+      dimLine(g,A,B,W+" "+u,22); dimLine(g,D,A,H+" "+u,22);}};
+}
+function genCirc(){
+  const u=pick(UNITS), r=rnd(2,15), useD=Math.random()<0.5, area=Math.random()<0.55;
+  const coef=area?r*r:2*r, ans=coef*PI;
+  const given=useD?`diameter ${2*r} ${u}`:`radius ${r} ${u}`;
+  return {ask:`A circle has ${given}. Find its ${area?"area":"circumference"}. Give an exact answer in terms of π (like 25π) or a decimal to the nearest tenth.`,
+    ans,coef,allowPi:true,unit:area?u+"²":u,tol:Math.max(0.06,0.006*ans),
+    work:area?`${useD?"r = d ÷ 2 = "+r+"\n":""}A = πr² = π(${r})² = ${r*r}π ≈ ${fmt(ans,1)} ${u}²`:`C = ${useD?"πd = π("+2*r+")":"2πr = 2π("+r+")"} = ${2*r}π ≈ ${fmt(ans,1)} ${u}`,
+    traps:area?[{v:2*r*PI,m:"That is the circumference (2πr). Area uses πr²."},{v:4*r*r*PI,m:"You squared the diameter. Use the radius: r = "+r+"."},{v:2*r*r*PI,m:"Square only the radius: πr², not 2πr²."}]
+              :[{v:r*r*PI,m:"That is the area (πr²). Circumference is 2πr."},{v:r*PI,m:"Circumference is 2πr = πd — you used πr."},{v:4*r*PI,m:"You doubled the diameter. C = πd = "+2*r+"π."}],
+    draw(g){const c=[350,250],R=150;
+      E("circle",{cx:c[0],cy:c[1],r:R,fill:area?BLUE:"none","fill-opacity":.14,stroke:area?BLUE:ORANGE,"stroke-width":area?2.6:4},g); dot(g,c,4);
+      if(useD){Ln(g,[c[0]-R,c[1]],[c[0]+R,c[1]],"line",{"stroke-width":2.2});T(g,c[0],c[1]-16,(2*r)+" "+u,{cls:"num"});}
+      else {Ln(g,c,[c[0]+R*Math.cos(-0.5),c[1]+R*Math.sin(-0.5)],"line",{"stroke-width":2.2});T(g,c[0]+R*0.45,c[1]-R*0.32,r+" "+u,{cls:"num"});}
+      T(g,350,58,area?"area = ?":"circumference = ?",{cls:"cap",c:area?BLUE:ORANGE});}};
+}
+function genCoord(){
+  let pts; for(let t=0;t<300;t++){const n=Math.random()<0.5?3:4;
+    pts=[];for(let i=0;i<n;i++)pts.push([rnd(-7,7),rnd(-5,5)]);
+    if(!isSimple(pts)||!isConvex(pts,true))continue; if(Math.abs(signedArea(pts))<8)continue; break;}
+  if(signedArea(pts)<0)pts.reverse();
+  const n=pts.length, nm=NAMES.slice(0,n), list=pts.map((p,i)=>nm[i]+"("+fmt(p[0])+", "+fmt(p[1])+")").join(", ");
+  const per=n===3&&Math.random()<0.4;
+  let sum=0,terms=[];for(let i=0;i<n;i++){const a=pts[i],b=pts[(i+1)%n],t=a[0]*b[1]-b[0]*a[1];sum+=t;terms.push(fmt(t));}
+  const A=Math.abs(sum)/2, Pm=perimeter(pts);
+  const B=boxPieces(pts); let bw=`box ${B.W} · ${B.H} = ${B.W*B.H}`; B.pieces.forEach(pc=>bw+=pc.type==="tri"?` − ${fmt(pc.area,2)}`:` − ${fmt(pc.area,2)}`); bw+=` = ${fmt(A,2)}`;
+  const sides=[];for(let i=0;i<n;i++){const a=pts[i],b=pts[(i+1)%n];sides.push(nm[i]+nm[(i+1)%n]+" = "+radical((b[0]-a[0])**2+(b[1]-a[1])**2));}
+  return {ask:per?`Triangle ${list}. Find its perimeter to the nearest tenth.`:`Find the area of ${n===3?"triangle":"quadrilateral"} ${nm} with vertices ${list}.`,
+    ans:per?Pm:A,unit:per?"units":"square units",tol:per?Math.max(0.1,0.003*Pm):0.05,
+    work:per?sides.join("\n")+`\nP ≈ ${fmt(Pm,1)}`:`Box and subtract: ${bw}\nShoelace: ½|${terms.join(" + ").replace(/\+ −/g,"− ")}| = ½|${fmt(sum)}| = ${fmt(A,2)}`,
+    traps:per?[]:[{v:Math.abs(sum),m:"Don't forget the ½ in the shoelace formula."},{v:B.W*B.H,m:"That's the bounding box — subtract the corner triangles."}],
+    draw(g){const U=28,O=[350,248], q=p=>[O[0]+p[0]*U,O[1]-p[1]*U];
+      gridLines(g,U,O[0],O[1],{x0:350-8*U,y0:248-6.5*U,x1:350+8*U,y1:248+6.5*U});
+      Ln(g,[350-8*U,O[1]],[350+8*U,O[1]],"thin",{stroke:"#7D8AA8"}); Ln(g,[O[0],248-6.5*U],[O[0],248+6.5*U],"thin",{stroke:"#7D8AA8"});
+      for(let x=-8;x<=8;x+=2)if(x)T(g,q([x,0])[0],O[1]+12,fmt(x),{cls:"sm",size:10.5,c:"#7D8AA8"});
+      for(let y=-6;y<=6;y+=2)if(y)T(g,O[0]-5,q([0,y])[1],fmt(y),{cls:"sm",size:10.5,c:"#7D8AA8",a:"end"});
+      const px=pts.map(q); fillP(g,px,BLUE,.2); const c=centroid(px);
+      px.forEach((p,i)=>{dot(g,p);const dx=p[0]-c[0],dy=p[1]-c[1],L=hyp(dx,dy)||1;T(g,p[0]+dx/L*22,p[1]+dy/L*18,nm[i]+"("+fmt(pts[i][0])+", "+fmt(pts[i][1])+")",{cls:"sm",fit:true,a:Math.abs(dx/L)<0.35?"middle":dx>0?"start":"end"});});}};
+}
+function genScale(){
+  const u=pick(["cm","in","ft"]), U2s=u+"²", v=pick(["k","sides","ratio"]);
+  const tri=(g,lab1,lab2,s1,s2,k)=>{const base=[[0,0],[4,0],[1.4,2.6]], s=Math.min(28,50/Math.max(k,1));
+    const a=base.map(p=>[110+p[0]*s*1.2,380-p[1]*s*1.2]), b=base.map(p=>[300+p[0]*s*1.2*k,380-p[1]*s*1.2*k]);
+    fillP(g,a,BLUE,.22); fillP(g,b,PINK,.18);
+    T(g,centroid(a)[0],centroid(a)[1]+4,lab1,{cls:"sm",c:BLUE}); T(g,centroid(b)[0],centroid(b)[1]+4,lab2,{cls:"num",c:PINK});
+    if(s1)dimLine(g,a[0],a[1],s1,18,{cls:"sm"}); if(s2)dimLine(g,b[0],b[1],s2,18,{cls:"sm"});};
+  if(v==="k"){const k=pick([2,3,4,0.5,1.5,2.5]), A=k<1?rnd(6,20)*4:rnd(4,30), ans=A*k*k;
+    return {ask:`A triangle has area ${A} ${U2s}. It is dilated by a scale factor of ${k}. What is the area of the image?`,ans,unit:U2s,
+      work:`Area scales by k²:\nA' = k² · A = ${k}² · ${A} = ${fmt(k*k,4)} · ${A} = ${fmt(ans,2)} ${U2s}`,
+      traps:[{v:A*k,m:"Lengths scale by k, but area scales by k²."},{v:A*2*k,m:"Square the scale factor: k² = "+fmt(k*k,4)+"."}],
+      draw(g){tri(g,"A = "+A,"A' = ?",null,null,Math.min(k,2.4));T(g,350,60,"scale factor k = "+k,{cls:"cap"});}};}
+  if(v==="sides"){const a=rnd(2,6), b=a+rnd(1,6), A=rnd(3,20), ans=A*(b/a)**2;
+    return {ask:`Two similar triangles have corresponding sides ${a} ${u} and ${b} ${u}. The smaller triangle has area ${A} ${U2s}. Find the area of the larger triangle (nearest tenth).`,ans,unit:U2s,tol:Math.max(0.06,0.003*ans),
+      work:`k = ${b} ÷ ${a} = ${fmt(b/a,4)}\nA' = k² · A = (${b}/${a})² · ${A} = ${fmt(ans,2)} ${U2s}`,
+      traps:[{v:A*b/a,m:"The area ratio is the square of the side ratio."}],
+      draw(g){tri(g,"A = "+A,"A' = ?",a+" "+u,b+" "+u,Math.min(b/a,2.4));}};}
+  const pr=pick([[1,2],[2,3],[1,3],[3,4],[2,5],[3,5],[1,4]]), m=rnd(1,4), A1=pr[0]*pr[0]*m*2, A2=pr[1]*pr[1]*m*2, ans=pr[1]/pr[0];
+  return {ask:`Two similar figures have areas ${A1} ${U2s} and ${A2} ${U2s}. What is the scale factor from the smaller to the larger? (A fraction like 3/2, or a decimal rounded to the hundredth.)`,ans,unit:"",tol:0.011,
+    work:`k² = ${A2} ÷ ${A1} = ${fmt(A2/A1,4)}\nk = √${fmt(A2/A1,4)} = ${pr[1]}/${pr[0]} ≈ ${fmt(ans,3)}`,
+    traps:[{v:A2/A1,m:"That ratio is k². Take the square root to get k."}],
+    draw(g){tri(g,"A = "+A1,"A = "+A2,null,null,Math.min(ans,2.4));T(g,350,60,"scale factor k = ?",{cls:"cap"});}};
+}
+function genDens(){
+  const kind=pick(["rect","circle","tri"]), P=rnd(12,240)*250;
+  let area, dims, work, draw;
+  if(kind==="rect"){const a=rnd(4,30),b=rnd(4,30); area=a*b; dims=`a rectangular county ${a} mi by ${b} mi`; work=`area = ${a} · ${b} = ${area} sq mi`;
+    draw=g=>{const M=fitMap([[0,0],[a,0],[a,b],[0,b]]),px=[[0,0],[a,0],[a,b],[0,b]].map(M);fillP(g,px,VIOLET,.2);dimLine(g,px[0],px[1],a+" mi",22);dimLine(g,px[3],px[0],b+" mi",22);
+      T(g,centroid(px)[0],centroid(px)[1],P.toLocaleString("en-US")+" people",{cls:"num"});};}
+  else if(kind==="circle"){const r=rnd(3,15); area=PI*r*r; dims=`a circular region within ${r} mi of a town center`; work=`area = πr² = π(${r})² ≈ ${fmt(area,2)} sq mi`;
+    draw=g=>{const c=[350,245],R=150;E("circle",{cx:c[0],cy:c[1],r:R,fill:VIOLET,"fill-opacity":.18,stroke:VIOLET,"stroke-width":2.6},g);dot(g,c);
+      Ln(g,c,[c[0]+R,c[1]],"line",{"stroke-width":2});T(g,c[0]+R/2,c[1]-14,r+" mi",{cls:"num"});T(g,c[0],c[1]+40,P.toLocaleString("en-US")+" people",{cls:"num"});};}
+  else {const b=rnd(8,30),h=rnd(6,24); area=b*h/2; dims=`a triangular region with base ${b} mi and height ${h} mi`; work=`area = ½ · ${b} · ${h} = ${fmt(area,2)} sq mi`;
+    draw=g=>{const s=rnd(2,b-2)||b/2,M=fitMap([[0,0],[b,0],[s,h]]),A=M([0,0]),B=M([b,0]),C=M([s,h]),F=M([s,0]);fillP(g,[A,B,C],VIOLET,.2);Ln(g,C,F,"aux");rtMark(g,F,[1,0],[0,-1],10);
+      dimLine(g,A,B,b+" mi",22);T(g,F[0]+10,(C[1]+F[1])/2,h+" mi",{a:"start",c:BLUE});T(g,centroid([A,B,C])[0]+(s<b/2?40:-40),centroid([A,B,C])[1]+20,P.toLocaleString("en-US")+" people",{cls:"num"});};}
+  const ans=P/area;
+  return {ask:`${P.toLocaleString("en-US")} people live in ${dims}. Find the population density in people per square mile, to the nearest whole number.`,ans,unit:"people / sq mi",tol:Math.max(0.6,0.003*ans),
+    work:`${work}\ndensity = ${P.toLocaleString("en-US")} ÷ ${fmt(area,2)} ≈ ${fmt(ans,0)} people per sq mi`,
+    traps:[{v:area/P,m:"Density is people ÷ area, not area ÷ people."}],draw};
+}
+const GENS={poly:genPoly,comp:genComp,circ:genCirc,coord:genCoord,scale:genScale,dens:genDens};
+function newProblem(){const k=S6.kind==="mix"?pick(["poly","poly","comp","circ","circ","coord","coord","scale","dens"]):S6.kind; const p=GENS[k](); p.kind=k; return p;}
+function parseAns(raw){
+  let s=String(raw).toLowerCase().replace(/\s+/g,"").replace(/,/g,"").replace(/\$/g,"").replace(/pi/g,"π").replace(/[×·]/g,"*");
+  const lead=/^[-0-9.π*\/]+/.exec(s); if(!lead)return null;
+  const rest=s.slice(lead[0].length); if(rest&&!/^[a-z²]/.test(rest))return null;
+  s=lead[0].replace(/[*\/]+$/,"");
+  let m;
+  if((m=/^(-?[0-9]*\.?[0-9]*)\*?π(?:\/([0-9]*\.?[0-9]+))?$/.exec(s))){let c=m[1]===""?1:m[1]==="-"?-1:parseFloat(m[1]); if(!isFinite(c))return null; if(m[2])c/=parseFloat(m[2]); return {v:c*PI,pi:true,coef:c};}
+  if((m=/^π\*?([0-9]*\.?[0-9]+)$/.exec(s))){const c=parseFloat(m[1]);return {v:c*PI,pi:true,coef:c};}
+  if((m=/^(-?[0-9]*\.?[0-9]+)\/([0-9]*\.?[0-9]+)$/.exec(s))){const d=parseFloat(m[2]);if(!d)return null;return {v:parseFloat(m[1])/d,pi:false};}
+  if(!/^-?[0-9]*\.?[0-9]+$/.test(s))return null;
+  return {v:parseFloat(s),pi:false};
+}
+const M6={
+  tab:"Challenge", lesson:"Mixed review", accent:"var(--coral)",
+  aria:"Practice problem figure",
+  title(){return "Practice: area, circles, coordinates, scaling";},
+  scoreText(){const s=S6.score;return "streak "+s.streak+" · best "+s.best+" · "+s.right+"/"+s.n+" correct";},
+  bar(){
+    btn("New problem",()=>{S6.p=newProblem();S6.checked=false;M6.panel();redraw();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    [["mix","Mixed"],["poly","Triangles & quadrilaterals"],["comp","Composite figures"],["circ","Circles (π)"],["coord","Coordinates"],["scale","Scaling"],["dens","Population density"]].forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;if(k===S6.kind)o.selected=true;sel.appendChild(o);});
+    sel.onchange=()=>{S6.kind=sel.value;S6.p=newProblem();S6.checked=false;M6.panel();redraw();};
+    bar.appendChild(sel);
+    M6.sp=spacer(M6.scoreText()); M6.sp.id="score";
+  },
+  draw(){if(!S6.p)S6.p=newProblem(); const g=root(); gridLines(g,32,0,0,null,"#E8EEF9"); S6.p.draw(g);},
+  panel(){
+    if(!S6.p)S6.p=newProblem(); const p=S6.p;
+    side.innerHTML=`<div class="panel"><h3>Problem</h3>${pad("<p>"+esc(p.ask)+"</p>")}
+      <label class="fld" for="ans">Your answer${p.unit?" ("+esc(p.unit)+")":""}</label>
+      <div class="fldwrap ansrow"><input type="text" id="ans" autocomplete="off" ${p.allowPi?"":'inputmode="decimal"'} placeholder="${p.allowPi?"e.g. 25π or 78.5":"number"}">${p.allowPi?'<button type="button" class="ghost" id="piBtn" aria-label="Insert pi">π</button>':""}</div>
+      <div class="fldwrap" style="margin:16px 0 4px"><button type="button" class="go" id="chk">Check my answer</button></div>
+      <div id="fb" aria-live="polite"></div></div>`+
+      panel("Formula sheet",pad(`<div class="eq">rectangle, parallelogram  A = bh
+triangle        A = ½bh
+trapezoid       A = ½(b₁ + b₂)h
+kite, rhombus   A = ½d₁d₂
+circle          A = πr²    C = 2πr = πd
+distance        d = √(Δx² + Δy²)
+shoelace        A = ½|Σ(xᵢyᵢ₊₁ − xᵢ₊₁yᵢ)|
+scale by k      P' = kP    A' = k²A
+density         = quantity ÷ area</div>`));
+    const inp=document.getElementById("ans");
+    const pb=document.getElementById("piBtn"); if(pb)pb.onclick=()=>{inp.value+="π";inp.focus();};
+    inp.addEventListener("keydown",e=>{if(e.key==="Enter")M6.check();});
+    document.getElementById("chk").onclick=()=>M6.check();
+  },
+  check(){
+    const p=S6.p, fb=document.getElementById("fb"), raw=document.getElementById("ans").value, r=parseAns(raw);
+    if(!r){fb.innerHTML=`<div class="verdict bad">Type a number${p.allowPi?" (or a multiple of π, like 16π)":""}.</div>`;return;}
+    const tol=p.tol===undefined?Math.max(0.05,0.001*Math.abs(p.ans)):p.tol;
+    const ok=r.pi&&p.allowPi?Math.abs(r.coef-p.coef)<1e-6||Math.abs(r.v-p.ans)<=tol:Math.abs(r.v-p.ans)<=tol;
+    if(!S6.checked){S6.checked=true;const s=S6.score;s.n++;if(ok){s.right++;s.streak++;s.best=Math.max(s.best,s.streak);}else s.streak=0;
+      const sp=document.getElementById("score"); if(sp)sp.textContent=M6.scoreText();}
+    if(ok){fb.innerHTML=`<div class="verdict good"><b>Correct!</b>${r.pi?" Exact answer in terms of π — nice.":""}<span class="w">${esc(p.work)}</span></div>`;return;}
+    let hint=""; (p.traps||[]).some(t=>{if(Math.abs(r.v-t.v)<=Math.max(tol,0.02*Math.abs(t.v))&&Math.abs(t.v-p.ans)>tol){hint=t.m;return true;}return false;});
+    fb.innerHTML=`<div class="verdict bad"><b>Not yet.</b> ${esc(hint||"Here is one way to work it out:")}<span class="w">${esc(p.work)}</span></div>`;
+  },
+  live(){}
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+let cur=0;
+function redraw(){const M=MODS[cur]; clear(); M.draw(); if(M.live)M.live(); else M.panel(); if(M.sync)M.sync(); bTitle.textContent=M.title();}
+function render(){
+  animId++; const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent);
+  bLesson.textContent=M.lesson; cv.setAttribute("aria-label",M.aria);
+  bar.innerHTML=""; M.bar(); if(M.live)M.panel(); redraw();
+  [...tabsEl.children].forEach((b,i)=>{b.setAttribute("aria-selected",String(i===cur));b.tabIndex=i===cur?0:-1;});
+}
+function svgPt(e){const p=cv.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(cv.getScreenCTM().inverse());return [q.x,q.y];}
+let dragId=null;
+cv.addEventListener("pointerdown",e=>{const id=e.target.dataset&&e.target.dataset.drag; if(!id)return;
+  dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault();});
+cv.addEventListener("pointermove",e=>{if(!dragId)return; const M=MODS[cur]; if(!M.drag)return; M.drag(dragId,svgPt(e)); redraw();});
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+
+if(new URLSearchParams(location.search).has("embed"))document.body.classList.add("embed");
+if(new URLSearchParams(location.search).has("test"))window.__AL={get p(){return S6.p;}};
+function fromHash(){const m=/^#tab-(\d+)$/.exec(location.hash); if(m){const i=+m[1]-1; if(i>=0&&i<MODS.length){cur=i;return true;}} return false;}
+fromHash();
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>{cur=i;try{history.replaceState(null,"",location.pathname+location.search+"#tab-"+(i+1));}catch(_){} render();};
+  b.onkeydown=e=>{if(e.key==="ArrowRight"||e.key==="ArrowLeft"){const j=(i+(e.key==="ArrowRight"?1:MODS.length-1))%MODS.length;tabsEl.children[j].focus();tabsEl.children[j].click();}};
+  tabsEl.appendChild(b);
+});
+window.addEventListener("hashchange",()=>{if(fromHash())render();});
+render();
+})();
+</script>
+</body>
+</html>

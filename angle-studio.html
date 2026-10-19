@@ -172,6 +172,9 @@
   .grab:hover{fill:rgba(255,107,53,.35)}
   .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
   footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
 </style>
 
 <div class="wrap">
@@ -1248,6 +1251,8 @@ const M6={
 /* ══════════════════════ controller ══════════════════════ */
 const MODS=[M1,M2,M3,M4,M5,M6];
 let cur=0;
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+{const m=/^#tab-(\d+)$/.exec(location.hash); if(m){const i=+m[1]-1; if(i>=0&&i<MODS.length) cur=i;}}
 function render(){
   const M=MODS[cur];
   document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
@@ -1262,7 +1267,7 @@ function render(){
 MODS.forEach((M,i)=>{
   const b=document.createElement("button"); b.setAttribute("role","tab");
   b.innerHTML='<span class="n">'+(i+1)+'</span>'+M.tab;
-  b.onclick=()=>{cur=i;render();};
+  b.onclick=()=>{cur=i;history.replaceState(null,"","#tab-"+(i+1));render();};
   tabsEl.appendChild(b);
 });
 render();

@@ -1,0 +1,1567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Circle Theorems Lab — Geometry Unit 3</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='%2300E5FF' stroke-width='5'/%3E%3Cpath d='M14 40 L32 12 L50 40' fill='none' stroke='%23FF3D8A' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35; --amber:#B45309; --slate:#64748B;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none;
+    -webkit-user-select:none;user-select:none}
+  svg.canvas.dragging, svg.canvas.dragging *{cursor:grabbing!important}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .bar button:disabled{opacity:.4;cursor:default;transform:none}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar label.chk:focus-within{outline:3px solid var(--yellow);outline-offset:2px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px;padding:9px 12px}
+  .bar .brk{flex-basis:100%;height:0}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .rel[data-part]{cursor:pointer}
+  .rel[data-part]:hover{background:rgba(255,255,255,.05)}
+  .rel.active{background:rgba(255,255,255,.09);box-shadow:inset 3px 0 0 var(--accent)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+  .eq .ok,.eq .no{font-weight:700}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top}
+  table.facts .ab{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  table.facts .st{color:#DDDDF2}
+  table.facts .st i{display:block;color:var(--dim);font-style:normal;font-size:13px;margin-top:4px}
+  ol.chain{margin:0;padding:6px 20px 18px 38px;font-size:15px;color:#CFCFEA}
+  ol.chain li{padding:7px 0} ol.chain li::marker{color:var(--accent);font-weight:700}
+  ol.chain li b{color:#fff}
+  ol.chain li.later{opacity:.42}
+  ol.chain li.now{color:#fff}
+  ol.chain li.now b{color:var(--accent)}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.8;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.2;fill:none;stroke-dasharray:9 6}
+  .dash{stroke-dasharray:8 6}
+  .circ{stroke:var(--graphite);stroke-width:2.6;fill:none}
+  .cmp{stroke:var(--slate);stroke-width:1.6;fill:none}
+  .arcHL{fill:none;stroke-width:8;stroke-linecap:round;opacity:.55}
+  .tick{stroke:var(--graphite);stroke-width:2.2}
+  .wedge{stroke-width:2.4;fill-opacity:.17}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .sm{font-family:var(--mono);font-weight:700;font-size:14px;paint-order:stroke;stroke:#fff;stroke-width:4.5;stroke-linejoin:round}
+  .tag{font-family:var(--mono);font-weight:700;font-size:14.5px;cursor:pointer;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .tag:hover{text-decoration:underline}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot a:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:4px}
+  footer.foot .links{display:flex;gap:22px;flex-wrap:wrap;margin-top:10px}
+
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+
+  @media (max-width:560px){
+    .wrap{padding:18px 12px 50px}
+    .masthead .eyebrow{margin-left:0;text-align:left;letter-spacing:.08em}
+    .bar{padding:12px 12px}
+    .bar .spacer{margin-left:0;width:100%}
+    .board-head{padding:14px 14px}
+    .board-head .lsn{margin-left:0;white-space:normal}
+    nav.tabs button{padding:9px 14px;font-size:14px}
+    .pad{padding:14px 16px}
+    .rel{padding:12px 14px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Circle Theorems <em>Lab</em></h1>
+    <div class="eyebrow">Geometry · Unit 3 · Polygons &amp; Circles</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Circle figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every figure is live and every measure is computed from the drawing — drag an orange handle and the facts follow. 1 grid square = 1 unit. Theorem wording follows Common Core / Eureka Math Geometry Module 5.
+    <div class="links"><a href="/geometry/">← Geometry course</a><a href="/math/#geometry">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460, U=32;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+
+const D2R=Math.PI/180;
+const norm=d=>((d%360)+360)%360;
+const PT=(c,r,deg)=>[c[0]+r*Math.cos(deg*D2R), c[1]-r*Math.sin(deg*D2R)];
+const angOf=(c,p)=>norm(Math.atan2(-(p[1]-c[1]), p[0]-c[0])/D2R);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const r1=v=>Math.round(v*10)/10;
+const fmt=v=>{const s=r1(v); return (Math.abs(s-Math.round(s))<0.05? String(Math.round(s)) : s.toFixed(1));};
+const f2=v=>(Math.round(v*100)/100).toFixed(2);
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const dist=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1]);
+const mid=(p,q)=>[(p[0]+q[0])/2,(p[1]+q[1])/2];
+const lerp=(p,q,t)=>[p[0]+(q[0]-p[0])*t,p[1]+(q[1]-p[1])*t];
+const unit=(p,q)=>{const L=dist(p,q)||1;return [(q[0]-p[0])/L,(q[1]-p[1])/L];};
+const add=(p,v,k)=>[p[0]+v[0]*(k===undefined?1:k),p[1]+v[1]*(k===undefined?1:k)];
+const uL=px=>fmt(px/U);           // px → units, display
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+
+function ang3(V,P,Q){
+  const a=Math.atan2(P[1]-V[1],P[0]-V[0]), b=Math.atan2(Q[1]-V[1],Q[0]-V[0]);
+  let d=Math.abs(a-b)/D2R; if(d>180)d=360-d; return d;
+}
+function smallWedge(V,P,Q){
+  const a=angOf(V,P), b=angOf(V,Q), d=norm(b-a);
+  return d<=180? {from:a,to:b,m:d} : {from:b,to:a,m:360-d};
+}
+// arc between circle angles x and y that does NOT contain angle z (ccw from→to)
+function arcNot(x,y,z){ const d=norm(y-x); return norm(z-x)<d ? {from:y,to:x,m:360-d} : {from:x,to:y,m:d}; }
+function arcCont(x,y,z){ const d=norm(y-x); return norm(z-x)<d ? {from:x,to:y,m:d} : {from:y,to:x,m:360-d}; }
+function minorArc(x,y){ const d=norm(y-x); return d<=180? {from:x,to:y,m:d} : {from:y,to:x,m:360-d}; }
+function inArc(a,arc){ return norm(a-arc.from) < arc.m-1e-9 && norm(a-arc.from)>1e-9; }
+function lineCircle(P,u,O,r){
+  const q=[P[0]-O[0],P[1]-O[1]], b=u[0]*q[0]+u[1]*q[1], c=q[0]*q[0]+q[1]*q[1]-r*r, D=b*b-c;
+  if(D<0)return null; const s=Math.sqrt(D); return [-b-s,-b+s];
+}
+function lineX(p1,p2,p3,p4){
+  const rx=p2[0]-p1[0], ry=p2[1]-p1[1], qx=p4[0]-p3[0], qy=p4[1]-p3[1];
+  const d=rx*qy-ry*qx; if(Math.abs(d)<1e-9)return null;
+  const wx=p3[0]-p1[0], wy=p3[1]-p1[1];
+  const t=(wx*qy-wy*qx)/d, s=(wx*ry-wy*rx)/d;
+  return {p:[p1[0]+t*rx,p1[1]+t*ry],t:t,s:s};
+}
+function tangentPts(O,r,P){
+  const d=dist(O,P); if(d<=r+0.01)return null;
+  const b=angOf(O,P), a=Math.acos(r/d)/D2R;
+  return {a1:norm(b+a),a2:norm(b-a),T1:PT(O,r,b+a),T2:PT(O,r,b-a),len:Math.sqrt(d*d-r*r)};
+}
+function cross(o,a,b){return (a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);}
+function footOn(P,A,B){const u=unit(A,B), t=(P[0]-A[0])*u[0]+(P[1]-A[1])*u[1]; return add(A,u,t);}
+function distToLine(P,A,B){return Math.abs(cross(A,B,P))/(dist(A,B)||1);}
+
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+function bg(){
+  const d=E("defs");
+  d.innerHTML='<pattern id="g" width="32" height="32" patternUnits="userSpaceOnUse">'+
+    '<path d="M32 0H0V32" fill="none" stroke="var(--grid)" stroke-width="1" opacity="0.75"/></pattern>'+
+    '<clipPath id="fr"><rect width="'+VW+'" height="'+VH+'"/></clipPath>'+
+    '<marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#22314F"/></marker>';
+  cv.appendChild(d);
+  cv.appendChild(E("rect",{width:VW,height:VH,fill:"url(#g)"}));
+  const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
+}
+function seg(g,p,q,cls,color,extra){
+  const l=E("line",{x1:p[0],y1:p[1],x2:q[0],y2:q[1],class:cls||"line"});
+  if(color)l.style.stroke=color;
+  if(extra)for(const k in extra)l.setAttribute(k,extra[k]);
+  g.appendChild(l); return l;
+}
+function longLine(g,p,q,cls,color,extra){ const u=unit(p,q); return seg(g,add(p,u,-1600),add(p,u,1600),cls,color,extra); }
+function ray(g,p,q,ext,cls,color){ const u=unit(p,q); return seg(g,p,add(q,u,ext),cls,color); }
+function circ(g,O,r,cls,color,extra){
+  const c=E("circle",{cx:O[0],cy:O[1],r:r,class:cls||"circ"}); if(color)c.style.stroke=color;
+  if(extra)for(const k in extra)c.setAttribute(k,extra[k]);
+  g.appendChild(c); return c;
+}
+function arcD(O,r,a1,a2){
+  const s=PT(O,r,a1), e=PT(O,r,a2), sw=norm(a2-a1);
+  if(sw<0.01)return "M "+s[0]+" "+s[1];
+  return "M "+s[0]+" "+s[1]+" A "+r+" "+r+" 0 "+(sw>180?1:0)+" 0 "+e[0]+" "+e[1];
+}
+function arc(g,O,r,a1,a2,cls,color,extra){
+  const p=E("path",{d:arcD(O,r,a1,a2),class:cls||"arcHL"}); if(color)p.style.stroke=color;
+  if(extra)for(const k in extra)p.setAttribute(k,extra[k]);
+  g.appendChild(p); return p;
+}
+function dot(g,p,rr){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:rr||5,class:"dot"})); }
+function txt(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"mk","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("fill",color);
+  t.textContent=s; g.appendChild(t); return t;
+}
+function grab(g,p,id){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:17,class:"grab","data-drag":id})); dot(g,p); }
+function nameOut(g,O,P,s,d,color){ const u=unit(O,P); return txt(g,add(P,u,d||24),s,"mk",color); }
+function wedge(g,c,a1,a2,r,color,opts){
+  opts=opts||{};
+  const s=PT(c,r,a1), e=PT(c,r,a2), sw=norm(a2-a1);
+  const d="M "+c[0]+" "+c[1]+" L "+s[0]+" "+s[1]+" A "+r+" "+r+" 0 "+(sw>180?1:0)+" 0 "+e[0]+" "+e[1]+" Z";
+  const p=E("path",{d:d,class:"wedge",stroke:color,fill:color});
+  g.appendChild(p);
+  if(opts.label!==undefined&&opts.label!==null){
+    const lp=PT(c,r+(opts.lr||24),a1+sw/2);
+    txt(g,lp,opts.label,opts.labelClass||"num",color);
+  }
+  return p;
+}
+function wedgeAt(g,V,P,Q,r,color,label,lr){ const w=smallWedge(V,P,Q); return wedge(g,V,w.from,w.to,r,color,{label:label,lr:lr}); }
+function rightMark(g,c,a,size){
+  size=size||13;
+  const p1=PT(c,size,a), p3=PT(c,size,a+90);
+  const p2=[p1[0]+(p3[0]-c[0]), p1[1]+(p3[1]-c[1])];
+  g.appendChild(E("polyline",{points:[p1,p2,p3].map(p=>p.join(",")).join(" "),class:"rt"}));
+}
+function rightAt(g,V,P,Q,size){ const a=angOf(V,P), b=angOf(V,Q); rightMark(g,V, norm(b-a)<=180? a : b, size); }
+function ticks(g,p,q,n,color){
+  const m=mid(p,q), u=unit(p,q), nn=[-u[1],u[0]];
+  for(let i=0;i<n;i++){ const o=(i-(n-1)/2)*6, c=add(m,u,o);
+    seg(g,add(c,nn,8),add(c,nn,-8),"tick",color); }
+}
+function segLabel(g,p,q,s,color,away,off,cls){
+  off=off||17; const m=mid(p,q), u=unit(p,q); let n=[-u[1],u[0]];
+  if(away && ((m[0]-away[0])*n[0]+(m[1]-away[1])*n[1])<0) n=[-n[0],-n[1]];
+  return txt(g,add(m,n,off),s,cls||"num",color);
+}
+function inCanvas(p,m){m=m===undefined?22:m;return [clamp(p[0],m,VW-m),clamp(p[1],m,VH-m)];}
+function snapPt(p,step){return [Math.round(p[0]/step)*step,Math.round(p[1]/step)*step];}
+
+/* ── bar / panel builders ── */
+function segCtl(opts,curVal,onPick,label){
+  const s=document.createElement("div"); s.className="seg"; if(label)s.setAttribute("aria-label",label);
+  s.setAttribute("role","group");
+  opts.forEach(([k,lab])=>{
+    const b=document.createElement("button"); b.type="button"; b.textContent=lab;
+    b.setAttribute("aria-pressed",String(curVal===k));
+    b.onclick=()=>onPick(k);
+    s.appendChild(b);
+  });
+  bar.appendChild(s); return s;
+}
+function btn(lab,fn,primary){
+  const b=document.createElement("button"); b.type="button"; b.textContent=lab; if(primary)b.className="primary";
+  b.onclick=fn; bar.appendChild(b); return b;
+}
+function chk(lab,val,fn){
+  const l=document.createElement("label"); l.className="chk";
+  const c=document.createElement("input"); c.type="checkbox"; c.checked=!!val;
+  c.onchange=()=>fn(c.checked);
+  l.appendChild(c); l.appendChild(document.createTextNode(lab)); bar.appendChild(l); return c;
+}
+function spacer(t){ const sp=document.createElement("span"); sp.className="spacer"; sp.textContent=t; bar.appendChild(sp); return sp; }
+function brk(){ const d=document.createElement("div"); d.className="brk"; bar.appendChild(d); }
+function panel(title,body){ return `<div class="panel"><h3>${title}</h3><div class="pad">${body}</div></div>`; }
+function tryThis(body){ return panel("Try this",body); }
+
+/* colours */
+const COL={rad:"var(--corr)",diam:"var(--same)",chord:"var(--samex)",sec:"var(--altx)",tan:"var(--alt)",
+  minor:"var(--vert)",major:"var(--amber)",central:"var(--lin)",ins:"var(--lin)",ins2:"var(--alt)",cen:"var(--corr)",
+  arc:"var(--vert)",arc2:"var(--samex)",unk:"var(--unk)"};
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null, dragHandler=null;
+function svgPt(e){
+  const m=cv.getScreenCTM(); if(!m)return [0,0];
+  const pt=cv.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY;
+  const p=pt.matrixTransform(m.inverse()); return [p.x,p.y];
+}
+cv.addEventListener("pointerdown",e=>{
+  const t=e.target.closest? e.target.closest("[data-drag]") : null;
+  if(!t||!dragHandler)return;
+  dragId=t.getAttribute("data-drag");
+  try{cv.setPointerCapture(e.pointerId);}catch(err){}
+  cv.classList.add("dragging"); e.preventDefault();
+});
+cv.addEventListener("pointermove",e=>{
+  if(!dragId||!dragHandler)return;
+  e.preventDefault();
+  dragHandler(dragId,svgPt(e));
+});
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;cv.classList.remove("dragging");}));
+cv.addEventListener("click",e=>{
+  const t=e.target.closest? e.target.closest("[data-part]") : null;
+  if(t&&window.__ctlPart)window.__ctlPart(t.getAttribute("data-part"));
+});
+
+/* ══════════════════════ 01 · ALL CIRCLES ARE SIMILAR ══════════════════════ */
+const PARTS=[
+  {k:"radius",  nm:"Radius",        col:COL.rad,   def:"A segment from the center to a point on the circle. All radii of a circle are congruent."},
+  {k:"diameter",nm:"Diameter",      col:COL.diam,  def:"A chord that passes through the center. Its length is 2r."},
+  {k:"chord",   nm:"Chord",         col:COL.chord, def:"A segment whose endpoints both lie on the circle."},
+  {k:"secant",  nm:"Secant",        col:COL.sec,   def:"A line that intersects the circle in exactly two points."},
+  {k:"tangent", nm:"Tangent",       col:COL.tan,   def:"A line in the plane of the circle that intersects it in exactly one point — the point of tangency."},
+  {k:"minor",   nm:"Minor arc",     col:COL.minor, def:"An arc smaller than a semicircle (less than 180°). Named by its two endpoints."},
+  {k:"major",   nm:"Major arc",     col:COL.major, def:"An arc larger than a semicircle (more than 180°). Named with three letters so it can't be confused with the minor arc."},
+  {k:"central", nm:"Central angle", col:COL.central,def:"An angle whose vertex is the center of the circle. Its measure is the measure of its intercepted arc."}
+];
+const M1={
+  tab:"All circles are similar", lesson:"G-C.A.1", accent:"var(--cyan)",
+  title:()=>M1.s.mode==="sim"?"Any circle maps onto any other":"Parts of a circle",
+  s:{mode:"sim", c1:[176,272], r1:64, h1:40, c2:[468,214], r2:128, h2:40, t:0, raf:0, hom:false,
+     part:"all", O:[322,236], r:150, p:{R:28,F:64,G:122,D:163,A:205,B:282,T:325}},
+  stop(){ if(M1.s.raf){cancelAnimationFrame(M1.s.raf);M1.s.raf=0;} },
+  bar(){
+    const s=M1.s;
+    segCtl([["sim","Similarity"],["parts","Parts of a circle"]],s.mode,k=>{M1.stop();s.mode=k;render();},"View");
+    if(s.mode==="sim"){
+      btn("▶ Translate, then dilate",()=>M1.play(),true);
+      btn("Reset",()=>{M1.stop();s.t=0;update();});
+      chk("One-step dilation center",s.hom,v=>{s.hom=v;update();});
+      spacer("Drag centers and radius handles");
+    } else {
+      const row=document.createElement("div"); row.className="chiprow"; row.setAttribute("role","group"); row.setAttribute("aria-label","Highlight a part");
+      [{k:"all",nm:"Show all",col:"var(--lavender)"}].concat(PARTS).forEach(P=>{
+        const b=document.createElement("button"); b.type="button"; b.textContent=P.nm; b.style.setProperty("--c",P.col);
+        b.setAttribute("aria-pressed",String(s.part===P.k));
+        b.onclick=()=>{s.part=P.k;render();};
+        row.appendChild(b);
+      });
+      bar.appendChild(row);
+      spacer("Click a label or chip to highlight it · drag the orange points");
+    }
+  },
+  play(){
+    const s=M1.s; M1.stop(); s.t=0; const t0=performance.now();
+    const step=now=>{
+      s.t=Math.min(2,(now-t0)/1300);
+      clear(); M1.draw();
+      if(s.t<2) s.raf=requestAnimationFrame(step); else {s.raf=0; update();}
+    };
+    s.raf=requestAnimationFrame(step);
+  },
+  draw(){ return M1.s.mode==="sim"? M1.drawSim() : M1.drawParts(); },
+  drawSim(){
+    const s=M1.s, g=bg(), k=s.r2/s.r1;
+    const H1=PT(s.c1,s.r1,s.h1), H2=PT(s.c2,s.r2,s.h2);
+    // one-step dilation centre
+    if(s.hom){
+      if(Math.abs(s.r2-s.r1)>0.5){
+        const H=[(s.r2*s.c1[0]-s.r1*s.c2[0])/(s.r2-s.r1),(s.r2*s.c1[1]-s.r1*s.c2[1])/(s.r2-s.r1)];
+        const P2=add(s.c2,[H1[0]-s.c1[0],H1[1]-s.c1[1]],k);
+        [[s.c1,s.c2],[H1,P2]].forEach(([a,b])=>{ const far=dist(H,a)>dist(H,b)?a:b; seg(g,H,far,"thin dash","var(--slate)"); });
+        seg(g,s.c2,P2,"thin dash","var(--lin)");
+        dot(g,P2,4); dot(g,H); txt(g,[H[0]+16,H[1]-16],"H","mk","var(--slate)");
+      }
+    }
+    circ(g,s.c1,s.r1,"circ",COL.cen,{"stroke-width":3});
+    circ(g,s.c2,s.r2,"circ",COL.ins,{"stroke-width":3});
+    seg(g,s.c1,H1,"line",COL.cen); seg(g,s.c2,H2,"line",COL.ins);
+    txt(g,inCanvas([s.c1[0],s.c1[1]-s.r1-16],14),"r₁ = "+uL(s.r1),"sm",COL.cen);
+    txt(g,inCanvas([s.c2[0],s.c2[1]-s.r2-16],14),"r₂ = "+uL(s.r2),"sm",COL.ins);
+    // translation vector
+    if(dist(s.c1,s.c2)>30){
+      const u=unit(s.c1,s.c2);
+      seg(g,add(s.c1,u,8),add(s.c2,u,-8),"thin dash","var(--graphite)",{"marker-end":"url(#ah)"});
+    }
+    // ghost image
+    if(s.t>0){
+      const v=[s.c2[0]-s.c1[0],s.c2[1]-s.c1[1]];
+      let gc,gr,R;
+      if(s.t<=1){ const e=ease(s.t); gc=add(s.c1,v,e); gr=s.r1; R=add(H1,v,e); }
+      else { const e=ease(s.t-1), kk=1+(k-1)*e; gc=s.c2; gr=s.r1*kk; R=add(s.c2,[H1[0]+v[0]-s.c2[0],H1[1]+v[1]-s.c2[1]],kk); }
+      circ(g,gc,gr,"circ","var(--magenta)",{"stroke-width":3.4,"stroke-dasharray":"10 6"});
+      seg(g,gc,R,"line","var(--magenta)",{"stroke-dasharray":"6 5"});
+      dot(g,R,4);
+      const msg = s.t<1? "Step 1 · translate C₁ to C₂" : (s.t<2? "Step 2 · dilate about C₂, k = "+f2(k) : "Image = circle C₂  ✓");
+      txt(g,[18,26],msg,"num","var(--magenta)","start");
+    }
+    grab(g,s.c1,"c1"); grab(g,H1,"h1"); grab(g,s.c2,"c2"); grab(g,H2,"h2");
+    txt(g,[s.c1[0]-6,s.c1[1]+28],"C₁","mk",COL.cen); txt(g,[s.c2[0]-6,s.c2[1]+28],"C₂","mk",COL.ins);
+  },
+  drawParts(){
+    const s=M1.s, g=bg(), O=s.O, r=s.r, p=s.p, sel=s.part;
+    const on=k=>sel==="all"||sel===k;
+    const grp=k=>{ const gg=E("g",{opacity:on(k)?1:0.13}); g.appendChild(gg); return gg; };
+    const P=a=>PT(O,r,a);
+    const A=P(p.A),B=P(p.B),R=P(p.R),F=P(p.F),G=P(p.G),D=P(p.D),Ee=P(p.D+180),T=P(p.T);
+    const mn=minorArc(p.A,p.B), mj={from:mn.to,to:mn.from+360,m:360-mn.m};
+    // arcs (outside the ring)
+    let gg=grp("major"); arc(gg,O,r+9,mj.from,mj.to,"arcHL",COL.major,{"stroke-width":sel==="major"?9:6});
+    gg=grp("minor"); arc(gg,O,r+9,mn.from,mn.to,"arcHL",COL.minor,{"stroke-width":sel==="minor"?9:6});
+    circ(g,O,r,"circ");
+    gg=grp("central"); wedge(gg,O,mn.from,mn.to,44,COL.central);
+    seg(gg,O,A,"thin",COL.central); seg(gg,O,B,"thin",COL.central);
+    gg=grp("diameter"); seg(gg,D,Ee,"line",COL.diam);
+    gg=grp("radius"); seg(gg,O,R,"line",COL.rad);
+    gg=grp("chord"); seg(gg,A,B,"line",COL.chord);
+    gg=grp("secant"); longLine(gg,F,G,"line",COL.sec);
+    gg=grp("tangent"); { const td=p.T+90; seg(gg,PT(T,220,td),PT(T,220,td+180),"line",COL.tan);
+      if(sel==="tangent"){ seg(gg,O,T,"thin dash",COL.rad); rightMark(gg,T,p.T+180,13);} }
+    dot(g,O); txt(g,[O[0]+4,O[1]+24],"O","mk");
+    // handles + point names
+    const pts=[["A",A,"chord"],["B",B,"chord"],["R",R,"radius"],["F",F,"secant"],["G",G,"secant"],["D",D,"diameter"],["T",T,"tangent"]];
+    pts.forEach(([n,q])=>grab(g,q,n));
+    dot(g,Ee);
+    pts.forEach(([n,q])=>nameOut(g,O,q,n,27));
+    nameOut(g,O,Ee,"E",27);
+    // clickable tags
+    const tag=(k,pos,label)=>{ const P2=PARTS.find(x=>x.k===k); const t=txt(g,pos,label||P2.nm.toLowerCase(),"tag",P2.col);
+      t.setAttribute("data-part",k); t.setAttribute("opacity",on(k)?1:0.35); };
+    tag("radius",(()=>{const m=mid(O,R),u=unit(O,R);return add(m,[-u[1],u[0]],-15);})());
+    tag("diameter",(()=>{const m=PT(O,r*0.55,p.D),u=unit(O,D);return add(m,[-u[1],u[0]],15);})());
+    tag("chord",add(mid(A,B),unit(mid(A,B),O),18));
+    tag("secant",(()=>{const u=unit(F,G);return add(G,u,72);})());
+    tag("tangent",PT(T,160,p.T+90+(Math.sin((p.T+90)*D2R)<0?180:0)));
+    tag("minor",PT(O,r+46,mn.from+mn.m/2),"minor arc");
+    tag("major",PT(O,r+46,mj.from+mj.m/2),"major arc");
+    tag("central",PT(O,74,mn.from+mn.m/2),"central ∠");
+  },
+  drag(id,q){
+    const s=M1.s;
+    if(s.mode==="sim"){
+      if(id==="c1"||id==="c2"){ s[id]=inCanvas(q,24); }
+      else { const c=id==="h1"?s.c1:s.c2, key=id==="h1"?"r1":"r2";
+        s[key]=clamp(Math.round(dist(c,q)/U*10)/10*U,0.8*U,6.5*U); s[id]=angOf(c,q); }
+      update(); return;
+    }
+    const a=Math.round(angOf(s.O,q));
+    if(id==="A"&&Math.abs(norm(a-s.p.B))<5)return;
+    if(id==="B"&&Math.abs(norm(a-s.p.A))<5)return;
+    if(id==="F"&&Math.abs(norm(a-s.p.G))<8)return;
+    if(id==="G"&&Math.abs(norm(a-s.p.F))<8)return;
+    s.p[id]=a; update();
+  },
+  panel(){
+    const s=M1.s; let h="";
+    if(s.mode==="sim"){
+      const k=s.r2/s.r1, v=[(s.c2[0]-s.c1[0])/U,-(s.c2[1]-s.c1[1])/U];
+      h+=panel("Live measures",`<div class="eq">r₁ = ${uL(s.r1)}    r₂ = ${uL(s.r2)}
+Step 1: translate by ⟨${fmt(v[0])}, ${fmt(v[1])}⟩   C₁ → C₂
+Step 2: dilate about C₂ by
+        k = r₂ / r₁ = ${uL(s.r2)} / ${uL(s.r1)} = ${f2(k)}
+<small>Translation then dilation is a similarity transformation, so circle C₁ ~ circle C₂.</small></div>
+        <p>${k>1.005?"k &gt; 1, so the dilation is an <b>enlargement</b>.":k<0.995?"k &lt; 1, so the dilation is a <b>reduction</b>.":"k = 1: the radii are equal, so the translation alone does the job — the circles are <b>congruent</b>."}</p>`);
+      h+=panel("Why every circle works",`<p>Two figures are <span class="term">similar</span> if a sequence of rigid motions and dilations maps one onto the other.</p>
+        <p><b>Translate</b> circle C₁ along the vector C₁C₂. Rigid motions keep distances, so you still have a circle of radius r₁ — now centered at C₂.</p>
+        <p><b>Dilate</b> about C₂ with scale factor k = r₂/r₁. Every point that was r₁ from C₂ is now k·r₁ = r₂ from C₂. Those are exactly the points of circle C₂.</p>
+        <p>Nothing about the two circles mattered — so <b>all circles are similar</b>. Polygons can't promise that: two rectangles need not be similar.</p>`);
+      h+=tryThis(`<p>Press ▶, then drag C₂'s radius handle until r₂ = r₁. What is k now? Then tick <b>One-step dilation center</b>: when the radii differ, a single dilation about H maps one circle onto the other. Where does H go as you make the circles nearly the same size?</p>`);
+    } else {
+      const p=s.p, mn=minorArc(p.A,p.B);
+      const mjArc={from:mn.to,m:360-mn.m};
+      const cand=[["R",p.R],["F",p.F],["G",p.G],["D",p.D],["E",norm(p.D+180)],["T",p.T]];
+      const third=(cand.find(c=>inArc(c[1],mjArc))||["X"])[0];
+      const vals={radius:"OR = "+uL(s.r),diameter:"DE = "+uL(2*s.r),chord:"AB = "+uL(dist(PT(s.O,s.r,p.A),PT(s.O,s.r,p.B))),
+        secant:"line FG",tangent:"OT ⟂ tangent",minor:"m⌢AB = "+fmt(mn.m)+"°",major:"m⌢A"+third+"B = "+fmt(360-mn.m)+"°",central:"m∠AOB = "+fmt(mn.m)+"°"};
+      h+=`<div class="panel"><h3>Vocabulary — click to highlight</h3>`+PARTS.map(P=>
+        `<div class="rel${s.part===P.k?" active":""}" data-part="${P.k}" tabindex="0" role="button" aria-pressed="${s.part===P.k}"><span class="dot" style="background:${P.col}"></span><span class="nm">${P.nm}<em>${P.def}</em></span><span class="val">${vals[P.k]}</span></div>`).join("")+`</div>`;
+      h+=panel("Connections",`<div class="eq">diameter = 2 × radius = ${uL(2*s.r)}
+m∠AOB = m⌢AB = ${fmt(mn.m)}°
+m⌢A${third}B = 360° − ${fmt(mn.m)}° = ${fmt(360-mn.m)}°</div>
+        <p>A chord lives <b>inside</b> the circle; a secant is the whole line through that chord. A tangent touches once — and it is always perpendicular to the radius drawn to the point of tangency.</p>`);
+      h+=tryThis(`<p>Drag F toward G. Just before they meet, the secant almost becomes a tangent line. Then drag D onto A: the diameter is now a chord with endpoint A — the longest chord the circle has.</p>`);
+    }
+    side.innerHTML=h;
+    side.querySelectorAll("[data-part]").forEach(el=>{
+      const go=()=>{ s.part=(s.part===el.dataset.part?"all":el.dataset.part); render(); };
+      el.onclick=go; el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}};
+    });
+  },
+  part(k){ M1.s.part=(M1.s.part===k?"all":k); render(); }
+};
+
+/* ══════════════════════ 02 · CENTRAL & INSCRIBED ANGLES ══════════════════════ */
+const M2={
+  tab:"Central & inscribed angles", lesson:"G-C.A.2", accent:"var(--yellow)",
+  title:()=>"Inscribed angle = ½ central angle = ½ arc",
+  O:[350,232], R:165,
+  s:{A:210,B:330,C:95,D:40,showCen:true,showD:false,helper:false,lock:false},
+  pts(){ const s=M2.s,O=M2.O,R=M2.R; return {A:PT(O,R,s.A),B:PT(O,R,s.B),C:PT(O,R,s.C),D:PT(O,R,s.D)}; },
+  caseOf(){
+    const s=M2.s,O=M2.O,{A,B,C}=M2.pts();
+    const aA=angOf(C,A), aB=angOf(C,B), aO=angOf(C,O);
+    const w=smallWedge(C,A,B);
+    const dA=Math.min(norm(aO-aA),norm(aA-aO)), dB=Math.min(norm(aO-aB),norm(aB-aO));
+    if(dA<0.6||dB<0.6) return "on";
+    return norm(aO-w.from)<w.m ? "in" : "out";
+  },
+  bar(){
+    const s=M2.s, cs=M2.caseOf(), arcM=arcNot(s.A,s.B,s.C).m;
+    const cur=Math.abs(arcM-180)<0.01?"semi":cs;
+    segCtl([["in","Center inside"],["on","Center on a side"],["out","Center outside"],["semi","Semicircle"]],cur,k=>{
+      const P={in:[210,330,95,false],on:[210,330,30,false],out:[240,300,150,false],semi:[200,20,105,true]}[k];
+      s.A=P[0];s.B=P[1];s.C=P[2];s.lock=P[3]; if(s.showD)s.D=norm(s.C+(k==="semi"?40:-45)); render();
+    },"Preset cases");
+    brk();
+    chk("Central angle",s.showCen,v=>{s.showCen=v;update();});
+    chk("Second inscribed angle ∠ADB",s.showD,v=>{s.showD=v;update();});
+    chk("Diameter through C",s.helper,v=>{s.helper=v;update();});
+    chk("Lock AB as a diameter",s.lock,v=>{s.lock=v; if(v){s.B=norm(s.A+180); if(Math.abs(norm(s.C-s.A))<6||Math.abs(norm(s.C-s.B))<6)s.C=norm(s.A+90);} render();});
+    spacer("Drag A, B, C"+(s.showD?", D":""));
+  },
+  draw(){
+    const s=M2.s,O=M2.O,R=M2.R,g=bg(),{A,B,C,D}=M2.pts();
+    const ia=arcNot(s.A,s.B,s.C);
+    circ(g,O,R,"circ");
+    arc(g,O,R,ia.from,ia.to,"arcHL",COL.arc,{"stroke-width":9});
+    txt(g,PT(O,R+34,ia.from+ia.m/2),"⌢ "+fmt(ia.m)+"°","num",COL.arc);
+    if(s.helper){ const Cp=PT(O,R,s.C+180); seg(g,C,Cp,"aux"); dot(g,Cp,4); txt(g,add(Cp,unit(O,Cp),22),"C′","mk","var(--corr)"); }
+    if(s.lock) seg(g,A,B,"thin dash","var(--graphite)");
+    if(s.showCen){
+      seg(g,O,A,"line",COL.cen); seg(g,O,B,"line",COL.cen);
+      wedge(g,O,ia.from,ia.to,ia.m>180?30:40,COL.cen,{label:fmt(ia.m)+"°"+(ia.m>180?" (reflex)":""),lr:ia.m>180?22:24});
+    }
+    seg(g,C,A,"line",COL.ins); seg(g,C,B,"line",COL.ins);
+    const ins=ang3(C,A,B);
+    if(Math.abs(ins-90)<0.3){ rightAt(g,C,A,B,16); txt(g,add(C,unit(C,O),56),"90°","num",COL.ins); }
+    else wedgeAt(g,C,A,B,42,COL.ins,fmt(ins)+"°");
+    if(s.showD){
+      seg(g,D,A,"line",COL.ins2); seg(g,D,B,"line",COL.ins2);
+      const iD=ang3(D,A,B);
+      if(Math.abs(iD-90)<0.3){ rightAt(g,D,A,B,16); txt(g,add(D,unit(D,O),56),"90°","num",COL.ins2);} else wedgeAt(g,D,A,B,34,COL.ins2,fmt(iD)+"°");
+    }
+    dot(g,O); txt(g,[O[0]+18,O[1]+18],"O","mk");
+    grab(g,A,"A"); grab(g,B,"B"); grab(g,C,"C"); if(s.showD)grab(g,D,"D");
+    nameOut(g,O,A,"A"); nameOut(g,O,B,"B"); nameOut(g,O,C,"C"); if(s.showD)nameOut(g,O,D,"D");
+  },
+  drag(id,q){
+    const s=M2.s, a=Math.round(angOf(M2.O,q));
+    const others=["A","B","C"].concat(s.showD?["D"]:[]).filter(k=>k!==id);
+    const tooClose=(x,ks)=>ks.some(k=>{const d=norm(x-s[k]);return d<5||d>355;});
+    if(s.lock&&(id==="A"||id==="B")){
+      const b=norm(a+180); if(tooClose(a,["C"].concat(s.showD?["D"]:[]))||tooClose(b,["C"].concat(s.showD?["D"]:[])))return;
+      s[id]=a; s[id==="A"?"B":"A"]=b;
+    } else { if(tooClose(a,others))return; s[id]=a; }
+    update(); refreshBar();
+  },
+  panel(){
+    const s=M2.s,{A,B,C,D}=M2.pts(), ia=arcNot(s.A,s.B,s.C), ins=ang3(C,A,B), cs=M2.caseOf();
+    let h=panel("Live measures",`<div class="eq">arc      m⌢AB  = ${fmt(ia.m)}°
+central  m∠AOB = ${fmt(ia.m)}°
+inscr.   m∠ACB = ${fmt(ins)}° = ½ · ${fmt(ia.m)}°
+<small>Inscribed Angle Theorem: the measure of an inscribed angle is half the measure of its intercepted arc — and half the central angle that intercepts the same arc.</small></div>
+      <p>An <span class="term">inscribed angle</span> has its vertex <b>on</b> the circle and its sides are chords. A <span class="term">central angle</span> has its vertex at the <b>center</b>. Both "cut off" (intercept) the purple arc.</p>`);
+    const cases={
+      on:`<p><b>Case 1 — the center is on a side.</b> Then CA is a diameter. △OBC is isosceles because OB = OC (radii), so its base angles are equal: m∠OCB = m∠OBC = x. The central angle ∠AOB is an exterior angle of that triangle, so m∠AOB = x + x = 2x. That is: inscribed = ½ central.</p>`,
+      in:`<p><b>Case 2 — the center is inside the angle.</b> Tick <b>Diameter through C</b>. The diameter CC′ splits ∠ACB into two angles that each have the center on a side. Use Case 1 on each piece and <b>add</b>: ½ arc AC′ + ½ arc C′B = ½ arc AB.</p>`,
+      out:`<p><b>Case 3 — the center is outside the angle.</b> Tick <b>Diameter through C</b>. Now ∠ACB is the <b>difference</b> of two angles that each have the center on a side. Use Case 1 on each and <b>subtract</b>: ½ arc C′A − ½ arc C′B = ½ arc AB (or the reverse).</p>`
+    };
+    h+=panel("Which case is this? — "+({on:"center on a side",in:"center inside",out:"center outside"}[cs]),cases[cs]+
+      `<p>Every case ends the same way — so the theorem is proved for <b>every</b> inscribed angle.</p>`);
+    if(Math.abs(ia.m-180)<0.01){
+      h+=panel("Thales' Theorem",`<div class="eq">m⌢AB = 180°  →  m∠ACB = ½ · 180° = 90°</div>
+        <p>When AB is a diameter, the intercepted arc is a semicircle. An <b>angle inscribed in a semicircle is a right angle</b>. Drag C anywhere on the circle — it stays 90°.</p>`);
+    }
+    if(s.showD){
+      const iD=ang3(D,A,B), same=!inArc(s.D,ia);
+      h+=panel("Two inscribed angles",same?
+        `<div class="eq">m∠ADB = ${fmt(iD)}° = m∠ACB = ${fmt(ins)}°</div><p>C and D are on the same side of chord AB, so both angles intercept the <b>same arc</b>. <b>Inscribed angles that intercept the same arc are congruent.</b></p>`:
+        `<div class="eq">m∠ADB + m∠ACB = ${fmt(iD)}° + ${fmt(ins)}° = ${fmt(iD+ins)}°</div><p>D crossed chord AB, so it now intercepts the <b>other</b> arc. The two arcs make 360°, so the angles make 180° — they are <b>supplementary</b>. (ACBD is a cyclic quadrilateral: see tab 04.)</p>`);
+    }
+    h+=tryThis(`<p>Tick <b>Second inscribed angle</b> and slide D along the big arc — its angle never changes. Now press <b>Semicircle</b> and drag C all the way around. Finally, make the arc bigger than 180°: the inscribed angle becomes obtuse, and the central angle becomes a reflex angle.</p>`);
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ 03 · TANGENTS, CHORDS & SECANTS ══════════════════════ */
+const TAN_STEPS=[
+  "Start with circle O and a point P outside it.",
+  "Draw segment <b>OP</b>.",
+  "Construct the <b>perpendicular bisector</b> of OP (compass arcs from O and from P). Mark midpoint <b>M</b>.",
+  "Draw the circle with center <b>M</b> through O and P (radius MO).",
+  "Mark where the two circles meet: <b>T₁</b> and <b>T₂</b>. Draw radii OT₁ and OT₂.",
+  "Draw lines <b>PT₁</b> and <b>PT₂</b>. These are the tangent lines."
+];
+function secantFrom(P,H,O,r){
+  const u=unit(P,H), t=lineCircle(P,u,O,r); if(!t)return null;
+  return {N:add(P,u,t[0]),F:add(P,u,t[1]),tn:t[0],tf:t[1],u:u};
+}
+function outsideFig(P,O,r,type,H1,H2){
+  // returns geometry for angle with vertex P outside circle
+  const res={type:type};
+  const tp=tangentPts(O,r,P); if(!tp)return null;
+  const side=X=>Math.sign(cross(P,O,X))||1;
+  const ang=X=>angOf(O,X);
+  if(type==="ss"){
+    const s1=secantFrom(P,H1,O,r), s2=secantFrom(P,H2,O,r); if(!s1||!s2)return null;
+    res.N1=s1.N;res.F1=s1.F;res.N2=s2.N;res.F2=s2.F;
+    res.near=arcNot(ang(s1.N),ang(s2.N),ang(s1.F)); res.far=arcNot(ang(s1.F),ang(s2.F),ang(s1.N));
+  } else if(type==="st"){
+    const s1=secantFrom(P,H1,O,r); if(!s1)return null;
+    const T=side(tp.T1)!==side(s1.F)?tp.T1:tp.T2;
+    res.N1=s1.N;res.F1=s1.F;res.N2=T;res.F2=T;res.T=T;
+    res.near=arcNot(ang(s1.N),ang(T),ang(s1.F)); res.far=arcNot(ang(s1.F),ang(T),ang(s1.N));
+  } else {
+    res.N1=res.F1=tp.T1; res.N2=res.F2=tp.T2; res.T1=tp.T1; res.T2=tp.T2;
+    res.near=arcCont(tp.a1,tp.a2,angOf(O,P)); res.far=arcNot(tp.a1,tp.a2,angOf(O,P));
+  }
+  res.angle=ang3(P,res.F1,res.F2);
+  return res;
+}
+const M3={
+  tab:"Tangents, chords & secants", lesson:"G-C.A.2 · G-C.A.4", accent:"var(--mint)",
+  title:()=>({tan:"Tangent lines from an external point",ch:"Chord properties",x:"Intersecting chords",ang:"Angles formed by chords, secants & tangents"}[M3.s.mode]),
+  O:[350,232], R:165,
+  s:{mode:"tan",
+     tan:{O:[262,236],r:120,ra:210,P:[590,150],step:5},
+     ch:{A:115,B:200,C:290,D:15,lock:false},
+     x:{A:150,B:345,C:75,D:250},
+     ang:{sub:"in",out:"ss",A:150,B:345,C:75,D:250,T:250,TA:25,P:[606,150],H1:140,H2:205,O:[290,236],r:140}},
+  bar(){
+    const s=M3.s;
+    segCtl([["tan","Tangents"],["ch","Chords"],["x","Intersecting chords"],["ang","Angles"]],s.mode,k=>{s.mode=k;render();},"Topic");
+    brk();
+    if(s.mode==="tan"){
+      const t=s.tan;
+      btn("◀ Back",()=>{t.step=Math.max(0,t.step-1);render();}).disabled=t.step===0;
+      btn("Next step ▶",()=>{t.step=Math.min(5,t.step+1);render();},true).disabled=t.step===5;
+      btn("Restart construction",()=>{t.step=0;render();});
+      spacer("Step "+t.step+" of 5 · drag P and the radius handle");
+    } else if(s.mode==="ch"){
+      chk("Make CD ≅ AB",s.ch.lock,v=>{s.ch.lock=v; if(v)s.ch.D=norm(s.ch.C+norm(s.ch.B-s.ch.A)); update();});
+      spacer("Drag A, B, C, D");
+    } else if(s.mode==="x"){
+      spacer("Drag A, B, C, D — keep the chords crossing");
+    } else {
+      segCtl([["in","Vertex inside"],["on","Vertex on the circle"],["out","Vertex outside"]],s.ang.sub,k=>{s.ang.sub=k;render();},"Vertex location");
+      if(s.ang.sub==="out") segCtl([["ss","2 secants"],["st","Secant + tangent"],["tt","2 tangents"]],s.ang.out,k=>{s.ang.out=k;render();},"Lines");
+      spacer({in:"Drag A, B, C, D",on:"Drag T and A",out:"Drag P and the points on the circle"}[s.ang.sub]);
+    }
+  },
+  draw(){ ({tan:M3.drawTan,ch:M3.drawCh,x:M3.drawX,ang:M3.drawAng})[M3.s.mode](); },
+  drawTan(){
+    const t=M3.s.tan,g=bg(),O=t.O,r=t.r,P=t.P,st=t.step,d=dist(O,P),Mm=mid(O,P),tp=tangentPts(O,r,P);
+    circ(g,O,r,"circ");
+    if(st>=1) seg(g,O,P,"thin","var(--graphite)");
+    if(st>=2){
+      const u=unit(O,P), n=[-u[1],u[0]], rho=0.66*d, h=Math.sqrt(rho*rho-d*d/4);
+      const X1=add(Mm,n,h), X2=add(Mm,n,-h);
+      [O,P].forEach(c=>[X1,X2].forEach(X=>{const a=angOf(c,X); arc(g,c,rho,a-8,a+8,"cmp");}));
+      longLine(g,X1,X2,"thin dash","var(--slate)");
+      if(st===2){ dot(g,X1,3.5); dot(g,X2,3.5); }
+      dot(g,Mm,4.5); txt(g,add(Mm,unit(X1,Mm),-0).map((v,i)=>v+(i?22:14)),"M","mk","var(--slate)");
+    }
+    if(st>=3) circ(g,Mm,d/2,"circ","var(--corr)",{"stroke-dasharray":"8 6","stroke-width":2});
+    if(st>=4){
+      [tp.T1,tp.T2].forEach(T=>{ seg(g,O,T,"line",COL.rad); dot(g,T); });
+      nameOut(g,O,tp.T1,"T₁",26,COL.tan); nameOut(g,O,tp.T2,"T₂",26,COL.tan);
+    }
+    if(st>=5){
+      [tp.T1,tp.T2].forEach(T=>{ ray(g,P,T,90,"line",COL.tan); rightAt(g,T,O,P,13); });
+      ticks(g,P,tp.T1,2,COL.tan); ticks(g,P,tp.T2,2,COL.tan);
+      segLabel(g,P,tp.T1,uL(tp.len),COL.tan,O,18,"sm"); segLabel(g,P,tp.T2,uL(tp.len),COL.tan,O,18,"sm");
+    }
+    segLabel(g,O,PT(O,r,t.ra),"r = "+uL(r),COL.rad,null,16,"sm"); seg(g,O,PT(O,r,t.ra),"thin",COL.rad);
+    dot(g,O); txt(g,[O[0]-4,O[1]+24],"O","mk");
+    grab(g,PT(O,r,t.ra),"r"); grab(g,P,"P"); txt(g,[P[0]+20,P[1]-18],"P","mk");
+  },
+  drawCh(){
+    const s=M3.s.ch,O=M3.O,R=M3.R,g=bg();
+    const A=PT(O,R,s.A),B=PT(O,R,s.B),C=PT(O,R,s.C),D=PT(O,R,s.D),M=mid(A,B),N=mid(C,D);
+    circ(g,O,R,"circ");
+    seg(g,A,B,"line",COL.chord); seg(g,C,D,"line",COL.ins);
+    [[M,A,B,1,COL.chord],[N,C,D,2,COL.ins]].forEach(([X,P,Q,n,col])=>{
+      if(dist(O,X)>3){ seg(g,O,X,"aux"); rightAt(g,X,O,P,11); }
+      ticks(g,P,X,n,col); ticks(g,X,Q,n,col); dot(g,X,4);
+    });
+    if(dist(O,M)>18) segLabel(g,O,M,uL(dist(O,M)),COL.cen,null,14,"sm");
+    if(dist(O,N)>18) segLabel(g,O,N,uL(dist(O,N)),COL.cen,null,14,"sm");
+    txt(g,add(M,unit(O,M),dist(O,M)>3?-20:20).map((v,i)=>i?v:v+14),"M","mk",COL.chord);
+    txt(g,add(N,unit(O,N),dist(O,N)>3?-20:20).map((v,i)=>i?v:v+14),"N","mk",COL.ins);
+    dot(g,O); txt(g,[O[0]-18,O[1]-14],"O","mk");
+    [["A",A],["B",B],["C",C],["D",D]].forEach(([n,p])=>{grab(g,p,n);nameOut(g,O,p,n);});
+  },
+  chordsE(s,O,R){
+    const A=PT(O,R,s.A),B=PT(O,R,s.B),C=PT(O,R,s.C),D=PT(O,R,s.D), X=lineX(A,B,C,D);
+    const ok=X&&X.t>0.001&&X.t<0.999&&X.s>0.001&&X.s<0.999;
+    return {A,B,C,D,E:ok?X.p:null};
+  },
+  drawX(){
+    const s=M3.s.x,O=M3.O,R=M3.R,g=bg(),{A,B,C,D,E:Ex}=M3.chordsE(s,O,R);
+    circ(g,O,R,"circ");
+    if(Ex){
+      seg(g,A,Ex,"line",COL.cen); seg(g,Ex,B,"line",COL.cen,{"stroke-dasharray":"1 0"});
+      seg(g,C,Ex,"line",COL.ins); seg(g,Ex,D,"line",COL.ins);
+      segLabel(g,A,Ex,uL(dist(A,Ex)),COL.cen,O,-17,"sm"); segLabel(g,Ex,B,uL(dist(Ex,B)),COL.cen,O,-17,"sm");
+      segLabel(g,C,Ex,uL(dist(C,Ex)),COL.ins,O,-17,"sm"); segLabel(g,Ex,D,uL(dist(Ex,D)),COL.ins,O,-17,"sm");
+      dot(g,Ex); txt(g,[Ex[0]+18,Ex[1]+20],"E","mk");
+    } else {
+      seg(g,A,B,"line",COL.cen); seg(g,C,D,"line",COL.ins);
+      txt(g,[350,24],"These chords don't cross — drag a point","num","var(--unk)");
+    }
+    [["A",A],["B",B],["C",C],["D",D]].forEach(([n,p])=>{grab(g,p,n);nameOut(g,O,p,n);});
+  },
+  drawAng(){
+    const a=M3.s.ang, g=bg();
+    if(a.sub==="in"){
+      const O=M3.O,R=M3.R,{A,B,C,D,E:Ex}=M3.chordsE(a,O,R);
+      circ(g,O,R,"circ");
+      if(Ex){
+        const aAC=arcNot(a.A,a.C,a.B), aBD=arcNot(a.B,a.D,a.A);
+        arc(g,O,R,aAC.from,aAC.to,"arcHL",COL.arc); arc(g,O,R,aBD.from,aBD.to,"arcHL",COL.arc2);
+        txt(g,PT(O,R+30,aAC.from+aAC.m/2),fmt(aAC.m)+"°","num",COL.arc);
+        txt(g,PT(O,R+30,aBD.from+aBD.m/2),fmt(aBD.m)+"°","num",COL.arc2);
+        seg(g,A,B,"line"); seg(g,C,D,"line");
+        const m=ang3(Ex,A,C);
+        wedgeAt(g,Ex,A,C,34,COL.ins,fmt(m)+"°"); wedgeAt(g,Ex,B,D,34,COL.ins,null);
+        dot(g,Ex); txt(g,add(Ex,unit(Ex,mid(B,C)),26),"E","mk");
+      } else { seg(g,A,B,"line"); seg(g,C,D,"line"); txt(g,[350,24],"These chords don't cross — drag a point","num","var(--unk)"); }
+      [["A",A],["B",B],["C",C],["D",D]].forEach(([n,p])=>{grab(g,p,n);nameOut(g,O,p,n);});
+    } else if(a.sub==="on"){
+      const O=M3.O,R=M3.R,T=PT(O,R,a.T),A=PT(O,R,a.TA);
+      circ(g,O,R,"circ");
+      const X=PT(T,230,a.T+90), Y=PT(T,230,a.T-90);
+      seg(g,X,Y,"line",COL.tan); seg(g,T,A,"line",COL.chord);
+      const arcs=M3.tcArcs();
+      arc(g,O,R,arcs.x.from,arcs.x.to,"arcHL",COL.arc); arc(g,O,R,arcs.y.from,arcs.y.to,"arcHL",COL.arc2,{"stroke-width":5});
+      txt(g,PT(O,R+30,arcs.x.from+arcs.x.m/2),fmt(arcs.x.m)+"°","num",COL.arc);
+      txt(g,PT(O,R+30,arcs.y.from+arcs.y.m/2),fmt(arcs.y.m)+"°","num",COL.arc2);
+      const w1=smallWedge(T,A,X), w2=smallWedge(T,A,Y);
+      wedge(g,T,w1.from,w1.to,38,COL.ins); wedge(g,T,w2.from,w2.to,26,COL.ins2);
+      txt(g,PT(T,74,w1.from+w1.m/2),"∠1 "+fmt(w1.m)+"°","sm",COL.ins);
+      txt(g,PT(T,74,w2.from+w2.m/2),"∠2 "+fmt(w2.m)+"°","sm",COL.ins2);
+      const lx=inCanvas(add(PT(T,190,a.T+90),unit(O,T),18),16), ly=inCanvas(add(PT(T,190,a.T-90),unit(O,T),18),16);
+      txt(g,lx,"X","mk",COL.tan); txt(g,ly,"Y","mk",COL.tan);
+      dot(g,O); grab(g,T,"T"); grab(g,A,"TA");
+      nameOut(g,O,T,"T",30); nameOut(g,O,A,"A");
+    } else {
+      const O=a.O,r=a.r,P=a.P,f=outsideFig(P,O,r,a.out,PT(O,r,a.H1),PT(O,r,a.H2));
+      circ(g,O,r,"circ");
+      if(f){
+        arc(g,O,r,f.far.from,f.far.to,"arcHL",COL.arc); arc(g,O,r,f.near.from,f.near.to,"arcHL",COL.arc2);
+        txt(g,PT(O,r+30,f.far.from+f.far.m/2),fmt(f.far.m)+"°","num",COL.arc);
+        txt(g,PT(O,r+30,f.near.from+f.near.m/2),fmt(f.near.m)+"°","num",COL.arc2);
+        const c1=a.out==="tt"?COL.tan:COL.sec, c2=a.out==="ss"?COL.sec:COL.tan;
+        ray(g,P,f.F1,a.out==="tt"?70:34,"line",c1); ray(g,P,f.F2,a.out==="ss"?34:70,"line",c2);
+        if(a.out!=="ss"){ const T=a.out==="st"?[f.T]:[f.T1,f.T2]; T.forEach(t=>{seg(g,O,t,"thin dash",COL.rad); rightAt(g,t,O,P,11);}); }
+        wedgeAt(g,P,f.F1,f.F2,48,COL.ins,fmt(f.angle)+"°",26);
+        const nm=a.out==="ss"?[["A",f.N1],["B",f.F1],["C",f.N2],["D",f.F2]]:a.out==="st"?[["A",f.N1],["B",f.F1],["T",f.T]]:[["T₁",f.T1],["T₂",f.T2]];
+        nm.forEach(([n,p])=>{ dot(g,p,4); nameOut(g,O,p,n,24); });
+      }
+      dot(g,O); txt(g,[O[0]-4,O[1]+24],"O","mk");
+      if(a.out!=="tt") grab(g,PT(O,r,a.H1),"H1");
+      if(a.out==="ss") grab(g,PT(O,r,a.H2),"H2");
+      grab(g,P,"P"); txt(g,[P[0]+20,P[1]-18],"P","mk");
+    }
+  },
+  tcArcs(){
+    const a=M3.s.ang,O=M3.O,R=M3.R,T=PT(O,R,a.T),A=PT(O,R,a.TA),X=PT(T,200,a.T+90);
+    const ccw={from:a.T,to:a.TA,m:norm(a.TA-a.T)}, cw={from:a.TA,to:a.T,m:360-ccw.m};
+    const mP=PT(O,R,ccw.from+ccw.m/2);
+    const sameSide=Math.sign(cross(T,A,mP))===Math.sign(cross(T,A,X));
+    return {x:sameSide?ccw:cw, y:sameSide?cw:ccw};
+  },
+  drag(id,q){
+    const s=M3.s;
+    if(s.mode==="tan"){
+      const t=s.tan;
+      if(id==="P"){ let p=inCanvas(q,24); if(dist(t.O,p)<t.r+22){ p=add(t.O,unit(t.O,p),t.r+22);} t.P=p; }
+      else { t.r=clamp(Math.round(dist(t.O,q)/U*10)/10*U,1.5*U,4.5*U); t.ra=angOf(t.O,q);
+        if(dist(t.O,t.P)<t.r+22) t.P=add(t.O,unit(t.O,t.P),t.r+22); }
+      update(); return;
+    }
+    if(s.mode==="ang"&&s.ang.sub==="out"){
+      const a=s.ang;
+      if(id==="P"){ let p=inCanvas(q,24); if(dist(a.O,p)<a.r+24)p=add(a.O,unit(a.O,p),a.r+24); a.P=inCanvas(p,24); if(dist(a.O,a.P)<a.r+20)return; }
+      else a[id]=Math.round(angOf(a.O,q));
+      update(); return;
+    }
+    const st= s.mode==="ch"?s.ch : s.mode==="x"?s.x : s.ang;
+    const ang=Math.round(angOf(M3.O,q));
+    const keys= (s.mode==="ang"&&s.ang.sub==="on")? ["T","TA"] : ["A","B","C","D"];
+    if(keys.some(k=>k!==id&&Math.min(norm(ang-st[k]),norm(st[k]-ang))<5))return;
+    st[id]=ang;
+    if(s.mode==="ch"&&st.lock){
+      if(id==="D") st.C=norm(st.D-norm(st.B-st.A)); else st.D=norm(st.C+norm(st.B-st.A));
+    }
+    update();
+  },
+  panel(){
+    const s=M3.s; let h="";
+    if(s.mode==="tan"){
+      const t=s.tan, tp=tangentPts(t.O,t.r,t.P), d=dist(t.O,t.P);
+      h+=`<div class="panel"><h3>Construct a tangent from P (G-C.A.4)</h3><ol class="chain">`+
+        TAN_STEPS.map((x,i)=>`<li class="${i===t.step?"now":(i>t.step?"later":"")}">${x}</li>`).join("")+`</ol></div>`;
+      h+=panel("Live measures",`<div class="eq">OP = ${uL(d)}    r = OT = ${uL(t.r)}
+m∠OT₁P = ${fmt(ang3(tp.T1,t.O,t.P))}°   m∠OT₂P = ${fmt(ang3(tp.T2,t.O,t.P))}°
+PT₁ = PT₂ = √(OP² − r²)
+         = √(${f2(d/U)}² − ${f2(t.r/U)}²) = ${f2(tp.len/U)}
+<small>A line is tangent to a circle if and only if it is perpendicular to the radius at the point of tangency.</small></div>`);
+      h+=panel("Why it works",`<p>T₁ is on the circle with diameter OP, so ∠OT₁P is <b>inscribed in a semicircle</b> — it is 90° (Thales). A line perpendicular to a radius at its endpoint on the circle is a <span class="term">tangent</span>, so PT₁ is tangent.</p>
+        <p>△OT₁P and △OT₂P are right triangles with the same hypotenuse OP and equal legs OT₁ = OT₂ (radii). By <b>HL</b> they are congruent, so <b>tangent segments from an external point are congruent</b>: PT₁ = PT₂.</p>`);
+      h+=tryThis(`<p>Press <b>Restart construction</b> and step through it with a compass on paper beside you. Then drag P toward the circle. What happens to the tangent segments as P gets close? As P moves far away, what angle do the two tangents make?</p>`);
+    } else if(s.mode==="ch"){
+      const c=s.ch,O=M3.O,R=M3.R,A=PT(O,R,c.A),B=PT(O,R,c.B),C=PT(O,R,c.C),D=PT(O,R,c.D),M=mid(A,B),N=mid(C,D);
+      const ab=dist(A,B),cd=dist(C,D),om=dist(O,M),on=dist(O,N);
+      const cong=Math.abs(ab-cd)<0.5;
+      h+=panel("Live measures",`<div class="eq">AM = ${uL(dist(A,M))}   MB = ${uL(dist(M,B))}
+CN = ${uL(dist(C,N))}   ND = ${uL(dist(N,D))}
+AB = ${uL(ab)}   distance OM = ${uL(om)}
+CD = ${uL(cd)}   distance ON = ${uL(on)}
+<small>${cong?'<span class="ok">AB ≅ CD, and OM = ON — congruent chords are equidistant from the center.</span>':(ab>cd?"AB is longer, so it is closer to the center (OM &lt; ON).":"CD is longer, so it is closer to the center (ON &lt; OM).")}</small></div>`);
+      h+=panel("Chord facts",`<p><b>If a diameter (or radius) is perpendicular to a chord, then it bisects the chord.</b> △OAM ≅ △OBM by HL (OA = OB are radii, OM is shared), so AM = MB.</p>
+        <p>The distance from a point to a line is measured along the <b>perpendicular</b>. <b>In the same circle, congruent chords are equidistant from the center</b> — and chords equidistant from the center are congruent.</p>
+        <p>Use the Pythagorean Theorem: (½ chord)² + distance² = r². Here: ${f2(dist(A,M)/U)}² + ${f2(om/U)}² = ${f2((dist(A,M)**2+om*om)/U/U)} = r² = ${f2(R*R/U/U)}.</p>`);
+      h+=tryThis(`<p>Tick <b>Make CD ≅ AB</b> and drag C around the circle: the two dashed distances stay equal. Untick it and drag D: the longer chord is always closer to O. Which chord is farthest from the center? Which is longest?</p>`);
+    } else if(s.mode==="x"){
+      const O=M3.O,R=M3.R,{A,B,C,D,E:Ex}=M3.chordsE(s.x,O,R);
+      if(Ex){
+        const ae=dist(A,Ex)/U,eb=dist(Ex,B)/U,ce=dist(C,Ex)/U,ed=dist(Ex,D)/U;
+        h+=panel("Live measures",`<div class="eq">AE · EB = ${f2(ae)} · ${f2(eb)} = ${f2(ae*eb)}
+CE · ED = ${f2(ce)} · ${f2(ed)} = ${f2(ce*ed)}
+<small>Intersecting Chords Theorem: if two chords intersect inside a circle, the products of the lengths of their segments are equal.</small></div>`);
+      } else h+=`<div class="panel"><h3>Live measures</h3><div class="verdict bad">The chords don't intersect. Drag the points so that C and D are on opposite sides of chord AB.</div></div>`;
+      h+=panel("Why the products match",`<p>Draw chords AC and BD (picture them). <b>∠AEC ≅ ∠DEB</b> because they are vertical angles. <b>∠CAB ≅ ∠CDB</b> because they are inscribed angles that intercept the same arc CB.</p>
+        <p>So △AEC ~ △DEB by <b>AA similarity</b>. Corresponding sides are proportional: AE/DE = CE/BE. Cross-multiply: <b>AE · EB = CE · ED</b>.</p>`);
+      h+=tryThis(`<p>Drag A so the blue chord passes through the center. The products still match. Can you make AE = EB? What does that force about CE · ED? (Tab 05 extends this to points <b>outside</b> the circle.)</p>`);
+    } else {
+      const a=s.ang;
+      if(a.sub==="in"){
+        const O=M3.O,R=M3.R,{A,C,E:Ex}=M3.chordsE(a,O,R);
+        if(Ex){ const x=arcNot(a.A,a.C,a.B).m,y=arcNot(a.B,a.D,a.A).m;
+          h+=panel("Vertex inside the circle",`<div class="eq">m∠AEC = ½(m⌢AC + m⌢BD)
+       = ½(${fmt(x)}° + ${fmt(y)}°) = ${fmt((x+y)/2)}°
+measured: ${fmt(ang3(Ex,A,C))}°
+<small>The angle formed by two chords is half the <b>sum</b> of the arcs intercepted by the angle and its vertical angle.</small></div>
+            <p><b>Why:</b> draw chord AD. ∠AEC is an exterior angle of △AED, so m∠AEC = m∠ADC + m∠DAB = ½ m⌢AC + ½ m⌢BD.</p>`);
+        } else h+=`<div class="panel"><h3>Vertex inside the circle</h3><div class="verdict bad">The chords don't intersect — drag a point.</div></div>`;
+      } else if(a.sub==="on"){
+        const O=M3.O,R=M3.R,T=PT(O,R,a.T),A=PT(O,R,a.TA),X=PT(T,200,a.T+90),Y=PT(T,200,a.T-90),arcs=M3.tcArcs();
+        h+=panel("Vertex on the circle",`<div class="eq">m∠1 = m∠ATX = ½ · ${fmt(arcs.x.m)}° = ${fmt(arcs.x.m/2)}°   measured ${fmt(ang3(T,A,X))}°
+m∠2 = m∠ATY = ½ · ${fmt(arcs.y.m)}° = ${fmt(arcs.y.m/2)}°   measured ${fmt(ang3(T,A,Y))}°
+<small>The angle formed by a tangent and a chord at the point of tangency is half the intercepted arc — just like an inscribed angle.</small></div>
+          <p>The two angles form a linear pair and their arcs make the whole circle: ½(360°) = 180°. ✓</p>`);
+      } else {
+        const f=outsideFig(a.P,a.O,a.r,a.out,PT(a.O,a.r,a.H1),PT(a.O,a.r,a.H2));
+        if(f){ const nm={ss:"two secants",st:"a secant and a tangent",tt:"two tangents"}[a.out];
+          h+=panel("Vertex outside the circle — "+nm,`<div class="eq">m∠P = ½(far arc − near arc)
+     = ½(${fmt(f.far.m)}° − ${fmt(f.near.m)}°) = ${fmt((f.far.m-f.near.m)/2)}°
+measured: ${fmt(f.angle)}°
+<small>The angle formed outside a circle by two secants, a secant and a tangent, or two tangents is half the <b>difference</b> of the intercepted arcs.</small></div>
+            ${a.out==="tt"?`<p>With two tangents the arcs add to 360°, so m∠P = 180° − near arc. Here: 180° − ${fmt(f.near.m)}° = ${fmt(180-f.near.m)}°.</p>`:""}
+            <p><b>Why:</b> draw a chord joining a near point to a far point. The far inscribed angle is an exterior angle of the small triangle at P, so ∠P = (½ far) − (½ near).</p>`);
+        }
+      }
+      h+=panel("The pattern",`<table class="facts">
+        <tr><td class="ab">inside</td><td class="st">½ (sum of arcs)<i>two chords</i></td></tr>
+        <tr><td class="ab">on</td><td class="st">½ (arc)<i>inscribed angle, tangent–chord angle</i></td></tr>
+        <tr><td class="ab">outside</td><td class="st">½ (difference of arcs)<i>secant–secant, secant–tangent, tangent–tangent</i></td></tr></table>`);
+      h+=tryThis(`<p>Choose <b>Vertex inside</b> and drag C toward A: the angle's vertex E slides toward the circle and the formula becomes "½ arc". Under <b>Vertex outside</b>, pull P far away — what happens to the near arc and the angle?</p>`);
+    }
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ 04 · INSCRIBED POLYGONS ══════════════════════ */
+const CIRC_STEPS=["Start with △ABC.","Construct the perpendicular bisector of <b>AB</b>.","Construct the perpendicular bisector of <b>BC</b>.",
+  "They meet at the <span class='term'>circumcenter</span> <b>O</b>.","The perpendicular bisector of <b>CA</b> passes through O too — the three are concurrent.",
+  "Draw the circle with center O through A: the <span class='term'>circumscribed circle</span>."];
+const INC_STEPS=["Start with △ABC.","Bisect <b>∠A</b> (arc across both sides, then two equal arcs).","Bisect <b>∠B</b>.",
+  "They meet at the <span class='term'>incenter</span> <b>I</b>.","The bisector of <b>∠C</b> passes through I too — concurrent.",
+  "Drop a perpendicular from I to BC; call its foot F. IF is the inradius.","Draw the circle with center I through F: the <span class='term'>inscribed circle</span>."];
+function circumcenter(A,B,C){
+  const d=2*(A[0]*(B[1]-C[1])+B[0]*(C[1]-A[1])+C[0]*(A[1]-B[1])); if(Math.abs(d)<1e-6)return null;
+  const a2=A[0]*A[0]+A[1]*A[1], b2=B[0]*B[0]+B[1]*B[1], c2=C[0]*C[0]+C[1]*C[1];
+  return [(a2*(B[1]-C[1])+b2*(C[1]-A[1])+c2*(A[1]-B[1]))/d,(a2*(C[0]-B[0])+b2*(A[0]-C[0])+c2*(B[0]-A[0]))/d];
+}
+function incenter(A,B,C){ const a=dist(B,C),b=dist(C,A),c=dist(A,B),p=a+b+c; return [(a*A[0]+b*B[0]+c*C[0])/p,(a*A[1]+b*B[1]+c*C[1])/p]; }
+function perpBis(g,P,Q,color){
+  const M=mid(P,Q),L=dist(P,Q),u=unit(P,Q),n=[-u[1],u[0]],rho=0.68*L,h=Math.sqrt(rho*rho-L*L/4);
+  const X1=add(M,n,h),X2=add(M,n,-h);
+  [P,Q].forEach(c=>[X1,X2].forEach(X=>{const a=angOf(c,X);arc(g,c,rho,a-7,a+7,"cmp");}));
+  longLine(g,X1,X2,"thin dash",color);
+  rightAt(g,M,P,X1,9);
+}
+function angBis(g,V,P,Q,color,I){
+  const rho=0.3*Math.min(dist(V,P),dist(V,Q)), X=add(V,unit(V,P),rho), Y=add(V,unit(V,Q),rho), Z=add(X,[Y[0]-V[0],Y[1]-V[1]]);
+  const w=smallWedge(V,P,Q); arc(g,V,rho,w.from,w.to,"cmp");
+  [X,Y].forEach(c=>{const a=angOf(c,Z);arc(g,c,rho,a-9,a+9,"cmp");});
+  const hit=lineX(V,Z,P,Q); const end=hit?hit.p:add(V,unit(V,Z),200);
+  seg(g,V,end,"thin dash",color);
+}
+const M4={
+  tab:"Inscribed polygons", lesson:"G-C.A.3", accent:"var(--magenta)",
+  title:()=>({cyc:"Cyclic quadrilaterals",circ:"Circumscribed circle of a triangle",inc:"Inscribed circle of a triangle"}[M4.s.mode]),
+  O:[350,232], R:165,
+  s:{mode:"cyc", q:{A:120,B:205,C:290,D:30,free:false,Dp:[520,110]}, tri:{A:[262,96],B:[140,372],C:[560,352]}, cstep:5, istep:6, snap:true},
+  quad(){
+    const q=M4.s.q,O=M4.O,R=M4.R;
+    return {A:PT(O,R,q.A),B:PT(O,R,q.B),C:PT(O,R,q.C),D:q.free?q.Dp:PT(O,R,q.D)};
+  },
+  bar(){
+    const s=M4.s;
+    segCtl([["cyc","Cyclic quadrilateral"],["circ","Circumscribed circle"],["inc","Inscribed circle"]],s.mode,k=>{s.mode=k;render();},"Topic");
+    brk();
+    if(s.mode==="cyc"){
+      chk("Let D leave the circle",s.q.free,v=>{s.q.free=v; if(v)s.q.Dp=PT(M4.O,M4.R,s.q.D); else s.q.D=Math.round(angOf(M4.O,s.q.Dp)); update();});
+      spacer("Drag A, B, C, D");
+    } else {
+      const key=s.mode==="circ"?"cstep":"istep", mx=s.mode==="circ"?5:6;
+      btn("◀ Back",()=>{s[key]=Math.max(0,s[key]-1);render();}).disabled=s[key]===0;
+      btn("Next step ▶",()=>{s[key]=Math.min(mx,s[key]+1);render();},true).disabled=s[key]===mx;
+      btn("Restart",()=>{s[key]=0;render();});
+      chk("Snap to grid",s.snap,v=>{s.snap=v;});
+      spacer("Step "+s[key]+" of "+mx+" · drag A, B, C");
+    }
+  },
+  draw(){
+    const s=M4.s,g=bg();
+    if(s.mode==="cyc"){
+      const O=M4.O,R=M4.R,q=s.q,{A,B,C,D}=M4.quad();
+      circ(g,O,R,"circ");
+      g.appendChild(E("polygon",{points:[A,B,C,D].map(p=>p.join(",")).join(" "),fill:"rgba(124,58,237,.06)",stroke:"var(--graphite)","stroke-width":2.8,"stroke-linejoin":"round"}));
+      if(!q.free){
+        const angs=[q.A,q.B,q.C,q.D];
+        for(let i=0;i<4;i++){ const a1=angs[i],a2=angs[(i+1)%4],m=norm(a2-a1); txt(g,PT(O,R+28,a1+m/2),fmt(m)+"°","sm",COL.arc); }
+      }
+      const V=[["A",A,D,B,COL.ins],["B",B,A,C,COL.cen],["C",C,B,D,COL.ins],["D",D,C,A,COL.cen]];
+      V.forEach(([n,P,X,Y,col])=>wedgeAt(g,P,X,Y,34,col,fmt(ang3(P,X,Y))+"°",28));
+      dot(g,O); txt(g,[O[0],O[1]+22],"O","mk","var(--slate)");
+      V.forEach(([n,P])=>{ grab(g,P,n); nameOut(g,O,P,n,26); });
+    } else {
+      const t=s.tri,{A,B,C}=t;
+      if(s.mode==="circ"){
+        const st=s.cstep, Oc=circumcenter(A,B,C);
+        if(st>=1) perpBis(g,A,B,COL.cen);
+        if(st>=2) perpBis(g,B,C,COL.ins);
+        if(st>=4) perpBis(g,C,A,COL.ins2);
+        if(st>=5&&Oc){ circ(g,Oc,dist(Oc,A),"circ",COL.arc,{"stroke-width":3});
+          [A,B,C].forEach(P=>seg(g,Oc,P,"thin",COL.arc)); }
+        seg(g,A,B,"line");seg(g,B,C,"line");seg(g,C,A,"line");
+        if(st>=3&&Oc){ dot(g,Oc,6); txt(g,[Oc[0]+18,Oc[1]-16],"O","mk",COL.arc); }
+      } else {
+        const st=s.istep, I=incenter(A,B,C);
+        if(st>=1) angBis(g,A,B,C,COL.cen);
+        if(st>=2) angBis(g,B,C,A,COL.ins);
+        if(st>=4) angBis(g,C,A,B,COL.ins2);
+        const F=footOn(I,B,C);
+        if(st>=5){ seg(g,I,F,"line",COL.arc); rightAt(g,F,I,C,10); dot(g,F,4); txt(g,add(F,unit(I,F),20),"F","mk",COL.arc); }
+        if(st>=6) circ(g,I,dist(I,F),"circ",COL.arc,{"stroke-width":3});
+        seg(g,A,B,"line");seg(g,B,C,"line");seg(g,C,A,"line");
+        if(st>=3){ dot(g,I,6); txt(g,add(I,unit(F,I),st>=5?22:-22),"I","mk",COL.arc); }
+      }
+      const G=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3];
+      [["A",A],["B",B],["C",C]].forEach(([n,P])=>{ grab(g,P,n); txt(g,add(P,unit(G,P),28),n,"mk"); });
+    }
+  },
+  drag(id,p){
+    const s=M4.s;
+    if(s.mode==="cyc"){
+      const q=s.q;
+      if(id==="D"&&q.free){ q.Dp=inCanvas(p,20); update(); return; }
+      const a=Math.round(angOf(M4.O,p)), keys=["A","B","C","D"], i=keys.indexOf(id);
+      const ang=k=>k==="D"&&q.free?angOf(M4.O,q.Dp):q[k];
+      const prev=ang(keys[(i+3)%4]), next=ang(keys[(i+1)%4]);
+      const span=norm(next-prev), off=norm(a-prev);
+      if(off<8||off>span-8)return;
+      q[id]=a; update(); return;
+    }
+    let P=inCanvas(p,26); if(s.snap)P=snapPt(P,U/2);
+    const t=s.tri, old=t[id]; t[id]=P;
+    if(Math.abs(cross(t.A,t.B,t.C))<2500||dist(t.A,t.B)<40||dist(t.B,t.C)<40||dist(t.C,t.A)<40){t[id]=old;return;}
+    update();
+  },
+  panel(){
+    const s=M4.s; let h="";
+    if(s.mode==="cyc"){
+      const {A,B,C,D}=M4.quad(), a=ang3(A,D,B), b=ang3(B,A,C), c=ang3(C,B,D), d=ang3(D,C,A);
+      const ok1=Math.abs(a+c-180)<0.6, ok2=Math.abs(b+d-180)<0.6;
+      h+=panel("Live measures",`<div class="eq">m∠A + m∠C = ${fmt(a)}° + ${fmt(c)}° = <span class="${ok1?"ok":"no"}">${fmt(a+c)}°</span>
+m∠B + m∠D = ${fmt(b)}° + ${fmt(d)}° = <span class="${ok2?"ok":"no"}">${fmt(b+d)}°</span>
+<small>If a quadrilateral is inscribed in a circle, then its opposite angles are supplementary.</small></div>`+
+        (s.q.free?`<p>D is ${dist(M4.O,D)<M4.R-2?"<b>inside</b>":dist(M4.O,D)>M4.R+2?"<b>outside</b>":"<b>on</b>"} the circle (OD = ${uL(dist(M4.O,D))}, r = ${uL(M4.R)}). ${(ok1&&ok2)?"The sums are 180° because D is on the circle.":"Off the circle, the opposite angles are <b>not</b> supplementary. The converse holds too: a quadrilateral whose opposite angles are supplementary <b>can</b> be inscribed in a circle."}</p>`:""));
+      h+=panel("Why the opposite angles are supplementary",`<p>∠A is an inscribed angle, so it is half of the arc it intercepts: arc BCD. ∠C is half of the arc it intercepts: arc DAB.</p>
+        <p>Those two arcs together make the whole circle, 360°. So m∠A + m∠C = ½(360°) = <b>180°</b>. The same argument works for ∠B and ∠D.</p>
+        <p>A polygon with all its vertices on one circle is <span class="term">inscribed</span> in the circle, and it is called a <span class="term">cyclic</span> polygon.</p>`);
+      h+=tryThis(`<p>Drag the vertices until ABCD is a rectangle. Why must every rectangle be cyclic? Then tick <b>Let D leave the circle</b> and drag D inside the circle: is m∠D bigger or smaller than 180° − m∠B?</p>`);
+    } else {
+      const {A,B,C}=s.tri;
+      if(s.mode==="circ"){
+        const Oc=circumcenter(A,B,C), angs=[ang3(A,B,C),ang3(B,C,A),ang3(C,A,B)], mx=Math.max.apply(null,angs);
+        const kind=Math.abs(mx-90)<0.6?"right":mx>90?"obtuse":"acute";
+        h+=`<div class="panel"><h3>Construction steps</h3><ol class="chain">`+CIRC_STEPS.map((x,i)=>`<li class="${i===s.cstep?"now":(i>s.cstep?"later":"")}">${x}</li>`).join("")+`</ol></div>`;
+        h+=panel("Live measures",`<div class="eq">OA = ${uL(dist(Oc,A))}   OB = ${uL(dist(Oc,B))}   OC = ${uL(dist(Oc,C))}
+<small>Every point on the perpendicular bisector of a segment is equidistant from its endpoints — so O is equidistant from A, B and C.</small></div>
+          <p>This triangle is <b>${kind}</b> (largest angle ${fmt(mx)}°), so the circumcenter lies <b>${kind==="acute"?"inside the triangle":kind==="right"?"on the hypotenuse — at its midpoint (Thales again!)":"outside the triangle"}</b>.</p>`);
+        h+=tryThis(`<p>Drag C until the triangle is a right triangle. Where is O? Now the hypotenuse is a diameter — the angle opposite it is inscribed in a semicircle.</p>`);
+      } else {
+        const I=incenter(A,B,C), dA=distToLine(I,B,C), dB=distToLine(I,C,A), dC=distToLine(I,A,B);
+        h+=`<div class="panel"><h3>Construction steps</h3><ol class="chain">`+INC_STEPS.map((x,i)=>`<li class="${i===s.istep?"now":(i>s.istep?"later":"")}">${x}</li>`).join("")+`</ol></div>`;
+        h+=panel("Live measures",`<div class="eq">distance I to BC = ${uL(dA)}
+distance I to CA = ${uL(dB)}
+distance I to AB = ${uL(dC)}
+<small>Every point on an angle bisector is equidistant from the sides of the angle — so I is equidistant from all three sides.</small></div>
+          <p>The incircle touches each side exactly once: each side is <b>tangent</b> to it, and the radius to each point of tangency is perpendicular to that side. The incenter is <b>always inside</b> the triangle.</p>`);
+        h+=tryThis(`<p>Compare with the circumscribed circle: the circumcenter uses <b>perpendicular bisectors</b> (equidistant from vertices); the incenter uses <b>angle bisectors</b> (equidistant from sides). Make the triangle equilateral — what happens to the two centers?</p>`);
+      }
+    }
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ 05 · SEGMENT LENGTHS (POWER OF A POINT) ══════════════════════ */
+const M5={
+  tab:"Segment lengths", lesson:"G-C.A.2", accent:"var(--lavender)",
+  title:()=>({cc:"Chord–chord: two chords through P",ss:"Secant–secant from an outside point",st:"Secant–tangent from an outside point"}[M5.s.mode]),
+  O:[300,236], R:150,
+  s:{mode:"cc",snap:false,cc:{P:[328,270],H1:25,H2:120},ss:{P:[612,140],H1:145,H2:200},st:{P:[600,322],H1:160}},
+  geo(){
+    const s=M5.s,O=M5.O,R=M5.R,c=s[s.mode],P=c.P;
+    if(s.mode==="cc"){
+      const L=[c.H1,c.H2].map(h=>{const H=PT(O,R,h),u=unit(P,H),t=lineCircle(P,u,O,R);return {X:add(P,u,t[0]),Y:add(P,u,t[1])};});
+      return {P,A:L[0].Y,B:L[0].X,C:L[1].Y,D:L[1].X};
+    }
+    const s1=secantFrom(P,PT(O,R,c.H1),O,R);
+    if(s.mode==="ss"){ const s2=secantFrom(P,PT(O,R,c.H2),O,R); return {P,A:s1.N,B:s1.F,C:s2.N,D:s2.F}; }
+    const tp=tangentPts(O,R,P), T=Math.sign(cross(P,O,tp.T1))!==Math.sign(cross(P,O,s1.F))?tp.T1:tp.T2;
+    return {P,A:s1.N,B:s1.F,T};
+  },
+  bar(){
+    const s=M5.s;
+    segCtl([["cc","Chord–chord"],["ss","Secant–secant"],["st","Secant–tangent"]],s.mode,k=>{s.mode=k;render();},"Configuration");
+    chk("Snap P to grid",s.snap,v=>{s.snap=v;});
+    spacer("Drag P and the points on the circle");
+  },
+  draw(){
+    const s=M5.s,O=M5.O,R=M5.R,g=bg(),G=M5.geo(),P=G.P,c=s[s.mode];
+    circ(g,O,R,"circ"); dot(g,O,4); txt(g,add(O,dist(O,P)>2?unit(P,O):[0,-1],22),"O","mk","var(--slate)");
+    seg(g,O,P,"thin dash","var(--slate)");
+    if(s.mode==="cc"){
+      seg(g,G.A,G.B,"line",COL.cen); seg(g,G.C,G.D,"line",COL.ins);
+      segLabel(g,P,G.A,uL(dist(P,G.A)),COL.cen,null,17,"sm"); segLabel(g,P,G.B,uL(dist(P,G.B)),COL.cen,null,17,"sm");
+      segLabel(g,P,G.C,uL(dist(P,G.C)),COL.ins,null,-17,"sm"); segLabel(g,P,G.D,uL(dist(P,G.D)),COL.ins,null,-17,"sm");
+    } else {
+      seg(g,P,G.B,"line",COL.cen); seg(g,P,G.A,"line",COL.cen,{"stroke-width":5});
+      segLabel(g,P,G.A,uL(dist(P,G.A)),COL.cen,O,17,"sm"); segLabel(g,G.A,G.B,uL(dist(G.A,G.B)),COL.cen,O,17,"sm");
+      if(s.mode==="ss"){
+        seg(g,P,G.D,"line",COL.ins); seg(g,P,G.C,"line",COL.ins,{"stroke-width":5});
+        segLabel(g,P,G.C,uL(dist(P,G.C)),COL.ins,O,17,"sm"); segLabel(g,G.C,G.D,uL(dist(G.C,G.D)),COL.ins,O,17,"sm");
+      } else {
+        seg(g,P,G.T,"line",COL.tan); seg(g,O,G.T,"thin",COL.rad); rightAt(g,G.T,O,P,11);
+        segLabel(g,P,G.T,uL(dist(P,G.T)),COL.tan,O,17,"sm");
+      }
+    }
+    const names=s.mode==="st"?[["A",G.A],["B",G.B],["T",G.T]]:[["A",G.A],["B",G.B],["C",G.C],["D",G.D]];
+    names.forEach(([n,p])=>{dot(g,p,4); nameOut(g,O,p,n,24);});
+    grab(g,PT(O,R,c.H1),"H1"); if(s.mode!=="st")grab(g,PT(O,R,c.H2),"H2");
+    grab(g,P,"P"); txt(g,s.mode==="cc"?[P[0]-20,P[1]-20]:[P[0]+20,P[1]-18],"P","mk");
+  },
+  drag(id,q){
+    const s=M5.s,O=M5.O,R=M5.R,c=s[s.mode];
+    if(id==="P"){
+      let p=inCanvas(q,24); if(s.snap)p=snapPt(p,U/2);
+      const d=dist(O,p);
+      if(s.mode==="cc"){ if(d>R-14)p=add(O,unit(O,p),R-14); }
+      else if(d<R+24) p=add(O,unit(O,p),R+24);
+      c.P=inCanvas(p,22); if(s.mode!=="cc"&&dist(O,c.P)<R+20)c.P=add(O,unit(O,c.P),R+24);
+    } else {
+      const a=Math.round(angOf(O,q));
+      const other=id==="H1"?c.H2:c.H1;
+      if(other!==undefined&&Math.min(norm(a-other),norm(other-a))<4)return;
+      c[id]=a;
+    }
+    update();
+  },
+  panel(){
+    const s=M5.s,G=M5.geo(),P=G.P,d=dist(M5.O,P)/U,r=M5.R/U, L=(p,q)=>dist(p,q)/U; let h="";
+    if(s.mode==="cc"){
+      const pa=L(P,G.A),pb=L(P,G.B),pc=L(P,G.C),pd=L(P,G.D);
+      h+=panel("Live measures",`<div class="eq">PA · PB = ${f2(pa)} · ${f2(pb)} = ${f2(pa*pb)}
+PC · PD = ${f2(pc)} · ${f2(pd)} = ${f2(pc*pd)}
+r² − OP² = ${f2(r)}² − ${f2(d)}² = ${f2(r*r-d*d)}
+<small>Chord–chord: segment × segment = segment × segment.</small></div>`);
+    } else if(s.mode==="ss"){
+      const pa=L(P,G.A),pb=L(P,G.B),pc=L(P,G.C),pd=L(P,G.D);
+      h+=panel("Live measures",`<div class="eq">PA · PB = ${f2(pa)} · ${f2(pb)} = ${f2(pa*pb)}
+PC · PD = ${f2(pc)} · ${f2(pd)} = ${f2(pc*pd)}
+OP² − r² = ${f2(d)}² − ${f2(r)}² = ${f2(d*d-r*r)}
+<small>Secant–secant: outside × whole = outside × whole. PB = PA + AB = ${f2(pa)} + ${f2(L(G.A,G.B))}.</small></div>`);
+    } else {
+      const pa=L(P,G.A),pb=L(P,G.B),pt=L(P,G.T);
+      h+=panel("Live measures",`<div class="eq">PT² = ${f2(pt)}² = ${f2(pt*pt)}
+PA · PB = ${f2(pa)} · ${f2(pb)} = ${f2(pa*pb)}
+OP² − r² = ${f2(d)}² − ${f2(r)}² = ${f2(d*d-r*r)}
+<small>Secant–tangent: tangent² = outside × whole.</small></div>`);
+    }
+    h+=panel("One idea, three pictures",`<p>Through a fixed point P, draw <b>any</b> line that meets the circle in two points. Multiply the two distances from P to the circle. You always get the same number — the <span class="term">power of the point</span> P.</p>
+      <p>Inside the circle the two distances point in opposite directions (chord pieces). Outside they point the same way: the <b>external segment</b> and the <b>whole secant</b>. A tangent is a secant whose two points have merged, so its product is tangent × tangent.</p>
+      <p><b>Proof idea:</b> each version comes from a pair of <b>similar triangles</b> (AA), using inscribed angles that intercept the same arc.</p>`);
+    h+=panel("Classic mistakes",`<p>Secants: multiply the <b>outside</b> piece by the <b>whole</b> secant — not by the inside piece. PA · AB is <b>not</b> constant; watch it change as you drag.</p>`);
+    h+=tryThis(`<p>On <b>Secant–tangent</b>, drag the secant's point on the circle until the secant turns into a tangent. What happens to A and B, and to PA · PB? On <b>Chord–chord</b>, drag P to the center: what is each product now?</p>`);
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ 06 · CHALLENGE ══════════════════════ */
+const UV=a=>[Math.cos(a*D2R),Math.sin(a*D2R)];
+function fitU(extra,padX,padY){
+  const pts=[[-1,-1],[1,1]].concat(extra||[]);
+  const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+  const mnx=Math.min.apply(null,xs),mxx=Math.max.apply(null,xs),mny=Math.min.apply(null,ys),mxy=Math.max.apply(null,ys);
+  const s=Math.min((VW-(padX||150))/(mxx-mnx),(VH-(padY||120))/(mxy-mny));
+  const cx=(mnx+mxx)/2, cy=(mny+mxy)/2;
+  const S=p=>[350+(p[0]-cx)*s, 236-(p[1]-cy)*s];
+  return {s:s,S:S,O:S([0,0])};
+}
+const fx=(a,b)=>{ // "ax + b"
+  const A=a===1?"x":a+"x"; if(!b)return A; return A+(b>0?" + "+b:" − "+(-b));
+};
+const GENS=[
+ // 1 inscribed / central / arc
+ function inscribed(){
+   const v=rnd(0,3), k=rnd(18,75), arcM=2*k, aA=rnd(200,250), aB=aA+arcM, maj=360-arcM;
+   const aC=aB+maj*(0.3+Math.random()*0.2), aD=aB+maj*(0.62+Math.random()*0.2);
+   const P={cat:"ang"};
+   if(v===0){P.ask="Find x, the measure of inscribed angle ∠ACB."; P.ans=k; P.work=`An inscribed angle is half its intercepted arc: x = ½ · ${arcM} = ${k}.`;}
+   if(v===1){P.ask="Find x, the measure of arc AB."; P.ans=arcM; P.work=`The intercepted arc is twice the inscribed angle: x = 2 · ${k} = ${arcM}.`;}
+   if(v===2){P.ask="O is the center. Find x, the measure of inscribed angle ∠ACB."; P.ans=k; P.work=`The central angle equals its arc (${arcM}°), and the inscribed angle is half of that: x = ½ · ${arcM} = ${k}.`;}
+   if(v===3){P.ask="Find x, the measure of ∠ADB."; P.ans=k; P.work=`∠ACB and ∠ADB are inscribed angles that intercept the same arc AB, so they are congruent: x = ${k}.`;}
+   P.draw=g=>{
+     const F=fitU([]),O=F.O,R=F.s,A=PT(O,R,aA),B=PT(O,R,aB),C=PT(O,R,aC),D=PT(O,R,aD);
+     circ(g,O,R,"circ"); arc(g,O,R,aA,aB,"arcHL",COL.arc);
+     txt(g,PT(O,R+30,aA+arcM/2),v===1?"x°":arcM+"°","num",v===1?COL.unk:COL.arc);
+     seg(g,C,A,"line",COL.ins); seg(g,C,B,"line",COL.ins);
+     if(v!==2&&v!==3) wedgeAt(g,C,A,B,38,v===0?COL.unk:COL.ins,v===0?"x°":k+"°");
+     if(v===3){ wedgeAt(g,C,A,B,38,COL.ins,k+"°"); seg(g,D,A,"line",COL.ins2); seg(g,D,B,"line",COL.ins2); wedgeAt(g,D,A,B,34,COL.unk,"x°"); nameOut(g,O,D,"D"); dot(g,D); }
+     if(v===2){ seg(g,O,A,"line",COL.cen); seg(g,O,B,"line",COL.cen); wedge(g,O,aA,aB,34,COL.cen,{label:arcM+"°"}); wedgeAt(g,C,A,B,38,COL.unk,"x°"); txt(g,add(O,unit(mid(A,B),O),24),"O","mk"); }
+     dot(g,O,4); [["A",A],["B",B],["C",C]].forEach(([n,p])=>{dot(g,p);nameOut(g,O,p,n);});
+   };
+   return P;
+ },
+ // 2 Thales
+ function thales(){
+   const c=2*rnd(20,70), a=c/2, ans=90-a, aC=rnd(0,1)?c:180-c;
+   const atA=aC===c; // angle at A subtends arc CB (from 0 to aC)
+   return {cat:"ang",ask:"AB is a diameter of circle O. Find x.",ans:atA?ans:ans,work:`∠ACB is inscribed in a semicircle, so m∠ACB = 90°. The angles of △ABC sum to 180°: x = 180 − 90 − ${a} = ${ans}.`,
+     draw:g=>{
+       const F=fitU([]),O=F.O,R=F.s,A=PT(O,R,180),B=PT(O,R,0),C=PT(O,R,aC);
+       circ(g,O,R,"circ"); seg(g,A,B,"line"); seg(g,A,C,"line",COL.ins); seg(g,B,C,"line",COL.ins);
+       // given angle a at the vertex whose angle equals a
+       const angA=ang3(A,B,C);
+       if(Math.abs(angA-a)<0.5){ wedgeAt(g,A,B,C,46,COL.ins,a+"°",30); wedgeAt(g,B,A,C,46,COL.unk,"x°",30); }
+       else { wedgeAt(g,B,A,C,46,COL.ins,a+"°",30); wedgeAt(g,A,B,C,46,COL.unk,"x°",30); }
+       dot(g,O,4); txt(g,[O[0],O[1]+22],"O","mk");
+       [["A",A],["B",B],["C",C]].forEach(([n,p])=>{dot(g,p);nameOut(g,O,p,n);});
+     }};
+ },
+ // 3 two chords
+ function chordAngle(){
+   let p,q; do{p=rnd(30,140);q=rnd(30,140);}while((p+q)%2||360-p-q<80);
+   const rest=360-p-q, s1=rnd(35,rest-35), a0=rnd(100,160);
+   const aA=a0,aC=a0+p,aB=aC+s1,aD=aB+q, x=(p+q)/2, v=rnd(0,1);
+   return {cat:"ang",ask:v?"Chords AB and CD intersect at E. Find x, the measure of arc BD.":"Chords AB and CD intersect at E. Find x = m∠AEC.",
+     ans:v?q:x, work:v?`m∠AEC = ½(m⌢AC + m⌢BD): ${x} = ½(${p} + x), so ${2*x} = ${p} + x and x = ${q}.`:`m∠AEC = ½(m⌢AC + m⌢BD) = ½(${p} + ${q}) = ${x}.`,
+     draw:g=>{
+       const F=fitU([]),O=F.O,R=F.s,A=PT(O,R,aA),B=PT(O,R,aB),C=PT(O,R,aC),D=PT(O,R,aD),X=lineX(A,B,C,D).p;
+       circ(g,O,R,"circ"); arc(g,O,R,aA,aC,"arcHL",COL.arc); arc(g,O,R,aB,aD,"arcHL",COL.arc2);
+       txt(g,PT(O,R+30,aA+p/2),p+"°","num",COL.arc); txt(g,PT(O,R+30,aB+q/2),v?"x°":q+"°","num",v?COL.unk:COL.arc2);
+       seg(g,A,B,"line"); seg(g,C,D,"line");
+       wedgeAt(g,X,A,C,32,v?COL.ins:COL.unk,v?x+"°":"x°");
+       dot(g,X); txt(g,add(X,unit(X,mid(B,C)),24),"E","mk");
+       [["A",A],["B",B],["C",C],["D",D]].forEach(([n,P])=>{dot(g,P);nameOut(g,O,P,n);});
+     }};
+ },
+ // 4 vertex outside
+ function outside(){
+   const type=pick(["ss","st","tt"]);
+   for(let k=0;k<60;k++){
+     if(type==="tt"){
+       const y=rnd(50,140), ang=180-y, rot=pick([0,180]), d=1/Math.cos(y/2*D2R), v=rnd(0,2);
+       const P=[d*Math.cos(rot*D2R),d*Math.sin(rot*D2R)];
+       const t1=rot+y/2, t2=rot-y/2;
+       return {cat:"ang",ask:["PA and PB are tangent to the circle. Find x = m∠P.","PA and PB are tangent to the circle. Find x = m∠P.","PA and PB are tangent to the circle. Find x, the measure of minor arc AB."][v],
+         ans:v===2?y:ang, work:v===0?`m∠P = ½(major − minor) = ½(${360-y} − ${y}) = ${ang}. (Shortcut: 180 − minor arc.)`:v===1?`Minor arc = 360 − ${360-y} = ${y}. m∠P = ½(${360-y} − ${y}) = ${ang}.`:`m∠P = 180 − minor arc, so ${ang} = 180 − x and x = ${y}.`,
+         draw:g=>{
+           const F=fitU([P]),O=F.O,R=F.s,PP=F.S(P),A=PT(O,R,t1),B=PT(O,R,t2);
+           circ(g,O,R,"circ"); const mn={from:t2,to:t1}; arc(g,O,R,t2,t1,"arcHL",COL.arc2); arc(g,O,R,t1,t2+360,"arcHL",COL.arc,{"stroke-width":5});
+           if(v===0) txt(g,PT(O,R+30,rot),y+"°","num",COL.arc2);
+           if(v===1) txt(g,PT(O,R+30,rot+180),(360-y)+"°","num",COL.arc);
+           if(v===2) txt(g,PT(O,R+30,rot),"x°","num",COL.unk);
+           ray(g,PP,A,50,"line",COL.tan); ray(g,PP,B,50,"line",COL.tan);
+           wedgeAt(g,PP,A,B,40,v===2?COL.ins:COL.unk,v===2?ang+"°":"x°",26);
+           dot(g,PP); txt(g,add(PP,unit(O,PP),24),"P","mk");
+           [["A",A],["B",B]].forEach(([n,p])=>{dot(g,p);nameOut(g,O,p,n);}); void mn;
+         }};
+     }
+     if(type==="ss"){
+       const y=rnd(20,80), ang=rnd(18,55), x=y+2*ang; if(x+y>320)continue;
+       const N1=UV(y/2),N2=UV(-y/2),F1=UV(180-x/2),F2=UV(180+x/2), X=lineX(N1,F1,N2,F2); if(!X)continue;
+       const P=X.p, d=Math.hypot(P[0],P[1]); if(d<1.15||d>3.3||P[0]<0)continue;
+       if(Math.abs(ang3(P,F1,F2)-ang)>0.3)continue;
+       const v=rnd(0,1), flip=pick([1,-1]), M=p=>[p[0]*flip,p[1]];
+       return {cat:"ang",ask:v?"Two secants meet at P. Find x, the measure of the far arc BD.":"Two secants meet at P. Find x = m∠P.",
+         ans:v?x:ang, work:v?`m∠P = ½(far − near): ${ang} = ½(x − ${y}), so ${2*ang} = x − ${y} and x = ${x}.`:`m∠P = ½(far arc − near arc) = ½(${x} − ${y}) = ${ang}.`,
+         draw:g=>{
+           const F=fitU([M(P)]),O=F.O,R=F.s,S=p=>F.S(M(p)),PP=S(P),A=S(N1),B=S(F1),C=S(N2),D=S(F2);
+           circ(g,O,R,"circ");
+           const far=arcNot(angOf(O,B),angOf(O,D),angOf(O,A)), near=arcNot(angOf(O,A),angOf(O,C),angOf(O,B));
+           arc(g,O,R,far.from,far.to,"arcHL",COL.arc); arc(g,O,R,near.from,near.to,"arcHL",COL.arc2);
+           txt(g,PT(O,R+30,far.from+far.m/2),v?"x°":x+"°","num",v?COL.unk:COL.arc);
+           txt(g,PT(O,R+30,near.from+near.m/2),y+"°","num",COL.arc2);
+           ray(g,PP,B,30,"line",COL.sec); ray(g,PP,D,30,"line",COL.sec);
+           wedgeAt(g,PP,B,D,44,v?COL.ins:COL.unk,v?ang+"°":"x°",26);
+           dot(g,PP); txt(g,add(PP,unit(O,PP),24),"P","mk");
+           [["A",A],["B",B],["C",C],["D",D]].forEach(([n,p])=>{dot(g,p,4);nameOut(g,O,p,n);});
+         }};
+     }
+     // st
+     const y=rnd(30,90), ang=rnd(18,50), x=y+2*ang; if(x+y>330)continue;
+     const T=UV(90),N=UV(90-y),Fp=UV(90+x);
+     if(Math.abs(Fp[1]-N[1])<1e-6)continue;
+     const t=(1-N[1])/(Fp[1]-N[1]); if(t>=0)continue;
+     const P=[N[0]+t*(Fp[0]-N[0]),1], d=Math.hypot(P[0],P[1]); if(P[0]<=0||d>3.3||d<1.15)continue;
+     if(Math.abs(ang3(P,T,Fp)-ang)>0.3)continue;
+     const v=rnd(0,1);
+     return {cat:"ang",ask:v?"PT is tangent at T and PB is a secant. Find x, the measure of arc TB.":"PT is tangent at T and PB is a secant. Find x = m∠P.",
+       ans:v?x:ang, work:v?`m∠P = ½(far − near): ${ang} = ½(x − ${y}), so x = ${2*ang} + ${y} = ${x}.`:`m∠P = ½(far arc − near arc) = ½(${x} − ${y}) = ${ang}.`,
+       draw:g=>{
+         const F=fitU([P]),O=F.O,R=F.s,PP=F.S(P),TT=F.S(T),A=F.S(N),B=F.S(Fp);
+         circ(g,O,R,"circ");
+         arc(g,O,R,90,90+x,"arcHL",COL.arc); arc(g,O,R,90-y,90,"arcHL",COL.arc2);
+         txt(g,PT(O,R+30,90+x/2),v?"x°":x+"°","num",v?COL.unk:COL.arc); txt(g,PT(O,R+30,90-y/2),y+"°","num",COL.arc2);
+         ray(g,PP,TT,70,"line",COL.tan); ray(g,PP,B,30,"line",COL.sec);
+         wedgeAt(g,PP,TT,B,44,v?COL.ins:COL.unk,v?ang+"°":"x°",26);
+         dot(g,PP); txt(g,add(PP,[0,1],-24),"P","mk");
+         [["T",TT],["A",A],["B",B]].forEach(([n,p])=>{dot(g,p,4);nameOut(g,O,p,n);});
+       }};
+   }
+   return null;
+ },
+ // 5 tangent–chord
+ function tanChord(){
+   const k=rnd(20,140), arcM=2*k, v=rnd(0,1), aA=270+arcM;
+   return {cat:"ang",ask:v?"Line ℓ is tangent to the circle at T. Find x, the measure of arc TA.":"Line ℓ is tangent to the circle at T. Find x = m∠ATX.",
+     ans:v?arcM:k, work:v?`A tangent–chord angle is half its intercepted arc, so the arc is twice the angle: x = 2 · ${k} = ${arcM}.`:`A tangent–chord angle is half its intercepted arc: x = ½ · ${arcM} = ${k}.`,
+     draw:g=>{
+       const F=fitU([[1.7,-1],[-1.7,-1]]),O=F.O,R=F.s,T=PT(O,R,270),A=PT(O,R,aA),X=add(T,[1,0],R*1.6),Y=add(T,[1,0],-R*1.6);
+       circ(g,O,R,"circ"); arc(g,O,R,270,aA,"arcHL",COL.arc);
+       txt(g,PT(O,R+30,270+k),v?"x°":arcM+"°","num",v?COL.unk:COL.arc);
+       seg(g,X,Y,"line",COL.tan); seg(g,T,A,"line",COL.chord);
+       wedgeAt(g,T,X,A,40,v?COL.ins:COL.unk,v?k+"°":"x°",28);
+       txt(g,[X[0]-6,X[1]-18],"X","mk",COL.tan); txt(g,[Y[0]+14,Y[1]-18],"ℓ","mk",COL.tan);
+       dot(g,O,4); [["T",T],["A",A]].forEach(([n,p])=>{dot(g,p);nameOut(g,O,p,n);});
+     }};
+ },
+ // 6 tangent segments
+ function tanSeg(){
+   if(rnd(0,1)){
+     const x=rnd(2,9), a=rnd(2,5), c=a+rnd(1,3), b=rnd(1,15), d=a*x+b-c*x;
+     const e1=fx(a,b), e2=fx(c,d);
+     return {cat:"len",ask:"PA and PB are tangent to circle O. Find x.",ans:x,work:`Tangent segments from the same external point are congruent: ${e1} = ${e2}, so ${c-a}x = ${b-d} and x = ${x}.`,
+       draw:g=>{ const d0=2.2,P=[d0,0],a1=Math.acos(1/d0)/D2R;
+         const F=fitU([P]),O=F.O,R=F.s,PP=F.S(P),A=PT(O,R,a1),B=PT(O,R,-a1);
+         circ(g,O,R,"circ"); seg(g,PP,A,"line",COL.tan); seg(g,PP,B,"line",COL.tan);
+         segLabel(g,PP,A,e1,COL.unk,O,20,"num"); segLabel(g,PP,B,e2,COL.unk,O,20,"num");
+         dot(g,O,4); txt(g,[O[0]-4,O[1]+22],"O","mk"); dot(g,PP); txt(g,[PP[0]+20,PP[1]],"P","mk");
+         [["A",A],["B",B]].forEach(([n,p])=>{dot(g,p);nameOut(g,O,p,n);}); }};
+   }
+   const T=pick([[3,4,5],[5,12,13],[8,15,17],[6,8,10],[9,12,15],[20,21,29],[12,16,20],[7,24,25]]).slice();
+   if(T[1]/T[0]>3.5) return null;
+   const r=T[0], t=T[1], h=T[2], v=rnd(0,2);
+   const ask=["Find x, the length of tangent segment PT.","Find x = OP.","Find x, the radius of circle O."][v];
+   const ans=[t,h,r][v];
+   const work=["The radius OT is perpendicular to the tangent PT, so △OTP is a right triangle: x² + "+r+"² = "+h+"², x = √("+(h*h)+" − "+(r*r)+") = "+t+".",
+     "The radius OT is perpendicular to the tangent PT, so OP is the hypotenuse: x² = "+r+"² + "+t+"² = "+(h*h)+", x = "+h+".",
+     "The radius OT is perpendicular to the tangent PT: x² + "+t+"² = "+h+"², x = √("+(h*h)+" − "+(t*t)+") = "+r+"."][v];
+   return {cat:"len",ask:"PT is tangent to circle O at T. "+ask,ans:ans,work:work,
+     draw:g=>{ const d0=h/r,P=[d0,0],a1=Math.acos(1/d0)/D2R;
+       const F=fitU([P]),O=F.O,R=F.s,PP=F.S(P),TT=PT(O,R,a1);
+       circ(g,O,R,"circ"); seg(g,PP,TT,"line",COL.tan); seg(g,O,TT,"line",COL.rad); seg(g,O,PP,"line",COL.graphite);
+       const L=[t,h,r].map((n,i)=>i===v?"x":String(n));
+       segLabel(g,PP,TT,L[0],v===0?COL.unk:COL.tan,O,18,"num"); segLabel(g,O,PP,L[1],v===1?COL.unk:"var(--graphite)",TT,18,"num"); segLabel(g,O,TT,L[2],v===2?COL.unk:COL.rad,PP,18,"num");
+       dot(g,O,4); txt(g,[O[0]-18,O[1]+14],"O","mk"); dot(g,PP); txt(g,[PP[0]+20,PP[1]],"P","mk"); dot(g,TT); nameOut(g,O,TT,"T"); }};
+ },
+ // 7 intersecting chords
+ function chordProd(){
+   for(let k=0;k<80;k++){
+     const a=rnd(2,12),b=rnd(2,12),c=rnd(2,12); if(c===a||c===b)continue;
+     const x=a*b/c; if(Math.abs(x*10-Math.round(x*10))>1e-9||x>16||x<1.5)continue;
+     if(Math.max(a,b)/Math.min(a,b)>3||Math.max(c,x)/Math.min(c,x)>3)continue;
+     const r=Math.max(a+b,c+x)/2*(1.02+Math.random()*0.12), d=Math.sqrt(r*r-a*b); if(d/r>0.6)continue;
+     if(Math.abs(b-a)>2*d*0.97||Math.abs(x-c)>2*d*0.97)continue;
+     const p1=Math.acos((b-a)/(2*d)), p2=-Math.acos((x-c)/(2*d));
+     const Eu=[d/r,0], u1=[Math.cos(p1),Math.sin(p1)], u2=[Math.cos(p2),Math.sin(p2)];
+     const A=add(Eu,u1,a/r), B=add(Eu,u1,-b/r), C=add(Eu,u2,c/r), D=add(Eu,u2,-x/r);
+     const rot=rnd(0,359), Rt=p=>[p[0]*Math.cos(rot*D2R)-p[1]*Math.sin(rot*D2R),p[0]*Math.sin(rot*D2R)+p[1]*Math.cos(rot*D2R)];
+     const xs=fmt(x);
+     return {cat:"len",ask:"Chords AB and CD intersect at E. Find x.",ans:x,work:`Intersecting chords: AE · EB = CE · ED, so ${a} · ${b} = ${c} · x. Then ${a*b} = ${c}x and x = ${xs}.`,
+       draw:g=>{ const F=fitU([]),O=F.O,R=F.s,S=p=>F.S(Rt(p)),PA=S(A),PB=S(B),PC=S(C),PD=S(D),PE=S(Eu);
+         circ(g,O,R,"circ"); seg(g,PA,PB,"line",COL.cen); seg(g,PC,PD,"line",COL.ins);
+         segLabel(g,PA,PE,String(a),COL.cen,O,-17,"num"); segLabel(g,PE,PB,String(b),COL.cen,O,-17,"num");
+         segLabel(g,PC,PE,String(c),COL.ins,O,-17,"num"); segLabel(g,PE,PD,"x",COL.unk,O,-17,"num");
+         dot(g,PE); txt(g,add(PE,unit(PE,mid(PB,PC)),-22),"E","mk");
+         [["A",PA],["B",PB],["C",PC],["D",PD]].forEach(([n,p])=>{dot(g,p);nameOut(g,O,p,n);}); }};
+   }
+   return null;
+ },
+ // 8 secant products
+ function secProd(){
+   for(let k=0;k<80;k++){
+     if(rnd(0,1)){
+       // secant–secant
+       const a=rnd(2,9),b=rnd(3,12),c=rnd(2,9); if(c===a)continue;
+       const x=a*(a+b)/c-c; if(x<1.5||x>16||Math.abs(x*10-Math.round(x*10))>1e-9)continue;
+       const r=Math.max(b,x)/2*(1.15+Math.random()*0.3), d=Math.sqrt(r*r+a*(a+b)); if(d/r>3.4)continue;
+       const ps1=Math.acos((2*a+b)/(2*d)), ps2=-Math.acos((2*c+x)/(2*d));
+       const P=[d/r,0], u1=[-Math.cos(ps1),Math.sin(ps1)], u2=[-Math.cos(ps2),Math.sin(ps2)];
+       const A=add(P,u1,a/r),B=add(P,u1,(a+b)/r),C=add(P,u2,c/r),D=add(P,u2,(c+x)/r), xs=fmt(x);
+       return {cat:"len",ask:"Two secants are drawn from P. Find x.",ans:x,work:`Secant–secant: outside × whole = outside × whole. ${a}(${a} + ${b}) = ${c}(${c} + x) → ${a*(a+b)} = ${c*c} + ${c}x → x = ${xs}.`,
+         draw:g=>{ const F=fitU([P]),O=F.O,R=F.s,S=F.S,PP=S(P),PA=S(A),PB=S(B),PC=S(C),PD=S(D);
+           circ(g,O,R,"circ"); seg(g,PP,PB,"line",COL.cen); seg(g,PP,PD,"line",COL.ins);
+           segLabel(g,PP,PA,String(a),COL.cen,O,17,"num"); segLabel(g,PA,PB,String(b),COL.cen,O,-17,"num");
+           segLabel(g,PP,PC,String(c),COL.ins,O,17,"num"); segLabel(g,PC,PD,"x",COL.unk,O,-17,"num");
+           dot(g,PP); txt(g,[PP[0]+20,PP[1]],"P","mk");
+           [["A",PA],["B",PB],["C",PC],["D",PD]].forEach(([n,p])=>{dot(g,p);nameOut(g,O,p,n);}); }};
+     }
+     // secant–tangent
+     const t=rnd(4,12), divs=[]; for(let a=2;a<t;a++)if((t*t)%a===0)divs.push(a); if(!divs.length)continue;
+     const a=pick(divs), b=t*t/a-a; if(b<2||b>20)continue;
+     const r=b/2*(1.15+Math.random()*0.35), d=Math.sqrt(r*r+t*t); if(d/r>3.4)continue;
+     const ps=Math.acos((2*a+b)/(2*d)), P=[d/r,0], u=[-Math.cos(ps),Math.sin(ps)];
+     const A=add(P,u,a/r),B=add(P,u,(a+b)/r), at=Math.acos(r/d)/D2R, T=UV(-at), v=rnd(0,1);
+     return {cat:"len",ask:v?"PT is tangent at T and PB is a secant. Find x = AB.":"PT is tangent at T and PB is a secant. Find x = PT.",ans:v?b:t,
+       work:v?`Secant–tangent: PT² = PA · PB. ${t}² = ${a}(${a} + x) → ${t*t} = ${a*a} + ${a}x → x = ${b}.`:`Secant–tangent: PT² = PA · PB = ${a}(${a} + ${b}) = ${t*t}, so x = √${t*t} = ${t}.`,
+       draw:g=>{ const F=fitU([P]),O=F.O,R=F.s,S=F.S,PP=S(P),PA=S(A),PB=S(B),PT2=S(T);
+         circ(g,O,R,"circ"); seg(g,PP,PB,"line",COL.cen); seg(g,PP,PT2,"line",COL.tan);
+         segLabel(g,PP,PA,String(a),COL.cen,O,17,"num"); segLabel(g,PA,PB,v?"x":String(b),v?COL.unk:COL.cen,O,-17,"num");
+         segLabel(g,PP,PT2,v?String(t):"x",v?COL.tan:COL.unk,O,17,"num");
+         dot(g,PP); txt(g,[PP[0]+20,PP[1]],"P","mk");
+         [["A",PA],["B",PB],["T",PT2]].forEach(([n,p])=>{dot(g,p);nameOut(g,O,p,n);}); }};
+   }
+   return null;
+ },
+ // 9 cyclic quadrilateral
+ function cyclic(){
+   const al=rnd(55,125), a2=rnd(35,2*al-35), a3=2*al-a2, a1=rnd(35,360-2*al-35), a4=360-2*al-a1;
+   if(a3<35||a4<35)return null;
+   const aA=rnd(100,150), aB=aA+a1, aC=aB+a2, aD=aC+a3; void a4;
+   const v=rnd(0,2); let ask,ans,work,lab;
+   if(v===0){ ask="ABCD is inscribed in the circle. Find x = m∠C."; ans=180-al; work=`Opposite angles of an inscribed quadrilateral are supplementary: x = 180 − ${al} = ${ans}.`; lab={A:al+"°",C:"x°"}; }
+   else if(v===1){ const B=(a3+a4)/2; if(B%1)return null; ask="ABCD is inscribed in the circle. Find x = m∠D."; ans=180-B; work=`∠B and ∠D are opposite angles of a cyclic quadrilateral, so they are supplementary: x = 180 − ${B} = ${ans}.`; lab={B:B+"°",D:"x°"}; }
+   else {
+     const x=rnd(5,20), p=rnd(2,5), q=al-p*x, m=rnd(1,4), n=180-al-m*x;
+     if(Math.abs(q)>60||Math.abs(n)>80||q===0||n===0)return null;
+     ask="ABCD is inscribed in the circle. Find x."; ans=x; work=`Opposite angles are supplementary: (${fx(p,q)}) + (${fx(m,n)}) = 180 → ${p+m}x + ${q+n} = 180 → x = ${x}.`;
+     lab={A:"("+fx(p,q)+")°",C:"("+fx(m,n)+")°"};
+   }
+   return {cat:"quad",ask,ans,work,draw:g=>{
+     const F=fitU([]),O=F.O,R=F.s,P={A:PT(O,R,aA),B:PT(O,R,aB),C:PT(O,R,aC),D:PT(O,R,aD)};
+     circ(g,O,R,"circ");
+     g.appendChild(E("polygon",{points:["A","B","C","D"].map(k=>P[k].join(",")).join(" "),fill:"rgba(124,58,237,.06)",stroke:"var(--graphite)","stroke-width":2.8}));
+     const nb={A:["D","B"],B:["A","C"],C:["B","D"],D:["C","A"]};
+     Object.keys(lab).forEach(k=>{ const isX=lab[k].indexOf("x")>=0&&v!==2; wedgeAt(g,P[k],P[nb[k][0]],P[nb[k][1]],32,isX?COL.unk:(v===2?COL.unk:COL.ins),lab[k],v===2?50:28); });
+     ["A","B","C","D"].forEach(k=>{dot(g,P[k]);nameOut(g,O,P[k],k);});
+   }};
+ }
+];
+const CATS={mix:"Mixed",ang:"Angles & arcs",len:"Segment lengths",quad:"Cyclic quadrilaterals"};
+function newProblem(cat){
+  for(let i=0;i<200;i++){
+    const gfn=pick(GENS), p=gfn();
+    if(p&&(cat==="mix"||p.cat===cat))return p;
+  }
+  return GENS[0]();
+}
+const M6={
+  tab:"Challenge", lesson:"G-C.A.2 · G-C.A.3", accent:"var(--coral)",
+  title:()=>"Practice — "+CATS[M6.s.cat],
+  s:{p:null,cat:"mix",checked:false,n:0,right:0,streak:0,best:0},
+  score(){ const s=M6.s; return "streak "+s.streak+" · best "+s.best+" · "+s.right+"/"+s.n+" correct"; },
+  bar(){
+    const s=M6.s;
+    btn("New problem",()=>{s.p=newProblem(s.cat);s.checked=false;render();},true);
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    Object.keys(CATS).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=CATS[k];sel.appendChild(o);});
+    sel.value=s.cat; sel.onchange=()=>{s.cat=sel.value;s.p=newProblem(s.cat);s.checked=false;render();};
+    bar.appendChild(sel);
+    spacer(M6.score()).id="score";
+  },
+  draw(){ if(!M6.s.p)M6.s.p=newProblem(M6.s.cat); const g=bg(); M6.s.p.draw(g); },
+  panel(){
+    const s=M6.s,p=s.p;
+    side.innerHTML=`<div class="panel"><h3>${p.ask}</h3>
+      <label class="fld" for="ans">Your answer</label><div class="fldwrap"><input type="number" id="ans" step="any" inputmode="decimal" placeholder="x ="></div>
+      <div class="fldwrap" style="margin:16px 0 4px"><button class="go" id="chk" type="button">Check my answer</button></div>
+      <div id="fb" aria-live="polite"></div></div>`+
+      panel("Toolkit",`<table class="facts" style="margin:-16px -20px;width:calc(100% + 40px)">
+        <tr><td class="ab">inscribed ∠</td><td class="st">½ intercepted arc<i>central ∠ = its arc · semicircle → 90°</i></td></tr>
+        <tr><td class="ab">∠ inside</td><td class="st">½ (sum of arcs)</td></tr>
+        <tr><td class="ab">∠ outside</td><td class="st">½ (far arc − near arc)</td></tr>
+        <tr><td class="ab">tangent</td><td class="st">⟂ radius · tangent segments from a point are ≅</td></tr>
+        <tr><td class="ab">chords</td><td class="st">piece × piece = piece × piece</td></tr>
+        <tr><td class="ab">secants</td><td class="st">outside × whole = outside × whole<i>tangent² = outside × whole</i></td></tr>
+        <tr><td class="ab">cyclic quad</td><td class="st">opposite angles are supplementary</td></tr></table>`)+
+      tryThis(`<p>Before you calculate, decide <b>where the vertex is</b>: at the center, on the circle, inside, or outside. That one decision picks the formula. Figures are drawn to scale, so estimate first and check your answer is reasonable.</p>`);
+    const inp=document.getElementById("ans"), fb=document.getElementById("fb");
+    const go=()=>{
+      const v=parseFloat(inp.value);
+      if(isNaN(v)){fb.innerHTML='<div class="verdict bad">Type a number first.</div>';return;}
+      const ok=Math.abs(v-p.ans)<=0.051;
+      if(!s.checked){ s.checked=true; s.n++; if(ok){s.right++;s.streak++;s.best=Math.max(s.best,s.streak);} else s.streak=0;
+        const sc=document.getElementById("score"); if(sc)sc.textContent=M6.score(); }
+      fb.innerHTML= ok? `<div class="verdict good"><b>Correct — x = ${fmt(p.ans)}.</b> ${p.work}</div>`
+                      : `<div class="verdict bad"><b>Not yet.</b> ${p.work}<br><br>Try the next one, or re-enter x = ${fmt(p.ans)} to see it marked right.</div>`;
+    };
+    document.getElementById("chk").onclick=go;
+    inp.onkeydown=e=>{if(e.key==="Enter")go();};
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+let cur=0;
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+function fromHash(){ const m=/^#tab-(\d+)$/.exec(location.hash); if(m){const i=+m[1]-1; if(i>=0&&i<MODS.length) return i;} return null; }
+{const h=fromHash(); if(h!==null)cur=h;}
+function update(){ const M=MODS[cur]; clear(); M.draw(); M.panel(); }
+function refreshBar(){ bar.innerHTML=""; MODS[cur].bar(); }
+function render(){
+  const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.title()+" — interactive figure");
+  clear(); M.draw();
+  bar.innerHTML=""; M.bar();
+  M.panel();
+  dragHandler=M.drag? M.drag : null;
+  window.__ctlPart=(M===M1&&M1.s.mode==="parts")? M1.part : null;
+  [...tabsEl.children].forEach((b,i)=>{b.setAttribute("aria-selected",String(i===cur));b.tabIndex=i===cur?0:-1;});
+}
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab");
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>{ if(cur===0)M1.stop(); cur=i; history.replaceState(null,"","#tab-"+(i+1)); render(); };
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(i+(e.key==="ArrowRight"?1:MODS.length-1))%MODS.length; tabsEl.children[j].focus(); tabsEl.children[j].click(); } };
+  tabsEl.appendChild(b);
+});
+window.addEventListener("hashchange",()=>{const h=fromHash(); if(h!==null&&h!==cur){M1.stop();cur=h;render();}});
+window.__ctl={answer:()=>M6.s.p&&M6.s.p.ans};
+render();
+})();
+</script>
+</body>
+</html>
