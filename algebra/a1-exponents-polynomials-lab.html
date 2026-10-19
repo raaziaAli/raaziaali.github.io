@@ -248,6 +248,8 @@
   .pad sup,.eq sup,.rel sup,.prob sup{font-size:.72em;line-height:0}
   .pad code{font-family:var(--mono);font-size:13.5px;color:#fff;background:rgba(0,0,0,.3);padding:1px 6px;border-radius:6px}
   .score{font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar .seg{flex-wrap:wrap}
+  @media (max-width:560px){ .bar .seg button{padding:9px 13px;font-size:14px} .bar{gap:8px} }
   .smallgo:focus-visible,.stp button:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 </style>
 </head>
@@ -791,13 +793,17 @@ function exprTokens(factors,mode){ // factors: arrays of terms {c,k}
     if(paren) toks.push({s:")"}); });
   return toks; }
 function drawExpr(g,factors,y,size,foil){
-  const toks=exprTokens(factors,"u"), cw=size*0.61; let tot=0; toks.forEach(t=>{t.w=t.s.length*cw; tot+=t.w;});
-  let x=350-tot/2; const centers=[];
-  toks.forEach(t=>{ T(g,x,y,t.s,{size,cls:"lbp",mid:1}); if(t.term)centers.push(x+t.w/2); x+=t.w; });
-  if(foil&&centers.length===4){ const arcs=[[0,2,"F",C_A,26],[0,3,"O",C_C,40],[1,2,"I",C_D,14],[1,3,"L",C_B,28]];
-    arcs.forEach(([a,b,l,c,h])=>{ const x1=centers[a],x2=centers[b];
-      P(g,`M${x1} ${y-size*.6} C ${x1} ${y-size*.6-h} ${x2} ${y-size*.6-h} ${x2} ${y-size*.6}`,{stroke:c,sw:2.2});
-      T(g,(x1+x2)/2,y-size*.6-h*.75-4,l,{size:12,anchor:"middle",fill:c}); }); }
+  const toks=exprTokens(factors,"u"), str=toks.map(t=>t.s).join("");
+  const fs=Math.min(size,fitSize(str,640,size));
+  const t=T(g,350,y,str,{size:fs,anchor:"middle",mid:1,cls:"lbp"});
+  if(!(foil&&toks.filter(k=>k.term).length===4))return;
+  let full=0, x0=350; try{ full=t.getComputedTextLength(); }catch(_){ full=str.length*fs*.6; } x0=350-full/2;
+  const centers=[]; let pos=0;
+  toks.forEach(k=>{ if(k.term){ let a=0,w=0; try{ a=t.getSubStringLength(0,pos); w=t.getSubStringLength(pos,k.s.length); }catch(_){ a=pos*fs*.6; w=k.s.length*fs*.6; } centers.push(x0+a+w/2); } pos+=k.s.length; });
+  const arcs=[[0,2,"F",C_A,26],[0,3,"O",C_C,40],[1,2,"I",C_D,14],[1,3,"L",C_B,28]];
+  arcs.forEach(([a,b2,l,c,h])=>{ const x1=centers[a],x2=centers[b2], yy=y-fs*.6;
+    P(g,`M${x1} ${yy} C ${x1} ${yy-h} ${x2} ${yy-h} ${x2} ${yy}`,{stroke:c,sw:2.2});
+    T(g,(x1+x2)/2,yy-h*.75-4,l,{size:12,anchor:"middle",fill:c}); });
 }
 function boxModel(g,Rw,Cl,x0,y0,W,H,o){ o=o||{}; const cw=W/Cl.length, rh=H/Rw.length, prods=[];
   Cl.forEach((t,j)=>T(g,x0+(j+.5)*cw,y0-14,tstr(t.c,t.k,"u"),{size:20,anchor:"middle",fill:o.colC||C_A}));
@@ -822,10 +828,11 @@ const M3={
     if(s.mode==="bb"){ segBtns([["box","Box model"],["tiles","Algebra tiles"]],s.view,k=>{ s.view=k; if(k==="tiles")M3.tileFix(); render(); },"View");
       if(s.view==="box") chk("Show FOIL",s.foil,v=>{s.foil=v;update();});
       else { const b=s.bb;
-        segBtns([["1","x"],["2","2x"]],String(b.a),k=>{b.a=+k;render();},"Top x-tiles");
-        segBtns([["1","+"],["-1","−"]],String(b.b<0?-1:1),k=>{b.b=Math.abs(b.b)*(+k);render();},"Sign of top units");
-        segBtns([["1","x"],["2","2x"]],String(b.c),k=>{b.c=+k;render();},"Side x-tiles");
-        segBtns([["1","+"],["-1","−"]],String(b.d<0?-1:1),k=>{b.d=Math.abs(b.d)*(+k);render();},"Sign of side units"); } }
+        const lab=t=>{const s2=document.createElement("span"); s2.className="score"; s2.textContent=t; bar.appendChild(s2);};
+        lab("Top:"); segBtns([["1","x"],["2","2x"]],String(b.a),k=>{b.a=+k;render();},"Top x-tiles");
+        segBtns([["1","+ units"],["-1","− units"]],String(b.b<0?-1:1),k=>{b.b=Math.abs(b.b)*(+k);render();},"Sign of top units");
+        lab("Side:"); segBtns([["1","x"],["2","2x"]],String(b.c),k=>{b.c=+k;render();},"Side x-tiles");
+        segBtns([["1","+ units"],["-1","− units"]],String(b.d<0?-1:1),k=>{b.d=Math.abs(b.d)*(+k);render();},"Sign of side units"); } }
     if(s.mode==="sp"){ segBtns([["sq+","(a + b)²"],["sq-","(a − b)²"],["dos","(a + b)(a − b)"]],s.sp.kind,k=>{stopAnim();s.sp.kind=k;s.sp.t=0;M3.spFix();render();},"Special product");
       if(s.sp.kind==="dos"){ btn("Rearrange",()=>animate(1400,t=>{s.sp.t=t;}),"primary"); btn("Reset",()=>{stopAnim();s.sp.t=0;update();}); } }
     if(s.mode!=="sp"&&!(s.mode==="bb"&&s.view==="tiles")) btn("New example",()=>{ M3.random(); render(); },"primary");
@@ -862,13 +869,13 @@ const M3={
     T(g,X0+W/2,Y0-u-24,top,{size:20,anchor:"middle",fill:C_A});
     T(g,X0-u-22,Y0+H/2,sideS,{size:20,anchor:"end",mid:1,fill:C_A});
     grab(g,X0+W+16,Y0-u/2-10,"b"); grabV(g,X0-u/2-10,Y0+H+16,"d");
-    const X=470, p=M3.prod(), ad=b.a*b.d, bc=b.b*b.c;
-    T(g,X,130,"x² tiles: "+b.a+" · "+b.c+" = "+(b.a*b.c),{size:16,fill:TPOS[2]});
-    T(g,X,164,"x tiles: "+(ad===0&&bc===0?"0":minus(ad)+" + "+minus(bc).replace(/^−/,"(−")+(bc<0?")":"")+" = "+minus(ad+bc)),{size:16,fill:TPOS[1]});
-    T(g,X,198,"unit tiles: "+minus(b.b)+" · "+minus(b.d)+" = "+minus(b.b*b.d),{size:16,fill:"#A16207"});
+    const X=Math.max(470,X0+W+40), p=M3.prod(), ad=b.a*b.d, bc=b.b*b.c, IW=VW-X-10;
+    {const q="x² tiles: "+b.a+" · "+b.c+" = "+(b.a*b.c); T(g,X,130,q,{size:fitSize(q,IW,16),fill:TPOS[2]});}
+    {const q="x tiles: "+(ad===0&&bc===0?"0":minus(ad)+" + "+minus(bc).replace(/^−/,"(−")+(bc<0?")":"")+" = "+minus(ad+bc)); T(g,X,164,q,{size:fitSize(q,IW,16),fill:TPOS[1]});}
+    {const q="unit tiles: "+minus(b.b)+" · "+minus(b.d)+" = "+minus(b.b*b.d); T(g,X,198,q,{size:fitSize(q,IW,16),fill:"#A16207"});}
     if(b.b<0||b.d<0) T(g,X,236,"red = negative (sign rule)",{size:13,fill:TNEG});
     T(g,X,300,"Area =",{size:15,fill:DIM});
-    const ps=polyStr(p,"u"); T(g,X,334,ps,{size:fitSize(ps,220,24),cls:"ttl",fill:C_D});
+    const ps=polyStr(p,"u"); T(g,X,334,ps,{size:fitSize(ps,IW,24),cls:"ttl",fill:C_D});
     if(ad!==0&&bc!==0&&Math.sign(ad)!==Math.sign(bc)) T(g,X,370,"+x and −x tiles cancel",{size:13,fill:DIM});
   },
   dragStart(){},
@@ -885,7 +892,7 @@ const M3={
   spK(){ return {"sq+":31,"sq-":37,"dos":28}[M3.s.sp.kind]; },
   dSp(g){ const q=M3.s.sp, k=M3.spK(), x0=50, y0=58, A=q.A, B=q.B, X=446;
     const nf=v=>num(v,2), fit=(cx,cy,s,w,h,c,mx)=>{ if(w<18||h<16)return; T(g,cx,cy,s,{size:Math.min(mx||17,w/(s.length*0.62),h*0.6),anchor:"middle",mid:1,cls:"lbp",fill:c}); };
-    const info=(lines)=>lines.forEach((l,i)=>T(g,X,l[2]||(70+i*36),l[0],{size:l[3]||15,fill:l[1]||INK}));
+    const info=(lines)=>lines.forEach((l,i)=>T(g,X,l[2]||(70+i*36),l[0],{size:fitSize(l[0],VW-X-8,l[3]||15),fill:l[1]||INK}));
     if(q.kind==="sq+"){ const a=A*k, b=B*k;
       R(g,x0,y0,a,a,{fill:C_A,fop:.18,stroke:C_A,rx:0}); R(g,x0+a,y0,b,a,{fill:C_C,fop:.18,stroke:C_C,rx:0}); R(g,x0,y0+a,a,b,{fill:C_C,fop:.18,stroke:C_C,rx:0}); R(g,x0+a,y0+a,b,b,{fill:"#CA8A04",fop:.2,stroke:"#CA8A04",rx:0});
       fit(x0+a/2,y0+a/2,"a² = "+nf(A*A),a,a,C_A,20); fit(x0+a+b/2,y0+a/2,"ab",b,a,C_C); fit(x0+a/2,y0+a+b/2,"ab = "+nf(A*B),a,b,C_C); fit(x0+a+b/2,y0+a+b/2,"b²",b,b,"#A16207");
@@ -1026,7 +1033,7 @@ const M4={
     T(g,350,38,"Factor x² + "+t.b+"x + "+t.c,{size:24,anchor:"middle",cls:"ttl"});
     const nR=s.place.filter(v=>v==="R").length, nB=s.place.filter(v=>v==="B").length, done=nR+nB===t.b, ok=done&&nR*nB===t.c;
     R(g,X0+L,Y0,6*u,L,{fill:"#E2E8F0",fop:.35,stroke:"#94A3B8",sw:1.2,dash:"5 4",rx:4}); R(g,X0,Y0+L,L,6*u,{fill:"#E2E8F0",fop:.35,stroke:"#94A3B8",sw:1.2,dash:"5 4",rx:4});
-    T(g,X0+L+3*u,Y0-10,"drop x tiles beside",{size:12,anchor:"middle",fill:DIM}); T(g,X0+L/2,Y0+L+6*u+16,"or below",{size:12,anchor:"middle",fill:DIM});
+    if(!ok){ T(g,X0+L+3*u,Y0-10,"drop x tiles beside",{size:12,anchor:"middle",fill:DIM}); T(g,X0+L/2,Y0+L+6*u+16,"or below",{size:12,anchor:"middle",fill:DIM}); }
     drawTileAt(g,X0,Y0,L,L,2,1);
     T(g,420,80,"x tiles ("+t.b+")",{size:13,fill:DIM}); T(g,420,214,"unit tiles ("+t.c+")",{size:13,fill:DIM});
     if(ok){ for(let i=0;i<nR;i++)for(let j=0;j<nB;j++) drawTileAt(g,X0+L+i*u,Y0+L+j*u,u,u,0,1);
