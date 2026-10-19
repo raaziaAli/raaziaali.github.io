@@ -1,0 +1,1241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trig Graphs Lab — Trigonometry Unit 3</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M6 32C14 8 22 8 32 32S50 56 58 32' stroke='%2300E5FF' stroke-width='6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='19' cy='14' r='5' fill='%23FF3D8A'/%3E%3Ccircle cx='45' cy='50' r='5' fill='%23FFD93D'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap;text-align:right}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td{padding:10px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top}
+  table.facts .ab{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  table.facts .st{color:#DDDDF2;font-family:var(--mono);font-size:13.5px}
+
+  /* ── drawing ── */
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── Trig Graphs Lab additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.go:focus-visible,.ghost:focus-visible,.rng input:focus-visible,.bar label.chk input:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:46px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB;paint-order:stroke;stroke:#fff;stroke-width:3;stroke-linejoin:round}
+  .axt{font-family:var(--mono);font-size:11.5px;font-weight:700;fill:#5A6A8F;paint-order:stroke;stroke:#fff;stroke-width:3.5;stroke-linejoin:round}
+  @media (max-width:560px){ svg.canvas .sm{font-size:20px;stroke-width:5} svg.canvas .mk{font-size:26px} svg.canvas .num{font-size:22px} svg.canvas .ax{font-size:16px} svg.canvas .axt{font-size:16px} }
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 130px}
+  .ansrow > div.wide{flex:1 1 100%}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  .prob .m{font-family:var(--mono);font-weight:700;color:#fff;white-space:nowrap}
+  .fmt{padding:6px 20px 0;font-size:13px;color:var(--dim)}
+  .kp{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13.5px}
+  .kp td,.kp th{padding:7px 20px;border-bottom:1px solid rgba(196,181,253,.11);text-align:left}
+  .kp th{color:var(--accent);font-size:12px;letter-spacing:.08em}
+  .kp td{color:#fff}
+  .badge{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:700;padding:3px 10px;border-radius:100px}
+  .badge.g{background:rgba(94,234,212,.18);color:var(--mint)}
+  .badge.m{background:rgba(255,217,61,.18);color:var(--yellow)}
+  .badge.b{background:rgba(255,107,107,.18);color:var(--coral)}
+  @media (max-width:560px){
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+    .rel{padding:12px 16px}
+    .board-head .lsn{margin-left:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Trig Graphs Lab</h1>
+    <div class="eyebrow">Trigonometry · Unit 3 · Trigonometric Functions &amp; Graphs</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Trigonometric graph"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every graph is live and every number is computed from the current function — drag a point or move a slider and the features follow. x is measured in radians unless you switch to degrees.
+    <div class="links"><a href="/trig-calculus/">← Trig &amp; Calculus courses</a><a href="/math/#trig-calculus">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460, PI=Math.PI, TAU=2*Math.PI, D2R=PI/180;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const near=(a,b,e)=>Math.abs(a-b)<(e||1e-9);
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+function num(v,dp){ dp=(dp==null?2:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+function fracParts(v,maxD){ maxD=maxD||12;
+  for(let d=1;d<=maxD;d++){ const n=Math.round(v*d); if(Math.abs(n/d-v)<1e-7){ const g=gcd(n,d); return [n/g,d/g]; } }
+  return null; }
+function fx(v){ const f=fracParts(v,12); if(f) return f[1]===1? minus(f[0]) : minus(f[0]+"/"+f[1]); return num(v,2); }
+function piStr(v){
+  if(Math.abs(v)<1e-9)return "0";
+  const f=fracParts(v/PI,72); if(!f) return num(v,2);
+  const n=f[0], d=f[1]; const s=(n===1?"":n===-1?"−":minus(n))+"π";
+  return d===1? s : s+"/"+d;
+}
+const isPiNice=v=>Math.abs(v)<1e-9||!!fracParts(v/PI,72);
+let degMode=false, snap=true, FS=1, cur=0;
+function xS(v){ return degMode? num(v/D2R,1)+"°" : piStr(v); }
+function xSa(v){ const s=xS(v); return (!degMode&&isPiNice(v)&&s.indexOf("π")>=0)? s+" ≈ "+num(v,2) : s; }
+function perS(step){ if(degMode) return num(step/D2R,1)+"°k"; const s=piStr(step); return s.indexOf("/")>=0? "k·"+s : s+"k"; }
+function seqS(base,step){ // "π/2 + 2πk"
+  const b=xS(base); return (b==="0"||b==="0°")? perS(step) : b+" + "+perS(step); }
+function coefStr(B){ // multiplier written before ( or x
+  const f=fracParts(B,12);
+  if(f){ if(f[1]===1) return f[0]===1?"":f[0]===-1?"−":minus(f[0]); return "("+minus(f[0]+"/"+f[1])+")"; }
+  const g=fracParts(B/PI,12);
+  if(g){ const n=g[0],d=g[1], s=(n===1?"":minus(n))+"π"; return d===1? s : "("+s+"/"+d+")"; }
+  return num(B,3);
+}
+function ampStr(A){ if(near(A,1))return ""; if(near(A,-1))return "−"; const s=coefStr(Math.abs(A)); return (A<0?"−":"")+s+" "; }
+function argStr(B,C,v,fC){ v=v||"x"; fC=fC||xS; const bs=coefStr(B);
+  if(near(C,0)) return bs+v;
+  const inner=v+(C>0?" − ":" + ")+fC(Math.abs(C));
+  return bs? bs+"("+inner+")" : inner; }
+function dStr(D){ return near(D,0)?"":(D>0?" + ":" − ")+fx(Math.abs(D)); }
+function eqStr(fn,A,B,C,D,o){ o=o||{}; return (o.lhs||"y")+" = "+ampStr(A)+fn+"("+argStr(B,C,o.v,o.fC)+")"+dStr(D); }
+const FN={sin:Math.sin,cos:Math.cos,tan:Math.tan,sec:u=>1/Math.cos(u),csc:u=>1/Math.sin(u),cot:u=>Math.cos(u)/Math.sin(u)};
+function mulberry(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+/* exact values at multiples of 30° and 45° */
+const SREF={0:[0,1,1],30:[1,1,2],45:[1,2,2],60:[1,3,2],90:[1,1,1]};       // k√r/den
+const TREF={0:[0,1,1],30:[1,3,3],45:[1,1,1],60:[1,3,1]};
+function exactTrig(fn,u){
+  const dg=u/D2R; if(Math.abs(dg-Math.round(dg))>1e-6)return null;
+  let d=((Math.round(dg)%360)+360)%360;
+  if(d%30!==0&&d%45!==0)return null;
+  if(fn==="cos"){ d=(d+90)%360; fn="sin"; }
+  const q=Math.floor(d/90), r=d%90, ref=(q%2===0)?r:90-r;
+  if(fn==="sin"){ const t=SREF[(q%2===0)?r:(r===0?90:90-r)]; let sg=(d>180)?-1:1; if(d===0||d===180)return {sg:1,k:0,r:1,den:1}; return {sg,k:t[0],r:t[1],den:t[2]}; }
+  if(fn==="tan"){ if(d%180===90)return {undef:true}; const rr=d%180, refA=rr<=90?rr:180-rr, t=TREF[refA]; const sg=(rr>90)?-1:1; return {sg,k:t[0],r:t[1],den:t[2]}; }
+  void ref; return null;
+}
+function exStr(e){ if(!e)return null; if(e.undef)return "undefined"; if(e.k===0)return "0";
+  let s; if(e.r===1) s=(e.den===1?"1":"1/"+e.den); else s="√"+e.r+(e.den>1?"/"+e.den:"");
+  return (e.sg<0?"−":"")+s; }
+function exVal(e){ return e.sg*e.k*Math.sqrt(e.r)/e.den; }
+function radCoef(c,r){ // c·√r as a string, c rational
+  if(Math.abs(c)<1e-12)return "0";
+  if(r===1) return fx(c);
+  const f=fracParts(Math.abs(c),24)||[Math.abs(c),1]; const n=f[0], d=f[1];
+  return (c<0?"−":"")+(n===1?"":n)+"√"+r+(d>1?"/"+d:""); }
+
+/* ══════════════════════ expression compiler (answers) ══════════════════════ */
+function compile(src){
+  let s=String(src).toLowerCase().replace(/\s+/g,"").replace(/[−–—]/g,"-").replace(/[×·]/g,"*").replace(/÷/g,"/").replace(/π/g,"pi").replace(/θ/g,"x");
+  s=s.replace(/^[a-z](\([a-z]\))?=/,"");
+  if(!s)return null;
+  const IDS=["sqrt","sin","cos","tan","sec","csc","cot","abs","pi","x","t","e"], FUNS=["sqrt","sin","cos","tan","sec","csc","cot","abs"];
+  const toks=[]; let i=0;
+  while(i<s.length){ const c=s[i];
+    if(/[0-9.]/.test(c)){ let j=i; while(j<s.length&&/[0-9.]/.test(s[j]))j++; const t=s.slice(i,j); if(t==="."||(t.match(/\./g)||[]).length>1)return null; toks.push({t:"n",v:parseFloat(t)}); i=j; continue; }
+    if(/[a-z]/.test(c)){ const id=IDS.find(w=>s.startsWith(w,i)); if(!id)return null; toks.push({t:FUNS.indexOf(id)>=0?"f":"id",v:id}); i+=id.length; continue; }
+    if(c==="√"){ toks.push({t:"f",v:"sqrt"}); i++; continue; }
+    if(c==="°"){ toks.push({t:"deg"}); i++; continue; }
+    if("+-*/^()".indexOf(c)>=0){ toks.push({t:"op",v:c}); i++; continue; }
+    return null;
+  }
+  let p=0; const peek=()=>toks[p], next=()=>toks[p++];
+  const isOp=(t,v)=>t&&t.t==="op"&&t.v===v;
+  const starts=t=>t&&(t.t==="n"||t.t==="id"||t.t==="f"||isOp(t,"("));
+  const F={sin:Math.sin,cos:Math.cos,tan:Math.tan,sec:u=>1/Math.cos(u),csc:u=>1/Math.sin(u),cot:u=>Math.cos(u)/Math.sin(u),sqrt:Math.sqrt,abs:Math.abs};
+  function expr(){ let a=term(); while(isOp(peek(),"+")||isOp(peek(),"-")){ const o=next().v, b=term(), A=a; a= o==="+"? e=>A(e)+b(e) : e=>A(e)-b(e);} return a; }
+  function term(){ let a=unary(); for(;;){ const t=peek();
+      if(isOp(t,"*")||isOp(t,"/")){ next(); const b=unary(), A=a; a= t.v==="*"? e=>A(e)*b(e) : e=>A(e)/b(e); }
+      else if(starts(t)){ const b=power(), A=a; a=e=>A(e)*b(e); }
+      else break; } return a; }
+  function unary(){ const t=peek(); if(isOp(t,"-")){ next(); const a=unary(); return e=>-a(e); } if(isOp(t,"+")){ next(); return unary(); } return power(); }
+  function power(){ const b=postfix(); if(isOp(peek(),"^")){ next(); const ex=unary(); return e=>Math.pow(b(e),ex(e)); } return b; }
+  function postfix(){ let a=atom(); while(peek()&&peek().t==="deg"){ next(); const A=a; a=e=>A(e)*D2R; } return a; }
+  function atom(){ const t=next(); if(!t)throw 0;
+    if(t.t==="n"){ const v=t.v; return ()=>v; }
+    if(isOp(t,"(")){ const a=expr(); if(!isOp(next(),")"))throw 0; return a; }
+    if(t.t==="id"){ if(t.v==="pi")return ()=>PI; if(t.v==="e")return ()=>Math.E; const n=t.v; return e=>{ const v=e[n]; return v===undefined?NaN:v; }; }
+    if(t.t==="f"){ const f=F[t.v]; let arg;
+      if(isOp(peek(),"(")) arg=atom();
+      else { arg=power(); while(starts(peek())&&peek().t!=="f"){ const b=power(), A=arg; arg=e=>A(e)*b(e); } }
+      return e=>f(arg(e)); }
+    throw 0;
+  }
+  try{ const f=expr(); if(p<toks.length)return null; return env=>{ try{ return f(env||{}); }catch(_){ return NaN; } }; }catch(_){ return null; }
+}
+function numVal(str){ const f=compile(str); if(!f)return NaN; return f({}); }
+
+/* ══════════════════════ svg primitives ══════════════════════ */
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild); placed=[];}
+function view(x0,x1,y0,y1,box){ box=box||[0,0,VW,VH];
+  const V={x0,x1,y0,y1,L:box[0],T:box[1],R:box[2],B:box[3]};
+  V.sx=x=>V.L+(x-V.x0)/(V.x1-V.x0)*(V.R-V.L);
+  V.sy=y=>V.B-(y-V.y0)/(V.y1-V.y0)*(V.B-V.T);
+  V.wx=px=>V.x0+(px-V.L)/(V.R-V.L)*(V.x1-V.x0);
+  V.wy=py=>V.y0+(V.B-py)/(V.B-V.T)*(V.y1-V.y0);
+  V.ppx=()=>(V.R-V.L)/(V.x1-V.x0); V.ppy=()=>(V.B-V.T)/(V.y1-V.y0);
+  V.p=(x,y)=>[V.sx(x),V.sy(y)];
+  return V;
+}
+let clipN=0;
+function autoStep(pp,minPx){ const c=[0.1,0.2,0.25,0.5,1,2,5,10,20,25,50,100]; for(const s of c){ if(pp*s>=minPx)return s; } return 200; }
+function txt(g,x,y,s,cls,color,anchor,extra){
+  const t=E("text",{x,y,class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("style","fill:"+color); if(extra)for(const k in extra)t.setAttribute(k,extra[k]);
+  t.textContent=s; g.appendChild(t); return t; }
+function grid(V,o){
+  o=o||{}; const id="clp"+(++clipN);
+  const d=E("defs",{}); d.innerHTML='<clipPath id="'+id+'"><rect x="'+V.L+'" y="'+V.T+'" width="'+(V.R-V.L)+'" height="'+(V.B-V.T)+'"/></clipPath>'; cv.appendChild(d);
+  const gg=E("g",{}); cv.appendChild(gg);
+  const ppx=V.ppx(), ppy=V.ppy();
+  let xmaj, xmin, xf;
+  if(o.xstep){ xmaj=o.xstep; xmin=o.xminor||o.xstep; xf=o.xfmt||(v=>num(v,2)); }
+  else if(o.xnum){ xmaj=autoStep(ppx,o.xmin||34); xmin=(ppx*xmaj/2>=14)?xmaj/2:xmaj; xf=o.xfmt||(v=>num(v,2)); }
+  else { const need=(degMode?54:42)*(FS>1?1.45:1); xmaj=[PI/2,PI,TAU,2*TAU].find(s=>ppx*s>=need)||2*TAU; xmin=(ppx*xmaj/2>=13)?xmaj/2:xmaj; xf=xS; }
+  const ys=o.ystep||autoStep(ppy,24*(FS>1?1.35:1)), ymin=(ppy*ys/2>=13)?ys/2:ys;
+  const yf=o.yfmt||(v=>num(v,2));
+  for(let k=Math.ceil(V.x0/xmin-1e-9);k<=Math.floor(V.x1/xmin+1e-9);k++){ const x=k*xmin, sx=V.sx(x); const maj=Math.abs(x/xmaj-Math.round(x/xmaj))<1e-6;
+    gg.appendChild(E("line",{x1:sx,y1:V.T,x2:sx,y2:V.B,stroke:maj?"#CCD8EE":"#E3EAF7","stroke-width":1})); }
+  for(let k=Math.ceil(V.y0/ymin-1e-9);k<=Math.floor(V.y1/ymin+1e-9);k++){ const y=k*ymin, sy=V.sy(y); const maj=Math.abs(y/ys-Math.round(y/ys))<1e-6;
+    gg.appendChild(E("line",{x1:V.L,y1:sy,x2:V.R,y2:sy,stroke:maj?"#CCD8EE":"#E3EAF7","stroke-width":1})); }
+  const axY=(V.y0<=0&&V.y1>=0)?0:V.y0, axX=(V.x0<=0&&V.x1>=0)?0:V.x0;
+  const ay=V.sy(axY), ax=V.sx(axX);
+  gg.appendChild(E("line",{x1:V.L,y1:ay,x2:V.R,y2:ay,stroke:"#8FA3C8","stroke-width":1.8}));
+  gg.appendChild(E("line",{x1:ax,y1:V.T,x2:ax,y2:V.B,stroke:"#8FA3C8","stroke-width":1.8}));
+  const ly=(ay+15*FS>VH-6)? ay-8*FS : ay+13*FS;
+  for(let k=Math.ceil(V.x0/xmaj-1e-9);k<=Math.floor(V.x1/xmaj+1e-9);k++){ const x=k*xmaj; if(Math.abs(x-axX)<1e-9&&axX===0)continue; const sx=V.sx(x); if(sx<V.L+10||sx>V.R-10)continue;
+    txt(gg,sx,ly,xf(x),"ax",null,"middle"); }
+  const left=(ax-8-30*FS<V.L-4);
+  for(let k=Math.ceil(V.y0/ys-1e-9);k<=Math.floor(V.y1/ys+1e-9);k++){ const y=k*ys; if(Math.abs(y-axY)<1e-9)continue; const sy=V.sy(y); if(sy<V.T+8||sy>V.B-8)continue;
+    txt(gg,left?ax+6:ax-6,sy,yf(y),"ax",null,left?"start":"end"); }
+  if(axY===0&&axX===0) txt(gg,ax-6,ly,"0","ax",null,"end");
+  if(o.xt) txt(gg,V.R-6,ay-11*FS,o.xt,"axt",null,"end");
+  if(o.yt) txt(gg,ax+8,V.T+12*FS,o.yt,"axt",null,"start");
+  const g=E("g",{"clip-path":"url(#"+id+")"}); cv.appendChild(g); return g;
+}
+function plot(g,V,f,o){
+  o=o||{}; const a=(o.from==null?V.x0:Math.max(V.x0,o.from)), b=(o.to==null?V.x1:Math.min(V.x1,o.to)); if(b<=a)return null;
+  const br=(o.breaks||[]).filter(x=>x>a+1e-9&&x<b-1e-9).sort((p,q)=>p-q);
+  const edges=[a].concat(br,[b]); let d=""; const N=Math.max(80,Math.round((V.sx(b)-V.sx(a))*1.6)); const lim=(V.y1-V.y0)*3;
+  for(let s=0;s<edges.length-1;s++){
+    const e0=edges[s]+(s>0?1e-5:0), e1=edges[s+1]-(s<edges.length-2?1e-5:0);
+    const n=Math.max(12,Math.ceil(N*(e1-e0)/(b-a))), clus=o.breaks&&o.breaks.length; let pen=false;
+    for(let i=0;i<=n;i++){ const t=i/n, x=e0+(e1-e0)*(clus?(1-Math.cos(PI*t))/2:t); let y=f(x);
+      if(!isFinite(y)){pen=false;continue;} y=clamp(y,V.y0-lim,V.y1+lim);
+      d+=(pen?"L":"M")+V.sx(x).toFixed(1)+" "+V.sy(y).toFixed(1); pen=true; }
+  }
+  const attrs={d,fill:"none",style:"stroke:"+(o.color||"var(--vert)"),"stroke-width":o.w||3.2,"stroke-linecap":"round","stroke-linejoin":"round"};
+  if(o.dash)attrs["stroke-dasharray"]=o.dash; if(o.op!=null)attrs["stroke-opacity"]=o.op;
+  const p=E("path",attrs); g.appendChild(p); return p;
+}
+function seg(g,p,q,color,w,dash,op){ const a={x1:p[0],y1:p[1],x2:q[0],y2:q[1],style:"stroke:"+(color||"var(--graphite)"),"stroke-width":w||2.4,"stroke-linecap":"round"};
+  if(dash)a["stroke-dasharray"]=dash; if(op!=null)a["stroke-opacity"]=op; const n=E("line",a); g.appendChild(n); return n; }
+function dot(g,p,color,r,hollow){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||5,style:hollow?("fill:#fff;stroke:"+color):("fill:"+(color||"var(--ink)")),stroke:hollow?undefined:"#fff","stroke-width":hollow?2.6:2,"pointer-events":"none"})); }
+function grab(g,p,id,color){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?24:15,class:"grab","data-drag":id})); dot(g,p,color||"var(--hand)",6); }
+function arrowHead(g,tip,dir,color){ const L=Math.hypot(dir[0],dir[1])||1, u=[dir[0]/L,dir[1]/L], n=[-u[1],u[0]], b=[tip[0]-u[0]*11,tip[1]-u[1]*11];
+  g.appendChild(E("polygon",{points:[tip,[b[0]+n[0]*5,b[1]+n[1]*5],[b[0]-n[0]*5,b[1]-n[1]*5]].map(p=>p.join(",")).join(" "),style:"fill:"+(color||"var(--graphite)")})); }
+function darrow(g,p,q,color,w){ seg(g,p,q,color,w||2); const d=[q[0]-p[0],q[1]-p[1]]; if(Math.hypot(d[0],d[1])>24){ arrowHead(g,q,d,color); arrowHead(g,p,[-d[0],-d[1]],color);} }
+function vasym(g,V,x,color){ seg(g,[V.sx(x),V.T],[V.sx(x),V.B],color||"#64748B",1.8,"7 6"); }
+/* label placement that avoids earlier labels and stays on the board */
+let placed=[];
+function lab(g,px,py,s,color,dirs,cls){
+  cls=cls||"sm"; const w=s.length*8.1*FS+6, h=17*FS;
+  dirs=dirs||[[0,-1],[0,1],[1,-1],[-1,-1],[1,1],[-1,1],[1,0],[-1,0]];
+  let pickB=null;
+  for(const dd of dirs){ let cx=px+dd[0]*(w/2+9*FS), cy=py+dd[1]*(h/2+8*FS);
+    cx=clamp(cx,w/2+4,VW-w/2-4); cy=clamp(cy,h/2+4,VH-h/2-4);
+    const box=[cx-w/2,cy-h/2,cx+w/2,cy+h/2];
+    const hit=placed.some(b=>!(box[2]<b[0]||box[0]>b[2]||box[3]<b[1]||box[1]>b[3]));
+    if(!hit){ pickB=box; break; } if(!pickB)pickB=box; }
+  placed.push(pickB);
+  return txt(g,(pickB[0]+pickB[2])/2,(pickB[1]+pickB[3])/2+1,s,cls,color);
+}
+function reserve(x0,y0,x1,y1){ placed.push([x0,y0,x1,y1]); }
+
+/* ══════════════════════ drag plumbing & bar builders ══════════════════════ */
+let dragId=null;
+function svgPt(e){ const m=cv.getScreenCTM(); if(!m)return [0,0]; const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y]; }
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag, M=MODS[cur];
+  if(id){ dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); if(M.grabStart)M.grabStart(id); return; }
+  if(M.tap){ if(M.tap(svgPt(e))!==false)update(); }
+});
+cv.addEventListener("pointermove",e=>{ if(!dragId)return; const M=MODS[cur]; if(!M.drag)return; if(M.drag(dragId,svgPt(e))!==false)update(); });
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+
+let sliders=[];
+function btn(label,fn,cls){ const b=document.createElement("button"); b.type="button"; b.innerHTML=label; if(cls)b.className=cls; b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(opts,val,fn,aria){ const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(aria)s.setAttribute("aria-label",aria);
+  opts.forEach(([k,lab])=>{ const b=document.createElement("button"); b.type="button"; b.innerHTML=lab; b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s; }
+function chk(label,val,fn){ const l=document.createElement("label"); l.className="chk"; const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i; }
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function slider(label,min,max,step,get,set,show,skip0){
+  const l=document.createElement("label"); l.className="rng"; const sp=document.createElement("span"); sp.innerHTML=label; l.appendChild(sp);
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=step; i.value=get(); i.setAttribute("aria-label",label.replace(/<[^>]+>/g,""));
+  const o=document.createElement("output");
+  const S={i,o,get,show}; sliders.push(S);
+  i.oninput=()=>{ let v=+i.value; if(skip0&&Math.abs(v)<1e-9){ v=(get()>0?-step:step); i.value=v; } set(v); update(); };
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l); o.textContent=show(); return S; }
+function syncSliders(){ sliders.forEach(S=>{ if(document.activeElement!==S.i)S.i.value=S.get(); S.o.textContent=S.show(); }); }
+function unitSeg(){ segBtns([["rad","Radians"],["deg","Degrees"]],degMode?"deg":"rad",k=>{degMode=(k==="deg"); render();},"x-axis units"); }
+function snapChk(label){ return chk(label||"Snap",snap,v=>{snap=v; update();}); }
+function tryPanel(html){ return '<div class="panel"><h3>Try this</h3><div class="pad">'+html+'</div></div>'; }
+function rel(color,name,sub,val){ return '<div class="rel"><span class="dot" style="background:'+color+'"></span><span class="nm">'+name+(sub?'<em>'+sub+'</em>':'')+'</span><span class="val">'+val+'</span></div>'; }
+const snapX=x=>snap? Math.round(x/(PI/12))*(PI/12) : Math.round(x*100)/100;
+const snapY=(y,s)=>snap? Math.round(y/(s||0.5))*(s||0.5) : Math.round(y*100)/100;
+function ex(fn,u){ const e=exactTrig(fn,u); const s=exStr(e); return s; }
+function valS(fn,u,v){ const s=ex(fn,u); if(s==="undefined")return "undefined"; if(s&&!/[√]/.test(s)&&s.indexOf("/")<0)return s; return s? s+" ≈ "+num(v,3) : num(v,3); }
+
+/* least-squares sinusoid: y ≈ A sin(2π/P (t − C)) + D */
+function solve3(M,v){ const a=M.map((r,i)=>r.concat([v[i]]));
+  for(let c=0;c<3;c++){ let pv=c; for(let r=c+1;r<3;r++)if(Math.abs(a[r][c])>Math.abs(a[pv][c]))pv=r; if(Math.abs(a[pv][c])<1e-12)return null; const t=a[c];a[c]=a[pv];a[pv]=t;
+    for(let r=0;r<3;r++){ if(r===c)continue; const f=a[r][c]/a[c][c]; for(let k=c;k<4;k++)a[r][k]-=f*a[c][k]; } }
+  return [a[0][3]/a[0][0],a[1][3]/a[1][1],a[2][3]/a[2][2]]; }
+function fitAt(T,Y,P){ const w=TAU/P, M=[[0,0,0],[0,0,0],[0,0,0]], v=[0,0,0];
+  for(let i=0;i<T.length;i++){ const r=[Math.sin(w*T[i]),Math.cos(w*T[i]),1]; for(let a=0;a<3;a++){ for(let b=0;b<3;b++)M[a][b]+=r[a]*r[b]; v[a]+=r[a]*Y[i]; } }
+  const s=solve3(M,v); if(!s)return null; let sse=0; for(let i=0;i<T.length;i++){ const f=s[0]*Math.sin(w*T[i])+s[1]*Math.cos(w*T[i])+s[2]; sse+=(Y[i]-f)*(Y[i]-f); }
+  return {P,a:s[0],b:s[1],D:s[2],sse}; }
+function fitSin(T,Y,Pmin,Pmax){
+  let best=null; const N=500;
+  for(let k=0;k<=N;k++){ const r=fitAt(T,Y,Pmin+(Pmax-Pmin)*k/N); if(r&&(!best||r.sse<best.sse))best=r; }
+  let lo=Math.max(Pmin,best.P-(Pmax-Pmin)/N), hi=Math.min(Pmax,best.P+(Pmax-Pmin)/N);
+  for(let it=0;it<50;it++){ const m1=lo+(hi-lo)*0.382, m2=lo+(hi-lo)*0.618; const f1=fitAt(T,Y,m1), f2=fitAt(T,Y,m2); if(f1.sse<f2.sse)hi=m2; else lo=m1; }
+  const r=fitAt(T,Y,(lo+hi)/2); if(r.sse<best.sse)best=r;
+  const A=Math.hypot(best.a,best.b), w=TAU/best.P; let C=Math.atan2(-best.b,best.a)/w; C=((C%best.P)+best.P)%best.P;
+  return {A,P:best.P,C,D:best.D,rms:Math.sqrt(best.sse/T.length),sse:best.sse};
+}
+
+/* ══════════════════════ TAB 1 · periodic behavior ══════════════════════ */
+const DAY=[9.6,10.7,11.9,13.2,14.3,15.0,14.7,13.7,12.4,11.1,9.9,9.3];
+const DATA1=(function(){
+  const day={T:[],Y:[]}; for(let m=1;m<=24;m++){ day.T.push(m); day.Y.push(DAY[(m-1)%12]); }
+  const r=mulberry(7), tide={T:[],Y:[]};
+  for(let t=0;t<=48;t+=1.5){ tide.T.push(t); tide.Y.push(Math.round((3.1*Math.sin(TAU/12.42*(t-2.3))+4.2+(r()-0.5)*0.5)*10)/10); }
+  return {day,tide};
+})();
+const C1={R:75,CX:104,CY:236,GX:216};
+const M1={
+  tab:"Periodic behavior", lesson:"F-TF.A.2 · F-IF.B.4", accent:"var(--cyan)",
+  title:()=>M1.s.src==="circle"?"Unwrap the unit circle":(M1.s.src==="day"?"Periodic data · hours of daylight":"Periodic data · ocean tides"),
+  s:{th:PI/3,play:false,fn:"sin",n:1,src:"circle",feat:true,fit:true},
+  bar(){
+    segBtns([["circle","Unit circle"],["day","Daylight data"],["tide","Tide data"]],M1.s.src,k=>{M1.s.src=k; M1.s.play=false; render();},"Source");
+    if(M1.s.src==="circle"){
+      btn(M1.s.play?"❚❚ Pause":"▶ Play",()=>{M1.s.play=!M1.s.play; render(); if(M1.s.play)startLoop();},"primary");
+      segBtns([["sin","sin"],["cos","cos"],["both","both"]],M1.s.fn,k=>{M1.s.fn=k; render();},"Function");
+      segBtns([[1,"1 period"],[2,"2 periods"]],M1.s.n,k=>{M1.s.n=k; M1.s.th=Math.min(M1.s.th,TAU*k); render();},"Window");
+      chk("Max / min / zeros",M1.s.feat,v=>{M1.s.feat=v; update();});
+      snapChk("Snap to π/12");
+      unitSeg();
+    } else chk("Sinusoid overlay",M1.s.fit,v=>{M1.s.fit=v; update();});
+  },
+  grabStart(){ if(M1.s.play){ M1.s.play=false; render(); } },
+  drag(id,p){
+    const s=M1.s, n=s.n, sc=471.24/(TAU*n);
+    let th;
+    if(id==="P"){ const a=Math.atan2(-(p[1]-C1.CY),p[0]-C1.CX); const k=Math.round((s.th-a)/TAU); th=a+k*TAU; }
+    else th=(p[0]-C1.GX)/sc;
+    th=clamp(th,0,TAU*n); if(snap)th=Math.round(th/(PI/12))*(PI/12);
+    s.th=th;
+  },
+  draw(){ if(M1.s.src==="circle")M1.drawCircle(); else M1.drawData(); },
+  drawCircle(){
+    const s=M1.s, {R,CX,CY,GX}=C1, n=s.n, sc=471.24/(TAU*n), th=s.th;
+    const V=view(-8/sc,TAU*n+16/sc,-1.32,1.32,[GX-8,CY-1.32*R,GX+471.24+16,CY+1.32*R]);
+    const g=grid(V,{xt:"θ"});
+    const top=E("g",{}); cv.appendChild(top);
+    // unit circle
+    seg(top,[CX-R-16,CY],[CX+R+16,CY],"#8FA3C8",1.6); seg(top,[CX,CY-R-16],[CX,CY+R+16],"#8FA3C8",1.6);
+    top.appendChild(E("circle",{cx:CX,cy:CY,r:R,fill:"rgba(2,132,199,.05)",stroke:"var(--graphite)","stroke-width":2}));
+    txt(top,CX+R+6,CY+12,"1","ax",null,"start"); txt(top,CX+5,CY-R-9,"1","ax",null,"start");
+    const tm=th%TAU, full=th>=TAU-1e-9;
+    const P=[CX+R*Math.cos(th),CY-R*Math.sin(th)];
+    // arc (the "string" we unwrap)
+    if(full) top.appendChild(E("circle",{cx:CX,cy:CY,r:R,fill:"none",style:"stroke:var(--cyan)","stroke-width":5,"stroke-opacity":.55}));
+    if(tm>1e-6){ const large=tm>PI?1:0; top.appendChild(E("path",{d:`M ${CX+R} ${CY} A ${R} ${R} 0 ${large} 0 ${P[0]} ${P[1]}`,fill:"none",style:"stroke:#00B8D4","stroke-width":5,"stroke-linecap":"round"})); }
+    const ra=20; if(tm>1e-6){ const q=[CX+ra*Math.cos(tm),CY-ra*Math.sin(tm)]; top.appendChild(E("path",{d:`M ${CX} ${CY} L ${CX+ra} ${CY} A ${ra} ${ra} 0 ${tm>PI?1:0} 0 ${q[0]} ${q[1]} Z`,fill:"rgba(0,184,212,.18)",stroke:"#00B8D4","stroke-width":1.5})); }
+    seg(top,[CX,CY],P,"var(--graphite)",2);
+    const showS=s.fn!=="cos", showC=s.fn!=="sin";
+    if(showC) seg(top,[CX,CY+(showS?0:0)],[P[0],CY],"var(--corr)",4.5);
+    if(showS) seg(top,[P[0],CY],P,"var(--unk)",4.5);
+    // unwrapped length on the θ-axis
+    seg(g,[V.sx(0),V.sy(0)],[V.sx(th),V.sy(0)],"#00B8D4",5,null,0.85);
+    // curves
+    const fns=[]; if(showS)fns.push(["sin","var(--unk)",Math.sin]); if(showC)fns.push(["cos","var(--corr)",Math.cos]);
+    fns.forEach(([nm,col,f])=>{ plot(g,V,f,{color:col,w:2,op:.35,from:0,to:TAU*n}); plot(g,V,f,{color:col,w:3.6,from:0,to:th}); });
+    // period bracket
+    const yb=V.sy(1.2); darrow(g,[V.sx(0),yb],[V.sx(TAU),yb],"var(--vert)",1.8);
+    seg(g,[V.sx(0),yb-6],[V.sx(0),yb+6],"var(--vert)",1.8); seg(g,[V.sx(TAU),yb-6],[V.sx(TAU),yb+6],"var(--vert)",1.8);
+    reserve(0,0,VW,0);
+    // features
+    if(s.feat){
+      fns.forEach(([nm,col])=>{
+        const F=M1.feats(nm), labelIt=(n===1&&s.fn!=="both");
+        const pts=[]; const push=(base,step,y,kind)=>{ for(let k=0;base+k*step<=TAU*n+1e-9;k++)pts.push([base+k*step,y,kind]); };
+        push(F.max,TAU,1,"max"); push(F.min,TAU,-1,"min"); push(F.zero,PI,0,"zero");
+        pts.forEach(([x,y,kind])=>{ const q=V.p(x,y); dot(g,q,kind==="zero"?"var(--graphite)":"var(--vert)",5.5,true);
+          if(labelIt){ const d=kind==="max"?[[0,-1],[1,-1]]:kind==="min"?[[0,1],[1,1]]:[[1,1],[-1,1],[1,-1]]; lab(top,q[0],q[1],"("+xS(x)+", "+y+")",kind==="zero"?"var(--graphite)":"#6D28D9",d); } });
+      });
+    }
+    txt(top,(V.sx(0)+V.sx(TAU))/2,yb-12*FS,"period = "+(degMode?"360°":"2π"),"sm","#6D28D9");
+    // projections + moving points
+    fns.forEach(([nm,col,f])=>{ const q=V.p(th,f(th)); seg(g,[q[0],V.sy(0)],q,col,4.5);
+      if(nm==="sin") seg(top,P,q,"#94A3B8",1.6,"5 5"); dot(top,q,col,6); });
+    dot(top,P,"var(--ink)",6);
+    grab(top,P,"P","var(--ink)");
+    const gf=s.fn==="cos"?Math.cos:Math.sin; grab(top,V.p(th,gf(th)),"G",s.fn==="cos"?"var(--corr)":"var(--unk)");
+    // θ readout
+    txt(top,CX,CY+R+38*FS,"θ = "+xS(th)+(degMode?"":(isPiNice(th)&&th>0?"":"")),"sm","#007C91");
+    txt(top,CX,24,"P = (cos θ, sin θ)","sm","var(--ink)");
+    const lx=V.sx(TAU*n)-4; if(showS)txt(top,lx,V.sy(-1.18),"y = sin θ","sm","var(--unk)","end");
+    if(showC)txt(top,lx-(showS?110*FS:0),V.sy(-1.18),"y = cos θ","sm","var(--corr)","end");
+  },
+  feats(fn){ return fn==="sin"? {max:PI/2,min:3*PI/2,zero:0} : {max:0,min:PI,zero:PI/2}; },
+  dview(){ return M1.s.src==="day"? view(-2,25.5,7.3,16.6,[0,0,VW,VH]) : view(-4.5,49.5,-1.2,9.6,[0,0,VW,VH]); },
+  fit(){ const D=M1.s.src==="day"?DATA1.day:DATA1.tide; return M1.s.src==="day"? fitSin(D.T,D.Y,8,16) : fitSin(D.T,D.Y,8,16); },
+  drawData(){
+    const s=M1.s, day=s.src==="day", D=day?DATA1.day:DATA1.tide, V=M1.dview();
+    const g=grid(V,day?{xnum:true,xstep:2,xt:"month (1 = Jan, 13 = next Jan)",yt:"hours of daylight",ystep:1}:{xnum:true,xstep:6,xminor:1.5,xt:"hours after midnight, day 1",yt:"water height (ft)",ystep:1});
+    const top=E("g",{}); cv.appendChild(top); reserve(0,0,VW,22);
+    if(s.fit){
+      const F=M1.fit(), f=t=>F.A*Math.sin(TAU/F.P*(t-F.C))+F.D;
+      seg(g,V.p(V.x0,F.D),V.p(V.x1,F.D),"var(--alt)",1.8,"8 6");
+      plot(g,V,f,{color:"var(--vert)",w:3});
+      let tm=F.C+F.P/4; while(tm-F.P>=V.x0+0.2)tm-=F.P; while(tm<0.3)tm+=F.P;
+      const tn=tm+F.P/2;
+      const yb=V.sy(F.D+F.A)-28; darrow(g,[V.sx(tm),yb],[V.sx(tm+F.P),yb],"var(--vert)",1.8);
+      txt(top,V.sx(tm+F.P/2),yb-12*FS,"period ≈ "+num(F.P,day?1:2)+(day?" months":" h"),"sm","#6D28D9");
+      dot(g,V.p(tm,F.D+F.A),"var(--vert)",6,true); dot(g,V.p(tn,F.D-F.A),"var(--vert)",6,true);
+      lab(top,V.sx(tn),V.sy(F.D-F.A),"min ≈ "+num(F.D-F.A,1),"#6D28D9",[[0,1],[1,1]]);
+      txt(top,V.R-8,V.sy(F.D)-11*FS,"midline y ≈ "+num(F.D,1),"sm","#047857","end");
+    }
+    D.T.forEach((t,i)=>dot(g,V.p(t,D.Y[i]),"var(--lin)",4.6));
+  },
+  live(){
+    const s=M1.s;
+    if(s.src!=="circle"){ if(!s.fit)return '<div class="pad"><p>Turn on the overlay to fit a sinusoid to the readings.</p></div>';
+      const F=M1.fit(), day=s.src==="day", u=day?"h":"ft", tv=day?"t":"t";
+      return '<div class="pad"><div class="eq">y ≈ '+num(F.A,2)+' sin(2π/'+num(F.P,2)+' · ('+tv+' − '+num(F.C,2)+')) + '+num(F.D,2)+'<small>Best-fitting sinusoid (least squares) — the period is found from the data, not typed in.</small></div></div>'+
+      rel("var(--vert)","Period","time for one full cycle",num(F.P,2)+(day?" months":" hours"))+
+      rel("var(--vert)","Maximum ≈ D + A",day?"longest days (late June)":"high tide",num(F.D+F.A,2)+" "+u)+
+      rel("var(--vert)","Minimum ≈ D − A",day?"shortest days (late December)":"low tide",num(F.D-F.A,2)+" "+u)+
+      rel("var(--alt)","Midline y = D","average of max and min",num(F.D,2)+" "+u)+
+      rel("var(--lin)","Typical miss","root-mean-square residual",num(F.rms,2)+" "+u); }
+    const th=s.th, c=Math.cos(th), sn=Math.sin(th);
+    return rel("#00B8D4","Angle θ","arc length on the unit circle",xS(th)+(degMode?" = "+num(th,2)+" rad":" = "+num(th/D2R,1)+"°"))+
+      rel("var(--ink)","Point P","(cos θ, sin θ)","("+num(c,2)+", "+num(sn,2)+")")+
+      rel("var(--unk)","sin θ","y-coordinate of P",valS("sin",th,sn))+
+      rel("var(--corr)","cos θ","x-coordinate of P",valS("cos",th,c))+
+      rel("var(--vert)","Turns","θ ÷ 2π",num(th/TAU,3))+
+      rel("var(--graphite)","sin(θ + 2π)","one more full turn",num(Math.sin(th+TAU),3)+" = sin θ");
+  },
+  panel(full){
+    if(!full)return;
+    const s=M1.s;
+    if(s.src!=="circle"){
+      side.innerHTML='<div class="panel"><h3>Periodic data</h3><div class="pad">'+
+        (s.src==="day"?'<p>These are approximate <b>hours of daylight</b> on the 15th of each month at 40° N latitude (about Philadelphia), shown for two years. The pattern repeats every year, so the data are <span class="term">periodic</span>.</p>':
+        '<p>These are <b>illustrative water-height readings</b> every 1.5 hours at a harbor with two high tides a day. High tide comes back about every 12.4 hours — the tide is driven by the Moon, which returns overhead about every 24.8 hours.</p>')+
+        '<p>A <span class="term">sinusoid</span> y = A sin(B(t − C)) + D is the standard model for data like this. The overlay is the best-fitting one: it makes the squared vertical misses as small as possible.</p><p>Real data never sit perfectly on the curve — but the <b>period</b>, <b>maximum</b>, <b>minimum</b> and <b>midline</b> describe the pattern well.</p></div></div>'+
+        '<div class="panel"><h3>Fitted features</h3><div id="live"></div></div>'+
+        tryPanel(s.src==="day"?'Use the fitted model: how many hours of daylight does it predict for the start of April (t = 3.5)? Then check the shape — why is the midline close to 12 hours?':'From the graph, estimate when the first high tide after midnight happens. How many hours later is the next one? Compare with the fitted period.');
+      return;
+    }
+    const fnL=s.fn==="both"?["sin","cos"]:[s.fn];
+    let rows=""; fnL.forEach(fn=>{ const F=M1.feats(fn);
+      rows+='<tr><td colspan="2" class="ab" style="padding-top:14px;color:'+(fn==="sin"?"#FF6B8E":"#5BC0F8")+'">y = '+fn+' θ</td></tr>'+
+        '<tr><td class="ab">Period</td><td class="st">'+(degMode?"360°":"2π")+'</td></tr>'+
+        '<tr><td class="ab">Max 1 at</td><td class="st">θ = '+seqS(F.max,TAU)+'</td></tr>'+
+        '<tr><td class="ab">Min −1 at</td><td class="st">θ = '+seqS(F.min,TAU)+'</td></tr>'+
+        '<tr><td class="ab">Zeros</td><td class="st">θ = '+seqS(F.zero,PI)+'</td></tr>'; });
+    side.innerHTML='<div class="panel"><h3>Unwrapping the circle</h3><div class="pad">'+
+      '<p>A point P moves around the <span class="term">unit circle</span> (radius 1). After turning through θ radians it sits at <b>(cos θ, sin θ)</b>. The arc it travelled has length θ — the cyan string.</p>'+
+      '<p>Lay that string flat along the θ-axis. Above each θ, plot the <b style="color:#FF6B8E">height of P</b> and you draw <b>y = sin θ</b>; plot its <b style="color:#5BC0F8">left–right position</b> and you draw <b>y = cos θ</b>.</p>'+
+      '<p>One full turn is 2π, and then P retraces its path. So both graphs repeat every 2π: they are <span class="term">periodic</span> with <b>period 2π</b>.</p>'+
+      '<div class="eq">sin(θ + 2π) = sin θ     cos(θ + 2π) = cos θ<small>A function is periodic with period p when f(x + p) = f(x) for every x, and p is the smallest such positive number.</small></div></div></div>'+
+      '<div class="panel"><h3>Live readout</h3><div id="live"></div></div>'+
+      '<div class="panel"><h3>Key features</h3><table class="facts">'+rows+'<tr><td class="ab">Range</td><td class="st">[−1, 1] for both</td></tr></table></div>'+
+      tryPanel('Press <b>Play</b> and watch the red segment on the circle and the red segment on the graph — they are always the same height. Then drag P to θ = 5π/6 and to θ = π/6. Why is sin the same at both? (Look at the circle.)');
+  }
+};
+let raf=0,lastT=0;
+function loop(ts){ raf=0; if(cur!==0||!M1.s.play||M1.s.src!=="circle")return;
+  const dt=lastT?Math.min(0.05,(ts-lastT)/1000):0; lastT=ts;
+  M1.s.th+=dt*PI/2.5; if(M1.s.th>TAU*M1.s.n)M1.s.th=0; update(); raf=requestAnimationFrame(loop); }
+function startLoop(){ if(!raf){ lastT=0; raf=requestAnimationFrame(loop); } }
+
+/* ══════════════════════ TAB 2 · amplitude, frequency & period ══════════════════════ */
+function freqStr(B){ const f=fracParts(B/2,12); if(!f)return num(B/TAU,3); const n=f[0], d=f[1]; return d===1? (n===1?"1/π":n+"/π") : n+"/("+d+"π)"; }
+const M2={
+  tab:"Amplitude & period", lesson:"F-TF.B.5 · F-BF.B.3", accent:"var(--magenta)",
+  title:()=>eqStr(M2.s.fn,M2.s.A,M2.s.B,0,0),
+  s:{A:2,B:2,fn:"sin",box:true,parent:true},
+  V:()=>view(-1.25,4*PI+0.55,-4.75,4.75),
+  bar(){
+    const s=M2.s;
+    slider("A",-4,4,0.5,()=>s.A,v=>{s.A=v;},()=>fx(s.A),true);
+    slider("B",0.5,4,0.25,()=>s.B,v=>{s.B=v;},()=>fx(s.B));
+    segBtns([["sin","sin"],["cos","cos"]],s.fn,k=>{s.fn=k; render();},"Function");
+    chk("One-cycle box",s.box,v=>{s.box=v; update();});
+    chk("Parent graph",s.parent,v=>{s.parent=v; update();});
+    unitSeg();
+  },
+  hp(){ const s=M2.s, P=TAU/s.B; return s.fn==="sin"? [P/4,s.A] : [P,s.A]; },
+  drag(id,p){ const s=M2.s, V=M2.V(); const x=V.wx(p[0]), y=V.wy(p[1]);
+    let A=clamp(Math.round(y*2)/2,-4,4); if(A===0)A=s.A>0?0.5:-0.5; s.A=A;
+    const Bn=s.fn==="sin"? PI/(2*Math.max(x,0.05)) : TAU/Math.max(x,0.05);
+    s.B=clamp(Math.round(Bn*4)/4,0.5,4); },
+  draw(){
+    const s=M2.s, V=M2.V(), g=grid(V,{}), top=E("g",{}); cv.appendChild(top);
+    const f=FN[s.fn], P=TAU/s.B, a=Math.abs(s.A), y=x=>s.A*f(s.B*x);
+    reserve(0,0,VW,4);
+    if(s.box){
+      g.appendChild(E("rect",{x:V.sx(0),y:V.sy(a),width:V.sx(P)-V.sx(0),height:V.sy(-a)-V.sy(a),fill:"rgba(219,39,119,.08)",style:"stroke:var(--altx)","stroke-width":2,"stroke-dasharray":"7 5"}));
+      const yb=V.sy(-a)+22*FS; darrow(top,[V.sx(0),yb],[V.sx(P),yb],"var(--altx)",1.8);
+      lab(top,(V.sx(0)+V.sx(P))/2,yb,"period = "+(degMode?"360°":"2π")+"/B = "+xS(P),"#BE185D",[[0,1],[1,1],[0,-1]]);
+      const ax=V.sx(s.fn==="sin"?P/4:0)+(s.fn==="sin"?0:-14);
+      darrow(top,[ax,V.sy(0)],[ax,V.sy(s.A)],"var(--lin)",2);
+      lab(top,ax,(V.sy(0)+V.sy(s.A))/2,"|A| = "+fx(a),"#C2410C",[[-1,0],[1,0]]);
+    }
+    if(s.parent) plot(g,V,f,{color:"#94A3B8",w:2.2,dash:"6 6"});
+    plot(g,V,y,{color:"var(--vert)",w:3.4});
+    if(s.box) plot(g,V,y,{color:"var(--altx)",w:4.6,from:0,to:P});
+    // cycle ticks across [0, 2π]
+    const n=Math.floor(s.B+1e-9); for(let k=1;k<=n&&k*P<=V.x1;k++) dot(g,V.p(k*P,s.fn==="sin"?0:s.A),"var(--altx)",4);
+    txt(top,14,22,"B = "+fx(s.B)+" → "+fx(s.B)+" cycle"+(near(s.B,1)?"":"s")+" every "+(degMode?"360°":"2π"),"sm","#BE185D","start");
+    if(s.parent) txt(top,14,22+22*FS,"dashed: y = "+s.fn+" x","sm","#64748B","start");
+    reserve(0,0,360*FS,32+22*FS);
+    grab(top,V.p(M2.hp()[0],M2.hp()[1]),"H","var(--hand)");
+  },
+  live(){ const s=M2.s, P=TAU/s.B, a=Math.abs(s.A);
+    return rel("var(--lin)","Amplitude |A|","half the distance from max to min",fx(a))+
+      rel("var(--vert)","B","cycles in every "+(degMode?"360°":"2π"),fx(s.B))+
+      rel("var(--altx)","Period 2π/B","length of one cycle",xSa(P))+
+      rel("var(--altx)","Frequency B/2π","cycles per "+(degMode?"degree":"unit of x"),degMode?num(s.B/360,4):freqStr(s.B)+" ≈ "+num(s.B/TAU,3))+
+      rel("var(--graphite)","Range","from min to max","["+fx(-a)+", "+fx(a)+"]")+
+      (s.A<0?rel("var(--unk)","A < 0","reflection across the x-axis","flipped"):"");
+  },
+  panel(full){ if(!full)return;
+    side.innerHTML='<div class="panel"><h3>Stretching a wave</h3><div class="pad">'+
+      '<p><b>A</b> stretches the graph <b>vertically</b>. The <span class="term">amplitude</span> is |A| — the distance from the midline up to a peak. A negative A flips the wave over the x-axis.</p>'+
+      '<p><b>B</b> squeezes the graph <b>horizontally</b>. Bx reaches 2π when x = 2π/B, so one cycle has length 2π/B. That length is the <span class="term">period</span>. Bigger B → shorter period → more cycles.</p>'+
+      '<p>The <span class="term">frequency</span> counts cycles per unit of x: it is the reciprocal of the period, B/2π. For sound or light, frequency is what you hear or see.</p>'+
+      '<div class="eq">y = A sin(Bx)   y = A cos(Bx)\namplitude = |A|\nperiod    = 2π/B\nfrequency = 1/period = B/2π</div>'+
+      '<p>Drag the <b style="color:var(--hand)">orange point</b> (a quarter-cycle peak for sine, the end of the first cycle for cosine) to change A and B together.</p></div></div>'+
+      '<div class="panel"><h3>Live readout</h3><div id="live"></div></div>'+
+      tryPanel('Set B = 1/2, then B = 4. How many cycles fit in the one-cycle box each time? Now find a B whose period is exactly π. What is its frequency? Does changing A ever change the period?');
+  }
+};
+
+/* ══════════════════════ TAB 3 · phase shift & midline ══════════════════════ */
+const M3={
+  tab:"Phase shift & midline", lesson:"F-TF.B.5", accent:"var(--yellow)",
+  title:()=>M3.s.mode==="explore"? eqStr(M3.s.fn,M3.s.A,M3.s.B,M3.s.C,M3.s.D) : "Write the equation from the graph",
+  s:{mode:"explore",fn:"sin",A:2,B:1,C:PI/6,D:1,parent:true,tg:null,M:[PI/2,1],m:[3*PI/2,-1],done:false},
+  V:()=>view(-PI-0.4,3*PI+0.4,-6.5,6.5),
+  bar(){
+    const s=M3.s;
+    segBtns([["explore","Explore"],["puzzle","Graph puzzle"]],s.mode,k=>{s.mode=k; if(k==="puzzle"&&!s.tg)M3.newT(); render();},"Mode");
+    if(s.mode==="explore"){
+      segBtns([["sin","sin"],["cos","cos"]],s.fn,k=>{s.fn=k; render();},"Function");
+      slider("A",-3,3,0.5,()=>s.A,v=>{s.A=v;},()=>fx(s.A),true);
+      slider("B",0.5,3,0.5,()=>s.B,v=>{s.B=v;},()=>fx(s.B));
+      slider("C",-12,12,1,()=>Math.round(s.C/(PI/12)),v=>{s.C=v*PI/12;},()=>xS(s.C));
+      slider("D",-3,3,0.5,()=>s.D,v=>{s.D=v;},()=>fx(s.D));
+      chk("Parent graph",s.parent,v=>{s.parent=v; update();});
+    } else { btn("New graph",()=>{M3.newT(); render();},"primary"); }
+    snapChk(); unitSeg();
+  },
+  newT(){ const s=M3.s; const B=pick([0.5,1,1,2,2,3]), P=TAU/B;
+    const A=pick([1,1.5,2,2.5,3]), D=pick([-2,-1.5,-1,-0.5,0,0.5,1,1.5,2]);
+    const C=rnd(-3,3)*P/8; s.tg={fn:pick(["sin","cos"]),A,B,C,D};
+    // the "cos" version of the same wave is shifted by a quarter period — keep the target a sine internally
+    s.tg.fn="sin"; s.M=[PI/2,1]; s.m=[3*PI/2,-1]; s.done=false; },
+  keys(){ const s=M3.s, P=TAU/s.B, ys=s.fn==="sin"?[0,1,0,-1,0]:[1,0,-1,0,1]; return ys.map((v,k)=>[s.C+k*P/4,s.D+s.A*v]); },
+  stud(){ const s=M3.s; const [xM,yM]=s.M, [xm,ym]=s.m; if(yM<=ym+1e-9||Math.abs(xm-xM)<1e-6)return null;
+    const A=(yM-ym)/2, D=(yM+ym)/2, h=Math.abs(xm-xM), B=PI/h; return {A,D,B,P:2*h,xM}; },
+  tf(){ const t=M3.s.tg; return x=>t.A*Math.sin(t.B*(x-t.C))+t.D; },
+  match(){ const S=M3.stud(); if(!S)return false; const f=M3.tf(); for(let i=0;i<=80;i++){ const x=-PI+4*PI*i/80; if(Math.abs(S.A*Math.cos(S.B*(x-S.xM))+S.D-f(x))>0.06)return false; } return true; },
+  drag(id,p){ const s=M3.s, V=M3.V(); const x=snapX(V.wx(p[0])), y=snapY(V.wy(p[1]));
+    if(s.mode==="puzzle"){ const q=[clamp(x,-PI,3*PI),clamp(y,-6,6)]; if(id==="M")s.M=q; else s.m=q; s.done=M3.match(); return; }
+    const P=TAU/s.B;
+    if(id==="K0"){ s.C=clamp(x,-PI,PI); s.D=clamp(y-(s.fn==="cos"?s.A:0),-3,3); if(snap)s.D=Math.round(s.D*2)/2; }
+    if(id==="K1"){ const q=x-s.C; if(q>0.05){ s.B=clamp(Math.round(PI/(2*q)*2)/2,0.5,3); }
+      if(s.fn==="sin"){ let A=clamp(Math.round((y-s.D)*2)/2,-3,3); if(A===0)A=s.A>0?0.5:-0.5; s.A=A; } }
+    if(id==="K2"){ let A=clamp(Math.round((s.D-y)*2)/2,-3,3); if(A===0)A=s.A>0?0.5:-0.5; s.A=A; }
+    void P; },
+  draw(){
+    const s=M3.s, V=M3.V(), g=grid(V,{}), top=E("g",{}); cv.appendChild(top);
+    if(s.mode==="puzzle")return M3.drawPuzzle(V,g,top);
+    const f=FN[s.fn], P=TAU/s.B, y=x=>s.A*f(s.B*(x-s.C))+s.D;
+    if(s.parent) plot(g,V,f,{color:"#94A3B8",w:2.2,dash:"6 6"});
+    seg(g,V.p(V.x0,s.D),V.p(V.x1,s.D),"var(--alt)",2,"9 6");
+    plot(g,V,y,{color:"var(--vert)",w:3.4});
+    plot(g,V,y,{color:"#CA8A04",w:5,from:s.C,to:s.C+P,op:.9});
+    // shift arrows
+    const y0=s.fn==="sin"?s.D:s.D+s.A;
+    if(Math.abs(s.C)>1e-6){ const yy=V.sy(s.D)+(s.fn==="sin"?18:0); seg(top,[V.sx(0),yy],[V.sx(s.C),yy],"var(--lin)",2.4); arrowHead(top,[V.sx(s.C),yy],[s.C>0?1:-1,0],"var(--lin)"); }
+    if(Math.abs(s.D)>1e-6){ const xx=V.sx(V.x0)+26; seg(top,[xx,V.sy(0)],[xx,V.sy(s.D)],"var(--alt)",2.4); arrowHead(top,[xx,V.sy(s.D)],[0,s.D>0?-1:1],"var(--alt)");
+      lab(top,xx,V.sy(s.D/2),"D = "+fx(s.D),"#047857",[[1,0]]); }
+    void y0;
+    lab(top,V.R-60,V.sy(s.D),"midline y = "+fx(s.D),"#047857",[[0,1],[0,-1]]);
+    if(Math.abs(s.C)>1e-6) lab(top,(V.sx(0)+V.sx(s.C))/2,V.sy(s.D)+(s.fn==="sin"?18:0),"shift "+xS(Math.abs(s.C))+(s.C>0?" right":" left"),"#C2410C",[[0,1],[0,-1]]);
+    const K=M3.keys(), gap=V.sx(P/4)-V.sx(0), full=gap>=86*FS;
+    K.forEach((k,i)=>{ const q=V.p(k[0],k[1]); dot(g,q,"#CA8A04",6);
+      const d=(Math.abs(k[1]-s.D)<1e-9)?[[1,1],[-1,-1],[1,-1]]:(k[1]>s.D?[[0,-1],[1,-1],[-1,-1]]:[[0,1],[1,1],[-1,1]]);
+      lab(top,q[0],q[1],full?"("+xS(k[0])+", "+fx(k[1])+")":String(i+1),"#854D0E",d); });
+    grab(top,V.p(K[0][0],K[0][1]),"K0","var(--hand)"); grab(top,V.p(K[1][0],K[1][1]),"K1","var(--hand)");
+    if(s.fn==="cos") grab(top,V.p(K[2][0],K[2][1]),"K2","var(--hand)");
+  },
+  drawPuzzle(V,g,top){
+    const s=M3.s, t=s.tg, f=M3.tf();
+    plot(g,V,f,{color:"#94A3B8",w:9,op:.5});
+    const S=M3.stud();
+    if(S){ const h=x=>S.A*Math.cos(S.B*(x-S.xM))+S.D; seg(g,V.p(V.x0,S.D),V.p(V.x1,S.D),"var(--alt)",1.8,"9 6"); plot(g,V,h,{color:s.done?"var(--alt)":"var(--vert)",w:3}); }
+    else txt(top,VW/2,26,"Drag the max point above the min point","sm","var(--unk)");
+    const pM=V.p(s.M[0],s.M[1]), pm=V.p(s.m[0],s.m[1]);
+    lab(top,pM[0],pM[1],"max ("+xS(s.M[0])+", "+fx(s.M[1])+")","#B45309",[[0,-1],[1,-1],[-1,-1]]);
+    lab(top,pm[0],pm[1],"min ("+xS(s.m[0])+", "+fx(s.m[1])+")","#B45309",[[0,1],[1,1],[-1,1]]);
+    grab(top,pM,"M","var(--hand)"); grab(top,pm,"m","var(--corr)");
+    void t;
+  },
+  live(){ const s=M3.s;
+    if(s.mode==="puzzle"){ const S=M3.stud();
+      if(!S)return '<div class="pad"><p>Your max point must be <b>higher</b> than your min point, and at a different x.</p></div>';
+      const Cs=S.xM-S.P/4;
+      let h=rel("var(--lin)","A = (max − min)/2","("+fx(s.M[1])+" − "+fx(s.m[1])+")/2",fx(S.A))+
+        rel("var(--alt)","D = (max + min)/2","the midline",fx(S.D))+
+        rel("var(--vert)","Period = 2 × |Δx|","max to next min is half a cycle",xS(S.P))+
+        rel("var(--vert)","B = 2π / period","",coefStr(S.B)||"1");
+      h+='<div class="pad"><div class="eq">'+eqStr("cos",S.A,S.B,S.xM,S.D)+'\n'+eqStr("sin",S.A,S.B,Cs,S.D)+'<small>Cosine starts at a max, so its shift is the max\'s x. Sine starts on the midline a quarter period earlier.</small></div>'+
+        (s.done?'<div class="verdict good" style="margin:8px 0 0"><b>Match!</b> Your equation fits the gray graph everywhere. Both forms above are correct — press <b>New graph</b> for another.</div>':'<p class="no" style="margin:0"><b>Not matching yet.</b> Put the orange point on a peak and the blue point on the <b>next</b> valley.</p>')+'</div>';
+      return h; }
+    const K=M3.keys(), P=TAU/s.B;
+    let h=rel("var(--lin)","Amplitude |A|","",fx(Math.abs(s.A)))+rel("var(--vert)","Period 2π/B","",xSa(P))+
+      rel("var(--lin)","Phase shift C",s.C>0?"to the right":s.C<0?"to the left":"none",xS(s.C))+rel("var(--alt)","Midline y = D","",fx(s.D))+
+      rel("var(--graphite)","Max / min","D ± |A|",fx(s.D+Math.abs(s.A))+" / "+fx(s.D-Math.abs(s.A)));
+    h+='<table class="kp"><tr><th>#</th><th>x = C + k·(P/4)</th><th>y</th></tr>'+K.map((k,i)=>'<tr><td>'+(i+1)+'</td><td>'+xS(k[0])+'</td><td>'+fx(k[1])+'</td></tr>').join("")+'</table>';
+    return h; },
+  panel(full){ if(!full)return; const s=M3.s;
+    if(s.mode==="puzzle"){
+      side.innerHTML='<div class="panel"><h3>Equation from a graph</h3><div class="pad">'+
+        '<p>The thick gray curve is a mystery sinusoid. Drag the <b style="color:var(--hand)">orange point</b> onto any <b>maximum</b> and the <b style="color:var(--corr)">blue point</b> onto the <b>next minimum</b>. Your curve is built only from those two points.</p>'+
+        '<p>Max and min give <b>A</b> and <b>D</b>. The horizontal distance between them is half a period, which gives <b>B</b>. The max\'s x-value is the cosine\'s phase shift.</p>'+
+        '<div class="eq">A = (max − min)/2   D = (max + min)/2\nperiod = 2·(x_min − x_max)   B = 2π/period</div></div></div>'+
+        '<div class="panel"><h3>Your equation</h3><div id="live"></div></div>'+
+        tryPanel('Every sinusoid can be written as a sine <b>and</b> as a cosine. Once you match, compare the two shifts in the readout — how far apart are they, as a fraction of the period?');
+      return; }
+    side.innerHTML='<div class="panel"><h3>Sliding a wave</h3><div class="pad">'+
+      '<p>Replacing x by <b>x − C</b> slides the graph <b>C units right</b> (left if C is negative). That slide is the <span class="term">phase shift</span>. Adding <b>D</b> lifts the whole graph D units; the line y = D is the <span class="term">midline</span>.</p>'+
+      '<p>Watch out: in y = sin(2x − π/3) the shift is <b>not</b> π/3. Factor first: 2x − π/3 = 2(x − π/6), so C = π/6.</p>'+
+      '<p><b>Five-point method:</b> one cycle starts at x = C and ends at C + period. Split it into quarters; the five points go midline → max → midline → min → midline for sine (max → midline → min → midline → max for cosine, when A &gt; 0).</p>'+
+      '<div class="eq">y = A sin(B(x − C)) + D\ny = A cos(B(x − C)) + D\nkey x-values: C, C + P/4, C + P/2, C + 3P/4, C + P</div>'+
+      '<p>Drag the <b style="color:var(--hand)">orange</b> start point to slide (C and D); drag the second point to set B'+(s.fn==="sin"?' and A':'')+'.</p></div></div>'+
+      '<div class="panel"><h3>Features &amp; key points</h3><div id="live"></div></div>'+
+      tryPanel('Graph y = 2 sin(x − π/2) + 1, then switch to cosine and find a phase shift that gives the <b>same</b> graph. Can you find another shift that works too?');
+  }
+};
+
+/* ══════════════════════ TAB 4 · tangent & cotangent ══════════════════════ */
+function asyms(base,step,x0,x1){ const out=[]; for(let k=Math.ceil((x0-base)/step-1e-9);base+k*step<=x1+1e-9;k++)out.push(base+k*step); return out; }
+const M4={
+  tab:"Tangent & cotangent", lesson:"F-IF.C.7e", accent:"var(--mint)",
+  title:()=>eqStr(M4.s.fn,M4.s.A,M4.s.B,M4.s.C,M4.s.D),
+  s:{fn:"tan",A:1,B:1,C:0,D:0,build:true,xp:PI/3},
+  V:()=>view(-TAU-0.3,TAU+0.3,-6,6),
+  bar(){ const s=M4.s;
+    segBtns([["tan","tan"],["cot","cot"]],s.fn,k=>{s.fn=k; render();},"Function");
+    slider("A",-3,3,0.5,()=>s.A,v=>{s.A=v;},()=>fx(s.A),true);
+    slider("B",0.5,3,0.5,()=>s.B,v=>{s.B=v;},()=>fx(s.B));
+    slider("C",-6,6,1,()=>Math.round(s.C/(PI/12)),v=>{s.C=v*PI/12;},()=>xS(s.C));
+    slider("D",-3,3,0.5,()=>s.D,v=>{s.D=v;},()=>fx(s.D));
+    chk("Build from sin & cos",s.build,v=>{s.build=v; update();});
+    btn("Reset",()=>{Object.assign(s,{A:1,B:1,C:0,D:0,xp:PI/3}); render();});
+    snapChk(); unitSeg(); },
+  asym(V){ const s=M4.s, st=PI/s.B; return asyms(s.C+(s.fn==="tan"?st/2:0),st,V.x0,V.x1); },
+  zeros(V){ const s=M4.s, st=PI/s.B; return asyms(s.C+(s.fn==="tan"?0:st/2),st,V.x0,V.x1); },
+  f(x){ const s=M4.s; return s.A*FN[s.fn](s.B*(x-s.C))+s.D; },
+  drag(id,p){ const V=M4.V(); M4.s.xp=clamp(snapX(V.wx(p[0])),V.x0+0.1,V.x1-0.1); },
+  draw(){
+    const s=M4.s, V=M4.V(), g=grid(V,{}), top=E("g",{}); cv.appendChild(top);
+    const as=M4.asym(V), u=x=>s.B*(x-s.C);
+    as.forEach(x=>vasym(g,V,x));
+    if(s.build){
+      plot(g,V,x=>Math.sin(u(x)),{color:"var(--unk)",w:2.2,op:.75});
+      plot(g,V,x=>Math.cos(u(x)),{color:"var(--corr)",w:2.2,op:.75});
+      // where the denominator is zero
+      as.forEach(x=>dot(g,V.p(x,0),s.fn==="tan"?"var(--corr)":"var(--unk)",5.5,true));
+    }
+    if(!near(s.D,0)) seg(g,V.p(V.x0,s.D),V.p(V.x1,s.D),"var(--alt)",1.8,"9 6");
+    plot(g,V,x=>M4.f(x),{color:"var(--lin)",w:3.4,breaks:as});
+    // centre points and quarter points of the branch containing 0..
+    M4.zeros(V).forEach(x=>dot(g,V.p(x,s.D),"var(--lin)",4.5));
+    // period bracket between first two asymptotes right of 0
+    const r=as.filter(x=>x>-1e-9); if(r.length>=2){ const yb=V.sy(5.3); darrow(top,[V.sx(r[0]),yb],[V.sx(r[1]),yb],"#C2410C",1.8);
+      lab(top,(V.sx(r[0])+V.sx(r[1]))/2,yb,"period = "+(degMode?"180°":"π")+"/B = "+xS(PI/s.B),"#C2410C",[[0,1],[0,-1]]); }
+    // probe
+    const xp=s.xp, U=u(xp), sn=Math.sin(U), cs=Math.cos(U), fv=M4.f(xp);
+    const px=V.sx(xp);
+    if(s.build){ seg(g,[px-4,V.sy(0)],[px-4,V.sy(sn)],"var(--unk)",4); seg(g,[px+4,V.sy(0)],[px+4,V.sy(cs)],"var(--corr)",4);
+      dot(g,[px-4,V.sy(sn)],"var(--unk)",4.5); dot(g,[px+4,V.sy(cs)],"var(--corr)",4.5); }
+    const ok=isFinite(fv)&&Math.abs(fv)<1e6;
+    const py=ok? V.sy(clamp(fv,V.y0+0.3,V.y1-0.3)) : V.sy(0);
+    seg(g,[px,V.T],[px,V.B],"#475569",1.2,"3 5");
+    if(ok) lab(top,px,py,"("+xS(xp)+", "+num(fv,2)+")","#9A3412",[[1,-1],[-1,-1],[1,1],[-1,1]]);
+    else lab(top,px,py,"undefined at x = "+xS(xp),"var(--unk)",[[1,-1]]);
+    grab(top,[px,py],"probe","var(--lin)");
+    if(s.build){ txt(top,12,VH-34*FS,"y = sin(u)","sm","var(--unk)","start"); txt(top,12,VH-14*FS,"y = cos(u)","sm","var(--corr)","start"); }
+  },
+  live(){ const s=M4.s, V=M4.V(), U=s.B*(s.xp-s.C), sn=Math.sin(U), cs=Math.cos(U), as=M4.asym(V);
+    const den=s.fn==="tan"?cs:sn, nm=s.fn==="tan"?sn:cs, r=Math.abs(den)<1e-9?null:nm/den;
+    const st=PI/s.B, base=s.C+(s.fn==="tan"?st/2:0);
+    return rel("var(--graphite)","u = B(x − C)","inside angle at the probe",num(U,3))+
+      rel("var(--unk)","sin u","",num(sn,3))+rel("var(--corr)","cos u","",num(cs,3))+
+      rel("var(--lin)",s.fn+" u = "+(s.fn==="tan"?"sin u / cos u":"cos u / sin u"),"",r==null?"undefined":num(r,3))+
+      rel("var(--lin)","f(x) = A·"+s.fn+" u + D","",r==null?"undefined":num(s.A*r+s.D,3))+
+      rel("var(--vert)","Period π/B","",xSa(PI/s.B))+
+      '<div class="pad"><div class="eq">asymptotes: x = '+seqS(base,st).replace(/k/g,"k")+'\non screen: '+as.map(xS).join(", ")+'<small>Vertical asymptotes sit where the denominator '+(s.fn==="tan"?"cos u":"sin u")+' = 0 (the hollow circles). Range: all real numbers.</small></div></div>'; },
+  panel(full){ if(!full)return;
+    side.innerHTML='<div class="panel"><h3>A ratio with a gap</h3><div class="pad">'+
+      '<p><b>tan u = sin u / cos u</b>. Wherever <b style="color:#5BC0F8">cos u = 0</b>, the ratio divides by zero, so tangent is undefined there and its graph shoots off along a <span class="term">vertical asymptote</span>. Wherever <b style="color:#FF6B8E">sin u = 0</b>, tangent is 0.</p>'+
+      '<p><b>cot u = cos u / sin u</b> is the reverse: asymptotes where sin u = 0, zeros where cos u = 0.</p>'+
+      '<p>Tangent repeats every <b>π</b>, not 2π: after half a turn both sin and cos change sign, and the ratio stays the same. With y = A tan(B(x − C)) + D the period becomes <b>π/B</b>; A stretches, C slides and D lifts.</p>'+
+      '<div class="eq">y = A tan(B(x − C)) + D\nperiod = π/B\ntan asymptotes: x = C + π/(2B) + kπ/B\ncot asymptotes: x = C + kπ/B</div>'+
+      '<p>Drag the <b>probe</b> and watch the red and blue bars: the curve\'s height is red ÷ blue (times A, plus D).</p></div></div>'+
+      '<div class="panel"><h3>Live readout</h3><div id="live"></div></div>'+
+      tryPanel('Drag the probe toward x = π/2 from the left. What happens to cos u, and what happens to tan u? Then set B = 2: where do the asymptotes move, and what is the new period?');
+  }
+};
+
+/* ══════════════════════ TAB 5 · secant & cosecant ══════════════════════ */
+const M5={
+  tab:"Secant & cosecant", lesson:"F-IF.C.7e", accent:"var(--lavender)",
+  title:()=>eqStr(M5.s.fn,M5.s.A,M5.s.B,M5.s.C,M5.s.D),
+  s:{fn:"sec",A:1,B:1,C:0,D:0,guide:true,xp:PI/4},
+  V:()=>view(-TAU-0.3,TAU+0.3,-6,6),
+  bar(){ const s=M5.s;
+    segBtns([["sec","sec"],["csc","csc"]],s.fn,k=>{s.fn=k; render();},"Function");
+    slider("A",-3,3,0.5,()=>s.A,v=>{s.A=v;},()=>fx(s.A),true);
+    slider("B",0.5,3,0.5,()=>s.B,v=>{s.B=v;},()=>fx(s.B));
+    slider("C",-6,6,1,()=>Math.round(s.C/(PI/12)),v=>{s.C=v*PI/12;},()=>xS(s.C));
+    slider("D",-3,3,0.5,()=>s.D,v=>{s.D=v;},()=>fx(s.D));
+    chk("Show "+(s.fn==="sec"?"cos":"sin")+" guide",s.guide,v=>{s.guide=v; update();});
+    btn("Reset",()=>{Object.assign(s,{A:1,B:1,C:0,D:0,xp:PI/4}); render();});
+    snapChk(); unitSeg(); },
+  gfn(){ return M5.s.fn==="sec"?"cos":"sin"; },
+  asym(V){ const s=M5.s, st=PI/s.B; return asyms(s.C+(s.fn==="sec"?st/2:0),st,V.x0,V.x1); },
+  f(x){ const s=M5.s; return s.A*FN[s.fn](s.B*(x-s.C))+s.D; },
+  g(x){ const s=M5.s; return s.A*FN[M5.gfn()](s.B*(x-s.C))+s.D; },
+  drag(id,p){ const V=M5.V(); M5.s.xp=clamp(snapX(V.wx(p[0])),V.x0+0.1,V.x1-0.1); },
+  draw(){
+    const s=M5.s, V=M5.V(), g=grid(V,{}), top=E("g",{}); cv.appendChild(top);
+    const as=M5.asym(V), st=PI/s.B;
+    as.forEach(x=>vasym(g,V,x));
+    seg(g,V.p(V.x0,s.D),V.p(V.x1,s.D),"var(--alt)",1.6,"9 6");
+    if(s.guide){ plot(g,V,x=>M5.g(x),{color:"var(--corr)",w:2.4,dash:"7 5",op:.85}); as.forEach(x=>dot(g,V.p(x,s.D),"var(--corr)",5,true)); }
+    plot(g,V,x=>M5.f(x),{color:"var(--vert)",w:3.4,breaks:as});
+    // touch points: guide max/min
+    const tb=s.C+(s.fn==="sec"?0:st/2); const tps=asyms(tb,st,V.x0,V.x1);
+    tps.forEach((x,i)=>{ const y=M5.f(x); dot(g,V.p(x,y),"var(--vert)",5.5); });
+    const tR=tps.filter(x=>x>=-1e-9).slice(0,2);
+    tR.forEach(x=>{ const y=M5.f(x), q=V.p(x,y); lab(top,q[0],q[1],"("+xS(x)+", "+fx(y)+")","#6D28D9",y>s.D?[[1,1],[-1,1],[0,1]]:[[1,-1],[-1,-1],[0,-1]]); });
+    // probe
+    const xp=s.xp, fv=M5.f(xp), gv=M5.g(xp), px=V.sx(xp), ok=isFinite(fv)&&Math.abs(fv)<1e6;
+    seg(g,[px,V.T],[px,V.B],"#475569",1.2,"3 5");
+    if(s.guide){ dot(g,V.p(xp,gv),"var(--corr)",5); }
+    const py=ok? V.sy(clamp(fv,V.y0+0.3,V.y1-0.3)) : V.sy(s.D);
+    if(ok) lab(top,px,py,"("+xS(xp)+", "+num(fv,2)+")","#5B21B6",[[1,-1],[-1,-1],[1,1],[-1,1]]); else lab(top,px,py,"undefined","var(--unk)",[[1,-1]]);
+    grab(top,[px,py],"probe","var(--vert)");
+    const r=as.filter(x=>x>-1e-9); if(r.length>=3){ const yb=V.sy(5.3); darrow(top,[V.sx(r[0]),yb],[V.sx(r[2]),yb],"#6D28D9",1.8);
+      lab(top,(V.sx(r[0])+V.sx(r[2]))/2,yb,"period = "+(degMode?"360°":"2π")+"/B = "+xS(TAU/s.B),"#6D28D9",[[0,1],[0,-1]]); }
+    if(s.guide) txt(top,12,VH-14*FS,"dashed: y = "+ampStr(s.A)+M5.gfn()+"(…)"+dStr(s.D),"sm","var(--corr)","start");
+  },
+  live(){ const s=M5.s, V=M5.V(), U=s.B*(s.xp-s.C), t=FN[M5.gfn()](U), as=M5.asym(V), st=PI/s.B, a=Math.abs(s.A);
+    const base=s.C+(s.fn==="sec"?st/2:0);
+    return rel("var(--graphite)","u = B(x − C)","inside angle at the probe",num(U,3))+
+      rel("var(--corr)",M5.gfn()+" u","the guide's wave",num(t,3))+
+      rel("var(--vert)",s.fn+" u = 1 / "+M5.gfn()+" u","reciprocal",Math.abs(t)<1e-9?"undefined":num(1/t,3))+
+      rel("var(--vert)","f(x)","A·"+s.fn+" u + D",Math.abs(t)<1e-9?"undefined":num(s.A/t+s.D,3))+
+      rel("var(--vert)","Period 2π/B","",xSa(TAU/s.B))+
+      rel("var(--graphite)","Range","never between D − |A| and D + |A|","(−∞, "+fx(s.D-a)+"] ∪ ["+fx(s.D+a)+", ∞)")+
+      '<div class="pad"><div class="eq">asymptotes: x = '+seqS(base,st)+'\non screen: '+as.map(xS).join(", ")+'<small>The asymptotes are where the guide crosses its midline (its trig part is 0).</small></div></div>'; },
+  panel(full){ if(!full)return;
+    side.innerHTML='<div class="panel"><h3>Reciprocals of waves</h3><div class="pad">'+
+      '<p><b>sec u = 1 / cos u</b> and <b>csc u = 1 / sin u</b>. Sketch the cosine (or sine) first as a dashed <b>guide</b>, then flip each height into its reciprocal.</p>'+
+      '<p>Where the guide is at a <b>max or min</b> (±1), its reciprocal is also ±1, so the U-shaped branches <b>touch</b> the guide there. As the guide shrinks toward 0, the reciprocal grows without bound — so every <b>zero</b> of the guide becomes a <span class="term">vertical asymptote</span>.</p>'+
+      '<p>A, B, C and D act on secant exactly as they act on the guide: the period is 2π/B, and nothing lands strictly between D − |A| and D + |A|.</p>'+
+      '<div class="eq">y = A sec(B(x − C)) + D   guide: y = A cos(B(x − C)) + D\nperiod = 2π/B\nsec asymptotes: x = C + π/(2B) + kπ/B\ncsc asymptotes: x = C + kπ/B</div></div></div>'+
+      '<div class="panel"><h3>Live readout</h3><div id="live"></div></div>'+
+      tryPanel('Drag the probe to where the guide equals 1/2. What is sec there? Now set A = −2: which way do the branches open, and does the range change?');
+  }
+};
+
+/* ══════════════════════ TAB 6 · modeling ══════════════════════ */
+const SCEN=(function(){
+  const mk=(seed,Ts,truth,noise,round)=>{ const r=mulberry(seed); const T=[],Y=[]; Ts.forEach(t=>{ T.push(t); const v=truth(t)+(r()-0.5)*2*noise; Y.push(Math.round(v*round)/round); }); return {T,Y}; };
+  const range=(a,b,s)=>{ const o=[]; for(let t=a;t<=b+1e-9;t+=s)o.push(Math.round(t*1000)/1000); return o; };
+  const temp=[41,44,53,64,74,83,88,86,79,68,57,46];
+  return {
+    ferris:{name:"Ferris wheel",data:mk(3,range(0,12,0.5),t=>-20*Math.cos(TAU*t/6)+22,0.35,10),
+      V:()=>view(-1.3,12.8,-4.5,47,[0,0,VW,VH]),xt:"time t (min)",yt:"height (m)",xs:1,ys:5,u:"m",tu:"min",
+      p:{A:[0,30,0.5],P:[2,12,0.1],C:[-6,6,0.1],D:[0,40,0.5]},init:{A:12,P:8,C:0,D:18},Pr:[2,12],
+      story:'A rider\'s height above the ground was read from a video every 30 seconds. The wheel is 40 m across and turns at a steady speed, so the height is a sinusoid in time.'},
+    tide:{name:"Tides",data:mk(11,range(0,36,1.5),t=>3.4*Math.sin(TAU/12.4*(t-1.4))+4.8,0.25,10),
+      V:()=>view(-3.8,37.5,-1.5,10.5,[0,0,VW,VH]),xt:"hours after midnight",yt:"water depth (ft)",xs:6,ys:1,u:"ft",tu:"h",
+      p:{A:[0,6,0.1],P:[6,18,0.1],C:[-6,12,0.1],D:[0,8,0.1]},init:{A:2,P:10,C:0,D:4},Pr:[6,18],
+      story:'Illustrative water-depth readings at a harbor, taken every 1.5 hours for a day and a half. Two high tides happen each day.'},
+    temp:{name:"Temperature",data:mk(5,range(1,24,1),t=>temp[(Math.round(t)-1)%12],1.6,1),
+      V:()=>view(-2,25.4,22,100,[0,0,VW,VH]),xt:"month (1 = Jan)",yt:"avg high (°F)",xs:2,ys:10,u:"°F",tu:"months",
+      p:{A:[0,40,0.5],P:[6,18,0.1],C:[-6,12,0.1],D:[30,90,0.5]},init:{A:15,P:10,C:0,D:60},Pr:[6,18],
+      story:'Average daily high temperature by month for two years (illustrative values based on Philadelphia normals). Seasons repeat every 12 months.'},
+    sound:{name:"Sound wave",data:mk(9,range(0,6,0.2),t=>0.8*Math.sin(TAU/(1000/440)*(t-0.3)),0.05,100),
+      V:()=>view(-0.45,6.3,-1.25,1.25,[0,0,VW,VH]),xt:"time t (ms)",yt:"air pressure change (Pa)",xs:1,ys:0.5,u:"Pa",tu:"ms",
+      p:{A:[0,1.5,0.01],P:[0.5,5,0.01],C:[-2,2,0.01],D:[-0.5,0.5,0.01]},init:{A:0.5,P:3,C:0,D:0},Pr:[0.8,5],
+      story:'A microphone samples the air-pressure change near a tuning fork every 0.2 milliseconds. A pure tone is a sinusoid; its frequency sets the pitch you hear.'}
+  };
+})();
+const NOTES=["A","A♯","B","C","C♯","D","D♯","E","F","F♯","G","G♯"];
+function noteName(f){ const n=Math.round(12*Math.log2(f/440)); return NOTES[((n%12)+12)%12]+(4+Math.floor((n+9)/12)); }
+const M6={
+  tab:"Modeling", lesson:"F-TF.B.5", accent:"var(--cyan)",
+  title:()=>"Fit a sinusoid · "+SCEN[M6.s.sc].name,
+  s:{sc:"ferris",res:true,par:{}},
+  P(){ const s=M6.s; if(!s.par[s.sc])s.par[s.sc]=Object.assign({},SCEN[s.sc].init); return s.par[s.sc]; },
+  f(t){ const p=M6.P(); return p.A*Math.sin(TAU/p.P*(t-p.C))+p.D; },
+  stats(){ const D=SCEN[M6.s.sc].data; let sse=0,mx=0; D.T.forEach((t,i)=>{ const r=D.Y[i]-M6.f(t); sse+=r*r; mx=Math.max(mx,Math.abs(r)); }); return {sse,rms:Math.sqrt(sse/D.T.length),mx}; },
+  bar(){ const s=M6.s, S=SCEN[s.sc], p=M6.P(), dp=S.p.A[2]<0.1?2:1;
+    segBtns(Object.keys(SCEN).map(k=>[k,SCEN[k].name]),s.sc,k=>{s.sc=k; render();},"Scenario");
+    slider("A",S.p.A[0],S.p.A[1],S.p.A[2],()=>p.A,v=>{p.A=v;},()=>num(p.A,dp));
+    slider("P",S.p.P[0],S.p.P[1],S.p.P[2],()=>p.P,v=>{p.P=v;},()=>num(p.P,dp));
+    slider("C",S.p.C[0],S.p.C[1],S.p.C[2],()=>p.C,v=>{p.C=v;},()=>num(p.C,dp));
+    slider("D",S.p.D[0],S.p.D[1],S.p.D[2],()=>p.D,v=>{p.D=v;},()=>num(p.D,dp));
+    btn("Best fit",()=>{ const F=fitSin(S.data.T,S.data.Y,S.Pr[0],S.Pr[1]); Object.assign(p,{A:F.A,P:F.P,C:F.C,D:F.D}); update(); },"primary");
+    btn("Reset",()=>{ s.par[s.sc]=Object.assign({},S.init); render(); });
+    chk("Residuals",s.res,v=>{s.res=v; update();});
+    M6.spEl=spacer(""); },
+  draw(){
+    const s=M6.s, S=SCEN[s.sc], V=S.V(), D=S.data, p=M6.P();
+    const g=grid(V,{xnum:true,xstep:S.xs,ystep:S.ys,xt:S.xt,yt:S.yt}), top=E("g",{}); cv.appendChild(top);
+    reserve(0,0,VW,24);
+    seg(g,V.p(V.x0,p.D),V.p(V.x1,p.D),"var(--alt)",1.6,"9 6");
+    plot(g,V,t=>M6.f(t),{color:"var(--vert)",w:3.2});
+    if(s.res) D.T.forEach((t,i)=>seg(g,V.p(t,D.Y[i]),V.p(t,M6.f(t)),"var(--unk)",2,null,.75));
+    D.T.forEach((t,i)=>dot(g,V.p(t,D.Y[i]),"var(--lin)",4.4));
+    const st=M6.stats();
+    txt(top,VW-10,VH-14*FS,"RMS residual = "+num(st.rms,S.p.A[2]<0.1?3:2)+" "+S.u,"sm","#9F1239","end");
+    if(M6.spEl)M6.spEl.textContent="SSE "+num(st.sse,S.p.A[2]<0.1?4:2);
+  },
+  live(){ const s=M6.s, S=SCEN[s.sc], p=M6.P(), st=M6.stats(), dp=S.p.A[2]<0.1?3:2;
+    const best=fitSin(S.data.T,S.data.Y,S.Pr[0],S.Pr[1]); const ratio=st.rms/Math.max(best.rms,1e-9);
+    const badge=ratio<1.25?'<span class="badge g">excellent fit</span>':ratio<2.5?'<span class="badge m">close</span>':'<span class="badge b">keep adjusting</span>';
+    let h='<div class="pad"><div class="eq">y = '+num(p.A,dp)+' sin(2π/'+num(p.P,dp)+' · (t − '+num(p.C,dp)+')) + '+num(p.D,dp)+'<small>B = 2π/P = '+num(TAU/p.P,3)+' · t in '+S.tu+'</small></div>'+badge+'</div>'+
+      rel("var(--unk)","RMS residual","typical vertical miss",num(st.rms,dp)+" "+S.u)+
+      rel("var(--unk)","Largest miss","max |data − model|",num(st.mx,dp)+" "+S.u)+
+      rel("var(--unk)","Sum of squared residuals","what “Best fit” makes smallest",num(st.sse,dp+1))+
+      rel("var(--graphite)","Best possible RMS","least-squares fit",num(best.rms,dp)+" "+S.u);
+    const tTop=(()=>{ let t=p.C+p.P/4; while(t<0)t+=p.P; while(t-p.P>=0)t-=p.P; return t; })();
+    let pred="";
+    if(s.sc==="ferris") pred=rel("var(--vert)","First time at the top","t = C + P/4",num(tTop,2)+" min")+rel("var(--vert)","Top / bottom height","D ± A",num(p.D+p.A,1)+" / "+num(p.D-p.A,1)+" m")+rel("var(--vert)","Predicted height at t = 2.5 min","",num(M6.f(2.5),1)+" m");
+    if(s.sc==="tide") pred=rel("var(--vert)","First high tide","t = C + P/4",num(tTop,2)+" h ≈ "+Math.floor(tTop)+":"+String(Math.round((tTop%1)*60)).padStart(2,"0"))+rel("var(--vert)","High / low depth","D ± A",num(p.D+p.A,1)+" / "+num(p.D-p.A,1)+" ft")+rel("var(--vert)","Predicted depth at 6 pm (t = 18)","",num(M6.f(18),1)+" ft");
+    if(s.sc==="temp") pred=rel("var(--vert)","Warmest time of year","t = C + P/4",num(tTop,1)+" (month)")+rel("var(--vert)","Warmest / coldest","D ± A",num(p.D+p.A,0)+" / "+num(p.D-p.A,0)+" °F")+rel("var(--vert)","Predicted for mid-April (t = 4.5)","",num(M6.f(4.5),0)+" °F");
+    if(s.sc==="sound"){ const fq=1000/p.P; pred=rel("var(--vert)","Frequency = 1/P","cycles per second (Hz)",num(fq,0)+" Hz")+rel("var(--vert)","Nearest musical note","equal temperament, A4 = 440 Hz",noteName(fq))+rel("var(--vert)","Amplitude","loudness",num(p.A,2)+" Pa"); }
+    return h+'<div style="border-top:1px solid var(--edge)"></div>'+pred; },
+  panel(full){ if(!full)return; const S=SCEN[M6.s.sc];
+    side.innerHTML='<div class="panel"><h3>'+S.name+'</h3><div class="pad"><p>'+S.story+'</p>'+
+      '<p>Move the sliders until the purple curve runs through the orange data. Each red segment is a <span class="term">residual</span>: data value − model value. A good model leaves small residuals that are scattered above and below.</p>'+
+      '<div class="eq">y = A sin(2π/P · (t − C)) + D\nA = (max − min)/2   D = (max + min)/2\nP = time for one full cycle   C = when the curve crosses the midline going up</div>'+
+      '<p>Fit by reasoning first — estimate max and min for A and D, the time between peaks for P — then fine-tune. <b>Best fit</b> shows the least-squares answer.</p></div></div>'+
+      '<div class="panel"><h3>Your model</h3><div id="live"></div></div>'+
+      tryPanel(M6.s.sc==="sound"?'The period is measured in milliseconds. Fit the wave, then compute 1000/P. Which note is the tuning fork playing? What would a wave with half the period sound like?':'Fit the data by hand and write down your RMS residual. Then press <b>Best fit</b>. How close did you get? Which of A, P, C, D made the biggest difference?');
+  }
+};
+
+/* ══════════════════════ TAB 7 · challenge ══════════════════════ */
+const KINDS=[["mix","Mixed practice"],["feat","Features from an equation"],["graph","Equation from a graph"],["asym","Asymptotes"],["eval","Evaluate f(x)"],["model","Modeling word problem"]];
+const bS=B=>coefStr(B);
+function genFeat(){
+  const fn=pick(["sin","cos"]), A=pick([1,2,3,4,-1,-2,-3,0.5,-0.5]);
+  const B=pick([1,2,3,4,0.5,PI,PI/2]);
+  let C; if(B===PI||B===PI/2) C=pick([0.5,1,-0.5,-1,2,1.5]); else C=pick([PI/2,PI/3,PI/4,PI/6,-PI/2,-PI/3,-PI/4,-PI/6,PI]);
+  const D=rnd(-4,4), form=pick([1,2,3]);
+  const fC=piStr; let eq;
+  if(form===1) eq=eqStr(fn,A,B,C,D,{fC});
+  else { const ph=-B*C, inner=(bS(B))+"x"+(ph<0?" − ":" + ")+piStr(Math.abs(ph));
+    eq= form===2? "y = "+ampStr(A)+fn+"("+inner+")"+dStr(D) : "y = "+(near(D,0)?"":fx(D)+(A<0?" − ":" + "))+(near(D,0)?ampStr(A):ampStr(Math.abs(A)))+fn+"("+inner+")"; }
+  const P=TAU/B;
+  return {kind:"feat",fn,A,B,C,D,form,eq,
+    q:'Find the amplitude, period, phase shift and midline of <span class="m">'+eq+'</span>.',
+    fields:[{l:"Amplitude",ph:"e.g. 3"},{l:"Period",ph:"e.g. 2π/3"},{l:"Phase shift",ph:"e.g. −π/4 (− = left)"},{l:"Midline y =",ph:"e.g. −2"}],
+    ans:[Math.abs(A),P,C,D],ansS:[fx(Math.abs(A)),piStr(P),piStr(C),fx(D)],
+    tol:0.011, f:x=>A*FN[fn](B*(x-C))+D};
+}
+function genGraph(){
+  const B=pick([1,1,2,2,0.5,3]), P=TAU/B, A=pick([1,1.5,2,2.5,3]), D=pick([-2,-1,-0.5,0,0.5,1,2]), C=rnd(-3,3)*P/8;
+  const f=x=>A*Math.sin(B*(x-C))+D;
+  let xM=C+P/4; while(xM>-PI/2+P)xM-=P; while(xM<-PI/2)xM+=P;
+  return {kind:"graph",A,B,C,D,P,xM,f,q:'Write an equation for the sinusoid shown on the board. Use the labeled maximum, minimum and midline crossing.',
+    fields:[{l:"y =",ph:"e.g. 2sin(3(x − π/6)) + 1",wide:true,eq:true}],ansS:[eqStr("sin",A,B,C,D,{fC:piStr})]};
+}
+function genAsym(){
+  const fn=pick(["tan","cot","sec","csc"]), A=pick([1,2,-1,3,0.5]), B=pick([1,2,3,0.5,4]), D=rnd(-2,2);
+  const C=pick([0,PI/4,-PI/4,PI/6,-PI/6,PI/3,PI/2,-PI/2]);
+  const st=PI/B, base=C+((fn==="tan"||fn==="sec")?st/2:0);
+  let k=Math.ceil((1e-9-base)/st); let x1=base+k*st; if(x1<=1e-9)x1+=st;
+  const eq=eqStr(fn,A,B,C,D,{fC:piStr});
+  return {kind:"asym",fn,A,B,C,D,eq,st,base,f:x=>A*FN[fn](B*(x-C))+D,
+    q:'For <span class="m">'+eq+'</span>, find the <b>smallest positive</b> x where a vertical asymptote occurs, and the distance between consecutive asymptotes.',
+    fields:[{l:"Smallest positive asymptote x =",ph:"e.g. π/8"},{l:"Distance between asymptotes",ph:"e.g. π/4"}],ans:[x1,st],ansS:[piStr(x1),piStr(st)],tol:0.011};
+}
+function genEval(){
+  for(let tries=0;tries<200;tries++){
+    const fn=pick(["sin","cos","tan"]), A=pick([2,3,-2,4,-1,1]), B=pick([1,2,3,0.5]), D=rnd(-3,3), C=pick([0,PI/6,-PI/6,PI/4,-PI/4,PI/3,PI/2]);
+    const us=[]; for(let d=0;d<360;d+=15){ if(d%30===0||d%45===0)us.push(d*D2R); }
+    const u=pick(us); const e=exactTrig(fn,u); if(!e||e.undef)continue;
+    const x0=u/B+C; if(x0<-PI/2||x0>2.5*PI)continue; if(!fracParts(x0/PI,72))continue;
+    const val=A*exVal(e)+D;
+    const coef=A*e.sg*e.k/e.den; const exact=(e.r===1||e.k===0)? fx(coef+D) : radCoef(coef,e.r)+dStr(D);
+    const eq=eqStr(fn,A,B,C,D,{lhs:"f(x)",fC:piStr});
+    return {kind:"eval",fn,A,B,C,D,u,e,x0,val,exact,eq,f:x=>A*FN[fn](B*(x-C))+D,
+      q:'Let <span class="m">'+eq+'</span>. Find <span class="m">f('+piStr(x0)+')</span> exactly or to the nearest hundredth.',
+      fields:[{l:"f("+piStr(x0)+") =",ph:"e.g. 1 + 3√3/2 or 3.60"}],ans:[val],ansS:[exact],tol:0.011};
+  }
+  return genFeat();
+}
+function genModel(){
+  const t=pick(["ferris","tide","temp"]);
+  if(t==="ferris"){ const d=pick([30,40,50,60]), b=pick([1,2,3,4]), P=pick([4,5,6,8,10,12]), A=d/2, D=b+d/2;
+    let T; do{ T=rnd(1,10*P-1)/10; }while(Math.abs((T/(P/4))-Math.round(T/(P/4)))<0.05);
+    const f=x=>-A*Math.cos(TAU/P*x)+D;
+    return {kind:"model",sub:t,A,D,P,T,f,v:"t",
+      q:'A Ferris wheel is <b>'+d+' m</b> in diameter and its lowest point is <b>'+b+' m</b> above the ground. It makes one full turn every <b>'+P+' minutes</b>. A rider boards at the lowest point at t = 0. Write h(t), the rider\'s height in meters after t minutes, and find the height at <b>t = '+num(T,1)+' min</b>.',
+      fields:[{l:"h(t) =",ph:"e.g. −20cos(πt/3) + 22",wide:true,eq:true},{l:"h("+num(T,1)+") (m)",ph:"nearest tenth"}],ans:[null,f(T)],ansS:["h(t) = "+ampStr(-A)+"cos("+bS(TAU/P)+"t)"+dStr(D),num(f(T),2)],tol:0.06};
+  }
+  if(t==="tide"){ const H=rnd(14,24)/2, L=rnd(1,6)/2, t1=rnd(2,10)/2, P=12.4, A=(H-L)/2, D=(H+L)/2;
+    const T=rnd(Math.ceil(t1)+1,22); const f=x=>A*Math.cos(TAU/P*(x-t1))+D;
+    const tl=t1+6.2;
+    return {kind:"model",sub:t,A,D,P,T,f,v:"t",t1,H,L,
+      q:'At a harbor, high tide of <b>'+num(H,1)+' ft</b> occurs at t = <b>'+num(t1,1)+'</b> hours after midnight, and the next low tide of <b>'+num(L,1)+' ft</b> occurs 6.2 hours later (t = '+num(tl,1)+'). Write a sinusoidal model d(t) for the depth, and predict the depth at <b>t = '+T+'</b>.',
+      fields:[{l:"d(t) =",ph:"e.g. 4cos(2π/12.4 (t − 3)) + 5",wide:true,eq:true},{l:"d("+T+") (ft)",ph:"nearest tenth"}],ans:[null,f(T)],ansS:["d(t) = "+ampStr(A)+"cos((2π/12.4)(t − "+num(t1,1)+"))"+dStr(D),num(f(T),2)],tol:0.06};
+  }
+  const Tmax=rnd(80,94), Tmin=rnd(26,44), A=(Tmax-Tmin)/2, D=(Tmax+Tmin)/2, P=12, T=pick([3,4,5,9,10,11,2,12]);
+  const f=x=>A*Math.cos(PI/6*(x-7))+D;
+  return {kind:"model",sub:t,A,D,P,T,f,v:"t",Tmax,Tmin,
+    q:'A city\'s average high temperature peaks at <b>'+Tmax+' °F</b> in July (t = 7) and bottoms out at <b>'+Tmin+' °F</b> in January (t = 1), where t is the month number. Write a sinusoidal model T(t) with period 12 months, and predict the average high for month <b>t = '+T+'</b>.',
+    fields:[{l:"T(t) =",ph:"e.g. 25cos(π/6 (t − 7)) + 60",wide:true,eq:true},{l:"T("+T+") (°F)",ph:"nearest tenth"}],ans:[null,f(T)],ansS:["T(t) = "+ampStr(A)+"cos((π/6)(t − 7))"+dStr(D),num(f(T),2)],tol:0.06};
+}
+function genProblem(kind){ if(kind==="mix")kind=pick(["feat","graph","asym","eval","model"]);
+  return {feat:genFeat,graph:genGraph,asym:genAsym,eval:genEval,model:genModel}[kind](); }
+function solText(pr){
+  if(pr.kind==="feat"){ const P=TAU/pr.B; let t="";
+    if(pr.form!==1){ t+="Factor B out of the angle:\n  "+bS(pr.B)+"x "+(-pr.B*pr.C<0?"− ":"+ ")+piStr(Math.abs(pr.B*pr.C))+" = "+argStr(pr.B,pr.C,"x",piStr)+"\n"; }
+    t+="So "+eqStr(pr.fn,pr.A,pr.B,pr.C,pr.D,{fC:piStr})+"\n";
+    t+="amplitude = |A| = "+fx(Math.abs(pr.A))+"\nperiod = 2π/B = 2π/"+(bS(pr.B)||"1")+" = "+piStr(P)+"\nphase shift = C = "+piStr(pr.C)+(pr.C>0?" (right)":pr.C<0?" (left)":"")+"\nmidline: y = "+fx(pr.D);
+    return t; }
+  if(pr.kind==="graph"){ const xm=pr.xM+pr.P/2;
+    return "max ("+piStr(pr.xM)+", "+fx(pr.D+pr.A)+"), next min ("+piStr(xm)+", "+fx(pr.D-pr.A)+")\nA = (max − min)/2 = "+fx(pr.A)+"   D = (max + min)/2 = "+fx(pr.D)+"\nhalf period = "+piStr(pr.P/2)+" → period = "+piStr(pr.P)+" → B = 2π/period = "+(bS(pr.B)||"1")+"\ncosine form (starts at a max):\n  "+eqStr("cos",pr.A,pr.B,pr.xM,pr.D,{fC:piStr})+"\nsine form (starts on the midline, going up):\n  "+eqStr("sin",pr.A,pr.B,pr.xM-pr.P/4,pr.D,{fC:piStr}); }
+  if(pr.kind==="asym"){ const tc=pr.fn==="tan"||pr.fn==="sec", den=tc?"cos":"sin";
+    return pr.fn+" u is undefined where "+den+" u = 0, i.e. u = "+(tc?"π/2 + kπ":"kπ")+"\nSet "+argStr(pr.B,pr.C,"x",piStr)+" = "+(tc?"π/2 + kπ":"kπ")+"\n  x = "+(near(pr.C,0)?"":piStr(pr.C)+" + ")+(tc?piStr(PI/(2*pr.B))+" + ":"")+"k·"+piStr(pr.st)+"\nsmallest positive: x = "+piStr(pr.ans[0])+"\nspacing = π/B = "+piStr(pr.st)+(pr.fn==="sec"||pr.fn==="csc"?"  (the period 2π/B is twice this)":"  (equal to the period)"); }
+  if(pr.kind==="eval"){ const inner=pr.B*(pr.x0-pr.C);
+    return "u = "+(bS(pr.B)||"")+(near(pr.B,1)?"":"(")+piStr(pr.x0)+(near(pr.C,0)?"":(pr.C>0?" − ":" + ")+piStr(Math.abs(pr.C)))+(near(pr.B,1)?"":")")+" = "+piStr(inner)+"\n"+pr.fn+"("+piStr(inner)+") = "+exStr(pr.e)+"\nf = "+fx(pr.A)+"·("+exStr(pr.e)+")"+dStr(pr.D)+" = "+pr.exact+(/√/.test(pr.exact)||pr.exact.indexOf("/")>=0?" ≈ "+num(pr.val,3):""); }
+  if(pr.kind==="model"){
+    if(pr.sub==="ferris") return "amplitude = radius = "+fx(pr.A)+"   midline = lowest + radius = "+fx(pr.D)+"\nperiod = "+pr.P+" → B = 2π/"+pr.P+" = "+bS(TAU/pr.P)+"\nstarts at the bottom → use −cos\n"+pr.ansS[0]+"\nh("+num(pr.T,1)+") = "+num(pr.f(pr.T),2)+" m";
+    if(pr.sub==="tide") return "A = (high − low)/2 = "+num(pr.A,2)+"   D = (high + low)/2 = "+num(pr.D,2)+"\nhigh to low = 6.2 h = half period → period 12.4 h → B = 2π/12.4 ≈ 0.507\ncosine starts at a high, so shift by the high-tide time "+num(pr.t1,1)+"\n"+pr.ansS[0]+"\nd("+pr.T+") ≈ "+num(pr.f(pr.T),2)+" ft";
+    return "A = ("+pr.Tmax+" − "+pr.Tmin+")/2 = "+fx(pr.A)+"   D = ("+pr.Tmax+" + "+pr.Tmin+")/2 = "+fx(pr.D)+"\nperiod 12 → B = 2π/12 = π/6; max at t = 7 → cos(π/6 (t − 7))\n"+pr.ansS[0]+"\nT("+pr.T+") = "+num(pr.f(pr.T),2)+" °F"; }
+}
+function hintText(pr,bad){
+  if(pr.kind==="feat"){ const H={0:"Amplitude is |A| — the number in front of "+pr.fn+", made positive.",1:"Period is 2π divided by the coefficient of x (after factoring).",2:"Factor the coefficient of x out of the whole angle: Bx − φ = B(x − φ/B). The phase shift is φ/B (positive means right).",3:"The midline is y = D, the constant added on."}; return bad.map(i=>H[i]).join(" "); }
+  if(pr.kind==="graph") return "Read A and D from the max and min first. Then measure from the max to the next min: that is half a period.";
+  if(pr.kind==="asym") return (pr.fn==="tan"||pr.fn==="sec"?"Set the inside angle equal to π/2 + kπ (where cos is 0)":"Set the inside angle equal to kπ (where sin is 0)")+" and solve for x. Spacing between asymptotes is π/B for all four functions.";
+  if(pr.kind==="eval") return "Substitute first: compute the inside angle u = B(x − C), find "+pr.fn+"(u) from the unit circle, then multiply by A and add D.";
+  if(pr.kind==="model") return "A = (max − min)/2, D = (max + min)/2, B = 2π/period. Choose cosine if the story starts at a max (or −cos for a min), then shift by when that happens.";
+  return "";
+}
+function sampleRange(f,a,b){ let mx=-Infinity,mn=Infinity; for(let i=0;i<=400;i++){ const v=f(a+(b-a)*i/400); if(isFinite(v)){mx=Math.max(mx,v);mn=Math.min(mn,v);} } return [mn,mx]; }
+const M7={
+  tab:"Challenge", lesson:"F-TF.B.5 · F-IF.C.7e", accent:"var(--coral)",
+  title:()=>"Practice: "+(KINDS.find(k=>k[0]===(M7.s.pr?M7.s.pr.kind:"feat"))||KINDS[1])[1].toLowerCase(),
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  streakEl:null,
+  newProb(){ M7.s.pr=genProblem(M7.s.kind); M7.s.state="open"; M7.s.reveal=false; M7.s.tries=0; },
+  bar(){ btn("New problem",()=>{M7.newProb();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    KINDS.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=M7.s.kind; sel.onchange=()=>{M7.s.kind=sel.value;M7.newProb();render();}; bar.appendChild(sel);
+    M7.streakEl=spacer(""); M7.upStreak(); },
+  upStreak(){ if(M7.streakEl)M7.streakEl.textContent="Streak "+M7.s.streak+" · Best "+M7.s.best+" · Solved "+M7.s.solved; },
+  draw(){
+    if(!M7.s.pr)M7.newProb();
+    const pr=M7.s.pr, show=M7.s.state==="right"||M7.s.reveal, dsave=degMode; degMode=false;
+    try{
+    if(pr.kind==="model"){
+      const sub=pr.sub; let V;
+      if(sub==="ferris") V=view(-pr.P*0.14,2*pr.P*1.04,-(pr.D+pr.A)*0.1,(pr.D+pr.A)*1.16);
+      else if(sub==="tide") V=view(-2.4,26,-1.4,pr.H+2.2);
+      else V=view(-1.4,13.6,Math.floor((pr.Tmin-14)/10)*10,pr.Tmax+14);
+      const g=grid(V,{xnum:true,xt:sub==="temp"?"month t":sub==="tide"?"hours t":"minutes t",yt:sub==="ferris"?"height (m)":sub==="tide"?"depth (ft)":"°F"}), top=E("g",{}); cv.appendChild(top); reserve(0,0,VW,22);
+      const known= sub==="ferris"? [[0,pr.D-pr.A,"board (bottom)"],[pr.P/2,pr.D+pr.A,"top"]] : sub==="tide"? [[pr.t1,pr.H,"high"],[pr.t1+6.2,pr.L,"low"]] : [[7,pr.Tmax,"July max"],[1,pr.Tmin,"Jan min"]];
+      if(show){ plot(g,V,pr.f,{color:"var(--vert)",w:3.2}); seg(g,V.p(V.x0,pr.D),V.p(V.x1,pr.D),"var(--alt)",1.6,"9 6"); const q=V.p(pr.T,pr.f(pr.T)); dot(g,q,"var(--magenta)",7); lab(top,q[0],q[1],"("+num(pr.T,1)+", "+num(pr.f(pr.T),1)+")","#BE185D"); }
+      known.forEach(k=>{ const q=V.p(k[0],k[1]); dot(g,q,"var(--lin)",6.5); lab(top,q[0],q[1],k[2]+" ("+num(k[0],1)+", "+num(k[1],1)+")","#C2410C",k[1]>pr.D?[[0,-1],[1,-1],[1,1]]:[[0,1],[1,1],[1,-1]]); });
+      return; }
+    const yr=pr.kind==="graph"?5.6:Math.max(4.5,Math.abs(pr.A)+Math.abs(pr.D)+1.6);
+    const V=view(-PI-0.3,3*PI+0.3,-yr,yr), g=grid(V,{}), top=E("g",{}); cv.appendChild(top);
+    if(pr.kind==="graph"){
+      plot(g,V,pr.f,{color:"var(--vert)",w:3.4});
+      const xm=pr.xM+pr.P/2, x0=pr.xM-pr.P/4;
+      [[pr.xM,pr.D+pr.A,"max"],[xm,pr.D-pr.A,"min"],[x0,pr.D,"mid"]].forEach(([x,y,k])=>{ const q=V.p(x,y); dot(g,q,k==="mid"?"var(--alt)":"var(--vert)",6);
+        lab(top,q[0],q[1],"("+piStr(x)+", "+fx(y)+")",k==="mid"?"#047857":"#5B21B6",k==="max"?[[0,-1],[1,-1]]:k==="min"?[[0,1],[1,1]]:[[-1,-1],[-1,1],[1,1]]); });
+      if(show) seg(g,V.p(V.x0,pr.D),V.p(V.x1,pr.D),"var(--alt)",1.6,"9 6");
+      return; }
+    if(!show){ txt(top,VW/2,VH/2-40,"?","mk","#94A3B8"); txt(top,VW/2,VH/2-8,"The graph appears when you solve it","sm","#64748B"); return; }
+    if(pr.kind==="feat"){ const P=TAU/pr.B; seg(g,V.p(V.x0,pr.D),V.p(V.x1,pr.D),"var(--alt)",1.6,"9 6"); plot(g,V,pr.f,{color:"var(--vert)",w:3.4}); plot(g,V,pr.f,{color:"#CA8A04",w:5,from:pr.C,to:pr.C+P}); dot(g,V.p(pr.C,pr.f(pr.C)),"#CA8A04",6); }
+    if(pr.kind==="asym"){ const as=asyms(pr.base,pr.st,V.x0,V.x1); as.forEach(x=>vasym(g,V,x)); plot(g,V,pr.f,{color:"var(--lin)",w:3.2,breaks:as});
+      const q=[V.sx(pr.ans[0]),V.T+20]; lab(top,q[0],q[1],"x = "+piStr(pr.ans[0]),"#C2410C",[[1,0],[1,1]]); }
+    if(pr.kind==="eval"){ const as=pr.fn==="tan"?asyms(pr.C+PI/(2*pr.B),PI/pr.B,V.x0,V.x1):[]; as.forEach(x=>vasym(g,V,x)); plot(g,V,pr.f,{color:"var(--vert)",w:3.2,breaks:as});
+      const q=V.p(pr.x0,pr.val); dot(g,q,"var(--magenta)",7); lab(top,q[0],q[1],"("+piStr(pr.x0)+", "+num(pr.val,2)+")","#BE185D"); }
+    } finally { degMode=dsave; }
+  },
+  panel(full){
+    const pr=M7.s.pr; if(!full&&document.getElementById("chk"))return;
+    const isEq=pr.fields.some(f=>f.eq);
+    side.innerHTML='<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob">'+pr.q+'</p></div>'+
+      '<div class="ansrow">'+pr.fields.map((f,i)=>'<div class="'+(f.wide?"wide":"")+'"><label class="fld" for="ans'+i+'">'+f.l+'</label><input type="text" id="ans'+i+'" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="'+f.ph+'"></div>').join("")+'</div>'+
+      '<p class="fmt">'+(isEq?'Type an equation in x (or t): use sin, cos, pi or π, sqrt, ^ and parentheses, like <b>2sin(3(x − pi/6)) + 1</b>. Any equivalent sine <b>or</b> cosine form is accepted — it is checked numerically at many points.':'Answers may be exact (π/3, 2pi/5, √3/2, sqrt(3)/2, −1/2) or decimals to the nearest hundredth. Phase shift: positive = right, negative = left.')+'</p>'+
+      '<div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap"><button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button><button id="sol" class="ghost" type="button">Show solution</button></div><div id="fb7"></div><div style="height:4px"></div></div>'+
+      '<div class="panel"><h3>How it works</h3><div class="pad"><p>Get one right on the first try to grow your streak. A wrong answer resets it and gives a targeted hint — then try again.</p><p>Pick a single problem type from the menu to drill one skill.</p></div></div>';
+    const ins=pr.fields.map((_,i)=>document.getElementById("ans"+i)), fb=document.getElementById("fb7");
+    const showSol=good=>{ fb.innerHTML=(good||"")+'<div class="fldwrap"><div class="eq">'+solText(pr)+'</div></div>'; };
+    const check=()=>{
+      if(M7.s.state==="right")return;
+      const bad=[]; let unread=false;
+      pr.fields.forEach((f,i)=>{ const raw=ins[i].value;
+        if(f.eq){ const F=compile(raw); if(!F){unread=true;return;}
+          const v=pr.v||"x", a=pr.kind==="model"?0:-PI, b=pr.kind==="model"?pr.P*1.5:3*PI; let okk=true, nan=0;
+          const tol=pr.kind==="model"? 0.06*Math.abs(pr.A)+0.06 : 0.05;
+          for(let k=0;k<=72;k++){ const x=a+(b-a)*k/72, env={}; env[v]=x; env.x=x; env.t=x; const y=F(env); if(!isFinite(y)){nan++;continue;} if(Math.abs(y-pr.f(x))>tol){okk=false;break;} }
+          if(nan>8)okk=false; if(!okk)bad.push(i); return; }
+        let s=String(raw).toLowerCase(), sg=1;
+        if(/left/.test(s)){sg=-1;} s=s.replace(/left|right|units?/g,"").replace(/^\s*(x|y)\s*=/,"");
+        const v=numVal(s)*sg; if(!isFinite(v)){unread=true;return;}
+        let ok=Math.abs(v-pr.ans[i])<=pr.tol;
+        if(!ok&&pr.kind==="feat"&&i===2){ const P=TAU/pr.B, d=(v-pr.C)/P; ok=Math.abs(d-Math.round(d))*P<=pr.tol; }
+        if(!ok&&pr.kind!=="feat"&&Math.abs(pr.ans[i])>20) ok=Math.abs(v-pr.ans[i])<=Math.abs(pr.ans[i])*0.004;
+        if(!ok)bad.push(i); });
+      if(unread){ fb.innerHTML='<div class="verdict bad"><b>I can\'t read that.</b> Fill in every box. Use numbers, π or pi, fractions like 3/4, √ or sqrt( ), and for equations sin( ), cos( ) with parentheses.</div>'; return; }
+      if(!bad.length){
+        M7.s.state="right"; if(M7.s.tries===0&&!M7.s.reveal){ M7.s.streak++; M7.s.best=Math.max(M7.s.best,M7.s.streak); } M7.s.solved++; M7.upStreak();
+        clear(); M7.draw(); ins.forEach(x=>x.disabled=true);
+        showSol('<div class="verdict good"><b>Correct!</b> '+(M7.s.tries||M7.s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+M7.s.streak+".")+' Compare with the worked solution. Press <b>New problem</b> for another.</div>');
+      } else {
+        M7.s.tries++; M7.s.streak=0; M7.upStreak();
+        let extra="";
+        const eqI=pr.fields.findIndex(f=>f.eq);
+        if(eqI>=0&&bad.indexOf(eqI)>=0){ const F=compile(ins[eqI].value); if(F){ const v=pr.v||"x", a=pr.kind==="model"?0:-PI, b=pr.kind==="model"?pr.P*3:3*PI;
+          const mine=sampleRange(x=>{const e={}; e[v]=x; e.x=x; e.t=x; return F(e);},a,b), want=sampleRange(pr.f,a,b);
+          if(isFinite(mine[0])&&isFinite(mine[1])){
+            if(Math.abs(mine[1]-want[1])<0.08&&Math.abs(mine[0]-want[0])<0.08) extra=" Your max and min are right (so A and D are right) — check the period and the shift.";
+            else extra=" Your equation reaches max "+num(mine[1],2)+" and min "+num(mine[0],2)+"; the target reaches "+num(want[1],2)+" and "+num(want[0],2)+"."; } } }
+        fb.innerHTML='<div class="verdict bad"><b>Not quite'+(pr.fields.length>1?" — check "+bad.map(i=>pr.fields[i].l.replace(/\s*=\s*$/,"").replace(/\s*\(.*\)$/,"")).join(" and "):"")+'.</b> '+hintText(pr,bad)+extra+'</div>';
+      }
+    };
+    document.getElementById("chk").onclick=check;
+    ins.forEach(x=>x.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); }));
+    document.getElementById("sol").onclick=()=>{ M7.s.reveal=true; if(M7.s.state!=="right"){M7.s.streak=0;M7.upStreak();} clear(); M7.draw();
+      showSol('<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>'); };
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6,M7];
+function setFS(){ FS=(window.innerWidth<=560)?1.5:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
+function update(){ setFS(); const M=MODS[cur]; clear(); M.draw(); if(M.live){ const l=document.getElementById("live"); if(l)l.innerHTML=M.live(); } else M.panel(false);
+  syncSliders(); bTitle.textContent=M.title(); }
+function render(){
+  setFS(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  if(M===M7&&!M7.s.pr)M7.newProb();
+  bar.innerHTML=""; sliders=[]; M.bar();
+  clear(); M.draw(); M.panel(true);
+  if(M.live){ const l=document.getElementById("live"); if(l)l.innerHTML=M.live(); }
+  syncSliders();
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+  if(cur===0&&M1.s.play)startLoop();
+}
+function go(i,push){ cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>
