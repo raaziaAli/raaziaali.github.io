@@ -1171,7 +1171,7 @@ function genProblem(kind){
       pr.q=`A belt connects pulley A (radius <b>${rA} cm</b>) to pulley B (radius <b>${rB} cm</b>). Pulley A turns at <b>${N} rpm</b>. How fast does pulley B turn, in rpm? (nearest hundredth)`;
       pr.fields=[numField("ω_B (rpm)",N2,{ph:"e.g. 240",alt:[[N*rB/rA,"Upside down: the smaller pulley must spin faster. ω_B = ω_A · r_A / r_B."]]})];
       pr.sol=`belt speed: v = r_A ω_A = r_B ω_B\nω_B = ω_A · r_A / r_B = ${N} · ${rA}/${rB} = ${num(N2,2)} rpm`; pr.hint=`The belt gives both rims the same linear speed, so r_A·ω_A = r_B·ω_B.`; }
-    else if(sb==="v2w"){ const r=pick([0.5,0.75,1.2,2,2.5,3,4]), v=pick([3,4,5,6,8,9,10,12,15]), w=v/r; pr.lab={r:r+" m",w:"v = "+v+" m/s"};
+    else if(sb==="v2w"){ const r=pick([0.5,0.75,1.2,2,2.5,3,4]), v=pick([3,4,5,6,8,9,10,12,15]), w=v/r; pr.lab={r:r+" m",v:v+" m/s"};
       pr.q=`A point on the rim of a wheel of radius <b>${r} m</b> moves at <b>${v} m/s</b>. Find the wheel's angular speed in <b>rad/s</b> (nearest hundredth).`;
       pr.fields=[numField("ω (rad/s)",w,{ph:"e.g. 6",alt:[[v*r,"Solve v = rω for ω — divide by r, don't multiply."]]})];
       pr.sol=`v = rω  →  ω = v / r = ${v} / ${r} = ${num(w,3)} rad/s`; pr.hint=`Rearrange v = rω: ω = v / r.`; }
@@ -1295,10 +1295,10 @@ const M6={
     sdot(g,C,"var(--ink)",6);
     const P=PT(C,R,60); sseg(g,C,P,"#E11D48",3); sdot(g,P,"#E11D48",7);
     if(L.r) stext(g,add(PT(C,R/2,60),[16,6]),"r "+(L.r.startsWith("d")?"":"= ")+L.r,"sm","#BE123C","start");
-    const tg=[-Math.sin(60*D2R),-Math.cos(60*D2R)]; arrow(g,P,add(P,mul(tg,70)),"#16A34A",3.4); stext(g,add(P,mul(tg,86)),"v","sm","#15803D");
+    const tg=[-Math.sin(60*D2R),-Math.cos(60*D2R)]; arrow(g,P,add(P,mul(tg,70)),"#16A34A",3.4); stext(g,add(P,mul(tg,86)),L.v?"v = "+L.v:"v","sm","#15803D");
     spath(g,pathD(arcPts(C,R+22,-20,40)),"var(--vert)",3); arrowHead(g,PT(C,R+22,40),unit(sub(PT(C,R+22,40),PT(C,R+22,36))),"var(--vert)",12);
     if(L.w) stext(g,PT(C,R+46,0),"ω: "+L.w,"sm","#6D28D9","start");
-    if(show) infoBox(g,10,10,["answer: "+(M6.ansText||"")],"#047857");
+    if(show&&M6.s.state==="right") infoBox(g,10,10,["your answer: "+(M6.ansText||"")],"#047857");
   },
   panel(full){
     const pr=M6.s.pr;
