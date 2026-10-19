@@ -1,0 +1,1278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coordinate Line Lab — Geometry Unit 1</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M10 50L54 14' stroke='%2300E5FF' stroke-width='6' stroke-linecap='round'/%3E%3Ccircle cx='10' cy='50' r='6' fill='%23FF3D8A'/%3E%3Ccircle cx='54' cy='14' r='6' fill='%23FFD93D'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .rel[data-pair]{cursor:pointer}
+  .rel[data-pair]:hover{background:rgba(255,255,255,.05)}
+  .rel.active{background:rgba(255,255,255,.09);box-shadow:inset 3px 0 0 var(--accent)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top}
+  table.facts .ab{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  table.facts .st{color:#DDDDF2}
+  table.facts .st i{display:block;color:var(--dim);font-style:normal;font-size:13px;margin-top:4px}
+  .cathead{padding-top:18px!important;padding-bottom:6px!important;font-family:var(--display);font-weight:600;
+    font-size:13px;letter-spacing:.02em;color:var(--yellow);border-bottom:none!important}
+  .chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-right:9px}
+  .chip.assume{background:rgba(255,217,61,.18);color:var(--yellow)}
+  .chip.proved{background:rgba(94,234,212,.16);color:var(--mint)}
+  ol.chain{margin:0;padding:6px 20px 18px 38px;font-size:15px;color:#CFCFEA}
+  ol.chain li{padding:8px 0} ol.chain li::marker{color:var(--accent);font-weight:700}
+  ol.chain li b{color:#fff}
+
+  .steps{width:100%;border-collapse:collapse;font-size:15px}
+  .steps td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:middle}
+  .steps .stmt{font-family:var(--mono);font-size:14px;font-weight:600;color:#fff;white-space:nowrap}
+  .steps .why{width:56%}
+  .steps tr.right .stmt{color:var(--mint)}
+  .steps tr.right select{border-color:rgba(94,234,212,.6)}
+  .steps tr.wrong select{border-color:var(--coral)}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.8;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.4;fill:none;stroke-dasharray:9 6}
+  .wedge{stroke-width:2.4;fill-opacity:.17;cursor:pointer}
+  .wedge.flat{cursor:default}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── Coordinate Line Lab additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible,.choice:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:16px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  @media (max-width:560px){ svg.canvas .sm{font-size:21px;stroke-width:5} svg.canvas .mk{font-size:27px} svg.canvas .num{font-size:22px} svg.canvas .ax{font-size:16px} }
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .leg{stroke-width:3;fill:none;stroke-dasharray:8 5;stroke-linecap:round}
+  .tick{stroke:var(--graphite);stroke-width:2.2}
+  .ghostdot{fill:#9AA8C7;stroke:#fff;stroke-width:2}
+  .nt{position:relative;display:inline-block;padding-top:.42em;line-height:1.05;font-family:var(--mono);font-weight:700;color:#fff;white-space:nowrap}
+  .nt::before{content:"";position:absolute;left:.06em;right:.06em;top:.2em;border-top:2px solid currentColor}
+  .nt.ray::after,.nt.line::after{content:"";position:absolute;right:-.12em;top:calc(.2em - 3.5px);border-left:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .nt.line .la{position:absolute;left:-.12em;top:calc(.2em - 3.5px);border-right:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .uterms{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+  .uterms span{font-family:var(--mono);font-size:12px;font-weight:600;padding:5px 11px;border-radius:100px;
+    border:1px solid var(--edge);color:var(--dim);opacity:.55}
+  .uterms span.on{opacity:1;color:#0A0A1F;background:var(--accent);border-color:var(--accent)}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px}
+  .choice{font-family:var(--ui);font-size:15px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:14px;padding:13px 12px;cursor:pointer;text-align:left;line-height:1.5;transition:.15s}
+  .choice:hover{background:rgba(255,255,255,.12)}
+  .choice.right{border-color:var(--mint);background:rgba(94,234,212,.16)}
+  .choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.14)}
+  .choice small{display:block;font-weight:400;color:var(--dim);font-size:12.5px}
+  .stepl{list-style:none;margin:0;padding:6px 0}
+  .stepl li{padding:10px 20px;border-left:3px solid transparent;color:var(--dim);font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li.done{color:#CFCFEA}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li b{color:#fff}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  @media (max-width:560px){
+    .choices{grid-template-columns:1fr}
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Coordinate Line Lab</h1>
+    <div class="eyebrow">Geometry · Unit 1 · Points, Lines &amp; Angles</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Coordinate geometry figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every figure is live and every number is computed from the drawing — drag a point and the work follows. Vocabulary follows Common Core / Eureka Math (EngageNY) Geometry.
+    <div class="links"><a href="/geometry/">← Geometry course</a><a href="/math/#geometry">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460, S=30, OX=350, OY=230;     // 1 grid unit = 30 svg px, origin at board centre
+const XL=11, YL=7;                              // usable coordinate range
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const D2R=Math.PI/180;
+const norm=d=>((d%360)+360)%360;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const isInt=v=>Math.abs(v-Math.round(v))<1e-9;
+const near=(a,b,e)=>Math.abs(a-b)<(e||1e-9);
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+function num(v,dp){ dp=(dp==null?1:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+function frac(v){
+  for(let d=1;d<=24;d++){ const n=Math.round(v*d);
+    if(Math.abs(n/d-v)<1e-7){ const g=gcd(n,d), N=n/g, D=d/g; return D===1? minus(String(N)) : minus(N+"/"+D); } }
+  return null;
+}
+let snap=true, FS=1;           // shared snap-to-grid setting (tabs 2–5)
+let cur=0;
+// exact fraction when coordinates are on the grid, decimals otherwise
+function fx(v){ const f=frac(v); return (f&&(snap||cur===5))? f : num(v,2); }
+function fxa(v){ const s=fx(v); return s.indexOf("/")>=0? s+" ≈ "+num(v,2) : s; }
+const par=(v,f)=>{ const s=(f||fx)(v); return v<-1e-12? "("+s+")" : s; };
+const nm=v=>num(v,2);
+const pt=p=>"("+nm(p[0])+", "+nm(p[1])+")";
+function rootStr(n){
+  n=Math.round(n); if(n===0)return "0";
+  let k=1,r=n;
+  for(let i=Math.floor(Math.sqrt(n));i>1;i--){ if(n%(i*i)===0){k=i;r=n/(i*i);break;} }
+  if(r===1)return String(k);
+  return (k>1?k:"")+"√"+r;
+}
+const W2S=p=>[OX+p[0]*S, OY-p[1]*S];
+const S2W=p=>[(p[0]-OX)/S, (OY-p[1])/S];
+function snapW(sp,free){
+  const w=S2W(sp); let x=clamp(w[0],-XL,XL), y=clamp(w[1],-YL,YL);
+  if(snap&&!free){x=Math.round(x);y=Math.round(y);} else {x=Math.round(x*10)/10;y=Math.round(y*10)/10;}
+  return [x,y];
+}
+const same=(p,q)=>near(p[0],q[0],1e-9)&&near(p[1],q[1],1e-9);
+const sub=(p,q)=>[p[0]-q[0],p[1]-q[1]];
+const add=(p,q)=>[p[0]+q[0],p[1]+q[1]];
+const mul=(p,k)=>[p[0]*k,p[1]*k];
+const len=v=>Math.hypot(v[0],v[1]);
+const unit=v=>{const l=len(v)||1;return [v[0]/l,v[1]/l];};
+const angOf=(c,p)=>norm(Math.atan2(-(p[1]-c[1]),p[0]-c[0])/D2R);  // screen coords, math orientation
+const PT=(c,r,deg)=>[c[0]+r*Math.cos(deg*D2R), c[1]-r*Math.sin(deg*D2R)];
+const LET="ABCDEF";
+
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+function gridBg(axes){
+  const d=E("defs"); d.innerHTML='<clipPath id="fr"><rect width="'+VW+'" height="'+VH+'"/></clipPath>';
+  cv.appendChild(d);
+  cv.appendChild(E("rect",{width:VW,height:VH,fill:"rgba(255,255,255,0)"}));
+  const gg=E("g",{});
+  for(let x=-XL;x<=XL;x++){const sx=OX+x*S; gg.appendChild(E("line",{x1:sx,y1:0,x2:sx,y2:VH,style:"stroke:var(--grid)",
+    "stroke-width":1}));}
+  for(let y=-YL;y<=YL;y++){const sy=OY-y*S; gg.appendChild(E("line",{x1:0,y1:sy,x2:VW,y2:sy,style:"stroke:var(--grid)","stroke-width":1}));}
+  if(axes){
+    gg.appendChild(E("line",{x1:0,y1:OY,x2:VW,y2:OY,stroke:"#8FA3C8","stroke-width":1.8}));
+    gg.appendChild(E("line",{x1:OX,y1:0,x2:OX,y2:VH,stroke:"#8FA3C8","stroke-width":1.8}));
+    for(let x=-10;x<=10;x+=2){ if(!x)continue; const t=E("text",{x:OX+x*S,y:OY+15,class:"ax","text-anchor":"middle"}); t.textContent=minus(x); gg.appendChild(t);}
+    for(let y=-6;y<=6;y+=2){ if(!y)continue; const t=E("text",{x:OX-6,y:OY-y*S+4,class:"ax","text-anchor":"end"}); t.textContent=minus(y); gg.appendChild(t);}
+    const o=E("text",{x:OX-6,y:OY+15,class:"ax","text-anchor":"end"}); o.textContent="0"; gg.appendChild(o);
+    const xl=E("text",{x:VW-10,y:OY-7,class:"ax","text-anchor":"end"}); xl.textContent="x"; gg.appendChild(xl);
+    const yl=E("text",{x:OX+8,y:13,class:"ax"}); yl.textContent="y"; gg.appendChild(yl);
+  }
+  cv.appendChild(gg);
+  const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
+}
+// screen-space primitives
+function sseg(g,p,q,style,w,dash){
+  const a={x1:p[0],y1:p[1],x2:q[0],y2:q[1],style:"stroke:"+(style||"var(--graphite)"),"stroke-width":w||2.8,"stroke-linecap":"round",fill:"none"};
+  if(dash)a["stroke-dasharray"]=dash; const n=E("line",a); g.appendChild(n); return n;
+}
+function sdot(g,p,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||5,style:"fill:"+(color||"var(--ink)"),stroke:"#fff","stroke-width":2,"pointer-events":"none"})); }
+function sgrab(g,p,id,color){
+  g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?26:16,class:"grab","data-drag":id}));
+  sdot(g,p,color);
+}
+function stext(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("style","fill:"+color);
+  t.textContent=s; g.appendChild(t); return t;
+}
+function arrowHead(g,tip,dir,color){
+  const n=[-dir[1],dir[0]], b=[tip[0]-dir[0]*14,tip[1]-dir[1]*14];
+  g.appendChild(E("polygon",{points:[tip,[b[0]+n[0]*6.5,b[1]+n[1]*6.5],[b[0]-n[0]*6.5,b[1]-n[1]*6.5]].map(p=>p.join(",")).join(" "),style:"fill:"+(color||"var(--graphite)")}));
+}
+// Liang–Barsky: where the line p→q meets the board (inset); tmin = 0 for a ray
+function clipLine(p,q,inset,tmin){
+  const dx=q[0]-p[0], dy=q[1]-p[1]; let t0=(tmin==null?-Infinity:tmin), t1=Infinity;
+  const P=[-dx,dx,-dy,dy], Q=[p[0]-inset,VW-inset-p[0],p[1]-inset,VH-inset-p[1]];
+  for(let i=0;i<4;i++){
+    if(Math.abs(P[i])<1e-12){ if(Q[i]<0)return null; continue; }
+    const t=Q[i]/P[i]; if(P[i]<0)t0=Math.max(t0,t); else t1=Math.min(t1,t);
+  }
+  if(t0>=t1)return null;
+  return [[p[0]+t0*dx,p[1]+t0*dy],[p[0]+t1*dx,p[1]+t1*dy]];
+}
+// label box that never leaves the board: anchor point + direction to push
+function smartLabel(g,anchor,dir,text,color,cls){
+  const w=text.length*8.3*FS+4, h=16*FS, d=unit(dir), off=16*FS;
+  let cx=anchor[0]+d[0]*(off+w/2*Math.abs(d[0])), cy=anchor[1]+d[1]*(off+h/2*Math.abs(d[1])+2);
+  cx=clamp(cx,w/2+6,VW-w/2-6); cy=clamp(cy,h/2+6,VH-h/2-6);
+  return stext(g,[cx,cy],text,cls||"sm",color);
+}
+// label beside a segment (screen pts), on the side given by normal n
+function sideLabel(g,p,q,n,text,color,t){
+  t=(t==null?0.5:t); const m=[p[0]+(q[0]-p[0])*t,p[1]+(q[1]-p[1])*t];
+  return smartLabel(g,m,n,text,color);
+}
+function rightMark(g,c,u,v,s){ s=s||12;
+  const a=[c[0]+u[0]*s,c[1]+u[1]*s], b=[a[0]+v[0]*s,a[1]+v[1]*s], e=[c[0]+v[0]*s,c[1]+v[1]*s];
+  g.appendChild(E("polyline",{points:[a,b,e].map(p=>p.join(",")).join(" "),class:"rt"}));
+}
+// world-space wrappers
+const wseg=(g,P,Q,c,w,d)=>sseg(g,W2S(P),W2S(Q),c,w,d);
+function wfull(g,P,Q,c,w,d){ const v=unit(sub(Q,P)); return wseg(g,add(P,mul(v,-60)),add(P,mul(v,60)),c,w,d); }
+function wlabel(g,P,text,away,color){
+  let dir=sub(W2S(P),W2S(away)); if(len(dir)<1)dir=[-1,-1];
+  return smartLabel(g,W2S(P),dir,text,color);
+}
+const outward=(P,cen)=>{const d=sub(W2S(P),W2S(cen));return len(d)<1?[-.7,-.7]:d;};
+function normalAway(P,Q,ref){ // screen normal of PQ pointing away from ref
+  const p=W2S(P),q=W2S(Q),r=W2S(ref); const d=unit(sub(q,p)); let n=[-d[1],d[0]];
+  const m=[(p[0]+q[0])/2,(p[1]+q[1])/2]; if((r[0]-m[0])*n[0]+(r[1]-m[1])*n[1]>0)n=[-n[0],-n[1]]; return n;
+}
+const centroid=V=>[V.reduce((s,p)=>s+p[0],0)/V.length,V.reduce((s,p)=>s+p[1],0)/V.length];
+
+/* notation in HTML */
+const ntSeg=(a,b)=>`<span class="nt">${a}${b}</span>`;
+const ntRay=(a,b)=>`<span class="nt ray">${a}${b}</span>`;
+const ntLine=(a,b)=>`<span class="nt line"><i class="la"></i>${a}${b}</span>`;
+
+/* ══════════════════════ shared worked solutions ══════════════════════ */
+function distInfo(A,B){
+  const dx=B[0]-A[0], dy=B[1]-A[1], s=dx*dx+dy*dy;
+  return {dx,dy,s,d:Math.sqrt(s),exact:(isInt(dx)&&isInt(dy))? rootStr(s) : null};
+}
+function distWork(A,B,n){
+  n=n||"AB"; const I=distInfo(A,B);
+  let t=`${n} = √((x₂ − x₁)² + (y₂ − y₁)²)\n`;
+  t+=`   = √((${nm(B[0])} − ${par(A[0],nm)})² + (${nm(B[1])} − ${par(A[1],nm)})²)\n`;
+  t+=`   = √(${par(I.dx,nm)}² + ${par(I.dy,nm)}²)\n`;
+  t+=`   = √(${nm(I.dx*I.dx)} + ${nm(I.dy*I.dy)})\n`;
+  if(I.exact){ t+=`   = √${nm(I.s)}`; if(I.exact!=="√"+nm(I.s))t+=` = ${I.exact}`; if(!isInt(I.d))t+=` ≈ ${num(I.d)}`; }
+  else t+=`   = √${nm(I.s)} ≈ ${num(I.d)}`;
+  return t;
+}
+function midWork(A,B){
+  const sx=A[0]+B[0], sy=A[1]+B[1];
+  return `M = ((x₁ + x₂)/2, (y₁ + y₂)/2)\n`+
+    `  = ((${nm(A[0])} + ${par(B[0],nm)})/2, (${nm(A[1])} + ${par(B[1],nm)})/2)\n`+
+    `  = (${nm(sx)}/2, ${nm(sy)}/2)\n`+
+    `  = (${num(sx/2,2)}, ${num(sy/2,2)})`;
+}
+function partPoint(A,B,m,n){ const k=m/(m+n); return [A[0]+k*(B[0]-A[0]),A[1]+k*(B[1]-A[1])]; }
+function partWork(A,B,m,n){
+  const k=m/(m+n), dx=B[0]-A[0], dy=B[1]-A[1], P=partPoint(A,B,m,n);
+  const ks=`${m}/${m+n}`, kss=fx(k), kshow=(kss!==ks && kss.indexOf("/")>=0)? ks+" = "+kss : ks;
+  return `P = A + (m/(m + n))(B − A)\n`+
+    `  = (${nm(A[0])}, ${nm(A[1])}) + (${kshow})(${nm(B[0])} − ${par(A[0],nm)}, ${nm(B[1])} − ${par(A[1],nm)})\n`+
+    `  = (${nm(A[0])}, ${nm(A[1])}) + (${ks})(${nm(dx)}, ${nm(dy)})\n`+
+    `  = (${nm(A[0])} + ${par(k*dx)}, ${nm(A[1])} + ${par(k*dy)})\n`+
+    `  = (${fxa(P[0])}, ${fxa(P[1])})`;
+}
+function slopeOf(P,Q){ const dx=Q[0]-P[0], dy=Q[1]-P[1]; return {dx,dy,vert:Math.abs(dx)<1e-9,m:Math.abs(dx)<1e-9?Infinity:dy/dx}; }
+function slopeWork(P,Q,lbl){
+  const s=slopeOf(P,Q);
+  let t=`${lbl||"m"} = (y₂ − y₁)/(x₂ − x₁) = (${nm(Q[1])} − ${par(P[1],nm)})/(${nm(Q[0])} − ${par(P[0],nm)}) = ${nm(s.dy)}/${nm(s.dx)}`;
+  if(s.vert) t+=`  → undefined (vertical)`;
+  else { const f=fx(s.m); if(f!==nm(s.dy)+"/"+nm(s.dx)) t+=` = ${f}`; }
+  return t;
+}
+const slopeStr=s=>s.vert?"undefined":fx(s.m);
+function coefX(m){
+  if(near(m,1))return "x"; if(near(m,-1))return "−x";
+  const f=fx(Math.abs(m)); return (m<0?"−":"")+(f.indexOf("/")>=0? "("+f+")x" : f+"x");
+}
+function slopeInt(m,b){
+  if(Math.abs(m)<1e-12)return "y = "+fx(b);
+  let t="y = "+coefX(m); if(Math.abs(b)>1e-9)t+=(b<0?" − ":" + ")+fx(Math.abs(b)); return t;
+}
+const vsub=(v,name)=> Math.abs(v)<1e-12? name : (v<0? `${name} + ${fx(-v)}` : `${name} − ${fx(v)}`);
+// line through Q parallel/perpendicular to the line through P0,P1
+function buildLine(P0,P1,Q,kind){
+  const s=slopeOf(P0,P1), horiz=!s.vert&&Math.abs(s.m)<1e-12;
+  let out={kind}, t="";
+  t+=slopeWork(P0,P1,"slope of ℓ")+"\n";
+  if(kind==="par"){
+    if(s.vert){ out.vert=true; t+=`Parallel lines are both vertical.\nEquation:  x = ${fx(Q[0])}`; out.eq=`x = ${fx(Q[0])}`; out.dir=[0,1]; out.text=t; return out; }
+    out.m=s.m; t+=`Parallel lines have equal slopes:  m∥ = ${fx(s.m)}\n`;
+  } else {
+    if(s.vert){ out.m=0; t+=`ℓ is vertical, so a perpendicular line is horizontal:  m⊥ = 0\n`; }
+    else if(horiz){ out.vert=true; t+=`ℓ is horizontal (m = 0), so a perpendicular line is vertical.\nEquation:  x = ${fx(Q[0])}`; out.eq=`x = ${fx(Q[0])}`; out.dir=[0,1]; out.text=t; return out; }
+    else { out.m=-1/s.m; t+=`Negative reciprocal:  m⊥ = −1/(${fx(s.m)}) = ${fx(out.m)}\n`; }
+  }
+  const m=out.m, b=Q[1]-m*Q[0]; out.b=b; out.dir=[1,m];
+  t+=`Point-slope through Q${pt(Q)}:\n  y − y₀ = m(x − x₀)\n  ${vsub(Q[1],"y")} = ${Math.abs(m)<1e-12?"0":fx(m)}(${vsub(Q[0],"x")})\n`;
+  t+=`b = y₀ − m·x₀ = ${nm(Q[1])} − ${par(m)}·${par(Q[0],nm)} = ${fx(b)}\n`;
+  t+=`Slope-intercept:  ${slopeInt(m,b)}`;
+  out.eq=slopeInt(m,b); out.text=t; return out;
+}
+function perimWork(V){
+  let t="", tot=0, parts=[];
+  V.forEach((P,i)=>{ const Q=V[(i+1)%V.length], I=distInfo(P,Q), n=LET[i]+LET[(i+1)%V.length];
+    tot+=I.d; parts.push(num(I.d));
+    let line=`${n} = √(${par(I.dx,nm)}² + ${par(I.dy,nm)}²) = √${nm(I.s)}`;
+    if(I.exact&&I.exact!=="√"+nm(I.s))line+=` = ${I.exact}`;
+    if(!isInt(I.d))line+=` ≈ ${num(I.d)}`;
+    t+=line+"\n"; });
+  t+=`Perimeter ≈ ${parts.join(" + ")} ≈ ${num(tot)}`;
+  return {text:t,P:tot};
+}
+function shoelace(V){ let s=0; const terms=[]; V.forEach((P,i)=>{const Q=V[(i+1)%V.length]; const v=P[0]*Q[1]-Q[0]*P[1]; terms.push({P,Q,v}); s+=v;}); return {sum:s,terms,area:Math.abs(s)/2}; }
+function segX(a,b,c,d){ // proper intersection of segments ab, cd
+  const o=(p,q,r)=>Math.sign((q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]));
+  return o(a,b,c)*o(a,b,d)<0 && o(c,d,a)*o(c,d,b)<0;
+}
+function isSimple(V){
+  const n=V.length;
+  for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+    if(j===i+1||(i===0&&j===n-1))continue;
+    if(segX(V[i],V[(i+1)%n],V[j],V[(j+1)%n]))return false; }
+  for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)if(same(V[i],V[j]))return false;
+  return true;
+}
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null;
+function svgPt(e){
+  const m=cv.getScreenCTM(); if(!m)return [0,0];
+  const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y];
+}
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag, M=MODS[cur];
+  if(id){ dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); return; }
+  if(M.place){ M.place(svgPt(e)); update(); }
+});
+cv.addEventListener("pointermove",e=>{
+  if(!dragId)return; const M=MODS[cur]; if(!M.drag)return;
+  if(M.drag(dragId,svgPt(e))!==false)update();
+});
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+
+/* bar builders */
+function btn(label,fn,cls){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(opts,val,fn){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group");
+  opts.forEach(([k,lab])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=lab;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s;
+}
+function chk(label,val,fn){
+  const l=document.createElement("label"); l.className="chk";
+  const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i;
+}
+function snapChk(){ return chk("Snap to grid",snap,v=>{snap=v; MODS.forEach(M=>M.resnap&&M.resnap()); update();}); }
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function slider(label,min,max,val,fn){
+  const l=document.createElement("label"); l.className="rng"; l.textContent=label+" ";
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=1; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); o.textContent=val;
+  i.oninput=()=>{o.textContent=i.value; fn(+i.value);};
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l); return i;
+}
+const snapAll=arr=>arr.map(p=>snap?[Math.round(p[0]),Math.round(p[1])]:p);
+function tryPanel(html){ return `<div class="panel"><h3>Try this</h3><div class="pad">${html}</div></div>`; }
+
+/* ══════════════════════ TAB 1 · undefined terms & definitions ══════════════════════ */
+const UT=[["point","point"],["line","line"],["plane","plane"],["dist","distance along a line"],["arc","distance around a circular arc"]];
+const TOOLS={
+  point:{label:"Point",need:["A"],terms:["point"],
+    def:`<p><span class="term">Point</span> is an <b>undefined term</b>. A point names an exact location; it has no length, width or thickness. We draw a dot and name it with a capital letter.</p>`,
+    nota:()=>`point A`,
+    tryit:`Place a point anywhere. Could two different points ever sit at the same location? (No — then they would be the same point.)`},
+  line:{label:"Line",need:["A","B"],terms:["point","line"],
+    def:`<p><span class="term">Line</span> is an <b>undefined term</b>. A line is a perfectly straight set of points with no thickness that extends without end in both directions. Through any two distinct points there is exactly one line.</p>`,
+    nota:()=>`${ntLine("A","B")} &nbsp;or&nbsp; line AB &nbsp;or&nbsp; ${ntLine("B","A")} (same line)`,
+    tryit:`Drag A and B anywhere. Is there any position where two different lines pass through both A and B? Name this line three different ways.`},
+  segment:{label:"Segment",need:["A","B"],terms:["point","line","dist"],
+    def:`<p>The <span class="term">segment</span> ${ntSeg("A","B")} is the set of points consisting of A, B, and all points on line AB that lie <b>between</b> A and B. A and B are its endpoints.</p><p>The <b>length</b> of the segment is the distance from A to B, written AB with no bar: a number, not a figure.</p>`,
+    nota:()=>`${ntSeg("A","B")} = ${ntSeg("B","A")} is the figure; AB is its length`,
+    tryit:`Make AB exactly 5 units long without making the segment horizontal or vertical. (Hint: a 3-4-5 right triangle.)`},
+  ray:{label:"Ray",need:["A","B"],terms:["point","line"],
+    def:`<p>The <span class="term">ray</span> ${ntRay("A","B")} is the point A together with all points on line AB that lie on the <b>same side of A as B</b>. A is the endpoint (vertex) of the ray.</p><p>Order matters: the first letter is always the endpoint.</p>`,
+    nota:()=>`${ntRay("A","B")} starts at A and passes through B; ${ntRay("B","A")} is a different ray`,
+    tryit:`Sketch ${ntRay("A","B")} and ${ntRay("B","A")} on paper. What figure do they share? (Their overlap is ${ntSeg("A","B")}.)`},
+  plane:{label:"Plane",need:["A","B","C"],terms:["point","line","plane"],
+    def:`<p><span class="term">Plane</span> is an <b>undefined term</b>. A plane is a perfectly flat surface with no thickness that extends without end in every direction. The shaded shape is only a hint: a plane has no edges.</p><p>Any three <b>non-collinear</b> points lie in exactly one plane.</p>`,
+    nota:()=>`plane ABC &nbsp;or a single script letter, plane 𝓜`,
+    tryit:`Drag C onto line AB. Why do three collinear points fail to pick out just one plane? Think of a door turning on its hinge line.`},
+  angle:{label:"Angle",need:["A","B","C"],terms:["point","line","arc"],
+    def:`<p>An <span class="term">angle</span> is the union of two non-collinear rays with the same endpoint. ∠ABC is made of ${ntRay("B","A")} and ${ntRay("B","C")}; the common endpoint B is the <b>vertex</b>, always the middle letter.</p><p>Its <b>measure</b> comes from the arc it cuts off on a circle centred at the vertex: a full turn is 360°.</p>`,
+    nota:()=>`∠ABC = ∠CBA = ∠B; its measure is m∠ABC`,
+    tryit:`Drag A until m∠ABC is exactly 90°. Then drag it to 180°: why is a straight angle not an angle by this definition?`},
+  circle:{label:"Circle",need:["O","A","B"],terms:["point","dist","arc"],
+    def:`<p>Given a point O and a distance r, the <span class="term">circle</span> with center O and radius r is the set of all points in the plane that are at distance r from O.</p><p>An <b>arc</b> is a connected part of a circle. The length of arc AB is a distance measured <b>around</b> the circle, not straight across.</p>`,
+    nota:()=>`circle O; radius ${ntSeg("O","A")}; arc AB, written ⌒AB`,
+    tryit:`Slide B around until arc AB is half the circle. Arc length ÷ radius should be about 3.14 — why?`},
+  perp:{label:"Perpendicular",need:["A","B","C","D"],terms:["point","line","arc"],
+    def:`<p>Two lines are <span class="term">perpendicular</span> if they intersect and one of the angles formed is a <b>right angle</b> (measure 90°). Then all four angles are right angles.</p><p>Segments and rays are perpendicular when the lines containing them are.</p>`,
+    nota:()=>`${ntLine("A","B")} ⊥ ${ntLine("C","D")}`,
+    tryit:`Drag D: the board snaps when you get within 3° of 90°. How many lines through C are perpendicular to line AB?`},
+  par:{label:"Parallel",need:["A","B","C","D"],terms:["point","line","plane"],
+    def:`<p>Two lines in a plane are <span class="term">parallel</span> if they <b>do not intersect</b>. Notice the definition is about not meeting, not about "same direction".</p><p>Segments and rays are parallel when the lines containing them are.</p>`,
+    nota:()=>`${ntLine("A","B")} ∥ ${ntLine("C","D")}`,
+    tryit:`Tilt D slightly off parallel. The lines now meet — maybe far off the board. The panel tells you where.`}
+};
+const DEF1={
+  point:{A:[350,230]}, line:{A:[230,290],B:[470,170]}, segment:{A:[200,320],B:[500,140]},
+  ray:{A:[180,310],B:[400,200]}, plane:{A:[230,300],B:[480,330],C:[420,160]},
+  angle:{A:[500,120],B:[250,320],C:[560,330]}, circle:{O:[350,235],A:[500,235],B:[0,0]},
+  perp:{A:[140,330],B:[560,170],C:[290,110],D:[402,397]}, par:{A:[140,170],B:[520,110],C:[170,340],D:[512,286]}
+};
+const U1=30; // tab-1 unit: one grid square
+const M1={
+  tab:"Undefined terms", lesson:"G-CO.A.1", accent:"var(--cyan)",
+  title:()=>"Build it: "+TOOLS[M1.s.tool].label.toLowerCase(),
+  s:{tool:"segment",pts:null,bAng:110,quiz:null,pick:null,score:{r:0,t:0},built:null},
+  init(){ M1.reset(); },
+  reset(){ const d=DEF1[M1.s.tool]; M1.s.pts={}; for(const k in d)M1.s.pts[k]=d[k].slice(); M1.s.bAng=110; if(M1.s.tool==="circle")M1.fixB(); },
+  fixB(){ const P=M1.s.pts; if(P.O&&P.A&&P.B){ const r=len(sub(P.A,P.O)); P.B=PT(P.O,r,M1.s.bAng);} },
+  bar(){
+    const row=document.createElement("div"); row.className="chiprow";
+    Object.keys(TOOLS).forEach(k=>{ const b=document.createElement("button"); b.type="button"; b.style.setProperty("--c","var(--cyan)");
+      b.textContent=TOOLS[k].label; b.setAttribute("aria-pressed",String(M1.s.tool===k));
+      b.onclick=()=>{M1.s.tool=k; M1.reset(); render();}; row.appendChild(b); });
+    bar.appendChild(row);
+    btn("Clear & place points",()=>{M1.s.pts={}; update();});
+    btn("Reset figure",()=>{M1.reset(); update();});
+    spacer("Tap the board to place · drag to move");
+  },
+  place(p){
+    const T=TOOLS[M1.s.tool], P=M1.s.pts; const k=T.need.find(n=>!P[n]); if(!k)return;
+    p=[clamp(p[0],14,VW-14),clamp(p[1],14,VH-14)];
+    if(M1.s.tool==="circle"&&k==="B"){ M1.s.bAng=angOf(P.O,p); P.B=[0,0]; M1.fixB(); return; }
+    P[k]=p;
+  },
+  drag(id,p){
+    const P=M1.s.pts, t=M1.s.tool; p=[clamp(p[0],14,VW-14),clamp(p[1],14,VH-14)];
+    if(t==="circle"){
+      if(id==="B"){ M1.s.bAng=angOf(P.O,p); M1.fixB(); return; }
+      P[id]=p; if(len(sub(P.A,P.O))<20)return false; M1.fixB(); return;
+    }
+    // snapping assists for perpendicular / parallel
+    if((t==="perp"||t==="par")&&id==="D"&&P.A&&P.B&&P.C){
+      const u=unit(sub(P.B,P.A)), w=sub(p,P.C), L=len(w);
+      if(L>20){ const a=Math.acos(clamp(Math.abs((u[0]*w[0]+u[1]*w[1])/L),0,1))/D2R;
+        if(t==="perp"&&a>87){ const n=[-u[1],u[0]], s=Math.sign(n[0]*w[0]+n[1]*w[1])||1; p=[P.C[0]+n[0]*L*s,P.C[1]+n[1]*L*s]; }
+        if(t==="par"&&a<3){ const s=Math.sign(u[0]*w[0]+u[1]*w[1])||1; p=[P.C[0]+u[0]*L*s,P.C[1]+u[1]*L*s]; } }
+    }
+    for(const k in P){ if(k!==id&&P[k]&&len(sub(P[k],p))<10)return false; }
+    P[id]=p;
+  },
+  info(){ // live measures for the current tool
+    const P=M1.s.pts, t=M1.s.tool, T=TOOLS[t], ok=T.need.every(k=>P[k]); if(!ok)return null;
+    const L=(a,b)=>len(sub(P[b],P[a]))/U1;
+    const r={};
+    if(t==="segment")r.AB=L("A","B");
+    if(t==="angle"||t==="plane"){ const v1=sub(P.A,P.B), v2=sub(P.C,P.B); r.cross=(v1[0]*v2[1]-v1[1]*v2[0])/(len(v1)*len(v2));
+      let d=Math.abs(angOf(P.B,P.A)-angOf(P.B,P.C)); if(d>180)d=360-d; r.ang=d; }
+    if(t==="circle"){ r.r=L("O","A"); r.th=norm(M1.s.bAng-angOf(P.O,P.A)); r.arc=r.r*r.th*D2R; }
+    if(t==="perp"||t==="par"){
+      const d1=sub(P.B,P.A), d2=sub(P.D,P.C); const cr=d1[0]*d2[1]-d1[1]*d2[0];
+      let a=Math.abs(angOf([0,0],d2)-angOf([0,0],d1))%180; r.ang=a; r.cross=cr/(len(d1)*len(d2));
+      if(Math.abs(r.cross)>1e-6){ const w=sub(P.C,P.A); const s=(w[0]*d2[1]-w[1]*d2[0])/cr; r.X=add(P.A,mul(d1,s)); }
+    }
+    return r;
+  },
+  draw(){
+    const g=gridBg(false), P=M1.s.pts, t=M1.s.tool, T=TOOLS[t], I=M1.info(), ink="var(--graphite)", blue="var(--corr)";
+    const have=T.need.filter(k=>P[k]);
+    const cen=have.length? [have.reduce((s,k)=>s+P[k][0],0)/have.length, have.reduce((s,k)=>s+P[k][1],0)/have.length] : [350,230];
+    const drawLine=(a,b,c,both)=>{ const cl=clipLine(a,b,22,both?null:0); if(!cl)return; sseg(g,cl[0],cl[1],c,3);
+      const d=unit(sub(b,a)); arrowHead(g,add(cl[1],mul(d,8)),d,c); if(both)arrowHead(g,add(cl[0],mul(d,-8)),[-d[0],-d[1]],c); return cl; };
+    if(I){
+      if(t==="line")drawLine(P.A,P.B,ink,true);
+      if(t==="segment"){ sseg(g,P.A,P.B,ink,3.4); const n=normalAway(S2W(P.A),S2W(P.B),[0,-20]); sideLabel(g,P.A,P.B,[n[0],n[1]],"AB = "+num(I.AB)+" units","var(--corr)"); }
+      if(t==="ray")drawLine(P.A,P.B,ink,false);
+      if(t==="plane"){
+        const c=[(P.A[0]+P.B[0]+P.C[0])/3,(P.A[1]+P.B[1]+P.C[1])/3];
+        if(Math.abs(I.cross)>0.08){
+          const u=sub(P.B,P.A), v=sub(P.C,P.A); const k=1.25;
+          const corners=[add(c,add(mul(u,-k*.7),mul(v,-k*.7))),add(c,add(mul(u,k*.8),mul(v,-k*.7))),add(c,add(mul(u,k*.8),mul(v,k*.8))),add(c,add(mul(u,-k*.7),mul(v,k*.8)))];
+          g.appendChild(E("polygon",{points:corners.map(p=>p.join(",")).join(" "),style:"fill:rgba(2,132,199,.10);stroke:var(--corr)","stroke-width":2,"stroke-dasharray":"7 5"}));
+          stext(g,[clamp(corners[2][0],60,640),clamp(corners[2][1]-14,20,440)],"plane 𝓜","mk","var(--corr)");
+        } else stext(g,[350,30],"A, B, C are collinear — many planes contain them","sm","var(--unk)");
+      }
+      if(t==="angle"){
+        drawLine(P.B,P.A,ink,false); drawLine(P.B,P.C,ink,false);
+        if(Math.abs(I.cross)>0.01){
+          let a1=angOf(P.B,P.A), a2=angOf(P.B,P.C); if(norm(a2-a1)>180){const tt=a1;a1=a2;a2=tt;}
+          const sw=norm(a2-a1), r=42, s=PT(P.B,r,a1), e=PT(P.B,r,a2);
+          if(near(I.ang,90,0.5)) { const u1=unit(sub(P.A,P.B)),u2=unit(sub(P.C,P.B)); rightMark(g,P.B,u1,u2,16); }
+          else g.appendChild(E("path",{d:`M ${P.B[0]} ${P.B[1]} L ${s[0]} ${s[1]} A ${r} ${r} 0 0 0 ${e[0]} ${e[1]} Z`,style:"fill:var(--vert);stroke:var(--vert)","fill-opacity":.17,"stroke-width":2.4}));
+          stext(g,PT(P.B,r+30,a1+sw/2),num(I.ang)+"°","num","var(--vert)");
+        } else stext(g,[350,30],"Rays are collinear — not an angle by definition","sm","var(--unk)");
+      }
+      if(t==="circle"){
+        const r=len(sub(P.A,P.O));
+        g.appendChild(E("circle",{cx:P.O[0],cy:P.O[1],r:r,style:"fill:none;stroke:var(--graphite)","stroke-width":2.8}));
+        sseg(g,P.O,P.A,blue,2.6,"8 5");
+        const nO=unit(sub(P.A,P.O)); sideLabel(g,P.O,P.A,[-nO[1],-nO[0]],"r = "+num(I.r),"var(--corr)");
+        const a1=angOf(P.O,P.A), sw=I.th;
+        if(sw>0.5){ g.appendChild(E("path",{d:`M ${P.A[0]} ${P.A[1]} A ${r} ${r} 0 ${sw>180?1:0} 0 ${P.B[0]} ${P.B[1]}`,style:"fill:none;stroke:var(--magenta)","stroke-width":6,"stroke-linecap":"round",opacity:.85}));
+          const lp=PT(P.O,r+(r>150?-34:34),a1+sw/2); stext(g,[clamp(lp[0],60,640),clamp(lp[1],16,444)],"arc AB ≈ "+num(I.arc),"sm","#C0185F"); }
+      }
+      if(t==="perp"||t==="par"){
+        drawLine(P.A,P.B,ink,true); drawLine(P.C,P.D,"var(--lin)",true);
+        const X=I.X;
+        if(X&&X[0]>0&&X[0]<VW&&X[1]>0&&X[1]<VH){
+          if(t==="perp"&&near(I.ang,90,0.05)){ const u1=unit(sub(P.B,P.A)),u2=unit(sub(P.D,P.C)); rightMark(g,X,u1,u2,16); }
+          else { const a1=angOf([0,0],sub(P.B,P.A)), a2=a1+I.ang, r=34, s=PT(X,r,a1), e=PT(X,r,a2);
+            g.appendChild(E("path",{d:`M ${X[0]} ${X[1]} L ${s[0]} ${s[1]} A ${r} ${r} 0 0 0 ${e[0]} ${e[1]} Z`,style:"fill:var(--vert);stroke:var(--vert)","fill-opacity":.17,"stroke-width":2.2}));
+            stext(g,PT(X,r+24,a1+I.ang/2),num(I.ang)+"°","num","var(--vert)"); }
+          sdot(g,X,"var(--vert)",4);
+        }
+        if(t==="par"&&Math.abs(I.cross)<1e-6){
+          [[P.A,P.B,ink],[P.C,P.D,"var(--lin)"]].forEach(([a,b,c])=>{ const m=[(a[0]+b[0])/2,(a[1]+b[1])/2], d=unit(sub(b,a));
+            [0,9].forEach(o=>{ const tip=add(m,mul(d,o+6)); const n=[-d[1],d[0]], bb=add(tip,mul(d,-9));
+              g.appendChild(E("polyline",{points:[add(bb,mul(n,6)),tip,add(bb,mul(n,-6))].map(p=>p.join(",")).join(" "),style:"fill:none;stroke:"+c,"stroke-width":2.4})); }); });
+        }
+      }
+    }
+    if(t==="point"&&P.A) stext(g,[P.A[0],P.A[1]+34],"point A","sm","var(--corr)");
+    // handles + labels
+    T.need.forEach(k=>{ if(!P[k])return; sgrab(g,P[k],k,k==="O"||(k==="B"&&t==="angle")?"var(--vert)":null);
+      let d=sub(P[k],cen); if(len(d)<5)d=[-1,-1.2]; smartLabel(g,P[k],d,k,"var(--ink)","mk"); });
+    const miss=T.need.filter(k=>!P[k]);
+    if(miss.length) stext(g,[350,VH-24],"Tap the board to place point "+miss[0]+(t==="circle"&&miss[0]==="B"?" (it lands on the circle)":""),"sm","var(--unk)");
+  },
+  live(){
+    const I=M1.info(), t=M1.s.tool, el=document.getElementById("t1live"); if(!el)return;
+    if(!I){ el.innerHTML=`<p>Place the remaining points to finish the figure.</p>`; return; }
+    let h="";
+    if(t==="point")h=`<p>A point has a position but <b>no size</b>: the dot is just so we can see it.</p>`;
+    if(t==="line")h=`<p>Two points, one line. The arrows remind you the line keeps going past the board.</p>`;
+    if(t==="segment")h=`<p>Length <b>AB = ${num(I.AB)}</b> units (1 unit = 1 grid square). This is the <b>distance along a line</b> from A to B.</p>`;
+    if(t==="ray")h=`<p>Endpoint <b>A</b>; the ray runs through B and on forever. A point on the other side of A is <b>not</b> on ${ntRay("A","B")}.</p>`;
+    if(t==="plane")h=Math.abs(I.cross)>0.08?`<p>A, B, C are non-collinear, so they determine exactly one plane.</p>`:`<div class="verdict bad" style="margin:0"><b>Collinear.</b> Infinitely many planes contain line AB, so these points do not name a single plane.</div>`;
+    if(t==="angle")h=Math.abs(I.cross)>0.01?`<p><b>m∠ABC = ${num(I.ang)}°</b> — ${I.ang<89.95?"acute":I.ang<90.05?"right":"obtuse"}.</p>`:`<div class="verdict bad" style="margin:0"><b>Collinear rays.</b> The definition needs non-collinear rays, so this is not an angle.</div>`;
+    if(t==="circle")h=`<p>Radius <b>r = ${num(I.r)}</b>. Every point on the circle is ${num(I.r)} units from O.</p><p>Central angle ${num(I.th)}°, so arc AB = r · θ(in radians) ≈ <b>${num(I.arc)}</b> units — the <b>distance around a circular arc</b>.</p>`;
+    if(t==="perp"){ const ok=near(I.ang,90,0.05); h=`<p>Angle at the intersection: <b>${num(I.ang)}°</b> (and ${num(180-I.ang)}°).</p>`+
+      (ok?`<div class="verdict good" style="margin:0"><b>Perpendicular.</b> The lines meet at a right angle: ${ntLine("A","B")} ⊥ ${ntLine("C","D")}.</div>`:`<div class="verdict bad" style="margin:0"><b>Not perpendicular.</b> Drag D until the angle is 90°.</div>`); }
+    if(t==="par"){ const ok=Math.abs(I.cross)<1e-6;
+      h= ok?`<div class="verdict good" style="margin:0"><b>Parallel.</b> These lines never meet: ${ntLine("A","B")} ∥ ${ntLine("C","D")}.</div>`
+          : `<div class="verdict bad" style="margin:0"><b>Not parallel.</b> The lines meet at an angle of ${num(Math.min(I.ang,180-I.ang))}°, ${I.X&&I.X[0]>0&&I.X[0]<VW&&I.X[1]>0&&I.X[1]<VH?"right here on the board":"off the board, about "+num(len(sub(I.X,[350,230]))/U1,0)+" units from the centre"}.</div>`; }
+    el.innerHTML=h;
+  },
+  newQuiz(){
+    const L="ABCDEFGHJKLMNPQRSTWXYZ".split(""); const a=L.splice(rnd(0,L.length-1),1)[0], b=L.splice(rnd(0,L.length-1),1)[0], c=L.splice(rnd(0,L.length-1),1)[0];
+    const type=pick(["seg","ray","rayR","line","angle"]);
+    const words={seg:"segment",ray:"ray",line:"line"};
+    let opts, ans;
+    if(type==="angle"){
+      opts=[["ang1",`∠${a}${b}${c}`,"vertex "+b],["ang2",`∠${b}${a}${c}`,"vertex "+a],["ang3",`∠${a}${c}${b}`,"vertex "+c],["r",ntRay(b,a),"ray "+b+a]]; ans="ang1";
+    } else {
+      opts=[["seg",ntSeg(a,b),"segment "+a+b],["ray",ntRay(a,b),"ray "+a+b],["rayR",ntRay(b,a),"ray "+b+a],["line",ntLine(a,b),"line "+a+b]]; ans=type;
+    }
+    opts.sort(()=>Math.random()-.5);
+    M1.s.quiz={type,a,b,c,opts,ans,flip:Math.random()<.5}; M1.s.pick=null;
+    void words;
+  },
+  quizSvg(q){
+    const W=320,H=130; let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Figure to name" style="display:block;background:linear-gradient(170deg,#fff,#EEF4FF);border-radius:12px">`;
+    const ink="#22314F", lab=(p,t,dy)=>`<text x="${p[0]}" y="${p[1]+(dy||-16)}" text-anchor="middle" font-family="Unbounded,sans-serif" font-weight="600" font-size="16" fill="#14213D" stroke="#fff" stroke-width="4" paint-order="stroke">${t}</text>`;
+    const dot=p=>`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#14213D" stroke="#fff" stroke-width="2"/>`;
+    const arrow=(tip,d)=>{const n=[-d[1],d[0]],b=[tip[0]-d[0]*13,tip[1]-d[1]*13];return `<polygon points="${tip} ${b[0]+n[0]*6},${b[1]+n[1]*6} ${b[0]-n[0]*6},${b[1]-n[1]*6}" fill="${ink}"/>`;};
+    const ln=(p,q)=>`<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke="${ink}" stroke-width="3" stroke-linecap="round"/>`;
+    if(q.type==="angle"){
+      const B=q.flip?[250,100]:[70,100], A=q.flip?[110,30]:[210,30], C=q.flip?[90,108]:[230,108];
+      const dA=unit(sub(A,B)), dC=unit(sub(C,B)), eA=add(A,mul(dA,28)), eC=add(C,mul(dC,22));
+      s+=ln(B,eA)+arrow(add(eA,mul(dA,6)),dA)+ln(B,eC)+arrow(add(eC,mul(dC,6)),dC)+dot(A)+dot(B)+dot(C)+lab(A,q.a)+lab(B,q.b,22)+lab(C,q.c,22);
+    } else {
+      let P=[80,92],Q=[230,48]; if(q.flip){P=[240,92];Q=[90,48];}
+      // for "rayR" the figure is the ray from the second-named point
+      let st=P,en=Q,nmS=q.a,nmE=q.b; if(q.type==="rayR"){st=Q;en=P;}
+      const d=unit(sub(en,st));
+      if(q.type==="seg")s+=ln(P,Q);
+      if(q.type==="ray"||q.type==="rayR"){ const e=add(en,mul(d,50)); s+=ln(st,e)+arrow(add(e,mul(d,6)),d); }
+      if(q.type==="line"){ const e1=add(Q,mul(unit(sub(Q,P)),50)), e0=add(P,mul(unit(sub(P,Q)),50)); s+=ln(e0,e1)+arrow(add(e1,mul(unit(sub(Q,P)),6)),unit(sub(Q,P)))+arrow(add(e0,mul(unit(sub(P,Q)),6)),unit(sub(P,Q))); }
+      s+=dot(P)+dot(Q)+lab(P,nmS,24)+lab(Q,nmE);
+    }
+    return s+"</svg>";
+  },
+  panel(full){
+    const t=M1.s.tool, T=TOOLS[t];
+    if(!full&&M1.s.built===t){ M1.live(); return; }
+    M1.s.built=t; if(!M1.s.quiz)M1.newQuiz();
+    const q=M1.s.quiz, sc=M1.s.score;
+    let h=`<div class="panel"><h3>Definition · ${T.label}</h3><div class="pad">${T.def}
+      <p style="margin-top:12px"><b>Notation:</b> ${T.nota()}</p>
+      <p style="margin:12px 0 4px;font-size:13px;color:var(--dim)">Built from these undefined notions:</p>
+      <div class="uterms">${UT.map(([k,l])=>`<span class="${T.terms.indexOf(k)>=0?"on":""}">${l}</span>`).join("")}</div></div></div>
+      <div class="panel"><h3>On the board</h3><div class="pad" id="t1live"></div></div>
+      <div class="panel"><h3>Quick check · name it <span style="float:right;font-family:var(--mono);font-size:12px;color:var(--dim)">${sc.r}/${sc.t}</span></h3>
+        <div class="pad" style="padding-bottom:0">${M1.quizSvg(q)}<p style="margin-top:12px">${q.type==="angle"?"Which name is correct for the angle shown?":"Which name describes this figure exactly?"}</p></div>
+        <div class="choices" id="qch"></div><div id="qfb"></div>
+        <div class="fldwrap" style="padding-bottom:16px"><button class="ghost" id="qnext" type="button" style="width:100%">Next figure</button></div></div>`+
+      tryPanel(T.tryit);
+    side.innerHTML=h;
+    const box=document.getElementById("qch");
+    q.opts.forEach(([k,html,sm])=>{ const b=document.createElement("button"); b.type="button"; b.className="choice"; b.innerHTML=html+`<small>${sm}</small>`;
+      if(M1.s.pick){ if(k===q.ans)b.classList.add("right"); else if(k===M1.s.pick)b.classList.add("wrong"); }
+      b.onclick=()=>{ if(M1.s.pick)return; M1.s.pick=k; sc.t++; if(k===q.ans)sc.r++; M1.panel(true); };
+      box.appendChild(b); });
+    if(M1.s.pick){
+      const ok=M1.s.pick===q.ans, fb=document.getElementById("qfb");
+      const why={seg:`It has two endpoints and stops at both, so it is a segment, ${ntSeg(q.a,q.b)}.`,
+        ray:`It starts at ${q.a} and goes on forever through ${q.b}. A ray is named endpoint first: ${ntRay(q.a,q.b)}.`,
+        rayR:`The endpoint is ${q.b} and it passes through ${q.a}. A ray is named endpoint first: ${ntRay(q.b,q.a)}.`,
+        line:`Arrows at both ends: it extends forever both ways, so it is ${ntLine(q.a,q.b)}.`,
+        angle:`The vertex is ${q.b}, and the vertex is always the middle letter: ∠${q.a}${q.b}${q.c}.`}[q.type];
+      fb.innerHTML=`<div class="verdict ${ok?"good":"bad"}"><b>${ok?"Correct.":"Not quite."}</b> ${why}</div>`;
+    }
+    document.getElementById("qnext").onclick=()=>{M1.newQuiz(); M1.panel(true);};
+    M1.live();
+  }
+};
+
+/* ══════════════════════ TAB 2 · distance & midpoint ══════════════════════ */
+const M2={
+  tab:"Distance & midpoint", lesson:"G-GPE.B.7 · 8.G.B.8", accent:"var(--yellow)",
+  title:()=>"Distance and midpoint on the coordinate plane",
+  s:{A:[-5,-2],B:[4,4],tri:true,mid:true},
+  resnap(){ [M2.s.A,M2.s.B]=snapAll([M2.s.A,M2.s.B]); },
+  bar(){
+    snapChk();
+    chk("Right triangle",M2.s.tri,v=>{M2.s.tri=v;update();});
+    chk("Midpoint",M2.s.mid,v=>{M2.s.mid=v;update();});
+    btn("Reset",()=>{M2.s.A=[-5,-2];M2.s.B=[4,4];update();});
+    spacer("Drag A and B");
+  },
+  drag(id,p){ const w=snapW(p), o=id==="A"?M2.s.B:M2.s.A; if(same(w,o))return false; M2.s[id]=w; },
+  draw(){
+    const g=gridBg(true), A=M2.s.A, B=M2.s.B, C=[B[0],A[1]], I=distInfo(A,B), M=[(A[0]+B[0])/2,(A[1]+B[1])/2];
+    if(M2.s.tri){
+      if(Math.abs(I.dx)>1e-9){ wseg(g,A,C,"var(--lin)",3,"8 5"); sideLabel(g,W2S(A),W2S(C),[0,B[1]>=A[1]?1:-1],"|Δx| = "+nm(Math.abs(I.dx)),"var(--lin)"); }
+      if(Math.abs(I.dy)>1e-9){ wseg(g,C,B,"var(--corr)",3,"8 5"); sideLabel(g,W2S(C),W2S(B),[B[0]>=A[0]?1:-1,0],"|Δy| = "+nm(Math.abs(I.dy)),"var(--corr)"); }
+      if(Math.abs(I.dx)>1e-9&&Math.abs(I.dy)>1e-9){ const c=W2S(C); rightMark(g,c,unit(sub(W2S(A),c)),unit(sub(W2S(B),c)),12); }
+    }
+    wseg(g,A,B,"var(--vert)",3.6);
+    const inside=(Math.abs(I.dx)>1e-9&&Math.abs(I.dy)>1e-9)? C : add(M,[-(B[1]-A[1]),B[0]-A[0]]);
+    const nIn=normalAway(A,B,inside); const nC=[-nIn[0],-nIn[1]];
+    sideLabel(g,W2S(A),W2S(B),M2.s.tri?nC:nIn,"d ≈ "+num(I.d),"var(--vert)",M2.s.mid?0.32:0.5);
+    if(M2.s.mid){ sdot(g,W2S(M),"var(--magenta)",6); smartLabel(g,W2S(M),nIn,"M"+pt(M),"#C0185F"); }
+    sgrab(g,W2S(A),"A"); sgrab(g,W2S(B),"B");
+    wlabel(g,A,"A"+pt(A),add(A,unit(sub(A,B)).map(v=>-v)) ,"var(--ink)");
+    wlabel(g,B,"B"+pt(B),add(B,unit(sub(B,A)).map(v=>-v)),"var(--ink)");
+  },
+  panel(){
+    const A=M2.s.A,B=M2.s.B,I=distInfo(A,B);
+    side.innerHTML=`<div class="panel"><h3>Distance = Pythagorean theorem</h3><div class="pad">
+      <p>Slide down from B to the level of A and you get a right triangle. Its legs are the horizontal change <b style="color:var(--lin)">|Δx| = ${nm(Math.abs(I.dx))}</b> and the vertical change <b style="color:#38BDF8">|Δy| = ${nm(Math.abs(I.dy))}</b>; ${ntSeg("A","B")} is the hypotenuse.</p>
+      <p>So AB² = Δx² + Δy². Taking the square root gives the <span class="term">distance formula</span>.</p>
+      <div class="eq">${distWork(A,B)}<small>Squaring makes the sign of Δx and Δy irrelevant, so either point can be (x₁, y₁).</small></div></div></div>
+      <div class="panel"><h3>Midpoint = average the coordinates</h3><div class="pad">
+      <p>The midpoint M is halfway in x and halfway in y, so each coordinate of M is the <b>average</b> of the endpoints' coordinates.</p>
+      <div class="eq">${midWork(A,B)}<small>Check: AM = MB = ${num(I.d/2)}, half of AB.</small></div></div></div>`+
+      tryPanel(`<p>1. Drag B so that AB = 5 but ${ntSeg("A","B")} is neither horizontal nor vertical. Which right triangle did you build?</p><p>2. Put A at (−3, 0). Where must B be so that the midpoint is (1, 2)? Predict, then test.</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 3 · partitioning a segment ══════════════════════ */
+const STEPS3=["Overview","Run & rise","Fraction of the way","Scale the run & rise","Add to A"];
+const M3={
+  tab:"Partitioning", lesson:"G-GPE.B.6", accent:"var(--mint)",
+  title:()=>"Find the point that divides AB in the ratio "+M3.s.m+" : "+M3.s.n,
+  s:{A:[-6,-3],B:[6,5],m:1,n:3,step:0},
+  resnap(){ [M3.s.A,M3.s.B]=snapAll([M3.s.A,M3.s.B]); },
+  bar(){
+    slider("m",1,9,M3.s.m,v=>{M3.s.m=v;bTitle.textContent=M3.title();update();});
+    slider("n",1,9,M3.s.n,v=>{M3.s.n=v;bTitle.textContent=M3.title();update();});
+    const pv=btn("◀ Step",()=>{M3.s.step=Math.max(0,M3.s.step-1);upd();});
+    const nx=btn("Step ▶",()=>{M3.s.step=Math.min(4,M3.s.step+1);upd();},"primary");
+    const lab=spacer("");
+    const upd=()=>{ lab.textContent="Step "+M3.s.step+" of 4 · "+STEPS3[M3.s.step]; pv.disabled=M3.s.step===0; nx.disabled=M3.s.step===4; update(); };
+    lab.textContent="Step "+M3.s.step+" of 4 · "+STEPS3[M3.s.step]; pv.disabled=M3.s.step===0; nx.disabled=M3.s.step===4;
+    snapChk();
+  },
+  drag(id,p){ const w=snapW(p), o=id==="A"?M3.s.B:M3.s.A; if(same(w,o))return false; M3.s[id]=w; },
+  draw(){
+    const g=gridBg(true), {A,B,m,n,step}=M3.s, k=m/(m+n), P=partPoint(A,B,m,n), dx=B[0]-A[0], dy=B[1]-A[1];
+    const C=[B[0],A[1]], Cp=[P[0],A[1]], diag=Math.abs(dx)>1e-9&&Math.abs(dy)>1e-9;
+    const ref=diag?C:add(A,[-dy,dx]); const nOut=normalAway(A,B,ref);
+    if(step>=1&&step!==2||step===2){ /* run & rise from step 1 on */ }
+    if(step>=1){
+      if(Math.abs(dx)>1e-9){ wseg(g,A,C,"var(--lin)",2.6,"8 5"); sideLabel(g,W2S(A),W2S(C),[0,dy>=0?1:-1],"run = "+nm(dx),"var(--lin)",step>=3?0.8:0.5); }
+      if(Math.abs(dy)>1e-9){ wseg(g,C,B,"var(--corr)",2.6,"8 5"); sideLabel(g,W2S(C),W2S(B),[dx>=0?1:-1,0],"rise = "+nm(dy),"var(--corr)"); }
+    }
+    if(step>=3){
+      if(Math.abs(dx)>1e-9){ wseg(g,A,Cp,"var(--lin)",5); sideLabel(g,W2S(A),W2S(Cp),[0,dy>=0?1:-1],fx(k*dx),"#C2410C",0.5); }
+      if(Math.abs(dy)>1e-9){ wseg(g,Cp,P,"var(--corr)",5); sideLabel(g,W2S(Cp),W2S(P),[dx>=0?1:-1,0],fx(k*dy),"#0369A1"); }
+    }
+    // the segment in two colours + equal-part ticks
+    wseg(g,A,P,"var(--magenta)",4.4); wseg(g,P,B,"var(--vert)",4.4);
+    const sa=W2S(A), sb=W2S(B), dd=unit(sub(sb,sa)), nn=[-dd[1],dd[0]], parts=m+n, Ls=len(sub(sb,sa));
+    if(Ls/parts>5) for(let i=1;i<parts;i++){ const q=add(sa,mul(sub(sb,sa),i/parts)); sseg(g,add(q,mul(nn,7)),add(q,mul(nn,-7)),"var(--graphite)",2.2); }
+    if(step===2){ for(let i=0;i<parts;i++){ const q=add(sa,mul(sub(sb,sa),(i+.5)/parts)); if(Ls/parts>18) stext(g,add(q,mul(nOut,14)),String(i+1),"sm",i<m?"#C0185F":"var(--vert)"); } }
+    sdot(g,W2S(P),"var(--magenta)",7);
+    smartLabel(g,W2S(P),nOut,"P"+"("+(snap?fx(P[0]):nm(P[0]))+", "+(snap?fx(P[1]):nm(P[1]))+")","#C0185F");
+    sgrab(g,sa,"A"); sgrab(g,sb,"B");
+    wlabel(g,A,"A"+pt(A),add(A,unit(sub(B,A))),"var(--ink)");
+    wlabel(g,B,"B"+pt(B),add(B,unit(sub(A,B))),"var(--ink)");
+  },
+  panel(){
+    const {A,B,m,n,step}=M3.s, k=m/(m+n), P=partPoint(A,B,m,n), dx=B[0]-A[0], dy=B[1]-A[1];
+    const AP=len(sub(P,A)), PB=len(sub(B,P));
+    const st=[
+      `Read the ratio. AP : PB = ${m} : ${n} means the segment is cut into <b>${m+n}</b> equal parts, with <b>${m}</b> from A to P.`,
+      `From A to B: <b>run = ${nm(B[0])} − ${par(A[0],nm)} = ${nm(dx)}</b>, <b>rise = ${nm(B[1])} − ${par(A[1],nm)} = ${nm(dy)}</b>.`,
+      `P is <b>${m}/${m+n}</b> of the way from A to B (not ${m}/${n}!).`,
+      `Scale: ${m}/${m+n} · ${par(dx,nm)} = <b>${fx(k*dx)}</b> across, ${m}/${m+n} · ${par(dy,nm)} = <b>${fx(k*dy)}</b> up.`,
+      `Start at A and move: P = (${nm(A[0])} + ${par(k*dx)}, ${nm(A[1])} + ${par(k*dy)}) = <b>(${fx(P[0])}, ${fx(P[1])})</b>.`];
+    side.innerHTML=`<div class="panel"><h3>Directed segment, ratio ${m} : ${n}</h3><div class="pad">
+      <p>"P partitions ${ntSeg("A","B")} in the ratio m : n" means <b>AP : PB = m : n</b>, measured from A toward B. Split the segment into m + n equal pieces; P sits after the first m.</p>
+      <p>That makes P a fraction <b>m/(m + n)</b> of the way along, in x and in y at the same time — similar slope triangles guarantee it.</p>
+      <div class="eq">${partWork(A,B,m,n)}<small>Check: AP ≈ ${num(AP)}, PB ≈ ${num(PB)}, and AP : PB ≈ ${num(AP/PB*n,2)} : ${n}.</small></div></div></div>
+      <div class="panel"><h3>The rise / run method</h3><ol class="stepl">${st.map((t,i)=>`<li class="${i===step?"on":i<step?"done":""}"><span class="sn">${i}</span>${t}</li>`).join("")}</ol></div>`+
+      tryPanel(`<p>1. Set m : n = 1 : 1. Which formula from the last tab does the partition formula turn into?</p><p>2. With A(−6, −3) and B(6, 5), which ratios m : n give a P with integer coordinates? Explain using the run 12 and rise 8.</p><p>3. Compare 1 : 3 with 3 : 1. What changes, and why does the order of the letters matter?</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 4 · parallel & perpendicular slopes ══════════════════════ */
+const M4={
+  tab:"Parallel & perpendicular", lesson:"G-GPE.B.5", accent:"var(--magenta)",
+  title:()=>M4.s.mode==="compare"?"Compare the slopes of two lines":"Line through Q "+(M4.s.kind==="par"?"parallel":"perpendicular")+" to ℓ",
+  s:{mode:"compare",P:[[-7,-2],[3,3],[-1,5],[2,-1]],Q:[3,-4],kind:"perp",rot:false},
+  resnap(){ M4.s.P=snapAll(M4.s.P); M4.s.Q=snapAll([M4.s.Q])[0]; },
+  bar(){
+    segBtns([["compare","Compare two lines"],["build","Build through a point"]],M4.s.mode,k=>{M4.s.mode=k;render();});
+    if(M4.s.mode==="compare") chk("Show 90° rotation",M4.s.rot,v=>{M4.s.rot=v;update();});
+    else segBtns([["par","Parallel"],["perp","Perpendicular"]],M4.s.kind,k=>{M4.s.kind=k;render();});
+    snapChk();
+    btn("Reset",()=>{M4.s.P=[[-7,-2],[3,3],[-1,5],[2,-1]];M4.s.Q=[3,-4];update();});
+  },
+  drag(id,p){
+    const w=snapW(p);
+    if(id==="Q"){ M4.s.Q=w; return; }
+    const i=+id, partner=M4.s.P[i^1]; if(same(w,partner))return false; M4.s.P[i]=w;
+  },
+  rel(){
+    const P=M4.s.P, d1=sub(P[1],P[0]), d2=sub(P[3],P[2]);
+    const cr=d1[0]*d2[1]-d1[1]*d2[0], dt=d1[0]*d2[0]+d1[1]*d2[1], sc=len(d1)*len(d2);
+    const par=Math.abs(cr)<1e-9*sc, perp=Math.abs(dt)<1e-9*sc;
+    const w=sub(P[2],P[0]), coinc=par&&Math.abs(w[0]*d1[1]-w[1]*d1[0])<1e-9*len(d1)*Math.max(1,len(w));
+    return {par,perp,coinc,s1:slopeOf(P[0],P[1]),s2:slopeOf(P[2],P[3])};
+  },
+  slopeTri(g,A,B,c){
+    const C=[B[0],A[1]]; if(Math.abs(B[0]-A[0])>1e-9)wseg(g,A,C,c,2,"6 5"); if(Math.abs(B[1]-A[1])>1e-9)wseg(g,C,B,c,2,"6 5");
+  },
+  draw(){
+    const g=gridBg(true), P=M4.s.P;
+    const c1="var(--corr)", c2="var(--lin)", c3="var(--alt)";
+    if(M4.s.mode==="compare"){
+      const R=M4.rel();
+      wfull(g,P[0],P[1],c1,3.2); wfull(g,P[2],P[3],c2,3.2);
+      M4.slopeTri(g,P[0],P[1],c1); M4.slopeTri(g,P[2],P[3],c2);
+      if(!R.par){ // intersection marks
+        const d1=sub(P[1],P[0]), d2=sub(P[3],P[2]), w=sub(P[2],P[0]); const s=(w[0]*d2[1]-w[1]*d2[0])/(d1[0]*d2[1]-d1[1]*d2[0]); const X=add(P[0],mul(d1,s));
+        if(R.perp){ const sx=W2S(X); rightMark(g,sx,unit(sub(W2S(P[1]),W2S(P[0]))),unit(sub(W2S(P[3]),W2S(P[2]))),14); }
+      }
+      if(M4.s.rot){
+        const A=P[0], a=P[1][0]-A[0], b=P[1][1]-A[1];
+        const R1=[A[0]+a,A[1]], B1=P[1], R2=[A[0],A[1]+a], B2=[A[0]-b,A[1]+a];
+        g.appendChild(E("polygon",{points:[A,R1,B1].map(p=>W2S(p).join(",")).join(" "),style:"fill:rgba(2,132,199,.14);stroke:var(--corr)","stroke-width":2}));
+        g.appendChild(E("polygon",{points:[A,R2,B2].map(p=>W2S(p).join(",")).join(" "),style:"fill:rgba(5,150,105,.14);stroke:var(--alt)","stroke-width":2,"stroke-dasharray":"6 4"}));
+        wfull(g,A,B2,c3,2.4,"10 6");
+        const sa=W2S(A), r=Math.min(len(sub(W2S(B1),sa)),110)*0.55, a1=angOf(sa,W2S(B1)), e1=PT(sa,r,a1), e2=PT(sa,r,a1+90);
+        g.appendChild(E("path",{d:`M ${e1[0]} ${e1[1]} A ${r} ${r} 0 0 0 ${e2[0]} ${e2[1]}`,style:"fill:none;stroke:var(--alt)","stroke-width":2.4}));
+        { const tt=(a1+90)*D2R; arrowHead(g,add(e2,mul([-Math.sin(tt),-Math.cos(tt)],4)),[-Math.sin(tt),-Math.cos(tt)],"var(--alt)"); }
+        stext(g,PT(sa,r+18,a1+45),"90°","num","var(--alt)");
+        sdot(g,W2S(B2),"var(--alt)",5); wlabel(g,B2,"B′"+pt(B2),A,"#047857");
+        if(Math.abs(a)>1e-9){ sideLabel(g,W2S(A),W2S(R1),[0,b>=0?1:-1],"run "+nm(a),"#0369A1"); sideLabel(g,W2S(A),W2S(R2),[a>=0?-1:1,0],"rise "+nm(a),"#047857"); }
+        if(Math.abs(b)>1e-9){ sideLabel(g,W2S(R1),W2S(B1),[a>=0?1:-1,0],"rise "+nm(b),"#0369A1"); sideLabel(g,W2S(R2),W2S(B2),[0,a>=0?-1:1],"run "+nm(-b),"#047857"); }
+      }
+      const nm4=["A","B","C","D"];
+      P.forEach((p,i)=>{ sgrab(g,W2S(p),String(i),i<2?c1:c2); });
+      P.forEach((p,i)=>{ const other=P[i^1]; wlabel(g,p,nm4[i]+pt(p),add(p,unit(sub(other,p))),i<2?"#0369A1":"#C2410C"); });
+    } else {
+      const Q=M4.s.Q, L=buildLine(P[0],P[1],Q,M4.s.kind);
+      wfull(g,P[0],P[1],c1,3.2); M4.slopeTri(g,P[0],P[1],c1);
+      wfull(g,Q,add(Q,L.dir),c3,3.2);
+      // right-angle mark or parallel arrows
+      if(M4.s.kind==="perp"){ const d1=sub(P[1],P[0]), d2=L.dir, w=sub(Q,P[0]); const den=d1[0]*d2[1]-d1[1]*d2[0];
+        if(Math.abs(den)>1e-12){ const s=(w[0]*d2[1]-w[1]*d2[0])/den, X=add(P[0],mul(d1,s)), sx=W2S(X); rightMark(g,sx,unit(sub(W2S(P[1]),W2S(P[0]))),unit(sub(W2S(add(X,d2)),sx)),14); } }
+      const legend=E("g",{"pointer-events":"none"});
+      legend.appendChild(E("rect",{x:12,y:12,width:250,height:52,rx:10,fill:"rgba(255,255,255,.92)",stroke:"#C9D6EE"}));
+      const s1=slopeOf(P[0],P[1]);
+      const l1=s1.vert?`x = ${fx(P[0][0])}`:slopeInt(s1.m,P[0][1]-s1.m*P[0][0]);
+      stext(legend,[24,30],"ℓ:  "+l1,"sm","#0369A1","start"); stext(legend,[24,50],(M4.s.kind==="par"?"∥ ":"⊥ ")+"through Q:  "+L.eq,"sm","#047857","start");
+      g.appendChild(legend);
+      sgrab(g,W2S(P[0]),"0",c1); sgrab(g,W2S(P[1]),"1",c1); sgrab(g,W2S(Q),"Q","var(--magenta)");
+      wlabel(g,P[0],"A"+pt(P[0]),add(P[0],unit(sub(P[1],P[0]))),"#0369A1");
+      wlabel(g,P[1],"B"+pt(P[1]),add(P[1],unit(sub(P[0],P[1]))),"#0369A1");
+      wlabel(g,Q,"Q"+pt(Q),add(Q,unit(L.dir)),"#C0185F");
+    }
+  },
+  panel(){
+    const P=M4.s.P;
+    if(M4.s.mode==="build"){
+      const L=buildLine(P[0],P[1],M4.s.Q,M4.s.kind);
+      side.innerHTML=`<div class="panel"><h3>${M4.s.kind==="par"?"Parallel":"Perpendicular"} line through Q</h3><div class="pad">
+        <p>${M4.s.kind==="par"?"Parallel lines have <b>equal slopes</b> (or are both vertical). So the new line borrows ℓ's slope and passes through Q.":"Perpendicular lines have slopes that are <b>negative reciprocals</b>: their product is −1. A vertical line is perpendicular to a horizontal one."}</p>
+        <div class="eq">${L.text}</div>
+        <p>Drag A, B and Q. Try making ℓ horizontal or vertical and watch the special cases.</p></div></div>`+
+        tryPanel(`<p>Make ℓ pass through (0, 0) and (2, 1). Before looking, write the equation of the line through Q(3, −4) perpendicular to ℓ. Then switch to Parallel and do it again.</p>`);
+      return;
+    }
+    const R=M4.rel(), s1=R.s1, s2=R.s2;
+    let v;
+    if(R.coinc) v=`<div class="verdict good"><b>Same line.</b> Equal slopes and a shared point: these are one line named twice, so they are not called parallel.</div>`;
+    else if(R.par) v=`<div class="verdict good"><b>Parallel.</b> ${s1.vert?"Both lines are vertical (undefined slope).":"The slopes are equal: "+fx(s1.m)+" = "+fx(s2.m)+"."} ${ntLine("A","B")} ∥ ${ntLine("C","D")}.</div>`;
+    else if(R.perp) v=`<div class="verdict good"><b>Perpendicular.</b> ${s1.vert||s2.vert?"One line is vertical and the other is horizontal.":"(" +fx(s1.m)+") · ("+fx(s2.m)+") = −1."} ${ntLine("A","B")} ⊥ ${ntLine("C","D")}.</div>`;
+    else v=`<div class="verdict bad"><b>Neither.</b> ${s1.vert||s2.vert?"One slope is undefined and the other line is not horizontal.":"The slopes differ, and their product is "+fx(s1.m*s2.m)+", not −1."}</div>`;
+    const a=P[1][0]-P[0][0], b=P[1][1]-P[0][1];
+    side.innerHTML=`<div class="panel"><h3>Slopes</h3><div class="pad">
+      <div class="eq">${slopeWork(P[0],P[1],"m(AB)")}\n${slopeWork(P[2],P[3],"m(CD)")}</div></div>${v}</div>
+      <div class="panel"><h3>Why negative reciprocals?</h3><div class="pad">
+      <p>Line AB has a slope triangle with run <b>a = ${nm(a)}</b> and rise <b>b = ${nm(b)}</b>, so its slope is b/a.</p>
+      <p>Rotate the whole triangle <b>90° counterclockwise</b> about A. Rotations preserve lengths and angles, so the image line is perpendicular to AB. The old run becomes the new rise, and the old rise becomes a run in the <b>opposite</b> direction:</p>
+      <div class="eq">(a, b) → (−b, a)
+slope before  = b/a ${Math.abs(a)>1e-9?"= "+fx(b/a):"(undefined)"}
+slope after   = a/(−b) ${Math.abs(b)>1e-9?"= "+fx(a/(-b)):"(undefined)"}${Math.abs(a)>1e-9&&Math.abs(b)>1e-9?"\nproduct       = (b/a)(−a/b) = −1":""}<small>${Math.abs(a)<1e-9||Math.abs(b)<1e-9?"Here one slope is 0 and the other is undefined — a horizontal and a vertical line.":"Turn on “Show 90° rotation” to see triangle and image."}</small></div></div></div>`+
+      tryPanel(`<p>1. Drag C and D to make ${ntLine("C","D")} parallel to ${ntLine("A","B")}, then perpendicular. Record both slopes each time.</p><p>2. Can two lines with positive slopes ever be perpendicular? Use the product rule to explain.</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 5 · perimeter & area ══════════════════════ */
+const DEFV=[[-6,-3],[5,-4],[1,5]];
+const M5={
+  tab:"Perimeter & area", lesson:"G-GPE.B.7", accent:"var(--lavender)",
+  title:()=>["","","","Triangle","Quadrilateral","Pentagon","Hexagon"][M5.s.V.length]+": perimeter and area from coordinates",
+  s:{V:DEFV.map(p=>p.slice()),box:true},
+  resnap(){ M5.s.V=snapAll(M5.s.V); },
+  bar(){
+    const V=M5.s.V;
+    const a=btn("+ Vertex",()=>{ if(V.length>=6)return;
+      let bi=0,bl=-1; V.forEach((p,i)=>{const l=len(sub(V[(i+1)%V.length],p)); if(l>bl){bl=l;bi=i;}});
+      const P=V[bi],Q=V[(bi+1)%V.length], m=[(P[0]+Q[0])/2,(P[1]+Q[1])/2], c=centroid(V), d=sub(Q,P);
+      let nrm=unit([d[1],-d[0]]); if((m[0]-c[0])*nrm[0]+(m[1]-c[1])*nrm[1]<0)nrm=[-nrm[0],-nrm[1]];
+      let np=add(m,mul(nrm,1.5)); np=[clamp(np[0],-XL,XL),clamp(np[1],-YL,YL)]; if(snap)np=[Math.round(np[0]),Math.round(np[1])]; else np=[Math.round(np[0]*10)/10,Math.round(np[1]*10)/10];
+      if(V.some(v=>same(v,np)))np=snap?[Math.round(m[0]),Math.round(m[1])]:m;
+      if(V.some(v=>same(v,np)))return;
+      V.splice(bi+1,0,np); render(); });
+    const r=btn("− Vertex",()=>{ if(V.length<=3)return; V.pop(); render(); });
+    a.disabled=V.length>=6; r.disabled=V.length<=3;
+    const bx=chk("Box method",M5.s.box,v=>{M5.s.box=v;update();}); bx.disabled=V.length!==3;
+    if(V.length!==3)bx.parentNode.title="Box method is shown for triangles";
+    snapChk();
+    btn("Reset",()=>{M5.s.V=DEFV.map(p=>p.slice());render();});
+  },
+  drag(id,p){ const i=+id, w=snapW(p); if(M5.s.V.some((v,j)=>j!==i&&same(v,w)))return false; M5.s.V[i]=w; },
+  boxParts(V){ // decomposition of bounding box minus triangle
+    const xs=V.map(p=>p[0]), ys=V.map(p=>p[1]), x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+    const tri=[], side=(p,q,r)=>(q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]);
+    for(let i=0;i<3;i++){ const P=V[i],Q=V[(i+1)%3],T=V[(i+2)%3];
+      if(Math.abs(P[0]-Q[0])<1e-9||Math.abs(P[1]-Q[1])<1e-9)continue;
+      let K=[P[0],Q[1]]; if(Math.sign(side(P,Q,K))===Math.sign(side(P,Q,T)))K=[Q[0],P[1]];
+      tri.push({pts:[P,Q,K],a:Math.abs((Q[0]-P[0])*(Q[1]-P[1]))/2,w:Math.abs(Q[0]-P[0]),h:Math.abs(Q[1]-P[1])}); }
+    const box=(x1-x0)*(y1-y0), A=shoelace(V).area, sumT=tri.reduce((s,t)=>s+t.a,0);
+    let rect=null; const left=box-A-sumT;
+    if(left>1e-9){
+      const onX=p=>near(p[0],x0)||near(p[0],x1), onY=p=>near(p[1],y0)||near(p[1],y1);
+      const vi=V.findIndex(p=>!(onX(p)&&onY(p))&&!(onX(p)||onY(p)));
+      if(vi>=0){ const Vv=V[vi], P=V[(vi+1)%3], Q=V[(vi+2)%3];
+        const ks=[[x0,y0],[x1,y0],[x1,y1],[x0,y1]].filter(k=>!same(k,P)&&!same(k,Q));
+        const K=ks.find(k=>Math.sign(side(P,Q,k))===Math.sign(side(P,Q,Vv)))||ks[0];
+        rect={a:[Math.min(Vv[0],K[0]),Math.min(Vv[1],K[1])],b:[Math.max(Vv[0],K[0]),Math.max(Vv[1],K[1])]};
+        rect.area=(rect.b[0]-rect.a[0])*(rect.b[1]-rect.a[1]); }
+    }
+    return {x0,x1,y0,y1,box,tri,rect,area:A};
+  },
+  draw(){
+    const g=gridBg(true), V=M5.s.V, c=centroid(V), simple=isSimple(V), showBox=M5.s.box&&V.length===3;
+    if(showBox){
+      const B=M5.boxParts(V), cols=["rgba(234,88,12,.20)","rgba(2,132,199,.20)","rgba(5,150,105,.20)"], strokes=["#EA580C","#0284C7","#059669"];
+      const s0=W2S([B.x0,B.y1]); g.appendChild(E("rect",{x:s0[0],y:s0[1],width:(B.x1-B.x0)*S,height:(B.y1-B.y0)*S,fill:"none",stroke:"#64748B","stroke-width":2,"stroke-dasharray":"7 5"}));
+      B.tri.forEach((t,i)=>{ g.appendChild(E("polygon",{points:t.pts.map(p=>W2S(p).join(",")).join(" "),fill:cols[i],stroke:strokes[i],"stroke-width":1.5}));
+        const cc=W2S(centroid(t.pts)); stext(g,cc,num(t.a),"sm",strokes[i]); });
+      if(B.rect){ const a=W2S([B.rect.a[0],B.rect.b[1]]); g.appendChild(E("rect",{x:a[0],y:a[1],width:(B.rect.b[0]-B.rect.a[0])*S,height:(B.rect.b[1]-B.rect.a[1])*S,fill:"rgba(255,217,61,.35)",stroke:"#CA8A04","stroke-width":1.5}));
+        stext(g,W2S([(B.rect.a[0]+B.rect.b[0])/2,(B.rect.a[1]+B.rect.b[1])/2]),num(B.rect.area),"sm","#A16207"); }
+    }
+    g.appendChild(E("polygon",{points:V.map(p=>W2S(p).join(",")).join(" "),style:"fill:rgba(124,58,237,"+(simple?".14":".06")+");stroke:var(--vert)","stroke-width":3.2,"stroke-linejoin":"round"}));
+    if(!showBox) V.forEach((P,i)=>{ const Q=V[(i+1)%V.length]; const n=normalAway(P,Q,c); sideLabel(g,W2S(P),W2S(Q),n,num(len(sub(Q,P))),"#6D28D9"); });
+    else stext(g,W2S(c),"A = "+num(shoelace(V).area),"sm","#6D28D9");
+    V.forEach((p,i)=>sgrab(g,W2S(p),String(i),"var(--vert)"));
+    V.forEach((p,i)=>smartLabel(g,W2S(p),outward(p,c),LET[i]+pt(p),"var(--ink)"));
+    if(!simple)stext(g,[350,VH-22],"Sides cross — not a simple polygon","sm","var(--unk)");
+  },
+  panel(){
+    const V=M5.s.V, pw=perimWork(V), sl=shoelace(V), simple=isSimple(V);
+    const names=V.map((_,i)=>LET[i]).join("");
+    let tt=`Area = ½ |Σ (xᵢ·yᵢ₊₁ − xᵢ₊₁·yᵢ)|\n`;
+    sl.terms.forEach((t,i)=>{ tt+=`  ${LET[i]}→${LET[(i+1)%V.length]}: ${par(t.P[0],nm)}·${par(t.Q[1],nm)} − ${par(t.Q[0],nm)}·${par(t.P[1],nm)} = ${nm(t.v)}\n`; });
+    tt+=`Σ = ${nm(sl.sum)}\nArea = ½ · |${nm(sl.sum)}| = ${nm(sl.area)}`;
+    let h=`<div class="panel"><h3>Perimeter of ${names}</h3><div class="pad">
+      <p>Perimeter is the total distance around: apply the <b>distance formula</b> to every side and add. Round only at the very end.</p>
+      <div class="eq">${pw.text}</div></div></div>
+      <div class="panel"><h3>Area · shoelace formula</h3><div class="pad">
+      <p>List the vertices in order around the polygon. Multiply "down the diagonals", subtract, add up and halve.</p>
+      <div class="eq">${tt}<small>${sl.sum>0?"Σ is positive: the vertices run counterclockwise.":"Σ is negative: the vertices run clockwise — the absolute value fixes it."}</small></div>
+      ${simple?"":`<div class="verdict bad" style="margin:0"><b>Warning.</b> The sides cross each other, so this is not a simple polygon and the shoelace result is not its area. Drag a vertex to untangle it.</div>`}</div></div>`;
+    if(V.length===3){
+      const B=M5.boxParts(V);
+      let bt=`box = ${nm(B.x1-B.x0)} × ${nm(B.y1-B.y0)} = ${nm(B.box)}\n`;
+      B.tri.forEach(t=>{ bt+=`− ½ · ${nm(t.w)} · ${nm(t.h)} = ${nm(t.a)}\n`; });
+      if(B.rect)bt+=`− rectangle ${nm(B.rect.b[0]-B.rect.a[0])} × ${nm(B.rect.b[1]-B.rect.a[1])} = ${nm(B.rect.area)}\n`;
+      bt+=`Area = ${nm(B.box)} − ${nm(B.box-B.area)} = ${nm(B.area)}`;
+      h+=`<div class="panel"><h3>Area · box-and-subtract</h3><div class="pad">
+        <p>Draw the smallest rectangle with horizontal and vertical sides around the triangle. The leftover corners are right triangles${B.rect?" (plus a small rectangle)":""} whose legs you can count on the grid.</p>
+        <div class="eq">${bt}<small>Same answer as the shoelace formula — two methods, one area.</small></div></div></div>`;
+    }
+    side.innerHTML=h+tryPanel(`<p>1. Make a right triangle with legs 6 and 8. Check its perimeter is 24 and its area is 24.</p><p>2. Add a vertex to make a quadrilateral. Can you make it a square that is <b>not</b> lined up with the grid? Prove it is a square using side lengths and slopes.</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+function parseExpr(str){
+  const s=String(str).replace(/−/g,"-").replace(/×/g,"*").replace(/÷/g,"/").replace(/\s+/g,"").toLowerCase().replace(/sqrt/g,"√");
+  if(!s)return NaN;
+  let i=0;
+  const peek=()=>s[i];
+  function expr(){ let v=term(); while(peek()==="+"||peek()==="-"){ const o=s[i++]; const r=term(); v=o==="+"?v+r:v-r; } return v; }
+  function term(){ let v=unary(); for(;;){ const c=peek();
+      if(c==="*"||c==="/"){ i++; const r=unary(); v=c==="*"?v*r:v/r; }
+      else if(c==="√"||c==="("){ v*=unary(); }
+      else break; } return v; }
+  function unary(){ if(peek()==="-"){i++;return -unary();} if(peek()==="+"){i++;return unary();} return power(); }
+  function power(){ const b=atom(); if(peek()==="^"){i++;return Math.pow(b,unary());} return b; }
+  function atom(){ const c=peek();
+    if(c==="("){ i++; const v=expr(); if(peek()!==")")throw 0; i++; return v; }
+    if(c==="√"){ i++; return Math.sqrt(power()); }
+    const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)); if(!m)throw 0; i+=m[0].length; return parseFloat(m[0]); }
+  try{ const v=expr(); if(i!==s.length)return NaN; return v; }catch(_){ return NaN; }
+}
+const KINDS=[["mix","Mix"],["dist","Distance"],["mid","Midpoint"],["part","Partition"],["line","∥ / ⊥ line"],["perim","Perimeter"]];
+const rp=(a,b,c,d)=>[rnd(a,b),rnd(c,d)];
+const inR=p=>Math.abs(p[0])<=10&&Math.abs(p[1])<=6;
+function genProblem(kind){
+  if(kind==="mix")kind=pick(["dist","mid","part","line","perim"]);
+  let pr={kind};
+  if(kind==="dist"||kind==="mid"){
+    let A,B; do{ A=rp(-9,8,-6,5); B=add(A,[rnd(1,10)*pick([1,-1]),rnd(1,8)*pick([1,-1])]); }while(!inR(B));
+    pr.A=A; pr.B=B;
+    if(kind==="dist"){ pr.ans=[distInfo(A,B).d]; pr.q=`Find the distance AB between A${pt(A)} and B${pt(B)}. Give an exact radical (like 3√5) or round to the nearest tenth.`; pr.fields=["AB"]; }
+    else { pr.ans=[(A[0]+B[0])/2,(A[1]+B[1])/2]; pr.q=`Find the midpoint M of ${ntSeg("A","B")} with A${pt(A)} and B${pt(B)}.`; pr.fields=["x","y"]; }
+  }
+  if(kind==="part"){
+    let A,B,m,n; do{ m=rnd(1,4); n=rnd(1,4); if(m===n)n=m+1; const k=m+n;
+      const nice=Math.random()<.7; const run=nice?k*rnd(1,3)*pick([1,-1]):rnd(2,12)*pick([1,-1]), rise=nice?k*rnd(0,2)*pick([1,-1]):rnd(1,9)*pick([1,-1]);
+      A=rp(-9,8,-6,5); B=add(A,[run,rise]); }while(!inR(B)||same(A,B));
+    pr.A=A;pr.B=B;pr.m=m;pr.n=n; pr.ans=partPoint(A,B,m,n);
+    pr.q=`Point P lies on ${ntSeg("A","B")} with A${pt(A)} and B${pt(B)}, and partitions the directed segment from A to B in the ratio <b>${m} : ${n}</b> (AP : PB = ${m} : ${n}). Find P. Fractions are fine (e.g. 7/3).`;
+    pr.fields=["x","y"];
+  }
+  if(kind==="line"){
+    let P0,P1,Q,type,L; for(;;){
+      type=pick(["par","perp"]);
+      const dx=rnd(1,4), dy=rnd(1,4)*pick([1,-1]); const g=gcd(dx,dy); P0=rp(-8,6,-5,4); P1=add(P0,[dx/g*(g>1?1:rnd(1,2)),dy/g*(g>1?1:1)]);
+      if(!inR(P1))continue; Q=rp(-7,7,-5,5);
+      const cr=(P1[0]-P0[0])*(Q[1]-P0[1])-(P1[1]-P0[1])*(Q[0]-P0[0]); if(Math.abs(cr)<1e-9)continue;
+      L=buildLine(P0,P1,Q,type); if(L.vert||Math.abs(L.b)>12)continue; break; }
+    pr.P0=P0;pr.P1=P1;pr.Q=Q;pr.type=type;pr.ans=[L.m,L.b];
+    pr.q=`Line ℓ passes through A${pt(P0)} and B${pt(P1)}. Write the equation of the line through Q${pt(Q)} that is <b>${type==="par"?"parallel":"perpendicular"}</b> to ℓ, in the form y = mx + b. Fractions are fine.`;
+    pr.fields=["m (slope)","b (y-intercept)"];
+  }
+  if(kind==="perim"){
+    let V; for(;;){ const n=pick([3,3,4]), c=rp(-3,3,-1,1), base=Math.random()*360;
+      const angs=[]; for(let i=0;i<n;i++)angs.push(base+i*360/n+rnd(-25,25));
+      V=angs.map(a=>{ const r=rnd(3,6); return [Math.round(c[0]+r*1.3*Math.cos(a*D2R)),Math.round(c[1]+r*Math.sin(a*D2R))]; });
+      if(!V.every(inR)||!isSimple(V)||shoelace(V).area<6)continue; break; }
+    pr.V=V; pr.ans=[perimWork(V).P];
+    pr.q=`Find the perimeter of polygon ${V.map((_,i)=>LET[i]).join("")} with vertices ${V.map((p,i)=>LET[i]+pt(p)).join(", ")}. Round to the nearest tenth.`;
+    pr.fields=["perimeter"]; pr.tol=0.11;
+  }
+  return pr;
+}
+function solText(pr){
+  if(pr.kind==="dist")return distWork(pr.A,pr.B);
+  if(pr.kind==="mid")return midWork(pr.A,pr.B);
+  if(pr.kind==="part")return partWork(pr.A,pr.B,pr.m,pr.n);
+  if(pr.kind==="line")return buildLine(pr.P0,pr.P1,pr.Q,pr.type).text;
+  if(pr.kind==="perim")return perimWork(pr.V).text;
+}
+function hintText(pr){
+  if(pr.kind==="dist")return `Draw the right triangle: the legs are |Δx| = ${Math.abs(pr.B[0]-pr.A[0])} and |Δy| = ${Math.abs(pr.B[1]-pr.A[1])}. The distance is the hypotenuse, √(Δx² + Δy²). Watch the signs when a coordinate is negative.`;
+  if(pr.kind==="mid")return `Average each coordinate separately: x = (${nm(pr.A[0])} + ${par(pr.B[0],nm)}) / 2 and y = (${nm(pr.A[1])} + ${par(pr.B[1],nm)}) / 2.`;
+  if(pr.kind==="part")return `P is ${pr.m}/${pr.m+pr.n} of the way from A to B — the fraction uses the <b>whole</b> m + n, not ${pr.m}/${pr.n}. Multiply the run and the rise by ${pr.m}/${pr.m+pr.n}, then add to A (not to B).`;
+  if(pr.kind==="line")return pr.type==="par"?`Parallel lines share a slope. Find ℓ's slope from A and B, then use b = y₀ − m·x₀ with Q.`:`First find ℓ's slope, then flip it and change its sign (negative reciprocal). Then use b = y₀ − m·x₀ with Q's coordinates.`;
+  if(pr.kind==="perim")return `Use the distance formula on each of the ${pr.V.length} sides and add. Keep full precision while adding; round only the final total.`;
+}
+const M6={
+  tab:"Challenge", lesson:"G-GPE.B.5–7 · G-CO.A.1", accent:"var(--coral)",
+  title:()=>"Practice: "+({dist:"distance",mid:"midpoint",part:"partition point",line:"parallel / perpendicular line",perim:"polygon perimeter"}[M6.s.pr?M6.s.pr.kind:"dist"]),
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  streakEl:null,
+  newProb(){ M6.s.pr=genProblem(M6.s.kind); M6.s.state="open"; M6.s.reveal=false; M6.s.tries=0; },
+  bar(){
+    btn("New problem",()=>{M6.newProb();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    KINDS.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=M6.s.kind; sel.onchange=()=>{M6.s.kind=sel.value;M6.newProb();render();}; bar.appendChild(sel);
+    M6.streakEl=spacer(""); M6.upStreak();
+  },
+  upStreak(){ if(M6.streakEl)M6.streakEl.textContent="Streak "+M6.s.streak+" · Best "+M6.s.best+" · Solved "+M6.s.solved; },
+  draw(){
+    if(!M6.s.pr)M6.newProb();
+    const g=gridBg(true), pr=M6.s.pr, show=M6.s.state==="right"||M6.s.reveal;
+    if(pr.kind==="dist"||pr.kind==="mid"||pr.kind==="part"){
+      wseg(g,pr.A,pr.B,"var(--vert)",3.4);
+      if(pr.kind==="part"){ const sa=W2S(pr.A), sb=W2S(pr.B), d=unit(sub(sb,sa)), nn=[-d[1],d[0]], k=pr.m+pr.n;
+        for(let i=1;i<k;i++){ const q=add(sa,mul(sub(sb,sa),i/k)); sseg(g,add(q,mul(nn,7)),add(q,mul(nn,-7)),"var(--graphite)",2); } }
+      if(show){
+        if(pr.kind==="dist"){ const C=[pr.B[0],pr.A[1]]; wseg(g,pr.A,C,"var(--lin)",2.6,"8 5"); wseg(g,C,pr.B,"var(--corr)",2.6,"8 5");
+          sideLabel(g,W2S(pr.A),W2S(pr.B),normalAway(pr.A,pr.B,add(C,mul(sub(C,pr.A),0))).map(v=>v),"≈ "+num(pr.ans[0]),"var(--vert)"); }
+        else { const M=pr.ans; sdot(g,W2S(M),"var(--magenta)",7); smartLabel(g,W2S(M),normalAway(pr.A,pr.B,[pr.B[0],pr.A[1]]),(pr.kind==="mid"?"M":"P")+"("+fx(M[0])+", "+fx(M[1])+")","#C0185F"); }
+      }
+      sdot(g,W2S(pr.A)); sdot(g,W2S(pr.B));
+      wlabel(g,pr.A,"A"+pt(pr.A),add(pr.A,unit(sub(pr.B,pr.A))),"var(--ink)");
+      wlabel(g,pr.B,"B"+pt(pr.B),add(pr.B,unit(sub(pr.A,pr.B))),"var(--ink)");
+    }
+    if(pr.kind==="line"){
+      wfull(g,pr.P0,pr.P1,"var(--corr)",3.2);
+      if(show){ wfull(g,pr.Q,add(pr.Q,[1,pr.ans[0]]),"var(--alt)",3.2,"10 6"); }
+      sdot(g,W2S(pr.P0),"var(--corr)"); sdot(g,W2S(pr.P1),"var(--corr)"); sdot(g,W2S(pr.Q),"var(--magenta)",6);
+      stext(g,add(W2S(add(pr.P1,mul(unit(sub(pr.P1,pr.P0)),3))),[14,-14]),"ℓ","mk","var(--corr)");
+      wlabel(g,pr.P0,"A"+pt(pr.P0),add(pr.P0,unit(sub(pr.P1,pr.P0))),"#0369A1");
+      wlabel(g,pr.P1,"B"+pt(pr.P1),add(pr.P1,unit(sub(pr.P0,pr.P1))),"#0369A1");
+      wlabel(g,pr.Q,"Q"+pt(pr.Q),add(pr.Q,[0,-1]),"#C0185F");
+    }
+    if(pr.kind==="perim"){
+      const V=pr.V, c=centroid(V);
+      g.appendChild(E("polygon",{points:V.map(p=>W2S(p).join(",")).join(" "),style:"fill:rgba(124,58,237,.14);stroke:var(--vert)","stroke-width":3.2,"stroke-linejoin":"round"}));
+      if(show)V.forEach((P,i)=>{ const Q=V[(i+1)%V.length]; sideLabel(g,W2S(P),W2S(Q),normalAway(P,Q,c),num(len(sub(Q,P))),"#6D28D9"); });
+      V.forEach((p,i)=>{ sdot(g,W2S(p),"var(--vert)"); smartLabel(g,W2S(p),outward(p,c),LET[i]+pt(p),"var(--ink)"); });
+    }
+  },
+  panel(full){
+    const pr=M6.s.pr, st=M6.s.state;
+    if(!full&&document.getElementById("chk"))return;
+    const giv={kind:pr.kind,A:pr.A,B:pr.B,m:pr.m,n:pr.n,P0:pr.P0,P1:pr.P1,Q:pr.Q,type:pr.type,V:pr.V};
+    let h=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob" data-given='${JSON.stringify(giv)}'>${pr.q}</p></div>
+      <div class="ansrow">${pr.fields.map((f,i)=>`<div><label class="fld" for="ans${i}">${f}</label><input type="text" id="ans${i}" inputmode="text" autocomplete="off" spellcheck="false" placeholder="${pr.kind==="dist"?"e.g. 3√5 or 6.7":"e.g. −2 or 5/3"}"></div>`).join("")}</div>
+      <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button>
+        <button id="sol" class="ghost" type="button">Show solution</button>
+      </div><div id="fb6"></div><div style="height:4px"></div></div>
+      <div class="panel"><h3>How answers are checked</h3><div class="pad">
+      <p>Type a number, a fraction like <b>−5/3</b>, or a radical like <b>2√13</b> (or sqrt(52)). Decimals rounded to the nearest tenth are accepted.</p>
+      <p>Get one right to grow your streak. A wrong answer resets it, gives you a hint, and lets you try again.</p></div></div>`;
+    side.innerHTML=h;
+    const ins=pr.fields.map((_,i)=>document.getElementById("ans"+i));
+    const fb=document.getElementById("fb6");
+    const showSol=(good)=>{ fb.innerHTML=(good||"")+`<div class="fldwrap"><div class="eq">${solText(pr)}</div></div>`; };
+    const check=()=>{
+      if(M6.s.state==="right")return;
+      const vals=ins.map(x=>parseExpr(x.value));
+      if(vals.some(v=>!isFinite(v))){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Use numbers, fractions like 7/3, or radicals like 3√5.</div>`; return; }
+      const tol=pr.tol||0.051, ok=vals.every((v,i)=>Math.abs(v-pr.ans[i])<=tol);
+      if(ok){
+        M6.s.state="right"; if(M6.s.tries===0&&!M6.s.reveal){ M6.s.streak++; M6.s.best=Math.max(M6.s.best,M6.s.streak); } M6.s.solved++; M6.upStreak();
+        clear(); M6.draw();
+        showSol(`<div class="verdict good"><b>Correct!</b> ${M6.s.tries||M6.s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+M6.s.streak+"."} Here is the full work to compare with yours. Press <b>New problem</b> for another.</div>`);
+        ins.forEach(x=>x.disabled=true);
+      } else {
+        M6.s.tries++; M6.s.streak=0; M6.upStreak();
+        const which=pr.fields.length>1? pr.fields.filter((_,i)=>Math.abs(vals[i]-pr.ans[i])>tol).join(" and ") : "";
+        fb.innerHTML=`<div class="verdict bad"><b>Not quite${which?" — check "+which:""}.</b> ${hintText(pr)}</div>`;
+      }
+    };
+    document.getElementById("chk").onclick=check;
+    ins.forEach(x=>x.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); }));
+    document.getElementById("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){M6.s.streak=0;M6.upStreak();} clear(); M6.draw(); showSol(`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
+function update(){ setFS(); const M=MODS[cur]; clear(); M.draw(); M.panel(false); }
+function render(){
+  setFS(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  if(M===M6&&!M6.s.pr)M6.newProb();
+  bar.innerHTML=""; M.bar();
+  clear(); M.draw(); M.panel(true);
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+M1.init();
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>

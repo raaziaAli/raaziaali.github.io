@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Triangle Congruence Lab — Geometry Unit 2</title>
+<meta name="description" content="Interactive triangle congruence lab: build triangles from SSS, SAS, ASA, AAS, HL and see why SSA and AAA fail; corresponding parts; isosceles, exterior angle, triangle inequality and midsegment theorems; points of concurrency; two-column proofs; practice.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,10 90,85 10,85' fill='none' stroke='%2300E5FF' stroke-width='10' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button:disabled{opacity:.4;cursor:default;transform:none}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .bar button:focus-visible,.seg button:focus-visible,.go:focus-visible,.ghost:focus-visible,.chiprow button:focus-visible,.choices button:focus-visible,.tf button:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:100%}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .rel[data-hl]{cursor:pointer}
+  .rel[data-hl]:hover{background:rgba(255,255,255,.05)}
+  .rel.active{background:rgba(255,255,255,.09);box-shadow:inset 3px 0 0 var(--accent)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+  .eq.big{font-size:20px;text-align:center}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .go:disabled{opacity:.45;cursor:default;transform:none}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict.info{background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .verdict b{color:#fff}
+
+  .steps{width:100%;border-collapse:collapse;font-size:15px}
+  .steps td{padding:10px 14px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:middle}
+  .steps td.no{font-family:var(--mono);font-size:12.5px;color:var(--dim);width:28px;padding-right:0}
+  .steps .stmt{font-family:var(--mono);font-size:14px;font-weight:600;color:#fff}
+  .steps .why{width:52%}
+  .steps select{font-size:14px;padding:10px 11px}
+  .steps tr.right .stmt{color:var(--mint)}
+  .steps tr.right select{border-color:rgba(94,234,212,.6)}
+  .steps tr.wrong select.bad{border-color:var(--coral)}
+  .steps tr.hintrow td{padding:0 14px 10px 42px;font-size:13.5px;color:#FFDCDA;border-bottom:1px solid rgba(196,181,253,.11)}
+  .steps th{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);text-align:left;padding:10px 14px;border-bottom:1px solid var(--edge)}
+  @media (max-width:600px){.steps td{display:block;width:auto!important;border-bottom:none;padding:6px 14px}
+    .steps tr{display:block;border-bottom:1px solid rgba(196,181,253,.14);padding:6px 0}
+    .steps th{display:none} .steps td.no{display:inline-block;padding-top:10px}
+    .steps tr.hintrow td{padding:0 14px 8px}}
+
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 20px}
+  .fields label{display:block;font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+  .fields .dimv{font-family:var(--mono);font-size:15px;color:var(--dim);padding:12px 0}
+  .choices{display:flex;flex-wrap:wrap;gap:8px}
+  .choices button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 16px;border-radius:100px;cursor:pointer}
+  .choices button:hover{background:rgba(255,255,255,.13)}
+  .choices button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .xy{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tf{display:flex;gap:6px}
+  .tf button{font-family:var(--ui);font-size:13px;font-weight:700;border:1px solid var(--edge);background:rgba(255,255,255,.06);color:var(--text);padding:6px 12px;border-radius:100px;cursor:pointer}
+  .tf button:hover{background:rgba(255,255,255,.13)}
+  .tf button.picked.good{background:var(--mint);color:#0A0A1F;border-color:var(--mint)}
+  .tf button.picked.bad{background:var(--coral);color:#0A0A1F;border-color:var(--coral)}
+  .tfwhy{grid-column:1/-1;font-size:13.5px;color:var(--dim);margin-top:-4px}
+  table.loc{width:100%;border-collapse:collapse;font-size:13.5px}
+  table.loc th,table.loc td{padding:9px 12px;border-bottom:1px solid rgba(196,181,253,.12);text-align:left}
+  table.loc th{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--accent);text-transform:uppercase}
+  table.loc td:first-child{color:#fff;font-weight:600}
+  table.loc tr.now td{background:rgba(255,255,255,.07)}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.8;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.2;fill:none;stroke-dasharray:9 6}
+  .wedge{stroke-width:2.2;fill-opacity:.16}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:15px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .sm{font-family:var(--mono);font-weight:700;font-size:13px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .cap{font-family:var(--mono);font-size:12.5px;font-weight:700;fill:#64748B;letter-spacing:.05em}
+  .mk,.num,.sm,.cap{pointer-events:none}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  .tri{fill:rgba(2,132,199,.08);stroke:var(--ink);stroke-width:3;stroke-linejoin:round}
+  .given{stroke:var(--ink);stroke-width:3.2;stroke-linecap:round;fill:none}
+  .free{stroke:var(--hand);stroke-width:3.2;stroke-linecap:round;fill:none}
+  .freed{stroke:var(--hand);stroke-width:2.6;stroke-dasharray:7 6;fill:none;stroke-linecap:round}
+  .guide{stroke:#94A3B8;stroke-width:1.5;stroke-dasharray:5 6;fill:none}
+  .ghostp{fill:rgba(219,39,119,.10);stroke:#DB2777;stroke-width:2.6;stroke-dasharray:8 5;stroke-linejoin:round;pointer-events:none}
+  .alt2{fill:rgba(124,58,237,.07);stroke:var(--vert);stroke-width:2.4;stroke-dasharray:7 5;stroke-linejoin:round}
+  .tick{stroke:var(--ink);stroke-width:2.3;stroke-linecap:round}
+  .arcm{fill:none;stroke-width:2.2}
+  .region{fill:rgba(20,33,61,.03);stroke:#CBD5E1;stroke-width:1.5;stroke-dasharray:6 5}
+  .pickc{fill:rgba(255,255,255,.01);stroke:transparent;stroke-width:3;cursor:pointer}
+  .pickc:hover{fill:rgba(255,107,53,.18)}
+  .axis{stroke:#475569;stroke-width:1.6}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+  footer.foot a{color:var(--cyan)}
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  @media (max-width:520px){
+    .wrap{padding:18px 12px 50px}
+    .masthead .eyebrow{margin-left:0;text-align:left;letter-spacing:.08em}
+    nav.tabs button{padding:9px 14px;font-size:14px}
+    .bar{padding:12px 14px}
+    .bar button,.seg button{padding:9px 13px;font-size:13.5px}
+    .board-head .lsn{margin-left:0}
+    .fields{grid-template-columns:1fr 1fr;padding:14px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Triangle Congruence <em>Lab</em></h1>
+    <div class="eyebrow">Geometry · Unit 2 · Triangles, Congruence &amp; Similarity</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Triangle figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every figure is live and every measure is computed from the drawing — drag a point and the facts follow. Criterion names and reasons follow Common Core / Eureka Math Geometry wording.<br>
+    <a href="/geometry/">← Geometry course</a> &nbsp;·&nbsp; <a href="/math/#geometry">Mrs. Ali's Classroom</a></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+if(new URLSearchParams(location.search).has("embed"))document.body.classList.add("embed");
+
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460, U=32;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+
+const D2R=Math.PI/180;
+const norm=d=>((d%360)+360)%360;
+const PT=(c,r,deg)=>[c[0]+r*Math.cos(deg*D2R), c[1]-r*Math.sin(deg*D2R)];
+const angOf=(c,p)=>norm(Math.atan2(-(p[1]-c[1]), p[0]-c[0])/D2R);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const r1=v=>Math.round(v*10)/10;
+const fmt=v=>{const s=r1(v); return (Math.abs(s-Math.round(s))<0.05? String(Math.round(s)) : s.toFixed(1));};
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const add=(p,q)=>[p[0]+q[0],p[1]+q[1]];
+const sub=(p,q)=>[p[0]-q[0],p[1]-q[1]];
+const mul=(p,k)=>[p[0]*k,p[1]*k];
+const len=v=>Math.hypot(v[0],v[1]);
+const dist=(p,q)=>len(sub(p,q));
+const mid=(p,q)=>[(p[0]+q[0])/2,(p[1]+q[1])/2];
+const unit=v=>{const l=len(v)||1;return [v[0]/l,v[1]/l];};
+const perp=v=>[-v[1],v[0]];
+const dotp=(u,v)=>u[0]*v[0]+u[1]*v[1];
+const cross=(u,v)=>u[0]*v[1]-u[1]*v[0];
+const dir=d=>[Math.cos(d*D2R),Math.sin(d*D2R)];
+const deg=v=>Math.atan2(v[1],v[0])/D2R;
+const cen3=(a,b,c)=>[(a[0]+b[0]+c[0])/3,(a[1]+b[1]+c[1])/3];
+const rotS=(v,a)=>{const c=Math.cos(a*D2R),s=Math.sin(a*D2R);return [v[0]*c-v[1]*s, v[0]*s+v[1]*c];};
+function angAt(V,P,Q){const u=sub(P,V),w=sub(Q,V);return Math.acos(clamp(dotp(u,w)/((len(u)*len(w))||1),-1,1))/D2R;}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function foot(V,P,Q){const d=sub(Q,P);const t=dotp(sub(V,P),d)/dotp(d,d);return add(P,mul(d,t));}
+function distSeg(X,P,Q){const d=sub(Q,P);const t=clamp(dotp(sub(X,P),d)/dotp(d,d),0,1);return dist(X,add(P,mul(d,t)));}
+function areaT(A,B,C){return Math.abs(cross(sub(B,A),sub(C,A)))/2;}
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+function bg(){
+  const d=E("defs");
+  d.innerHTML='<pattern id="g" width="32" height="32" patternUnits="userSpaceOnUse">'+
+    '<path d="M32 0H0V32" fill="none" stroke="var(--grid)" stroke-width="1" opacity="0.75"/></pattern>'+
+    '<clipPath id="fr"><rect width="'+VW+'" height="'+VH+'"/></clipPath>'+
+    '<clipPath id="ws"><rect x="306" y="0" width="'+(VW-306)+'" height="'+VH+'"/></clipPath>';
+  cv.appendChild(d);
+  cv.appendChild(E("rect",{width:VW,height:VH,fill:"url(#g)"}));
+  const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
+}
+function seg(g,p,q,cls,extra){const l=E("line",{x1:p[0],y1:p[1],x2:q[0],y2:q[1],class:cls||"line"});if(extra)for(const k in extra)l.setAttribute(k,extra[k]);g.appendChild(l);return l;}
+function poly(g,pts,cls,extra){const n=E("polygon",{points:pts.map(p=>p[0].toFixed(2)+","+p[1].toFixed(2)).join(" "),class:cls||"tri"});if(extra)for(const k in extra)n.setAttribute(k,extra[k]);g.appendChild(n);return n;}
+function circ(g,c,r,cls,extra){const n=E("circle",{cx:c[0],cy:c[1],r:r,class:cls||"guide"});if(extra)for(const k in extra)n.setAttribute(k,extra[k]);g.appendChild(n);return n;}
+function fullLine(g,p,d,cls,extra){const u=unit(d);return seg(g,add(p,mul(u,-2400)),add(p,mul(u,2400)),cls,extra);}
+function txt(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"mk","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("fill",color);
+  t.textContent=s; g.appendChild(t); return t;
+}
+function dot(g,p,color,r){const c=E("circle",{cx:p[0],cy:p[1],r:r||5,class:"dot"});if(color)c.setAttribute("fill",color);g.appendChild(c);}
+function grab(g,p,id){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:17,class:"grab","data-drag":id})); dot(g,p); }
+function wedge(g,c,a1,a2,r,color,opts){
+  opts=opts||{};
+  const s=PT(c,r,a1), e=PT(c,r,a2), sw=norm(a2-a1);
+  const d="M "+c[0]+" "+c[1]+" L "+s[0]+" "+s[1]+" A "+r+" "+r+" 0 "+(sw>180?1:0)+" 0 "+e[0]+" "+e[1]+" Z";
+  const p=E("path",{d:d,class:"wedge",stroke:color,fill:color});
+  if(opts.ghost){p.setAttribute("fill-opacity",.05);p.setAttribute("opacity",.35);}
+  g.appendChild(p);
+  if(opts.label!==undefined&&opts.label!==null){
+    const lp=PT(c,r+(opts.ld||20),a1+sw/2);
+    txt(g,lp,opts.label,opts.labelClass||"num",color);
+  }
+  return p;
+}
+function interiorAngle(V,P,Q){
+  const a=angOf(V,P), b=angOf(V,Q), d=norm(b-a);
+  return d<=180? {from:a,to:b,m:d} : {from:b,to:a,m:360-d};
+}
+function angW(g,V,P,Q,r,color,label,opts){const o=interiorAngle(V,P,Q);return wedge(g,V,o.from,o.to,r,color,Object.assign({label:label},opts||{}));}
+function arcs(g,V,P,Q,r,n,color){
+  const o=interiorAngle(V,P,Q);
+  for(let i=0;i<n;i++){const rr=r+i*5.5, s=PT(V,rr,o.from), e=PT(V,rr,o.to);
+    g.appendChild(E("path",{d:"M "+s[0]+" "+s[1]+" A "+rr+" "+rr+" 0 0 0 "+e[0]+" "+e[1],class:"arcm",stroke:color||"var(--corr)"}));}
+}
+function ticks(g,P,Q,n,color){
+  const M=mid(P,Q), d=unit(sub(Q,P)), nn=perp(d);
+  for(let i=0;i<n;i++){const off=(i-(n-1)/2)*6.5, c=add(M,mul(d,off));
+    seg(g,add(c,mul(nn,7.5)),sub(c,mul(nn,7.5)),"tick",color?{stroke:color}:null);}
+}
+function parArrows(g,P,Q,n,color){
+  const d=unit(sub(Q,P)), nn=perp(d), M=mid(P,Q);
+  for(let i=0;i<n;i++){const c=add(M,mul(d,(i-(n-1)/2)*9+4));
+    const a=add(sub(c,mul(d,9)),mul(nn,6)), b=sub(sub(c,mul(d,9)),mul(nn,6));
+    g.appendChild(E("polyline",{points:a.join(",")+" "+c.join(",")+" "+b.join(","),fill:"none",stroke:color||"var(--ink)","stroke-width":2.4,"stroke-linecap":"round","stroke-linejoin":"round"}));}
+}
+function rightMark(g,V,P,Q,size){
+  size=size||12; const u=mul(unit(sub(P,V)),size), w=mul(unit(sub(Q,V)),size);
+  g.appendChild(E("polyline",{points:[add(V,u),add(add(V,u),w),add(V,w)].map(p=>p.join(",")).join(" "),class:"rt"}));
+}
+function vlabel(g,V,cn,s,d,color,cls){const u=unit(sub(V,cn));return txt(g,add(V,mul(u,d||22)),s,cls||"mk",color);}
+function sideLabel(g,P,Q,cn,s,color,d,cls){
+  const M=mid(P,Q); let n=perp(unit(sub(Q,P))); if(dotp(n,sub(M,cn))<0)n=mul(n,-1);
+  return txt(g,add(M,mul(n,d||18)),s,cls||"num",color);
+}
+function angLabel(g,V,P,Q,s,color,d,cls){
+  const b=unit(add(unit(sub(P,V)),unit(sub(Q,V))));
+  return txt(g,add(V,mul(b,d||44)),s,cls||"sm",color);
+}
+function triangleFromAngles(B,C,angB,angC){
+  const base=Math.atan2(-(C[1]-B[1]),C[0]-B[0])/D2R;
+  const dB=base+angB, dC=base+180-angC;
+  const u=[Math.cos(dB*D2R),-Math.sin(dB*D2R)], v=[Math.cos(dC*D2R),-Math.sin(dC*D2R)];
+  const den=u[0]*v[1]-u[1]*v[0], w=[C[0]-B[0],C[1]-B[1]];
+  const s=(w[0]*v[1]-w[1]*v[0])/den;
+  return [B[0]+u[0]*s, B[1]+u[1]*s];
+}
+function fitTriangle(angB,angC,opt){
+  opt=opt||{};
+  const b0=[0,0], c0=[100,0];
+  const a0=triangleFromAngles(b0,c0,angB,angC);
+  const pts=[b0,c0,a0];
+  if(opt.ext)pts.push([c0[0]+38,0]);
+  const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+  const w=Math.max.apply(null,xs)-Math.min.apply(null,xs);
+  const h=Math.max.apply(null,ys)-Math.min.apply(null,ys);
+  const s=Math.min((opt.w||420)/w,(opt.h||250)/h);
+  const cx=(Math.max.apply(null,xs)+Math.min.apply(null,xs))/2;
+  const by=Math.max.apply(null,ys);
+  const ox=(opt.cx||350), oy=(opt.baseY||350);
+  const M=p=>[ox+(p[0]-cx)*s, oy+(p[1]-by)*s];
+  return {A:M(a0),B:M(b0),C:M(c0)};
+}
+function snapG(p){return [Math.round(p[0]/U)*U,Math.round(p[1]/U)*U];}
+function dragTri(obj,id,p,snap,minArea){
+  let q=[clamp(p[0],26,674),clamp(p[1],26,434)]; if(snap)q=snapG(q);
+  const t={A:obj.A,B:obj.B,C:obj.C}; t[id]=q;
+  if(areaT(t.A,t.B,t.C)<(minArea||1800))return false;
+  obj[id]=q; return true;
+}
+function mkBtn(label,fn,cls){const b=document.createElement("button");b.textContent=label;if(cls)b.className=cls;b.onclick=fn;return b;}
+function mkSeg(opts,curv,fn){
+  const s=document.createElement("div"); s.className="seg";
+  opts.forEach(([k,lab])=>{const b=document.createElement("button");b.textContent=lab;b.setAttribute("aria-pressed",curv===k);b.onclick=()=>fn(k);s.appendChild(b);});
+  return s;
+}
+function mkChk(label,val,fn){
+  const l=document.createElement("label"); l.className="chk";
+  const c=document.createElement("input"); c.type="checkbox"; c.checked=val; c.onchange=()=>fn(c.checked);
+  l.appendChild(c); l.appendChild(document.createTextNode(label)); return l;
+}
+function spacer(t){const sp=document.createElement("span");sp.className="spacer";sp.textContent=t;return sp;}
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null;
+function svgPt(e){const p=cv.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(cv.getScreenCTM().inverse());return [q.x,q.y];}
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag; if(!id)return;
+  dragId=id; cv.setPointerCapture(e.pointerId); e.preventDefault();
+});
+cv.addEventListener("pointermove",e=>{
+  if(!dragId)return; const M=MODS[cur]; if(M.drag)M.drag(dragId,svgPt(e));
+});
+["pointerup","pointercancel"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+cv.addEventListener("click",e=>{
+  const k=e.target.dataset&&e.target.dataset.pick; const M=MODS[cur];
+  if(k&&M.pick)M.pick(k);
+});
+
+/* ══════════════════════ TAB 1 · congruence criteria builder ══════════════════════ */
+const CR={
+ SSS:{name:"Side-Side-Side",ok:true,gs:["c","b","a"],ga:[],
+   fields:[["c","AB",2,10],["b","AC",2,10],["a","BC",2,10]],def:{c:8,b:7,a:6},
+   stmt:"If three sides of one triangle are congruent to three sides of another triangle, then the triangles are congruent.",
+   how:"Drag the two orange stick ends. The sticks are hinged at D and E and cannot change length, so each free end can only travel along its dashed circle.",
+   why:["Three fixed lengths leave no freedom. Once DE is laid down, the third vertex must be exactly AC away from D <b>and</b> exactly BC away from E — that is, on both dashed circles.","Two circles cross in at most two points, and those two points are mirror images across line DE. Either way you get a copy of △ABC, so the ghost always fits."],
+   tryit:"Change the lengths to 3, 4 and 8. Can the sticks meet? Now try 3, 5 and 8 — what kind of “triangle” is that?"},
+ SAS:{name:"Side-Angle-Side",ok:true,gs:["c","b"],ga:["A"],
+   fields:[["c","AB",2,10],["A","m∠A",15,150],["b","AC",2,10]],def:{c:8,A:50,b:6},
+   stmt:"If two sides and the included angle of one triangle are congruent to two sides and the included angle of another triangle, then the triangles are congruent.",
+   how:"Side DE, side DF and the angle between them are locked. Stretch the orange third side from E to any length you like and try to close the triangle somewhere else.",
+   why:["Fixing the angle at D fixes the <b>direction</b> of DF; fixing its length pins the point F. With D, E and F all pinned, the third side EF has no choice at all.","The angle must be the <span class=\"term\">included</span> angle — the one formed by the two given sides. Move the angle to a different vertex and you get SSA, which fails."],
+   tryit:"Set m∠A = 90°. The third side is now the hypotenuse — check its length with the Pythagorean theorem."},
+ ASA:{name:"Angle-Side-Angle",ok:true,gs:["c"],ga:["A","B"],
+   fields:[["A","m∠A",15,150],["c","AB",2,10],["B","m∠B",15,150]],def:{A:55,c:8,B:60},
+   stmt:"If two angles and the included side of one triangle are congruent to two angles and the included side of another triangle, then the triangles are congruent.",
+   how:"Base DE and the angles at D and E are locked, so the other two sides must run along the dashed rays. Slide the orange ends along the rays and try to meet anywhere but one spot.",
+   why:["Two rays leave the ends of a fixed segment at fixed angles. Two non-parallel lines cross at <b>exactly one</b> point, so the third vertex is forced.","The side must be the <span class=\"term\">included</span> side — the one between the two angles."],
+   tryit:"Make m∠A + m∠B close to 180°. Where do the rays meet now? What happens when the sum reaches 180°?"},
+ AAS:{name:"Angle-Angle-Side",ok:true,gs:["a"],ga:["A","B"],
+   fields:[["A","m∠A",15,150],["B","m∠B",15,150],["a","BC",2,10]],def:{A:60,B:50,a:7},
+   stmt:"If two angles and a non-included side of one triangle are congruent to the corresponding parts of another triangle, then the triangles are congruent.",
+   how:"Side EF (it is opposite ∠D) and the angle at E are locked. Slide D along the ray from E. The angle at D changes as you go — find every place where it equals the given m∠A.",
+   why:["The angles of a triangle sum to 180°, so two angles fix the third: m∠F = 180° − m∠D − m∠E. That turns AAS into ASA — EF is the side <b>between</b> ∠E and ∠F.","So AAS is not a new idea; it is ASA in disguise, which is why it is on the list."],
+   tryit:"Compare with ASA. In AAS, which side is between the two given angles, and which side is given instead?"},
+ HL:{name:"Hypotenuse-Leg",ok:true,gs:["c","b"],ga:[],right:true,
+   fields:[["c","hyp. AB",3,10],["b","leg AC",2,10]],def:{c:8.5,b:5},
+   stmt:"If the hypotenuse and a leg of one right triangle are congruent to the hypotenuse and a leg of another right triangle, then the triangles are congruent.",
+   how:"The right angle at F and the leg FD are locked. Swing the hypotenuse from D until it lands on the other leg's line — on either side of F.",
+   why:["In a right triangle the Pythagorean theorem fixes the third side: (other leg)² = (hypotenuse)² − (leg)². So HL is really SSS for right triangles.","The hypotenuse lands on the line at two points, one on each side of F. They are reflections of each other across leg FD, so both triangles are congruent to △ABC."],
+   tryit:"Close the triangle on the left of F, then on the right. Read the rigid motion each time — one of them needs a reflection."},
+ SSA:{name:"Side-Side-Angle — not a criterion",ok:false,gs:["b","a"],ga:["A"],
+   fields:[["A","m∠A",15,150],["b","AC",2,10],["a","BC",2,10]],def:{A:35,b:8,a:5.5},
+   stmt:"SSA is NOT a congruence criterion: two sides and a non-included angle can fit two different triangles.",
+   how:"∠D and side DF are locked; the orange side FE has the given length BC but can swing. Land it on the base line. Look for a second landing point.",
+   why:["The swinging side is a radius of the dashed circle around F. If it is shorter than DF, the circle can cross the base line <b>twice</b> — at E₁ and E₂ — and both triangles have the same two sides and the same angle at D.","Let h = AC·sin A be the distance from F down to the line. BC &lt; h: no triangle. BC = h: one right triangle. h &lt; BC &lt; AC: <b>two</b> triangles (the ambiguous case). BC ≥ AC: one."],
+   tryit:"Keep m∠A = 35° and AC = 8 (so h ≈ 4.6). Find values of BC that give no triangle, exactly one, and two."},
+ AAA:{name:"Angle-Angle-Angle — not a criterion",ok:false,gs:[],ga:["A","B","C"],
+   fields:[["A","m∠A",15,150],["B","m∠B",15,150]],def:{A:55,B:65},
+   stmt:"AAA is NOT a congruence criterion: equal angles force the same shape, not the same size.",
+   how:"All three angles are locked. Drag E to change the base length — the triangle always closes, but is it the same triangle?",
+   why:["The angles fix the <b>shape</b> only. Every position of E gives a triangle <span class=\"term\">similar</span> to △ABC — a dilation of it — but the ghost only fits when the scale factor is exactly 1.","That is why angle–angle is a <b>similarity</b> criterion (AA, coming later in this unit), not a congruence criterion."],
+   tryit:"Drag E until the ghost fits exactly. What is the scale factor then? Is there any other position that works?"}
+};
+const SIDE_V={a:["B","C"],b:["C","A"],c:["A","B"]}, TICKN={c:1,b:2,a:3}, ARCN={A:1,B:2,C:3};
+const SIDE_NM={c:"AB",b:"AC",a:"BC"}, WSIDE={c:"DE",b:"DF",a:"EF"};
+const ANG_COL={A:"var(--corr)",B:"var(--alt)",C:"var(--vert)"};
+
+function solveRef(k,v){
+  let a,b,c,A,B,C;
+  const sin=x=>Math.sin(x*D2R), cos=x=>Math.cos(x*D2R);
+  if(k==="SSS"){a=v.a;b=v.b;c=v.c;
+    if(a+b<=c+1e-9||a+c<=b+1e-9||b+c<=a+1e-9)return {err:"These lengths fail the triangle inequality: the two shorter sides must add to more than the longest. Change one of the numbers."};
+    A=Math.acos((b*b+c*c-a*a)/(2*b*c))/D2R;}
+  else if(k==="SAS"){c=v.c;b=v.b;A=v.A;}
+  else if(k==="ASA"){A=v.A;B=v.B;c=v.c;C=180-A-B;if(C<1)return {err:"m∠A + m∠B must be less than 180°, or the rays never meet."};b=c*sin(B)/sin(C);}
+  else if(k==="AAS"){A=v.A;B=v.B;a=v.a;C=180-A-B;if(C<1)return {err:"m∠A + m∠B must be less than 180°."};c=a*sin(C)/sin(A);b=a*sin(B)/sin(A);}
+  else if(k==="HL"){c=v.c;b=v.b;if(b>=c-0.05)return {err:"A leg must be shorter than the hypotenuse."};A=Math.acos(b/c)/D2R;}
+  else if(k==="SSA"){A=v.A;b=v.b;a=v.a;const h=b*sin(A);
+    if(a<h-1e-9)return {err:"BC = "+fmt(a)+" is shorter than h = AC·sin A ≈ "+fmt(h)+", the distance from C to the base line. The swinging side never reaches the line: no triangle at all."};
+    c=b*cos(A)+Math.sqrt(Math.max(0,a*a-h*h)); if(c<=0.05)return {err:"With these numbers the swinging side only lands behind A — no triangle."};}
+  else if(k==="AAA"){A=v.A;B=v.B;C=180-A-B;if(C<1)return {err:"The angles of a triangle must sum to 180°, so m∠A + m∠B must be less than 180°."};c=7;b=c*sin(B)/sin(C);}
+  const P={A:[0,0],B:[c,0],C:mul(dir(A),b)};
+  a=dist(P.B,P.C);
+  return {a:a,b:b,c:c,A:A,B:angAt(P.B,P.C,P.A),C:angAt(P.C,P.A,P.B),P:P};
+}
+
+const T1={
+  tab:"Congruence criteria", lesson:"G-CO.B.7 · B.8", accent:"var(--cyan)",
+  title:()=>T1.s.crit+" — "+CR[T1.s.crit].name,
+  s:{crit:"SSS",vals:{},free:{},rot:0,flip:1,anim:1,was:false},
+  init(){for(const k in CR){T1.s.vals[k]=Object.assign({},CR[k].def);T1.resetFree(k);}},
+  resetFree(k){
+    const R=solveRef(k,T1.s.vals[k]); const f={};
+    if(!R.err){
+      if(k==="SSS"){f.t1=Math.min(R.A+40,172);f.t2=180-R.B-55;}
+      else if(k==="SAS"){f.q=add([R.c,0],mul(dir(180-R.B+40),R.a*0.75));}
+      else if(k==="ASA"){f.t1=R.b*0.5;f.t2=R.a*0.5;}
+      else if(k==="AAS"){f.t=R.c*0.5;}
+      else if(k==="HL"){f.psi=deg([R.a,-R.b])+22;}
+      else if(k==="SSA"){const F=R.P.C;f.psi=deg(sub([R.c,0],F))+28;}
+      else if(k==="AAA"){f.s=R.c*0.68;}
+    }
+    T1.s.free[k]=f; T1.s.was=false; T1.s.anim=1;
+  },
+  geom(){
+    const k=T1.s.crit, R=solveRef(k,T1.s.vals[k]); if(R.err)return {err:R.err,k:k};
+    let sol;
+    if(k==="AAS")sol={E:[0,0],F:[R.a,0],D:mul(dir(R.B),R.c)};
+    else if(k==="HL")sol={F:[0,0],D:[0,R.b],E:[R.a,0]};
+    else sol={D:R.P.A,E:R.P.B,F:R.P.C};
+    const wc=cen3(sol.D,sol.E,sol.F);
+    const xs=[R.P.A[0],R.P.B[0],R.P.C[0]], ys=[R.P.A[1],R.P.B[1],R.P.C[1]];
+    const x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs),y0=Math.min.apply(null,ys),y1=Math.max.apply(null,ys);
+    const rad=Math.max(dist(wc,sol.D),dist(wc,sol.E),dist(wc,sol.F));
+    const S=Math.min(26,250/(x1-x0),290/(y1-y0),170/rad);
+    const rc=[(x0+x1)/2,(y0+y1)/2];
+    const ref=p=>[156+S*(p[0]-rc[0]),262-S*(p[1]-rc[1])];
+    const cs=Math.cos(T1.s.rot*D2R), sn=Math.sin(T1.s.rot*D2R), fl=T1.s.flip;
+    const L=p=>{const x=p[0]-wc[0],y=(p[1]-wc[1])*fl;return [505+S*(x*cs-y*sn),258-S*(x*sn+y*cs)];};
+    const Li=q=>{const X=(q[0]-505)/S,Y=-(q[1]-258)/S;const x=X*cs+Y*sn,y=-X*sn+Y*cs;return [x+wc[0],y/fl+wc[1]];};
+    return {k:k,R:R,f:T1.s.free[k],sol:sol,S:S,ref:ref,L:L,Li:Li};
+  },
+  cons(G){
+    const k=G.k,R=G.R,f=G.f,o={};
+    if(k==="SSS"){o.D=[0,0];o.E=[R.c,0];o.P=mul(dir(f.t1),R.b);o.Q=add(o.E,mul(dir(f.t2),R.a));if(dist(o.P,o.Q)<1e-4)o.tri={D:o.D,E:o.E,F:o.P};}
+    else if(k==="SAS"){o.D=[0,0];o.E=[R.c,0];o.F=R.P.C;o.Q=f.q;if(dist(f.q,o.F)<1e-4)o.tri={D:o.D,E:o.E,F:o.F};}
+    else if(k==="ASA"){o.D=[0,0];o.E=[R.c,0];o.u=dir(R.A);o.w=dir(180-R.B);o.P=mul(o.u,f.t1);o.Q=add(o.E,mul(o.w,f.t2));if(dist(o.P,o.Q)<1e-4)o.tri={D:o.D,E:o.E,F:o.P};}
+    else if(k==="AAS"){o.E=[0,0];o.F=[R.a,0];o.u=dir(R.B);o.D=mul(o.u,f.t);o.angD=angAt(o.D,o.E,o.F);if(Math.abs(f.t-R.c)<1e-6)o.tri={D:o.D,E:o.E,F:o.F};}
+    else if(k==="HL"){o.F=[0,0];o.D=[0,R.b];o.P=add(o.D,mul(dir(f.psi),R.c));if(Math.abs(o.P[1])<1e-4)o.tri={D:o.D,E:o.P,F:o.F};}
+    else if(k==="SSA"){o.D=[0,0];o.F=R.P.C;o.P=add(o.F,mul(dir(f.psi),R.a));
+      const h=o.F[1], r2=R.a*R.a-h*h; o.cands=[];
+      if(r2>=-1e-9){const r=Math.sqrt(Math.max(0,r2));[o.F[0]-r,o.F[0]+r].forEach(x=>{if(x>0.05&&!o.cands.some(c=>Math.abs(c[0]-x)<1e-6))o.cands.push([x,0]);});}
+      if(Math.abs(o.P[1])<1e-4&&o.P[0]>0.05)o.tri={D:o.D,E:o.P,F:o.F};}
+    else if(k==="AAA"){o.D=[0,0];o.E=[f.s,0];const C=180-R.A-R.B;o.F=mul(dir(R.A),f.s*Math.sin(R.B*D2R)/Math.sin(C*D2R));o.tri={D:o.D,E:o.E,F:o.F};}
+    return o;
+  },
+  ghost(G,o){
+    if(!o.tri)return null;
+    const Rp=G.R.P;
+    const rs={A:G.ref(Rp.A),B:G.ref(Rp.B),C:G.ref(Rp.C)};
+    const ts={A:G.L(o.tri.D),B:G.L(o.tri.E),C:G.L(o.tri.F)};
+    const anc={SSS:["A","B"],SAS:["A","B"],ASA:["A","B"],AAS:["B","C"],HL:["C","A"],SSA:["A","C"],AAA:["A","B"]}[G.k];
+    const ori=t=>Math.sign(cross(sub(t.B,t.A),sub(t.C,t.A)));
+    const refl=ori(rs)!==ori(ts);
+    const Ra=rs[anc[0]],Rb=rs[anc[1]],Ta=ts[anc[0]],Tb=ts[anc[1]];
+    let u=sub(Rb,Ra); if(refl)u=[u[0],-u[1]];
+    const v=sub(Tb,Ta);
+    const al=deg(v)-deg(u);
+    const t=T1.s.anim;
+    const map=p=>{let d=sub(p,Ra);d=[d[0],d[1]*(refl?1-2*t:1)];d=rotS(d,al*t);return add(add(Ra,mul(sub(Ta,Ra),t)),d);};
+    const fin=p=>{let d=sub(p,Ra);if(refl)d=[d[0],-d[1]];d=rotS(d,al);return add(Ta,d);};
+    const fit=["A","B","C"].every(x=>dist(fin(rs[x]),ts[x])<0.05*G.S);
+    let ccw=-al; ccw=((ccw%360)+540)%360-180;
+    return {pts:["A","B","C"].map(x=>map(rs[x])),fit:fit,refl:refl,ccw:ccw,rs:rs,ts:ts};
+  },
+  motionText(gh){
+    const parts=[];
+    if(gh.refl)parts.push("a reflection");
+    if(Math.abs(gh.ccw)>0.5)parts.push("a rotation of "+fmt(Math.abs(gh.ccw))+"° "+(gh.ccw>0?"counterclockwise":"clockwise"));
+    parts.push("a translation");
+    return parts.length===1?parts[0]:parts.slice(0,-1).join(", ")+" and "+parts[parts.length-1];
+  },
+  markRef(g,P,k,R,withVals){
+    const c=CR[k], cn=cen3(P.A,P.B,P.C);
+    c.gs.forEach(s=>{const v=SIDE_V[s];ticks(g,P[v[0]],P[v[1]],TICKN[s]);if(withVals)sideLabel(g,P[v[0]],P[v[1]],cn,fmt(R[s]),"var(--ink)",19);});
+    c.ga.forEach(a=>{const o=["A","B","C"].filter(x=>x!==a);arcs(g,P[a],P[o[0]],P[o[1]],24,ARCN[a],ANG_COL[a]);
+      if(withVals)angLabel(g,P[a],P[o[0]],P[o[1]],fmt(R[a])+"°",ANG_COL[a],52);});
+    if(c.right)rightMark(g,P.C,P.A,P.B,13);
+  },
+  draw(){
+    const g=bg();
+    g.appendChild(E("rect",{x:10,y:10,width:290,height:440,rx:14,class:"region"}));
+    txt(g,[155,32],"REFERENCE △ABC","cap");
+    txt(g,[505,32],"BUILD △DEF HERE","cap");
+    const G=T1.geom();
+    if(G.err){txt(g,[505,230],"No triangle with these givens","num","var(--unk)");txt(g,[155,230],"—","num","#94A3B8");return;}
+    const R=G.R,k=G.k;
+    // reference
+    const rP={A:G.ref(R.P.A),B:G.ref(R.P.B),C:G.ref(R.P.C)}, rcn=cen3(rP.A,rP.B,rP.C);
+    poly(g,[rP.A,rP.B,rP.C],"tri");
+    T1.markRef(g,rP,k,R,true);
+    ["A","B","C"].forEach(x=>{vlabel(g,rP[x],rcn,x,20);dot(g,rP[x]);});
+    // workspace
+    const gw=E("g",{"clip-path":"url(#ws)"}); g.appendChild(gw);
+    const o=T1.cons(G), L=G.L;
+    const hd=[];
+    const SL=(p,q,cls)=>seg(gw,L(p),L(q),cls);
+    if(k==="SSS"){
+      circ(gw,L(o.D),R.b*G.S,"guide"); circ(gw,L(o.E),R.a*G.S,"guide");
+      if(!o.tri){SL(o.D,o.E,"given");ticks(gw,L(o.D),L(o.E),1);
+        SL(o.D,o.P,"free");ticks(gw,L(o.D),L(o.P),2,"var(--hand)");
+        SL(o.E,o.Q,"free");ticks(gw,L(o.E),L(o.Q),3,"var(--hand)");}
+      hd.push(["p",o.P],["q",o.Q]);
+    } else if(k==="SAS"){
+      if(!o.tri){SL(o.D,o.E,"given");ticks(gw,L(o.D),L(o.E),1);SL(o.D,o.F,"given");ticks(gw,L(o.D),L(o.F),2);
+        arcs(gw,L(o.D),L(o.E),L(o.F),24,1,ANG_COL.A);dot(gw,L(o.F));
+        SL(o.E,o.Q,"freed");
+        txt(gw,add(L(mid(o.E,o.Q)),[0,-14]),fmt(dist(o.E,o.Q)),"sm","var(--hand)");
+        txt(gw,add(L(o.F),[0,-20]),"F","mk");}
+      hd.push(["q",o.Q]);
+    } else if(k==="ASA"){
+      seg(gw,L(o.D),L(mul(o.u,40)),"guide"); seg(gw,L(o.E),L(add(o.E,mul(o.w,40))),"guide");
+      if(!o.tri){SL(o.D,o.E,"given");ticks(gw,L(o.D),L(o.E),1);
+        arcs(gw,L(o.D),L(o.E),L(o.P),24,1,ANG_COL.A);arcs(gw,L(o.E),L(o.D),L(o.Q),24,2,ANG_COL.B);
+        SL(o.D,o.P,"free");SL(o.E,o.Q,"free");
+        sideLabel(gw,L(o.D),L(o.P),L(mid(o.D,o.E)),fmt(f2(o.D,o.P)),"var(--hand)",16,"sm");
+        sideLabel(gw,L(o.E),L(o.Q),L(mid(o.D,o.E)),fmt(f2(o.E,o.Q)),"var(--hand)",16,"sm");}
+      hd.push(["p",o.P],["q",o.Q]);
+    } else if(k==="AAS"){
+      seg(gw,L(o.E),L(mul(o.u,40)),"guide");
+      if(!o.tri){SL(o.E,o.F,"given");ticks(gw,L(o.E),L(o.F),3);arcs(gw,L(o.E),L(o.F),L(o.D),24,2,ANG_COL.B);
+        SL(o.E,o.D,"free");SL(o.D,o.F,"free");
+        const good=Math.abs(o.angD-R.A)<0.05;
+        angW(gw,L(o.D),L(o.E),L(o.F),30,good?"var(--alt)":"var(--unk)",null);
+        angLabel(gw,L(o.D),L(o.E),L(o.F),"m∠D = "+fmt(o.angD)+"° (need "+fmt(R.A)+"°)","var(--unk)",-30);}
+      hd.push(["d",o.D]);
+    } else if(k==="HL"){
+      fullLine(gw,L(o.F),sub(L([1,0]),L([0,0])),"guide");
+      circ(gw,L(o.D),R.c*G.S,"guide");
+      if(!o.tri){SL(o.F,o.D,"given");ticks(gw,L(o.F),L(o.D),2);rightMark(gw,L(o.F),L(o.D),L([1,0]),13);rightMark(gw,L(o.F),L(o.D),L([-1,0]),13);
+        SL(o.D,o.P,"free");ticks(gw,L(o.D),L(o.P),1,"var(--hand)");}
+      hd.push(["p",o.P]);
+    } else if(k==="SSA"){
+      fullLine(gw,L(o.D),sub(L([1,0]),L([0,0])),"guide");
+      circ(gw,L(o.F),R.a*G.S,"guide");
+      o.cands.forEach((c,i)=>{circ(gw,L(c),7,"guide",{stroke:"var(--vert)","stroke-width":2.4,"stroke-dasharray":"none",fill:"#fff"});
+        txt(gw,add(L(c),[0,24]),o.cands.length>1?"E"+(i?"₂":"₁"):"E","sm","var(--vert)");});
+      if(o.tri&&o.cands.length>1){const other=o.cands.find(c=>dist(c,o.tri.E)>1e-3);
+        if(other)poly(gw,[L(o.D),L(other),L(o.F)],"alt2");}
+      if(!o.tri){SL(o.D,[Math.max(R.c,o.cands.length?o.cands[o.cands.length-1][0]:R.c)+1.5,0],"given");
+        SL(o.D,o.F,"given");ticks(gw,L(o.D),L(o.F),2);arcs(gw,L(o.D),L([3,0]),L(o.F),24,1,ANG_COL.A);
+        SL(o.F,o.P,"free");ticks(gw,L(o.F),L(o.P),3,"var(--hand)");}
+      hd.push(["p",o.P]);
+    } else if(k==="AAA"){
+      seg(gw,L(o.D),L(mul(dir(R.A),40)),"guide");
+      hd.push(["e",o.E]);
+    }
+    if(!o.tri){
+      ["D","E","F"].forEach(x=>{if(o[x]&&!(k==="SAS"&&x==="F")){dot(gw,L(o[x]));}});
+      const wc=L(G.sol?cen3(G.sol.D,G.sol.E,G.sol.F):[0,0]);
+      if(o.D)vlabel(gw,L(o.D),wc,"D",22);
+      if(o.E)vlabel(gw,L(o.E),wc,"E",22);
+      if(o.F&&k!=="SAS")vlabel(gw,L(o.F),wc,"F",22);
+    } else {
+      const P={A:L(o.tri.D),B:L(o.tri.E),C:L(o.tri.F)}, cn=cen3(P.A,P.B,P.C);
+      poly(gw,[P.A,P.B,P.C],"tri",{fill:"rgba(5,150,105,.10)"});
+      T1.markRef(gw,P,k,R,false);
+      if(k==="AAA"){sideLabel(gw,P.A,P.B,cn,"DE = "+fmt(o.tri.E[0]),"var(--hand)",18,"sm");}
+      [["A","D"],["B","E"],["C","F"]].forEach(([x,n])=>{vlabel(gw,P[x],cn,n,22);dot(gw,P[x]);});
+      if(k==="SSA"&&o.cands.length>1){const other=o.cands.find(c=>dist(c,o.tri.E)>1e-3);
+        if(other)txt(gw,add(L(other),[0,-18]),"also fits!","sm","var(--vert)");}
+    }
+    // ghost
+    const gh=T1.ghost(G,o);
+    if(gh){poly(g,gh.pts,"ghostp");
+      ["A","B","C"].forEach((x,i)=>txt(g,add(gh.pts[i],[0,0]),x,"sm","#DB2777"));}
+    hd.forEach(([id,p])=>grab(g,L(p),id));
+  },
+  drag(id,q){
+    const G=T1.geom(); if(G.err)return; const k=G.k,R=G.R,f=G.f; const p=G.Li(q); const tol=11/G.S;
+    if(k==="SSS"){
+      if(id==="p")f.t1=deg(p); else f.t2=deg(sub(p,[R.c,0]));
+      const P=mul(dir(f.t1),R.b), Q=add([R.c,0],mul(dir(f.t2),R.a));
+      if(dist(P,Q)<tol){const x=(R.b*R.b-R.a*R.a+R.c*R.c)/(2*R.c), y=Math.sqrt(Math.max(0,R.b*R.b-x*x))*((P[1]+Q[1])>=0?1:-1);
+        f.t1=deg([x,y]); f.t2=deg(sub([x,y],[R.c,0]));}
+    } else if(k==="SAS"){
+      f.q=dist(p,R.P.C)<tol? R.P.C.slice() : p;
+    } else if(k==="ASA"){
+      const mx=Math.max(R.a,R.b)*1.8+1;
+      if(id==="p")f.t1=clamp(dotp(p,dir(R.A)),0.3,mx); else f.t2=clamp(dotp(sub(p,[R.c,0]),dir(180-R.B)),0.3,mx);
+      const P=mul(dir(R.A),f.t1), Q=add([R.c,0],mul(dir(180-R.B),f.t2));
+      if(dist(P,Q)<tol){f.t1=R.b;f.t2=R.a;}
+    } else if(k==="AAS"){
+      f.t=clamp(dotp(p,dir(R.B)),0.4,R.c*2.2+1);
+      const D=mul(dir(R.B),f.t);
+      if(Math.abs(angAt(D,[0,0],[R.a,0])-R.A)<0.6||Math.abs(f.t-R.c)<tol*0.7)f.t=R.c;
+    } else if(k==="HL"){
+      const D=[0,R.b]; f.psi=deg(sub(p,D)); const P=add(D,mul(dir(f.psi),R.c));
+      if(Math.abs(P[1])<tol){f.psi=deg(sub([(P[0]>=0?1:-1)*R.a,0],D));}
+    } else if(k==="SSA"){
+      const F=R.P.C; f.psi=deg(sub(p,F)); const P=add(F,mul(dir(f.psi),R.a));
+      const o=T1.cons(G); for(const c of o.cands){if(dist(P,c)<tol*1.3){f.psi=deg(sub(c,F));break;}}
+    } else if(k==="AAA"){
+      f.s=clamp(p[0],R.c*0.4,R.c*1.45); if(Math.abs(f.s-R.c)<tol*0.5)f.s=R.c;
+    }
+    const now=!!T1.cons(G).tri;
+    if(now&&!T1.s.was){T1.s.was=true;startAnim();} else if(!now)T1.s.was=false;
+    render();
+  },
+  bar(){
+    bar.appendChild(mkSeg(Object.keys(CR).map(x=>[x,x]),T1.s.crit,x=>{T1.s.crit=x;T1.s.was=!!(T1.geom().err?false:T1.cons(T1.geom()).tri);T1.s.anim=1;render();}));
+    bar.appendChild(mkBtn("Rotate 30°",()=>{T1.s.rot=(T1.s.rot+30)%360;render();}));
+    bar.appendChild(mkBtn("Reflect",()=>{T1.s.flip*=-1;render();}));
+    bar.appendChild(mkBtn("Reset",()=>{T1.s.vals[T1.s.crit]=Object.assign({},CR[T1.s.crit].def);T1.s.rot=0;T1.s.flip=1;T1.resetFree(T1.s.crit);render();}));
+    const G=T1.geom(); const closed=!G.err&&!!T1.cons(G).tri;
+    const b=mkBtn("Replay rigid motion",()=>startAnim()); b.disabled=!closed; bar.appendChild(b);
+  },
+  panel(){
+    const k=T1.s.crit, c=CR[k], v=T1.s.vals[k], G=T1.geom();
+    let h=`<div class="panel"><h3>${k}: ${c.ok?"a congruence criterion":"not a criterion"}</h3><div class="pad">
+      <div class="eq">${esc(c.stmt)}</div><p>${c.how}</p></div></div>`;
+    h+=`<div class="panel"><h3>Given parts — edit the numbers</h3><div class="fields">`;
+    c.fields.forEach(([key,lab,mn,mx])=>{
+      h+=`<div><label for="fv_${key}">${lab}</label><input type="number" id="fv_${key}" data-key="${key}" min="${mn}" max="${mx}" step="${key===key.toUpperCase()?1:0.5}" value="${v[key]}"></div>`;});
+    if(k==="AAA"&&!G.err)h+=`<div><label>m∠C (forced)</label><div class="dimv">${fmt(G.R.C)}°</div></div>`;
+    if(k==="SSA"&&!G.err)h+=`<div><label>h = AC·sin A</label><div class="dimv">${fmt(v.b*Math.sin(v.A*D2R))}</div></div>`;
+    h+=`</div></div>`;
+    if(G.err){
+      h+=`<div class="panel"><h3>Status</h3><div class="verdict bad"><b>No triangle.</b> ${G.err}</div></div>`;
+    } else {
+      const o=T1.cons(G), gh=T1.ghost(G,o);
+      h+=`<div class="panel"><h3>Status</h3>`;
+      if(!o.tri){
+        h+=`<div class="verdict info"><b>Not closed yet.</b> Drag the orange handle${(k==="SSS"||k==="ASA")?"s":""} until the triangle closes. Try hard to close it in a <i>different</i> shape from △ABC.</div>`;
+      } else if(k==="AAA"){
+        const s=o.tri.E[0]/G.R.c;
+        h+= gh.fit ? `<div class="verdict good"><b>Same size — this time.</b> Scale factor 1, so the ghost fits. But nothing in the givens forced this size: every other position of E also has the same three angles.</div>`
+                   : `<div class="verdict bad"><b>Similar, not congruent.</b> Same three angles, but △DEF is △ABC scaled by <b>k = ${s.toFixed(2)}</b>. The ghost of △ABC does not fit, so AAA does not prove congruence.</div>`;
+      } else if(k==="SSA"){
+        const two=o.cands.length>1;
+        if(gh.fit)h+=`<div class="verdict ${two?"info":"good"}"><b>Closed, and it matches △ABC.</b> ${two?"But look at the purple triangle — the swinging side also lands at the other point. That triangle has the same two sides and the same angle, yet it is a different triangle. Swing over and land there.":"With these numbers only one triangle fits (BC ≥ AC, or BC = h). That is luck, not a rule — change BC to be between h and AC."}</div>`;
+        else h+=`<div class="verdict bad"><b>A different triangle with the same SSA parts!</b> DF = AC, FE = BC and m∠D = m∠A — yet the ghost of △ABC does not fit. Two non-congruent triangles share these givens, so SSA is <b>not</b> a congruence criterion.</div>`;
+      } else {
+        h+= gh.fit ? `<div class="verdict good"><b>Closed — and congruent.</b> The ghost of △ABC lands exactly on △DEF after ${T1.motionText(gh)}. A rigid motion maps one onto the other, so <b>△ABC ≅ △DEF</b> by ${k}.</div>`
+                   : `<div class="verdict bad">Closed, but the ghost does not fit — check the values.</div>`;
+      }
+      // comparison table
+      const T=o.tri? {D:o.tri.D,E:o.tri.E,F:o.tri.F} : null;
+      const rows=[["AB","DE","c",["D","E"]],["AC","DF","b",["D","F"]],["BC","EF","a",["E","F"]]];
+      h+=`<div class="rel" style="border-top:1px solid rgba(196,181,253,.12)"><span></span><span class="nm"><em>△ABC part · △DEF part</em></span><span class="val" style="color:var(--dim)">ABC · DEF</span></div>`;
+      rows.forEach(([r,w,key,vv])=>{const given=c.gs.indexOf(key)>=0; const mv=T?dist(T[vv[0]],T[vv[1]]):null; const ok=T&&Math.abs(mv-G.R[key])<0.05;
+        h+=`<div class="rel"><span class="dot" style="background:${given?"var(--accent)":"#555"}"></span><span class="nm">${r} ↔ ${w}<em>${given?"given":"not given"}</em></span><span class="val ${T?(ok?"ok":"no"):""}">${fmt(G.R[key])} · ${T?fmt(mv)+(ok?" ✓":" ✗"):"—"}</span></div>`;});
+      [["A","D",["E","F"]],["B","E",["D","F"]],["C","F",["D","E"]]].forEach(([r,w,vv])=>{const given=c.ga.indexOf(r)>=0||(c.right&&r==="C"); const mv=T?angAt(T[w],T[vv[0]],T[vv[1]]):null; const ok=T&&Math.abs(mv-G.R[r])<0.3;
+        h+=`<div class="rel"><span class="dot" style="background:${given?"var(--accent)":"#555"}"></span><span class="nm">∠${r} ↔ ∠${w}<em>${given?"given":"not given"}</em></span><span class="val ${T?(ok?"ok":"no"):""}">${fmt(G.R[r])}° · ${T?fmt(mv)+"°"+(ok?" ✓":" ✗"):"—"}</span></div>`;});
+      h+=`</div>`;
+    }
+    h+=`<div class="panel"><h3>Why it ${c.ok?"works":"fails"}</h3><div class="pad">${c.why.map(x=>"<p>"+x+"</p>").join("")}
+      <p style="color:var(--dim);font-size:13.5px">Marks: tick marks show congruent sides (1, 2 or 3 ticks), arcs show congruent angles. The pink dashed outline is a ghost of △ABC moved by a rigid motion.</p></div></div>`;
+    h+=`<div class="panel"><h3>Try this</h3><div class="pad"><p>${c.tryit}</p></div></div>`;
+    side.innerHTML=h;
+    side.querySelectorAll("input[data-key]").forEach(inp=>{
+      inp.onchange=()=>{const key=inp.dataset.key; const fd=c.fields.find(x=>x[0]===key); let val=parseFloat(inp.value);
+        if(isNaN(val))val=c.def[key]; val=clamp(val,fd[2],fd[3]); T1.s.vals[k][key]=val; T1.resetFree(k); render();};
+    });
+  }
+};
+function f2(p,q){return dist(p,q);}
+let animRaf=0;
+function startAnim(){
+  cancelAnimationFrame(animRaf);
+  const t0=performance.now();
+  const step=now=>{
+    if(MODS[cur]!==T1){T1.s.anim=1;return;}
+    const x=clamp((now-t0)/1500,0,1); T1.s.anim=x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+    clear(); T1.draw();
+    if(x<1)animRaf=requestAnimationFrame(step);
+  };
+  T1.s.anim=0; animRaf=requestAnimationFrame(step);
+}
+
+/* ══════════════════════ TAB 2 · corresponding parts ══════════════════════ */
+const PAIRC={A:"var(--corr)",B:"var(--altx)",C:"var(--alt)"};
+const T2={
+  tab:"Corresponding parts", lesson:"G-CO.B.7", accent:"var(--magenta)",
+  title:()=>"Corresponding parts of congruent triangles",
+  s:{p:null,sel:null,pairs:{},checked:null,showM:true,hl:null,tf:{}},
+  gen(){
+    let A,B,C; do{A=rnd(38,95);B=rnd(32,88);C=180-A-B;}while(C<28||Math.abs(A-B)<9||Math.abs(B-C)<9||Math.abs(A-C)<9);
+    const c=rnd(50,70)/10, b=c*Math.sin(B*D2R)/Math.sin(C*D2R);
+    const loc={A:[0,0],B:[c,0],C:mul(dir(A),b)};
+    const cn=cen3(loc.A,loc.B,loc.C);
+    const rad=Math.max(dist(cn,loc.A),dist(cn,loc.B),dist(cn,loc.C));
+    const S=Math.min(30,140/rad);
+    const ref={}, img={};
+    const th=rnd(35,325), refl=Math.random()<0.5;
+    let perm; do{perm=shuffle(["D","E","F"]);}while(perm.join("")==="DEF");
+    const lab={A:perm[0],B:perm[1],C:perm[2]};
+    ["A","B","C"].forEach(x=>{const d=sub(loc[x],cn);
+      ref[x]=[172+S*d[0],245-S*d[1]];
+      let e=[refl?-d[0]:d[0],d[1]]; e=rotS(e,th); img[lab[x]]=[528+S*e[0],245-S*e[1]];});
+    T2.s.p={loc:loc,ref:ref,img:img,lab:lab,th:th,refl:refl};
+    T2.s.sel=null;T2.s.pairs={};T2.s.checked=null;T2.s.hl=null;T2.s.tf={};T2.s.stm=null;
+  },
+  draw(){
+    if(!T2.s.p)T2.gen();
+    const g=bg(), p=T2.s.p, s=T2.s, lab=p.lab;
+    seg(g,[350,20],[350,440],"guide");
+    txt(g,[175,30],"△ABC","cap"); txt(g,[525,30],"THE IMAGE UNDER A RIGID MOTION","cap");
+    const R=p.ref, I=p.img, rc=cen3(R.A,R.B,R.C), ic=cen3(I.D,I.E,I.F);
+    poly(g,[R.A,R.B,R.C],"tri"); poly(g,[I.D,I.E,I.F],"tri");
+    // highlight
+    if(s.hl){
+      const [t,x]=s.hl.split(":");
+      if(t==="s"){const a=x[0],b=x[1];seg(g,R[a],R[b],"line",{stroke:"var(--hand)","stroke-width":7,opacity:.85});seg(g,I[lab[a]],I[lab[b]],"line",{stroke:"var(--hand)","stroke-width":7,opacity:.85});}
+      else {const o=["A","B","C"].filter(y=>y!==x);angW(g,R[x],R[o[0]],R[o[1]],34,"var(--hand)",null);angW(g,I[lab[x]],I[lab[o[0]]],I[lab[o[1]]],34,"var(--hand)",null);}
+    }
+    if(s.showM){
+      const L=p.loc;
+      [["A","B"],["B","C"],["C","A"]].forEach(([a,b])=>{const v=fmt(dist(L[a],L[b]));
+        sideLabel(g,R[a],R[b],rc,v,"var(--graphite)",17,"sm"); sideLabel(g,I[lab[a]],I[lab[b]],ic,v,"var(--graphite)",17,"sm");});
+      ["A","B","C"].forEach(x=>{const o=["A","B","C"].filter(y=>y!==x); const v=fmt(angAt(L[x],L[o[0]],L[o[1]]))+"°";
+        angLabel(g,R[x],R[o[0]],R[o[1]],v,"var(--vert)",40); angLabel(g,I[lab[x]],I[lab[o[0]]],I[lab[o[1]]],v,"var(--vert)",40);});
+    }
+    for(const l in s.pairs)seg(g,R[l],I[s.pairs[l]],"guide",{stroke:PAIRC[l],"stroke-width":2.2,"stroke-dasharray":"3 6"});
+    ["A","B","C"].forEach(x=>{const col=s.pairs[x]?PAIRC[x]:null; vlabel(g,R[x],rc,x,24,col||"var(--ink)");});
+    ["D","E","F"].forEach(x=>{let col=null; for(const l in s.pairs)if(s.pairs[l]===x)col=PAIRC[l]; vlabel(g,I[x],ic,x,24,col||"var(--ink)");});
+    const ring=(P,col,sel)=>{circ(g,P,15,"guide",{stroke:col,"stroke-width":sel?4:3,"stroke-dasharray":sel?"4 3":"none",fill:"none"});};
+    ["A","B","C"].forEach(x=>{dot(g,R[x]); if(s.pairs[x])ring(R[x],PAIRC[x]); if(s.sel==="L:"+x)ring(R[x],"var(--hand)",true);
+      g.appendChild(E("circle",{cx:R[x][0],cy:R[x][1],r:22,class:"pickc","data-pick":"L:"+x}));});
+    ["D","E","F"].forEach(x=>{dot(g,I[x]); for(const l in s.pairs)if(s.pairs[l]===x)ring(I[x],PAIRC[l]); if(s.sel==="R:"+x)ring(I[x],"var(--hand)",true);
+      g.appendChild(E("circle",{cx:I[x][0],cy:I[x][1],r:22,class:"pickc","data-pick":"R:"+x}));});
+  },
+  pick(k){
+    const s=T2.s, side=k[0], v=k.slice(2);
+    if(!s.sel||s.sel[0]===side){s.sel=(s.sel===k)?null:k;}
+    else{const o=s.sel.slice(2); const l=side==="L"?v:o, r=side==="R"?v:o;
+      for(const x in s.pairs)if(s.pairs[x]===r)delete s.pairs[x];
+      s.pairs[l]=r; s.sel=null; s.checked=null; s.stm=null; s.tf={};}
+    render();
+  },
+  bar(){
+    bar.appendChild(mkBtn("New pair of triangles",()=>{T2.gen();render();},"primary"));
+    bar.appendChild(mkChk("Show measures",T2.s.showM,v=>{T2.s.showM=v;render();}));
+    bar.appendChild(mkBtn("Clear matches",()=>{T2.s.pairs={};T2.s.sel=null;T2.s.checked=null;T2.s.hl=null;T2.s.stm=null;render();}));
+    bar.appendChild(spacer(T2.s.sel?"Now tap its partner":"Tap a vertex, then its partner"));
+  },
+  stmts(){
+    const L=T2.s.p.lab, w=s=>s.split("").map(x=>L[x]).join("");
+    const correct="ABC", others=["BCA","CAB","ACB","BAC","CBA"], eqp=pick(others);
+    const wrongs=shuffle([["ABC","DEF"],["ABC",w("BAC")],["ABC",w("ACB")],["ABC",w("CBA")]].filter(x=>x[1]!==w("ABC")));
+    const list=[
+      {t:"△"+correct+" ≅ △"+w(correct),ok:true,why:"A↔"+L.A+", B↔"+L.B+", C↔"+L.C+" — each letter sits in the matching position."},
+      {t:"△"+eqp+" ≅ △"+w(eqp),ok:true,why:"Same correspondence, just listed starting from a different vertex. Still true."},
+      {t:"△"+wrongs[0][0]+" ≅ △"+wrongs[0][1],ok:false,why:"This pairs "+wrongs[0][0].split("").map((x,i)=>x+"↔"+wrongs[0][1][i]).join(", ")+" — at least one pair does not correspond."},
+      {t:"∠B ≅ ∠"+L.B,ok:true,why:"B corresponds to "+L.B+", so the angles there are congruent (CPCTC)."},
+      {t:"AC ≅ "+L.A+L.B,ok:false,why:"AC corresponds to "+L.A+L.C+", not "+L.A+L.B+"."}
+    ];
+    return shuffle(list);
+  },
+  panel(){
+    const s=T2.s, p=T2.s.p, L=p.lab;
+    let h=`<div class="panel"><h3>Match the vertices</h3><div class="pad">
+      <p>The right triangle is △ABC after a rigid motion — so the two are congruent. But which vertex went where? Tap a vertex of △ABC, then the vertex it landed on.</p></div>`;
+    ["A","B","C"].forEach(x=>{const r=s.pairs[x];
+      h+=`<div class="rel"><span class="dot" style="background:${PAIRC[x]}"></span><span class="nm">${x} ↔ ${r||"?"}</span><span class="val ${s.checked?(r===L[x]?"ok":"no"):""}">${s.checked?(r===L[x]?"✓":"✗"):""}</span></div>`;});
+    const full=Object.keys(s.pairs).length===3;
+    h+=`<div class="fldwrap" style="margin:16px 0 4px"><button class="go" id="t2chk" ${full?"":"disabled"}>Check my correspondence</button></div>`;
+    if(s.checked==="bad")h+=`<div class="verdict bad"><b>Not quite.</b> ${["A","B","C"].filter(x=>s.pairs[x]!==L[x]).length} vertex pair${["A","B","C"].filter(x=>s.pairs[x]!==L[x]).length>1?"s are":" is"} wrong. Corresponding angles must have equal measures, and corresponding sides equal lengths — compare the numbers on the figure.</div>`;
+    h+=`</div>`;
+    if(s.checked==="good"){
+      const st="△ABC ≅ △"+L.A+L.B+L.C;
+      h+=`<div class="panel"><h3>The congruence statement</h3><div class="pad">
+        <div class="eq big">${st}</div>
+        <p>The order of the letters <b>is</b> the correspondence: 1st ↔ 1st, 2nd ↔ 2nd, 3rd ↔ 3rd. Writing △ABC ≅ △DEF here would claim A↔D, B↔E, C↔F — and that is false for this pair.</p>
+        <p>The rigid motion was ${p.refl?"a reflection, then ":""}a rotation of ${p.th}° counterclockwise, and a translation.</p></div></div>`;
+      if(!s.stm)s.stm=T2.stmts();
+      h+=`<div class="panel"><h3>True or false?</h3>`;
+      s.stm.forEach((m,i)=>{const a=s.tf[i];
+        h+=`<div class="rel" style="grid-template-columns:1fr auto"><span class="nm" style="font-family:var(--mono)">${m.t}</span>
+          <span class="tf"><button data-tf="${i}" data-v="1" class="${a!==undefined&&a===1?"picked "+(m.ok?"good":"bad"):""}">True</button><button data-tf="${i}" data-v="0" class="${a!==undefined&&a===0?"picked "+(!m.ok?"good":"bad"):""}">False</button></span>
+          ${a!==undefined?`<span class="tfwhy">${(a===1)===m.ok?"<span class=\"ok\">Right.</span> ":"<span class=\"no\">Not quite.</span> "}${m.ok?"True — ":"False — "}${m.why}</span>`:""}</div>`;});
+      h+=`</div>`;
+      h+=`<div class="panel"><h3>CPCTC — tap a pair to light it up</h3>`;
+      [["s:AB","AB",L.A+L.B],["s:BC","BC",L.B+L.C],["s:CA","CA",L.C+L.A]].forEach(([k,a,b])=>{const v=fmt(dist(p.loc[k[2]],p.loc[k[3]]));
+        h+=`<div class="rel${s.hl===k?" active":""}" data-hl="${k}"><span class="dot" style="background:var(--hand)"></span><span class="nm">${a} ≅ ${b}<em>corresponding sides</em></span><span class="val">${v} = ${v}</span></div>`;});
+      ["A","B","C"].forEach(x=>{const o=["A","B","C"].filter(y=>y!==x); const v=fmt(angAt(p.loc[x],p.loc[o[0]],p.loc[o[1]]));
+        h+=`<div class="rel${s.hl==="a:"+x?" active":""}" data-hl="a:${x}"><span class="dot" style="background:var(--hand)"></span><span class="nm">∠${x} ≅ ∠${L[x]}<em>corresponding angles</em></span><span class="val">${v}° = ${v}°</span></div>`;});
+      h+=`</div>`;
+    }
+    h+=`<div class="panel"><h3>Why order matters</h3><div class="pad">
+      <p>Two triangles are <span class="term">congruent</span> when a sequence of rigid motions (translations, rotations, reflections) maps one onto the other. The motion pairs every part with a <b>corresponding</b> part.</p>
+      <p><b>CPCTC</b> — corresponding parts of congruent triangles are congruent. Once you know △ABC ≅ △${L.A}${L.B}${L.C}, all six pairs of parts are congruent for free. You can read them straight off the statement.</p></div></div>
+      <div class="panel"><h3>Try this</h3><div class="pad"><p>Untick “Show measures” and press “New pair”. Can you match the vertices just by looking at the shape — the longest side, the smallest angle? Then turn the measures back on to check.</p></div></div>`;
+    side.innerHTML=h;
+    const ck=document.getElementById("t2chk");
+    if(ck)ck.onclick=()=>{s.checked=["A","B","C"].every(x=>s.pairs[x]===L[x])?"good":"bad";render();};
+    side.querySelectorAll("[data-tf]").forEach(b=>b.onclick=()=>{s.tf[+b.dataset.tf]=+b.dataset.v;render();});
+    side.querySelectorAll("[data-hl]").forEach(el=>el.onclick=()=>{s.hl=(s.hl===el.dataset.hl)?null:el.dataset.hl;render();});
+  }
+};
+
+/* ══════════════════════ TAB 3 · triangle theorems ══════════════════════ */
+const T3={
+  tab:"Triangle theorems", lesson:"G-CO.C.10", accent:"var(--mint)",
+  title:()=>({iso:"Base angles of an isosceles triangle",ext:"The exterior angle theorem",ineq:"The triangle inequality",mid:"The midsegment theorem"}[T3.s.mode]),
+  s:{mode:"iso",iso:{w:150,A:[350,110],free:false},ext:{A:[290,110],B:[130,370],C:[470,370]},
+     ineq:{a:5,b:6,c:8,snap:true},mid:{A:[320,80],B:[110,390],C:[590,370]},snap:false},
+  bar(){
+    bar.appendChild(mkSeg([["iso","Isosceles"],["ext","Exterior angle"],["ineq","Triangle inequality"],["mid","Midsegment"]],T3.s.mode,k=>{T3.s.mode=k;render();}));
+    const m=T3.s.mode;
+    if(m==="iso")bar.appendChild(mkChk("Let A leave the perpendicular bisector",T3.s.iso.free,v=>{T3.s.iso.free=v;if(!v)T3.s.iso.A=[350,T3.s.iso.A[1]];render();}));
+    if(m==="ineq")bar.appendChild(mkChk("Snap lengths to 0.5",T3.s.ineq.snap,v=>{T3.s.ineq.snap=v;render();}));
+    if(m==="ext"||m==="mid")bar.appendChild(mkChk("Snap to grid",T3.s.snap,v=>{T3.s.snap=v;render();}));
+    bar.appendChild(mkBtn("Reset",()=>{const d={iso:{w:150,A:[350,110],free:false},ext:{A:[290,110],B:[130,370],C:[470,370]},ineq:{a:5,b:6,c:8,snap:true},mid:{A:[320,80],B:[110,390],C:[590,370]}};T3.s[m]=d[m];render();}));
+    bar.appendChild(spacer(m==="ineq"?"Drag the ends of the bars":"Drag the orange points"));
+  },
+  draw(){
+    const g=bg(), m=T3.s.mode;
+    if(m==="iso"){
+      const s=T3.s.iso, B=[350-s.w,380], C=[350+s.w,380], A=s.A, M=[350,380];
+      seg(g,[350,16],[350,446],"aux"); rightMark(g,M,C,[350,300],12);
+      txt(g,[362,28],"perpendicular bisector of BC","cap","var(--corr)","start");
+      poly(g,[A,B,C],"tri");
+      ticks(g,B,M,2,"#64748B"); ticks(g,M,C,2,"#64748B");
+      const AB=dist(A,B)/U, AC=dist(A,C)/U, eq=Math.abs(AB-AC)<0.01;
+      if(eq){ticks(g,A,B,1);ticks(g,A,C,1);}
+      const aB=angAt(B,A,C), aC=angAt(C,A,B), aA=angAt(A,B,C), same=Math.abs(aB-aC)<0.05;
+      angW(g,B,A,C,40,"var(--corr)",fmt(aB)+"°");
+      angW(g,C,A,B,40,same?"var(--corr)":"var(--unk)",fmt(aC)+"°");
+      angW(g,A,B,C,34,"var(--vert)",fmt(aA)+"°",{ld:22});
+      const cn=cen3(A,B,C);
+      sideLabel(g,A,B,cn,fmt(AB),"var(--ink)",20); sideLabel(g,A,C,cn,fmt(AC),"var(--ink)",20);
+      txt(g,[350,404],"M","mk"); vlabel(g,B,cn,"B",22); vlabel(g,C,cn,"C",22);
+      txt(g,[A[0]+(A[0]>=350?24:-24),A[1]-18],"A","mk");
+      grab(g,A,"A"); grab(g,C,"C");
+    } else if(m==="ext"){
+      const {A,B,C}=T3.s.ext;
+      const u=unit(sub(C,B)), D=add(C,mul(u,110));
+      seg(g,C,D,"line"); dot(g,D);
+      poly(g,[A,B,C],"tri");
+      const aA=angAt(A,B,C), aB=angAt(B,A,C), aC=angAt(C,A,B), ex=180-aC;
+      angW(g,A,B,C,36,"var(--corr)",fmt(aA)+"°");
+      angW(g,B,A,C,36,"var(--alt)",fmt(aB)+"°");
+      angW(g,C,A,B,26,"#94A3B8",null);
+      angW(g,C,D,A,52,"var(--unk)",fmt(ex)+"°",{ld:22});
+      const cn=cen3(A,B,C);
+      vlabel(g,A,cn,"A",24); vlabel(g,B,cn,"B",24); vlabel(g,C,[C[0],C[1]-40],"C",22);
+      txt(g,add(D,[14,-14]),"D","mk");
+      grab(g,A,"A"); grab(g,B,"B"); grab(g,C,"C");
+    } else if(m==="ineq"){
+      const s=T3.s.ineq, S=26, x0=120;
+      const bars=[["a",s.a,"var(--lin)",44],["b",s.b,"var(--corr)",80],["c",s.c,"var(--ink)",116]];
+      bars.forEach(([k,v,col,y])=>{txt(g,[64,y],k+" = "+fmt(v),"num",col);
+        seg(g,[x0,y],[x0+v*S,y],"line",{stroke:col,"stroke-width":7});});
+      seg(g,[x0,30],[x0,130],"thin",{opacity:.4});
+      const P=[350-s.c*S/2,410], Q=[350+s.c*S/2,410];
+      const a=s.a,b=s.b,c=s.c;
+      const xF=(b*b-a*a+c*c)/(2*c), y2=b*b-xF*xF;
+      seg(g,P,Q,"line",{stroke:"var(--ink)","stroke-width":4});
+      if(y2>1e-6&&a+b>c+1e-9&&a+c>b+1e-9&&b+c>a+1e-9){
+        const F=[P[0]+xF*S,P[1]-Math.sqrt(y2)*S];
+        poly(g,[P,Q,F],"tri",{fill:"rgba(5,150,105,.10)",stroke:"none"});
+        seg(g,P,F,"line",{stroke:"var(--corr)","stroke-width":4}); seg(g,Q,F,"line",{stroke:"var(--lin)","stroke-width":4});
+        dot(g,F); txt(g,[F[0],F[1]-22],"closes ✓","sm","var(--alt)");
+      } else {
+        let bt,at;
+        if(c>=a+b){bt=[P[0]+b*S,P[1]];at=[Q[0]-a*S,Q[1]];}
+        else if(b>=a+c){bt=[P[0]+b*S,P[1]];at=[Q[0]+a*S,Q[1]];}
+        else {bt=[P[0]-b*S,P[1]];at=[Q[0]-a*S,Q[1]];}
+        const off=[0,-10];
+        seg(g,add(P,off),add(bt,off),"line",{stroke:"var(--corr)","stroke-width":4});
+        seg(g,add(Q,[0,10]),add(at,[0,10]),"line",{stroke:"var(--lin)","stroke-width":4});
+        const gap=dist(bt,at)/S;
+        if(gap<0.01)txt(g,[(bt[0]+at[0])/2,P[1]-40],"tips just touch — a flat segment, not a triangle","sm","var(--unk)");
+        else {seg(g,add(bt,[0,-26]),add(at,[0,-26]),"line",{stroke:"var(--unk)","stroke-width":2,"stroke-dasharray":"4 4"});
+          txt(g,[(bt[0]+at[0])/2,P[1]-44],"gap "+fmt(gap)+" — cannot close","sm","var(--unk)");}
+      }
+      dot(g,P); dot(g,Q);
+      txt(g,[P[0]-14,P[1]+22],"P","mk"); txt(g,[Q[0]+14,Q[1]+22],"Q","mk");
+      txt(g,[350,P[1]+24],"c","sm","var(--ink)");
+      bars.forEach(([k,v,col,y])=>grab(g,[x0+v*S,y],"i"+k));
+    } else {
+      const {A,B,C}=T3.s.mid, M=mid(A,B), N=mid(A,C);
+      poly(g,[A,B,C],"tri");
+      seg(g,B,C,"line",{stroke:"var(--corr)","stroke-width":4});
+      seg(g,M,N,"line",{stroke:"var(--alt)","stroke-width":4});
+      ticks(g,A,M,1); ticks(g,M,B,1); ticks(g,A,N,2); ticks(g,N,C,2);
+      parArrows(g,M,N,1,"var(--alt)"); parArrows(g,B,C,1,"var(--corr)");
+      dot(g,M); dot(g,N);
+      const cn=cen3(A,B,C);
+      sideLabel(g,M,N,A,"MN = "+fmt(dist(M,N)/U),"var(--alt)",18,"sm");
+      sideLabel(g,B,C,cn,"BC = "+fmt(dist(B,C)/U),"var(--corr)",20,"sm");
+      vlabel(g,M,mid(M,N),"M",24); vlabel(g,N,mid(M,N),"N",24);
+      vlabel(g,A,cn,"A",24); vlabel(g,B,cn,"B",24); vlabel(g,C,cn,"C",24);
+      grab(g,A,"A"); grab(g,B,"B"); grab(g,C,"C");
+    }
+  },
+  drag(id,p){
+    const m=T3.s.mode;
+    if(m==="iso"){const s=T3.s.iso;
+      if(id==="A")s.A= s.free? [clamp(p[0],40,660),clamp(p[1],30,345)] : [350,clamp(p[1],30,345)];
+      else s.w=clamp(Math.abs(p[0]-350),50,300);}
+    else if(m==="ext")dragTri(T3.s.ext,id,p,T3.s.snap);
+    else if(m==="mid")dragTri(T3.s.mid,id,p,T3.s.snap);
+    else {const s=T3.s.ineq; let v=clamp((p[0]-120)/26,1,10); if(s.snap)v=Math.round(v*2)/2; s[id[1]]=v;}
+    render();
+  },
+  panel(){
+    const m=T3.s.mode; let h="";
+    if(m==="iso"){
+      const s=T3.s.iso, B=[350-s.w,380], C=[350+s.w,380], A=s.A;
+      const AB=dist(A,B)/U, AC=dist(A,C)/U, aB=angAt(B,A,C), aC=angAt(C,A,B), aA=angAt(A,B,C);
+      const eq=Math.abs(AB-AC)<0.01;
+      h+=`<div class="panel"><h3>Live measures</h3><div class="pad">
+        <div class="eq">AB = ${fmt(AB)}   AC = ${fmt(AC)}${eq?"   (AB ≅ AC)":""}
+m∠B = ${fmt(aB)}°   m∠C = ${fmt(aC)}°
+m∠A + m∠B + m∠C = ${fmt(aA)}° + ${fmt(aB)}° + ${fmt(aC)}° = 180°
+<small>Base angles of an isosceles triangle are congruent.</small></div>
+        ${eq?`<p>A sits on the perpendicular bisector of BC, so it is the same distance from B and C: the triangle is <span class="term">isosceles</span> with legs AB and AC. Drag A up and down — the <b>base angles</b> ∠B and ∠C stay equal, and each is (180° − m∠A) ÷ 2 = ${fmt((180-aA)/2)}°.</p>`
+             :`<p class="no"><b>A has left the perpendicular bisector</b>, so AB ≠ AC — and now m∠B ≠ m∠C. Equal base angles go hand in hand with equal legs (the converse is true too).</p>`}
+      </div></div>
+      <div class="panel"><h3>Why it is true</h3><div class="pad">
+        <p>Reflect the figure across the perpendicular bisector of BC. The reflection swaps B and C and leaves A where it is (A is on the line of reflection).</p>
+        <p>So the reflection maps △ABC onto △ACB, and it carries ∠B onto ∠C. Rigid motions preserve angle measure, so <b>m∠B = m∠C</b>.</p>
+        <p>You can also prove it with SAS: draw the bisector of ∠A — see proof 3 in the Proof builder tab.</p></div></div>
+      <div class="panel"><h3>Try this</h3><div class="pad"><p>Drag A until m∠A = 60°. What are the base angles? What kind of triangle is that? Then tick the box and move A off the line — which base angle is larger, the one opposite the longer side or the shorter side?</p></div></div>`;
+    } else if(m==="ext"){
+      const {A,B,C}=T3.s.ext, aA=angAt(A,B,C), aB=angAt(B,A,C), aC=angAt(C,A,B), ex=180-aC;
+      h+=`<div class="panel"><h3>Live measures</h3><div class="pad">
+        <div class="eq">m∠ACD = ${fmt(ex)}°
+m∠A + m∠B = ${fmt(aA)}° + ${fmt(aB)}° = ${fmt(aA+aB)}°
+<small>The measure of an exterior angle of a triangle equals the sum of the measures of the two remote interior angles.</small></div>
+        <p>∠ACD is an <span class="term">exterior angle</span>: it is formed by one side and the extension of another. ∠A and ∠B are the <span class="term">remote interior angles</span> — the two that are not next to it.</p></div></div>
+      <div class="panel"><h3>Why it is true</h3><div class="pad">
+        <div class="eq">m∠ACB + m∠ACD = 180°    linear pair
+m∠A + m∠B + m∠ACB = 180°  triangle sum
+∴ m∠ACD = m∠A + m∠B     subtraction</div>
+        <p>Both lines equal 180°, and both contain m∠ACB. Take it away and what is left over must be equal. A bonus: the exterior angle is <b>bigger</b> than either remote interior angle on its own.</p></div></div>
+      <div class="panel"><h3>Try this</h3><div class="pad"><p>Drag A until the exterior angle is exactly 90°. What do the two remote angles add to? Now drag C so the triangle becomes obtuse at C — what happens to the exterior angle?</p></div></div>`;
+    } else if(m==="ineq"){
+      const s=T3.s.ineq,a=s.a,b=s.b,c=s.c;
+      const row=(x,y,z,nx,ny,nz)=>{const ok=x+y>z+1e-9;return `<div class="rel"><span class="dot" style="background:${ok?"var(--mint)":"var(--coral)"}"></span><span class="nm">${nx} + ${ny} &gt; ${nz}?</span><span class="val ${ok?"ok":"no"}">${fmt(x)} + ${fmt(y)} = ${fmt(x+y)} ${ok?"&gt;":"≤"} ${fmt(z)} ${ok?"✓":"✗"}</span></div>`;};
+      const all=a+b>c+1e-9&&a+c>b+1e-9&&b+c>a+1e-9;
+      h+=`<div class="panel"><h3>Check all three pairs</h3>${row(a,b,c,"a","b","c")}${row(a,c,b,"a","c","b")}${row(b,c,a,"b","c","a")}
+        <div class="verdict ${all?"good":"bad"}">${all?"<b>It closes.</b> Every pair of sides is longer than the third, so these lengths make a triangle.":"<b>It cannot close.</b> One side is at least as long as the other two together. Hinged at P and Q, the two shorter sticks fall flat and still cannot meet."}</div></div>
+      <div class="panel"><h3>The triangle inequality</h3><div class="pad">
+        <div class="eq">a + b &gt; c,  a + c &gt; b,  b + c &gt; a
+<small>The sum of any two side lengths of a triangle is greater than the third side length.</small></div>
+        <p><b>Shortcut:</b> you only need to check that the two <b>shortest</b> sides add to more than the longest.</p>
+        <p>If a + b = c exactly, the sticks lie flat on c — a <b>degenerate</b> “triangle” with zero area. That does not count.</p>
+        <div class="eq">|a − b| &lt; c &lt; a + b
+<small>Here: ${fmt(Math.abs(a-b))} &lt; c &lt; ${fmt(a+b)}</small></div></div></div>
+      <div class="panel"><h3>Try this</h3><div class="pad"><p>Set a = 4 and b = 6. Drag c from 1 to 10 and find the exact values where the triangle starts and stops closing. Do they match |a − b| and a + b?</p></div></div>`;
+    } else {
+      const {A,B,C}=T3.s.mid, M=mid(A,B), N=mid(A,C), mn=dist(M,N)/U, bc=dist(B,C)/U;
+      const sl=(p,q)=>{const dx=q[0]-p[0], dy=-(q[1]-p[1]); return Math.abs(dx)<1e-9?"undefined (vertical)":fmt(dy/dx*100)/100+"";};
+      const angMN=deg([N[0]-M[0],-(N[1]-M[1])]), angBC=deg([C[0]-B[0],-(C[1]-B[1])]);
+      h+=`<div class="panel"><h3>Live measures</h3><div class="pad">
+        <div class="eq">MN = ${fmt(mn)}    BC = ${fmt(bc)}
+MN ÷ BC = ${(mn/bc).toFixed(3)}
+slope MN = ${(Math.abs(N[0]-M[0])<1e-9)?"undefined":((M[1]-N[1])/(N[0]-M[0])).toFixed(2)}   slope BC = ${(Math.abs(C[0]-B[0])<1e-9)?"undefined":((B[1]-C[1])/(C[0]-B[0])).toFixed(2)}
+<small>The segment joining the midpoints of two sides of a triangle is parallel to the third side and half its length.</small></div>
+        <p>M is the midpoint of AB and N is the midpoint of AC (the tick marks). MN is a <span class="term">midsegment</span>. Drag any vertex: the slopes stay equal (parallel, marked with arrows) and MN stays exactly half of BC.</p></div></div>
+      <div class="panel"><h3>Why it is true</h3><div class="pad">
+        <p>A dilation centered at A with scale factor ½ sends B to M and C to N. Dilations send a segment to a <b>parallel</b> segment, scaled by the factor — so MN ∥ BC and MN = ½·BC.</p>
+        <p>Equivalently, △AMN ~ △ABC by SAS similarity: the sides around ∠A are in the ratio 1 : 2.</p></div></div>
+      <div class="panel"><h3>Try this</h3><div class="pad"><p>Turn on snap to grid and place B and C on the same grid row. What is the slope of MN? Then find the midpoints of all three sides in your head — the three midsegments cut the triangle into four congruent triangles.</p></div></div>`;
+    }
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ TAB 4 · points of concurrency ══════════════════════ */
+const CEN={med:{n:"Medians → centroid",c:"var(--lin)",p:"G"},bis:{n:"Angle bisectors → incenter",c:"var(--alt)",p:"I"},
+  perp:{n:"Perpendicular bisectors → circumcenter",c:"var(--corr)",p:"O"},alt:{n:"Altitudes → orthocenter",c:"var(--vert)",p:"H"},euler:{n:"Euler line",c:"var(--unk)",p:""}};
+function centers(A,B,C){
+  const a=dist(B,C),b=dist(C,A),c=dist(A,B);
+  const G=cen3(A,B,C);
+  const I=[(a*A[0]+b*B[0]+c*C[0])/(a+b+c),(a*A[1]+b*B[1]+c*C[1])/(a+b+c)];
+  const area=areaT(A,B,C), r=area/((a+b+c)/2);
+  const d=2*(A[0]*(B[1]-C[1])+B[0]*(C[1]-A[1])+C[0]*(A[1]-B[1]));
+  const s2=p=>p[0]*p[0]+p[1]*p[1];
+  const O=[(s2(A)*(B[1]-C[1])+s2(B)*(C[1]-A[1])+s2(C)*(A[1]-B[1]))/d,(s2(A)*(C[0]-B[0])+s2(B)*(A[0]-C[0])+s2(C)*(B[0]-A[0]))/d];
+  const R=dist(O,A);
+  const H=[A[0]+B[0]+C[0]-2*O[0],A[1]+B[1]+C[1]-2*O[1]];
+  return {a:a,b:b,c:c,G:G,I:I,r:r,O:O,R:R,H:H};
+}
+function locate(X,A,B,C){
+  for(const v of [A,B,C])if(dist(X,v)<3)return "vertex";
+  if(distSeg(X,A,B)<3||distSeg(X,B,C)<3||distSeg(X,C,A)<3)return "on";
+  const s1=Math.sign(cross(sub(B,A),sub(X,A))),s2=Math.sign(cross(sub(C,B),sub(X,B))),s3=Math.sign(cross(sub(A,C),sub(X,C)));
+  return (s1===s2&&s2===s3)?"inside":"outside";
+}
+function triKind(A,B,C){
+  const m=Math.max(angAt(A,B,C),angAt(B,A,C),angAt(C,A,B));
+  return Math.abs(m-90)<0.5?"right":(m>90?"obtuse":"acute");
+}
+const T4={
+  tab:"Points of concurrency", lesson:"G-CO.C.10 · G-C.A.3", accent:"var(--yellow)",
+  title:()=>"Where the special segments meet",
+  s:{A:[300,90],B:[110,380],C:[580,360],on:{med:true,bis:false,perp:false,alt:false,euler:false},snap:false},
+  bar(){
+    const row=document.createElement("div"); row.className="chiprow";
+    Object.keys(CEN).forEach(k=>{const b=document.createElement("button");b.textContent=CEN[k].n;b.style.setProperty("--c",CEN[k].c);
+      b.setAttribute("aria-pressed",T4.s.on[k]);b.onclick=()=>{T4.s.on[k]=!T4.s.on[k];render();};row.appendChild(b);});
+    bar.appendChild(row);
+    bar.appendChild(mkChk("Snap to grid",T4.s.snap,v=>{T4.s.snap=v;if(v){["A","B","C"].forEach(x=>T4.s[x]=snapG(T4.s[x]));}render();}));
+    bar.appendChild(mkBtn("Right triangle",()=>{T4.s.A=[160,96];T4.s.B=[160,384];T4.s.C=[544,384];render();}));
+    bar.appendChild(mkBtn("Obtuse triangle",()=>{T4.s.A=[224,224];T4.s.B=[96,384];T4.s.C=[608,384];render();}));
+    bar.appendChild(mkBtn("Equilateral",()=>{T4.s.A=[350,96];T4.s.B=[184,384];T4.s.C=[516,384];render();}));
+    bar.appendChild(spacer("Drag A, B, C"));
+  },
+  draw(){
+    const g=bg(), {A,B,C}=T4.s, on=T4.s.on, K=centers(A,B,C);
+    const V={A:A,B:B,C:C}, opp={A:["B","C"],B:["C","A"],C:["A","B"]};
+    if(on.perp){
+      ["A","B","C"].forEach(x=>{const [p,q]=opp[x]; const M=mid(V[p],V[q]);
+        fullLine(g,M,perp(sub(V[q],V[p])),"aux",{stroke:CEN.perp.c,"stroke-width":1.8});
+        rightMark(g,M,V[q],add(M,perp(sub(V[q],V[p]))),9);});
+      circ(g,K.O,K.R,"guide",{stroke:CEN.perp.c,"stroke-width":2.2,"stroke-dasharray":"none",fill:"rgba(2,132,199,.04)"});
+      seg(g,K.O,A,"line",{stroke:CEN.perp.c,"stroke-width":1.6,"stroke-dasharray":"3 4"});
+    }
+    if(on.alt){
+      ["A","B","C"].forEach(x=>{const [p,q]=opp[x]; const F=foot(V[x],V[p],V[q]);
+        fullLine(g,V[x],sub(F,V[x]),"guide",{stroke:CEN.alt.c,opacity:.55});
+        seg(g,V[x],F,"line",{stroke:CEN.alt.c,"stroke-width":2.2});
+        if(distSeg(F,V[p],V[q])>1){const near=dist(F,V[p])<dist(F,V[q])?V[p]:V[q]; seg(g,near,F,"guide",{stroke:"var(--graphite)"});}
+        if(dist(F,V[x])>14)rightMark(g,F,V[x],dist(F,V[p])>1?V[p]:V[q],9);});
+    }
+    if(on.bis){
+      ["A","B","C"].forEach(x=>{const [p,q]=opp[x]; const bp=dist(V[x],V[q]), cq=dist(V[x],V[p]);
+        const Fp=[(bp*V[p][0]+cq*V[q][0])/(bp+cq),(bp*V[p][1]+cq*V[q][1])/(bp+cq)];
+        seg(g,V[x],Fp,"line",{stroke:CEN.bis.c,"stroke-width":2});});
+      circ(g,K.I,K.r,"guide",{stroke:CEN.bis.c,"stroke-width":2.2,"stroke-dasharray":"none",fill:"rgba(5,150,105,.06)"});
+      const T=foot(K.I,B,C); seg(g,K.I,T,"line",{stroke:CEN.bis.c,"stroke-width":1.6,"stroke-dasharray":"3 4"});
+    }
+    if(on.med){
+      ["A","B","C"].forEach(x=>{const [p,q]=opp[x]; const M=mid(V[p],V[q]);
+        seg(g,V[x],M,"line",{stroke:CEN.med.c,"stroke-width":2.2}); dot(g,M,CEN.med.c,4);});
+    }
+    if(on.euler&&dist(K.O,K.H)>2){fullLine(g,K.O,sub(K.H,K.O),"line",{stroke:CEN.euler.c,"stroke-width":2,"stroke-dasharray":"10 5"});}
+    poly(g,[A,B,C],"tri",{fill:"rgba(2,132,199,.05)"});
+    const pts=[];
+    if(on.med||on.euler)pts.push(["G",K.G,CEN.med.c]);
+    if(on.bis)pts.push(["I",K.I,CEN.bis.c]);
+    if(on.perp||on.euler)pts.push(["O",K.O,CEN.perp.c]);
+    if(on.alt||on.euler)pts.push(["H",K.H,CEN.alt.c]);
+    pts.forEach(([n,p,c],i)=>{dot(g,p,c,6.5); const off=[[16,-14],[-16,-14],[16,16],[-16,16]][i%4]; txt(g,add(p,off),n,"num",c);});
+    const cn=cen3(A,B,C);
+    vlabel(g,A,cn,"A",26); vlabel(g,B,cn,"B",26); vlabel(g,C,cn,"C",26);
+    grab(g,A,"A"); grab(g,B,"B"); grab(g,C,"C");
+  },
+  drag(id,p){dragTri(T4.s,id,p,T4.s.snap,2500);render();},
+  panel(){
+    const {A,B,C}=T4.s, on=T4.s.on, K=centers(A,B,C), kind=triKind(A,B,C);
+    const eqi=Math.abs(K.a-K.b)<1&&Math.abs(K.b-K.c)<1;
+    const u=x=>fmt(x/U);
+    const L={G:locate(K.G,A,B,C),I:locate(K.I,A,B,C),O:locate(K.O,A,B,C),H:locate(K.H,A,B,C)};
+    const where=x=>({inside:"inside",outside:"outside",on:"on a side",vertex:"at a vertex"}[x]);
+    let h=`<div class="panel"><h3>This triangle is ${eqi?"equilateral":kind}</h3>`;
+    [["G","Centroid",CEN.med.c],["I","Incenter",CEN.bis.c],["O","Circumcenter",CEN.perp.c],["H","Orthocenter",CEN.alt.c]].forEach(([k,n,c])=>{
+      h+=`<div class="rel"><span class="dot" style="background:${c}"></span><span class="nm">${n} ${k}</span><span class="val">${where(L[k])}</span></div>`;});
+    if(eqi)h+=`<div class="note" style="margin-top:12px"><b>Equilateral:</b> all four centers land on the same point.</div>`;
+    h+=`</div>`;
+    if(on.med){const Ma=mid(B,C); h+=`<div class="panel"><h3>Centroid — medians</h3><div class="pad">
+      <p>A <span class="term">median</span> joins a vertex to the midpoint of the opposite side. The three medians always meet at the <b>centroid</b> G — the triangle's balance point.</p>
+      <div class="eq">AG = ${u(dist(A,K.G))}   GMₐ = ${u(dist(K.G,Ma))}
+AG : GMₐ = ${(dist(A,K.G)/dist(K.G,Ma)).toFixed(2)} : 1
+G = ((x₁+x₂+x₃)/3, (y₁+y₂+y₃)/3)
+<small>The centroid is two-thirds of the way from each vertex to the opposite midpoint.</small></div></div></div>`;}
+    if(on.bis){const dA=distSeg(K.I,B,C),dB=distSeg(K.I,C,A),dC=distSeg(K.I,A,B); h+=`<div class="panel"><h3>Incenter — angle bisectors</h3><div class="pad">
+      <p>The three angle bisectors meet at the <b>incenter</b> I. Every point on an angle bisector is equidistant from the angle's sides, so I is the same distance from all three sides — the center of the <span class="term">inscribed circle</span>.</p>
+      <div class="eq">distance to BC, CA, AB = ${u(dA)}, ${u(dB)}, ${u(dC)}
+inradius r = ${u(K.r)}</div></div></div>`;}
+    if(on.perp){h+=`<div class="panel"><h3>Circumcenter — perpendicular bisectors</h3><div class="pad">
+      <p>Every point on the perpendicular bisector of a segment is equidistant from its endpoints. The three perpendicular bisectors meet at the <b>circumcenter</b> O, equidistant from all three vertices — the center of the <span class="term">circumscribed circle</span> (G-C.A.3).</p>
+      <div class="eq">OA = ${u(dist(K.O,A))}   OB = ${u(dist(K.O,B))}   OC = ${u(dist(K.O,C))}
+circumradius R = ${u(K.R)}</div>
+      ${kind==="right"?"<p>In a right triangle O is the <b>midpoint of the hypotenuse</b> — so the hypotenuse is a diameter.</p>":""}</div></div>`;}
+    if(on.alt){h+=`<div class="panel"><h3>Orthocenter — altitudes</h3><div class="pad">
+      <p>An <span class="term">altitude</span> is the perpendicular segment from a vertex to the line containing the opposite side. In an obtuse triangle two of them land on <b>extensions</b> of sides (grey dashes). The lines containing the altitudes meet at the <b>orthocenter</b> H.</p>
+      ${kind==="right"?"<p>Right triangle: the two legs are altitudes, so H is the right-angle vertex.</p>":""}</div></div>`;}
+    if(on.euler){const og=dist(K.O,K.G),gh=dist(K.G,K.H); h+=`<div class="panel"><h3>The Euler line</h3><div class="pad">
+      <p>In every triangle that is not equilateral, O, G and H lie on one line, and G sits between them.</p>
+      <div class="eq">OG = ${u(og)}   GH = ${u(gh)}
+OG : GH = 1 : ${og>1?(gh/og).toFixed(2):"—"}</div>
+      <p>The incenter is generally <b>not</b> on the Euler line (it is only when the triangle is isosceles).</p></div></div>`;}
+    const rowc=k=>k===kind&&!eqi?' class="now"':"";
+    h+=`<div class="panel"><h3>Where each center lies</h3><table class="loc">
+      <tr><th></th><th>acute</th><th>right</th><th>obtuse</th></tr>
+      <tr><td>Centroid</td><td>inside</td><td>inside</td><td>inside</td></tr>
+      <tr><td>Incenter</td><td>inside</td><td>inside</td><td>inside</td></tr>
+      <tr><td>Circumcenter</td><td>inside</td><td>midpoint of hypotenuse</td><td>outside</td></tr>
+      <tr><td>Orthocenter</td><td>inside</td><td>right-angle vertex</td><td>outside</td></tr></table>
+      <div class="pad" style="font-size:13.5px;color:var(--dim)">Your triangle is <b>${eqi?"equilateral (acute)":kind}</b>. Unit = one grid square.</div></div>
+      <div class="panel"><h3>Try this</h3><div class="pad"><p>Turn on circumcenter and orthocenter. Drag A slowly so the triangle goes from acute to right to obtuse. Watch O cross side BC exactly when the angle at A hits 90° — and watch H arrive at A.</p></div></div>`;
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ TAB 5 · proof builder ══════════════════════ */
+const RS={
+  given:["Setup & properties","Given"],
+  refl:["Setup & properties","Reflexive property of congruence"],
+  trans:["Setup & properties","Transitive property of congruence"],
+  midDef:["Definitions","Definition of midpoint"],
+  bisDef:["Definitions","Definition of angle bisector"],
+  perpDef:["Definitions","Definition of perpendicular lines (they form right angles)"],
+  vert:["Angle facts","Vertical angles are congruent"],
+  altInt:["Angle facts","If parallel lines are cut by a transversal, then alternate interior angles are congruent"],
+  isos:["Angle facts","Base angles of an isosceles triangle are congruent"],
+  sum:["Angle facts","The sum of the angle measures in a triangle is 180°"],
+  sss:["Congruence criteria","SSS triangle congruence criterion"],
+  sas:["Congruence criteria","SAS triangle congruence criterion"],
+  asa:["Congruence criteria","ASA triangle congruence criterion"],
+  aas:["Congruence criteria","AAS triangle congruence criterion"],
+  hl:["Congruence criteria","HL (hypotenuse-leg) criterion for right triangles"],
+  cpctc:["After congruence","Corresponding parts of congruent triangles are congruent (CPCTC)"]
+};
+const PROOFS=[
+ {name:"Kite: SSS",fig:"kite",given:"AB ≅ AD and BC ≅ DC",prove:"△ABC ≅ △ADC",
+  plan:"The two triangles share side AC. A shared side gives you a third pair of sides for free.",
+  steps:[{s:"AB ≅ AD",r:"given"},{s:"BC ≅ DC",r:"given"},
+   {s:"AC ≅ AC",r:"refl",hint:"A segment shared by both triangles is congruent to itself."},
+   {opts:["△ABC ≅ △ADC","△ABC ≅ △DAC","△ABC ≅ △CDA"],r:"sss",hint:"Three pairs of sides. In the statement, A must match A, B must match D, and C must match C."},
+   {opts:["∠BAC ≅ ∠DAC","∠BAC ≅ ∠DCA","∠BAC ≅ ∠ACD"],r:"cpctc",hint:"Once the triangles are congruent, matching angles follow. ∠BAC is at A in △ABC, so its partner is at A in △ADC."}]},
+ {name:"Bowtie: vertical angles + midpoints → SAS",fig:"bowtie",given:"E is the midpoint of AD and of BC",prove:"△ABE ≅ △DCE",
+  plan:"Midpoints give two pairs of congruent segments. The angles at E are vertical angles — and they sit between those segments.",
+  steps:[{s:"E is the midpoint of AD",r:"given"},{s:"AE ≅ DE",r:"midDef",hint:"A midpoint splits a segment into two congruent halves."},
+   {s:"E is the midpoint of BC",r:"given"},{s:"BE ≅ CE",r:"midDef"},
+   {s:"∠AEB ≅ ∠DEC",r:"vert",hint:"The two angles at E are formed by two crossing lines."},
+   {opts:["△ABE ≅ △DCE","△ABE ≅ △CDE","△ABE ≅ △DEC"],r:"sas",hint:"Side, included angle, side. A↔D, B↔C, E↔E."},
+   {opts:["AB ≅ DC","AB ≅ DE","AB ≅ CE"],r:"cpctc"}]},
+ {name:"Isosceles base angles via an angle bisector",fig:"isos",given:"AB ≅ AC; AD bisects ∠BAC",prove:"∠B ≅ ∠C",
+  plan:"The bisector AD cuts the triangle into two triangles that share AD. Look for two sides and the angle between them.",
+  steps:[{s:"AB ≅ AC",r:"given"},{s:"AD bisects ∠BAC",r:"given"},
+   {s:"∠BAD ≅ ∠CAD",r:"bisDef",hint:"A bisector splits an angle into two congruent angles."},
+   {s:"AD ≅ AD",r:"refl"},
+   {opts:["△BAD ≅ △CAD","△BAD ≅ △ACD","△BAD ≅ △CDA"],r:"sas",hint:"B↔C, A↔A, D↔D."},
+   {s:"∠B ≅ ∠C",r:"cpctc",hint:"Not “base angles of an isosceles triangle” — that is the very theorem you are proving! It follows from the congruent triangles."}]},
+ {name:"Parallelogram diagonal: alternate interior angles → ASA",fig:"para",given:"AB ∥ DC and AD ∥ BC",prove:"△ABC ≅ △CDA",
+  plan:"Diagonal AC is a transversal for both pairs of parallel sides. That gives two pairs of alternate interior angles, with the shared side AC between them.",
+  steps:[{s:"AB ∥ DC",r:"given"},{s:"∠BAC ≅ ∠DCA",r:"altInt",hint:"AC cuts the parallel lines AB and DC."},
+   {s:"AC ≅ CA",r:"refl"},{s:"AD ∥ BC",r:"given"},{s:"∠BCA ≅ ∠DAC",r:"altInt"},
+   {opts:["△ABC ≅ △CDA","△ABC ≅ △ADC","△ABC ≅ △CAD"],r:"asa",hint:"A↔C and C↔A (the angles swap ends of the diagonal), B↔D. The side AC is between the two angles."}]},
+ {name:"Altitude of an isosceles triangle: HL",fig:"hl",given:"AB ≅ AC; AD ⊥ BC",prove:"BD ≅ CD",
+  plan:"AD ⊥ BC makes two right triangles. They share leg AD and have congruent hypotenuses.",
+  steps:[{s:"AD ⊥ BC",r:"given"},{s:"∠ADB and ∠ADC are right angles",r:"perpDef"},
+   {s:"AB ≅ AC",r:"given"},{s:"AD ≅ AD",r:"refl"},
+   {opts:["△ADB ≅ △ADC","△ADB ≅ △DAC","△ADB ≅ △CDA"],r:"hl",hint:"Hypotenuses AB and AC, shared leg AD — both are right triangles."},
+   {opts:["BD ≅ CD","BD ≅ AD","BD ≅ AC"],r:"cpctc"}]}
+];
+function drawProofFig(g,k){
+  const lab=(p,s,o)=>txt(g,add(p,o),s,"mk");
+  if(k==="kite"){
+    const A=[350,60],B=[180,250],D=[520,250],C=[350,410];
+    poly(g,[A,B,C,D],"tri"); seg(g,A,C,"line",{stroke:"var(--corr)"});
+    ticks(g,A,B,1);ticks(g,A,D,1);ticks(g,B,C,2);ticks(g,D,C,2);
+    arcs(g,A,B,C,30,1,"var(--alt)");arcs(g,A,D,C,36,1,"var(--alt)");
+    lab(A,"A",[0,-22]);lab(B,"B",[-22,0]);lab(D,"D",[22,0]);lab(C,"C",[0,24]);
+    [A,B,C,D].forEach(p=>dot(g,p));
+  } else if(k==="bowtie"){
+    const A=[180,110],D=[520,370],B=[180,370],C=[520,110],Ee=[350,240];
+    seg(g,A,D);seg(g,B,C);seg(g,A,B);seg(g,C,D);
+    ticks(g,A,Ee,1);ticks(g,Ee,D,1);ticks(g,B,Ee,2);ticks(g,Ee,C,2);
+    arcs(g,Ee,A,B,26,1,"var(--vert)");arcs(g,Ee,D,C,26,1,"var(--vert)");
+    lab(A,"A",[-18,-16]);lab(B,"B",[-18,16]);lab(C,"C",[18,-16]);lab(D,"D",[18,16]);lab(Ee,"E",[0,-28]);
+    [A,B,C,D,Ee].forEach(p=>dot(g,p));
+  } else if(k==="isos"||k==="hl"){
+    const A=[350,60],B=[170,390],C=[530,390],D=[350,390];
+    poly(g,[A,B,C],"tri"); seg(g,A,D,"line",{stroke:"var(--corr)"});
+    ticks(g,A,B,1);ticks(g,A,C,1);
+    if(k==="isos"){arcs(g,A,B,D,40,1,"var(--alt)");arcs(g,A,D,C,46,1,"var(--alt)");
+      arcs(g,B,A,C,30,1,"var(--unk)");arcs(g,C,A,B,30,1,"var(--unk)");txt(g,[214,372],"?","num","var(--unk)");txt(g,[486,372],"?","num","var(--unk)");}
+    else {rightMark(g,D,A,C,14);rightMark(g,D,A,B,14);txt(g,[260,410],"?","num","var(--unk)");txt(g,[440,410],"?","num","var(--unk)");}
+    lab(A,"A",[0,-22]);lab(B,"B",[-20,12]);lab(C,"C",[20,12]);lab(D,"D",[0,26]);
+    [A,B,C,D].forEach(p=>dot(g,p));
+  } else if(k==="para"){
+    const A=[140,370],B=[240,110],C=[560,110],D=[460,370];
+    poly(g,[A,B,C,D],"tri"); seg(g,A,C,"line",{stroke:"var(--corr)"});
+    parArrows(g,A,B,1);parArrows(g,D,C,1);parArrows(g,A,D,2);parArrows(g,B,C,2);
+    arcs(g,A,B,C,40,1,"var(--alt)");arcs(g,C,D,A,40,1,"var(--alt)");
+    arcs(g,C,B,A,34,2,"var(--vert)");arcs(g,A,D,C,34,2,"var(--vert)");
+    lab(A,"A",[-18,14]);lab(B,"B",[-14,-18]);lab(C,"C",[16,-18]);lab(D,"D",[18,14]);
+    [A,B,C,D].forEach(p=>dot(g,p));
+  }
+}
+const T5={
+  tab:"Proof builder", lesson:"G-CO.C.10 · G-SRT.B.5", accent:"var(--lavender)",
+  title:()=>"Two-column proof: "+PROOFS[T5.s.i].name,
+  s:{i:0,ord:null,checked:false,reveal:false,vals:{}},
+  load(i){T5.s.i=i;T5.s.checked=false;T5.s.reveal=false;T5.s.vals={};T5.s.ord=PROOFS[i].steps.map(st=>st.opts?shuffle(st.opts):null);},
+  bar(){
+    if(!T5.s.ord)T5.load(0);
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Choose a proof");
+    PROOFS.forEach((p,i)=>{const o=document.createElement("option");o.value=i;o.textContent=(i+1)+". "+p.name;sel.appendChild(o);});
+    sel.value=T5.s.i; sel.onchange=()=>{T5.load(+sel.value);render();};
+    bar.appendChild(sel);
+    bar.appendChild(mkBtn("Clear",()=>{T5.load(T5.s.i);render();}));
+  },
+  draw(){if(!T5.s.ord)T5.load(0);const g=bg();drawProofFig(g,PROOFS[T5.s.i].fig);},
+  panel(){
+    const p=PROOFS[T5.s.i], s=T5.s;
+    const reasonSel=(i,val)=>{let h=`<select data-r="${i}" aria-label="Reason for step ${i+1}"><option value="">— choose the reason —</option>`;
+      const cats=[]; for(const k in RS)if(cats.indexOf(RS[k][0])<0)cats.push(RS[k][0]);
+      cats.forEach(c=>{h+=`<optgroup label="${c}">`;for(const k in RS)if(RS[k][0]===c)h+=`<option value="${k}"${val===k?" selected":""}>${RS[k][1]}</option>`;h+=`</optgroup>`;});
+      return h+`</select>`;};
+    let rows="";
+    p.steps.forEach((st,i)=>{
+      const v=s.vals[i]||{}; const rv=s.reveal?st.r:(v.r||""); const sv=s.reveal&&st.opts?st.opts[0]:(v.s||"");
+      let cls="", okS=true, okR=rv===st.r;
+      if(st.opts)okS=sv===st.opts[0];
+      if(s.checked&&(rv||sv))cls=(okS&&okR)?"right":"wrong";
+      const stmt= st.opts? `<select data-s="${i}" class="${s.checked&&!okS?"bad":""}" aria-label="Statement ${i+1}"><option value="">— choose the statement —</option>${s.ord[i].map(o=>`<option${sv===o?" selected":""}>${o}</option>`).join("")}</select>`
+                         : esc(st.s);
+      rows+=`<tr class="${cls}"><td class="no">${i+1}</td><td class="stmt">${stmt}</td><td class="why">${reasonSel(i,rv).replace("<select ",`<select class="${s.checked&&rv!==st.r?"bad":""}" `)}</td></tr>`;
+      if(s.checked&&cls==="wrong"&&st.hint)rows+=`<tr class="hintrow"><td colspan="3">Hint: ${st.hint}</td></tr>`;
+    });
+    let fb="";
+    if(s.checked){
+      let right=0; p.steps.forEach((st,i)=>{const v=s.vals[i]||{};if(v.r===st.r&&(!st.opts||v.s===st.opts[0]))right++;});
+      fb= right===p.steps.length? `<div class="verdict good"><b>Every row is justified.</b> That is a complete proof of <b>${p.prove}</b>. Notice how the congruence statement's letter order decided which parts you could claim afterwards.</div>`
+        : `<div class="verdict bad"><b>${right} of ${p.steps.length} rows correct.</b> Look at the rows outlined in red. For each one ask: which single fact makes this line follow from the lines above it?</div>`;
+    }
+    side.innerHTML=`<div class="panel"><h3>Given / Prove</h3><div class="pad">
+        <p><b>Given:</b> ${p.given}</p><p><b>Prove:</b> ${p.prove}</p>
+        <p style="margin-top:12px"><b style="color:var(--accent)">Make a plan.</b> ${p.plan}</p></div></div>
+      <div class="panel"><h3>The proof</h3><table class="steps"><tr><th>#</th><th>Statement</th><th>Reason</th></tr>${rows}</table>
+        <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px">
+          <button id="ck" class="go" style="flex:1">Check each row</button><button id="rv" class="ghost">Reveal</button></div>${fb}</div>
+      <div class="panel"><h3>Writing tips</h3><div class="pad">
+        <p>Every congruence proof follows the same arc: <b>collect three pairs of parts</b> (each with its own reason), <b>name the criterion</b>, then use <b>CPCTC</b> to get anything else.</p>
+        <p>Shared sides are free — cite the <span class="term">reflexive property</span>. Crossing lines give free <span class="term">vertical angles</span>.</p></div></div>`;
+    side.querySelectorAll("select[data-r]").forEach(el=>el.onchange=()=>{const i=+el.dataset.r;s.vals[i]=Object.assign(s.vals[i]||{},{r:el.value});s.checked=false;s.reveal=false;});
+    side.querySelectorAll("select[data-s]").forEach(el=>el.onchange=()=>{const i=+el.dataset.s;s.vals[i]=Object.assign(s.vals[i]||{},{s:el.value});s.checked=false;s.reveal=false;});
+    document.getElementById("ck").onclick=()=>{s.checked=true;s.reveal=false;T5.panel();};
+    document.getElementById("rv").onclick=()=>{s.reveal=true;s.checked=false;p.steps.forEach((st,i)=>{s.vals[i]={r:st.r,s:st.opts?st.opts[0]:undefined};});T5.panel();};
+  }
+};
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+const fx=(m,q)=>{let s=(m===1?"":m===-1?"−":String(m))+"x"; if(q>0)s+=" + "+q; else if(q<0)s+=" − "+(-q); return s;};
+function parseAns(v){
+  if(v===undefined||v===null)return NaN; v=String(v).trim().replace(/−/g,"-").replace(/\s+/g,"");
+  if(!v)return NaN; const m=v.match(/^(-?\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/); if(m)return parseFloat(m[1])/parseFloat(m[2]);
+  return /^-?\d*\.?\d+$/.test(v)?parseFloat(v):NaN;
+}
+function placeTri(loc,center,size,rot,refl){
+  const cn=cen3(loc[0],loc[1],loc[2]);
+  const pts=loc.map(p=>{let x=p[0]-cn[0],y=p[1]-cn[1]; if(refl)x=-x; return rotS([x,y],rot);});
+  const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
+  const sc=size/Math.max(Math.max.apply(null,xs)-Math.min.apply(null,xs),Math.max.apply(null,ys)-Math.min.apply(null,ys));
+  const cx=(Math.max.apply(null,xs)+Math.min.apply(null,xs))/2, cy=(Math.max.apply(null,ys)+Math.min.apply(null,ys))/2;
+  return pts.map(p=>[center[0]+(p[0]-cx)*sc,center[1]-(p[1]-cy)*sc]);
+}
+const CRIT_EXPL={
+  SSS:"Three pairs of sides are marked congruent: SSS.",
+  SAS:"Two pairs of sides and the angle between them (the included angle) are marked: SAS.",
+  ASA:"Two pairs of angles and the side between them (the included side) are marked: ASA.",
+  AAS:"Two pairs of angles and a side that is not between them: AAS.",
+  HL:"Both are right triangles, with congruent hypotenuses and one pair of congruent legs: HL.",
+  none_SSA:"The marks show two sides and an angle that is <b>not</b> between them — SSA. The swinging side can land in two places, so this is not enough information.",
+  none_AAA:"Only angles are marked. AAA guarantees the same shape but not the same size, so it is not enough information.",
+  none_SS:"Only two pairs of parts are marked. Every criterion needs three pairs."
+};
+const PROB={
+  crit(){
+    const cases=["SSS","SAS","ASA","AAS","HL","SSA","AAA","SS"]; const cs=pick(cases);
+    const R=shuffle([0,1,2]), X=R[0],Y=R[1],Z=R[2];
+    const ang=[0,0,0];
+    if(cs==="HL"){ang[Z]=90;ang[X]=rnd(30,58);ang[Y]=90-ang[X];}
+    else{let a,b,c;do{a=rnd(35,100);b=rnd(30,95);c=180-a-b;}while(c<28||Math.abs(a-b)<10||Math.abs(b-c)<10||Math.abs(a-c)<10||Math.abs(a-90)<6||Math.abs(b-90)<6||Math.abs(c-90)<6);ang[0]=a;ang[1]=b;ang[2]=c;}
+    const loc=[[0,0],[1,0],mul(dir(ang[0]),Math.sin(ang[1]*D2R)/Math.sin(ang[2]*D2R))];
+    const sides=[],angs=[];let right=null;
+    if(cs==="SSS"){sides.push([X,Y],[Y,Z],[Z,X]);}
+    else if(cs==="SAS"){angs.push(Y);sides.push([X,Y],[Y,Z]);}
+    else if(cs==="ASA"){angs.push(X,Y);sides.push([X,Y]);}
+    else if(cs==="AAS"){angs.push(X,Y);sides.push([Y,Z]);}
+    else if(cs==="HL"){right=Z;sides.push([X,Y],[X,Z]);}
+    else if(cs==="SSA"){angs.push(X);sides.push([X,Y],[Y,Z]);}
+    else if(cs==="AAA"){angs.push(X,Y,Z);}
+    else {sides.push([X,Y],[Y,Z]);}
+    const perm=shuffle(["D","E","F"]);
+    const L1=placeTri(loc,[175,240],200,rnd(0,359),false), L2=placeTri(loc,[525,240],200,rnd(0,359),Math.random()<0.5);
+    const ans=["SSS","SAS","ASA","AAS","HL"].indexOf(cs)>=0?cs:"none";
+    return {type:"Which criterion?",kind:"choice",opts:["SSS","SAS","ASA","AAS","HL","none"],optLab:{none:"Not enough information"},ans:ans,
+      q:`The marks show which parts are congruent. Which criterion proves <b>△ABC ≅ △${perm.join("")}</b> — or is there not enough information?`,
+      work:CRIT_EXPL[ans==="none"?"none_"+cs:cs],
+      draw(g){
+        seg(g,[350,20],[350,440],"guide");
+        [[L1,["A","B","C"]],[L2,perm]].forEach(([P,nm])=>{
+          poly(g,P,"tri"); const cn=cen3(P[0],P[1],P[2]);
+          sides.forEach((sd,i)=>ticks(g,P[sd[0]],P[sd[1]],i+1));
+          angs.forEach((v,i)=>{const o=[0,1,2].filter(x=>x!==v);arcs(g,P[v],P[o[0]],P[o[1]],22,i+1,"var(--corr)");});
+          if(right!==null){const o=[0,1,2].filter(x=>x!==right);rightMark(g,P[right],P[o[0]],P[o[1]],13);}
+          P.forEach((p,i)=>{dot(g,p);vlabel(g,p,cn,nm[i],22);});
+        });
+      }};
+  },
+  isos(){
+    if(Math.random()<0.5){
+      let x,p,q,r,s2,v; do{x=rnd(5,20);p=rnd(2,6);r=rnd(2,6);v=rnd(35,75);q=v-p*x;s2=v-r*x;}while(p===r||q===0||s2===0||Math.abs(q)>60||Math.abs(s2)>60);
+      const T=fitTriangle(v,v,{w:400,h:270,baseY:380});
+      return {type:"Solve for x — isosceles triangle",kind:"num",ans:x,lab:"x =",
+        q:`In △ABC, AB ≅ AC. m∠B = (${fx(p,q)})° and m∠C = (${fx(r,s2)})°. Find x.`,
+        work:`Base angles of an isosceles triangle are congruent, so ${fx(p,q)} = ${fx(r,s2)}. Collect terms: ${p-r}x = ${s2-q}, so x = ${x}. (Each base angle is ${v}°.)`,
+        draw(g){const {A,B,C}=T;poly(g,[A,B,C],"tri");ticks(g,A,B,1);ticks(g,A,C,1);
+          angW(g,B,A,C,36,"var(--unk)","("+fx(p,q)+")°",{ld:30});angW(g,C,A,B,36,"var(--unk)","("+fx(r,s2)+")°",{ld:30});
+          const cn=cen3(A,B,C);[["A",A],["B",B],["C",C]].forEach(([n,P])=>{dot(g,P);vlabel(g,P,cn,n,22);});}};
+    }
+    let x,m,q,v,ap; do{x=rnd(4,25);m=rnd(1,4);v=rnd(30,80);q=v-m*x;ap=180-2*v;}while(q===0||Math.abs(q)>40||ap<20);
+    const T=fitTriangle(v,v,{w:400,h:270,baseY:380});
+    return {type:"Solve for x — isosceles triangle",kind:"num",ans:x,lab:"x =",
+      q:`In △ABC, AB ≅ AC and m∠A = ${ap}°. m∠B = (${fx(m,q)})°. Find x.`,
+      work:`The base angles are congruent and the three angles sum to 180°: 2(${fx(m,q)}) + ${ap} = 180, so ${fx(m,q)} = ${v} and x = ${x}.`,
+      draw(g){const {A,B,C}=T;poly(g,[A,B,C],"tri");ticks(g,A,B,1);ticks(g,A,C,1);
+        angW(g,A,B,C,34,"var(--graphite)",ap+"°");angW(g,B,A,C,36,"var(--unk)","("+fx(m,q)+")°",{ld:30});
+        const cn=cen3(A,B,C);[["A",A],["B",B],["C",C]].forEach(([n,P])=>{dot(g,P);vlabel(g,P,cn,n,22);});}};
+  },
+  ext(){
+    let x,m,q,n,pp,r1v,r2v; do{x=rnd(5,25);r1v=rnd(30,70);m=rnd(1,4);r2v=rnd(30,75);q=r2v-m*x;n=rnd(2,5);pp=r1v+r2v-n*x;}while(n===m||q===0||pp===0||Math.abs(q)>50||Math.abs(pp)>60||r1v+r2v>150);
+    const T=fitTriangle(r1v,180-r1v-r2v,{ext:true,w:420,h:260,baseY:370});
+    return {type:"Solve for x — exterior angle",kind:"num",ans:x,lab:"x =",
+      q:`In the figure, m∠B = ${r1v}°, m∠A = (${fx(m,q)})° and the exterior angle ∠ACD = (${fx(n,pp)})°. Find x.`,
+      work:`Exterior angle theorem: m∠ACD = m∠A + m∠B, so ${fx(n,pp)} = ${fx(m,q)} + ${r1v}. Then ${n-m}x = ${q+r1v-pp}, so x = ${x}.`,
+      draw(g){const {A,B,C}=T;const D=[C[0]+(C[0]-B[0])*0.36,C[1]];seg(g,B,D);poly(g,[A,B,C],"tri");
+        angW(g,B,A,C,34,"var(--graphite)",r1v+"°");angW(g,A,B,C,34,"var(--unk)","("+fx(m,q)+")°",{ld:30});
+        angW(g,C,D,A,48,"var(--unk)","("+fx(n,pp)+")°",{ld:34});
+        const cn=cen3(A,B,C);[["A",A],["B",B]].forEach(([n2,P])=>{dot(g,P);vlabel(g,P,cn,n2,22);});
+        dot(g,C);txt(g,[C[0]-6,C[1]+24],"C","mk");dot(g,D);txt(g,[D[0]+16,D[1]+4],"D","mk");}};
+  },
+  mid(){
+    let x,p,q,r,s2,v; do{x=rnd(2,12);p=rnd(1,3);v=rnd(4,16);q=v-p*x;r=rnd(1,6);s2=2*v-r*x;}while(r===2*p||q===0||s2===0||Math.abs(q)>30||Math.abs(s2)>40);
+    const A=[330,70],B=[120,390],C=[590,380],M=mid(A,B),N=mid(A,C);
+    return {type:"Solve for x — midsegment",kind:"num",ans:x,lab:"x =",
+      q:`M and N are the midpoints of AB and AC. MN = ${fx(p,q)} and BC = ${fx(r,s2)}. Find x.`,
+      work:`Midsegment theorem: BC = 2·MN, so ${fx(r,s2)} = 2(${fx(p,q)}) = ${fx(2*p,2*q)}. Then ${r-2*p}x = ${2*q-s2}, so x = ${x}. (MN = ${v}, BC = ${2*v}.)`,
+      draw(g){poly(g,[A,B,C],"tri");seg(g,M,N,"line",{stroke:"var(--unk)","stroke-width":3.4});ticks(g,A,M,1);ticks(g,M,B,1);ticks(g,A,N,2);ticks(g,N,C,2);
+        parArrows(g,M,N,1);parArrows(g,B,C,1);
+        txt(g,add(mid(M,N),[0,-18]),fx(p,q),"num","var(--unk)");txt(g,add(mid(B,C),[0,26]),fx(r,s2),"num","var(--unk)");
+        const cn=cen3(A,B,C);[["A",A],["B",B],["C",C]].forEach(([n,P])=>{dot(g,P);vlabel(g,P,cn,n,22);});
+        dot(g,M);dot(g,N);txt(g,add(M,[-22,-4]),"M","mk");txt(g,add(N,[22,-4]),"N","mk");}};
+  },
+  ineq(){
+    const bars=(Ls,g,qmark)=>{const mx=Math.max.apply(null,Ls.filter(x=>x!==null)), sc=Math.min(36,440/mx);
+      Ls.forEach((v,i)=>{const y=150+i*80;txt(g,[100,y],v===null?"?":String(v),"num","var(--ink)");
+        if(v!==null)seg(g,[140,y],[140+v*sc,y],"line",{stroke:["var(--lin)","var(--corr)","var(--alt)"][i],"stroke-width":8});
+        else seg(g,[140,y],[600,y],"guide");});};
+    if(Math.random()<0.55){
+      let a=rnd(3,12),b=rnd(3,12),t=rnd(0,2),c,ok;
+      if(t===0){c=rnd(Math.abs(a-b)+1,a+b-1);ok=true;}else if(t===1){c=a+b;ok=false;}else{c=a+b+rnd(1,5);ok=false;}
+      const Ls=shuffle([a,b,c]), s=Ls.slice().sort((x,y)=>x-y);
+      return {type:"Triangle inequality",kind:"choice",opts:["yes","no"],optLab:{yes:"Yes, it is a triangle",no:"No triangle"},ans:ok?"yes":"no",
+        q:`Can segments of lengths <b>${Ls.join(", ")}</b> form a triangle?`,
+        work:`Check the two shortest against the longest: ${s[0]} + ${s[1]} = ${s[0]+s[1]} ${s[0]+s[1]>s[2]?"&gt;":(s[0]+s[1]===s[2]?"=":"&lt;")} ${s[2]}. ${s[0]+s[1]>s[2]?"Greater, so yes — a triangle.":(s[0]+s[1]===s[2]?"Equal is not enough: the sides would lie flat (degenerate).":"Too short to reach — no triangle.")}`,
+        draw(g){bars(Ls,g);}};
+    }
+    const p=rnd(3,14),q=rnd(3,14); if(p===q)return PROB.ineq(); const small=Math.random()<0.5;
+    const ans=small?Math.abs(p-q)+1:p+q-1;
+    return {type:"Triangle inequality",kind:"num",ans:ans,lab:"length =",
+      q:`Two sides of a triangle measure ${p} and ${q}. What is the <b>${small?"smallest":"largest"}</b> possible <b>whole-number</b> length of the third side?`,
+      work:`The third side s must satisfy |${p} − ${q}| &lt; s &lt; ${p} + ${q}, that is ${Math.abs(p-q)} &lt; s &lt; ${p+q}. The ${small?"smallest":"largest"} whole number is ${ans}.`,
+      draw(g){bars([p,q,null],g);}};
+  },
+  cent(){
+    let P;
+    do{P=[[rnd(-9,9),rnd(-6,6)],[rnd(-9,9),rnd(-6,6)],[rnd(-9,9),rnd(-6,6)]];}
+    while(areaT(P[0],P[1],P[2])<10||(P[0][0]+P[1][0]+P[2][0])%3!==0||(P[0][1]+P[1][1]+P[2][1])%3!==0);
+    const Gx=(P[0][0]+P[1][0]+P[2][0])/3,Gy=(P[0][1]+P[1][1]+P[2][1])/3;
+    const sp=30,O=[350,232],S=p=>[O[0]+p[0]*sp,O[1]-p[1]*sp];
+    return {type:"Centroid coordinates",kind:"xy",ans:[Gx,Gy],
+      q:`Find the coordinates of the centroid of △ABC with A(${P[0].join(", ")}), B(${P[1].join(", ")}), C(${P[2].join(", ")}).`,
+      work:`Average the coordinates: x = (${P[0][0]} + ${P[1][0]} + ${P[2][0]}) ÷ 3 = ${Gx}, y = (${P[0][1]} + ${P[1][1]} + ${P[2][1]}) ÷ 3 = ${Gy}. The centroid is (${Gx}, ${Gy}).`,
+      draw(g){
+        for(let i=-11;i<=11;i++)seg(g,S([i,-7.5]),S([i,7.5]),"thin",{stroke:"#CBD5E1","stroke-width":1});
+        for(let j=-7;j<=7;j++)seg(g,S([-11.5,j]),S([11.5,j]),"thin",{stroke:"#CBD5E1","stroke-width":1});
+        seg(g,S([-11.5,0]),S([11.5,0]),"axis");seg(g,S([0,-7.5]),S([0,7.5]),"axis");
+        for(let i=-10;i<=10;i+=2)if(i)txt(g,add(S([i,0]),[0,13]),String(i),"cap");
+        for(let j=-6;j<=6;j+=2)if(j)txt(g,add(S([0,j]),[-12,0]),String(j),"cap");
+        const Q=P.map(S); poly(g,Q,"tri"); const cn=cen3(Q[0],Q[1],Q[2]);
+        ["A","B","C"].forEach((n,i)=>{dot(g,Q[i]);vlabel(g,Q[i],cn,n+"("+P[i].join(",")+")",28,null,"sm");});}};
+  }
+};
+const CAT={all:["crit","isos","ext","mid","ineq","cent"],crit:["crit"],solve:["isos","ext","mid"],ineq:["ineq"],cent:["cent"]};
+const T6={
+  tab:"Challenge", lesson:"Practice", accent:"var(--coral)",
+  title:()=>T6.s.p?T6.s.p.type:"Challenge",
+  s:{p:null,cat:"all",done:false,pickd:null,score:{n:0,right:0,streak:0,best:0},fb:""},
+  newP(){T6.s.p=PROB[pick(CAT[T6.s.cat])]();T6.s.done=false;T6.s.pickd=null;T6.s.fb="";},
+  scoreText(){const s=T6.s.score;return "score "+s.right+"/"+s.n+" · streak "+s.streak+" · best "+s.best;},
+  bar(){
+    bar.appendChild(mkBtn("New problem",()=>{T6.newP();render();},"primary"));
+    bar.appendChild(mkSeg([["all","Mix"],["crit","Criteria"],["solve","Solve for x"],["ineq","Inequality"],["cent","Centroid"]],T6.s.cat,k=>{T6.s.cat=k;T6.newP();render();}));
+    bar.appendChild(spacer(T6.scoreText()));
+  },
+  draw(){if(!T6.s.p)T6.newP();const g=bg();T6.s.p.draw(g);},
+  check(){
+    const p=T6.s.p; let ok, given;
+    if(p.kind==="choice"){given=T6.s.pickd; if(!given){T6.s.fb='<div class="verdict bad">Pick an answer first.</div>';T6.panel();return;} ok=given===p.ans;}
+    else if(p.kind==="num"){const v=parseAns(document.getElementById("a1").value); if(isNaN(v)){T6.s.fb='<div class="verdict bad">Type a number (fractions like 7/3 are fine).</div>';T6.panel();return;} ok=Math.abs(v-p.ans)<0.011;}
+    else {const vx=parseAns(document.getElementById("a1").value),vy=parseAns(document.getElementById("a2").value);
+      if(isNaN(vx)||isNaN(vy)){T6.s.fb='<div class="verdict bad">Enter both coordinates.</div>';T6.panel();return;}
+      ok=Math.abs(vx-p.ans[0])<0.021&&Math.abs(vy-p.ans[1])<0.021;}
+    if(!T6.s.done){T6.s.done=true;const s=T6.s.score;s.n++;if(ok){s.right++;s.streak++;s.best=Math.max(s.best,s.streak);}else s.streak=0;
+      const sp=bar.querySelector(".spacer"); if(sp)sp.textContent=T6.scoreText();}
+    const ansTxt=p.kind==="xy"?"("+p.ans[0]+", "+p.ans[1]+")":(p.optLab&&p.optLab[p.ans]?p.optLab[p.ans]:p.ans);
+    T6.s.fb= ok? `<div class="verdict good"><b>Correct!</b> ${p.work}</div>` : `<div class="verdict bad"><b>Not quite.</b> The answer is <b>${ansTxt}</b>. ${p.work}</div>`;
+    T6.panel(true);
+  },
+  panel(keep){
+    const p=T6.s.p, olds=keep?[...side.querySelectorAll("input")].map(i=>i.value):null;
+    let inp="";
+    if(p.kind==="choice")inp=`<div class="fldwrap" style="margin-top:4px"><div class="choices">${p.opts.map(o=>`<button data-c="${o}" aria-pressed="${T6.s.pickd===o}">${(p.optLab&&p.optLab[o])||o}</button>`).join("")}</div></div>`;
+    else if(p.kind==="num")inp=`<label class="fld" for="a1">${p.lab}</label><div class="fldwrap"><input type="text" inputmode="decimal" id="a1" autocomplete="off" placeholder="your answer"></div>`;
+    else inp=`<label class="fld">Centroid G</label><div class="fldwrap xy"><input type="text" inputmode="decimal" id="a1" placeholder="x" aria-label="x-coordinate" autocomplete="off"><input type="text" inputmode="decimal" id="a2" placeholder="y" aria-label="y-coordinate" autocomplete="off"></div>`;
+    side.innerHTML=`<div class="panel"><h3>${p.type}</h3><div class="pad"><p>${p.q}</p></div>${inp}
+      <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px"><button class="go" id="chk" style="flex:1">Check my answer</button><button class="ghost" id="nxt">Next</button></div>
+      <div id="fb">${T6.s.fb}</div></div>
+      <div class="panel"><h3>Toolkit</h3><div class="pad">
+        <p><b>Criteria:</b> SSS, SAS, ASA, AAS, HL prove congruence. SSA and AAA do not.</p>
+        <p><b>Isosceles:</b> base angles congruent. <b>Exterior angle</b> = sum of the two remote interior angles. <b>Midsegment</b> = ½ the third side.</p>
+        <p><b>Triangle inequality:</b> two shortest sides must add to <i>more</i> than the longest. <b>Centroid:</b> average the x's and the y's.</p></div></div>`;
+    if(olds)side.querySelectorAll("input").forEach((el,i)=>{if(olds[i]!==undefined)el.value=olds[i];});
+    side.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{T6.s.pickd=b.dataset.c;side.querySelectorAll("[data-c]").forEach(x=>x.setAttribute("aria-pressed",x===b));});
+    document.getElementById("chk").onclick=()=>T6.check();
+    document.getElementById("nxt").onclick=()=>{T6.newP();render();};
+    side.querySelectorAll("input").forEach(el=>el.addEventListener("keydown",e=>{if(e.key==="Enter")T6.check();}));
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[T1,T2,T3,T4,T5,T6];
+let cur=0;
+function render(){
+  const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent);
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" figure: "+M.title());
+  clear(); M.draw();
+  bar.innerHTML=""; M.bar();
+  M.panel();
+  [...tabsEl.children].forEach((b,i)=>b.setAttribute("aria-selected",i===cur));
+}
+T1.init();
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>{cur=i;dragId=null;try{history.replaceState(null,"","#tab-"+(i+1));}catch(e){location.hash="tab-"+(i+1);}render();};
+  tabsEl.appendChild(b);
+});
+function fromHash(){const m=/^#tab-(\d+)$/.exec(location.hash);if(m){const n=clamp(parseInt(m[1],10)-1,0,MODS.length-1);if(n!==cur){cur=n;}return true;}return false;}
+fromHash();
+window.addEventListener("hashchange",()=>{if(fromHash())render();});
+window.__tcl={answer:()=>T6.s.p&&T6.s.p.ans,kind:()=>T6.s.p&&T6.s.p.kind,T1:T1,T2:T2};
+render();
+})();
+</script>
+</body>
+</html>
