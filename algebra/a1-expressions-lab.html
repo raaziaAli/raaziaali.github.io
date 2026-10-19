@@ -1,0 +1,1466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Expressions Lab — Algebra 1 Unit 1</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Crect x='10' y='10' width='26' height='26' rx='3' fill='%2360A5FA'/%3E%3Crect x='40' y='10' width='10' height='26' rx='2' fill='%2334D399'/%3E%3Crect x='40' y='42' width='10' height='10' rx='2' fill='%23FCD34D'/%3E%3Crect x='10' y='42' width='26' height='10' rx='2' fill='%23F87171'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .bar button:disabled{opacity:.4;cursor:default;transform:none}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict.info{background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td{padding:10px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top}
+  table.facts .ab{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  table.facts .st{color:#DDDDF2}
+
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── Expressions Lab additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.go:focus-visible,.ghost:focus-visible,.choice:focus-visible,.mini:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:26px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .ex{font-family:var(--mono);font-weight:600}
+  .lab{font-family:var(--ui);font-weight:700;font-size:13px;fill:#5B6B8C;letter-spacing:.04em}
+  .cap{font-family:var(--ui);font-size:15px;fill:var(--ink)}
+  .capb{font-family:var(--ui);font-size:16px;font-weight:700;fill:var(--ink)}
+  .tl{font-family:var(--mono);font-weight:700;fill:#14213D}
+  .hit{fill:transparent;cursor:pointer}
+  .hit:hover{fill:rgba(124,58,237,.10)}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px}
+  .choice{font-family:var(--mono);font-size:16px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:14px;padding:13px 12px;cursor:pointer;text-align:left;line-height:1.5;transition:.15s}
+  .choice:hover{background:rgba(255,255,255,.12)}
+  .choice.right{border-color:var(--mint);background:rgba(94,234,212,.16)}
+  .choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.14)}
+  .stepl{list-style:none;margin:0;padding:6px 0;max-height:420px;overflow-y:auto}
+  .stepl li{padding:10px 20px;border-left:3px solid transparent;color:var(--dim);font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li.done{color:#CFCFEA}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li .xp{font-family:var(--mono);font-weight:600;color:#fff;display:block;font-size:15px;margin-bottom:3px}
+  .stepl li b{color:#fff}
+  mark{background:rgba(255,107,53,.38);color:#fff;border-radius:4px;padding:0 2px}
+  mark.res{background:rgba(94,234,212,.28)}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  .xm{font-family:var(--mono);font-weight:600;color:#fff;white-space:nowrap}
+  .hint{font-size:13px;color:var(--dim);margin-top:7px}
+  .rowbtn{display:flex;gap:10px;flex-wrap:wrap;padding:12px 20px 4px}
+  .mini{font-family:var(--ui);font-size:13.5px;font-weight:600;border:1px solid var(--edge);background:rgba(255,255,255,.06);
+    color:var(--text);padding:8px 13px;border-radius:100px;cursor:pointer}
+  .mini:hover{background:rgba(255,255,255,.13)}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14.5px}
+  .kv dt{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);padding-top:2px}
+  .kv dd{margin:0;color:#E7E9FA}
+  @media (max-width:560px){
+    .choices{grid-template-columns:1fr}
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+  }
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Expressions Lab</h1>
+    <div class="eyebrow">Algebra 1 · Unit 1 · Foundations &amp; Expressions</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Expressions figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every step is computed live from the expression you type or build — change it and the work follows. Vocabulary follows Common Core / Eureka Math (EngageNY) Algebra I.
+    <div class="links"><a href="/algebra/">← Algebra courses</a><a href="/math/#algebra">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+const REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const rnz=(a,b)=>{let v;do{v=rnd(a,b);}while(v===0);return v;};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+function num(v,dp){ dp=(dp==null?2:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+function frac(v){
+  if(!isFinite(v))return "undefined";
+  for(let d=1;d<=48;d++){ const n=Math.round(v*d);
+    if(Math.abs(n/d-v)<1e-8){ const g=gcd(n,d), N=n/g, D=d/g; return D===1? minus(String(N)) : minus(N+"/"+D); } }
+  return num(v,3);
+}
+const SUPD="⁰¹²³⁴⁵⁶⁷⁸⁹";
+const supStr=s=>String(s).replace(/[0-9]/g,c=>SUPD[+c]).replace(/[-−]/g,"⁻");
+const par=v=>v<0?"("+minus(v)+")":minus(v);
+let FS=1, cur=0;
+
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+function stext(g,p,s,cls,color,anchor,size){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  let st=""; if(color)st+="fill:"+color+";"; if(size)st+="font-size:"+size+"px;"; if(st)t.setAttribute("style",st);
+  t.textContent=s; g.appendChild(t); return t;
+}
+function wrapWords(str,maxChars){ const w=String(str).split(/\s+/); const out=[]; let line="";
+  w.forEach(x=>{ if((line+" "+x).trim().length>maxChars&&line){out.push(line);line=x;} else line=(line+" "+x).trim(); }); if(line)out.push(line); return out; }
+function wtext(g,x,y,str,maxChars,lh,cls,color,anchor,size){ const L=wrapWords(str,maxChars); L.forEach((l,i)=>stext(g,[x,y+i*lh],l,cls,color,anchor||"start",size)); return L.length; }
+
+/* ══════════════════════ exact rational arithmetic ══════════════════════ */
+function R(n,d){ if(d===undefined)d=1; if(d===0)throw "Division by zero is undefined.";
+  if(d<0){n=-n;d=-d;} const g=gcd(n,d); n=n/g; d=d/g; if(Object.is(n,-0))n=0;
+  if(Math.abs(n)>1e15||d>1e15) throw "The numbers got too big for this tool."; return {n,d}; }
+const rAdd=(a,b)=>R(a.n*b.d+b.n*a.d,a.d*b.d), rSub=(a,b)=>R(a.n*b.d-b.n*a.d,a.d*b.d),
+      rMul=(a,b)=>R(a.n*b.n,a.d*b.d), rNeg=a=>R(-a.n,a.d);
+function rDiv(a,b){ if(b.n===0)throw "Division by zero is undefined — you can’t divide by 0."; return R(a.n*b.d,a.d*b.n); }
+function rPow(a,b){
+  if(b.d!==1)throw "This tool only handles whole-number exponents.";
+  let e=b.n; if(Math.abs(e)>12)throw "That exponent is too big for this tool.";
+  if(e===0&&a.n===0)throw "0⁰ is undefined.";
+  if(e<0){ if(a.n===0)throw "0 to a negative power is undefined."; a=R(a.d,a.n); e=-e; }
+  let n=1,d=1; for(let k=0;k<e;k++){n*=a.n;d*=a.d;} return R(n,d);
+}
+function rStr(v,dec){ if(dec&&v.d!==1){ return minus(String(+(v.n/v.d).toFixed(4))); } return v.d===1? minus(String(v.n)) : minus(v.n+"/"+v.d); }
+
+/* ══════════════════════ expression parser (AST) ══════════════════════ */
+const T0={"+":1,"-":1,"*":2,"/":2},   // correct order of operations
+      TM1={"+":2,"-":2,"*":1,"/":1},  // mistake: + − before × ÷
+      TM2={"-":1,"+":2,"/":3,"*":4};  // mistake: "PEMDAS" read literally — × before ÷, + before −
+let NID=1;
+const L=(v,extra)=>Object.assign({k:"lit",v,id:NID++},extra||{});
+function tokenize(src){
+  let s=String(src).replace(/\*\*/g,"^").replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g,m=>"^"+[...m].map(c=>SUPD.indexOf(c)).join(""));
+  const out=[]; let i=0;
+  while(i<s.length){
+    const c=s[i];
+    if(/\s/.test(c)){i++;continue;}
+    const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i));
+    if(m){ out.push({t:"num",s:m[0]}); i+=m[0].length; continue; }
+    if(/[a-zA-Z]/.test(c)){ out.push({t:"var",s:c.toLowerCase()}); i++; continue; }
+    if(c==="+"){out.push({t:"op",s:"+",d:"+"});i++;continue;}
+    if("-−–—".includes(c)){out.push({t:"op",s:"-",d:"−"});i++;continue;}
+    if("*×·∙⋅".includes(c)){out.push({t:"op",s:"*",d:(c==="*"||c==="×")?"×":"·"});i++;continue;}
+    if(c==="/"||c==="÷"){out.push({t:"op",s:"/",d:c});i++;continue;}
+    if(c==="^"){out.push({t:"op",s:"^",d:"^"});i++;continue;}
+    if("([{".includes(c)){out.push({t:"(",s:c});i++;continue;}
+    if(")]}".includes(c)){out.push({t:")",s:c});i++;continue;}
+    throw "I don’t understand the symbol “"+esc(c)+"”.";
+  }
+  return out;
+}
+function rightmost(n){ while(n.k==="bin"||n.k==="pow")n=n.b; if(n.k==="neg")return rightmost(n.a); return n; }
+function negate(a){ return a.k==="lit"? L(rNeg(a.v),{dec:a.dec}) : {k:"neg",a,id:NID++}; }
+function parse(src,table){
+  table=table||T0;
+  const tk=tokenize(src); if(!tk.length)throw "Type an expression first.";
+  let i=0, dec=false;
+  const peek=()=>tk[i];
+  const startsAtom=t=>t&&(t.t==="num"||t.t==="var"||t.t==="(");
+  function expr(minP){
+    let left=unary();
+    for(;;){
+      const t=peek(); if(!t)break;
+      if(t.t==="op"&&t.s!=="^"){
+        const p=table[t.s]; if(p<minP)break; i++;
+        if(!peek()||peek().t===")")throw "The expression can’t end with “"+t.d+"” — something must come after it.";
+        if(peek().t==="op"&&peek().s!=="-"&&peek().s!=="+")throw "Two operations in a row: “"+t.d+" "+peek().d+"”.";
+        const right=expr(p+1);
+        left={k:"bin",op:t.s,sym:t.d,a:left,b:right,id:NID++};
+      } else if(startsAtom(t)){
+        const p=table["*"]; if(p<minP)break;
+        const rm=rightmost(left);
+        if(t.t==="num"&&rm.k==="lit")throw "Two numbers in a row — put an operation between them.";
+        if(t.t==="num"&&rm.k==="var")throw "Write the number in front of the variable (like 3x, not x3).";
+        const right=expr(p+1);
+        left={k:"bin",op:"*",imp:true,a:left,b:right,id:NID++};
+      } else break;
+    }
+    return left;
+  }
+  function unary(){
+    const t=peek();
+    if(t&&t.t==="op"&&t.s==="-"){ i++; if(!peek())throw "The expression can’t end with “−”."; return negate(unary()); }
+    if(t&&t.t==="op"&&t.s==="+"){ i++; return unary(); }
+    return power();
+  }
+  function power(){
+    const base=atom();
+    const t=peek();
+    if(t&&t.t==="op"&&t.s==="^"){ i++; if(!peek())throw "Put an exponent after ^."; const e=unary(); return {k:"pow",a:base,b:e,id:NID++}; }
+    return base;
+  }
+  function atom(){
+    const t=peek();
+    if(!t)throw "The expression ends too soon.";
+    if(t.t==="num"){ i++; let v;
+      if(t.s.includes(".")){ dec=true; const k=(t.s.split(".")[1]||"").length; v=R(Math.round(parseFloat(t.s)*Math.pow(10,k)),Math.pow(10,k)); }
+      else v=R(parseInt(t.s,10),1);
+      return L(v,{dec:t.s.includes(".")}); }
+    if(t.t==="var"){ i++; return {k:"var",n:t.s,id:NID++}; }
+    if(t.t==="("){ i++;
+      const want={"(":")","[":"]","{":"}"}[t.s];
+      if(peek()&&peek().t===")")throw "Empty grouping symbols “"+t.s+peek().s+"”.";
+      const inner=expr(0); const c=peek();
+      if(!c||c.t!==")")throw "Missing a closing “"+want+"”.";
+      if(c.s!==want)throw "“"+t.s+"” must be closed with “"+want+"”, not “"+c.s+"”.";
+      i++; return {k:"grp",br:t.s,a:inner,id:NID++}; }
+    if(t.t===")")throw "Unexpected “"+t.s+"” — check your grouping symbols.";
+    throw "Unexpected “"+t.d+"” — something is missing before it.";
+  }
+  const root=expr(0);
+  if(i<tk.length){ const t=tk[i]; throw t.t===")"?"Extra “"+t.s+"” — check your grouping symbols.":"Unexpected “"+(t.d||t.s)+"”."; }
+  return {root:normalize(root),dec};
+}
+function normalize(n){
+  if(n.k==="bin"||n.k==="pow"){ const a=normalize(n.a), b=normalize(n.b); return (a===n.a&&b===n.b)?n:Object.assign({},n,{a,b}); }
+  if(n.k==="neg"){ const a=normalize(n.a); if(a.k==="lit")return L(rNeg(a.v),{dec:a.dec,from:a.id}); return a===n.a?n:Object.assign({},n,{a}); }
+  if(n.k==="grp"){ const a=normalize(n.a); if(a.k==="lit")return a; return a===n.a?n:Object.assign({},n,{a}); }
+  return n;
+}
+function replaceId(n,id,nn){
+  if(n.id===id)return nn;
+  if(n.k==="bin"||n.k==="pow"){ const a=replaceId(n.a,id,nn), b=replaceId(n.b,id,nn); return (a===n.a&&b===n.b)?n:Object.assign({},n,{a,b}); }
+  if(n.k==="neg"||n.k==="grp"){ const a=replaceId(n.a,id,nn); return a===n.a?n:Object.assign({},n,{a}); }
+  return n;
+}
+function varsOf(n,set){ set=set||new Set(); if(n.k==="var")set.add(n.n); if(n.a)varsOf(n.a,set); if(n.b)varsOf(n.b,set); return set; }
+function hasGrp(n){ return n.k==="grp"||(n.a&&hasGrp(n.a))||(n.b&&hasGrp(n.b)); }
+function subst(n,env){
+  if(n.k==="var")return env[n.n]!==undefined? L(env[n.n],{sub:true}) : n;
+  if(n.k==="bin"||n.k==="pow")return Object.assign({},n,{a:subst(n.a,env),b:subst(n.b,env)});
+  if(n.k==="neg"||n.k==="grp")return Object.assign({},n,{a:subst(n.a,env)});
+  return n;
+}
+function evalF(n,env){
+  switch(n.k){
+    case "lit": return n.v.n/n.v.d;
+    case "var": { const v=env[n.n]; return v===undefined?(env._any!==undefined?env._any:NaN):v; }
+    case "neg": return -evalF(n.a,env);
+    case "grp": return evalF(n.a,env);
+    case "pow": return Math.pow(evalF(n.a,env),evalF(n.b,env));
+    case "bin": { const a=evalF(n.a,env), b=evalF(n.b,env);
+      if(n.op==="+")return a+b; if(n.op==="-")return a-b; if(n.op==="*")return a*b; return b===0?NaN:a/b; }
+  }
+  return NaN;
+}
+function equiv(A,B,anyVar){
+  let good=0;
+  for(let t=0;t<9;t++){
+    const env={x:Math.random()*7-3.3,y:Math.random()*7-3.1,n:Math.random()*7-3.2};
+    if(anyVar)env._any=env.n;
+    const a=evalF(A,env), b=evalF(B,anyVar?{_any:env.n,n:env.n}:env);
+    if(!isFinite(a)&&!isFinite(b))continue;
+    if(!isFinite(a)||!isFinite(b))return false;
+    if(Math.abs(a-b)>1e-7*Math.max(1,Math.abs(a),Math.abs(b)))return false;
+    good++;
+  }
+  return good>=4;
+}
+function termsOf(n,sign,out){ out=out||[]; sign=sign||1;
+  if(n.k==="bin"&&!n.imp&&(n.op==="+"||n.op==="-")){ termsOf(n.a,sign,out); termsOf(n.b,n.op==="-"?-sign:sign,out); }
+  else out.push({n,sign}); return out; }
+function factorsOf(n,out){ out=out||[];
+  if(n.k==="bin"&&n.op==="*")
+  { factorsOf(n.a,out); factorsOf(n.b,out); } else out.push(n); return out; }
+function monoKey(n){ // null when the term is not a monomial
+  const d={}; let ok=true;
+  (function w(m){
+    if(!ok)return;
+    if(m.k==="lit")return;
+    if(m.k==="var"){d[m.n]=(d[m.n]||0)+1;return;}
+    if(m.k==="neg"){w(m.a);return;}
+    if(m.k==="pow"&&m.a.k==="var"&&m.b.k==="lit"&&m.b.v.d===1&&m.b.v.n>=0){d[m.a.n]=(d[m.a.n]||0)+m.b.v.n;return;}
+    if(m.k==="bin"&&m.op==="*"){w(m.a);w(m.b);return;}
+    if(m.k==="bin"&&m.op==="/"&&m.b.k==="lit"){w(m.a);return;}
+    ok=false;
+  })(n);
+  return ok? Object.keys(d).sort().filter(k=>d[k]).map(k=>k+d[k]).join("") : null;
+}
+function isSimplified(root){
+  if(hasGrp(root))return {ok:false,why:"Remove all parentheses — distribute so no grouping symbols are left."};
+  const seen=new Set();
+  for(const t of termsOf(root)){ const k=monoKey(t.n); if(k===null)return {ok:false,why:"Write each term as a number times variables."};
+    if(seen.has(k))return {ok:false,why:"Some like terms are still separate — combine them into one term."}; seen.add(k); }
+  return {ok:true};
+}
+// coefficients of a polynomial in x of degree ≤ 2, found by evaluating
+function quadCoefs(f){
+  const c0=f(0), f1=f(1), fm=f(-1), c2=(f1+fm)/2-c0, c1=(f1-fm)/2;
+  for(const t of [2,3,-2.5]){ const v=f(t); if(!isFinite(v)||Math.abs(v-(c0+c1*t+c2*t*t))>1e-7*Math.max(1,Math.abs(v)))return null; }
+  return [c0,c1,c2].map(v=>Math.abs(v-Math.round(v))<1e-9?Math.round(v):v);
+}
+// polynomial to text: coefs [c0,c1,c2,...]
+function polyStr(c,v){ v=v||"x"; let s="";
+  for(let d=c.length-1;d>=0;d--){ const k=c[d]; if(!k)continue;
+    const a=Math.abs(k), vp=d===0?"":(d===1?v:v+supStr(d)), body=(a===1&&d>0?"":frac(a))+vp;
+    s+= s? (k<0?" − ":" + ")+body : (k<0?"−":"")+body; }
+  return s||"0"; }
+
+/* ══════════════════════ rendering an AST as tokens ══════════════════════ */
+const OPSYM={"+":"+","-":"−","*":"×","/":"÷"};
+function toks(root,dec){
+  const T=[],spans={};
+  const put=(s,sup,kind)=>T.push({s,sup,kind});
+  function r(n,sup,ctx){
+    const st=T.length;
+    if(n.k==="lit"){
+      let s=rStr(n.v,dec||n.dec); const ng=n.v.n<0, fr=n.v.d!==1&&!(dec||n.dec);
+      const p=n.sub||ctx==="impR"||((ng||fr)&&(ctx==="R"||ctx==="base"))||(fr&&ctx==="impL");
+      if(p)s="("+s+")";
+      put(s,sup,"num");
+    } else if(n.k==="var") put(n.n,sup,"var");
+    else if(n.k==="neg"){ put("−",sup,"op"); r(n.a,sup,"R"); }
+    else if(n.k==="grp"){ put(n.br,sup,"br"); r(n.a,sup,"top"); put({"(":")","[":"]","{":"}"}[n.br],sup,"br"); }
+    else if(n.k==="pow"){ r(n.a,sup,"base"); r(n.b,sup+1,"exp"); }
+    else if(n.k==="bin"){
+      if(n.imp){ r(n.a,sup,"impL"); r(n.b,sup,"impR"); }
+      else if(n.op==="/"&&n.sym==="/"){ r(n.a,sup,"L"); put("/",sup,"op"); r(n.b,sup,"R"); }
+      else { r(n.a,sup,"L"); put(" "+(n.sym||OPSYM[n.op])+" ",sup,"op"); r(n.b,sup,"R"); }
+    }
+    spans[n.id]=[st,T.length];
+  }
+  r(root,0,"top"); return {T,spans};
+}
+function tokHTML(T,marks){ // marks: [[start,end,cls],...]
+  let h=""; marks=marks||[];
+  T.forEach((t,i)=>{
+    marks.forEach(m=>{ if(m[0]===i)h+='<mark'+(m[2]?' class="'+m[2]+'"':'')+'>'; });
+    let s=esc(t.s.replace(/ /g," ")); for(let k=0;k<t.sup;k++)s="<sup>"+s+"</sup>"; h+=s;
+    marks.forEach(m=>{ if(m[1]-1===i)h+='</mark>'; });
+  });
+  return '<span class="xm">'+h+'</span>';
+}
+const exprHTML=(root,dec)=>tokHTML(toks(root,dec).T);
+const srcHTML=src=>{ try{ return exprHTML(parse(src).root); }catch(_){ return esc(src); } };
+function layToks(T,fs){ const cw=fs*0.6; let x=0;
+  const out=T.map(t=>{ const f=t.sup?Math.pow(0.64,t.sup):1, w=t.s.length*cw*f;
+    const lead=(t.s.length-t.s.replace(/^ +/,"").length)*cw*f, trail=(t.s.length-t.s.replace(/ +$/,"").length)*cw*f;
+    const o={x0:x+lead,x1:x+w-trail,x,w,f,sup:t.sup}; x+=w; return o; });
+  out.W=x; return out; }
+const KCOL={num:"#14213D",var:"#7C3AED",op:"#22314F",br:"#64748B"};
+function drawToks(g,T,x,y,fs,opt){
+  opt=opt||{}; const Ly=layToks(T,fs);
+  T.forEach((t,i)=>{ const l=Ly[i], s=t.s.trim(); if(!s)return;
+    const tt=E("text",{x:x+l.x0,y:y-(t.sup?fs*0.42*t.sup:0),class:"ex","font-size":fs*l.f});
+    tt.setAttribute("style","fill:"+((opt.color&&opt.color(i,t))||KCOL[t.kind]||"#14213D"));
+    tt.textContent=s; g.appendChild(tt);
+    if(opt.hit){ const r=E("rect",{x:x+l.x-1,y:y-fs*1.05,width:l.w+2,height:fs*1.45,class:"hit","data-pick":"tok:"+i}); g.appendChild(r); }
+  });
+  return Ly;
+}
+function spanBox(Ly,sp,x,y,fs){
+  let sup=0; for(let i=sp[0];i<sp[1];i++)sup=Math.max(sup,Ly[i].sup);
+  return {x0:x+Ly[sp[0]].x0-5, x1:x+Ly[sp[1]-1].x1+5, y0:y-fs*0.86-(sup?fs*0.36:0), y1:y+fs*0.3};
+}
+function boxRect(g,b,fill,stroke,dash){ g.appendChild(E("rect",{x:b.x0,y:b.y0,width:b.x1-b.x0,height:b.y1-b.y0,rx:6,fill,stroke,"stroke-width":2,"stroke-dasharray":dash||""})); }
+
+/* ══════════════════════ step-by-step evaluator ══════════════════════ */
+const RANKP=10;
+function readyNodes(root,spans){
+  const out=[];
+  (function walk(n,depth,inner){
+    if(n.k==="grp"){ walk(n.a,depth+1,n.a); return; }
+    if(n.k==="bin"||n.k==="pow"){ walk(n.a,depth,inner); walk(n.b,depth,inner);
+      if(n.a.k==="lit"&&n.b.k==="lit")out.push({n,depth,inner,pos:spans[n.id][0]}); }
+    else if(n.k==="neg")walk(n.a,depth,inner);
+  })(root,0,root);
+  return out;
+}
+function levelOps(inner){ const out=[]; (function w(n){ if(n.k==="grp")return; if(n.k==="bin"||n.k==="pow"){ out.push(n); w(n.a); w(n.b);} else if(n.k==="neg")w(n.a); })(inner); return out; }
+function parentGrp(root,id){ let f=null; (function w(n){ if(f)return; if(n.k==="grp"&&n.a.id===id){f=n.id;return;} if(n.a)w(n.a); if(n.b)w(n.b); })(root); return f; }
+function findRes(root,id){ let f=null; (function w(n){ if(f)return; if(n.id===id||n.from===id){f=n.id;return;} if(n.a)w(n.a); if(n.b)w(n.b); })(root); return f; }
+const isMD=o=>o.k==="bin"&&(o.op==="*"||o.op==="/"), isAS=o=>o.k==="bin"&&(o.op==="+"||o.op==="-");
+function stepOnce(root,table,dec,mode,tk){
+  const spans=tk.spans;
+  const rd=readyNodes(root,spans); if(!rd.length)return null;
+  const rank=n=>n.k==="pow"?RANKP:table[n.op];
+  rd.sort((p,q)=>q.depth-p.depth||rank(q.n)-rank(p.n)||p.pos-q.pos);
+  const c=rd[0], n=c.n, A=n.a.v, B=n.b.v;
+  const V= n.k==="pow"? rPow(A,B) : {"+":rAdd,"-":rSub,"*":rMul,"/":rDiv}[n.op](A,B);
+  const lit=L(V,{dec:n.a.dec||n.b.dec});
+  const next=normalize(replaceId(root,n.id,lit));
+  const D=dec||lit.dec, aS=rStr(A,D), bS=rStr(B,D), vS=rStr(V,D);
+  const pa=s=>s.indexOf("−")===0||s.indexOf("/")>0?"("+s+")":s;
+  let detail, dHTML;
+  if(n.k==="pow"){
+    const e=B.n, rep=(B.d===1&&e>=2&&e<=4&&A.d===1)? " = "+Array(e).fill(pa(aS)).join(" · ") : "";
+    detail=pa(aS)+supStr(bS)+rep+" = "+vS; dHTML=esc(pa(aS))+"<sup>"+esc(bS)+"</sup>"+esc(rep+" = "+vS);
+  } else { const sy=n.imp?"·":(n.sym==="/"?"÷":(n.sym||OPSYM[n.op])); detail=aS+" "+sy+" "+pa(bS)+" = "+vS; dHTML=esc(detail); }
+  // reason
+  const opPos=o=>o.k==="pow"?spans[o.b.id][0]:spans[o.a.id][1];
+  const ops=levelOps(c.inner).filter(o=>o!==n);
+  const where=c.depth>0? "Work inside the innermost grouping symbols first. " : "";
+  let why="", bad=false;
+  if(mode==="m1"&&isAS(n)&&ops.some(isMD)){ why="MISTAKE: adding or subtracting before the × or ÷ in the same part of the expression."; bad=true; }
+  else if(mode==="m2"&&n.op==="*"&&ops.some(o=>o.k==="bin"&&o.op==="/"&&opPos(o)<opPos(n))){ why="MISTAKE: multiplying before the ÷ on its left — PEMDAS does not mean × always comes before ÷."; bad=true; }
+  else if(mode==="m2"&&n.op==="+"&&ops.some(o=>o.k==="bin"&&o.op==="-"&&opPos(o)<opPos(n))){ why="MISTAKE: adding before the − on its left — + and − have equal rank, so go left to right."; bad=true; }
+  else if(n.k==="pow") why="Exponents come before ×, ÷, + and −.";
+  else if(isMD(n)) why= ops.some(isMD)? "× and ÷ have equal rank, so work left to right — this one comes first." : (ops.some(isAS)? "Multiplication and division come before addition and subtraction." : "Multiply or divide.");
+  else why= ops.some(isAS)? "Only + and − are left here. They have equal rank, so work left to right." : (c.depth>0?"This is the last operation inside the grouping symbols.":"This is the last operation.");
+  return {target:n.id,hi:parentGrp(root,n.id)||n.id,c,lit,next,detail,dHTML,why:(bad?"":where)+why,bad};
+}
+function runSeq(root,table,dec,mode){
+  const S=[]; let cur=root, res=null; S.err=null;
+  for(let g=0;g<80;g++){
+    const tk=toks(cur,dec);
+    const st={root:cur,T:tk.T,spans:tk.spans,resId:res!=null?findRes(cur,res):null};
+    S.push(st);
+    try{ st.step=stepOnce(cur,table,dec,mode,tk); }catch(e){ S.err=String(e); st.step=null; break; }
+    if(!st.step)break;
+    res=st.step.lit.id; cur=st.step.next;
+  }
+  return S;
+}
+const seqValue=S=>{ const r=S[S.length-1].root; return r.k==="lit"?r.v:null; };
+function ladderHTML(S,k,dec){ // ordered list of steps (side panel)
+  return '<ol class="stepl">'+S.map((st,i)=>{
+    if(k!=null&&i>k)return "";
+    const marks=[]; if(st.resId!=null&&st.spans[st.resId])marks.push([...st.spans[st.resId],"res"]);
+    if(st.step&&(k==null||i===k))marks.push(st.spans[st.step.hi]);
+    const on=(k!=null&&i===k)?"on":(k!=null&&i<k?"done":"");
+    const body=st.step? `<b>${st.step.dHTML}</b> — ${esc(st.step.why)}` : (S.err?`<span class="no">${esc(S.err)}</span>`:"Done — a single number is left.");
+    return `<li class="${on}"><span class="xp">${i?"= ":""}${tokHTML(st.T,marks)}</span><span class="sn">${st.step?"Step "+(i+1):"✓"}</span>${body}</li>`;
+  }).join("")+'</ol>';
+}
+// draw a ladder of lines on the board
+function drawLadder(g,S,k,top,bottom,opt){
+  opt=opt||{}; const x0=opt.x||30, maxW=opt.maxW||620;
+  let w1=0; S.forEach(st=>{ w1=Math.max(w1,layToks(st.T,1).W); });
+  const fs=clamp(maxW/Math.max(w1+2,1),12,opt.fsMax||30);
+  const row=Math.max(fs*1.9,30), maxRows=Math.max(1,Math.floor((bottom-top)/row)), first=Math.max(0,k-maxRows+1);
+  for(let i=first;i<=k;i++){
+    const st=S[i], y=top+(i-first)*row+fs*0.95, xs=x0+fs*1.2;
+    if(i>0)stext(g,[x0+fs*0.3,y-fs*0.3],"=","ex","#5B6B8C","middle",fs);
+    const Ly=layToks(st.T,fs);
+    if(st.resId!=null&&st.spans[st.resId])boxRect(g,spanBox(Ly,st.spans[st.resId],xs,y,fs),"rgba(5,150,105,.14)","rgba(5,150,105,.55)");
+    if(st.step){ const b=spanBox(Ly,st.spans[st.step.hi],xs,y,fs);
+      if(i===k)boxRect(g,b,st.step.bad?"rgba(225,29,72,.16)":"rgba(255,107,53,.20)",st.step.bad?"#E11D48":"#FF6B35");
+      else boxRect(g,b,"none","#B6C2DA","5 4"); }
+    drawToks(g,st.T,xs,y,fs);
+    if(!st.step&&i===k&&opt.final)opt.final(g,xs+Ly.W,y,fs);
+  }
+  return fs;
+}
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null;
+function svgPt(e){
+  const m=cv.getScreenCTM(); if(!m)return [0,0];
+  const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y];
+}
+cv.addEventListener("pointerdown",e=>{
+  const M=MODS[cur], t=e.target.closest?e.target.closest("[data-drag],[data-pick]"):null;
+  if(t&&t.dataset.drag){ const id=t.dataset.drag; dragId=M.grab?(M.grab(id,svgPt(e))||id):id;
+    try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); update(); return; }
+  if(t&&t.dataset.pick&&M.pick){ M.pick(t.dataset.pick); update(); }
+});
+cv.addEventListener("pointermove",e=>{
+  if(!dragId)return; const M=MODS[cur]; if(!M.drag)return;
+  if(M.drag(dragId,svgPt(e))!==false)update();
+});
+function endDrag(){ if(!dragId)return; const M=MODS[cur], id=dragId; dragId=null; if(M.drop)M.drop(id); update(); }
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,endDrag));
+
+/* bar builders */
+function btn(label,fn,cls){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(opts,val,fn,lab){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(lab)s.setAttribute("aria-label",lab);
+  opts.forEach(([k,l])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=l;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s;
+}
+function chk(label,val,fn){
+  const l=document.createElement("label"); l.className="chk";
+  const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i;
+}
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function slider(label,min,max,val,fn,step){
+  const l=document.createElement("label"); l.className="rng"; l.textContent=label+" ";
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=step||1; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); o.textContent=minus(val);
+  i.oninput=()=>{o.textContent=minus(i.value); fn(+i.value);};
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l);
+  return {set(v){i.value=v;o.textContent=minus(v);}};
+}
+function selectBox(opts,val,fn,lab){ const s=document.createElement("select"); s.setAttribute("aria-label",lab||"Choose");
+  opts.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;s.appendChild(o);});
+  s.value=val; s.onchange=()=>fn(s.value); bar.appendChild(s); return s; }
+function tryPanel(html){ return `<div class="panel"><h3>Try this</h3><div class="pad">${html}</div></div>`; }
+const $=id=>document.getElementById(id);
+
+/* ══════════════════════ TAB 1 · order of operations ══════════════════════ */
+const PRE1=["3 + 4 × (6 − 2)²","2 + 3 × 4","(2 + 3) × 4","8 ÷ 2 × 4","20 − 6 ÷ 3 + 2²","10 − 4 − 3","[(8 − 2) × 3] ÷ (4 + 5)",
+  "2 × [5 + (9 − 3) ÷ 2]","−3² + 4","(−3)² + 4","18 ÷ 3² × 2 − 1","5 + 2{8 − [3 + (4 − 2)]}","36 ÷ (2 + 4) × 3","7 + 3(10 − 2²)","48 ÷ 4 × 3 − 2 + 6"];
+const MODE1=[["ok","Correct order"],["m1","Mistake: + before ×"],["m2","Mistake: × before ÷"]];
+const TBL={ok:T0,m1:TM1,m2:TM2};
+const P1={src:PRE1[0],mode:"ok",k:0,S:null,good:null,err:null,dec:false};
+function compute1(){
+  P1.err=null; P1.k=0;
+  try{
+    const pr=parse(P1.src,TBL[P1.mode]);
+    if(varsOf(pr.root).size)throw "This tab is for numbers only — try the Evaluating tab for expressions with x and y.";
+    P1.dec=pr.dec; P1.S=runSeq(pr.root,TBL[P1.mode],pr.dec,P1.mode);
+    const pg=parse(P1.src,T0); P1.good=runSeq(pg.root,T0,pg.dec,"ok");
+  }catch(e){ P1.err=String(e); P1.S=null; }
+}
+const M1={
+  tab:"Order of operations", lesson:"A-SSE.A.1 · 6.EE.A.2c", accent:"var(--cyan)",
+  title:()=>P1.mode==="ok"?"Order of operations, one step at a time":"What goes wrong with the wrong order",
+  init(){ compute1(); },
+  bar(){
+    selectBox([["","Pick an expression…"]].concat(PRE1.map(p=>[p,p])),PRE1.includes(P1.src)?P1.src:"",v=>{ if(!v)return; P1.src=v; compute1(); render(); },"Example expressions");
+    M1.bk=btn("◀ Back",()=>{P1.k=Math.max(0,P1.k-1);update();});
+    M1.nx=btn("Next step ▶",()=>{ if(P1.S)P1.k=Math.min(P1.S.length-1,P1.k+1); update(); },"primary");
+    btn("Show all",()=>{ if(P1.S)P1.k=P1.S.length-1; update(); });
+    btn("Reset",()=>{P1.k=0;update();});
+    segBtns(MODE1,P1.mode,k=>{P1.mode=k;compute1();render();},"Evaluation mode");
+    M1.sp=spacer("");
+  },
+  draw(){
+    const g=E("g",{}); cv.appendChild(g);
+    if(M1.sp)M1.sp.textContent=P1.S?"Step "+Math.min(P1.k+1,P1.S.length-1||1)+" / "+Math.max(1,P1.S.length-1):"";
+    if(M1.bk)M1.bk.disabled=!P1.S||P1.k===0;
+    if(M1.nx)M1.nx.disabled=!P1.S||P1.k>=P1.S.length-1;
+    if(P1.err||!P1.S){ wtext(g,40,200,"⚠ "+(P1.err||"Type an expression."),60,26,"capb","#B91C1C"); return; }
+    const S=P1.S, k=P1.k, md=P1.mode;
+    stext(g,[30,26],md==="ok"?"CORRECT ORDER":(md==="m1"?"COMMON MISTAKE · + AND − BEFORE × AND ÷":"COMMON MISTAKE · × ALWAYS BEFORE ÷, + BEFORE −"),"lab",md==="ok"?"#0369A1":"#BE123C","start");
+    const gv=seqValue(P1.good), mv=seqValue(S);
+    drawLadder(g,S,k,40,380,{final:(gg,x,y,fs)=>{
+      if(S.err)return;
+      const right=md==="ok"||(gv&&mv&&gv.n===mv.n&&gv.d===mv.d);
+      stext(gg,[Math.min(x+18,640),y-fs*0.3],right?"✓":"✗","ex",right?"#059669":"#E11D48","start",fs);
+    }});
+    // caption
+    g.appendChild(E("rect",{x:14,y:388,width:672,height:62,rx:12,fill:"#F1F5FF",stroke:"#DCE6F7"}));
+    const st=S[k];
+    if(st.step){
+      stext(g,[30,407],"Step "+(k+1)+" of "+(S.length-1)+":  "+st.step.detail,"capb",st.step.bad?"#BE123C":"#14213D","start",16*Math.min(FS,1.3));
+      wtext(g,30,430,st.step.why,FS>1?52:84,18,"cap",st.step.bad?"#BE123C":"#334155","start",14*Math.min(FS,1.3));
+    } else if(S.err){
+      wtext(g,30,410,"⚠ "+S.err,80,20,"capb","#B91C1C");
+    } else {
+      const vs=rStr(mv,P1.dec);
+      if(md==="ok") { stext(g,[30,407],"Value: "+vs,"capb","#047857","start",17); stext(g,[30,431],"Every expression has exactly one value when the order of operations is followed.","cap","#334155","start",14); }
+      else { const gs=gv?rStr(gv,P1.dec):"?"; const same=gs===vs;
+        stext(g,[30,407],"Mistake gives "+vs+" · correct value is "+gs,"capb",same?"#B45309":"#BE123C","start",17);
+        stext(g,[30,431],same?"Same answer this time — but only by luck. Try 2 + 3 × 4 or 8 ÷ 2 × 4.":"Different answers! That is why everyone must use the same order.","cap","#334155","start",14); }
+    }
+  },
+  panel(full){
+    if(full){
+      side.innerHTML=`<div class="panel"><h3>Your expression</h3>
+        <label class="fld" for="ex1">Type an expression</label>
+        <div class="fldwrap"><input type="text" id="ex1" autocomplete="off" spellcheck="false" value="${esc(P1.src)}">
+        <div class="hint">Use + − × ÷ (or * and /), ^ for exponents (3^2), and ( ) [ ] { } for grouping. 3(4) means 3 × 4.</div></div>
+        <div class="rowbtn"><button class="mini" id="go1" type="button">Evaluate step by step</button></div><div id="er1"></div><div style="height:8px"></div></div>
+        <div class="panel"><h3>Steps</h3><div id="st1"></div></div>
+        <div id="cmp1"></div>
+        <div class="panel"><h3>The order of operations</h3><div class="pad">
+        <p>An expression has to mean the <b>same thing to everyone</b>, so mathematicians agreed on an order:</p>
+        <div class="eq">1. Grouping symbols ( ) [ ] { } — innermost first
+2. Exponents
+3. × and ÷, left to right
+4. + and −, left to right<small>“PEMDAS” is a memory aid, but M and D are a tie, and so are A and S — whichever comes first from the left goes first.</small></div>
+        <p>A negative sign in front is not part of the base: <b>−3² = −(3 · 3) = −9</b>, but <b>(−3)² = 9</b>.</p></div></div>`+
+        tryPanel(`<p>1. Compare <b>2 + 3 × 4</b> and <b>(2 + 3) × 4</b>. Where do parentheses change the answer?</p><p>2. Choose <b>8 ÷ 2 × 4</b> and switch to “Mistake: × before ÷”. Why is 16 right and 1 wrong?</p><p>3. Write your own expression with value 24 that uses all four operations and an exponent.</p>`);
+      const inp=$("ex1"), go=()=>{ P1.src=inp.value; compute1(); render(); };
+      $("go1").onclick=go; inp.addEventListener("keydown",e=>{ if(e.key==="Enter")go(); });
+    }
+    $("er1").innerHTML=P1.err?`<div class="verdict bad"><b>Can’t evaluate that.</b> ${P1.err}</div>`:"";
+    $("st1").innerHTML=P1.S?ladderHTML(P1.S,P1.k,P1.dec):`<div class="pad">Fix the expression to see the steps.</div>`;
+    let c="";
+    if(P1.S&&P1.mode!=="ok"&&P1.good){
+      const gv=seqValue(P1.good), mv=seqValue(P1.S);
+      if(gv&&mv){ const same=gv.n===mv.n&&gv.d===mv.d;
+        c=`<div class="panel"><h3>Compare the answers</h3><div class="pad"><div class="eq">Correct order:   ${rStr(gv,P1.dec)}
+This mistake:    ${rStr(mv,P1.dec)}</div><p>${same?"Here the mistake happens to give the same value — the operations didn’t compete. Pick an example where they do.":"The same expression gave <b>two different values</b>. Only one can be right, so the convention matters. "+(P1.mode==="m1"?"Multiplication and division must be done before addition and subtraction.":"× and ÷ are a tie (as are + and −) — go left to right.")}</p></div></div>`; }
+    }
+    $("cmp1").innerHTML=c;
+  }
+};
+
+/* ══════════════════════ TAB 2 · algebra tiles ══════════════════════ */
+const TL=76, TU=22, TRAYW=178;
+const MAT={x:192,y:10,w:498,h:440};
+const TDIM={x2:[TL,TL],x:[TL,TU],"1":[TU,TU]};
+const TCOL={x2:["#60A5FA","#1D4ED8"],x:["#34D399","#047857"],"1":["#FCD34D","#B45309"]}, NCOL=["#F87171","#B91C1C"];
+const TSRC=[["x2",1,16,44],["x2",-1,98,44],["x",1,16,160],["x",-1,98,160],["1",1,43,226],["1",-1,125,226]];
+let TID=1;
+const P2={tiles:[],target:null,showSimp:true,flash:[],msg:""};
+let raf=0;
+function animStart(){ if(REDUCED){ while(animTick()){} if(cur===1)update(); return; } if(!raf)raf=requestAnimationFrame(animStep); }
+function animTick(){
+  let busy=false;
+  P2.tiles.forEach(t=>{
+    if(t.tx!=null){ const dx=t.tx-t.x, dy=t.ty-t.y; if(Math.hypot(dx,dy)<0.8||REDUCED){t.x=t.tx;t.y=t.ty;t.tx=t.ty=null;} else {t.x+=dx*.2;t.y+=dy*.2;busy=true;} }
+    else if(t.dying!=null){ t.dying-=REDUCED?1:0.06; if(t.dying>0)busy=true; }
+  });
+  const gone=P2.tiles.filter(t=>t.dying!=null&&t.dying<=0);
+  if(gone.length){ gone.forEach(t=>{ if(t.sgn>0)P2.flash.push({x:t.x+TDIM[t.type][0]/2,y:t.y+TDIM[t.type][1]/2,a:1}); }); P2.tiles=P2.tiles.filter(t=>!(t.dying!=null&&t.dying<=0)); }
+  P2.flash.forEach(f=>{f.a-=REDUCED?1:0.035;}); P2.flash=P2.flash.filter(f=>f.a>0); if(P2.flash.length)busy=true;
+  return busy;
+}
+function animStep(){ raf=0; const busy=animTick(); if(cur===1&&!dragId)update(); if(busy)animStart(); }
+const live=()=>P2.tiles.filter(t=>t.dying==null);
+function counts(){ const c={x2:[0,0],x:[0,0],"1":[0,0]}; live().forEach(t=>c[t.type][t.sgn>0?0:1]++); return c; }
+function overlap(a,b){ const [aw,ah]=TDIM[a.type],[bw,bh]=TDIM[b.type];
+  const ix=Math.max(0,Math.min(a.x+aw,b.x+bw)-Math.max(a.x,b.x)), iy=Math.max(0,Math.min(a.y+ah,b.y+bh)-Math.max(a.y,b.y));
+  return ix*iy/Math.min(aw*ah,bw*bh); }
+function pairUp(a,b){ const mx=(a.x+b.x)/2, my=(a.y+b.y)/2; a.dying=b.dying=1; a.tx=b.tx=mx; a.ty=b.ty=my; }
+function removePairs(){
+  let n=0; ["x2","x","1"].forEach(tp=>{ const P=live().filter(t=>t.type===tp&&t.sgn>0), N=live().filter(t=>t.type===tp&&t.sgn<0);
+    for(let i=0;i<Math.min(P.length,N.length);i++){ pairUp(P[i],N[i]); n++; } });
+  P2.msg=n?`Removed ${n} zero pair${n>1?"s":""}: each positive tile and its matching negative tile add to 0.`:"No zero pairs to remove — no type has both a positive and a negative tile.";
+  animStart();
+}
+function layoutFlow(groups,startY){ // groups: [[tile,...],...] each laid out left to right with gaps; returns positions
+  let x=MAT.x+12, y=startY, rowH=0;
+  groups.forEach(gr=>{ if(!gr.length)return; gr.forEach(t=>{ const [w,h]=TDIM[t.type];
+      if(x+w>MAT.x+MAT.w-8){ x=MAT.x+12; y+=rowH+8; rowH=0; }
+      t.tx=x; t.ty=y; x+=w+(t.type==="1"?6:8); rowH=Math.max(rowH,h); });
+    x+=26; });
+  return y+rowH;
+}
+function combine(){
+  let y=MAT.y+14;
+  ["x2","x","1"].forEach(tp=>{ const P=live().filter(t=>t.type===tp&&t.sgn>0), N=live().filter(t=>t.type===tp&&t.sgn<0);
+    if(!P.length&&!N.length)return; y=layoutFlow([P,N],y)+16; });
+  P2.tiles=live().sort((a,b)=>"x2x1".indexOf(a.type)-"x2x1".indexOf(b.type)||b.sgn-a.sgn).concat(P2.tiles.filter(t=>t.dying!=null));
+  P2.msg="Like tiles are grouped together: x² tiles with x² tiles, x tiles with x tiles, and units with units.";
+  animStart();
+}
+function addTiles(type,sgn,n,arr){ for(let i=0;i<n;i++){ const t={id:TID++,type,sgn,x:MAT.x+MAT.w/2,y:MAT.y+MAT.h/2}; P2.tiles.push(t); if(arr)arr.push(t);} }
+function randomExpr2(){
+  let terms;
+  for(;;){
+    terms=[]; const n=rnd(4,6);
+    for(let i=0;i<n;i++){ terms.push([pick(["x2","x","x","1","1"]),rnz(-4,4)]); }
+    const tot=terms.reduce((s,t)=>s+Math.abs(t[1]),0);
+    const types=new Set(terms.map(t=>t[0]));
+    const hasPair=["x2","x","1"].some(tp=>terms.some(t=>t[0]===tp&&t[1]>0)&&terms.some(t=>t[0]===tp&&t[1]<0));
+    const xx=terms.filter(t=>t[0]==="x2").reduce((s,t)=>s+Math.abs(t[1]),0);
+    if(tot<=22&&tot>=7&&types.size>=2&&hasPair&&xx<=5)break;
+  }
+  P2.tiles=[]; const groups=terms.map(([tp,c])=>{ const arr=[]; addTiles(tp,Math.sign(c),Math.abs(c),arr); return arr; });
+  layoutFlow(groups,MAT.y+14); P2.tiles.forEach(t=>{t.x=t.tx;t.y=t.ty;t.tx=t.ty=null;});
+  let s=""; terms.forEach(([tp,c],i)=>{ const a=Math.abs(c), v=tp==="x2"?"x²":(tp==="x"?"x":""), body=(a===1&&v?"":a)+v; s+=i===0?(c<0?"−":"")+body:(c<0?" − ":" + ")+body; });
+  P2.target=s; P2.msg="Simplify it: remove zero pairs, then combine like terms.";
+}
+function matExpr(){ const c=counts(); const parts=[];
+  [["x2","x²"],["x","x"],["1",""]].forEach(([tp,v])=>{ [0,1].forEach(si=>{ const n=c[tp][si]; if(!n)return; parts.push([si?-1:1,(n===1&&v?"":n)+v]); }); });
+  if(!parts.length)return "0";
+  return parts.map((p,i)=>i===0?(p[0]<0?"−":"")+p[1]:(p[0]<0?" − ":" + ")+p[1]).join(""); }
+function netPoly(){ const c=counts(); return [c["1"][0]-c["1"][1],c.x[0]-c.x[1],c.x2[0]-c.x2[1]]; }
+function drawTile(g,t,x,y,alpha,src){
+  const [w,h]=TDIM[t.type], col=t.sgn>0?TCOL[t.type]:NCOL;
+  const gg=E("g",{opacity:alpha==null?1:clamp(alpha,0,1)}); g.appendChild(gg);
+  gg.appendChild(E("rect",{x,y,width:w,height:h,rx:t.type==="1"?3:5,fill:col[0],stroke:col[1],"stroke-width":2,
+    "data-drag":src?"src:"+t.type+":"+t.sgn:"T"+t.id,style:"cursor:grab"}));
+  const lb=t.type==="1"?(t.sgn>0?"+":"−"):(t.sgn>0?"":"−")+(t.type==="x2"?"x²":"x");
+  stext(gg,[x+w/2,y+h/2+1],lb,"tl",null,"middle",t.type==="x2"?20:(t.type==="x"?15:15));
+}
+const M2={
+  tab:"Algebra tiles", lesson:"A-SSE.A.1a · 7.EE.A.1", accent:"var(--mint)",
+  title:()=>"Algebra tiles: like terms & zero pairs",
+  grab(id,p){
+    if(id.indexOf("src:")===0){ const [,tp,sg]=id.split(":");
+      if(live().length>=40){ P2.msg="The mat is full (40 tiles). Remove zero pairs or clear the mat."; return "none"; }
+      const [w,h]=TDIM[tp]; const t={id:TID++,type:tp,sgn:+sg,x:p[0]-w/2,y:p[1]-h/2}; P2.tiles.push(t); P2.off=[w/2,h/2]; return "T"+t.id; }
+    const t=P2.tiles.find(t=>"T"+t.id===id); if(!t||t.dying!=null)return "none";
+    P2.off=[p[0]-t.x,p[1]-t.y]; t.tx=t.ty=null; P2.tiles=P2.tiles.filter(q=>q!==t).concat([t]); return id;
+  },
+  drag(id,p){ const t=P2.tiles.find(t=>"T"+t.id===id); if(!t)return false; const [w,h]=TDIM[t.type];
+    t.x=clamp(p[0]-P2.off[0],0,VW-w); t.y=clamp(p[1]-P2.off[1],0,VH-h); },
+  drop(id){ const t=P2.tiles.find(t=>"T"+t.id===id); if(!t)return; const [w]=TDIM[t.type];
+    if(t.x+w/2<TRAYW+6){ P2.tiles=P2.tiles.filter(q=>q!==t); P2.msg="Tile removed."; return; }
+    if(t.x<MAT.x)t.x=MAT.x+2;
+    const o=live().find(q=>q!==t&&q.type===t.type&&q.sgn===-t.sgn&&overlap(q,t)>0.3);
+    if(o){ pairUp(t,o); P2.msg=`Zero pair! ${t.type==="1"?"1 + (−1)":(t.type==="x"?"x + (−x)":"x² + (−x²)")} = 0, so both tiles disappear.`; animStart(); }
+  },
+  bar(){
+    btn("Random expression",()=>{randomExpr2();render();},"primary");
+    btn("Remove zero pairs",()=>{removePairs();update();});
+    btn("Combine like terms",()=>{combine();update();});
+    btn("Clear mat",()=>{P2.tiles=[];P2.target=null;P2.msg="";render();});
+    chk("Show simplified form",P2.showSimp,v=>{P2.showSimp=v;update();});
+  },
+  draw(){
+    const g=E("g",{}); cv.appendChild(g);
+    g.appendChild(E("rect",{x:6,y:6,width:TRAYW-6,height:448,rx:14,fill:"#EEF2FB",stroke:"#C9D5EC"}));
+    stext(g,[TRAYW/2+3,24],"TILE TRAY","lab",null,"middle");
+    TSRC.forEach(([tp,sg,x,y])=>{ stext(g,[x+TL/2,y-9],(sg>0?"+":"−")+(tp==="x2"?"x²":(tp==="x"?"x":"1")),"sm",sg>0?TCOL[tp][1]:NCOL[1]); drawTile(g,{type:tp,sgn:sg},x,y,1,true); });
+    g.appendChild(E("rect",{x:18,y:282,width:142,height:160,rx:12,fill:"none",stroke:"#9AA8C7","stroke-width":1.6,"stroke-dasharray":"6 5"}));
+    ["Drag tiles onto","the mat.","","Drag a tile back","here to remove it."].forEach((s,i)=>stext(g,[89,314+i*22],s,"cap","#5B6B8C","middle",13.5));
+    g.appendChild(E("rect",{x:MAT.x,y:MAT.y,width:MAT.w,height:MAT.h,rx:14,fill:"rgba(255,255,255,.65)",stroke:"#C9D5EC"}));
+    if(!P2.tiles.length)wtext(g,MAT.x+MAT.w/2,MAT.y+MAT.h/2-14,"Drag tiles here, or press “Random expression”.",30,24,"cap","#94A3B8","middle",16);
+    P2.tiles.forEach(t=>{ const a=t.dying!=null&&t.tx==null?t.dying:1; drawTile(g,t,t.x,t.y,a,false); });
+    P2.flash.forEach(f=>{ g.appendChild(E("circle",{cx:f.x,cy:f.y,r:12+(1-f.a)*34,fill:"none",stroke:"#7C3AED","stroke-width":3,opacity:f.a}));
+      stext(g,[f.x,f.y],"0","ex","#7C3AED","middle",26).setAttribute("opacity",f.a); });
+  },
+  panel(full){
+    if(full){
+      side.innerHTML=`<div id="tg2"></div><div class="panel"><h3>Expression on the mat</h3><div class="pad" id="ex2"></div></div>
+      <div class="panel"><h3>Like terms &amp; zero pairs</h3><div class="pad">
+      <p>Each tile stands for a term: a big square is <b>x²</b>, a long rectangle is <b>x</b>, a small square is <b>1</b>. Red tiles are the opposites: −x², −x, −1.</p>
+      <p><span class="term">Like terms</span> have the same variable raised to the same power, like 3x and −5x. Only like terms can be combined — an x tile and an x² tile are different shapes.</p>
+      <p>A <span class="term">zero pair</span> is a tile and its opposite. Together they are worth 0, so removing them does not change the value.</p>
+      <div class="eq">3x + (−2x) = (3 − 2)x = x<small>Combining like terms is the distributive property in reverse: add the coefficients, keep the variable part.</small></div></div></div>`+
+      tryPanel(`<p>1. Press <b>Random expression</b>. Before touching anything, predict the simplified form (turn off “Show simplified form”).</p><p>2. Can x² + x ever be combined into one term? Use the tile shapes to explain why not.</p><p>3. Build an expression with 9 tiles whose simplified form is just <b>x − 1</b>.</p>`);
+    }
+    const c=counts(), np=netPoly(), pairs=["x2","x","1"].filter(tp=>c[tp][0]&&c[tp][1]);
+    $("tg2").innerHTML=P2.target?`<div class="panel"><h3>Simplify</h3><div class="pad"><div class="eq" style="font-size:17px">${esc(P2.target)}</div><p>Use zero pairs and combine like terms until each kind of tile appears in only one color.</p></div></div>`:"";
+    const done=live().length&&!pairs.length;
+    $("ex2").innerHTML=`<div class="eq" style="font-size:16px">${esc(matExpr())}${pairs.length||!live().length?"":""}
+= ${P2.showSimp?esc(polyStr(np)):"?"}<small>Tiles: ${c.x2[0]+c.x2[1]} x² · ${c.x[0]+c.x[1]} x · ${c["1"][0]+c["1"][1]} unit</small></div>
+      <p>${pairs.length?`Zero pairs remain among the <b>${pairs.map(p=>p==="x2"?"x²":(p==="1"?"unit":"x")).join(", ")}</b> tiles. Drag a red tile onto a matching tile, or press <b>Remove zero pairs</b>.`:(done?`<span class="ok"><b>No zero pairs left.</b></span> The simplified expression is <b>${esc(polyStr(np))}</b>.`:"The mat is empty.")}</p>
+      ${P2.msg?`<p style="color:var(--dim)">${esc(P2.msg)}</p>`:""}`;
+  }
+};
+
+/* ══════════════════════ TAB 3 · distributive property ══════════════════════ */
+const P3={mode:"var",a:3,b:4,c:2,xl:3.5,A:12,B:18,f:1,fneg:false,sc:30};
+const X3=118, Y3=76;
+function dims3(){
+  if(P3.mode==="gcf"){ const f=(P3.fneg?-1:1)*P3.f, q1=P3.A/f, q2=P3.B/f, XV=1.5, w1=Math.abs(q1)*XV, w2=Math.abs(q2);
+    const s=Math.min(30,540/(w1+w2),250/P3.f); return {f,q1,q2,w1,w2,h:P3.f,s}; }
+  return {w1:P3.mode==="num"?P3.b:P3.xl,w2:Math.abs(P3.c),h:Math.abs(P3.a),s:30};
+}
+function newGcf(){ let k,p,q; do{ k=pick([2,2,3,3,4,5,6,7]); p=rnd(1,6); q=rnd(1,9); }while(gcd(p,q)!==1||k*p>36||k*q>48);
+  const sp=Math.random()<.3?-1:1, sq=Math.random()<.35?-1:1; P3.A=k*p*sp; P3.B=k*q*sq; P3.f=1; P3.fneg=false; }
+const sgn3=v=>v<0?"−":"+";
+function eqLines3(){
+  const a=P3.a, c=P3.c, fa=minus(a);
+  if(P3.mode==="num"){ const b=P3.b;
+    return [`${fa}(${b} ${sgn3(c)} ${Math.abs(c)}) = ${fa}·${b} + ${fa}·${par(c)}`, `= ${minus(a*b)} ${sgn3(a*c)} ${Math.abs(a*c)} = ${minus(a*b+a*c)}`, `Check: ${fa}·${b+c} = ${minus(a*(b+c))} ✓`]; }
+  if(P3.mode==="var"){ const lhs=(a===-1?"−":(a===1?"":fa))+`(x ${sgn3(c)} ${Math.abs(c)})`;
+    return [`${lhs} = ${fa}·x + ${fa}·${par(c)}`, `= ${polyStr([a*c,a])}`, a<0?"A negative factor changes the sign of every term.":"Multiply the outside factor by every term inside."]; }
+  const d=dims3(), ok=Number.isInteger(d.q1)&&Number.isInteger(d.q2), G=gcd(P3.A,P3.B);
+  const lhs=polyStr([P3.B,P3.A]);
+  const inner=ok?polyStr([d.q2,d.q1]):`${frac(d.q1)}x ${sgn3(d.q2)} ${frac(Math.abs(d.q2))}`;
+  return [`${lhs} = ${minus(d.f)}(${inner})`, ok?(Math.abs(d.f)===G?`${Math.abs(d.f)} is the GCF of ${Math.abs(P3.A)} and ${Math.abs(P3.B)} — fully factored.`:`${Math.abs(d.f)} is a common factor, but not the greatest (GCF = ${G}).`):`${Math.abs(d.f)} is not a factor of both ${Math.abs(P3.A)} and ${Math.abs(P3.B)}.`, ""];
+}
+const M3={
+  tab:"Distributive property", lesson:"7.EE.A.1 · A-SSE.A.2", accent:"var(--yellow)",
+  title:()=>({num:"Area model: a(b + c)",var:"Area model: a(x + b)",gcf:"Factor out the GCF"})[P3.mode],
+  grab(id){ P3.sc=dims3().s; return id; },
+  drag(id,p){
+    const d=dims3();
+    if(id==="w1"){ const v=(p[0]-X3)/d.s; if(P3.mode==="num")P3.b=clamp(Math.round(v),1,9); else P3.xl=clamp(Math.round(v*10)/10,1.5,9); }
+    if(id==="w2"){ const v=Math.round((p[0]-X3)/d.s-d.w1); P3.c=(P3.c<0?-1:1)*clamp(v,1,9); }
+    if(id==="h"){ const v=Math.round((p[1]-Y3)/(P3.mode==="gcf"?P3.sc:d.s));
+      if(P3.mode==="gcf"){ P3.f=clamp(v,1,Math.max(Math.abs(P3.A),Math.abs(P3.B),1)); if(M3.fs)M3.fs.set(P3.f); }
+      else P3.a=(P3.a<0?-1:1)*clamp(v,1,8); }
+  },
+  bar(){
+    segBtns([["num","a(b + c)"],["var","a(x + b)"],["gcf","Factor (GCF)"]],P3.mode,k=>{P3.mode=k;render();},"Model");
+    if(P3.mode!=="gcf"){
+      btn("Outside factor: ± sign",()=>{P3.a=-P3.a;update();});
+      btn("Second term: ± sign",()=>{P3.c=-P3.c;update();});
+      btn("Random",()=>{P3.a=rnz(-6,6);P3.b=rnd(1,8);P3.c=rnz(-7,7);P3.xl=rnd(25,60)/10;update();});
+    } else {
+      btn("New expression",()=>{newGcf();render();},"primary");
+      M3.fs=slider("Factor",1,Math.max(Math.abs(P3.A),Math.abs(P3.B)),P3.f,v=>{P3.f=v;update();});
+      chk("Factor out a negative",P3.fneg,v=>{P3.fneg=v;update();});
+      btn("Use the GCF",()=>{P3.f=gcd(P3.A,P3.B);M3.fs.set(P3.f);update();});
+    }
+  },
+  draw(){
+    const g=E("g",{}); cv.appendChild(g);
+    const d=E("defs",{}); d.innerHTML='<pattern id="hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" fill="rgba(225,29,72,.10)"/><line x1="0" y1="0" x2="0" y2="9" stroke="#E11D48" stroke-width="2.2" opacity=".35"/></pattern>'; g.appendChild(d);
+    const D=dims3(), s=D.s, x1=X3+D.w1*s, x2=x1+D.w2*s, yb=Y3+D.h*s;
+    let s1,s2; const gcf=P3.mode==="gcf";
+    if(gcf){ s1=Math.sign(P3.A); s2=Math.sign(P3.B); } else { s1=Math.sign(P3.a); s2=Math.sign(P3.a)*Math.sign(P3.c); }
+    const ok=!gcf||(Number.isInteger(D.q1)&&Number.isInteger(D.q2));
+    const reg=(xa,xb,sg,col)=>{ g.appendChild(E("rect",{x:xa,y:Y3,width:xb-xa,height:yb-Y3,fill:sg>0?col:"url(#hatch)",stroke:sg>0?"#0369A1":"#BE123C","stroke-width":2.6,"stroke-dasharray":ok?"":"8 5"})); };
+    reg(X3,x1,s1,"rgba(2,132,199,.15)"); reg(x1,x2,s2,"rgba(5,150,105,.15)");
+    // unit grid
+    const gl=(xa,ya,xb,yb2)=>g.appendChild(E("line",{x1:xa,y1:ya,x2:xb,y2:yb2,stroke:"rgba(34,49,79,.22)","stroke-width":1}));
+    if(ok){ for(let j=1;j<D.h;j++)gl(X3,Y3+j*s,x2,Y3+j*s);
+      if(P3.mode==="num")for(let i=1;i<D.w1;i++)gl(X3+i*s,Y3,X3+i*s,yb);
+      if(gcf)for(let i=1;i<Math.abs(D.q1);i++)gl(X3+i*1.5*s,Y3,X3+i*1.5*s,yb);
+      for(let i=1;i<D.w2;i++)gl(x1+i*s,Y3,x1+i*s,yb); }
+    // dimension labels
+    const fa=gcf?minus(D.f):minus(P3.a);
+    const lab1=P3.mode==="num"?String(P3.b):(P3.mode==="var"?"x":(Number.isInteger(D.q1)?(D.q1===1?"x":(D.q1===-1?"−x":minus(D.q1)+"x")):frac(D.q1)+"x"));
+    const lab2=gcf?frac(D.q2):minus(P3.c);
+    const fz=FS>1?26:20;
+    stext(g,[(X3+x1)/2,Y3-20],lab1,"num",s1*(gcf?Math.sign(D.f):Math.sign(P3.a))<0?"#BE123C":"#0369A1","middle",fz);
+    stext(g,[(x1+x2)/2,Y3-20],lab2,"num",(gcf?D.q2:P3.c)<0?"#BE123C":"#047857","middle",fz);
+    stext(g,[X3-26,(Y3+yb)/2],fa,"num",(gcf?D.f:P3.a)<0?"#BE123C":"#22314F","middle",fz);
+    if(P3.mode==="var"){ // brace to show x is "any length"
+      stext(g,[(X3+x1)/2,Y3-44],"(any length)","ax",null,"middle",12*Math.min(FS,1.4)); }
+    // area labels
+    let a1,a2;
+    if(P3.mode==="num"){ a1=`${fa}·${P3.b} = ${minus(P3.a*P3.b)}`; a2=`${fa}·${par(P3.c)} = ${minus(P3.a*P3.c)}`; }
+    else if(P3.mode==="var"){ a1=polyStr([0,P3.a]); a2=`${fa}·${par(P3.c)} = ${minus(P3.a*P3.c)}`; }
+    else { a1=polyStr([0,P3.A]); a2=minus(P3.B); }
+    const fit=(str,w)=>str.length*(FS>1?24:17)*0.6<w-8;
+    let below=0;
+    [[a1,X3,x1,s1],[a2,x1,x2,s2]].forEach(([str,xa,xb,sg])=>{
+      const col=sg>0?"#0C4A6E":"#9F1239";
+      if(fit(str,xb-xa)&&yb-Y3>=26)stext(g,[(xa+xb)/2,(Y3+yb)/2],str,"num",col,"middle",FS>1?24:17);
+      else { stext(g,[(xa+xb)/2,yb+22+below*24],str,"num",col,"middle",FS>1?22:16); below++; } });
+    // handles
+    const hd=(x,y,id)=>{ g.appendChild(E("circle",{cx:x,cy:y,r:FS>1?24:14,class:"grab","data-drag":id})); g.appendChild(E("circle",{cx:x,cy:y,r:5,fill:"#FF6B35",stroke:"#fff","stroke-width":2,"pointer-events":"none"})); };
+    if(!gcf){ hd(x1,(Y3+yb)/2,"w1"); hd(x2,(Y3+yb)/2,"w2"); }
+    hd((X3+x2)/2,yb,"h");
+    // equations
+    const EL=eqLines3(), ey=Math.max(yb+30+below*24,360);
+    EL.forEach((l,i)=>{ if(l)stext(g,[350,ey+i*30],l,i===2?"cap":"num",i===2?"#475569":(gcf&&!ok&&i===1?"#BE123C":"#14213D"),"middle",i===2?14:(l.length>44?15:18)); });
+  },
+  panel(full){
+    const EL=eqLines3();
+    let h="";
+    if(P3.mode==="gcf"){
+      const A=Math.abs(P3.A), B=Math.abs(P3.B), G=gcd(A,B);
+      const facs=n=>{const r=[];for(let i=1;i<=n;i++)if(n%i===0)r.push(i);return r;};
+      const fA=facs(A), fB=facs(B), com=fA.filter(v=>B%v===0);
+      const d=dims3(), ok=Number.isInteger(d.q1)&&Number.isInteger(d.q2);
+      h+=`<div class="panel"><h3>Factor ${esc(polyStr([P3.B,P3.A]))}</h3><div class="pad">
+        <p>Factoring is the distributive property <b>backwards</b>: we know the area and look for the side lengths.</p>
+        <dl class="kv"><dt>${A}</dt><dd>${fA.join(", ")}</dd><dt>${B}</dt><dd>${fB.join(", ")}</dd><dt>common</dt><dd>${com.map(v=>v===G?`<b class="ok">${v}</b>`:v).join(", ")}</dd></dl>
+        <div class="eq">${esc(EL[0])}<small>${esc(EL[1])}</small></div>
+        ${ok&&Math.abs(d.f)===G?`<div class="verdict good" style="margin:12px 0 0"><b>Fully factored.</b> Inside the parentheses, ${esc(polyStr([d.q2,d.q1]))} has no common factor other than 1. Check by distributing: ${minus(d.f)}·${esc(polyStr([0,d.q1]))} = ${esc(polyStr([0,P3.A]))} and ${minus(d.f)}·${par(d.q2)} = ${minus(P3.B)}.</div>`:""}
+        ${!ok?`<div class="verdict bad" style="margin:12px 0 0">The sides would not be whole numbers — <b>${Math.abs(d.f)}</b> does not divide both coefficients.</div>`:""}
+        <p style="margin-top:11px">${P3.A<0?"The first term is negative, so it is common to factor out a <b>negative</b> GCF — every sign inside flips.":"Turn on “Factor out a negative” to see how every sign inside flips."}</p></div></div>`;
+    } else {
+      h+=`<div class="panel"><h3>Distribute</h3><div class="pad"><div class="eq">${esc(EL[0])}
+${esc(EL[1])}<small>${esc(EL[2])}</small></div>
+      <p>The rectangle is <b>${minus(P3.a)}</b> tall and <b>${P3.mode==="num"?P3.b:"x"} ${sgn3(P3.c)} ${Math.abs(P3.c)}</b> wide. Its area can be found two ways: multiply the whole width, or add the areas of the two parts. Both give the same answer — that is the <span class="term">distributive property</span>.</p></div></div>`;
+      h+=`<div class="panel"><h3>Negative factors</h3><div class="pad">
+      <p>Shaded red regions have a <b>negative</b> “area”: a positive times a negative is negative, and a negative times a negative is positive.</p>
+      <div class="eq">−3(x − 4) = −3·x + (−3)(−4)
+         = −3x + 12<small>The most common mistake is writing −3x − 12: the −3 must multiply the −4 too.</small></div></div></div>`;
+    }
+    h+=`<div class="panel"><h3>The rule</h3><div class="pad"><div class="eq">a(b + c) = ab + ac
+ab + ac = a(b + c)<small>Left to right is distributing (expanding). Right to left is factoring out the common factor a.</small></div>
+    <p>Drag the orange handles to change the side lengths; use the sign buttons to make a factor negative.</p></div></div>`;
+    side.innerHTML=h+tryPanel(P3.mode==="gcf"?`<p>1. Slide the factor up from 1. Which values make both side lengths whole numbers? Which is the greatest?</p><p>2. Factor out the GCF, then the negative GCF. Distribute each answer to check you get the original expression.</p>`:`<p>1. Make <b>4(x + 3)</b>. Show the two areas are 4x and 12.</p><p>2. Make <b>−2(x − 5)</b>. Predict both areas before you look. Why is the second one positive?</p><p>3. In a(b + c) mode, find two different rectangles with total area 24.</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 4 · evaluating expressions ══════════════════════ */
+const PRE4=["3x^2 − 2xy + 5","2(x + 3) − 4","x^2 − 4x + 7","5 − 2x","(x + y)^2 − xy","x/2 + 3y","−x^2 + 6","4xy − x + y − 9","3(x − y)^2"];
+const P4={src:PRE4[0],x:2,y:-1,sel:null,err:null,root:null,S:null};
+function compute4(){
+  P4.err=null;
+  try{ const pr=parse(P4.src,T0); const vs=[...varsOf(pr.root)].filter(v=>v!=="x"&&v!=="y");
+    if(vs.length)throw "Use only the variables x and y here (found “"+vs.join(", ")+"”).";
+    P4.root=pr.root; P4.dec=pr.dec;
+    const sub=subst(pr.root,{x:R(P4.x),y:R(P4.y)});
+    P4.S=runSeq(sub,T0,pr.dec,"ok");
+  }catch(e){ P4.err=String(e); P4.S=null; }
+}
+function partsInfo(){
+  const {T,spans}=toks(P4.root,P4.dec), terms=termsOf(P4.root);
+  const tokInfo=T.map(()=>({term:-1,fac:-1}));
+  terms.forEach((t,ti)=>{ const sp=spans[t.n.id]; for(let i=sp[0];i<sp[1];i++)tokInfo[i].term=ti;
+    factorsOf(t.n).forEach((f,fi)=>{ const fs=spans[f.id]; for(let i=fs[0];i<fs[1];i++)tokInfo[i].fac=fi; }); });
+  for(let i=T.length-1;i>=0;i--){ if(tokInfo[i].term<0){ let j=i+1; while(j<T.length&&tokInfo[j].term<0)j++; if(j<T.length)tokInfo[i]={term:tokInfo[j].term,fac:-2}; } }
+  return {T,spans,terms,tokInfo};
+}
+const isConst=n=>varsOf(n).size===0;
+function termHTML(t,spans,T){ const sp=spans[t.n.id]; let h=tokHTML(T.slice(sp[0],sp[1])); if(t.sign<0)h='<span class="xm">−</span>'+h; return h; }
+function coefOf(t){ if(hasGrp(t.n)||isConst(t.n))return null; const v=evalF(t.n,{x:1,y:1})*t.sign; return monoKey(t.n)!==null?v:null; }
+const M4={
+  tab:"Evaluating", lesson:"6.EE.A.2c · A-SSE.A.1b", accent:"var(--lavender)",
+  title:()=>"Evaluate by substitution",
+  init(){ compute4(); },
+  pick(id){ const i=+id.split(":")[1]; const info=partsInfo().tokInfo[i]; if(info&&info.term>=0)P4.sel=info; },
+  drag(id,p){ if(id!=="gx")return false; const G=M4.G; if(!G)return false;
+    const x=clamp(Math.round(G.xmin+(p[0]-G.X0)/(G.X1-G.X0)*(G.xmax-G.xmin)),-10,10);
+    if(x!==P4.x){ P4.x=x; if(M4.sx)M4.sx.set(x); compute4(); } },
+  bar(){
+    selectBox([["","Pick an expression…"]].concat(PRE4.map(p=>[p,srcPlain(p)])),PRE4.includes(P4.src)?P4.src:"",v=>{ if(!v)return; P4.src=v; P4.sel=null; compute4(); render(); },"Example expressions");
+    M4.sx=slider("x =",-10,10,P4.x,v=>{P4.x=v;compute4();update();});
+    M4.sy=slider("y =",-10,10,P4.y,v=>{P4.y=v;compute4();update();});
+  },
+  draw(){
+    const g=E("g",{}); cv.appendChild(g); M4.G=null;
+    if(P4.err||!P4.root){ wtext(g,40,200,"⚠ "+(P4.err||"Type an expression."),60,26,"capb","#B91C1C"); return; }
+    const PI=partsInfo(), Ly0=layToks(PI.T,1);
+    const fs=clamp(600/Ly0.W,16,34), x0=350-Ly0.W*fs/2, y0=62;
+    stext(g,[20,20],"CLICK ANY PART OF THE EXPRESSION","lab",null,"start");
+    const Ly=layToks(PI.T,fs);
+    if(P4.sel){ // term bracket & factor box
+      const t=PI.terms[P4.sel.term], sp=PI.spans[t.n.id];
+      let s0=sp[0]; if(s0>0&&PI.tokInfo[s0-1].fac===-2)s0--;
+      const b=spanBox(Ly,[s0,sp[1]],x0,y0,fs);
+      g.appendChild(E("path",{d:`M${b.x0} ${b.y1+4} v8 H${b.x1} v-8`,fill:"none",stroke:"#7C3AED","stroke-width":2.5}));
+      stext(g,[(b.x0+b.x1)/2,b.y1+24],"term "+(P4.sel.term+1),"sm","#7C3AED");
+      if(P4.sel.fac>=0){ const f=factorsOf(t.n)[P4.sel.fac]; boxRect(g,spanBox(Ly,PI.spans[f.id],x0,y0,fs),"rgba(255,107,53,.18)","#FF6B35"); }
+    }
+    drawToks(g,PI.T,x0,y0,fs,{hit:true});
+    // substitution ladder (compact, single line with final value)
+    const S=P4.S;
+    stext(g,[20,124],"SUBSTITUTE  x = "+minus(P4.x)+",  y = "+minus(P4.y),"lab","#6D28D9","start");
+    if(S){
+      const st=S[0], L1=layToks(st.T,1); const fs2=clamp(470/L1.W,12,24);
+      drawToks(g,st.T,24,158,fs2);
+      const v=seqValue(S);
+      const vx=24+L1.W*fs2+12;
+      stext(g,[vx,158-fs2*0.3],"= "+(S.err?"undefined":rStr(v,P4.dec)),"ex",S.err?"#B91C1C":"#047857","start",Math.max(fs2,18));
+    }
+    // table of values
+    const tx=18, ty=196;
+    g.appendChild(E("rect",{x:tx,y:ty,width:300,height:250,rx:12,fill:"rgba(255,255,255,.75)",stroke:"#DCE6F7"}));
+    stext(g,[tx+150,ty+18],"TABLE OF VALUES"+(varsOf(P4.root).has("y")?"  (y = "+minus(P4.y)+")":""),"lab",null,"middle");
+    stext(g,[tx+70,ty+44],"x","ex","#7C3AED","middle",16); stext(g,[tx+205,ty+44],"value","ex","#14213D","middle",16);
+    g.appendChild(E("line",{x1:tx+12,y1:ty+56,x2:tx+288,y2:ty+56,stroke:"#B6C2DA"}));
+    g.appendChild(E("line",{x1:tx+130,y1:ty+30,x2:tx+130,y2:ty+240,stroke:"#B6C2DA"}));
+    for(let k=-2;k<=2;k++){ const xv=P4.x+k, yy=ty+84+(k+2)*36, v=evalF(P4.root,{x:xv,y:P4.y});
+      if(k===0)g.appendChild(E("rect",{x:tx+8,y:yy-18,width:284,height:32,rx:8,fill:"rgba(124,58,237,.12)",stroke:"#7C3AED"}));
+      stext(g,[tx+70,yy-2],minus(xv),"ex","#14213D","middle",17); stext(g,[tx+205,yy-2],isFinite(v)?frac(v):"undefined","ex",k===0?"#6D28D9":"#14213D","middle",17); }
+    // mini graph
+    const big=Math.abs(P4.x)>6, xmin=big?-10:-6, xmax=big?10:6, X0=352, X1=684, Y0=200, Y1=444;
+    const ys=[]; for(let i=0;i<=240;i++){ const xv=xmin+(xmax-xmin)*i/240; const v=evalF(P4.root,{x:xv,y:P4.y}); if(isFinite(v))ys.push(v); }
+    let ymin=Math.min(0,...ys), ymax=Math.max(0,...ys); if(!ys.length){ymin=-1;ymax=1;}
+    if(ymax-ymin<2){ymax+=1;ymin-=1;}
+    const sorted=ys.slice().sort((a,b)=>a-b), q=n=>sorted[Math.floor(n*(sorted.length-1))];
+    if(sorted.length&&ymax-ymin>400){ ymin=Math.min(0,q(.05)); ymax=Math.max(0,q(.95)); }
+    const padY=(ymax-ymin)*0.08; ymin-=padY; ymax+=padY;
+    const SX=x=>X0+(x-xmin)/(xmax-xmin)*(X1-X0), SY=y=>Y1-(y-ymin)/(ymax-ymin)*(Y1-Y0);
+    M4.G={X0,X1,xmin,xmax};
+    g.appendChild(E("rect",{x:X0,y:Y0,width:X1-X0,height:Y1-Y0,fill:"#fff",stroke:"#DCE6F7"}));
+    for(let x=xmin;x<=xmax;x++){ g.appendChild(E("line",{x1:SX(x),y1:Y0,x2:SX(x),y2:Y1,stroke:"#EEF2FB"})); if(x%(big?5:2)===0&&x)stext(g,[SX(x),clamp(SY(0)+12,Y0+8,Y1-6)],minus(x),"ax"); }
+    const step=niceStep((ymax-ymin)/5);
+    for(let y=Math.ceil(ymin/step)*step;y<=ymax;y+=step){ g.appendChild(E("line",{x1:X0,y1:SY(y),x2:X1,y2:SY(y),stroke:"#EEF2FB"})); if(Math.abs(y)>1e-9)stext(g,[clamp(SX(0)-4,X0+18,X1),SY(y)],num(y,2),"ax",null,"end"); }
+    if(ymin<=0&&ymax>=0)g.appendChild(E("line",{x1:X0,y1:SY(0),x2:X1,y2:SY(0),stroke:"#8FA3C8","stroke-width":1.6}));
+    g.appendChild(E("line",{x1:SX(0),y1:Y0,x2:SX(0),y2:Y1,stroke:"#8FA3C8","stroke-width":1.6}));
+    let d="", pen=false, prev=null;
+    for(let i=0;i<=400;i++){ const xv=xmin+(xmax-xmin)*i/400, v=evalF(P4.root,{x:xv,y:P4.y});
+      if(!isFinite(v)||v<ymin-(ymax-ymin)||v>ymax+(ymax-ymin)||(prev!=null&&Math.abs(v-prev)>(ymax-ymin)*0.8)){pen=false;prev=isFinite(v)?v:null;continue;}
+      d+=(pen?"L":"M")+SX(xv).toFixed(1)+" "+SY(clamp(v,ymin-(ymax-ymin)*.5,ymax+(ymax-ymin)*.5)).toFixed(1); pen=true; prev=v; }
+    const cp=E("clipPath",{id:"gclip"}); cp.appendChild(E("rect",{x:X0,y:Y0,width:X1-X0,height:Y1-Y0})); g.appendChild(cp);
+    g.appendChild(E("path",{d,fill:"none",stroke:"#7C3AED","stroke-width":2.8,"clip-path":"url(#gclip)"}));
+    const vc=evalF(P4.root,{x:P4.x,y:P4.y});
+    if(isFinite(vc)){ const px=SX(P4.x), py=clamp(SY(vc),Y0,Y1);
+      g.appendChild(E("line",{x1:px,y1:py,x2:px,y2:clamp(SY(0),Y0,Y1),stroke:"#7C3AED","stroke-dasharray":"4 4","stroke-width":1.5}));
+      g.appendChild(E("circle",{cx:px,cy:py,r:FS>1?24:15,class:"grab","data-drag":"gx"}));
+      g.appendChild(E("circle",{cx:px,cy:py,r:6,fill:"#7C3AED",stroke:"#fff","stroke-width":2,"pointer-events":"none"}));
+      const lt="("+minus(P4.x)+", "+frac(vc)+")", right=px<X1-90;
+      stext(g,[right?px+12:px-12,clamp(py-16,Y0+12,Y1-10)],lt,"sm","#6D28D9",right?"start":"end"); }
+    stext(g,[X1-6,Y0+12],"value as x changes","ax",null,"end");
+  },
+  panel(full){
+    if(full){
+      side.innerHTML=`<div class="panel"><h3>Your expression</h3>
+        <label class="fld" for="ex4">Expression in x and y</label>
+        <div class="fldwrap"><input type="text" id="ex4" autocomplete="off" spellcheck="false" value="${esc(P4.src)}">
+        <div class="hint">Examples: 3x^2 − 2xy + 5 · 2(x + 3) · x/2 + y. Write 3x for 3 times x.</div></div>
+        <div class="rowbtn"><button class="mini" id="go4" type="button">Use this expression</button></div><div id="er4"></div><div style="height:8px"></div></div>
+        <div class="panel"><h3>Parts of the expression</h3><div class="pad" id="pt4"></div></div>
+        <div class="panel"><h3>Substitute, then simplify</h3><div id="st4"></div></div>
+        <div class="panel"><h3>How to evaluate</h3><div class="pad">
+        <p><span class="term">Evaluate</span> means find the value of the expression for given values of the variables.</p>
+        <p>Replace each variable with its value <b>in parentheses</b>, then follow the order of operations. The parentheses keep negative numbers safe: with x = −3, x² is (−3)² = 9, not −9.</p>
+        <div class="eq">x = −3:  2x² = 2(−3)² = 2(9) = 18</div></div></div>`+
+        tryPanel(`<p>1. For 5 − 2x, step x from −2 to 2. By how much does the value change each time? Where do you see that number in the expression?</p><p>2. For x² − 4x + 7, drag the point on the graph. Which x gives the smallest value?</p><p>3. Click each part of 3x² − 2xy + 5 and name it: term, coefficient, constant or factor.</p>`);
+      const inp=$("ex4"), go=()=>{ P4.src=inp.value; P4.sel=null; compute4(); render(); };
+      $("go4").onclick=go; inp.addEventListener("keydown",e=>{ if(e.key==="Enter")go(); });
+    }
+    $("er4").innerHTML=P4.err?`<div class="verdict bad"><b>Can’t use that.</b> ${P4.err}</div>`:"";
+    if(!P4.root||P4.err){ $("pt4").innerHTML="—"; $("st4").innerHTML=""; return; }
+    const PI=partsInfo(), terms=PI.terms;
+    const coefs=terms.map(coefOf).filter(v=>v!==null), consts=terms.filter(t=>isConst(t.n)).map(t=>frac(evalF(t.n,{})*t.sign));
+    let h=`<dl class="kv"><dt>terms</dt><dd>${terms.length}: ${terms.map(t=>termHTML(t,PI.spans,PI.T)).join(" , ")}</dd>
+      <dt>coefficients</dt><dd>${coefs.length?coefs.map(v=>`<span class="xm">${frac(v)}</span>`).join(", "):"none"}</dd>
+      <dt>constant</dt><dd>${consts.length?consts.map(v=>`<span class="xm">${v}</span>`).join(", "):"none"}</dd></dl>`;
+    if(P4.sel){ const t=terms[P4.sel.term], th=termHTML(t,PI.spans,PI.T), fl=factorsOf(t.n), cf=coefOf(t);
+      let msg="";
+      if(P4.sel.fac===-2) msg=`The <b>${t.sign<0?"−":"+"}</b> sign belongs to the term after it: the term is ${th}${t.sign<0&&cf!==null?`, so its coefficient is <b>${frac(cf)}</b>`:""}.`;
+      else { const f=fl[P4.sel.fac], fh=exprHTML(f,P4.dec);
+        if(isConst(t.n)) msg=`${th} is a <span class="term">constant term</span> — its value stays ${frac(evalF(t.n,{})*t.sign)} no matter what x and y are.`;
+        else if(f&&f.k==="lit") msg=`${fh} is the <span class="term">coefficient</span> of the term ${th}: the number multiplying the variable part.${t.sign<0?` Because the term is subtracted, we say the coefficient is <b>${frac(cf)}</b>.`:""}`;
+        else if(f&&f.k==="var") msg=`${fh} is a <span class="term">factor</span> of the term ${th} — a variable being multiplied.${cf!==null&&fl.length===1?` Its coefficient is ${frac(cf)} (an invisible 1).`:""}`;
+        else if(f&&f.k==="pow") msg=`${fh} is a <span class="term">factor</span> of ${th}. The small number is an <b>exponent</b>: it says how many times the base is multiplied by itself, so ${fh} = ${exprHTML(f.a)} · ${exprHTML(f.a)}${f.b.k==="lit"&&f.b.v.n===3?" · "+exprHTML(f.a):""}.`;
+        else if(f&&f.k==="grp") msg=`${fh} is a <span class="term">factor</span> written in parentheses — the whole quantity is treated as one thing and multiplied.`;
+        else if(f&&f.k==="bin"&&f.op==="/") msg=`${fh} is one term. Dividing by a number is multiplying by its reciprocal, so its coefficient is <b>${cf!==null?frac(cf):"—"}</b>.`;
+        else if(f&&f.k==="neg") msg=`${fh} — the negative sign means the opposite of what follows. It is the term ${th}.`;
+        else msg=`This is part of the term ${th}.`; }
+      h+=`<div class="verdict info" style="margin:14px 0 0">${msg}${fl.length>1&&P4.sel.fac!==-2?`<br>Factors of this term: ${fl.map(f=>exprHTML(f,P4.dec)).join(" , ")}`:""}</div>`;
+    } else h+=`<p style="margin-top:11px;color:var(--dim)">Click a part of the expression on the board to learn its name.</p>`;
+    $("pt4").innerHTML=h;
+    $("st4").innerHTML=P4.S?ladderHTML(P4.S,null,P4.dec):"";
+  }
+};
+function niceStep(r){ const p=Math.pow(10,Math.floor(Math.log10(r||1))), m=r/p; return (m<1.5?1:m<3?2:m<7?5:10)*p; }
+function srcPlain(s){ return s.replace(/\^2/g,"²").replace(/\^3/g,"³"); }
+
+/* ══════════════════════ TAB 5 · writing expressions ══════════════════════ */
+const WORDS=[
+  (a,b)=>({p:`${a} less than twice a number`,ans:`2n − ${a}`,traps:[[`${a} − 2n`,`“Less than” reverses the order: ${a} less than 2n means start with 2n, then take away ${a}.`],[`2(n − ${a})`,`That is “twice the difference of a number and ${a}” — only the number is doubled here.`],[`2n + ${a}`,`“Less than” means subtract, not add.`]]}),
+  (a)=>({p:`${a} more than a number`,ans:`n + ${a}`,traps:[[`${a}n`,`“More than” means add, not multiply.`],[`n − ${a}`,`“More than” means add.`]]}),
+  (a)=>({p:`the difference of a number and ${a}`,ans:`n − ${a}`,traps:[[`${a} − n`,`“The difference of A and B” keeps the order: A − B.`],[`n + ${a}`,`“Difference” means subtract.`]]}),
+  (a)=>({p:`${a} subtracted from a number`,ans:`n − ${a}`,traps:[[`${a} − n`,`“Subtracted from” reverses the order: you take ${a} away from the number.`],[`n + ${a}`,`Subtracted means take away.`]]}),
+  (a)=>({p:`a number subtracted from ${a}`,ans:`${a} − n`,traps:[[`n − ${a}`,`“Subtracted from ${a}” means start with ${a}.`],[`−${a}n`,`Subtraction is not multiplication.`]]}),
+  (a,b)=>({p:`the product of ${a} and a number, decreased by ${b}`,ans:`${a}n − ${b}`,traps:[[`${a}(n − ${b})`,`The comma says: first form the product, then decrease the result by ${b}.`],[`${b} − ${a}n`,`“Decreased by ${b}” means subtract ${b} from the product.`],[`${a} + n − ${b}`,`“Product” means multiply.`]]}),
+  (a,b)=>({p:`${a} times the sum of a number and ${b}`,ans:`${a}(n + ${b})`,traps:[[`${a}n + ${b}`,`“Times the sum” — the whole sum is multiplied, so it needs parentheses.`],[`${a} + n + ${b}`,`“Times” means multiply.`]]}),
+  (a)=>({p:`the quotient of a number and ${a}`,ans:`n/${a}`,traps:[[`${a}/n`,`Order matters in division: the quotient of A and B is A ÷ B.`],[`${a}n`,`“Quotient” means divide.`]]}),
+  (a)=>({p:`${a} less than a number`,ans:`n − ${a}`,traps:[[`${a} − n`,`“Less than” reverses the order: start with the number, then take away ${a}.`],[`n + ${a}`,`“Less than” means subtract.`]]}),
+  (a)=>({p:`the sum of the square of a number and ${a}`,ans:`n^2 + ${a}`,traps:[[`(n + ${a})^2`,`That squares the whole sum. Here only the number is squared.`],[`2n + ${a}`,`Squaring means n · n, not 2 · n.`]]}),
+  (a)=>({p:`the square of the sum of a number and ${a}`,ans:`(n + ${a})^2`,traps:[[`n^2 + ${a}`,`The whole sum is squared, so it needs parentheses.`],[`n^2 + ${a}^2`,`You can’t square each part separately: (n + ${a})² ≠ n² + ${a*a}.`]]}),
+  (a)=>({p:`twice the difference of a number and ${a}`,ans:`2(n − ${a})`,traps:[[`2n − ${a}`,`“Twice the difference” doubles the whole difference — use parentheses.`],[`2(${a} − n)`,`“Difference of a number and ${a}” is n − ${a}, in that order.`]]}),
+  (a)=>({p:`half of a number, increased by ${a}`,ans:`n/2 + ${a}`,traps:[[`(n + ${a})/2`,`The comma says: take half first, then increase by ${a}.`],[`2n + ${a}`,`Half means divide by 2.`]]}),
+  (a)=>({p:`${a} fewer than three times a number`,ans:`3n − ${a}`,traps:[[`${a} − 3n`,`“Fewer than” reverses the order, like “less than”.`],[`3(n − ${a})`,`Only the number is tripled, then ${a} is subtracted.`]]}),
+  (a,b)=>({p:`the quotient of ${a} more than a number and ${b}`,ans:`(n + ${a})/${b}`,traps:[[`n + ${a}/${b}`,`The whole quantity “${a} more than a number” is divided, so group it.`],[`${b}/(n + ${a})`,`Order matters in division: the quantity is divided by ${b}.`]]}),
+  (a,b)=>({p:`${b} decreased by the product of ${a} and a number`,ans:`${b} − ${a}n`,traps:[[`${a}n − ${b}`,`Start with ${b}, then decrease it.`],[`(${b} − ${a})n`,`Only the product ${a}n is subtracted.`]]})
+];
+const REAL=[
+  (a,b)=>({p:`A taxi charges $${a} to start plus $${b} per mile. Write the cost for n miles.`,ans:`${a} + ${b}n`,traps:[[`(${a} + ${b})n`,`Only the per-mile charge is multiplied by n; the starting fee is paid once.`],[`${a}n + ${b}`,`The rate “per mile” is what multiplies n.`]]}),
+  (a)=>({p:`Maya is ${a} years younger than her brother, who is n years old. Write Maya’s age.`,ans:`n − ${a}`,traps:[[`${a} − n`,`Start with the brother’s age and take away ${a}.`],[`n + ${a}`,`Younger means less, so subtract.`]]}),
+  (a,b)=>({p:`Concert tickets cost $${a} each, plus a $${b} fee per order. Write the cost of one order of n tickets.`,ans:`${a}n + ${b}`,traps:[[`${a}(n + ${b})`,`The fee is added once, not multiplied by the ticket price.`],[`${b}n + ${a}`,`The price per ticket multiplies n.`]]}),
+  (a)=>({p:`A rectangle’s length is ${a} more than its width n. Write its perimeter.`,ans:`2n + 2(n + ${a})`,traps:[[`2n + ${a}`,`Perimeter adds all four sides: two widths and two lengths.`],[`n(n + ${a})`,`Length × width is the area, not the perimeter.`],[`4n + ${a}`,`The extra ${a} is on both lengths, so it counts twice: 4n + ${2*a}.`]]}),
+  (a,b)=>({p:`You have $${b*10} and spend $${a} each week. Write the money left after n weeks.`,ans:`${b*10} − ${a}n`,traps:[[`${a}n − ${b*10}`,`Start with what you have, then subtract what you spend.`],[`(${b*10} − ${a})n`,`Only the spending grows each week.`]]}),
+  (a,b)=>({p:`${a} friends split a bill of n dollars and a $${b} tip equally. Write what each person pays.`,ans:`(n + ${b})/${a}`,traps:[[`n + ${b}/${a}`,`The tip and the bill are both shared — group them before dividing.`],[`${a}/(n + ${b})`,`Divide the total by the number of people, not the other way.`]]}),
+  (a)=>({p:`The temperature was ${a*5}° and dropped 3° every hour. Write the temperature after n hours.`,ans:`${a*5} − 3n`,traps:[[`3n − ${a*5}`,`Start at ${a*5}° and subtract the drop.`],[`${a*5} − 3`,`The drop happens every hour, so multiply 3 by n.`]]})
+];
+const KEYW=[["less than","subtract — and reverse the order"],["fewer than","subtract — and reverse the order"],["more than","add"],["subtracted from","subtract — reverse the order"],["decreased by","subtract"],["increased by","add"],["difference","subtract, in the order given"],["sum","add — the sum is one quantity"],["product","multiply"],["quotient","divide, in the order given"],["times","multiply"],["twice","multiply by 2"],["three times","multiply by 3"],["half of","divide by 2"],["square of","raise to the power 2"],["per","rate × number of units"],["each","multiply by how many"],["every","multiply by how many"],["plus","add"],["younger","subtract"],["equally","divide"],["dropped","subtract"],["spend","subtract"],["perimeter","add all the sides"],["a number","the variable n"],["width n","the variable n"]];
+function makeItem(real){
+  for(;;){
+    const f=real?pick(REAL):pick(WORDS), a=rnd(2,9), b=rnd(2,9); if(a===b)continue;
+    const it=f(a,b), A=parse(it.ans).root;
+    const traps=[]; it.traps.forEach(([e,w])=>{ const r=parse(e).root; if(!equiv(r,A,true)&&!traps.some(t=>equiv(t.r,r,true)))traps.push({e,w,r}); });
+    // extra generic distractor
+    while(traps.length<3){ const e=pick([`${a}n − ${b}`,`n − ${a+b}`,`${a}(n + 1)`,`n + ${a*b}`,`${b}n + ${a}`,`${a} − ${b}n`]); const r=parse(e).root; if(!equiv(r,A,true)&&!traps.some(t=>equiv(t.r,r,true)))traps.push({e,w:"Read the phrase again piece by piece.",r}); }
+    it.A=A; it.choices=shuffle([{e:it.ans,r:A,ok:true}].concat(traps.slice(0,3)));
+    it.kw=KEYW.filter(([k])=>it.p.toLowerCase().includes(k)).filter((k,i,arr)=>!arr.some(o=>o!==k&&o[0].includes(k[0])&&o[0]!==k[0]));
+    return it;
+  }
+}
+function phraseSegs(p,kw){ // returns words with highlight flags
+  const low=p.toLowerCase(), mark=new Array(p.length).fill(0);
+  kw.forEach(([k])=>{ let i=low.indexOf(k); while(i>=0){ for(let j=i;j<i+k.length;j++)mark[j]=k==="a number"||k==="width n"?2:1; i=low.indexOf(k,i+1); } });
+  const words=[]; let i=0;
+  p.split(" ").forEach(w=>{ words.push({w,m:mark[i]||mark[i+w.length-1]||0}); i+=w.length+1; });
+  return words;
+}
+const P5={real:false,it:null,state:"open",streak:0,best:0,picked:null,msg:""};
+const M5={
+  tab:"Writing expressions", lesson:"A-SSE.A.1 · A-CED.A.1", accent:"var(--magenta)",
+  title:()=>P5.real?"Write an expression for a situation":"Translate words into an expression",
+  newItem(){ P5.it=makeItem(P5.real); P5.state="open"; P5.picked=null; P5.msg=""; },
+  bar(){
+    btn("New phrase",()=>{M5.newItem();render();},"primary");
+    segBtns([["p","Word phrases"],["r","Real-world"]],P5.real?"r":"p",k=>{P5.real=k==="r";M5.newItem();render();},"Phrase type");
+    M5.sp=spacer("");
+  },
+  draw(){
+    if(!P5.it)M5.newItem();
+    if(M5.sp)M5.sp.textContent="Streak "+P5.streak+" · Best "+P5.best;
+    const g=E("g",{}); cv.appendChild(g), it=P5.it;
+    stext(g,[30,28],"TRANSLATE INTO AN ALGEBRAIC EXPRESSION — USE n FOR THE NUMBER","lab",null,"start");
+    const words=phraseSegs(it.p.charAt(0).toUpperCase()+it.p.slice(1),it.kw);
+    const fs=FS>1?36:(it.p.length>60?24:30), maxW=640; let x=30, y=86; const lh=fs*1.45, cw=fs*0.56;
+    let t=E("text",{x:30,y,class:"cap","font-size":fs,"font-weight":600}); g.appendChild(t);
+    words.forEach(o=>{ const w=(o.w.length+1)*cw;
+      if(x+w>30+maxW){ x=30; y+=lh; t=E("text",{x:30,y,class:"cap","font-size":fs,"font-weight":600}); g.appendChild(t); }
+      const ts=E("tspan",{}); ts.textContent=o.w+" "; ts.setAttribute("style","fill:"+(o.m===1?"#DB2777":(o.m===2?"#7C3AED":"#14213D"))+(o.m?";text-decoration:underline":""));
+      t.appendChild(ts); x+=w; });
+    let ky=y+56;
+    if(P5.state==="right"||P5.state==="shown"){
+      stext(g,[30,ky],"Expression:","lab","#047857","start");
+      const tk=toks(it.A).T; drawToks(g,tk,140,ky+8,30); ky+=56;
+    }
+    if(it.kw.length){
+      stext(g,[30,ky],"KEY WORDS","lab","#DB2777","start"); ky+=8;
+      it.kw.slice(0,Math.floor((440-ky)/28)).forEach(([k,m],i)=>{ const yy=ky+22+i*28;
+        stext(g,[30,yy],"“"+k+"”","ex",k==="a number"||k==="width n"?"#7C3AED":"#DB2777","start",16);
+        stext(g,[48+k.length*9.6+16,yy],"→  "+m,"cap","#334155","start",15); });
+    }
+  },
+  panel(){
+    const it=P5.it;
+    let h=`<div class="panel"><h3>Which expression matches?</h3><div class="choices">${it.choices.map((c,i)=>{
+      let cls=""; if(P5.picked!=null&&(i===P5.picked||(c.ok&&P5.state!=="open")))cls=c.ok?"right":"wrong";
+      return `<button type="button" class="choice ${cls}" data-i="${i}">${exprHTML(c.r)}</button>`; }).join("")}</div>
+      <label class="fld" for="w5">…or type it yourself</label>
+      <div class="ansrow"><div><input type="text" id="w5" autocomplete="off" spellcheck="false" placeholder="e.g. 2n − 5"></div></div>
+      <div class="rowbtn"><button class="mini" id="c5" type="button">Check typed answer</button><button class="mini" id="s5" type="button">Show answer</button></div>
+      <div id="fb5">${P5.msg}</div><div style="height:6px"></div></div>
+      <div class="panel"><h3>Reading the words</h3><div class="pad">
+      <p>Translate one piece at a time, and watch for words that <b>reverse the order</b>: “5 less than x” is <b>x − 5</b>, and “5 subtracted from x” is also <b>x − 5</b>.</p>
+      <p>“The difference of a and b” and “the quotient of a and b” keep the order as written: a − b and a ÷ b.</p>
+      <p>Words like <b>times the sum</b> or <b>square of the sum</b> act on a whole quantity, so they need parentheses.</p>
+      <div class="eq">5 less than twice a number  →  2n − 5<small>Check by testing a number: if n = 10, twice it is 20, and 5 less is 15. 2(10) − 5 = 15 ✓</small></div></div></div>`+
+      tryPanel(`<p>1. Write a phrase of your own whose expression is <b>3(n − 4)</b>, and another for <b>3n − 4</b>.</p><p>2. Explain to a partner why “7 less than n” and “7 − n” are different. Test with n = 10.</p>`);
+    side.innerHTML=h;
+    const right=()=>{ if(P5.state==="open"){ P5.streak++; P5.best=Math.max(P5.best,P5.streak); } P5.state="right"; };
+    const wrong=()=>{ if(P5.state==="open")P5.streak=0; if(P5.state!=="right")P5.state="tried"; };
+    side.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{
+      if(P5.state==="right"||P5.state==="shown")return;
+      const c=it.choices[+b.dataset.i]; P5.picked=+b.dataset.i;
+      if(c.ok){ right(); P5.msg=`<div class="verdict good"><b>Correct!</b> ${exprHTML(c.r)} matches “${esc(it.p)}”. Press <b>New phrase</b> for another.</div>`; }
+      else { wrong(); P5.msg=`<div class="verdict bad"><b>Not quite.</b> ${esc(c.w||"")} Try another choice.</div>`; P5.picked=+b.dataset.i; }
+      render(); });
+    const typed=()=>{
+      if(P5.state==="right"||P5.state==="shown")return;
+      const v=$("w5").value; let r;
+      try{ r=parse(v).root; }catch(e){ $("fb5").innerHTML=`<div class="verdict bad"><b>Can’t read that.</b> ${e}</div>`; return; }
+      const vs=[...varsOf(r)]; if(vs.length>1){ $("fb5").innerHTML=`<div class="verdict bad">Use just one letter for the number (n).</div>`; return; }
+      if(equiv(r,it.A,true)){ right(); P5.msg=`<div class="verdict good"><b>Correct!</b> ${exprHTML(r)} is equivalent to ${exprHTML(it.A)}.</div>`; P5.picked=it.choices.findIndex(c=>c.ok); render(); return; }
+      wrong(); const tr=it.choices.find(c=>!c.ok&&equiv(c.r,r,true));
+      P5.msg=`<div class="verdict bad"><b>Not quite.</b> ${tr?esc(tr.w):"Test your expression with a number, like n = 10, and compare it with the words."}</div>`; $("fb5").innerHTML=P5.msg; M5.sp.textContent="Streak "+P5.streak+" · Best "+P5.best;
+    };
+    $("c5").onclick=typed; $("w5").addEventListener("keydown",e=>{ if(e.key==="Enter")typed(); });
+    $("s5").onclick=()=>{ if(P5.state!=="right"){ P5.streak=0; P5.state="shown"; P5.picked=it.choices.findIndex(c=>c.ok);
+      P5.msg=`<div class="verdict info"><b>Answer:</b> ${exprHTML(it.A)}. Read the key words on the board, then try a new phrase.</div>`; render(); } };
+  }
+};
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+const KINDS6=[["mix","Mix"],["ooo","Order of operations"],["simp","Combine like terms"],["dist","Distribute"],["eval","Evaluate"],["words","Words → expression"]];
+function genOOO(){
+  const a=rnd(2,9), b=rnd(2,9), c=rnd(2,9), d=rnd(2,6), e=rnd(2,5);
+  const s=rnd(2,5), dv=pick([1,s,s*s].filter(v=>v>1)), q=rnd(2,4);
+  return pick([`${a+3} + ${b} × ${c}`,`(${a} + ${b}) × ${c} − ${d}`,`${a} × ${b} − ${c*d} ÷ ${d}`,`${a*3} − ${e}² + ${c}`,`${d*e*q} ÷ ${d} × ${q}`,
+    `${a} × [${b} + (${c+d} − ${d+1})]`,`${a} + ${b}(${d+e} − ${d})²`,`−${e}² + ${b*3}`,`${a+10} − ${b} + ${c}`,`(${s+b} − ${b})² ÷ ${dv}`,`${q*q*a} ÷ ${q}² × ${e}`,`${a}² − 2(${b} + ${c})`]);
+}
+function simpTerms(){ let t; for(;;){ t=[]; const n=rnd(4,6); for(let i=0;i<n;i++)t.push([pick(["x2","x","x","1","1"]),rnz(-7,7)]);
+  const ty=["x2","x","1"].filter(k=>t.filter(q=>q[0]===k).length>=2); if(ty.length>=1&&new Set(t.map(q=>q[0])).size>=2)return t; } }
+function termsStr(t){ return t.map(([tp,c],i)=>{ const a=Math.abs(c), v=tp==="x2"?"x²":(tp==="x"?"x":""), body=(a===1&&v?"":a)+v; return i===0?(c<0?"−":"")+body:(c<0?" − ":" + ")+body; }).join(""); }
+function genProblem(kind){
+  if(kind==="mix")kind=pick(["ooo","simp","dist","eval","words"]);
+  const pr={kind};
+  if(kind==="ooo"){
+    let src,S,v; do{ src=genOOO(); const p=parse(src); S=runSeq(p.root,T0,false,"ok"); v=seqValue(S); }while(!v||v.d!==1||Math.abs(v.n)>500);
+    pr.src=src; pr.S=S; pr.ans=v.n/v.d;
+    const alt=t=>{ try{ const p=parse(src,t); const r=seqValue(runSeq(p.root,t,false,"ok")); return r?r.n/r.d:NaN; }catch(_){return NaN;} };
+    pr.m1=alt(TM1); pr.m2=alt(TM2);
+    pr.q=`Evaluate using the order of operations: <span class="xm">${srcHTML(src)}</span>`; pr.ph="e.g. 17"; pr.fmt="Type a number (fractions like 7/2 are fine).";
+  }
+  if(kind==="simp"){
+    const t=simpTerms(); pr.src=termsStr(t); pr.root=parse(pr.src).root;
+    pr.c=[0,0,0]; t.forEach(([tp,c])=>pr.c[tp==="x2"?2:(tp==="x"?1:0)]+=c);
+    pr.q=`Simplify by combining like terms: <span class="xm">${esc(pr.src)}</span>`; pr.ph="e.g. 2x^2 − 3x + 4"; pr.fmt="Type an expression in x. Use ^ for exponents (x^2). Any order of terms is fine.";
+  }
+  if(kind==="dist"){
+    const a=rnz(-6,6), b=rnd(1,5), c=rnz(-9,9), d=rnz(-6,6);
+    const inner=`${b===1?"":b}x ${c<0?"−":"+"} ${Math.abs(c)}`;
+    const form=pick(["a","a","ad","ac","neg","x"]);
+    const A=a===1?"":(a===-1?"−":minus(a));
+    if(form==="a"){ pr.src=`${A}(${inner})`; pr.c=[a*c,a*b,0]; }
+    if(form==="ad"){ pr.src=`${A}(${inner}) ${d<0?"−":"+"} ${Math.abs(d)===1?"":Math.abs(d)}x`; pr.c=[a*c,a*b+d,0]; }
+    if(form==="ac"){ pr.src=`${A}(${inner}) ${d<0?"−":"+"} ${Math.abs(d)}`; pr.c=[a*c+d,a*b,0]; }
+    if(form==="neg"){ pr.src=`−(${inner})`; pr.c=[-c,-b,0]; }
+    if(form==="x"){ pr.src=`x(${inner})`; pr.c=[0,c,b]; }
+    pr.root=parse(pr.src).root; pr.a=form==="neg"?-1:(form==="x"?null:a); pr.b=b; pr.cc=c; pr.form=form;
+    pr.q=`Use the distributive property to expand and simplify: <span class="xm">${srcHTML(pr.src)}</span>`; pr.ph="e.g. 6x − 15"; pr.fmt="Type an expression in x with no parentheses, like terms combined.";
+  }
+  if(kind==="eval"){
+    const a=rnd(2,6), b=rnd(2,7), c=rnd(1,9);
+    pr.src=pick([`${a}x^2 − ${b}y`,`${a}(x + ${b}) − y`,`x^2 + ${a}xy − ${b}`,`(x − y)^2 + ${a}`,`${a}x − ${b}y + ${c}`,`−x^2 + ${a}y`,`${a}y − x^2 + ${c}`,`(x + ${a})(y − ${b})`]);
+    pr.x=rnz(-5,5); pr.y=rnz(-5,5); pr.root=parse(pr.src).root;
+    pr.S=runSeq(subst(pr.root,{x:R(pr.x),y:R(pr.y)}),T0,false,"ok"); const v=seqValue(pr.S); pr.ans=v.n/v.d;
+    pr.q=`Evaluate <span class="xm">${srcHTML(pr.src)}</span> for <b>x = ${minus(pr.x)}</b> and <b>y = ${minus(pr.y)}</b>.`; pr.ph="e.g. −14"; pr.fmt="Type a number.";
+  }
+  if(kind==="words"){
+    const it=makeItem(Math.random()<.4); pr.it=it; pr.A=it.A;
+    pr.q=`Write an algebraic expression for: <b>${esc(it.p)}</b> (use n for the number).`; pr.ph="e.g. 2n − 5"; pr.fmt="Type an expression using n. Any equivalent expression is accepted.";
+  }
+  return pr;
+}
+function polyAns(pr){ return polyStr(pr.c); }
+function solHTML(pr){
+  if(pr.kind==="ooo"||pr.kind==="eval")return ladderHTML(pr.S,null,false);
+  if(pr.kind==="simp"){ const T=termsOf(pr.root); const grp=k=>T.filter(t=>monoKey(t.n)===k).map(t=>(t.sign<0?"−":"+")+" "+exprHTML(t.n)).join(" ").replace(/^\+ /,"");
+    return `<div class="pad"><div class="eq">x² terms:  ${grp("x2")||"none"}  →  ${esc(polyStr([0,0,pr.c[2]]))}
+x terms:   ${grp("x1")||"none"}  →  ${esc(polyStr([0,pr.c[1]]))}
+constants: ${grp("")||"none"}  →  ${esc(polyStr([pr.c[0]]))}
+
+Simplified:  ${esc(polyAns(pr))}<small>Add the coefficients of like terms; the variable part stays the same.</small></div></div>`; }
+  if(pr.kind==="dist"){ const out=pr.form==="x"?"x":minus(pr.a);
+    return `<div class="pad"><div class="eq">${srcHTML(pr.src)}
+= ${esc(out)}·${esc(pr.b===1?"x":pr.b+"x")} + ${esc(out)}·${esc(par(pr.cc))}${pr.form==="ad"||pr.form==="ac"?" + …":""}
+= ${esc(polyAns(pr))}<small>Multiply the outside factor by <b>every</b> term inside the parentheses, watch the signs, then combine like terms.</small></div></div>`; }
+  if(pr.kind==="words"){ const tr=pr.it; return `<div class="pad"><div class="eq">${exprHTML(tr.A)}<small>${tr.kw.map(([k,m])=>"“"+k+"” → "+m).join(" · ")}</small></div></div>`; }
+}
+function hint6(pr,r,val){
+  if(pr.kind==="ooo"){
+    if(Math.abs(val-pr.m1)<1e-9&&pr.m1!==pr.ans)return "It looks like you added or subtracted before multiplying or dividing. × and ÷ come first.";
+    if(Math.abs(val-pr.m2)<1e-9&&pr.m2!==pr.ans)return "It looks like you multiplied before dividing (or added before subtracting). Those pairs are ties — go left to right.";
+    return "Work one operation at a time: grouping symbols, then exponents, then × ÷ left to right, then + − left to right.";
+  }
+  if(pr.kind==="eval")return "Substitute each value in parentheses, e.g. x = −3 gives (−3)² = 9. Then follow the order of operations.";
+  if(pr.kind==="simp"||pr.kind==="dist"){
+    const c=quadCoefs(t=>evalF(r,{x:t})); if(!c)return "Your expression doesn’t have the right form — the answer should be a polynomial in x of degree 2 or less.";
+    const bad=[]; if(c[2]!==pr.c[2])bad.push("x² term"); if(c[1]!==pr.c[1])bad.push("x term"); if(c[0]!==pr.c[0])bad.push("constant term");
+    let extra="";
+    if(pr.kind==="dist"&&pr.form==="a"){ if(c[1]===pr.a*pr.b&&c[0]===pr.cc)extra=" Remember to multiply the outside factor by the second term too."; else if(c[1]===pr.c[1]&&c[0]===-pr.c[0])extra=" Check the sign of the constant term: a negative times a negative is positive."; }
+    return "Check your "+bad.join(" and ")+"."+extra;
+  }
+  if(pr.kind==="words"){ const tr=pr.it.choices.find(c=>!c.ok&&equiv(c.r,r,true)); return tr?tr.w:"Test your expression with n = 10 and compare it with the words."; }
+}
+const P6={kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false};
+const M6={
+  tab:"Challenge", lesson:"A-SSE.A.1–2 · A-CED.A.1", accent:"var(--coral)",
+  title:()=>"Practice: "+({ooo:"order of operations",simp:"combine like terms",dist:"distributive property",eval:"evaluate an expression",words:"words to an expression"}[P6.pr?P6.pr.kind:"ooo"]),
+  newProb(){ P6.pr=genProblem(P6.kind); P6.state="open"; P6.reveal=false; P6.tries=0; },
+  bar(){
+    btn("New problem",()=>{M6.newProb();render();},"primary");
+    selectBox(KINDS6,P6.kind,v=>{P6.kind=v;M6.newProb();render();},"Problem type");
+    M6.sp=spacer(""); M6.up();
+  },
+  up(){ if(M6.sp)M6.sp.textContent="Streak "+P6.streak+" · Best "+P6.best+" · Solved "+P6.solved; },
+  draw(){
+    if(!P6.pr)M6.newProb();
+    const g=E("g",{}); cv.appendChild(g); const pr=P6.pr, show=P6.state==="right"||P6.reveal;
+    const lab={ooo:"EVALUATE",simp:"SIMPLIFY",dist:"EXPAND (DISTRIBUTE)",eval:"EVALUATE FOR x = "+minus(pr.x)+", y = "+minus(pr.y),words:"WRITE AN EXPRESSION"}[pr.kind];
+    stext(g,[30,28],lab,"lab","#BE123C","start");
+    if(pr.kind==="words"){
+      const words=phraseSegs(pr.it.p.charAt(0).toUpperCase()+pr.it.p.slice(1),[]);
+      wtext(g,30,90,words.map(w=>w.w).join(" "),FS>1?28:40,40,"cap","#14213D","start",FS>1?30:28);
+      if(show){ stext(g,[30,300],"ANSWER","lab","#047857","start"); drawToks(g,toks(pr.A).T,30,350,34); }
+      return;
+    }
+    if((pr.kind==="ooo"||pr.kind==="eval")){
+      if(show){ drawLadder(g,pr.S,pr.S.length-1,44,450,{fsMax:26,final:(gg,x,y,fs)=>stext(gg,[Math.min(x+16,660),y-fs*.3],"✓","ex","#059669","start",fs)}); }
+      else { const T=pr.kind==="eval"?toks(pr.root).T:pr.S[0].T, Ly=layToks(T,1), fs=clamp(600/Ly.W,18,46); drawToks(g,T,350-Ly.W*fs/2,200,fs);
+        if(pr.kind==="eval")stext(g,[350,280],"x = "+minus(pr.x)+"     y = "+minus(pr.y),"ex","#7C3AED","middle",26); }
+      return;
+    }
+    const T=toks(pr.root).T, Ly=layToks(T,1), fs=clamp(600/Ly.W,18,42);
+    drawToks(g,T,350-Ly.W*fs/2,show?120:200,fs);
+    if(show){ stext(g,[350,220],"=","ex","#5B6B8C","middle",30); const A=parse(polyAns(pr)).root, T2=toks(A).T, L2=layToks(T2,1), f2=clamp(560/L2.W,18,40);
+      drawToks(g,T2,350-L2.W*f2/2,300,f2); stext(g,[350,370],"✓ simplified","capb","#047857","middle",16); }
+  },
+  panel(full){
+    const pr=P6.pr;
+    if(!full&&$("chk6"))return;
+    side.innerHTML=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob6" data-kind="${pr.kind}" data-src="${esc(pr.src||"")}" data-x="${pr.x!=null?pr.x:""}" data-y="${pr.y!=null?pr.y:""}" data-ans="${esc(pr.kind==="words"?pr.it.ans:(pr.ans!=null?String(pr.ans):polyAns(pr)))}">${pr.q}</p></div>
+      <div class="ansrow"><div><label class="fld" for="ans6">Your answer</label><input type="text" id="ans6" autocomplete="off" spellcheck="false" placeholder="${esc(pr.ph)}"><div class="hint">${pr.fmt}</div></div></div>
+      <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="chk6" class="go" type="button" style="flex:1 1 140px">Check answer</button>
+        <button id="sol6" class="ghost" type="button">Show solution</button></div>
+      <div id="fb6"></div><div style="height:4px"></div></div>
+      <div class="panel"><h3>How answers are checked</h3><div class="pad">
+      <p>Numbers can be integers, decimals or fractions like <b>−7/2</b>. Expressions can be typed with ^ for exponents: <b>3x^2 − x + 4</b>.</p>
+      <p>Expressions are checked by <b>evaluating both at several random values</b> of x — so any equivalent form (any order of terms) counts. For “simplify” and “distribute”, your answer must also have no parentheses and no like terms left to combine.</p>
+      <p>A first-try correct answer grows your streak. A wrong answer resets it and gives a hint.</p></div></div>`;
+    const inp=$("ans6"), fb=$("fb6");
+    const showSol=good=>{ fb.innerHTML=(good||"")+solHTML(pr); };
+    const check=()=>{
+      if(P6.state==="right")return;
+      let r; try{ r=parse(inp.value).root; }catch(e){ fb.innerHTML=`<div class="verdict bad"><b>I can’t read that.</b> ${e}</div>`; return; }
+      let ok=false, val=NaN, msg="";
+      if(pr.kind==="ooo"||pr.kind==="eval"){
+        if(varsOf(r).size){ fb.innerHTML=`<div class="verdict bad">Type a single number — no variables.</div>`; return; }
+        val=evalF(r,{}); ok=Math.abs(val-pr.ans)<1e-9||(Math.abs(val-pr.ans)<0.006&&String(inp.value).includes("."));
+      } else if(pr.kind==="simp"||pr.kind==="dist"){
+        const vs=[...varsOf(r)]; if(vs.some(v=>v!=="x")){ fb.innerHTML=`<div class="verdict bad">Use the variable x only.</div>`; return; }
+        const target=parse(polyAns(pr)).root;
+        if(equiv(r,target,false)){ const si=isSimplified(r); if(si.ok)ok=true; else msg=`<div class="verdict info"><b>Equivalent — but not finished.</b> ${si.why}</div>`; }
+      } else {
+        if(varsOf(r).size>1){ fb.innerHTML=`<div class="verdict bad">Use one letter (n) for the number.</div>`; return; }
+        ok=equiv(r,pr.A,true);
+      }
+      if(ok){
+        if(P6.tries===0&&!P6.reveal){ P6.streak++; P6.best=Math.max(P6.best,P6.streak); }
+        P6.state="right"; P6.solved++; M6.up(); clear(); M6.draw();
+        showSol(`<div class="verdict good"><b>Correct!</b> ${P6.tries||P6.reveal?"Got there — the streak counts first-try answers only.":"Streak "+P6.streak+"."} Compare with the worked solution, then press <b>New problem</b>.</div>`);
+        inp.disabled=true;
+      } else if(msg){ fb.innerHTML=msg; }
+      else { P6.tries++; P6.streak=0; M6.up(); fb.innerHTML=`<div class="verdict bad"><b>Not quite.</b> ${esc(hint6(pr,r,val))}</div>`; }
+    };
+    $("chk6").onclick=check; inp.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); });
+    $("sol6").onclick=()=>{ P6.reveal=true; if(P6.state!=="right"){P6.streak=0;M6.up();} clear(); M6.draw(); showSol(`<div class="verdict info"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
+function update(){ setFS(); const M=MODS[cur]; clear(); M.draw(); M.panel(false); }
+function render(){
+  setFS(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M6&&!P6.pr)M6.newProb();
+  if(M===M5&&!P5.it)M5.newItem();
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  bar.innerHTML=""; M.bar();
+  clear(); M.draw(); M.panel(true);
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+M1.init(); M4.init(); randomExpr2();
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>

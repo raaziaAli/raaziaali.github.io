@@ -1,0 +1,1239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radicals &amp; Power Functions Lab — Algebra 2 Unit 5</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M8 36l7-4 9 20L38 12h18' stroke='%2300E5FF' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  /* ── drawing ── */
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── Radicals Lab additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible,.exs button:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:100px}
+  .rng output{min-width:26px;text-align:right;color:var(--accent)}
+  .numin{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:4px 6px 4px 15px}
+  .numin input{width:86px;padding:7px 10px;border-radius:100px;font-family:var(--mono);font-size:14px}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .big{font-family:var(--mono);font-weight:700;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round;fill:var(--ink)}
+  .why{font-family:var(--ui);font-weight:500;fill:#5B6B8C}
+  @media (max-width:560px){ svg.canvas .sm{font-size:21px;stroke-width:5} svg.canvas .ax{font-size:17px} }
+  .stepl{list-style:none;margin:0;padding:6px 0}
+  .stepl li{padding:10px 20px;border-left:3px solid transparent;color:var(--dim);font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li.done{color:#CFCFEA}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li b{color:#fff}
+  .stepl li .mx{display:block;font-family:var(--mono);font-weight:600;color:#fff;margin-top:4px;white-space:pre-wrap}
+  .stepl li.hide{display:none}
+  .stepl li .bad{color:var(--coral);font-weight:700} .stepl li .good{color:var(--mint);font-weight:700}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  .exs{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 4px}
+  .exs button{font-family:var(--mono);font-size:13px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:100px;padding:6px 12px;cursor:pointer}
+  .exs button:hover{background:rgba(255,255,255,.14)}
+  table.vals{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13.5px}
+  table.vals td,table.vals th{padding:8px 12px;border-bottom:1px solid rgba(196,181,253,.12);text-align:right}
+  table.vals th{color:var(--dim);font-weight:600;font-size:12px;letter-spacing:.06em}
+  table.vals td:first-child,table.vals th:first-child{text-align:left}
+  table.vals td{color:#fff}
+  .sw{display:inline-block;width:11px;height:11px;border-radius:11px;margin-right:8px;vertical-align:middle}
+  .fmt{font-size:13px;color:var(--dim);padding:6px 20px 0}
+  .fmt code{font-family:var(--mono);color:#fff;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:6px}
+  sup{font-size:.7em;line-height:0}
+  @media (max-width:560px){
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:78px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+    .board-head .lsn{margin-left:0;white-space:normal}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Radicals &amp; Power Functions Lab</h1>
+    <div class="eyebrow">Algebra 2 · Unit 5 · Radical &amp; Power Functions</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Radical and power function figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every graph is live and every number is computed from the current settings — drag a point or move a slider and the work follows. Vocabulary follows Common Core / Eureka Math (EngageNY) Algebra II.
+    <div class="links"><a href="/algebra/">← Algebra courses</a><a href="/math/#algebra">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const isInt=v=>Math.abs(v-Math.round(v))<1e-9;
+const near=(a,b,e)=>Math.abs(a-b)<(e||1e-9);
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+function num(v,dp){ dp=(dp==null?2:dp); if(!isFinite(v))return "undefined"; const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0;
+  let t=String(s); if(/e/.test(t)) t=s.toPrecision(4); return minus(t); }
+function fr(v,maxD){ maxD=maxD||48; if(!isFinite(v))return null;
+  for(let d=1;d<=maxD;d++){ const n=Math.round(v*d); if(Math.abs(n/d-v)<1e-9*Math.max(1,Math.abs(v))){ const g=gcd(n,d); return [n/g,d/g]; } } return null; }
+function fx(v){ if(!isFinite(v))return "undefined"; const f=fr(v,48); if(f&&Math.abs(f[0])<1e9) return f[1]===1? minus(f[0]) : minus(f[0]+"/"+f[1]); return num(v,3); }
+function fxa(v){ const s=fx(v); return (s.indexOf("/")>=0||!isInt(v))&&fr(v,48)? s+" ≈ "+num(v,3) : s; }
+const exact=v=>!!fr(v,48);
+const h=s=>String(s).replace(/\^\{([^}]*)\}/g,"<sup>$1</sup>");      // markup → HTML
+const plain=s=>String(s).replace(/\^\{([^}]*)\}/g,"$1");
+function realPow(b,e){
+  if(!isFinite(b)||!isFinite(e))return NaN;
+  if(b>=0) return Math.pow(b,e);
+  if(isInt(e)) return Math.pow(b,Math.round(e));
+  const f=fr(e,60); if(!f) return NaN; if(f[1]%2===0) return NaN;
+  const v=Math.pow(-b,e); return (Math.abs(f[0])%2===1)? -v : v;
+}
+const rootN=(v,n)=>realPow(v,1/n);
+function spf(n){ if(n%2===0)return 2; for(let p=3;p*p<=n;p+=2) if(n%p===0)return p; return n; }
+function extract(n,idx){ let k=1,r=Math.abs(n); for(let p=2;Math.pow(p,idx)<=r;p++){ const pp=Math.pow(p,idx); while(r%pp===0){r/=pp;k*=p;} } return {k:k*(n<0&&idx%2?-1:1),r}; }
+/* radical markup: index n, radicand */
+function R(n,inner){ inner=String(inner); const simple=/^[0-9a-z.]+$/i.test(inner); const body=simple?inner:"("+inner+")";
+  return (n===2?"√":n===3?"∛":n===4?"∜":"^{"+n+"}√")+body; }
+const wrapB=s=>(/^[0-9a-z.]+$/i.test(String(s))?String(s):"("+s+")");
+function coefS(k){ return near(k,1)?"":near(k,-1)?"−":fx(k); }
+function poly(cs,v){ v=v||"x"; const deg=cs.length-1; let out="";
+  cs.forEach((c,i)=>{ const p=deg-i; if(near(c,0,1e-12))return; const a=Math.abs(c);
+    const body=p===0? fx(a) : (near(a,1)?"":fx(a))+v+(p>1?"^{"+p+"}":"");
+    out+= out? (c<0?" − ":" + ")+body : (c<0?"−":"")+body; });
+  return out||"0"; }
+const lin=(a,b)=>poly([a,b]);
+function surd(A,B,d,C,idx){ idx=idx||2;
+  if(B!==0&&d>1){ const e=extract(d,idx); B*=e.k; d=e.r; }
+  if(d===1){A+=B;B=0;}
+  if(A===0&&B===0) return "0";
+  const g=gcd(gcd(A,B),C); A/=g;B/=g;C/=g; if(C<0){A=-A;B=-B;C=-C;}
+  let nu=""; if(A) nu=fx(A);
+  if(B){ const rs=R(idx,d), cb=Math.abs(B)===1?"":fx(Math.abs(B)); nu+= nu? (B<0?" − ":" + ")+cb+rs : (B<0?"−":"")+cb+rs; }
+  if(C===1) return nu; return ((A&&B)?"("+nu+")":nu)+"/"+C;
+}
+function textLen(s){ let n=0; String(s).split(/(\^\{[^}]*\})/).forEach(p=>{ const m=/^\^\{([^}]*)\}$/.exec(p); n+= m? m[1].length*.68 : p.length; }); return n; }
+
+let snap=true, FS=1, cur=0;
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+/* rich SVG text with ^{superscripts} */
+function rich(g,x,y,s,o){ o=o||{};
+  const t=E("text",{x,y,class:o.cls||"sm","text-anchor":o.anchor||"middle","dominant-baseline":"middle"});
+  let st=""; if(o.color)st+="fill:"+o.color+";"; if(o.size)st+="font-size:"+o.size+"px;"; if(o.weight)st+="font-weight:"+o.weight+";"; if(st)t.setAttribute("style",st);
+  let up=false;
+  String(s).split(/(\^\{[^}]*\})/).forEach(p=>{ if(!p)return; const m=/^\^\{([^}]*)\}$/.exec(p); const ts=E("tspan",{});
+    if(m){ ts.setAttribute("style","font-size:68%"); ts.setAttribute("dy",up?"0":"-0.62em"); ts.textContent=m[1]; up=true; }
+    else { if(up){ts.setAttribute("dy","0.62em");} ts.textContent=p; up=false; }
+    t.appendChild(ts); });
+  g.appendChild(t); return t;
+}
+function fitSize(s,base,maxW){ return Math.min(base*FS, maxW/(Math.max(1,textLen(s))*0.62)); }
+function label(g,sx,sy,s,color,o){ o=o||{}; const fs=(o.size||13.5)*(o.size?1:FS); const w=textLen(s)*fs*0.62+6, hh=fs+4;
+  const cx=clamp(sx,w/2+4,VW-w/2-4), cy=clamp(sy,hh/2+3,VH-hh/2-3);
+  return rich(g,cx,cy,s,{color,cls:o.cls||"sm",size:o.size}); }
+
+/* ── coordinate window ── */
+let WIN={x0:-10,x1:10,y0:-6,y1:6};
+const X=x=>(x-WIN.x0)/(WIN.x1-WIN.x0)*VW, Y=y=>VH-(y-WIN.y0)/(WIN.y1-WIN.y0)*VH;
+const IX=sx=>WIN.x0+sx/VW*(WIN.x1-WIN.x0), IY=sy=>WIN.y0+(VH-sy)/VH*(WIN.y1-WIN.y0);
+function niceStep(r,t){ const raw=r/t, p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p; }
+const inWin=(x,y)=>x>=WIN.x0&&x<=WIN.x1&&y>=WIN.y0&&y<=WIN.y1;
+let clipN=0;
+function graphBg(W){
+  WIN=W; const id="fr"+(++clipN);
+  const d=E("defs"); d.innerHTML='<clipPath id="'+id+'"><rect width="'+VW+'" height="'+VH+'"/></clipPath>'; cv.appendChild(d);
+  cv.appendChild(E("rect",{width:VW,height:VH,fill:"rgba(255,255,255,0)"}));
+  const gg=E("g",{}); const sx=niceStep(W.x1-W.x0,14), sy=niceStep(W.y1-W.y0,9);
+  for(let x=Math.ceil(W.x0/sx)*sx;x<=W.x1+1e-9;x+=sx){ const p=X(x); gg.appendChild(E("line",{x1:p,y1:0,x2:p,y2:VH,style:"stroke:var(--grid)","stroke-width":1})); }
+  for(let y=Math.ceil(W.y0/sy)*sy;y<=W.y1+1e-9;y+=sy){ const p=Y(y); gg.appendChild(E("line",{x1:0,y1:p,x2:VW,y2:p,style:"stroke:var(--grid)","stroke-width":1})); }
+  const ax=clamp(X(0),0,VW), ay=clamp(Y(0),0,VH);
+  gg.appendChild(E("line",{x1:0,y1:ay,x2:VW,y2:ay,stroke:"#8FA3C8","stroke-width":1.8}));
+  gg.appendChild(E("line",{x1:ax,y1:0,x2:ax,y2:VH,stroke:"#8FA3C8","stroke-width":1.8}));
+  const lx=Math.max(1,Math.ceil(34*FS/(sx/(W.x1-W.x0)*VW))), ly=Math.max(1,Math.ceil(22*FS/(sy/(W.y1-W.y0)*VH)));
+  let i=0; for(let x=Math.ceil(W.x0/sx)*sx;x<=W.x1+1e-9;x+=sx,i++){ if(Math.abs(x)<1e-9||Math.round(x/sx)%lx)continue;
+    const t=E("text",{x:X(x),y:clamp(ay+15*FS,12,VH-5),class:"ax","text-anchor":"middle"}); t.textContent=num(x,2); gg.appendChild(t); }
+  for(let y=Math.ceil(W.y0/sy)*sy;y<=W.y1+1e-9;y+=sy){ if(Math.abs(y)<1e-9||Math.round(y/sy)%ly)continue;
+    const t=E("text",{x:clamp(ax-6,30*FS,VW-4),y:Y(y)+4,class:"ax","text-anchor":"end"}); t.textContent=num(y,2); gg.appendChild(t); }
+  const xl=E("text",{x:VW-10,y:ay-7,class:"ax","text-anchor":"end"}); xl.textContent="x"; gg.appendChild(xl);
+  const yl=E("text",{x:ax+8,y:14*FS,class:"ax"}); yl.textContent="y"; gg.appendChild(yl);
+  cv.appendChild(gg);
+  const g=E("g",{"clip-path":"url(#"+id+")"}); cv.appendChild(g); return g;
+}
+function plot(g,f,o){ o=o||{};
+  const a=Math.max(WIN.x0,o.a==null?-Infinity:o.a), b=Math.min(WIN.x1,o.b==null?Infinity:o.b); if(a>=b)return;
+  const N=o.n||700, H=WIN.y1-WIN.y0; let d="", pen=false, prev=null;
+  const xs=[]; for(let i=0;i<=N;i++)xs.push(a+(b-a)*i/N);
+  if(o.a!=null&&o.a>WIN.x0){ for(let j=1;j<=12;j++) xs.push(o.a+(b-a)/N*j*j/144); xs.sort((p,q)=>p-q); }
+  for(const x of xs){ const y=f(x);
+    if(!isFinite(y)||y>WIN.y1+3*H||y<WIN.y0-3*H){pen=false;prev=null;continue;}
+    const sy=Y(y); if(pen&&prev!=null&&Math.abs(sy-prev)>VH*1.3)pen=false;
+    d+=(pen?"L":"M")+X(x).toFixed(2)+" "+sy.toFixed(2); pen=true; prev=sy; }
+  if(!d)return;
+  const p=E("path",{d,fill:"none",style:"stroke:"+(o.color||"var(--vert)"),"stroke-width":o.w||3.2,"stroke-linecap":"round","stroke-linejoin":"round"});
+  if(o.dash)p.setAttribute("stroke-dasharray",o.dash); if(o.op)p.setAttribute("opacity",o.op); g.appendChild(p); return p;
+}
+function vline(g,x,color,w,dash){ const p=X(x); g.appendChild(E("line",{x1:p,y1:0,x2:p,y2:VH,style:"stroke:"+color,"stroke-width":w||2,"stroke-dasharray":dash||""})); }
+function hline(g,y,color,w,dash){ const p=Y(y); g.appendChild(E("line",{x1:0,y1:p,x2:VW,y2:p,style:"stroke:"+color,"stroke-width":w||2,"stroke-dasharray":dash||""})); }
+function wseg(g,x1,y1,x2,y2,color,w,dash){ g.appendChild(E("line",{x1:X(x1),y1:Y(y1),x2:X(x2),y2:Y(y2),style:"stroke:"+color,"stroke-width":w||2,"stroke-dasharray":dash||"","stroke-linecap":"round"})); }
+function sdot(g,sx,sy,color,r,hollow){ const a={cx:sx,cy:sy,r:r||5,style:hollow?"fill:#fff;stroke:"+color:"fill:"+(color||"var(--ink)"),"stroke-width":hollow?3:2,"pointer-events":"none"}; if(!hollow)a.stroke="#fff"; g.appendChild(E("circle",a)); }
+function wdot(g,x,y,color,r,hollow){ if(isFinite(x)&&isFinite(y)) sdot(g,X(x),Y(y),color,r,hollow); }
+function grab(g,sx,sy,id,color){ g.appendChild(E("circle",{cx:sx,cy:sy,r:FS>1?26:16,class:"grab","data-drag":id})); sdot(g,sx,sy,color); }
+function curveLabel(g,f,text,color,side_){ // place near right (or left) edge where curve is visible
+  const xs=[]; for(let i=0;i<=60;i++)xs.push(side_==="left"? WIN.x0+(WIN.x1-WIN.x0)*(0.04+i*0.012) : WIN.x1-(WIN.x1-WIN.x0)*(0.06+i*0.012));
+  for(const x of xs){ const y=f(x); if(isFinite(y)&&y<WIN.y1-(WIN.y1-WIN.y0)*.06&&y>WIN.y0+(WIN.y1-WIN.y0)*.06){
+      const w=textLen(text)*13.5*FS*.62; label(g,X(x)+(side_==="left"?w/2+8:-w/2-8),Y(y)-16*FS,text,color); return; } }
+}
+function snapV(v,st){ st=st||1; return snap? Math.round(v/st)*st : Math.round(v*10)/10; }
+function zoomW(W,k){ const cx=(W.x0+W.x1)/2, cy=(W.y0+W.y1)/2, hx=(W.x1-W.x0)/2*k, hy=(W.y1-W.y0)/2*k;
+  if(hx<1.5||hx>400)return; W.x0=cx-hx;W.x1=cx+hx;W.y0=cy-hy;W.y1=cy+hy; }
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null;
+function svgPt(e){ const m=cv.getScreenCTM(); if(!m)return [0,0]; const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y]; }
+cv.addEventListener("pointerdown",e=>{ const id=e.target.dataset&&e.target.dataset.drag; if(id){ dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); } });
+cv.addEventListener("pointermove",e=>{ if(!dragId)return; const M=MODS[cur]; if(!M.drag)return; if(M.drag(dragId,svgPt(e))!==false)update(); });
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+
+/* bar builders */
+function btn(label_,fn,cls){ const b=document.createElement("button"); b.type="button"; b.textContent=label_; if(cls)b.className=cls; b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(opts,val,fn,lab){ const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(lab)s.setAttribute("aria-label",lab);
+  opts.forEach(([k,l])=>{ const b=document.createElement("button"); b.type="button"; b.innerHTML=h(l); b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s; }
+function chk(label_,val,fn){ const l=document.createElement("label"); l.className="chk"; const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label_)); bar.appendChild(l); return i; }
+function snapChk(){ return chk("Snap",snap,v=>{snap=v;update();}); }
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function slider(label_,min,max,val,fn,step){ const l=document.createElement("label"); l.className="rng"; l.textContent=label_+" ";
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=step||1; i.value=val; i.setAttribute("aria-label",label_);
+  const o=document.createElement("output"); o.textContent=num(val);
+  i.oninput=()=>{o.textContent=num(+i.value); fn(+i.value);};
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l); i.sync=v=>{i.value=v;o.textContent=num(v);}; return i; }
+function numIn(label_,val,fn){ const l=document.createElement("label"); l.className="numin"; l.textContent=label_;
+  const i=document.createElement("input"); i.type="number"; i.step="any"; i.value=val; i.setAttribute("aria-label",label_);
+  i.oninput=()=>{ const v=parseFloat(i.value); if(isFinite(v))fn(v); }; l.appendChild(i); bar.appendChild(l); return i; }
+function zoomBtns(W){ btn("−",()=>{zoomW(W,1.25);update();}).setAttribute("aria-label","Zoom out"); btn("+",()=>{zoomW(W,0.8);update();}).setAttribute("aria-label","Zoom in"); }
+function tryPanel(html){ return `<div class="panel"><h3>Try this</h3><div class="pad">${html}</div></div>`; }
+const copyW=W=>({x0:W.x0,x1:W.x1,y0:W.y0,y1:W.y1});
+
+/* ══════════════════════ converter (tab 1) ══════════════════════ */
+function convert(str){
+  let s=String(str).toLowerCase().replace(/\s+/g,"").replace(/[−–]/g,"-");
+  if(!s) return null;
+  s=s.replace(/∜\(/g,"root(4,").replace(/∜(-?[\d.]+|[a-z])/g,"root(4,$1)")
+     .replace(/√\(/g,"sqrt(").replace(/√(-?[\d.]+|[a-z])/g,"sqrt($1)")
+     .replace(/∛\(/g,"cbrt(").replace(/∛(-?[\d.]+|[a-z])/g,"cbrt($1)")
+     .replace(/(sqrt|cbrt)(-?[\d.]+|[a-z])(?![\w(])/g,"$1($2)");
+  const B="(-?\\d+(?:\\.\\d+)?|[a-z]|\\(-?\\d+(?:\\.\\d+)?\\))";
+  let m=new RegExp("^"+B+"\\^\\(?(-?\\d+(?:\\.\\d+)?)(?:\\/(-?\\d+))?\\)?$").exec(s);
+  const baseOf=t=>{ t=t.replace(/[()]/g,""); const v=parseFloat(t); return isFinite(v)?{v,s:fx(v),num:true}:{v:NaN,s:t,num:false}; };
+  if(m){ const b=baseOf(m[1]); let e=parseFloat(m[2])/(m[3]?parseFloat(m[3]):1); const f=fr(e,60); if(!f) return {err:"Use a fractional exponent like 3/4."};
+    return {dir:"toRad",b,m:f[0],n:f[1],raw:m[3]?[parseInt(m[2]),parseInt(m[3])]:f}; }
+  const F="(sqrt|cbrt|root)\\((?:(\\d+),)?";
+  m=new RegExp("^"+F+B+"(?:\\^(-?\\d+))?\\)$").exec(s);
+  let n,mm,b,outer=false;
+  if(m){ n=m[1]==="sqrt"?2:m[1]==="cbrt"?3:parseInt(m[2]); b=baseOf(m[3]); mm=m[4]?parseInt(m[4]):1; }
+  else { m=new RegExp("^\\(?"+F+B+"\\)\\)?\\^(-?\\d+)$").exec(s);
+    if(m){ n=m[1]==="sqrt"?2:m[1]==="cbrt"?3:parseInt(m[2]); b=baseOf(m[3]); mm=parseInt(m[4]); outer=true; } }
+  if(n==null||!isFinite(n)||n<2) return {err:"I couldn't read that. Try one of the examples."};
+  return {dir:"toExp",b,m:mm,n,outer};
+}
+function evalSteps(b,m,n){ // numeric b^(m/n), root first
+  const out=[]; const bs=b<0?"("+fx(b)+")":fx(b);
+  if(m<0){ out.push(`= 1 / ${bs}^{${-m}/${n}}`); m=-m; }
+  const r=rootN(b,n); if(!isFinite(r)){ out.push(`${R(n,fx(b))} is not a real number (even root of a negative)`); return {lines:out,v:NaN}; }
+  const rs=exact(r)?fx(r):"≈ "+num(r,4);
+  return {lines:out,r,rs};
+}
+function convertHTML(str){
+  const c=convert(str); if(!c) return `<p style="color:var(--dim)">Type an expression above, or tap an example.</p>`;
+  if(c.err) return `<div class="verdict bad" style="margin:8px 0"><b>Hmm.</b> ${c.err}</div>`;
+  const B=c.b, bs=(B.num&&B.v<0)?"("+B.s+")":B.s; let L=[];
+  if(c.dir==="toRad"){
+    let m=c.m, n=c.n;
+    if(n===1){ return `<div class="eq">${h(bs+"^{"+m+"}")} has an integer exponent — there is no root to write.</div>`; }
+    L.push(`${bs}^{${m}/${n}}`);
+    let pre="";
+    if(m<0){ L.push(`= 1 / ${bs}^{${-m}/${n}}   ← negative exponent means reciprocal`); m=-m; pre="1 / "; }
+    L.push(`= ${pre}(${bs}^{1/${n}})^{${m}}   ← power of a power: (1/${n})·${m} = ${m}/${n}`);
+    L.push(`= ${pre}(${R(n,B.s)})^{${m}}   ← ${bs}^{1/${n}} = ${R(n,B.s)}`);
+    L.push(`= ${pre}${R(n,m===1?B.s:bs+"^{"+m+"}")}   ← same value: root and power commute`);
+    if(B.num){ const r=rootN(B.v,n); if(!isFinite(r)) L.push(`${R(n,B.s)} is not a real number (even root of a negative).`);
+      else { const v=realPow(B.v,c.m/c.n); L.push(`Evaluate, root first: ${R(n,B.s)} = ${exact(r)?fx(r):"≈ "+num(r,4)}, so ${pre}(${exact(r)?fx(r):num(r,4)})^{${m}} = ${exact(v)?fx(v):"≈ "+num(v,4)}`); } }
+    return `<p><b>Exponent → radical form</b></p><div class="eq">${h(L.join("\n"))}<small>The denominator ${n} becomes the index of the root; the numerator ${Math.abs(c.m)} stays a power.</small></div>`;
+  } else {
+    const m=c.m, n=c.n, g=gcd(m,n);
+    L.push(c.outer? `(${R(n,B.s)})^{${m}}` : R(n,m===1?B.s:bs+"^{"+m+"}"));
+    if(c.outer) L.push(`= (${bs}^{1/${n}})^{${m}}   ← ${R(n,B.s)} = ${bs}^{1/${n}}`);
+    else L.push(`= (${m===1?bs:bs+"^{"+m+"}"})^{1/${n}}   ← an nth root is the 1/n power`);
+    L.push(`= ${bs}^{${m}/${n}}   ← power of a power: multiply exponents`);
+    if(g>1&&m%n!==0) L.push(`= ${bs}^{${m/g}/${n/g}}   ← reduce the fraction${B.num&&B.v<0?" (careful: for a negative base, reducing can change whether the value is real)":""}`);
+    if(m%n===0) L.push(`= ${bs}^{${m/n}}`);
+    if(B.num){ const v=realPow(B.v,m/n); L.push(isFinite(v)?`Value: ${exact(v)?fx(v):"≈ "+num(v,4)}`:`Not a real number.`); }
+    return `<p><b>Radical → exponent form</b></p><div class="eq">${h(L.join("\n"))}<small>The index ${n} of the root becomes the denominator of the exponent.</small></div>`;
+  }
+}
+
+/* ══════════════════════ TAB 1 · rational exponents ══════════════════════ */
+const M1={
+  tab:"Rational exponents", lesson:"N-RN.A.1 · N-RN.A.2", accent:"var(--cyan)",
+  title:()=>"Rational exponents: x^{m/n} = (ⁿ√x)^{m}",
+  s:{b:8,m:2,n:3,W:{x0:-9,x1:17,y0:-5,y1:12},conv:"27^(2/3)"},
+  bIn:null,
+  bar(){ const s=M1.s;
+    M1.bIn=numIn("base x =",s.b,v=>{s.b=v;update();});
+    slider("m",-3,6,s.m,v=>{s.m=v;update();});
+    slider("n",2,6,s.n,v=>{s.n=v;update();});
+    snapChk(); zoomBtns(s.W);
+    btn("Reset",()=>{ Object.assign(s,{b:8,m:2,n:3,W:{x0:-9,x1:17,y0:-5,y1:12}}); render(); });
+    spacer("Drag the point");
+  },
+  drag(id,p){ const s=M1.s; s.b=snapV(clamp(IX(p[0]),WIN.x0,WIN.x1)); if(M1.bIn)M1.bIn.value=s.b; },
+  draw(){
+    const s=M1.s, g=graphBg(s.W), e=s.m/s.n, f=x=>realPow(x,e), red=fr(e,60)||[s.m,s.n], q=red[1];
+    if(!(s.m===1)) plot(g,x=>rootN(x,s.n),{color:"#9AA8C7",w:2,dash:"7 5",a:s.n%2===0?0:null});
+    if(s.m!==1) curveLabel(g,x=>rootN(x,s.n),"y = "+R(s.n,"x"),"#6B7A99","left");
+    plot(g,f,{color:"var(--vert)",w:3.6,a:(q%2===0&&s.m>0)?0:null});
+    curveLabel(g,f,"y = x^{"+s.m+"/"+s.n+"}","#6D28D9");
+    const v=f(s.b);
+    if(isFinite(v)&&inWin(s.b,v)){
+      wseg(g,s.b,0,s.b,v,"var(--lin)",2.2,"6 5"); wseg(g,0,v,s.b,v,"var(--corr)",2.2,"6 5");
+      grab(g,X(s.b),Y(v),"P","var(--magenta)");
+      label(g,X(s.b)+(X(s.b)>VW-140?-70:70),Y(v)-22*FS,"("+fx(s.b)+", "+(exact(v)?fx(v):num(v,2))+")","#C0185F");
+    } else if(s.b>=WIN.x0&&s.b<=WIN.x1){
+      grab(g,X(s.b),clamp(Y(0),20,VH-20),"P","#9AA8C7");
+      label(g,X(s.b),clamp(Y(0),20,VH-20)-26*FS,isFinite(v)?"off screen — zoom out":"x^{"+s.m+"/"+s.n+"} undefined here","#B91C1C");
+    }
+    // machine strip
+    const bs=s.b<0?"("+fx(s.b)+")":fx(s.b), r=rootN(s.b,s.n);
+    let line;
+    if(!isFinite(r)) line=R(s.n,fx(s.b))+" is not a real number";
+    else { const rs=exact(r)?fx(r):num(r,3), mm=Math.abs(s.m);
+      line=fx(s.b)+"  ⟶  "+R(s.n,bs)+" = "+rs+"  ⟶  "+(s.m<0?"1/":"")+wrapB(rs)+"^{"+mm+"} = "+(exact(v)?fx(v):num(v,3)); }
+    const fs=fitSize(line,16,(FS>1?660:430)), w=Math.min(textLen(line)*fs*.62+28,VW-20);
+    cv.appendChild(E("rect",{x:10,y:10,width:w,height:fs*3.3,rx:12,fill:"#fff","fill-opacity":.93,stroke:"#C7D2EA"}));
+    rich(cv,24,10+fs*1.05,"root first, then power:",{anchor:"start",cls:"why",size:fs*.78});
+    rich(cv,24,10+fs*2.3,line,{anchor:"start",cls:"big",size:fs,color:"var(--ink)"});
+  },
+  panel(full){
+    const s=M1.s;
+    if(full){
+      side.innerHTML=`<div class="panel"><h3>${h("Why x^{1/n} = ⁿ√x")}</h3><div class="pad">
+        <p>We want the exponent rules to keep working for fractions. The <b>power of a power</b> rule says (x<sup>a</sup>)<sup>b</sup> = x<sup>ab</sup>.</p>
+        <p>So (x<sup>1/2</sup>)<sup>2</sup> = x<sup>1</sup> = x. That means x<sup>1/2</sup> is a number whose square is x — that is exactly <span class="term">√x</span>. In the same way (x<sup>1/3</sup>)<sup>3</sup> = x, so x<sup>1/3</sup> = ∛x.</p>
+        <div class="eq" id="m1why"></div></div></div>
+        <div class="panel"><h3>${h("Evaluating x^{m/n}")}</h3><div class="pad">
+        <p>The denominator n is the <b>index</b> of the root; the numerator m is the <b>power</b>. You may do them in either order — but taking the <b>root first</b> keeps the numbers small.</p>
+        <div class="eq" id="m1eval"></div></div></div>
+        <div class="panel"><h3>Converter</h3><div class="pad">
+        <p>Type either form: <b>x^(3/4)</b>, <b>27^(2/3)</b>, <b>root(5, x^2)</b>, <b>sqrt(x^3)</b>, <b>cbrt(8)^2</b> or use √ ∛ ∜.</p>
+        <input type="text" id="m1conv" aria-label="Expression to convert" autocomplete="off" spellcheck="false" value="${s.conv}">
+        <div class="exs" id="m1exs"></div>
+        <div id="m1out"></div></div></div>`+
+        tryPanel(`<p>1. Set m = 1 and drag the point. Why does the purple graph sit exactly on the dashed root graph?</p><p>2. Make x = −8 and n = 3, then n = 2. Why is one value real and the other not?</p><p>3. With x = 16, compare 16<sup>3/4</sup> computed root-first and power-first. Which is easier by hand?</p>`);
+      const inp=document.getElementById("m1conv"), out=document.getElementById("m1out");
+      const run=()=>{ s.conv=inp.value; out.innerHTML=convertHTML(inp.value); };
+      inp.addEventListener("input",run);
+      const ex=document.getElementById("m1exs");
+      ["x^(3/4)","27^(2/3)","16^(-3/4)","root(5,x^2)","sqrt(x^3)","cbrt(-8)^2","∜(81)"].forEach(t=>{ const b=document.createElement("button"); b.type="button"; b.textContent=t; b.onclick=()=>{inp.value=t;run();}; ex.appendChild(b); });
+      run();
+    }
+    const n=s.n, m=s.m, b=s.b, bs=b<0?"("+fx(b)+")":fx(b);
+    const r=rootN(b,n);
+    let w=`(x^{1/${n}})^{${n}} = x^{${n}/${n}} = x^{1}\n`;
+    if(isFinite(r)) w+=`With x = ${fx(b)}: ${R(n,bs)} = ${exact(r)?fx(r):"≈ "+num(r,4)}, and (${exact(r)?fx(r):num(r,4)})^{${n}} = ${fx(Math.pow(r,n))} ✓`;
+    else w+=`With x = ${fx(b)}: no real number raised to the even power ${n} is negative, so ${bs}^{1/${n}} is not real.`;
+    document.getElementById("m1why").innerHTML=h(w);
+    let e=`${bs}^{${m}/${n}}`;
+    if(m===0){ e+=` = ${bs}^{0} = ${b===0?"undefined (0⁰)":"1"}`; }
+    else if(!isFinite(r)){ e+=` : ${R(n,bs)} is not a real number, so ${bs}^{${m}/${n}} is undefined (in the reals).`; }
+    else{
+      const mm=Math.abs(m), pre=m<0?"1 / ":"", rs=exact(r)?fx(r):num(r,4), v=realPow(b,m/n);
+      if(m<0) e+=` = 1 / ${bs}^{${mm}/${n}}`;
+      e+=`\nRoot first:   ${pre}(${R(n,bs)})^{${mm}} = ${pre}(${rs})^{${mm}} = ${exact(v)?fx(v):"≈ "+num(v,4)}`;
+      const big=Math.pow(b,mm), rb=rootN(big,n);
+      e+=`\nPower first:  ${pre}${R(n,bs+"^{"+mm+"}")} = ${pre}${R(n,num(big,3))} = ${exact(v)?fx(v):"≈ "+num(v,4)}`;
+      if(isFinite(rb)&&!near(rb,Math.abs(realPow(b,mm/n)),1e-6*Math.max(1,rb))) e+=`  ⚠ even index: ${R(n,num(big,3))} = ${num(rb,4)}, but ${R(n,bs)} wasn't real`;
+      const g=gcd(m,n); if(g>1&&b<0) e+=`\n${m}/${n} reduces to ${m/g}/${n/g}; for negative bases always reduce first.`;
+      e+=`<small>Root first, the biggest number you handle is ${num(Math.max(Math.abs(b),Math.abs(Math.pow(r,mm))),3)}; power first it is ${num(Math.abs(big),3)}.</small>`;
+    }
+    document.getElementById("m1eval").innerHTML=h(e);
+  }
+};
+
+/* ══════════════════════ TAB 2 · simplifying radicals ══════════════════════ */
+const SQF=[2,3,5,6,7,10,11,13,14,15];
+function genProd(){
+  for(;;){ const idx=Math.random()<.7?2:3, quot=Math.random()<.4;
+    const a=rnd(1,4), c=rnd(1,4);
+    if(!quot){ const b=rnd(2,idx===2?20:12), d=rnd(2,idx===2?20:12); const e=extract(b*d,idx); if(e.k===1||e.r===1||extract(b,idx).k>1||extract(d,idx).k>1)continue; return {t:"prod",idx,a,b,c,d}; }
+    else { if(idx===3)continue; const d=rnd(2,7), t=pick([8,12,18,20,24,27,28,32,45,48,50,54,63,72,75]); const e=extract(t,2); if(e.r===1)continue; return {t:"quot",idx:2,a:a*pick([1,2,3]),b:d*t,c,d}; }
+  }
+}
+function genRat(kind){
+  if(kind==="mono"){ if(Math.random()<.25){ const c=pick([2,3,4,5,9]); return {t:"cube",a:rnd(1,9),c}; } return {t:"mono",a:rnd(1,12),b:rnd(1,4),c:pick([2,3,5,6,7,8,10,12,18])}; }
+  for(;;){ const a=rnd(1,9)*(Math.random()<.2?-1:1), b=rnd(1,6)*(Math.random()<.3?-1:1), c=pick([1,1,2,3])*(Math.random()<.5?-1:1), d=pick([2,3,5,6,7]); if(b*b-c*c*d===0)continue; return {t:"bin",a,b,c,d}; }
+}
+function genLike(){
+  const s=pick([2,3,5,6,7]); const ks=[1,2,3,4,5].sort(()=>Math.random()-.5).slice(0,3);
+  const terms=ks.map(k=>[rnd(1,3)*(Math.random()<.35?-1:1),k*k*s]);
+  if(Math.random()<.35){ const t=pick([2,3,5,7].filter(z=>z!==s)); terms.splice(rnd(1,3),0,[rnd(1,3)*(Math.random()<.4?-1:1),t*pick([1,4,9])]); }
+  return {t:"like",terms,s};
+}
+function termStr(terms,mapper){ let out=""; terms.forEach((t,i)=>{ const c=t[0], body=mapper(t,Math.abs(c)); out+= i===0? (c<0?"−":"")+body : (c<0?" − ":" + ")+body; }); return out; }
+function exSteps(ex){
+  const S=[];
+  if(ex.t==="prod"){ const {idx,a,b,c,d}=ex, P=b*d, e=extract(P,idx), co=a*c;
+    S.push({ex:`(${coefS(a)}${R(idx,b)})(${coefS(c)}${R(idx,d)})`,why:"the product to simplify"});
+    S.push({ex:`= ${a}·${c}·${R(idx,b+"·"+d)}`,why:`product property: ${plain(R(idx,"a"))}·${plain(R(idx,"b"))} = ${plain(R(idx,"ab"))}`});
+    S.push({ex:`= ${coefS(co)}${R(idx,P)}`,why:"multiply"});
+    S.push({ex:`= ${coefS(co)}${R(idx,e.k+"^{"+idx+"}·"+e.r)}`,why:`${e.k}${idx===2?"²":"³"} = ${Math.pow(e.k,idx)} is the largest perfect ${idx===2?"square":"cube"} factor of ${P}`});
+    S.push({ex:`= ${coefS(co)}·${e.k}${R(idx,e.r)} = ${coefS(co*e.k)}${R(idx,e.r)}`,why:"take the perfect power out of the root"});
+  }
+  if(ex.t==="quot"){ const {a,b,c,d}=ex, t=b/d, e=extract(t,2);
+    S.push({ex:`${coefS(a)}√${b} / ${coefS(c)}√${d}`,why:"the quotient to simplify"});
+    S.push({ex:`= (${a}/${c})·√(${b}/${d})`,why:"quotient property: √a / √b = √(a/b)"});
+    S.push({ex:`= (${a}/${c})·√${t}`,why:`divide inside the root: ${b} ÷ ${d} = ${t}`});
+    S.push({ex:`= (${a}/${c})·√(${e.k}^{2}·${e.r}) = (${a}/${c})·${e.k}√${e.r}`,why:`${e.k*e.k} is the largest perfect square factor of ${t}`});
+    S.push({ex:`= ${surd(0,a*e.k,e.r,c)}`,why:"multiply and reduce the fraction"});
+  }
+  if(ex.t==="mono"){ const {a,b,c}=ex, den=b*c;
+    S.push({ex:`${a} / ${coefS(b)}√${c}`,why:"a radical in the denominator"});
+    S.push({ex:`= ${a} / ${coefS(b)}√${c} · √${c}/√${c}`,why:`multiply by √${c}/√${c}, a form of 1`});
+    S.push({ex:`= ${a}√${c} / ${b===1?"":b+"·"}${c}`,why:`√${c} · √${c} = ${c}, a rational number`});
+    if(extract(c,2).k>1) S.push({ex:`= ${coefS(a*extract(c,2).k)}√${extract(c,2).r} / ${den}`,why:`simplify √${c} = ${extract(c,2).k}√${extract(c,2).r}`});
+    S.push({ex:`= ${surd(0,a,c,den)}`,why:"reduce the fraction"});
+  }
+  if(ex.t==="cube"){ const {a,c}=ex, c2=c*c;
+    S.push({ex:`${a} / ∛${c}`,why:"a cube root in the denominator"});
+    S.push({ex:`= ${a} / ∛${c} · ∛(${c}^{2})/∛(${c}^{2})`,why:`we need ∛(${c}^{3}); multiply by ∛(${c}^{2})/∛(${c}^{2})`});
+    S.push({ex:`= ${a}∛${c2} / ∛${c*c2} = ${a}∛${c2} / ${c}`,why:`∛(${c}^{3}) = ${c}`});
+    S.push({ex:`= ${surd(0,a,c2,c,3)}`,why:"simplify the radical and reduce"});
+  }
+  if(ex.t==="bin"){ const {a,b,c,d}=ex, D=b*b-c*c*d;
+    const den=`${b} ${c<0?"−":"+"} ${coefS(Math.abs(c))}√${d}`, conj=`${b} ${c<0?"+":"−"} ${coefS(Math.abs(c))}√${d}`;
+    S.push({ex:`${a} / (${den})`,why:"a binomial denominator"});
+    S.push({ex:`= ${a}(${conj}) / ((${den})(${conj}))`,why:"multiply top and bottom by the conjugate"});
+    S.push({ex:`= ${a}(${conj}) / (${b}^{2} − ${c*c===1?"":c*c+"·"}${d})`,why:"(p + q)(p − q) = p² − q²: the radicals cancel"});
+    S.push({ex:`= ${surd(a*b,0,1,1)==="0"?"":fx(a*b)}${-a*c<0?" − ":" + "}${coefS(Math.abs(a*c))}√${d}  /  ${D}`.replace(/^ \+ /,""),why:`distribute; ${b*b} − ${c*c*d} = ${D}`});
+    S.push({ex:`= ${surd(a*b,-a*c,d,D)}`,why:"reduce by a common factor (and move a negative sign to the top)"});
+  }
+  if(ex.t==="like"){ const {terms,s}=ex;
+    S.push({ex:termStr(terms,(t,a)=>coefS(a)+"√"+t[1]),why:"radicals look different at first"});
+    S.push({ex:"= "+termStr(terms,(t,a)=>{const e=extract(t[1],2); return coefS(a)+(e.k>1?"√("+e.k+"^{2}·"+e.r+")":"√"+e.r);}),why:"find each radicand's largest perfect-square factor"});
+    S.push({ex:"= "+termStr(terms.map(t=>{const e=extract(t[1],2); return [t[0]*e.k,e.r];}),(t,a)=>coefS(a)+"√"+t[1]),why:"simplify each radical"});
+    const groups={}; terms.forEach(t=>{const e=extract(t[1],2); groups[e.r]=(groups[e.r]||0)+t[0]*e.k;});
+    const keys=Object.keys(groups).map(Number).sort((p,q)=>(q===s)-(p===s));
+    let res=""; keys.forEach(k=>{ const c=groups[k]; if(!c)return; const body=coefS(Math.abs(c))+(k===1?"":"√"+k)||"1"; res+= res?(c<0?" − ":" + ")+body:(c<0?"−":"")+body; });
+    S.push({ex:"= "+(res||"0"),why:"combine like radicals (same index, same radicand) by adding coefficients"});
+  }
+  return S;
+}
+const M2={
+  tab:"Simplifying radicals", lesson:"N-RN.A.2", accent:"var(--yellow)",
+  title:()=>({tree:"Factor tree: pull out perfect powers",prod:"Products & quotients of radicals",rat:"Rationalizing the denominator",like:"Adding & subtracting like radicals"}[M2.s.mode]),
+  s:{mode:"tree",n:72,idx:2,step:99,rk:"mono",ex:{prod:{t:"prod",idx:2,a:2,b:6,c:3,d:10},rat:{t:"mono",a:6,b:1,c:8},like:{t:"like",terms:[[1,12],[2,27],[-1,48]],s:3}}},
+  bar(){ const s=M2.s;
+    segBtns([["tree","Factor tree"],["prod","× ÷"],["rat","Rationalize"],["like","Like radicals"]],s.mode,k=>{s.mode=k;s.step=99;render();},"Mode");
+    if(s.mode==="tree"){
+      segBtns([[2,"√ square"],[3,"∛ cube"]],s.idx,k=>{s.idx=k;render();},"Index");
+      M2.nIn=numIn("radicand",s.n,v=>{ v=Math.round(v); if(v>=2&&v<=5000){s.n=v;update();} });
+      btn("Random",()=>{ s.n=s.idx===2? pick(SQF)*Math.pow(rnd(2,9),2)*(Math.random()<.3?pick([1,4]):1) : pick([2,3,4,5,6,7,9,10])*Math.pow(rnd(2,5),3); if(s.n>5000)s.n=72; render(); });
+    } else {
+      if(s.mode==="rat") segBtns([["mono","Monomial"],["bin","Binomial"]],s.rk,k=>{s.rk=k;s.ex.rat=genRat(k);s.step=0;render();},"Denominator type");
+      btn("New example",()=>{ s.ex[s.mode]= s.mode==="prod"?genProd(): s.mode==="rat"?genRat(s.rk):genLike(); s.step=0; render(); },"primary");
+      btn("Next step",()=>{ s.step=Math.min(s.step+1,99); update(); });
+      btn("Show all",()=>{ s.step=99; update(); });
+    }
+  },
+  tree(){ const s=M2.s; const primes=[]; let c=s.n; while(c>1){ const p=spf(c); primes.push(p); c/=p; } return primes; },
+  draw(){
+    const s=M2.s;
+    if(s.mode!=="tree"){ const S=exSteps(s.ex[s.mode]), upto=Math.min(s.step,S.length-1);
+      const dy=Math.min(84,(VH-30)/S.length), y0=24+dy*0.35;
+      S.forEach((st,i)=>{ if(i>upto)return; const y=y0+i*dy;
+        if(i===upto) cv.appendChild(E("rect",{x:12,y:y-dy*0.32,width:VW-24,height:dy*0.92,rx:12,fill:"rgba(255,217,61,.16)",stroke:"rgba(180,140,0,.35)"}));
+        const fs=fitSize(st.ex,24,VW-60); rich(cv,30,y,st.ex,{anchor:"start",cls:"big",size:fs,color:i===S.length-1?"#047857":"var(--ink)"});
+        rich(cv,30,y+fs*0.62+11*FS,st.why,{anchor:"start",cls:"why",size:Math.min(13.5*FS,(VW-60)/(st.why.length*.5))}); });
+      if(upto<S.length-1) rich(cv,VW-20,VH-16,"Next step ▸ ("+(upto+1)+"/"+S.length+")",{anchor:"end",cls:"why",size:13*FS});
+      return; }
+    const P=M2.tree(), idx=s.idx, L=P.length-1;
+    // grouping
+    const cnt={}; P.forEach(p=>cnt[p]=(cnt[p]||0)+1);
+    const PAL=["#7C3AED","#0284C7","#059669","#DB2777","#EA580C","#B45309"]; const colOf={}; let ci=0; Object.keys(cnt).forEach(p=>{ if(cnt[p]>=idx) colOf[p]=PAL[ci++%PAL.length]; });
+    const seen={}; const leafCol=P.map(p=>{ seen[p]=(seen[p]||0)+1; return (seen[p]<=Math.floor(cnt[p]/idx)*idx)? colOf[p] : "#9AA8C7"; });
+    const x0=60, y0=40, dx=L?Math.min(44,250/L):0, dy=L?Math.min(56,340/L):0, lx=Math.min(40,dx+14), r=Math.max(13,Math.min(19,dy*0.38))*Math.min(FS,1.25);
+    let comp=s.n;
+    for(let i=0;i<L;i++){ const cx=x0+i*dx, cy=y0+i*dy;
+      cv.appendChild(E("line",{x1:cx,y1:cy,x2:cx-lx+dx*0,y2:cy+dy,stroke:"#8FA3C8","stroke-width":2}));
+      cv.appendChild(E("line",{x1:cx,y1:cy,x2:cx+dx,y2:cy+dy,stroke:"#8FA3C8","stroke-width":2}));
+      cv.appendChild(E("circle",{cx,cy,r:r+4,fill:"#fff",stroke:"#22314F","stroke-width":2}));
+      rich(cv,cx,cy+1,String(comp),{cls:"big",size:Math.min(15,r*0.9*Math.min(1.6,4/String(comp).length))});
+      const lxp=cx-lx, lyp=cy+dy; cv.appendChild(E("circle",{cx:lxp,cy:lyp,r,fill:leafCol[i],stroke:"#fff","stroke-width":2}));
+      rich(cv,lxp,lyp+1,String(P[i]),{cls:"big",size:Math.min(15,r*0.9),color:"#fff"}).setAttribute("style",`fill:#fff;stroke:none;font-size:${Math.min(15,r*0.9)}px`);
+      comp/=P[i];
+    }
+    const fx_=x0+L*dx, fy=y0+L*dy;
+    cv.appendChild(E("circle",{cx:fx_,cy:fy,r,fill:leafCol[L],stroke:"#fff","stroke-width":2}));
+    rich(cv,fx_,fy+1,String(P[L]),{cls:"big",size:Math.min(15,r*0.9)}).setAttribute("style",`fill:#fff;stroke:none;font-size:${Math.min(15,r*0.9)}px`);
+    // right column
+    const RX=Math.max(330,fx_+50), RW=VW-RX-14, e=extract(s.n,idx), sym=idx===2?"pair":"triple";
+    const line1=s.n+" = "+P.join("·");
+    rich(cv,RX,44,line1,{anchor:"start",cls:"big",size:fitSize(line1,17,RW)});
+    rich(cv,RX,74,"circle each "+sym+" of equal primes",{anchor:"start",cls:"why",size:Math.min(13*FS,RW/22)});
+    // chips grouped
+    const sorted=P.slice().sort((a,b)=>a-b); const cw=Math.min(30,RW/Math.max(sorted.length+1,1)), chy=112;
+    let cx=RX+cw/2, j=0;
+    const done={};
+    sorted.forEach(p=>{ done[p]=(done[p]||0)+1; const inG=done[p]<=Math.floor(cnt[p]/idx)*idx; const col=inG?colOf[p]:"#9AA8C7";
+      if(inG&&(done[p]-1)%idx===0) cv.appendChild(E("rect",{x:cx-cw/2+1,y:chy-cw/2-3,width:cw*idx-2,height:cw+6,rx:cw/2,fill:"none",stroke:col,"stroke-width":2.4}));
+      cv.appendChild(E("circle",{cx,cy:chy,r:cw*0.4,fill:col}));
+      const t=rich(cv,cx,chy+1,String(p),{cls:"big",size:cw*0.42}); t.setAttribute("style",`fill:#fff;stroke:none;font-size:${cw*0.42}px`);
+      cx+=cw; j++; });
+    const outs=[]; const ins=[]; Object.keys(cnt).map(Number).sort((a,b)=>a-b).forEach(p=>{ const g=Math.floor(cnt[p]/idx); for(let k=0;k<g;k++)outs.push(p); for(let k=0;k<cnt[p]%idx;k++)ins.push(p); });
+    const res= e.r===1? String(e.k) : (e.k===1? R(idx,e.r) : e.k+R(idx,e.r));
+    const lines=[];
+    lines.push(R(idx,s.n)+" = "+R(idx,Object.keys(cnt).map(Number).sort((a,b)=>a-b).map(p=>cnt[p]>1?p+"^{"+cnt[p]+"}":p).join("·")));
+    lines.push("each "+sym+" → one factor outside");
+    lines.push("outside: "+(outs.length?outs.join("·")+" = "+e.k:"nothing (no "+sym+")"));
+    lines.push("inside: "+(ins.length?ins.join("·")+" = "+e.r:"1"));
+    lines.push(R(idx,s.n)+" = "+res);
+    lines.forEach((t,i)=>{ const last=i===lines.length-1, isWhy=i===1; const y=168+i*(last?50:44)+(last?14:0);
+      if(isWhy) rich(cv,RX,y,t,{anchor:"start",cls:"why",size:Math.min(13*FS,RW/24)});
+      else rich(cv,RX,y,t,{anchor:"start",cls:"big",size:fitSize(t,last?30:17,RW),color:last?"#047857":"var(--ink)"}); });
+  },
+  panel(){
+    const s=M2.s; let html="";
+    if(s.mode==="tree"){ const idx=s.idx,e=extract(s.n,idx), kp=Math.pow(e.k,idx);
+      const res= e.r===1? String(e.k) : (e.k===1? R(idx,e.r) : e.k+R(idx,e.r));
+      html=`<div class="panel"><h3>Pull out perfect ${idx===2?"squares":"cubes"}</h3><div class="pad">
+        <p>Break the radicand into primes with a <span class="term">factor tree</span>. Since ${h(R(idx,"a^{"+idx+"}"))} = a, every ${idx===2?"pair":"group of three"} of equal primes can leave the root as <b>one</b> factor. Leftover primes stay inside.</p>
+        <p>A radical is in <b>simplest form</b> when the radicand has no perfect ${idx===2?"square":"cube"} factor other than 1.</p>
+        <div class="eq">${h(R(idx,s.n)+" = "+R(idx,kp+"·"+e.r)+"\n   = "+R(idx,kp)+"·"+R(idx,e.r)+"\n   = "+res)}<small>${kp>1?`${kp} = ${e.k}${idx===2?"²":"³"} is the largest perfect ${idx===2?"square":"cube"} factor of ${s.n}.`:`${s.n} has no perfect ${idx===2?"square":"cube"} factor, so ${plain(R(idx,s.n))} is already simplest.`} Check: ${plain(res)} ≈ ${num(rootN(s.n,idx),4)}.</small></div></div></div>`+
+        tryPanel(`<p>1. Find a radicand whose square root simplifies to 6√5. (Hint: 6²·5.)</p><p>2. Switch to ∛ and try 72. Why does only one 2 come out now?</p><p>3. Which numbers under 100 simplify the most? Try 64, 96 and 98.</p>`);
+    } else {
+      const S=exSteps(s.ex[s.mode]), upto=Math.min(s.step,S.length-1);
+      const info={prod:`<p>The <span class="term">product property</span> ${h(R(2,"a")+"·"+R(2,"b")+" = "+R(2,"ab"))} and the <span class="term">quotient property</span> ${h(R(2,"a")+" / "+R(2,"b")+" = "+R(2,"a/b"))} hold for a, b ≥ 0 (and for cube roots of any real numbers).</p><p>Multiply or divide the radicands first, then pull out perfect powers. Coefficients multiply with coefficients.</p>`,
+        rat:`<p>A simplified answer has <b>no radical in the denominator</b>. To clear it we multiply by a form of 1.</p><p><b>Monomial</b> denominator ${h("b√c")}: multiply by √c/√c, because √c·√c = c. <b>Binomial</b> denominator p + q√d: multiply by the <span class="term">conjugate</span> p − q√d, because (p + q√d)(p − q√d) = p² − q²d has no radical.</p>`,
+        like:`<p><span class="term">Like radicals</span> have the same index and the same radicand, such as 2√3 and 5√3. You add or subtract them like like terms: 2√3 + 5√3 = 7√3.</p><p>Radicals that look different may become like radicals after simplifying, so simplify each one first. √2 + √3 is <b>not</b> √5.</p>`}[s.mode];
+      html=`<div class="panel"><h3>${M2.title()}</h3><div class="pad">${info}</div></div>
+        <div class="panel"><h3>Steps</h3><ol class="stepl">${S.map((st,i)=>`<li class="${i<upto?"done":i===upto?"on":"hide"}"><span class="sn">${i+1}</span>${st.why}<span class="mx">${h(st.ex)}</span></li>`).join("")}</ol></div>`+
+        tryPanel({prod:`<p>Before pressing <b>Next step</b>, simplify the product on paper. Then check: is ${h("√8·√2")} rational? What about ${h("∛4·∛2")}?</p>`,
+          rat:`<p>Predict the conjugate before revealing step 2. Then check with decimals: does the original fraction have the same value as the final answer?</p>`,
+          like:`<p>Before revealing, decide which terms will combine. Can √8 + √18 be written as a single radical term? (Yes: 5√2.)</p>`}[s.mode]);
+    }
+    side.innerHTML=html;
+  }
+};
+
+/* ══════════════════════ TAB 3 · graphs ══════════════════════ */
+const PL=[["1/3",1/3,"#0891B2"],["1/2",.5,"#059669"],["1",1,"#9AA8C7"],["3/2",1.5,"#B45309"],["2",2,"#7C3AED"],["3",3,"#EA580C"],["−1",-1,"#DB2777"],["−2",-2,"#DC2626"]];
+function radEqStr(a,n,hh,k){ return "y = "+coefS(a)+R(n,lin(1,-hh))+(k?(k<0?" − ":" + ")+fx(Math.abs(k)):""); }
+const M3={
+  tab:"Power & radical graphs", lesson:"F-IF.C.7b · F-BF.B.3", accent:"var(--mint)",
+  title:()=>M3.s.mode==="rad"?h(radEqStr(M3.s.a,M3.s.n,M3.s.h,M3.s.k)):"Compare y = x^{p}",
+  s:{mode:"rad",a:2,h:1,k:-2,n:2,parent:true,W:{x0:-6,x1:14,y0:-7,y1:7},on:{"1/3":true,"1/2":true,"2":true,"3":true},t:2,W2:{x0:-3,x1:5,y0:-3,y1:8}},
+  sl:{},
+  bar(){ const s=M3.s;
+    segBtns([["rad",h("a·ⁿ√(x − h) + k")],["pow",h("y = x^{p}")]],s.mode,k=>{s.mode=k;render();},"Mode");
+    if(s.mode==="rad"){
+      segBtns([[2,"√"],[3,"∛"]],s.n,k=>{s.n=k;render();},"Index");
+      M3.sl.a=slider("a",-4,4,s.a,v=>{ if(v===0)v=0.5; s.a=v; update(); },0.5);
+      M3.sl.h=slider("h",-8,8,s.h,v=>{s.h=v;update();});
+      M3.sl.k=slider("k",-6,6,s.k,v=>{s.k=v;update();});
+      chk("Parent",s.parent,v=>{s.parent=v;update();}); snapChk(); zoomBtns(s.W);
+      btn("Reset",()=>{Object.assign(s,{a:2,h:1,k:-2,W:{x0:-6,x1:14,y0:-7,y1:7}});render();});
+    } else {
+      const row=document.createElement("div"); row.className="chiprow"; row.setAttribute("role","group"); row.setAttribute("aria-label","Exponents to show");
+      PL.forEach(([k,,c])=>{ const b=document.createElement("button"); b.type="button"; b.style.setProperty("--c",c); b.innerHTML="p = "+k; b.setAttribute("aria-pressed",String(!!s.on[k]));
+        b.onclick=()=>{ s.on[k]=!s.on[k]; b.setAttribute("aria-pressed",String(!!s.on[k])); update(); }; row.appendChild(b); });
+      bar.appendChild(row); snapChk(); zoomBtns(s.W2); btn("Reset view",()=>{s.W2={x0:-3,x1:5,y0:-3,y1:8};s.t=2;update();}); spacer("Drag the probe on the x-axis");
+    }
+  },
+  sync(){ const s=M3.s; ["a","h","k"].forEach(k=>M3.sl[k]&&M3.sl[k].sync(s[k])); },
+  drag(id,p){ const s=M3.s;
+    if(id==="V"){ s.h=clamp(snapV(IX(p[0])),-8,8); s.k=clamp(snapV(IY(p[1])),-6,6); M3.sync(); }
+    if(id==="A"){ let a=snapV(IY(p[1])-s.k,0.5); a=clamp(a,-4,4); if(Math.abs(a)<0.1)return false; s.a=a; M3.sync(); }
+    if(id==="T"){ s.t=snapV(clamp(IX(p[0]),WIN.x0,WIN.x1),0.5); }
+    bTitle.innerHTML=h(M3.title());
+  },
+  draw(){ const s=M3.s;
+    if(s.mode==="rad"){
+      const g=graphBg(s.W), n=s.n, f=x=>s.a*rootN(x-s.h,n)+s.k;
+      if(n===2){ const xh=clamp(X(s.h),0,VW); if(xh>0){ g.appendChild(E("rect",{x:0,y:0,width:xh,height:VH,fill:"rgba(220,38,38,.07)"})); vline(g,s.h,"#DC2626",1.6,"6 5");
+          if(xh>150) label(g,xh/2,24*FS,"x < "+fx(s.h)+": not in domain","#B91C1C"); } }
+      if(s.parent){ plot(g,x=>rootN(x,n),{color:"#9AA8C7",w:2.2,dash:"7 5",a:n===2?0:null}); }
+      plot(g,f,{color:"var(--alt)",w:3.6,a:n===2?s.h:null});
+      const base=n===2?[[0,0],[1,1],[4,2],[9,3]]:[[-8,-2],[-1,-1],[0,0],[1,1],[8,2]];
+      base.forEach(([u,v])=>wdot(g,s.h+u,s.k+s.a*v,"var(--alt)",4.5));
+      curveLabel(g,f,radEqStr(s.a,n,s.h,s.k),"#047857");
+      if(s.parent) curveLabel(g,x=>rootN(x,n),"parent y = "+R(n,"x"),"#6B7A99","left");
+      grab(g,X(s.h),Y(s.k),"V","var(--magenta)"); grab(g,X(s.h+1),Y(s.k+s.a),"A","var(--lin)");
+      label(g,X(s.h)-(n===2?50:58)*FS,Y(s.k)+(s.a>0?18:-18)*FS,"("+fx(s.h)+", "+fx(s.k)+")","#C0185F");
+      label(g,X(s.h+1)+52*FS,Y(s.k+s.a),"("+fx(s.h+1)+", "+fx(s.k+s.a)+")","#C2410C");
+    } else {
+      const g=graphBg(s.W2);
+      PL.forEach(([k,p,c])=>{ if(!s.on[k])return; const f=x=>realPow(x,p); plot(g,f,{color:c,w:3.2,a:(p===.5||p===1.5)?0:null}); });
+      vline(g,s.t,"#22314F",1.6,"5 5");
+      PL.forEach(([k,p,c])=>{ if(!s.on[k])return; const y=realPow(s.t,p); if(isFinite(y)&&inWin(s.t,y)) wdot(g,s.t,y,c,5.5); });
+      wdot(g,0,0,"var(--ink)",4); wdot(g,1,1,"var(--ink)",5); label(g,X(1)+34*FS,Y(1)+14*FS,"(1, 1)","var(--ink)");
+      // curve labels on right edge
+      const used=[]; PL.forEach(([k,p,c])=>{ if(!s.on[k])return; let x=WIN.x1-(WIN.x1-WIN.x0)*.05, y=realPow(x,p);
+        if(!(y<WIN.y1)){ x=Math.pow(WIN.y1*0.93,1/p); y=realPow(x,p); }
+        if(!isFinite(y))return; let sy=Y(y)-12*FS; while(used.some(u=>Math.abs(u-sy)<18*FS))sy-=18*FS; used.push(sy);
+        label(g,X(x)-20*FS,sy,"x^{"+k+"}",c); });
+      grab(g,X(s.t),clamp(Y(0),20,VH-20),"T","var(--hand)");
+    }
+  },
+  panel(){ const s=M3.s;
+    if(s.mode==="rad"){ const n=s.n, a=s.a, hh=s.h, k=s.k;
+      const moves=[]; if(hh) moves.push(`shift <b>${hh>0?"right":"left"} ${fx(Math.abs(hh))}</b>`); if(k) moves.push(`shift <b>${k>0?"up":"down"} ${fx(Math.abs(k))}</b>`);
+      if(Math.abs(a)!==1) moves.push(`vertical <b>${Math.abs(a)>1?"stretch":"compression"}</b> by a factor of ${fx(Math.abs(a))}`); if(a<0) moves.push(`<b>reflect</b> over the x-axis`);
+      const dom= n===2? `x ≥ ${fx(hh)}` : "all real numbers", ran= n===2? (a>0?`y ≥ ${fx(k)}`:`y ≤ ${fx(k)}`) : "all real numbers";
+      const base=n===2?[[0,0],[1,1],[4,2],[9,3]]:[[-8,-2],[-1,-1],[0,0],[1,1],[8,2]];
+      side.innerHTML=`<div class="panel"><h3>Transformations</h3><div class="pad">
+        <p>Start from the parent ${h("y = "+R(n,"x"))}. In ${h("y = a·"+R(n,"x − h")+" + k")}, h slides the graph left/right, k slides it up/down, and a stretches it vertically (and flips it when a &lt; 0).</p>
+        <p>This graph: ${moves.length?moves.join(", "):"no change — it is the parent"}.</p>
+        <div class="eq">${h(radEqStr(a,n,hh,k))}\nDomain: ${dom}\nRange:  ${ran}<small>${n===2?`An even root needs a radicand ≥ 0: x − ${par(hh)} ≥ 0, so x ≥ ${fx(hh)}. The shaded region is outside the domain.`:"Cube roots of negative numbers are real (∛(−8) = −2), so the domain is all real numbers."}</small></div></div></div>
+        <div class="panel"><h3>Key points: (x, y) → (x + h, a·y + k)</h3><table class="vals"><tr><th>parent</th><th>image</th></tr>${base.map(([u,v])=>`<tr><td>(${fx(u)}, ${fx(v)})</td><td>(${fx(u+hh)}, ${fx(a*v+k)})</td></tr>`).join("")}</table></div>`+
+        tryPanel(`<p>1. Drag the pink point. Which part of the equation changes? Then drag the orange point — what is it controlling?</p><p>2. Make the graph start at (−3, 4) and go <b>down</b> to the right. Write its equation.</p><p>3. Switch to ∛. Why does the shaded region disappear?</p>`);
+    } else { const t=s.t;
+      const rows=PL.filter(([k])=>s.on[k]).map(([k,p,c])=>{ const y=realPow(t,p); return `<tr><td><span class="sw" style="background:${c}"></span>${h("x^{"+k+"}")}</td><td>${isFinite(y)?num(y,3):"undefined"}</td><td>${p===.5||p===1.5?"x ≥ 0":p<0?"x ≠ 0":"all reals"}</td></tr>`; }).join("");
+      const vals=PL.filter(([k])=>s.on[k]).map(([k,p])=>[k,realPow(t,p)]).filter(v=>isFinite(v[1])).sort((a,b)=>b[1]-a[1]);
+      side.innerHTML=`<div class="panel"><h3>Power functions y = x<sup>p</sup></h3><div class="pad">
+        <p>Every power function with p &gt; 0 passes through (0, 0) and (1, 1); with p &lt; 0 it still passes through (1, 1) but has an asymptote at x = 0.</p>
+        <p>For <b>x &gt; 1</b>, a bigger exponent grows faster. For <b>0 &lt; x &lt; 1</b> the order flips: x<sup>3</sup> is smaller than x<sup>2</sup>, which is smaller than x<sup>1/2</sup>.</p>
+        <p>x<sup>1/2</sup> = √x and x<sup>3/2</sup> need x ≥ 0; x<sup>1/3</sup> = ∛x works for every x.</p></div></div>
+        <div class="panel"><h3>Values at x = ${num(t)}</h3><table class="vals"><tr><th>function</th><th>y</th><th>domain</th></tr>${rows||'<tr><td colspan="3">Turn on some exponents.</td></tr>'}</table>
+        <div class="pad" style="font-size:14px">${vals.length>1?"Largest to smallest here: "+vals.map(v=>h("x^{"+v[0]+"}")).join(" &gt; "):""}</div></div>`+
+        tryPanel(`<p>1. Drag the probe to x = 0.5, then to x = 2. How does the order of x<sup>1/2</sup>, x<sup>2</sup> and x<sup>3</sup> change?</p><p>2. Turn on only p = 2 and p = 1/2. Where do they cross? Explain why using inverses.</p>`);
+    }
+  }
+};
+function par(v){ const s=fx(v); return v<0?"("+s+")":s; }
+
+/* ══════════════════════ radical equation engine (tabs 4, 6) ══════════════════════ */
+function lhsStr(E){ if(E.two) return R(2,lin(E.a,E.b)); return coefS(E.p)+R(E.idx,lin(E.b,E.c))+(E.d?(E.d<0?" − ":" + ")+fx(Math.abs(E.d)):""); }
+function rhsStr(E){ if(E.two) return R(2,lin(E.c,E.d))+(E.e<0?" − ":" + ")+fx(Math.abs(E.e)); return lin(E.e,E.f); }
+const eqStr=E=>lhsStr(E)+" = "+rhsStr(E);
+function fns(E){ if(E.two) return {L:x=>rootN(E.a*x+E.b,2), Rf:x=>rootN(E.c*x+E.d,2)+E.e};
+  return {L:x=>E.p*rootN(E.b*x+E.c,E.idx)+E.d, Rf:x=>E.e*x+E.f}; }
+function xMinus(r){ return r>0?"x − "+fx(r):r<0?"x + "+fx(-r):"x"; }
+function quadSolve(A,B,C,S){ // returns roots, pushes steps
+  const out=[]; if(near(A,0,1e-12)){ if(near(B,0,1e-12)) return out; out.push(-C/B); S.push({t:"Solve the linear equation",m:`${poly([B,C])} = 0\nx = ${fx(-C/B)}`}); return out; }
+  let a=A,b=B,c=C; const fa=[A,B,C].map(v=>fr(v,24)); if(fa.every(Boolean)){ const L=fa.reduce((m,f)=>m*f[1]/gcd(m,f[1]),1); a*=L;b*=L;c*=L; const g=gcd(gcd(Math.round(a),Math.round(b)),Math.round(c)); a/=g;b/=g;c/=g; if(a<0){a=-a;b=-b;c=-c;} }
+  const D=b*b-4*a*c; let m=`${poly([a,b,c])} = 0`;
+  if(D<-1e-9){ S.push({t:"Solve the quadratic",m:m+`\nDiscriminant ${num(D,3)} < 0: no real candidates.`}); return out; }
+  const sd=Math.sqrt(Math.max(0,D)), r1=(-b-sd)/(2*a), r2=(-b+sd)/(2*a);
+  if(near(a,1)&&isInt(r1)&&isInt(r2)) m+= near(r1,r2)? `\n(${xMinus(r1)})^{2} = 0` : `\n(${xMinus(Math.round(r1))})(${xMinus(Math.round(r2))}) = 0`;
+  else m+=`\nx = (${fx(-b)} ± √${num(D,3)}) / ${fx(2*a)}`;
+  if(near(r1,r2,1e-9)){ out.push(r1); m+=`\nx = ${fxa(r1)}`; } else { out.push(r1,r2); m+=`\nx = ${fxa(r1)}  or  x = ${fxa(r2)}`; }
+  S.push({t:"Solve the resulting equation",m}); return out;
+}
+function solveRad(E){
+  const S=[]; let cands=[]; const F=fns(E);
+  if(!E.two){
+    const al=E.e/E.p, be=(E.f-E.d)/E.p, rad=R(E.idx,lin(E.b,E.c)), rhs=poly([al,be]);
+    let m=eqStr(E);
+    if(E.d) m+=`\n${coefS(E.p)}${rad} = ${poly([E.e,E.f-E.d])}`;
+    if(E.p!==1) m+=`\n${rad} = ${rhs}`;
+    S.push({t:"<b>Isolate</b> the radical",m:E.d||E.p!==1?m:m+"\n(already isolated)"});
+    if(E.idx===2&&!E.e&&be<0) S.push({t:"<b>Notice</b>",m:`A principal square root is never negative, but the right side is ${fx(be)}. Expect an extraneous answer.`});
+    const pw=E.idx===2?"2":"3";
+    if(E.idx===3){ S.push({t:"<b>Raise</b> both sides to the 3rd power (cube)",m:`(${rad})^{3} = ${wrapB(rhs)}^{3}\n${lin(E.b,E.c)} = ${fx(Math.pow(be,3))}`});
+      const x=(Math.pow(be,3)-E.c)/E.b; cands=[x]; S.push({t:"Solve",m:`${fx(E.b)===`1`?"x":fx(E.b)+"x"} = ${fx(Math.pow(be,3)-E.c)}\nx = ${fxa(x)}`}); }
+    else{
+      const A=al*al, B=2*al*be-E.b, C=be*be-E.c;
+      S.push({t:"<b>Raise</b> both sides to the 2nd power (square)",m:`(${rad})^{${pw}} = (${rhs})^{2}\n${lin(E.b,E.c)} = ${poly([A,2*al*be,be*be])}`+(A?`\n0 = ${poly([A,B,C])}`:"")});
+      cands=quadSolve(A,B,C,S);
+    }
+  } else {
+    const P=E.a-E.c, Q=E.b-E.d-E.e*E.e, k2=4*E.e*E.e;
+    S.push({t:"<b>Isolate</b> one radical",m:eqStr(E)+"\n(the left radical is alone)"});
+    S.push({t:"<b>Square</b> both sides",m:`${lin(E.a,E.b)} = (${R(2,lin(E.c,E.d))})^{2} ${E.e<0?"−":"+"} ${fx(Math.abs(2*E.e))}${R(2,lin(E.c,E.d))} + ${fx(E.e*E.e)}\n${lin(E.a,E.b)} = ${lin(E.c,E.d+E.e*E.e)} ${E.e<0?"−":"+"} ${fx(Math.abs(2*E.e))}${R(2,lin(E.c,E.d))}`});
+    S.push({t:"<b>Isolate</b> the remaining radical",m:`${poly([P,Q])} = ${fx(2*E.e)}${R(2,lin(E.c,E.d))}`});
+    S.push({t:"<b>Square</b> again",m:`(${poly([P,Q])})^{2} = ${fx(k2)}(${lin(E.c,E.d)})\n${poly([P*P,2*P*Q,Q*Q])} = ${poly([k2*E.c,k2*E.d])}`});
+    cands=quadSolve(P*P,2*P*Q-k2*E.c,Q*Q-k2*E.d,S);
+  }
+  cands=cands.map(x=>{ const f=fr(x,24); return f?f[0]/f[1]:x; });
+  const res=cands.map(x=>{ const l=F.L(x), r=F.Rf(x); return {x,l,r,ok:isFinite(l)&&isFinite(r)&&Math.abs(l-r)<1e-7*Math.max(1,Math.abs(r))}; });
+  let cm=res.map(c=>`x = ${fxa(c.x)}:  left = ${isFinite(c.l)?fxa(c.l):"undefined"},  right = ${fxa(c.r)}   ${c.ok?"✓ solution":"✗ extraneous"}`).join("\n");
+  if(!res.length) cm="No candidates to check.";
+  S.push({t:"<b>Check</b> every candidate in the <b>original</b> equation",m:cm});
+  const sol=res.filter(c=>c.ok);
+  S.push({t:"<b>Conclusion</b>",m:sol.length?"Solution: "+sol.map(c=>"x = "+fxa(c.x)).join(", ")+(res.length>sol.length?"\n("+res.filter(c=>!c.ok).map(c=>"x = "+fx(c.x)).join(", ")+" is extraneous)":""):"No solution — every candidate is extraneous."});
+  return {S,res,sol,F};
+}
+function genRadEq(kind){
+  if(kind==="lin-none"){ const d=rnd(1,6), c=rnd(-6,6); return {idx:2,p:1,b:1,c,d,e:0,f:d-rnd(1,5)}; }
+  for(let t=0;t<4000;t++){ const beta=rnd(-5,3), s=rnd(-3,9), r=rnd(-6,8); if(r===s)continue;
+    const b=s+r+2*beta, c=beta*beta-s*r; if(b<=0||b>6||Math.abs(c)>30)continue;
+    const vs=s+beta>=0, vr=r+beta>=0;
+    if(kind==="one"&&!(vs!==vr))continue; if(kind==="both"&&!(vs&&vr))continue; if(kind==="none"&&(vs||vr))continue;
+    const d=pick([0,0,rnd(1,5),-rnd(1,4)]); return {idx:2,p:1,b,c,d,e:1,f:beta+d}; }
+  return {idx:2,p:1,b:1,c:3,d:0,e:1,f:-3};
+}
+function autoWin(E,res){
+  const F=fns(E); const xs=res.map(c=>c.x); const dEnd=E.two?Math.max(-E.b/E.a,-E.d/E.c):(E.idx===2?-E.c/E.b:0); xs.push(dEnd);
+  let x0=Math.min(...xs)-3, x1=Math.max(...xs)+3; if(x1-x0<12){const m=(x0+x1)/2;x0=m-6;x1=m+6;}
+  let ys=[0]; for(let i=0;i<=40;i++){ const x=x0+(x1-x0)*i/40; [F.L(x),F.Rf(x)].forEach(y=>{if(isFinite(y))ys.push(clamp(y,-20,20));}); }
+  let y0=Math.min(...ys)-1.5, y1=Math.max(...ys)+1.5; if(y1-y0<8){const m=(y0+y1)/2;y0=m-4;y1=m+4;}
+  return {x0:Math.floor(x0),x1:Math.ceil(x1),y0:Math.floor(y0),y1:Math.ceil(y1)};
+}
+function drawRadEq(g,E,sol,o){ o=o||{};
+  const F=sol.F;
+  if(o.sq&&!E.two){ const al=E.e/E.p, be=(E.f-E.d)/E.p; if(E.idx===2){ plot(g,x=>E.b*x+E.c,{color:"#A78BFA",w:2.2,dash:"3 5"}); plot(g,x=>Math.pow(al*x+be,2),{color:"#FDBA74",w:2.2,dash:"3 5"}); } }
+  if(o.sq&&E.two){ const P=E.a-E.c, Q=E.b-E.d-E.e*E.e; plot(g,x=>Math.pow(P*x+Q,2),{color:"#FDBA74",w:2.2,dash:"3 5"}); plot(g,x=>4*E.e*E.e*(E.c*x+E.d),{color:"#A78BFA",w:2.2,dash:"3 5"}); }
+  if(o.mirror&&!E.two&&E.idx===2) plot(g,x=>2*E.d-E.e*x-E.f,{color:"#F87171",w:2.2,dash:"9 6"});
+  plot(g,F.L,{color:"var(--vert)",w:3.6,a:E.two?Math.max(-E.b/E.a,-E.d/E.c):(E.idx===2?-E.c/E.b:null)});
+  plot(g,F.Rf,{color:"var(--lin)",w:3.6,a:E.two?-E.d/E.c:null});
+  curveLabel(g,F.L,"y = "+lhsStr(E),"#6D28D9","left"); curveLabel(g,F.Rf,"y = "+rhsStr(E),"#C2410C");
+  sol.res.forEach(c=>{
+    if(c.ok){ wdot(g,c.x,c.l,"var(--alt)",7); label(g,X(c.x),Y(c.l)-22*FS,"x = "+fx(c.x)+" ✓","#047857"); }
+    else { vline(g,c.x,"#DC2626",2,"6 5"); if(isFinite(c.l))wdot(g,c.x,c.l,"#DC2626",6,true); wdot(g,c.x,c.r,"#DC2626",6,true);
+      if(o.sq&&!E.two&&E.idx===2) wdot(g,c.x,E.b*c.x+E.c,"#7C3AED",5);
+      label(g,X(c.x),clamp(Y(0)+30*FS,30,VH-30),"x = "+fx(c.x)+" extraneous","#B91C1C"); }
+    if(o.sq) { if(!E.two&&E.idx===2) wdot(g,c.x,E.b*c.x+E.c,"#7C3AED",4.5); }
+  });
+}
+const PRESETS=[
+  ["√(x + 3) = x − 3",{idx:2,p:1,b:1,c:3,d:0,e:1,f:-3}],
+  ["√(2x + 3) = x",{idx:2,p:1,b:2,c:3,d:0,e:1,f:0}],
+  ["√(x − 2) + 4 = x",{idx:2,p:1,b:1,c:-2,d:4,e:1,f:0}],
+  ["√(3x + 1) = x − 3",{idx:2,p:1,b:3,c:1,d:0,e:1,f:-3}],
+  ["2√(x + 1) = x + 1",{idx:2,p:2,b:1,c:1,d:0,e:1,f:1}],
+  ["√(x − 1) + 3 = 1",{idx:2,p:1,b:1,c:-1,d:3,e:0,f:1}],
+  ["∛(x − 3) + 5 = 3",{idx:3,p:1,b:1,c:-3,d:5,e:0,f:3}],
+  ["√(x + 7) = √x + 1",{two:true,a:1,b:7,c:1,d:0,e:1}],
+  ["√(3x + 1) = √(x + 4) + 1",{two:true,a:3,b:1,c:1,d:4,e:1}],
+  ["√(2x + 5) = √(x + 2) + 1",{two:true,a:2,b:5,c:1,d:2,e:1}]
+];
+
+/* ══════════════════════ TAB 4 · solving radical equations ══════════════════════ */
+const M4={
+  tab:"Radical equations", lesson:"A-REI.A.2", accent:"var(--magenta)",
+  title:()=>"Solve "+eqStr(M4.s.E),
+  s:{pi:0,E:PRESETS[0][1],step:0,sq:true,mirror:false,W:null,t:null},
+  setE(E){ const s=M4.s; s.E=E; s.step=0; s.sol=solveRad(E); s.W=autoWin(E,s.sol.res); s.t=(s.W.x0+s.W.x1)/2; },
+  bar(){ const s=M4.s;
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Equation");
+    PRESETS.forEach(([n],i)=>{const o=document.createElement("option");o.value=i;o.textContent=n;sel.appendChild(o);});
+    const o2=document.createElement("option"); o2.value="r"; o2.textContent="Random equation"; sel.appendChild(o2);
+    sel.value=s.pi; sel.onchange=()=>{ s.pi=sel.value; M4.setE(sel.value==="r"?genRadEq(pick(["one","one","both","none","lin-none"])):PRESETS[+sel.value][1]); render(); };
+    bar.appendChild(sel);
+    btn("Next step",()=>{s.step++;update();},"primary"); btn("All steps",()=>{s.step=99;update();}); btn("Restart",()=>{s.step=0;update();});
+    if(s.pi==="r") btn("New random",()=>{ M4.setE(genRadEq(pick(["one","one","both","none","lin-none"]))); render(); });
+    chk("Squared graphs",s.sq,v=>{s.sq=v;update();});
+    if(!s.E.two&&s.E.idx===2) chk("Mirror right side",s.mirror,v=>{s.mirror=v;update();});
+    zoomBtns(s.W);
+  },
+  drag(id,p){ if(id==="T") M4.s.t=snapV(clamp(IX(p[0]),WIN.x0,WIN.x1),0.5); },
+  draw(){ const s=M4.s; if(!s.sol)M4.setE(s.E); const g=graphBg(s.W); const show=s.step>=s.sol.S.length-2;
+    drawRadEq(g,s.E,show?s.sol:{F:s.sol.F,res:[]},{sq:s.sq&&s.step>=1,mirror:s.mirror});
+    const t=s.t, l=s.sol.F.L(t), r=s.sol.F.Rf(t);
+    vline(g,t,"#22314F",1.4,"4 5");
+    if(isFinite(l))wdot(g,t,l,"var(--vert)",5); if(isFinite(r))wdot(g,t,r,"var(--lin)",5);
+    const ty=clamp(Y(0),20,VH-20); grab(g,X(t),ty,"T","var(--hand)");
+    label(g,X(t),VH-14*FS-(ty>VH-60?44:0),"x = "+num(t)+":  left "+(isFinite(l)?num(l):"undef.")+",  right "+num(r),"var(--ink)");
+  },
+  panel(){ const s=M4.s, S=s.sol.S, upto=Math.min(s.step,S.length-1);
+    side.innerHTML=`<div class="panel"><h3>Isolate → raise → solve → check</h3><div class="pad">
+      <p>To undo a square root, <b>isolate</b> it and <b>square</b> both sides (cube for a cube root). Then solve the polynomial equation.</p>
+      <p>Squaring is not reversible: a = b and a = −b both give a² = b². So squaring can create <span class="term">extraneous solutions</span> — numbers that solve the squared equation but not the original. You must <b>check</b> every candidate in the original equation.</p></div></div>
+      <div class="panel"><h3>Steps</h3><ol class="stepl">${S.map((st,i)=>`<li class="${i<upto?"done":i===upto?"on":"hide"}"><span class="sn">${i+1}</span>${st.t}<span class="mx">${h(st.m).replace(/✓ solution/g,'<span class="good">✓ solution</span>').replace(/✗ extraneous/g,'<span class="bad">✗ extraneous</span>')}</span></li>`).join("")}</ol></div>
+      <div class="panel"><h3>Reading the graph</h3><div class="pad">
+      <p>Purple is the <b>left side</b>, orange the <b>right side</b>. Solutions are the x-values where they actually meet (green).</p>
+      <p>The faint dashed curves are the two sides <b>after squaring</b>${s.E.two?" the second time":""} — they meet at <b>every</b> candidate, including the extraneous one (red dashed line), where the original curves miss each other.${!s.E.two&&s.E.idx===2?" Turn on <b>Mirror right side</b>: the extraneous root is where the radical meets the right side's reflection — the equation √ = −(…) that squaring sneaks in.":""}</p></div></div>`+
+      tryPanel(`<p>1. Before revealing the check step, drag the probe to each candidate. Do the two sides really agree there?</p><p>2. Pick "√(x − 1) + 3 = 1". Why could you predict "no solution" right after isolating?</p><p>3. Compare with "∛(x − 3) + 5 = 3": why is a negative right side fine for a cube root?</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 5 · rational-exponent equations & inverses ══════════════════════ */
+const P5=[{a:1,m:3,n:2,b:0,c:27},{a:1,m:2,n:3,b:0,c:4},{a:2,m:3,n:4,b:0,c:16},{a:1,m:2,n:3,b:1,c:10},{a:1,m:5,n:2,b:0,c:32},{a:1,m:4,n:3,b:0,c:16},{a:1,m:3,n:2,b:0,c:-8},{a:1,m:1,n:3,b:0,c:-2},{a:1,m:-1,n:2,b:0,c:1/3}];
+const pStr=q=>(q.a!==1?fx(q.a):"")+"x^{"+q.m+"/"+q.n+"}"+(q.b?(q.b<0?" − ":" + ")+fx(Math.abs(q.b)):"")+" = "+fx(q.c);
+function solvePow(q){
+  const S=[]; const v=(q.c-q.b)/q.a, f=fr(q.m/q.n,60), m=f[0], n=f[1];
+  let first=pStr(q); if(q.b) first+=`\n${q.a!==1?fx(q.a):""}x^{${q.m}/${q.n}} = ${fx(q.c-q.b)}`; if(q.a!==1) first+=`\nx^{${q.m}/${q.n}} = ${fx(v)}`;
+  S.push({t:"<b>Isolate</b> the power",m:first});
+  let sols=[];
+  if(q.m!==m) S.push({t:"Reduce the exponent",m:`${q.m}/${q.n} = ${m}/${n}`});
+  const evenM=Math.abs(m)%2===0, evenN=n%2===0;
+  if(evenN&&(v<0||(m<0&&v===0))){ S.push({t:"<b>Notice</b>",m:`x^{${m}/${n}} = (${R(n,"x")})^{${m}} uses an even root, so it is never negative. It can't equal ${fx(v)}.`}); }
+  else if(!evenN&&evenM&&v<0){ S.push({t:"<b>Notice</b>",m:`x^{${m}/${n}} = (${R(n,"x")})^{${m}} is an even power, so it is never negative. It can't equal ${fx(v)}.`}); }
+  else if(m<0&&v===0){ S.push({t:"<b>Notice</b>",m:"A negative exponent is a reciprocal; it is never 0."}); }
+  else{
+    const rec=n+"/"+m, mag=Math.pow(Math.abs(v),n/m), root=Math.pow(Math.abs(v),1/Math.abs(m));
+    S.push({t:`<b>Raise</b> both sides to the reciprocal power ${minus(rec)}`,m:`(x^{${m}/${n}})^{${minus(rec)}} = ${wrapB(fx(v))}^{${minus(rec)}}\nx^{1} = ${wrapB(fx(v))}^{${minus(rec)}}`+(evenM?`\n± because x and −x give the same even power`:"")});
+    let ev=`${wrapB(fx(Math.abs(v)))}^{${minus(n+"/"+m)}} = (${R(Math.abs(m),fx(Math.abs(v)))})^{${m<0?-n:n}}`;
+    if(Math.abs(m)===1) ev=`${wrapB(fx(Math.abs(v)))}^{${minus(n+"/"+m)}}`;
+    ev+=` = ${Math.abs(m)>1?"("+(exact(root)?fx(root):num(root,4))+")^{"+(m<0?-n:n)+"} = ":""}${exact(mag)?fx(mag):"≈ "+num(mag,4)}`;
+    S.push({t:"<b>Evaluate</b> (root first)",m:ev});
+    sols= evenM? [-mag,mag] : [v<0?-mag:mag];
+    S.push({t:"<b>Check</b>",m:sols.map(x=>{ const l=q.a*realPow(x,q.m/q.n)+q.b; return `x = ${fxa(x)}: ${q.a!==1?fx(q.a)+"·":""}(${fx(x)})^{${q.m}/${q.n}}${q.b?(q.b<0?" − ":" + ")+fx(Math.abs(q.b)):""} = ${fxa(l)} ${Math.abs(l-q.c)<1e-7*Math.max(1,Math.abs(q.c))?"✓":"✗"}`; }).join("\n")});
+  }
+  S.push({t:"<b>Conclusion</b>",m:sols.length?"x = "+sols.map(fxa).join("  or  x = "):"No real solution."});
+  return {S,sols};
+}
+const PAIRS=[
+  {nm:"x² ↔ √x",f:x=>x*x,fi:x=>rootN(x,2),even:true,d0:0,fS:"x^{2}",fiS:"√x"},
+  {nm:"x³ ↔ ∛x",f:x=>x*x*x,fi:x=>Math.cbrt(x),even:false,d0:null,fS:"x^{3}",fiS:"∛x"},
+  {nm:"x^(2/3) ↔ x^(3/2)",f:x=>realPow(x,2/3),fi:x=>realPow(x,1.5),even:true,d0:0,fS:"x^{2/3}",fiS:"x^{3/2}"},
+  {nm:"(x − 2)² + 1 ↔ √(x − 1) + 2",f:x=>(x-2)*(x-2)+1,fi:x=>rootN(x-1,2)+2,even:true,d0:2,fS:"(x − 2)^{2} + 1",fiS:"√(x − 1) + 2"}
+];
+const M5={
+  tab:"Exponent equations & inverses", lesson:"A-REI.A.2 · F-BF.B.4a", accent:"var(--lavender)",
+  title:()=>M5.s.mode==="solve"?"Solve "+pStr(M5.s.q):"Inverse functions: f(x) = "+PAIRS[M5.s.pi].fS,
+  s:{mode:"solve",qi:0,q:Object.assign({},P5[0]),step:99,W:{x0:-12,x1:16,y0:-6,y1:32},pi:0,restrict:true,a:2,Wi:{x0:-6,x1:10,y0:-3.5,y1:7}},
+  sl:{},
+  bar(){ const s=M5.s;
+    segBtns([["solve","Solve x^{m/n} = c"],["inv","Inverses"]],s.mode,k=>{s.mode=k;render();},"Mode");
+    if(s.mode==="solve"){
+      const sel=document.createElement("select"); sel.setAttribute("aria-label","Equation");
+      P5.forEach((q,i)=>{const o=document.createElement("option");o.value=i;o.textContent=plain(pStr(q)).replace(/x(-?\d+)\/(\d+)/,"x^($1/$2)");sel.appendChild(o);});
+      sel.value=s.qi; sel.onchange=()=>{ s.qi=+sel.value; s.q=Object.assign({},P5[s.qi]); s.step=0; M5.fitW(); render(); }; bar.appendChild(sel);
+      M5.sl.m=slider("m",-3,5,s.q.m,v=>{ if(v===0)v=1; s.q.m=v; s.step=99; M5.fitW(); update(); bTitle.innerHTML=h(M5.title()); });
+      M5.sl.n=slider("n",1,5,s.q.n,v=>{ s.q.n=v; s.step=99; M5.fitW(); update(); bTitle.innerHTML=h(M5.title()); });
+      btn("Next step",()=>{s.step++;update();},"primary"); btn("All steps",()=>{s.step=99;update();});
+      snapChk(); zoomBtns(s.W); spacer("Drag the line y = c");
+    } else {
+      const sel=document.createElement("select"); sel.setAttribute("aria-label","Function pair");
+      PAIRS.forEach((p,i)=>{const o=document.createElement("option");o.value=i;o.textContent=p.nm;sel.appendChild(o);});
+      sel.value=s.pi; sel.onchange=()=>{s.pi=+sel.value; s.a=PAIRS[s.pi].d0!=null?PAIRS[s.pi].d0+1.5:1.5; render();}; bar.appendChild(sel);
+      if(PAIRS[s.pi].even) chk("Restrict domain",s.restrict,v=>{s.restrict=v;update();});
+      snapChk(); spacer("Drag P along f");
+    }
+  },
+  fitW(){ const s=M5.s, q=s.q, r=solvePow(q).sols; const xs=r.concat([0]); const xm=Math.max(4,...xs.map(Math.abs))*1.25;
+    const y=Math.max(Math.abs(q.c),4)*1.3; s.W={x0:-xm,x1:xm,y0:-y*0.45,y1:y}; },
+  drag(id,p){ const s=M5.s;
+    if(id==="C"){ s.q.c=snapV(clamp(IY(p[1]),WIN.y0,WIN.y1)); s.step=99; bTitle.innerHTML=h(M5.title()); }
+    if(id==="P"){ const P=PAIRS[s.pi]; let x=snapV(IX(p[0]),0.5); if(P.even&&s.restrict&&x<P.d0)x=P.d0; s.a=clamp(x,WIN.x0,WIN.x1); }
+  },
+  draw(){ const s=M5.s;
+    if(s.mode==="solve"){ const q=s.q, g=graphBg(s.W), f=x=>q.a*realPow(x,q.m/q.n)+q.b, R5=solvePow(q), red=fr(q.m/q.n,60);
+      plot(g,f,{color:"var(--vert)",w:3.6,a:(red[1]%2===0&&q.m>0)?0:null});
+      curveLabel(g,f,"y = "+(q.a!==1?fx(q.a):"")+"x^{"+q.m+"/"+q.n+"}"+(q.b?(q.b<0?" − ":" + ")+fx(Math.abs(q.b)):""),"#6D28D9","left");
+      hline(g,q.c,"var(--lin)",3.2);
+      const done=s.step>=R5.S.length-1;
+      R5.sols.forEach(x=>{ if(done){ wdot(g,x,q.c,"var(--alt)",7); wseg(g,x,0,x,q.c,"var(--alt)",2,"5 5"); label(g,X(x),clamp(Y(0)+18*FS,14,VH-14),"x = "+(exact(x)?fx(x):num(x,2)),"#047857"); } });
+      const gx=clamp(X(WIN.x1-(WIN.x1-WIN.x0)*.08),0,VW); grab(g,gx,Y(q.c),"C","var(--lin)");
+      label(g,gx-60*FS,Y(q.c)-18*FS,"y = "+fx(q.c),"#C2410C");
+    } else { const P=PAIRS[s.pi], g=graphBg(s.Wi), restr=P.even&&s.restrict;
+      wseg(g,-20,-20,30,30,"#9AA8C7",2,"7 6"); label(g,X(5.6),Y(5.6)+18*FS,"y = x","#6B7A99");
+      if(restr||!P.even){ plot(g,P.f,{color:"var(--vert)",w:3.6,a:restr?P.d0:null}); const fiStart=restr?P.f(P.d0):null; plot(g,P.fi,{color:"var(--alt)",w:3.6,a:fiStart}); }
+      else { plot(g,P.f,{color:"var(--vert)",w:3.6});
+        // reflection of full f: parametric
+        let d=""; for(let i=0;i<=600;i++){ const t=WIN.x0-6+(WIN.x1-WIN.x0+12)*i/600, y=P.f(t); if(!isFinite(y))continue; d+=(d?"L":"M")+X(y).toFixed(1)+" "+Y(t).toFixed(1); }
+        g.appendChild(E("path",{d,fill:"none",stroke:"#DC2626","stroke-width":3,"stroke-dasharray":"8 6"}));
+        const vx=4; vline(g,vx,"#DC2626",1.6,"3 4");
+        const roots=[]; for(let i=0;i<4000;i++){ const t0=-10+i*0.005, t1=t0+0.005; const a=P.f(t0)-vx, b=P.f(t1)-vx; if(isFinite(a)&&isFinite(b)&&a*b<=0&&!(b===0&&i<3999)) roots.push((t0+t1)/2); }
+        roots.forEach(t=>wdot(g,vx,t,"#DC2626",6,true));
+        label(g,X(vx)+90*FS,Y(WIN.y1)+20*FS,"x = "+vx+" hits it "+roots.length+" times","#B91C1C");
+      }
+      curveLabel(g,P.f,"f(x) = "+P.fS,"#6D28D9","left"); if(restr||!P.even) curveLabel(g,P.fi,"f^{−1}(x) = "+P.fiS,"#047857");
+      const a=s.a, b=P.f(a);
+      if(isFinite(b)){ wseg(g,a,b,b,a,"var(--magenta)",2,"5 4"); const m=(a+b)/2; wdot(g,m,m,"#9AA8C7",4);
+        grab(g,X(a),Y(b),"P","var(--vert)"); wdot(g,b,a,(restr||!P.even)?"var(--alt)":"#DC2626",6.5);
+        label(g,X(a)-62*FS,Y(b)-14*FS,"P("+num(a)+", "+num(b)+")","#6D28D9"); label(g,X(b)+64*FS,Y(a)+16*FS,"P′("+num(b)+", "+num(a)+")",(restr||!P.even)?"#047857":"#B91C1C"); }
+    }
+  },
+  panel(){ const s=M5.s;
+    if(s.mode==="solve"){ const R5=solvePow(s.q), S=R5.S, upto=Math.min(s.step,S.length-1);
+      side.innerHTML=`<div class="panel"><h3>Undo a rational exponent</h3><div class="pad">
+        <p>To solve x<sup>m/n</sup> = c, <b>isolate</b> the power, then raise both sides to the <span class="term">reciprocal</span> power n/m, because (x<sup>m/n</sup>)<sup>n/m</sup> = x<sup>1</sup>.</p>
+        <p>Watch the parity: if the reduced <b>m is even</b>, both x and −x work (±). If <b>n is even</b>, x must be ≥ 0 and the power is never negative. Evaluate c<sup>n/m</sup> root first.</p></div></div>
+        <div class="panel"><h3>Steps</h3><ol class="stepl">${S.map((st,i)=>`<li class="${i<upto?"done":i===upto?"on":"hide"}"><span class="sn">${i+1}</span>${st.t}<span class="mx">${h(st.m)}</span></li>`).join("")}</ol></div>`+
+        tryPanel(`<p>1. Choose x<sup>2/3</sup> = 4. Why are there two solutions? Find them on the graph.</p><p>2. Choose x<sup>3/2</sup> = −8 and drag the line. For which c are there no solutions?</p><p>3. Set m = 3, n = 3. What equation is this, really?</p>`);
+    } else { const P=PAIRS[s.pi], restr=P.even&&s.restrict, a=s.a, b=P.f(a), back=P.fi(b);
+      side.innerHTML=`<div class="panel"><h3>Inverse functions undo each other</h3><div class="pad">
+        <p>An <span class="term">inverse function</span> f<sup>−1</sup> reverses f: if f(a) = b then f<sup>−1</sup>(b) = a. Its graph is the reflection of f across the line y = x — each point (a, b) becomes (b, a).</p>
+        <p>${P.even?`<b>${h(P.fS)} is not one-to-one</b> on all real numbers: two inputs give the same output, so its reflection fails the vertical line test. We <b>restrict the domain</b> to x ≥ ${P.d0}, and then ${h(P.fiS)} is the inverse.`:`${h(P.fS)} is one-to-one, so its inverse ${h(P.fiS)} works for every real number — no restriction needed.`}</p></div></div>
+        <div class="panel"><h3>Check with P</h3><div class="pad"><div class="eq">${h(`f(${num(a)}) = ${num(b,3)}\nf^{−1}(${num(b,3)}) = ${isFinite(back)?num(back,3):"undefined"}  ${isFinite(back)&&near(back,a,1e-6)?"✓ back to "+num(a):"✗ not "+num(a)}`)}<small>${P.even&&!restr?`Without the restriction, f(${num(a)}) = f(${num(2*(P.d0||0)-a)}), so "undo f" has two possible answers.`:(P.even?`${h(P.fiS)} always returns the value with x ≥ ${P.d0}, so it only undoes f on the restricted domain.`:"Composition in either order gives back the input.")}</small></div>
+        ${s.pi===0?`<p>For x ≥ 0: (√x)<sup>2</sup> = x and √(x<sup>2</sup>) = x. For all reals, √(x<sup>2</sup>) = |x|.</p>`:""}</div></div>`+
+        tryPanel(`<p>1. Turn off <b>Restrict domain</b> and drag P to a negative x. Where does its reflection land? Is it on the green curve?</p><p>2. Why does x³ ↔ ∛x never need a restriction?</p>`);
+    }
+  }
+};
+
+/* ══════════════════════ answer parsing (tab 6) ══════════════════════ */
+function compile(str){
+  let s=String(str).toLowerCase().replace(/[−–—]/g,"-").replace(/[×·⋅]/g,"*").replace(/÷/g,"/").replace(/\*\*/g,"^").replace(/\s+/g,"");
+  const SUP="⁰¹²³⁴⁵⁶⁷⁸⁹";
+  s=s.replace(/sqrt/g,"√").replace(/cbrt/g,"∛").replace(/root/g,"@");
+  s=s.replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)√/g,(m,d)=>"#"+[...d].map(c=>SUP.indexOf(c)).join("")+"√");
+  s=s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g,m=>"^"+[...m].map(c=>SUP.indexOf(c)).join(""));
+  if(!s) return null;
+  const meta={hasX:false,hasRad:false,fracExp:false,rad:[],radDen:false};
+  let i=0; const peek=()=>s[i];
+  const K=v=>({f:()=>v,x:false,r:false});
+  function expr(){ let a=term(); while(peek()==="+"||peek()==="-"){ const o=s[i++]; const b=term(), fa=a.f, fb=b.f; a={f:o==="+"?x=>fa(x)+fb(x):x=>fa(x)-fb(x),x:a.x||b.x,r:a.r||b.r}; } return a; }
+  const startsAtom=c=>c!=null&&/[0-9.x(√∛∜#@]/.test(c);
+  function term(){ let a=unary(); for(;;){ const c=peek();
+      if(c==="*"||c==="/"){ i++; const b=unary(), fa=a.f, fb=b.f; if(c==="/"&&b.r)meta.radDen=true; a={f:c==="*"?x=>fa(x)*fb(x):x=>fa(x)/fb(x),x:a.x||b.x,r:a.r||b.r}; }
+      else if(startsAtom(c)){ const b=power(), fa=a.f, fb=b.f; a={f:x=>fa(x)*fb(x),x:a.x||b.x,r:a.r||b.r}; }
+      else break; } return a; }
+  function unary(){ if(peek()==="-"){i++; const a=unary(), fa=a.f; return {f:x=>-fa(x),x:a.x,r:a.r};} if(peek()==="+"){i++;return unary();} return power(); }
+  function power(){ const b=atom(); if(peek()==="^"){ i++; const e=unary(); if(!e.x){ const ev=e.f(0); if(!isInt(ev))meta.fracExp=true; } const fb=b.f, fe=e.f; return {f:x=>realPow(fb(x),fe(x)),x:b.x||e.x,r:b.r||e.r}; } return b; }
+  function radical(n,arg){ meta.hasRad=true; if(!arg.x){ const v=arg.f(0); meta.rad.push({idx:n,v}); } const fa=arg.f; return {f:x=>rootN(fa(x),n),x:arg.x,r:true}; }
+  function atom(){ const c=peek();
+    if(c==="("){ i++; const v=expr(); if(peek()!==")")throw 0; i++; return v; }
+    if(c==="√"){ i++; return radical(2,power()); }
+    if(c==="∛"){ i++; return radical(3,power()); }
+    if(c==="∜"){ i++; return radical(4,power()); }
+    if(c==="#"){ i++; const m=/^\d+/.exec(s.slice(i)); if(!m)throw 0; i+=m[0].length; if(peek()!=="√")throw 0; i++; return radical(parseInt(m[0]),power()); }
+    if(c==="@"){ i++; if(peek()!=="(")throw 0; i++; const nE=expr(); if(peek()!==",")throw 0; i++; const a=expr(); if(peek()!==")")throw 0; i++; const n=Math.round(nE.f(0)); if(n<2)throw 0; return radical(n,a); }
+    if(c==="x"){ i++; meta.hasX=true; return {f:x=>x,x:true,r:false}; }
+    const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)); if(!m)throw 0; i+=m[0].length; return K(parseFloat(m[0])); }
+  try{ const v=expr(); if(i!==s.length)return null; meta.f=v.f; return meta; }catch(_){ return null; }
+}
+function numVal(str){ const c=compile(str); if(!c||c.hasX)return NaN; return c.f(0); }
+function parseSolSet(str){ let s=String(str).toLowerCase().replace(/[−–]/g,"-").replace(/\s+/g,"");
+  if(/^(no(real)?solutions?|none|nosol|∅|\{\}|empty|ns|dne)$/.test(s)||/nosolution/.test(s)) return [];
+  s=s.replace(/x=/g,"").replace(/[{}]/g,"");
+  const parts=s.split(/,|;|or|and/).filter(Boolean); const v=parts.map(numVal); return v.some(z=>!isFinite(z))?null:v; }
+function parseDomain(str){ let s=String(str).toLowerCase().replace(/[−–]/g,"-").replace(/\s+/g,"").replace(/≥/g,">=").replace(/≤/g,"<=").replace(/∞|infinity/g,"inf").replace(/\+inf/g,"inf");
+  if(/^(allreals?(numbers)?|allrealnumbers|all|r|ℝ|\(-inf,inf\)|-inf<x<inf|everything|allx)$/.test(s)) return {all:true};
+  let m;
+  if((m=/^x(>=|<=|>|<)(.+)$/.exec(s))) return {op:m[1],v:numVal(m[2])};
+  if((m=/^(.+?)(>=|<=|>|<)x$/.exec(s))) return {op:{">=":"<=","<=":">=",">":"<","<":">"}[m[2]],v:numVal(m[1])};
+  if((m=/^\[(.+),inf\)$/.exec(s))) return {op:">=",v:numVal(m[1])};
+  if((m=/^\((.+),inf\)$/.exec(s))) return {op:">",v:numVal(m[1])};
+  if((m=/^\(-inf,(.+)\]$/.exec(s))) return {op:"<=",v:numVal(m[1])};
+  if((m=/^\(-inf,(.+)\)$/.exec(s))) return {op:"<",v:numVal(m[1])};
+  return null; }
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+const KINDS=[["mix","Mix"],["conv","Convert forms"],["eval","Evaluate x^(m/n)"],["simp","Simplify radicals"],["solve","Radical equations"],["dom","Domain"]];
+function genProblem(kind){
+  if(kind==="mix")kind=pick(["conv","eval","simp","solve","dom"]);
+  const pr={kind};
+  if(kind==="conv"){ let n,m; do{ n=pick([2,3,4,5]); m=rnd(1,5); }while(m%n===0||(m===1&&n===2&&Math.random()<.5));
+    if(Math.random()<.2) m=-m;
+    pr.m=m; pr.n=n; pr.dir=pick(["toExp","toRad"]); pr.ans=x=>realPow(x,m/n);
+    if(pr.dir==="toExp"){ const outer=Math.random()<.4&&m>0; const radS=outer?"("+R(n,"x")+")^{"+m+"}":(m<0?"1/":"")+R(n,Math.abs(m)===1?"x":"x^{"+Math.abs(m)+"}");
+      pr.show=radS; pr.q=`Write using a <b>rational exponent</b>: ${h(radS)}`; pr.prompt="Rewrite with a rational exponent"; pr.fmt="Type like <code>x^(3/4)</code> or <code>x^(-2/3)</code>.";
+      pr.sol=`${radS} = x^{${m}/${n}}\n(the index ${n} becomes the denominator; the power ${Math.abs(m)} the numerator${m<0?"; 1/… makes the exponent negative":""})`; }
+    else { pr.show="x^{"+m+"/"+n+"}"; pr.q=`Write in <b>radical form</b>: ${h(pr.show)}`; pr.prompt="Rewrite in radical form"; pr.fmt="Type like <code>root(4, x^3)</code>, <code>(cbrt x)^2</code>, <code>sqrt(x^5)</code>, or with √ ∛ ∜. Use <code>1/…</code> for negative exponents.";
+      pr.sol=`x^{${m}/${n}} = ${m<0?"1/":""}${R(n,Math.abs(m)===1?"x":"x^{"+Math.abs(m)+"}")} = ${m<0?"1/":""}(${R(n,"x")})^{${Math.abs(m)}}`; }
+  }
+  if(kind==="eval"){ let n,r,m,neg,val,b;
+    for(;;){ n=pick([2,2,3,3,4,5]); r=n===2?rnd(2,11):n===3?rnd(2,5):n===4?rnd(2,3):2; m=pick([1,2,3,-1,-2,2,3]); if(gcd(m,n)!==1&&Math.abs(m)!==1)continue; if(m===1&&Math.random()<.5)continue;
+      neg=n%2===1&&Math.random()<.3; const rr=neg?-r:r; val=Math.pow(rr,m); if(Math.abs(val)>1500)continue; b=Math.pow(rr,n); break; }
+    const rr=neg?-r:r; pr.b=b; pr.m=m; pr.n=n; pr.val=val; const bs=b<0?"("+fx(b)+")":fx(b);
+    pr.show=bs+"^{"+m+"/"+n+"}"; pr.q=`Evaluate ${h(pr.show)} without a calculator.`; pr.prompt="Evaluate"; pr.fmt="An integer or a fraction like <code>1/8</code>.";
+    pr.sol=`${bs}^{${m}/${n}} = ${m<0?"1 / ":""}(${R(n,bs)})^{${Math.abs(m)}}\n   = ${m<0?"1 / ":""}(${fx(rr)})^{${Math.abs(m)}}\n   = ${fx(val)}`; }
+  if(kind==="simp"){ const t=pick(["sq","sq","cb","coef","prod","rat"]); let idx=2,v,r,show,sol;
+    if(t==="sq"||t==="coef"){ const rr=pick(SQF), k=rnd(2,t==="coef"?6:9), c=t==="coef"?rnd(2,5):1; const N=k*k*rr; r=rr; v=c*k*Math.sqrt(rr); show=(c>1?c:"")+"√"+N; sol=`${show} = ${c>1?c+"·":""}√(${k*k}·${rr}) = ${c>1?c+"·":""}${k}√${rr} = ${c*k}√${rr}`; }
+    if(t==="cb"){ idx=3; const rr=pick([2,3,4,5,6,7,9,10]), k=rnd(2,5); const N=k*k*k*rr; if(N>1100) return genProblem("simp"); r=rr; v=k*Math.cbrt(rr); show="∛"+N; sol=`∛${N} = ∛(${k*k*k}·${rr}) = ∛${k*k*k}·∛${rr} = ${k}∛${rr}`; }
+    if(t==="prod"){ const ex=(function(){ for(;;){ const a=rnd(2,15), b=rnd(2,20); const e=extract(a*b,2); if(e.k>1&&e.r>1&&extract(a,2).k===1&&extract(b,2).k===1&&a!==b) return {a,b,e}; } })();
+      r=ex.e.r; v=ex.e.k*Math.sqrt(r); show="√"+ex.a+" · √"+ex.b; sol=`√${ex.a}·√${ex.b} = √${ex.a*ex.b} = √(${ex.e.k*ex.e.k}·${r}) = ${ex.e.k}√${r}`; }
+    if(t==="rat"){ const c=pick([2,3,5,6,7]), a=rnd(1,12); if(a%c===0) return genProblem("simp"); r=c; v=a/Math.sqrt(c); show=a+"/√"+c; sol=`${a}/√${c} · √${c}/√${c} = ${a}√${c}/${c}${gcd(a,c)>1?" = "+surd(0,a,c,c):""}`; }
+    pr.idx=idx; pr.r=r; pr.v=v; pr.t=t; pr.show=show; pr.q=`Simplify completely: ${h(show)}`; pr.prompt="Simplify";
+    pr.fmt="Type like <code>3√2</code>, <code>3sqrt2</code>, <code>6*cbrt(2)</code> or <code>5√2/2</code>. No radicals in a denominator.";
+    pr.sol=sol; }
+  if(kind==="solve"){ const k=pick(["one","one","one","both","none","lin-none","lin-none"]); const E=genRadEq(k); pr.E=E; pr.res=solveRad(E);
+    pr.show=eqStr(E); pr.q=`Solve: ${h(pr.show)}`; pr.prompt="Solve"; pr.fmt="List solutions like <code>6</code> or <code>-1, 3</code>; type <code>no solution</code> if every candidate is extraneous.";
+    pr.ans=pr.res.sol.map(c=>c.x); pr.extra=pr.res.res.filter(c=>!c.ok).map(c=>c.x);
+    pr.sol=pr.res.S.map((s_,i)=>(i+1)+". "+s_.t.replace(/<[^>]+>/g,"")+"\n"+s_.m).join("\n"); }
+  if(kind==="dom"){ const n=pick([2,2,3,4]), b=pick([1,1,2,3,-1,-2]), c=rnd(-9,9), a=pick([1,2,-1,3,-2]), k=rnd(-5,5);
+    pr.n=n; pr.b=b; pr.c=c; pr.a=a; pr.k=k; pr.bd=-c/b;
+    pr.show="y = "+coefS(a)+R(n,lin(b,c))+(k?(k<0?" − ":" + ")+Math.abs(k):""); pr.q=`State the domain of ${h(pr.show)}.`; pr.prompt="Domain";
+    pr.fmt="Type like <code>x >= 3</code>, <code>x ≤ -5/2</code>, <code>[3, inf)</code> or <code>all real numbers</code>.";
+    pr.op= n%2? null : (b>0?">=":"<=");
+    pr.sol= n%2? `The index ${n} is odd: odd roots accept any real number.\nDomain: all real numbers` : `Even index ${n}: the radicand must be ≥ 0.\n${lin(b,c)} ≥ 0\n${b>0?`x ≥ ${fx(-c/b)}`:`x ≤ ${fx(-c/b)}   (dividing by a negative flips ≥)`}\nDomain: ${b>0?"x ≥ ":"x ≤ "}${fx(-c/b)}`; }
+  return pr;
+}
+function hintText(pr,ans){
+  if(pr.kind==="conv") return pr.dir==="toExp"?`The <b>index</b> of the root becomes the <b>denominator</b>: ${h(R(pr.n,"x^{a}"))} = x<sup>a/${pr.n}</sup>.${pr.m<0?" A reciprocal (1/…) makes the exponent negative.":""}`:`The <b>denominator</b> ${pr.n} is the index of the root and the numerator ${Math.abs(pr.m)} is a power: x<sup>a/${pr.n}</sup> = ${h(R(pr.n,"x^{a}"))}.${pr.m<0?" Negative exponent → write 1/(…).":""}`;
+  if(pr.kind==="eval") return `Take the root first: ${h(R(pr.n,pr.b<0?"("+fx(pr.b)+")":fx(pr.b)))} = ? Then raise that to the ${Math.abs(pr.m)} power${pr.m<0?", and take the reciprocal (negative exponent)":""}.`;
+  if(pr.kind==="simp") return pr.t==="rat"?`Multiply top and bottom by √${pr.r} so the denominator becomes ${pr.r}, then reduce.`:`Look for the largest perfect ${pr.idx===2?"square":"cube"} factor of the radicand and take its ${pr.idx===2?"square":"cube"} root outside.`;
+  if(pr.kind==="solve"){ const hit=ans&&pr.extra.filter(x=>ans.some(a=>Math.abs(a-x)<1e-6)); if(hit&&hit.length) return `You included x = ${hit.map(fx).join(", ")} — substitute it into the <b>original</b> equation: the two sides don't match, so it is <b>extraneous</b>.`;
+    return `Isolate the radical, square both sides, solve, then check each candidate in the original equation. Extraneous candidates must be thrown out.`; }
+  if(pr.kind==="dom") return pr.n%2?`The index ${pr.n} is odd — can you take the cube root of a negative number?`:`Even root: set the radicand ${h(lin(pr.b,pr.c))} ≥ 0 and solve.${pr.b<0?" Dividing by a negative flips the inequality.":""}`;
+}
+function checkAnswer(pr,str){ // {ok, msg}
+  if(!String(str).trim()) return {ok:false,msg:"Type an answer first."};
+  if(pr.kind==="conv"){ const c=compile(str); if(!c) return {ok:false,read:true};
+    const xs=[0.37,1.3,2.9,5.2]; const eqv=xs.every(x=>{ const a=c.f(x), e=pr.ans(x); return isFinite(a)&&Math.abs(a-e)<=1e-6*Math.max(1,Math.abs(e)); });
+    if(!eqv) return {ok:false};
+    if(pr.dir==="toExp"&&(c.hasRad||!c.fracExp)) return {ok:false,msg:"That's equal, but write it with a <b>rational exponent</b> and no radical sign."};
+    if(pr.dir==="toRad"&&(!c.hasRad||c.fracExp)) return {ok:false,msg:"That's equal, but write it in <b>radical form</b> — no fractional exponent."};
+    return {ok:true}; }
+  if(pr.kind==="eval"){ const v=numVal(str); if(!isFinite(v)) return {ok:false,read:true}; return {ok:Math.abs(v-pr.val)<=1e-6*Math.max(1,Math.abs(pr.val))}; }
+  if(pr.kind==="simp"){ const c=compile(str); if(!c||c.hasX) return {ok:false,read:true}; const v=c.f(0);
+    if(!(Math.abs(v-pr.v)<1e-6*Math.max(1,Math.abs(pr.v)))) return {ok:false};
+    if(c.fracExp) return {ok:false,msg:"Equal, but use radical form (no fractional exponents)."};
+    if(c.radDen) return {ok:false,msg:"Equal, but there is still a radical in the <b>denominator</b>. Rationalize it."};
+    if(!c.rad.length||c.rad.some(q=>q.idx!==pr.idx||!near(q.v,pr.r))) return {ok:false,msg:`That has the right value, but it isn't in <b>simplest radical form</b> — the radicand still has a perfect ${pr.idx===2?"square":"cube"} factor (or the form is unusual).`};
+    return {ok:true}; }
+  if(pr.kind==="solve"){ const a=parseSolSet(str); if(a===null) return {ok:false,read:true};
+    const has=(arr,x)=>arr.some(y=>Math.abs(y-x)<1e-6); const ok=a.length===pr.ans.length? (pr.ans.every(x=>has(a,x))&&a.every(x=>has(pr.ans,x))) : (new Set(a.map(x=>Math.round(x*1e6))).size===pr.ans.length&&pr.ans.every(x=>has(a,x))&&a.every(x=>has(pr.ans,x)));
+    return {ok,vals:a}; }
+  if(pr.kind==="dom"){ const d=parseDomain(str); if(!d||(!d.all&&!isFinite(d.v))) return {ok:false,read:true};
+    if(pr.n%2) return {ok:!!d.all};
+    if(d.all) return {ok:false};
+    if(Math.abs(d.v-pr.bd)<1e-6&&(d.op===">"||d.op==="<")&&d.op[0]===pr.op[0]) return {ok:false,msg:`Close! At x = ${fx(pr.bd)} the radicand is 0, and ${h(R(pr.n,"0"))} = 0 is defined — include the endpoint (use ≥ or ≤).`};
+    return {ok:Math.abs(d.v-pr.bd)<1e-6&&d.op===pr.op}; }
+  return {ok:false};
+}
+const M6={
+  tab:"Challenge", lesson:"N-RN.A · A-REI.A.2 · F-IF.C.7b", accent:"var(--coral)",
+  title:()=>"Practice: "+({conv:"convert forms",eval:"evaluate a rational exponent",simp:"simplify a radical",solve:"solve a radical equation",dom:"domain of a radical function"}[M6.s.pr?M6.s.pr.kind:"conv"]),
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  streakEl:null,
+  newProb(){ const s=M6.s; s.pr=genProblem(s.kind); s.state="open"; s.reveal=false; s.tries=0; },
+  bar(){ btn("New problem",()=>{M6.newProb();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    KINDS.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=M6.s.kind; sel.onchange=()=>{M6.s.kind=sel.value;M6.newProb();render();}; bar.appendChild(sel);
+    M6.streakEl=spacer(""); M6.upStreak(); },
+  upStreak(){ if(M6.streakEl)M6.streakEl.textContent="Streak "+M6.s.streak+" · Best "+M6.s.best+" · Solved "+M6.s.solved; },
+  draw(){ if(!M6.s.pr)M6.newProb(); const pr=M6.s.pr, show=M6.s.state==="right"||M6.s.reveal;
+    if(show&&pr.kind==="solve"){ const W=autoWin(pr.E,pr.res.res); const g=graphBg(W); drawRadEq(g,pr.E,pr.res,{}); return; }
+    if(show&&pr.kind==="dom"){ const W={x0:-12,x1:12,y0:-8,y1:8}; const g=graphBg(W); const f=x=>pr.a*rootN(pr.b*x+pr.c,pr.n)+pr.k;
+      if(pr.n%2===0){ const xb=X(pr.bd); if(pr.b>0) g.appendChild(E("rect",{x:0,y:0,width:clamp(xb,0,VW),height:VH,fill:"rgba(220,38,38,.07)"})); else g.appendChild(E("rect",{x:clamp(xb,0,VW),y:0,width:VW-clamp(xb,0,VW),height:VH,fill:"rgba(220,38,38,.07)"})); vline(g,pr.bd,"#DC2626",1.6,"6 5"); wdot(g,pr.bd,pr.k,"var(--alt)",6); }
+      plot(g,f,{color:"var(--alt)",w:3.6,a:pr.n%2===0&&pr.b>0?pr.bd:null,b:pr.n%2===0&&pr.b<0?pr.bd:null}); curveLabel(g,f,pr.show,"#047857",pr.b<0&&pr.n%2===0?"left":null); return; }
+    if(show&&pr.kind==="eval"&&Math.abs(pr.val)<60&&Math.abs(pr.b)<200){ const xm=Math.max(Math.abs(pr.b)*1.3,4), ym=Math.max(Math.abs(pr.val)*1.5,3); const g=graphBg({x0:-xm*(pr.b<0?1:0.25),x1:xm*(pr.b<0?0.4:1),y0:-ym*(pr.val<0?1:0.3),y1:ym*(pr.val<0?0.4:1)});
+      const f=x=>realPow(x,pr.m/pr.n); plot(g,f,{color:"var(--vert)",w:3.4,a:pr.n%2===0&&pr.m>0?0:null}); wseg(g,pr.b,0,pr.b,pr.val,"var(--lin)",2,"5 5"); wseg(g,0,pr.val,pr.b,pr.val,"var(--corr)",2,"5 5"); wdot(g,pr.b,pr.val,"var(--magenta)",7);
+      label(g,X(pr.b),Y(pr.val)-22*FS,"("+fx(pr.b)+", "+fx(pr.val)+")","#C0185F"); curveLabel(g,f,"y = x^{"+pr.m+"/"+pr.n+"}","#6D28D9",pr.b<0?"left":null); return; }
+    // problem card
+    cv.appendChild(E("rect",{x:30,y:40,width:VW-60,height:VH-80,rx:22,fill:"#fff",stroke:"#C7D2EA","stroke-width":2}));
+    rich(cv,VW/2,112,pr.prompt,{cls:"why",size:20*Math.min(FS,1.3)});
+    const fs=fitSize(pr.show,44,VW-120); rich(cv,VW/2,VH/2+10,pr.show,{cls:"big",size:fs});
+    if(show){ const last=plain(pr.sol).split("\n").pop(); const ls=fitSize(last,22,VW-120); rich(cv,VW/2,VH-100,last,{cls:"big",size:ls,color:"#047857"}); }
+    else rich(cv,VW/2,VH-90,"answer in the panel →",{cls:"why",size:15*Math.min(FS,1.3)});
+  },
+  panel(full){ const pr=M6.s.pr;
+    if(!full&&document.getElementById("chk"))return;
+    side.innerHTML=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob" data-kind="${pr.kind}">${pr.q}</p></div>
+      <label class="fld" for="ans0">Your answer</label><div class="fldwrap"><input type="text" id="ans0" autocomplete="off" spellcheck="false" autocapitalize="off"></div>
+      <div class="fmt">${pr.fmt}</div>
+      <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button>
+        <button id="sol" class="ghost" type="button">Show solution</button></div>
+      <div id="fb6"></div><div style="height:4px"></div></div>
+      <div class="panel"><h3>How answers are checked</h3><div class="pad">
+      <p>Expressions are compared by value at several x-values, so any equivalent form counts — but it must be in the form asked for (radical vs. exponent, simplest radical form).</p>
+      <p>A first-try correct answer grows your streak. A wrong answer resets it and gives a hint; you can try again.</p></div></div>`;
+    const inp=document.getElementById("ans0"), fb=document.getElementById("fb6");
+    const showSol=good=>{ fb.innerHTML=(good||"")+`<div class="fldwrap"><div class="eq">${h(pr.sol)}</div></div>`; };
+    const check=()=>{ const s=M6.s; if(s.state==="right")return;
+      const r=checkAnswer(pr,inp.value);
+      if(r.read){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> ${pr.fmt}</div>`; return; }
+      if(r.ok){ s.state="right"; if(s.tries===0&&!s.reveal){ s.streak++; s.best=Math.max(s.best,s.streak); } s.solved++; M6.upStreak(); clear(); M6.draw();
+        showSol(`<div class="verdict good"><b>Correct!</b> ${s.tries||s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+s.streak+"."} Compare with the full work below, then press <b>New problem</b>.</div>`); inp.disabled=true; }
+      else { s.tries++; s.streak=0; M6.upStreak(); fb.innerHTML=`<div class="verdict bad"><b>Not quite.</b> ${r.msg||hintText(pr,r.vals)}</div>`; }
+    };
+    document.getElementById("chk").onclick=check;
+    inp.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); });
+    document.getElementById("sol").onclick=()=>{ const s=M6.s; s.reveal=true; if(s.state!=="right"){s.streak=0;M6.upStreak();} clear(); M6.draw();
+      showSol(`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+  },
+  // test hook: a correct answer string for the current problem
+  answer(){ const pr=M6.s.pr;
+    if(pr.kind==="conv") return pr.dir==="toExp"? `x^(${pr.m}/${pr.n})` : (pr.m<0?`1/root(${pr.n},x^${-pr.m})`:`root(${pr.n},x^${pr.m})`);
+    if(pr.kind==="eval") return fx(pr.val).replace(/−/g,"-");
+    if(pr.kind==="simp"){ if(pr.t==="rat") return plain(surd(0,Math.round(pr.v*pr.r/Math.sqrt(pr.r)),pr.r,pr.r)).replace(/−/g,"-"); const k=Math.round(pr.v/rootN(pr.r,pr.idx)); return k+(pr.idx===2?"sqrt":"*cbrt")+"("+pr.r+")"; }
+    if(pr.kind==="solve") return pr.ans.length? pr.ans.map(x=>fx(x).replace(/−/g,"-")).join(", ") : "no solution";
+    if(pr.kind==="dom") return pr.n%2? "all real numbers" : "x "+pr.op+" "+fx(pr.bd).replace(/−/g,"-");
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+window.__radLab={M6,MODS};
+function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
+function update(){ setFS(); const M=MODS[cur]; clear(); clipN=0; M.draw(); M.panel(false); }
+function render(){
+  setFS(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M6&&!M6.s.pr)M6.newProb();
+  if(M===M4&&!M4.s.sol)M4.setE(M4.s.E);
+  bTitle.innerHTML=h(M.title()); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+plain(M.title()));
+  bar.innerHTML=""; M.bar();
+  clear(); clipN=0; M.draw(); M.panel(true);
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>
