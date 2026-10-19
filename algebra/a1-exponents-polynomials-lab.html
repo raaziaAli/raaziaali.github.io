@@ -337,7 +337,7 @@ function normIn(str){
 }
 /* polynomial in x → {p, terms, termPolys, factors (top-level product), paren} */
 function parsePoly(str){
-  const s=normIn(str); if(!s) return null; let i=0, top=null;
+  const s=normIn(str); if(!s) return null; let i=0, top=null, grp=false;
   const peek=()=>s[i];
   function expr(isTop){
     const tp=[]; let r=term(); let acc=r.p; tp.push(r.p); const f0=r.f;
@@ -361,11 +361,11 @@ function parsePoly(str){
       let r=[1]; for(let j=0;j<e;j++) r=pmul(r,b); if(f&&pdeg(b)>=1) for(let j=0;j<e;j++) f.push(b); return r; }
     if(f&&pdeg(b)>=1) f.push(b); return b; }
   function atom(){ const c=peek();
-    if(c==="("){ i++; const v=expr(false); if(peek()!==")") throw "p"; i++; return v; }
+    if(c==="("){ i++; grp=true; const v=expr(false); if(peek()!==")") throw "p"; i++; return v; }
     if(c==="x"){ i++; return [0,1]; }
     const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)); if(!m) throw "a"; i+=m[0].length; return [parseFloat(m[0])]; }
   try{ const p=expr(true); if(i!==s.length) return null;
-    return {p:ptrim(p),terms:top.terms,termPolys:top.termPolys,factors:top.factors,paren:s.indexOf("(")>=0}; }catch(_){ return null; }
+    return {p:ptrim(p),terms:top.terms,termPolys:top.termPolys,factors:top.factors,paren:grp}; }catch(_){ return null; }
 }
 /* numeric expression with letter variables */
 function evalExpr(str,V){
@@ -1177,7 +1177,7 @@ const M5={
   drop(id,p){ const s=M5.s, d=s.drag; s.drag=null; if(!d||!p)return; const x=350+(p[0]-d.x0);
     if(x<230) M5.answer(true); else if(x>470) M5.answer(false); },
   draw(){ const g=E("g",{}); cv.appendChild(g); if(M5.s.mode==="explore")M5.dEx(g); else M5.dSort(g); },
-  dEx(g){ const s=M5.s, {a,b,P,Q,r}=s.pair, op=s.op;
+  dEx(g){ const s=M5.s, {a,b,r}=s.pair, PP=s.pair.P, QQ=s.pair.Q, op=s.op;
     const box=(x,ttl,sub,o1,o2,res,inside)=>{
       R(g,x,52,310,286,{fill:"#C4B5FD",fop:.14,stroke:C_D,sw:2.4,rx:28});
       T(g,x+155,84,ttl,{size:20,anchor:"middle",cls:"ttl",fill:C_D}); T(g,x+155,106,sub,{size:13,anchor:"middle",fill:DIM});
@@ -1188,7 +1188,7 @@ const M5={
     };
     const os=o=>({"+":"+","−":"−","×":"×","÷":"÷"}[o]);
     box(20,"Integers","… −2, −1, 0, 1, 2 …","a = "+minus(a),"b = "+minus(b),"a "+os(op)+" b = "+r.iS,r.inI);
-    box(370,"Polynomials","in x, real coefficients","P = "+polyStr(P,"u"),"Q = "+polyStr(Q,"u"),r.pS,r.inP);
+    box(370,"Polynomials","in x, real coefficients","P = "+polyStr(PP,"u"),"Q = "+polyStr(QQ,"u"),r.pS,r.inP);
     const st=s.stats[op], msg=op==="÷"?"÷ is NOT closed: one result outside the set is enough to break closure.":"Tried "+st[0]+" pair"+(st[0]>1?"s":"")+" with "+op+": every result stayed inside both sets.";
     T(g,350,446,msg,{size:fitSize(msg,680,15),anchor:"middle",fill:op==="÷"?TNEG:"#047857"});
   },

@@ -576,8 +576,8 @@ const M1={
   draw(){
     const {a,b,c}=M1.s, R=csSteps(a,b,c), st=R.st[M1.s.step], stage=st.stage, p=R.p, h=R.h, m=Math.abs(h);
     const g=E("g",{}); cv.appendChild(g);
-    stext(g,[190,24],near(a,1)?"Tiles for x² + "+(p<0?"(−":"")+fr(Math.abs(p))+(p<0?")":"")+"x":"Tiles for the inside: x² "+(p<0?"−":"+")+" "+fr(Math.abs(p))+"x","sm","var(--ink)");
-    const TX=40, TY=62, X=170;
+    stext(g,[190,24],(FS>1?"":(near(a,1)?"Tiles for ":"Tiles for the inside: "))+poly([[1,"x²"],[p,"x"]]),"sm","var(--ink)");
+    const TX=40, TY=86, X=160;
     const C={sq:["#DDD6FE","#7C3AED"],x:["#BAE6FD","#0284C7"],nx:["rgba(254,202,202,.85)","#DC2626"],u:["#FDE68A","#CA8A04"]};
     const rect=(x,y,w,hh_,col,dash,extra)=>{ const r=E("rect",Object.assign({x,y,width:Math.max(0,w),height:Math.max(0,hh_),fill:col[0],stroke:col[1],"stroke-width":2},extra||{})); if(dash)r.setAttribute("stroke-dasharray",dash); g.appendChild(r); return r; };
     rect(TX,TY,X,X,C.sq); stext(g,[TX+X/2,TY+X/2],"x²","mk","#5B21B6");
@@ -617,8 +617,11 @@ const M1={
       }
     }
     const capY=TY+X+(h>0&&stage>0?m*Math.min(30,75/Math.max(m,1e-9)):0)+34;
-    stext(g,[190,Math.min(capY,420)],cap,"sm","var(--graphite)");
-    if(!near(a,1)) stext(g,[190,Math.min(capY,420)+24],"(then multiply the whole square by a = "+fr(a)+")","sm","#64748B");
+    const mx=Math.floor(350/(8.1*FS)), lines=[]; let ln="";
+    cap.replace(/\((x [−+] )/g,(m0,m1)=>"("+m1.replace(/ /g,"\u00a0")).split(" ").forEach(w=>{ if((ln+" "+w).trim().length>mx){ lines.push(ln.trim()); ln=w; } else ln+=" "+w; }); if(ln.trim())lines.push(ln.trim());
+    if(!near(a,1)) lines.push("(then multiply by a = "+fr(a)+")");
+    const lh=19*FS, y0=Math.min(capY,446-lh*(lines.length-1)-6);
+    lines.forEach((l,i)=>stext(g,[190,y0+i*lh],l,"sm",i===lines.length-1&&!near(a,1)?"#64748B":"var(--graphite)"));
     // mini graph
     g.appendChild(E("line",{x1:378,y1:14,x2:378,y2:446,stroke:"#C7D2EA","stroke-width":1.5}));
     const k=R.k, xv=-h, S=12; let yc=0; if(Math.abs(k)>13) yc=k-Math.sign(k)*10;
@@ -626,7 +629,9 @@ const M1={
     const gp=drawPlane(P,{gap:36});
     curve(gp,P,x=>a*x*x+b*x+c,"var(--vert)",3);
     if(stage===4){ const V=P.W2S([xv,k]); sseg(gp,[V[0],16],[V[0],444],"#C0185F",1.6,"6 5"); sdot(gp,V,"var(--magenta)",6); label(gp,V,[0,a>0?1:-1],"("+fr(xv)+", "+fr(k)+")","#C0185F"); }
-    stext(gp,[540,34],"y = "+(stage===4?vform(a,xv,k):quad(a,b,c)),"sm","#6D28D9");
+    const eqs="y = "+(stage===4?vform(a,xv,k):quad(a,b,c)), ew=eqs.length*8.2*FS+16;
+    gp.appendChild(E("rect",{x:539-ew/2,y:22-9*FS,width:ew,height:18*FS+6,rx:8,fill:"rgba(255,255,255,.92)",stroke:"#C7D2EA"}));
+    stext(gp,[539,25],eqs,"sm","#6D28D9");
   },
   panel(){
     const {a,b,c,step}=M1.s, R=csSteps(a,b,c);
@@ -852,7 +857,8 @@ const M4={
     if(op==="div"){
       if(cabs(z2)===0){ t="z₂ = 0: division by zero is undefined."; }
       else { const n2=c*c+d*d, re=a*c+b*d, im=b*c-a*d, F=v=>snap?fr(v):num(v,3);
-        t=`${pz(z1)} / ${pz(z2)}\n= ${pz(z1)}${pz([c,-d])} / (${pz(z2)}${pz([c,-d])})    ← multiply by the conjugate\n= (${F(re)} ${im<0?"−":"+"} ${F(Math.abs(im))}i) / (${f(c*c)} + ${f(d*d)})\n= ${F(re)}/${F(n2)} ${im<0?"−":"+"} (${F(Math.abs(im))}/${F(n2)})i\n= ${cstr([re/n2,im/n2],v=>snap?fr(v):num(v,3))}`; }
+        const fin=cstr([re/n2,im/n2],v=>snap?fr(v):num(v,3)), split=`${F(re)}/${F(n2)} ${im<0?"−":"+"} (${F(Math.abs(im))}/${F(n2)})i`;
+        t=`${pz(z1)} / ${pz(z2)}\nMultiply top and bottom by the conjugate ${cs([c,-d])}:\n= ${pz(z1)}${pz([c,-d])} / (${pz(z2)}${pz([c,-d])})\n= (${cstr([re,im],F)}) / (${f(c*c)} + ${f(d*d)})\n= ${split}${split!==fin?"\n= "+fin:""}`; }
       h=`<p>You can't leave i in a denominator. Multiply the top and bottom by the <b>conjugate of the denominator</b>: the bottom becomes c² + d², a real number, and you can split into a + bi form.</p><p>Geometrically division undoes multiplication: moduli <b>divide</b> and angles <b>subtract</b>.</p>${cabs(z2)>0?`<div class="eq">|z₁| / |z₂| ≈ ${num(cabs(z1))} / ${num(cabs(z2))} ≈ ${num(cabs(z1)/cabs(z2))}\nθ₁ − θ₂ ≈ ${num(cargD(z1)-cargD(z2),1)}°</div>`:""}`; }
     side.innerHTML=`<div class="panel"><h3>${OPS.find(o=>o[0]===op)[1]}</h3><div class="pad">${h}<div class="eq">${esc(t)}</div></div></div>
       <div class="panel"><h3>Measurements</h3>
@@ -890,7 +896,7 @@ const M5={
     // separator & complex plane
     cv.appendChild(E("rect",{x:440,y:0,width:8,height:VH,fill:"#E2E8F0"}));
     const gz=drawPlane(Z,{xl:"real",yl:"imag",imag:true,gap:36});
-    stext(gz,[575,20],"roots in the complex plane","sm","var(--ink)");
+    stext(gz,[575,VH-16],FS>1?"roots":"roots in the complex plane","sm","var(--ink)");
     const pts=Q.kind==="neg"? [[Q.p,Q.q],[Q.p,-Q.q]] : Q.vals;
     if(Q.kind==="neg") sseg(gz,Z.W2S(pts[0]),Z.W2S(pts[1]),"#94A3B8",1.8,"6 5");
     pts.forEach((r,i)=>{ const s=Z.W2S(r); sdot(gz,s,Q.kind==="neg"?"var(--magenta)":"#059669",7);
@@ -1000,7 +1006,7 @@ const M6={
       const {a,b,c}=pr, xv=-b/(2*a), yv=a*xv*xv+b*xv+c, S=26;
       let ox=clamp(350-xv*S,40,660), oy=230+clamp(yv+(a>0?4:-4),-14,14)*S*0.5; oy=clamp(oy,30,430);
       const P=Plane({ox,oy,S,rect:[0,0,VW,VH]}), g=drawPlane(P);
-      if(!show){ stext(g,[350,VH/2],"The graph appears after you answer.","sm","#64748B"); return; }
+      if(!show){ { const t="The graph appears after you answer."; infoBox(g,350-(t.length*8.1*FS+20)/2,VH/2-30,[t],"#475569"); }; return; }
       curve(g,P,x=>a*x*x+b*x+c,"var(--vert)");
       const V=P.W2S([xv,yv]); sdot(g,V,"var(--vert)",6); label(g,V,[0,a>0?1:-1],"vertex ("+fr(xv)+", "+fr(yv)+")","#6D28D9");
       const Q=qSolve(a,b,c); if(Q.kind!=="neg")Q.vals.forEach((r,i)=>{ const s=P.W2S([r[0],0]); sdot(g,s,"var(--magenta)",7); label(g,s,[i?0.5:-0.5,a>0?-1:1],"x ≈ "+num(r[0]),"#C0185F"); });
