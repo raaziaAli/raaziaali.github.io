@@ -1,0 +1,1108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quadratics &amp; Complex Lab — Algebra 2 Unit 2</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M10 12Q32 80 54 12' stroke='%2300E5FF' stroke-width='6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='46' r='6' fill='%23FF3D8A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .rel[data-pair]{cursor:pointer}
+  .rel[data-pair]:hover{background:rgba(255,255,255,.05)}
+  .rel.active{background:rgba(255,255,255,.09);box-shadow:inset 3px 0 0 var(--accent)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top}
+  table.facts .ab{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  table.facts .st{color:#DDDDF2}
+  table.facts .st i{display:block;color:var(--dim);font-style:normal;font-size:13px;margin-top:4px}
+  .cathead{padding-top:18px!important;padding-bottom:6px!important;font-family:var(--display);font-weight:600;
+    font-size:13px;letter-spacing:.02em;color:var(--yellow);border-bottom:none!important}
+  .chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-right:9px}
+  .chip.assume{background:rgba(255,217,61,.18);color:var(--yellow)}
+  .chip.proved{background:rgba(94,234,212,.16);color:var(--mint)}
+  ol.chain{margin:0;padding:6px 20px 18px 38px;font-size:15px;color:#CFCFEA}
+  ol.chain li{padding:8px 0} ol.chain li::marker{color:var(--accent);font-weight:700}
+  ol.chain li b{color:#fff}
+
+  .steps{width:100%;border-collapse:collapse;font-size:15px}
+  .steps td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:middle}
+  .steps .stmt{font-family:var(--mono);font-size:14px;font-weight:600;color:#fff;white-space:nowrap}
+  .steps .why{width:56%}
+  .steps tr.right .stmt{color:var(--mint)}
+  .steps tr.right select{border-color:rgba(94,234,212,.6)}
+  .steps tr.wrong select{border-color:var(--coral)}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.8;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.4;fill:none;stroke-dasharray:9 6}
+  .wedge{stroke-width:2.4;fill-opacity:.17;cursor:pointer}
+  .wedge.flat{cursor:default}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── shared lab additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible,.choice:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:16px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  @media (max-width:560px){ svg.canvas .sm{font-size:21px;stroke-width:5} svg.canvas .mk{font-size:27px} svg.canvas .num{font-size:22px} svg.canvas .ax{font-size:16px} }
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .leg{stroke-width:3;fill:none;stroke-dasharray:8 5;stroke-linecap:round}
+  .tick{stroke:var(--graphite);stroke-width:2.2}
+  .ghostdot{fill:#9AA8C7;stroke:#fff;stroke-width:2}
+  .nt{position:relative;display:inline-block;padding-top:.42em;line-height:1.05;font-family:var(--mono);font-weight:700;color:#fff;white-space:nowrap}
+  .nt::before{content:"";position:absolute;left:.06em;right:.06em;top:.2em;border-top:2px solid currentColor}
+  .nt.ray::after,.nt.line::after{content:"";position:absolute;right:-.12em;top:calc(.2em - 3.5px);border-left:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .nt.line .la{position:absolute;left:-.12em;top:calc(.2em - 3.5px);border-right:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .uterms{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+  .uterms span{font-family:var(--mono);font-size:12px;font-weight:600;padding:5px 11px;border-radius:100px;
+    border:1px solid var(--edge);color:var(--dim);opacity:.55}
+  .uterms span.on{opacity:1;color:#0A0A1F;background:var(--accent);border-color:var(--accent)}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px}
+  .choice{font-family:var(--ui);font-size:15px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:14px;padding:13px 12px;cursor:pointer;text-align:left;line-height:1.5;transition:.15s}
+  .choice:hover{background:rgba(255,255,255,.12)}
+  .choice.right{border-color:var(--mint);background:rgba(94,234,212,.16)}
+  .choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.14)}
+  .choice small{display:block;font-weight:400;color:var(--dim);font-size:12.5px}
+  .stepl{list-style:none;margin:0;padding:6px 0}
+  .stepl li{padding:10px 20px;border-left:3px solid transparent;color:var(--dim);font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li.done{color:#CFCFEA}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li b{color:#fff}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  @media (max-width:560px){
+    .choices{grid-template-columns:1fr}
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+  }
+  /* ── Quadratics & Complex Lab additions ── */
+  .seglab{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--dim);align-self:center;margin-right:3px}
+  .bar .seg{flex-wrap:wrap}
+  .seg button.sm2{padding:9px 13px;min-width:44px}
+  .mono{font-family:var(--mono)}
+  .stepl li .ex{display:block;font-family:var(--mono);font-size:14px;font-weight:600;color:#fff;margin:3px 0;overflow-wrap:anywhere}
+  .stepl li .nx{display:block;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--mint);margin-top:4px;overflow-wrap:anywhere}
+  .stepl li.todo{opacity:.45}
+  .stepl li.todo .ex,.stepl li.todo .nx{color:var(--dim)}
+  .meter{display:block;width:100%;height:auto;margin:4px 0 8px}
+  .cls{display:inline-block;font-family:var(--mono);font-size:12.5px;font-weight:700;padding:4px 11px;border-radius:100px;letter-spacing:.04em}
+  .cls.pos{background:rgba(94,234,212,.18);color:var(--mint)}
+  .cls.zero{background:rgba(255,217,61,.18);color:var(--yellow)}
+  .cls.neg{background:rgba(196,181,253,.2);color:var(--lavender)}
+  table.cyc{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:14px}
+  table.cyc td{padding:8px 20px;border-bottom:1px solid rgba(196,181,253,.11);color:#CFCFEA}
+  table.cyc tr.on td{background:rgba(255,255,255,.08);color:#fff;font-weight:700}
+  table.cyc tr.on td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+  .calc3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .calc3 label.fld{margin:0 0 6px}
+  .fmt{font-size:13px;color:var(--dim);margin-top:8px}
+  .fmt code{font-family:var(--mono);color:#fff;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:6px}
+  .choices .choice[disabled]{cursor:default;opacity:.85}
+  @media (max-width:560px){ .calc3{gap:7px} .steps .stmt{white-space:normal} .seg button.sm2{padding:8px 10px;min-width:38px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Quadratics &amp; Complex Numbers Lab</h1>
+    <div class="eyebrow">Algebra 2 · Unit 2 · Quadratic Equations &amp; Complex Numbers</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Quadratics and complex numbers figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every graph and every step is live and computed from the current numbers — change a coefficient or drag a point and the work follows. Vocabulary follows Common Core / Eureka Math (EngageNY) Algebra II.
+    <div class="links"><a href="/algebra/">← Algebra courses</a><a href="/math/#algebra">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const D2R=Math.PI/180;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const isInt=v=>Math.abs(v-Math.round(v))<1e-9;
+const near=(a,b,e)=>Math.abs(a-b)<(e||1e-9);
+const gcd=(a,b)=>{a=Math.abs(Math.round(a));b=Math.abs(Math.round(b));while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+function num(v,dp){ dp=(dp==null?2:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+// exact fraction when possible, otherwise a rounded decimal
+function fr(v,maxD){
+  if(!isFinite(v))return "—"; maxD=maxD||400;
+  if(Math.abs(v)<1e-12)return "0";
+  for(let d=1;d<=maxD;d++){ const n=Math.round(v*d);
+    if(Math.abs(n/d-v)<1e-9*Math.max(1,Math.abs(v))){ const g=gcd(n,d); return d/g===1? minus(String(n/g)) : minus((n/g)+"/"+(d/g)); } }
+  return num(v,3);
+}
+const isFrac=s=>s.indexOf("/")>=0;
+const frA=v=>{ const s=fr(v); return isFrac(s)? s+" ≈ "+num(v,3) : s; };
+const par=s=>(s[0]==="−"? "("+s+")" : s);
+function simpRad(n){ n=Math.round(Math.abs(n)); if(n===0)return [0,1]; let k=1,r=n;
+  for(let i=Math.floor(Math.sqrt(n));i>1;i--){ if(n%(i*i)===0){k=i;r=n/(i*i);break;} } return [k,r]; }
+// √R for a rational R ≥ 0, simplified
+function sqrtRat(R){
+  if(R<0)return null; if(R===0)return "0";
+  for(let d=1;d<=400;d++){ const n=Math.round(R*d); if(Math.abs(n/d-R)<1e-9){
+    const g=gcd(n,d), N=n/g, Dn=d/g; const [k,r]=simpRad(N*Dn); const g2=gcd(k,Dn), K=k/g2, Dd=Dn/g2;
+    if(r===1)return fr(K/Dd);
+    return (K===1?"":K)+"√"+r+(Dd>1?"/"+Dd:""); } }
+  return "√"+num(R,3);
+}
+// polynomial text from [[coef,"x²"],[coef,"x"],[coef,""]]
+function poly(terms){
+  let out="", first=true;
+  for(const [c,v] of terms){
+    if(Math.abs(c)<1e-12)continue;
+    const ab=Math.abs(c), f=fr(ab);
+    const body= v? ((near(ab,1)?"":(isFrac(f)?"("+f+")":f))+v) : f;
+    out+= first? (c<0?"−":"")+body : (c<0?" − ":" + ")+body; first=false;
+  }
+  return out||"0";
+}
+const quad=(a,b,c)=>poly([[a,"x²"],[b,"x"],[c,""]]);
+const sgnT=v=>Math.abs(v)<1e-12?"":(v<0?" − ":" + ")+fr(Math.abs(v));
+const sqBin=xv=>Math.abs(xv)<1e-12?"x":"(x "+(xv>0?"−":"+")+" "+fr(Math.abs(xv))+")";
+function aPre(a){ if(near(a,1))return ""; if(near(a,-1))return "−"; const f=fr(a); return isFrac(f)?"("+f+")":f; }
+function vform(a,xv,k){ const b=sqBin(xv); return aPre(a)+(b==="x"?"x²":b+"²")+sgnT(k); }
+// complex numbers as [re, im]
+const cadd=(a,b)=>[a[0]+b[0],a[1]+b[1]], csub=(a,b)=>[a[0]-b[0],a[1]-b[1]];
+const cmul=(a,b)=>[a[0]*b[0]-a[1]*b[1],a[0]*b[1]+a[1]*b[0]];
+const cdiv=(a,b)=>{const d=b[0]*b[0]+b[1]*b[1]; return [(a[0]*b[0]+a[1]*b[1])/d,(a[1]*b[0]-a[0]*b[1])/d];};
+const cabs=z=>Math.hypot(z[0],z[1]);
+const cargD=z=>{ let t=Math.atan2(z[1],z[0])/D2R; if(Math.abs(t+180)<1e-9)t=180; return t; };
+function cstr(z,f){ f=f||fr; const re=z[0], im=z[1];
+  const reS=Math.abs(re)<1e-12?"":f(re);
+  if(Math.abs(im)<1e-12)return reS||"0";
+  const ab=Math.abs(im), s=f(ab), co=near(ab,1)?"":(isFrac(s)?"("+s+")":s);
+  if(!reS)return (im<0?"−":"")+co+"i";
+  return reS+(im<0?" − ":" + ")+co+"i";
+}
+function csqrt(z){ const r=cabs(z); if(r===0)return [0,0]; const re=Math.sqrt((r+z[0])/2), im=Math.sqrt(Math.max(0,(r-z[0])/2)); return [re, z[1]<0?-im:im]; }
+
+/* ── expression parser: real/complex, optional variable x ── */
+function parseC(str,xv){
+  let s=String(str).toLowerCase().replace(/[−–—]/g,"-").replace(/[×·]/g,"*").replace(/÷/g,"/")
+    .replace(/\s+/g,"").replace(/sqrt/g,"√").replace(/²/g,"^2").replace(/\*\*/g,"^").replace(/^y=/,"").replace(/^x=/,"");
+  s=s.replace(/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)i/g,"($1/$2)i");
+  if(!s)return null; let i=0;
+  function expr(){ let v=term(); while(s[i]==="+"||s[i]==="-"){ const o=s[i++]; const r=term(); v=o==="+"?cadd(v,r):csub(v,r);} return v; }
+  function term(){ let v=unary(); for(;;){ const c=s[i];
+      if(c==="*"||c==="/"){ i++; const r=unary(); v=c==="*"?cmul(v,r):cdiv(v,r); }
+      else if(c&&/[0-9.(√ix]/.test(c)){ v=cmul(v,power()); }
+      else break; } return v; }
+  function unary(){ if(s[i]==="-"){i++; const v=unary(); return [-v[0],-v[1]];} if(s[i]==="+"){i++;return unary();} return power(); }
+  function power(){ const b=atom(); if(s[i]==="^"){ i++; const e=unary(); if(Math.abs(e[1])>1e-12)throw 0;
+      const n=e[0]; if(isInt(n)&&Math.abs(n)<=400){ let r=[1,0]; for(let k=0;k<Math.abs(n);k++)r=cmul(r,b); return n<0?cdiv([1,0],r):r; }
+      if(Math.abs(b[1])<1e-12&&b[0]>0)return [Math.pow(b[0],n),0]; throw 0; } return b; }
+  function atom(){ const c=s[i];
+    if(c==="("){ i++; const v=expr(); if(s[i]!==")")throw 0; i++; return v; }
+    if(c==="√"){ i++; let neg=false; if(s[i]==="-"){neg=true;i++;} let v=power(); if(neg)v=[-v[0],-v[1]]; return csqrt(v); }
+    if(c==="i"){ i++; return [0,1]; }
+    if(c==="x"){ if(xv==null)throw 0; i++; return [xv,0]; }
+    const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)); if(!m)throw 0; i+=m[0].length; return [parseFloat(m[0]),0]; }
+  try{ const v=expr(); if(i!==s.length||!isFinite(v[0])||!isFinite(v[1]))return null; return v; }catch(_){ return null; }
+}
+// a list of answers: "3, -1", "2±sqrt(3)", "(1±√5)/2", "1 ± 2i", "x = 4 or x = -2"
+function parseList(str){
+  let s=String(str).replace(/\+\/-|\+-|-\+/g,"±").replace(/\s+or\s+|\s+and\s+|;/gi,",");
+  const parts=s.split(",").map(t=>t.trim()).filter(Boolean); const out=[];
+  for(let p of parts){ p=p.replace(/^x\s*=\s*/i,"");
+    if(p.indexOf("±")>=0){ const a=parseC(p.replace("±","+")), b=parseC(p.replace("±","-")); if(!a||!b)return null; out.push(a,b); }
+    else { const v=parseC(p); if(!v)return null; out.push(v); } }
+  return out.length?out:null;
+}
+function sameSet(given,want,tol){
+  const cl=(p,q)=>Math.abs(p[0]-q[0])<=tol&&Math.abs(p[1]-q[1])<=tol;
+  return want.every(w=>given.some(g=>cl(g,w))) && given.every(g=>want.some(w=>cl(g,w)));
+}
+
+/* ── quadratic solving, exact + decimal ── */
+function qSolve(a,b,c){
+  const D=b*b-4*a*c, Dz=Math.abs(D)<1e-9?0:D, out={a,b,c,D:Dz,p:-b/(2*a)};
+  if(Dz>0){ const s=Math.sqrt(Dz); out.vals=[[(-b-s)/(2*a),0],[(-b+s)/(2*a),0]].sort((u,v)=>u[0]-v[0]); out.kind="pos"; }
+  else if(Dz===0){ out.vals=[[out.p,0]]; out.kind="zero"; }
+  else { out.q=Math.sqrt(-Dz)/(2*Math.abs(a)); out.vals=[[out.p,out.q],[out.p,-out.q]]; out.kind="neg"; }
+  // exact form when a, b, c are rational
+  let sc=null; for(let d=1;d<=120;d++){ if([a,b,c].every(v=>isInt(v*d))){sc=d;break;} }
+  if(sc){
+    let A=Math.round(a*sc),B=Math.round(b*sc),C=Math.round(c*sc); const g=gcd(gcd(A,B),C); A/=g;B/=g;C/=g;
+    const DD=B*B-4*A*C, den=2*A; out.int={A,B,C,D:DD};
+    if(DD===0){ out.exact="x = "+fr(-B/den); out.exactList=[fr(-B/den)]; }
+    else { const [k,r]=simpRad(DD);
+      if(r===1&&DD>0){ const xs=[(-B-k)/den,(-B+k)/den].sort((u,v)=>u-v); out.exactList=xs.map(v=>fr(v)); out.exact="x = "+out.exactList.join(" or x = "); }
+      else { const g2=gcd(gcd(B,k),den); let nb=-B/g2, nk=k/g2, nd=den/g2; if(nd<0){nb=-nb;nd=-nd;}
+        const rad=(nk===1?"":String(nk))+(DD<0?"i":"")+(r>1?"√"+r:"");
+        const top= nb===0? "±"+rad : minus(nb)+" ± "+rad;
+        const e= nd===1? top : (nb===0? top+"/"+nd : "("+top+")/"+nd);
+        out.exact="x = "+e; out.exactList=[e]; }
+    }
+  }
+  return out;
+}
+const qValsStr=Q=>Q.kind==="neg"? (Math.abs(Q.p)<1e-12? "±"+cstr([0,Q.q],v=>num(v,3)) : cstr([Q.p,Q.q],v=>num(v,3)).replace(" + "," ± ")) : Q.vals.map(v=>num(v[0],3)).join(", ");
+function qWork(a,b,c){
+  const Q=qSolve(a,b,c), A=fr(a),B=fr(b),C=fr(c);
+  let t=`a = ${A},  b = ${B},  c = ${C}\n`;
+  t+=`x = (−b ± √(b² − 4ac)) / (2a)\n`;
+  t+=`  = (${Math.abs(b)<1e-12?"0":"−"+par(B)} ± √(${par(B)}² − 4·${par(A)}·${par(C)})) / (2·${par(A)})\n`;
+  t+=`  = (${fr(-b)} ± √(${fr(b*b)} ${4*a*c<0?"+":"−"} ${fr(Math.abs(4*a*c))})) / ${par(fr(2*a))}\n`;
+  t+=`  = (${fr(-b)} ± √${par(fr(Q.D))}) / ${par(fr(2*a))}\n`;
+  if(Q.kind==="neg"){ const s=sqrtRat(-Q.D), raw="√"+fr(-Q.D); t+=`√(${fr(Q.D)}) = i√${fr(-Q.D)}${s!==raw?" = "+(s.indexOf("√")>=0? s.replace(/^(\d*)√/,"$1i√") : s+"i"):""}\n`; }
+  if(Q.exact) t+=`${Q.exact}\n`;
+  if(Q.kind==="neg") t+=`x = ${cstr([Q.p,Q.q])}  or  x = ${cstr([Q.p,-Q.q])}\n  ≈ ${qValsStr(Q)}`;
+  else t+=`  ≈ ${qValsStr(Q)}`;
+  return {text:t,Q};
+}
+function classHTML(Q){
+  if(Q.kind==="pos")return `<span class="cls pos">D &gt; 0 · two real roots</span>`;
+  if(Q.kind==="zero")return `<span class="cls zero">D = 0 · one repeated real root</span>`;
+  return `<span class="cls neg">D &lt; 0 · two complex roots</span>`;
+}
+function meterSVG(D){
+  const R=Math.max(20,Math.ceil(Math.abs(D)*1.25/10)*10), W=300, x=v=>20+(v+R)/(2*R)*(W-40);
+  const mx=x(clamp(D,-R,R));
+  return `<svg class="meter" viewBox="0 0 ${W} 64" role="img" aria-label="Discriminant meter, D = ${num(D)}">
+    <rect x="20" y="18" width="${(W-40)/2}" height="14" rx="7" fill="#C4B5FD" opacity=".55"/>
+    <rect x="${W/2}" y="18" width="${(W-40)/2}" height="14" rx="7" fill="#5EEAD4" opacity=".55"/>
+    <rect x="${W/2-2}" y="12" width="4" height="26" fill="#FFD93D"/>
+    <polygon points="${mx},16 ${mx-8},4 ${mx+8},4" fill="#fff"/>
+    <text x="20" y="52" fill="#A5A5C9" font-family="JetBrains Mono,monospace" font-size="11">−${R} complex</text>
+    <text x="${W/2}" y="52" fill="#FFD93D" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle">0</text>
+    <text x="${W-20}" y="52" fill="#A5A5C9" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="end">real +${R}</text>
+  </svg>`;
+}
+
+/* ── svg ── */
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+let FS=1, snap=true, cur=0, clipN=0;
+const sub=(p,q)=>[p[0]-q[0],p[1]-q[1]], add=(p,q)=>[p[0]+q[0],p[1]+q[1]], mul=(p,k)=>[p[0]*k,p[1]*k];
+const len=v=>Math.hypot(v[0],v[1]); const unit=v=>{const l=len(v)||1;return [v[0]/l,v[1]/l];};
+function Plane(o){ const P=Object.assign({},o);
+  P.W2S=p=>[P.ox+p[0]*P.S, P.oy-p[1]*P.S]; P.S2W=p=>[(p[0]-P.ox)/P.S,(P.oy-p[1])/P.S];
+  P.xmin=(P.rect[0]-P.ox)/P.S; P.xmax=(P.rect[0]+P.rect[2]-P.ox)/P.S;
+  P.ymax=(P.oy-P.rect[1])/P.S; P.ymin=(P.oy-P.rect[1]-P.rect[3])/P.S; return P; }
+const gStep=(S,px)=>{ for(const s of [0.25,0.5,1,2,5,10,20,50,100]) if(s*S>=px) return s; return 200; };
+function drawPlane(P,o){
+  o=o||{}; const [rx,ry,rw,rh]=P.rect, id="cp"+(clipN++);
+  const d=E("defs",{}); d.innerHTML=`<clipPath id="${id}"><rect x="${rx}" y="${ry}" width="${rw}" height="${rh}"/></clipPath>`; cv.appendChild(d);
+  const gg=E("g",{"clip-path":`url(#${id})`}); cv.appendChild(gg);
+  const mi=gStep(P.S,12), lb=gStep(P.S,o.gap||(FS>1?60:40));
+  for(let k=Math.ceil(P.xmin/mi);k*mi<=P.xmax;k++){ const s=P.W2S([k*mi,0]); gg.appendChild(E("line",{x1:s[0],y1:ry,x2:s[0],y2:ry+rh,style:"stroke:var(--grid)","stroke-width":isInt(k*mi/lb)?1.3:.8})); }
+  for(let k=Math.ceil(P.ymin/mi);k*mi<=P.ymax;k++){ const s=P.W2S([0,k*mi]); gg.appendChild(E("line",{x1:rx,y1:s[1],x2:rx+rw,y2:s[1],style:"stroke:var(--grid)","stroke-width":isInt(k*mi/lb)?1.3:.8})); }
+  const O=P.W2S([0,0]);
+  gg.appendChild(E("line",{x1:rx,y1:O[1],x2:rx+rw,y2:O[1],stroke:"#8FA3C8","stroke-width":1.8}));
+  gg.appendChild(E("line",{x1:O[0],y1:ry,x2:O[0],y2:ry+rh,stroke:"#8FA3C8","stroke-width":1.8}));
+  const ly=clamp(O[1]+15,ry+12,ry+rh-6), lx=clamp(O[0]-6,rx+24,rx+rw-4);
+  for(let k=Math.ceil(P.xmin/lb);k*lb<=P.xmax;k++){ const v=k*lb; if(!v)continue; const s=P.W2S([v,0]); if(s[0]<rx+10||s[0]>rx+rw-10)continue;
+    const t=E("text",{x:s[0],y:ly,class:"ax","text-anchor":"middle"}); t.textContent=minus(+v.toFixed(2)); gg.appendChild(t); }
+  for(let k=Math.ceil(P.ymin/lb);k*lb<=P.ymax;k++){ const v=k*lb; if(!v)continue; const s=P.W2S([0,v]); if(s[1]<ry+10||s[1]>ry+rh-8)continue;
+    const t=E("text",{x:lx,y:s[1]+4,class:"ax","text-anchor":"end"}); const vs=minus(+v.toFixed(2)); t.textContent=o.imag?(vs==="1"?"i":vs==="−1"?"−i":vs+"i"):vs; gg.appendChild(t); }
+  const xl=E("text",{x:rx+rw-8,y:clamp(O[1]-8,ry+14,ry+rh-8),class:"ax","text-anchor":"end"}); xl.textContent=o.xl||"x"; gg.appendChild(xl);
+  const yl=E("text",{x:clamp(O[0]+8,rx+4,rx+rw-30),y:ry+14,class:"ax"}); yl.textContent=o.yl||"y"; gg.appendChild(yl);
+  const g=E("g",{"clip-path":`url(#${id})`}); cv.appendChild(g); g._rect=P.rect; return g;
+}
+function curve(g,P,f,color,w){
+  let d="", pen=false; const n=360;
+  for(let j=0;j<=n;j++){ const x=P.xmin+(P.xmax-P.xmin)*j/n, y=f(x);
+    if(!isFinite(y)){pen=false;continue;} const s=P.W2S([x,y]); s[1]=clamp(s[1],-3000,3500);
+    d+=(pen?"L":"M")+s[0].toFixed(1)+" "+s[1].toFixed(1); pen=true; }
+  g.appendChild(E("path",{d,fill:"none",style:"stroke:"+color,"stroke-width":w||3.4,"stroke-linecap":"round","stroke-linejoin":"round"}));
+}
+function sseg(g,p,q,color,w,dash){ const a={x1:p[0],y1:p[1],x2:q[0],y2:q[1],style:"stroke:"+(color||"var(--graphite)"),"stroke-width":w||2.6,"stroke-linecap":"round"}; if(dash)a["stroke-dasharray"]=dash; g.appendChild(E("line",a)); }
+function sdot(g,p,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||5,style:"fill:"+(color||"var(--ink)"),stroke:"#fff","stroke-width":2,"pointer-events":"none"})); }
+function sgrab(g,p,id,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?26:17,class:"grab","data-drag":id})); sdot(g,p,color,r||6); }
+function stext(g,p,s,cls,color,anchor){ const t=E("text",{x:p[0],y:p[1],class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"}); if(color)t.setAttribute("style","fill:"+color); t.textContent=s; g.appendChild(t); return t; }
+function label(g,anchor,dir,text,color,rect){
+  rect=rect||g._rect||[0,0,VW,VH];
+  const w=text.length*8.2*FS+4, h=16*FS, d=unit(dir), off=14*FS;
+  let cx=anchor[0]+d[0]*(off+w/2*Math.abs(d[0])), cy=anchor[1]+d[1]*(off+h/2*Math.abs(d[1])+2);
+  cx=clamp(cx,rect[0]+w/2+6,rect[0]+rect[2]-w/2-6); cy=clamp(cy,rect[1]+h/2+6,rect[1]+rect[3]-h/2-6);
+  return stext(g,[cx,cy],text,"sm",color);
+}
+function arrowHead(g,tip,dir,color,sz){ sz=sz||13; const n=[-dir[1],dir[0]], b=[tip[0]-dir[0]*sz,tip[1]-dir[1]*sz];
+  g.appendChild(E("polygon",{points:[tip,[b[0]+n[0]*sz*.45,b[1]+n[1]*sz*.45],[b[0]-n[0]*sz*.45,b[1]-n[1]*sz*.45]].map(p=>p.join(",")).join(" "),style:"fill:"+color})); }
+function arrow(g,p,q,color,w,dash){ const v=sub(q,p), L=len(v); if(L<3)return; const u=[v[0]/L,v[1]/L], sz=Math.min(14,L*.5);
+  sseg(g,p,[q[0]-u[0]*sz*.8,q[1]-u[1]*sz*.8],color,w||3,dash); arrowHead(g,q,u,color,sz); }
+// arc in math orientation (degrees, ccw positive) around screen centre c
+function arcD(c,r,a0,a1){ const p0=[c[0]+r*Math.cos(a0*D2R),c[1]-r*Math.sin(a0*D2R)], p1=[c[0]+r*Math.cos(a1*D2R),c[1]-r*Math.sin(a1*D2R)];
+  const large=Math.abs(a1-a0)>180?1:0, sweep=a1>a0?0:1; return `M${p0[0].toFixed(1)} ${p0[1].toFixed(1)}A${r} ${r} 0 ${large} ${sweep} ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}`; }
+function arc(g,c,r,a0,a1,color,w,head){
+  if(Math.abs(a1-a0)<.5)return; g.appendChild(E("path",{d:arcD(c,r,a0,a1),fill:"none",style:"stroke:"+color,"stroke-width":w||2.4}));
+  if(head){ const t=a1*D2R, s=Math.sign(a1-a0); const tip=[c[0]+r*Math.cos(t),c[1]-r*Math.sin(t)]; const dir=[-Math.sin(t)*s,-Math.cos(t)*s]; arrowHead(g,tip,dir,color,10); }
+}
+function infoBox(g,x,y,lines,color){
+  const w=Math.max(...lines.map(l=>l.length))*8.1*FS+20, h=lines.length*19*FS+12;
+  g.appendChild(E("rect",{x,y,width:w,height:h,rx:10,fill:"rgba(255,255,255,.92)",stroke:"#C7D2EA"}));
+  lines.forEach((l,i)=>stext(g,[x+10,y+16*FS+i*19*FS],l,"sm",i===0?(color||"var(--ink)"):"var(--ink)","start"));
+}
+
+/* ── drag plumbing ── */
+let dragId=null;
+function svgPt(e){ const m=cv.getScreenCTM(); if(!m)return [0,0]; const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y]; }
+cv.addEventListener("pointerdown",e=>{ const id=e.target.dataset&&e.target.dataset.drag; if(id){ dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); } });
+cv.addEventListener("pointermove",e=>{ if(!dragId)return; const M=MODS[cur]; if(!M.drag)return; if(M.drag(dragId,svgPt(e))!==false)update(); });
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+
+/* ── bar builders ── */
+function btn(label,fn,cls,aria){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; if(aria)b.setAttribute("aria-label",aria); b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(lab,opts,val,fn){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(lab){ s.setAttribute("aria-label",lab); const l=document.createElement("span"); l.className="seglab"; l.textContent=lab; s.appendChild(l); }
+  opts.forEach(([k,t])=>{ const b=document.createElement("button"); b.type="button"; b.className="sm2"; b.textContent=t; b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s;
+}
+function chk(label,val,fn){ const l=document.createElement("label"); l.className="chk"; const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked); l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i; }
+function snapChk(fn){ return chk("Snap to grid",snap,v=>{snap=v; if(fn)fn(); update();}); }
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function slider(label,min,max,val,fn,skip0){
+  const l=document.createElement("label"); l.className="rng"; l.textContent=label+" ";
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=1; i.value=Math.round(val); i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); o.textContent=fr(val); let prev=+i.value;
+  i.oninput=()=>{ let v=+i.value; if(skip0&&v===0){ v=prev>0?-1:1; i.value=v; } prev=v; o.textContent=fr(v); fn(v); };
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l);
+  return {set(v){ i.value=Math.round(v); prev=Math.round(v); o.textContent=fr(v); }};
+}
+function tryPanel(html){ return `<div class="panel"><h3>Try this</h3><div class="pad">${html}</div></div>`; }
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+/* ══════════════════════ TAB 1 · completing the square ══════════════════════ */
+function csSteps(a,b,c){
+  const p=b/a, h=p/2, hh=h*h, k=c-a*hh, A1=near(a,1), aS=aPre(a);
+  const inner=ex=>poly([[1,"x²"],[p,"x"]].concat(ex||[]));
+  const st=[];
+  st.push({t:`Start with standard form <b>y = ax² + bx + c</b>: a = ${fr(a)}, b = ${fr(b)}, c = ${fr(c)}.`, ex:`y = ${quad(a,b,c)}`, stage:0});
+  if(Math.abs(p)<1e-12){
+    st.push({t:`There is no x-term, so there is nothing to complete: h = 0.`, ex:`y = ${vform(a,0,c)}`, nx:`vertex (0, ${fr(c)})`, stage:4});
+    return {st,p,h,hh,k};
+  }
+  if(!A1) st.push({t:`a ≠ 1, so first <b>factor a = ${fr(a)} out of the x² and x terms only</b>. The constant c stays outside.`, ex:`y = ${aS}(${inner()})${sgnT(c)}`, stage:0});
+  st.push({t:`Take <b>half</b> of the x-coefficient ${fr(p)} and <b>square</b> it. That square is the missing corner.`, ex:`(${fr(p)} ÷ 2)² = (${fr(h)})² = ${fr(hh)}`, stage:1});
+  st.push({t:`<b>Add</b> ${fr(hh)} inside to complete the square — and <b>subtract</b> it too, so we have really added zero.`, ex:`y = ${aS}(${inner([[hh,""],[-hh,""]])})${sgnT(c)}`, stage:3});
+  st.push({t: A1? `Keep the perfect-square trinomial together and combine the leftover constants.`
+                 : `Move −${fr(hh)} out of the parentheses. It was being multiplied by a, so it comes out as ${fr(a)} · (−${fr(hh)}) = ${fr(-a*hh)}.`,
+    ex:`y = ${aS}(${inner([[hh,""]])})${sgnT(-a*hh)}${sgnT(c)}`, nx:`y = ${aS}(${inner([[hh,""]])})${sgnT(k)}`, stage:3});
+  st.push({t:`Factor the perfect-square trinomial: x² ${p<0?"−":"+"} ${near(Math.abs(p),1)?"":par(fr(Math.abs(p)))}x + ${fr(hh)} = ${sqBin(-h)}².`, ex:`y = ${vform(a,-h,k)}`, stage:4});
+  st.push({t:`Read the <b>vertex form</b> y = a(x − h)² + k.`, ex:`vertex (h, k) = (${fr(-h)}, ${fr(k)})`, nx:`axis of symmetry x = ${fr(-h)} · ${a>0?"opens up, minimum":"opens down, maximum"} value ${fr(k)}`, stage:4});
+  const R=-k/a, sR=sqrtRat(Math.abs(R));
+  st.push({t:`Solve <b>${quad(a,b,c)} = 0</b> the same way: isolate the square, then take ± square roots.`,
+    ex:`${vform(a,-h,k)} = 0  →  ${sqBin(-h)}² = ${fr(R)}`,
+    nx: Math.abs(R)<1e-12? `x = ${fr(-h)} (one repeated root)` : R>0? `x = ${fr(-h)} ± ${sR}  ≈ ${num(-h-Math.sqrt(R),3)}, ${num(-h+Math.sqrt(R),3)}` : `a square can't equal ${fr(R)} for real x → x = ${fr(-h)} ± ${sR.indexOf("√")>=0? "i"+sR : (sR==="1"?"i":sR+"i")} (complex)`, stage:4});
+  return {st,p,h,hh,k};
+}
+const M1={
+  tab:"Complete the square", lesson:"A-REI.B.4a · A-SSE.B.3b", accent:"var(--cyan)",
+  title:()=>"Complete the square: y = "+quad(M1.s.a,M1.s.b,M1.s.c),
+  s:{a:1,b:6,c:5,step:0},
+  bar(){
+    segBtns("a",[[-2,"−2"],[-1,"−1"],[1,"1"],[2,"2"],[3,"3"]],M1.s.a,v=>{M1.s.a=v;M1.s.step=Math.min(M1.s.step,csSteps(v,M1.s.b,M1.s.c).st.length-1);render();});
+    slider("b",-10,10,M1.s.b,v=>{M1.s.b=v; M1.s.step=Math.min(M1.s.step,csSteps(M1.s.a,v,M1.s.c).st.length-1); update(); bTitle.textContent=M1.title();});
+    slider("c",-10,10,M1.s.c,v=>{M1.s.c=v; update(); bTitle.textContent=M1.title();});
+    btn("◀ Back",()=>{M1.s.step=Math.max(0,M1.s.step-1);update();},null,"Previous step");
+    btn("Next step ▶",()=>{M1.s.step=Math.min(csSteps(M1.s.a,M1.s.b,M1.s.c).st.length-1,M1.s.step+1);update();},"primary");
+    btn("All steps",()=>{M1.s.step=csSteps(M1.s.a,M1.s.b,M1.s.c).st.length-1;update();});
+  },
+  draw(){
+    const {a,b,c}=M1.s, R=csSteps(a,b,c), st=R.st[M1.s.step], stage=st.stage, p=R.p, h=R.h, m=Math.abs(h);
+    const g=E("g",{}); cv.appendChild(g);
+    stext(g,[190,24],(FS>1?"":(near(a,1)?"Tiles for ":"Tiles for the inside: "))+poly([[1,"x²"],[p,"x"]]),"sm","var(--ink)");
+    const TX=40, TY=86, X=160;
+    const C={sq:["#DDD6FE","#7C3AED"],x:["#BAE6FD","#0284C7"],nx:["rgba(254,202,202,.85)","#DC2626"],u:["#FDE68A","#CA8A04"]};
+    const rect=(x,y,w,hh_,col,dash,extra)=>{ const r=E("rect",Object.assign({x,y,width:Math.max(0,w),height:Math.max(0,hh_),fill:col[0],stroke:col[1],"stroke-width":2},extra||{})); if(dash)r.setAttribute("stroke-dasharray",dash); g.appendChild(r); return r; };
+    rect(TX,TY,X,X,C.sq); stext(g,[TX+X/2,TY+X/2],"x²","mk","#5B21B6");
+    stext(g,[TX+X/2,TY-12],"x","sm","#5B21B6"); stext(g,[TX-14,TY+X/2],"x","sm","#5B21B6");
+    let cap="";
+    if(m<1e-12){ cap="No x-tiles: x² is already a square."; }
+    else {
+      const u=Math.min(30,75/m), w=m*u, hS=fr(m), hhS=fr(m*m);
+      const units=(x0,y0)=>{ if(isInt(m)&&m<=10){ for(let i=0;i<m;i++)for(let j=0;j<m;j++) rect(x0+i*u,y0+j*u,u,u,C.u,null,{"stroke-width":1.2}); } else rect(x0,y0,w,w,C.u); };
+      if(h>0){
+        if(stage===0){ rect(TX+X+10,TY,2*w,X,C.x); stext(g,[TX+X+10+w,TY-12],fr(p),"sm","#0369A1"); if(2*w>36)stext(g,[TX+X+10+w,TY+X/2],fr(p)+"x","sm","#0369A1");
+          cap=`x² and ${fr(p)} x-tiles (each x by 1)`; }
+        else {
+          rect(TX+X,TY,w,X,C.x); rect(TX,TY+X,X,w,C.x);
+          stext(g,[TX+X+w/2,TY-12],hS,"sm","#0369A1"); stext(g,[TX-14,TY+X+w/2],hS,"sm","#0369A1");
+          if(w>=34){ stext(g,[TX+X+w/2,TY+X/2],hS+"x","sm","#0369A1"); } if(w>=18) stext(g,[TX+X/2,TY+X+w/2],hS+"x","sm","#0369A1");
+          if(stage<3){ rect(TX+X,TY+X,w,w,["rgba(255,255,255,.4)","#CA8A04"],"6 4"); if(w>=18)stext(g,[TX+X+w/2,TY+X+w/2],"?","mk","#CA8A04");
+            cap=`Split the x-tiles in half: ${hS} on each side. The corner (${hS} × ${hS}) is missing.`; }
+          else { units(TX+X,TY+X); cap=`Add ${hhS} unit tile${near(m*m,1)?"":"s"} to fill the corner.`; }
+          stext(g,[TX+X+w+12,TY+X+w/2],"+"+hhS,"sm","#A16207","start");
+          if(stage===4){ g.appendChild(E("rect",{x:TX,y:TY,width:X+w,height:X+w,fill:"none",stroke:"var(--magenta)","stroke-width":4}));
+            stext(g,[TX+(X+w)/2,TY-32],"x + "+hS,"sm","#C0185F"); cap=`A complete square: (x + ${hS})²`; }
+        }
+      } else {
+        if(stage===0){ rect(TX+X+10,TY,2*w,X,C.nx,"5 3"); stext(g,[TX+X+10+w,TY-12],"−"+fr(-p),"sm","#B91C1C"); if(2*w>40)stext(g,[TX+X+10+w,TY+X/2],"−"+fr(-p)+"x","sm","#B91C1C");
+          cap=`x² and ${fr(-p)} negative x-tiles (to take away)`; }
+        else {
+          rect(TX+X-w,TY,w,X,C.nx,"5 3"); rect(TX,TY+X-w,X,w,C.nx,"5 3");
+          stext(g,[TX+X-w/2,TY-12],hS,"sm","#B91C1C"); stext(g,[TX-14,TY+X-w/2],hS,"sm","#B91C1C");
+          if(stage<3){ g.appendChild(E("rect",{x:TX+X-w,y:TY+X-w,width:w,height:w,fill:"rgba(220,38,38,.45)",stroke:"#991B1B","stroke-width":2}));
+            cap=`Take away ${hS}x twice — the ${hS} × ${hS} corner was removed twice.`; }
+          else { units(TX+X-w,TY+X-w); cap=`Add back ${hhS} so the corner is only removed once.`; }
+          stext(g,[TX+X+12,TY+X-w/2],stage<3?"removed twice!":"+"+hhS+" back",stage<3?"sm":"sm",stage<3?"#B91C1C":"#A16207","start");
+          if(stage===4){ g.appendChild(E("rect",{x:TX,y:TY,width:X-w,height:X-w,fill:"rgba(255,61,138,.10)",stroke:"var(--magenta)","stroke-width":4}));
+            stext(g,[TX+(X-w)/2,TY+(X-w)/2+26],"(x − "+hS+")²","sm","#C0185F"); stext(g,[TX+(X-w)/2,TY-32],"x − "+hS,"sm","#C0185F"); cap=`What is left is a square: (x − ${hS})²`; }
+        }
+      }
+    }
+    const capY=TY+X+(h>0&&stage>0?m*Math.min(30,75/Math.max(m,1e-9)):0)+34;
+    const mx=Math.floor(350/(8.1*FS)), lines=[]; let ln="";
+    cap.replace(/\((x [−+] )/g,(m0,m1)=>"("+m1.replace(/ /g,"\u00a0")).split(" ").forEach(w=>{ if((ln+" "+w).trim().length>mx){ lines.push(ln.trim()); ln=w; } else ln+=" "+w; }); if(ln.trim())lines.push(ln.trim());
+    if(!near(a,1)) lines.push("(then multiply by a = "+fr(a)+")");
+    const lh=19*FS, y0=Math.min(capY,446-lh*(lines.length-1)-6);
+    lines.forEach((l,i)=>stext(g,[190,y0+i*lh],l,"sm",i===lines.length-1&&!near(a,1)?"#64748B":"var(--graphite)"));
+    // mini graph
+    g.appendChild(E("line",{x1:378,y1:14,x2:378,y2:446,stroke:"#C7D2EA","stroke-width":1.5}));
+    const k=R.k, xv=-h, S=12; let yc=0; if(Math.abs(k)>13) yc=k-Math.sign(k)*10;
+    const P=Plane({ox:538-clamp(xv,-4,4)*0, oy:240+yc*S, S, rect:[384,16,310,428]});
+    const gp=drawPlane(P,{gap:36});
+    curve(gp,P,x=>a*x*x+b*x+c,"var(--vert)",3);
+    if(stage===4){ const V=P.W2S([xv,k]); sseg(gp,[V[0],16],[V[0],444],"#C0185F",1.6,"6 5"); sdot(gp,V,"var(--magenta)",6); label(gp,V,[0,a>0?1:-1],"("+fr(xv)+", "+fr(k)+")","#C0185F"); }
+    const eqs="y = "+(stage===4?vform(a,xv,k):quad(a,b,c)), ew=eqs.length*8.2*FS+16;
+    gp.appendChild(E("rect",{x:539-ew/2,y:22-9*FS,width:ew,height:18*FS+6,rx:8,fill:"rgba(255,255,255,.92)",stroke:"#C7D2EA"}));
+    stext(gp,[539,25],eqs,"sm","#6D28D9");
+  },
+  panel(){
+    const {a,b,c,step}=M1.s, R=csSteps(a,b,c);
+    side.innerHTML=`<div class="panel"><h3>Why "complete the square"?</h3><div class="pad">
+      <p>An expression like x² + ${fr(Math.abs(R.p))}x is <b>almost</b> a square: an x-by-x tile plus a strip of x-tiles. Split the strip in half and put one half on each side — now a corner is missing.</p>
+      <p>That corner is (half of b)². Add it (and subtract it, so nothing changes) and you get a <span class="term">perfect-square trinomial</span> that factors as (x + half)².</p>
+      <p>When a ≠ 1, factor a out of the x-terms first so the tiles describe x² + (b/a)x.</p>
+      <div class="eq">x² + bx + (b/2)² = (x + b/2)²\ny = a(x − h)² + k   vertex (h, k)<small>For y = ax² + bx + c: h = −b/(2a), k = c − b²/(4a).</small></div></div></div>
+      <div class="panel"><h3>Step by step</h3><ol class="stepl">${R.st.map((s,i)=>`<li class="${i===step?"on":i<step?"done":"todo"}"><span class="sn">${i+1}</span>${s.t}<span class="ex">${esc(s.ex)}</span>${s.nx?`<span class="nx">${esc(s.nx)}</span>`:""}</li>`).join("")}</ol></div>`+
+      tryPanel(`<p>1. Set a = 1, b = 8. How many unit tiles fill the corner? Predict before you press <b>Next step</b>.</p><p>2. Make b odd (try b = 5). Why does the corner become a fraction, and why does that not break anything?</p><p>3. Set a = 2, b = 8, c = 3. Why does the subtracted corner come out as −8, not −4?</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 2 · quadratic formula ══════════════════════ */
+const ZS=[60,40,30,20,15,10,6];
+function derivSteps(a,b,c){
+  const p=b/a, h=p/2, hh=h*h, Dq=(b*b-4*a*c)/(4*a*a);
+  return [
+    ["Start with standard form, a ≠ 0.","ax² + bx + c = 0",`${quad(a,b,c)} = 0`],
+    ["Divide every term by a so the x² coefficient is 1.","x² + (b/a)x + c/a = 0",`${quad(1,p,c/a)} = 0`],
+    ["Subtract c/a from both sides.","x² + (b/a)x = −c/a",`${quad(1,p,0)} = ${fr(-c/a)}`],
+    ["Complete the square: add (b/2a)² = b²/4a² to both sides.","x² + (b/a)x + b²/4a² = b²/4a² − c/a",`${quad(1,p,hh)} = ${fr(hh)} ${-c/a<0?"−":"+"} ${fr(Math.abs(c/a))}`],
+    ["Factor the left side. Over the common denominator 4a², the right side is b² − 4ac.","(x + b/2a)² = (b² − 4ac) / 4a²",`${sqBin(-h)}² = ${fr(Dq)}`],
+    ["Take the square root of both sides — remember ±. Since √(4a²) = 2|a|, the ± covers the sign of a.","x + b/2a = ±√(b² − 4ac) / 2a",`${sqBin(-h)} = ±√${par(fr(Dq))}`],
+    ["Subtract b/2a and write one fraction. This is the quadratic formula.","x = (−b ± √(b² − 4ac)) / 2a",`x = ${fr(-h)} ± √${par(fr(Dq))}   →   ${qSolve(a,b,c).exact||("x ≈ "+qValsStr(qSolve(a,b,c)))}`]
+  ];
+}
+const M2={
+  tab:"Quadratic formula", lesson:"A-REI.B.4a · A-REI.B.4b", accent:"var(--yellow)",
+  title:()=>M2.s.mode==="derive"?"Derive the quadratic formula":"Solve "+quad(M2.s.a,M2.s.b,M2.s.c)+" = 0",
+  s:{a:1,b:-2,c:-3,mode:"solve",dstep:0,zi:2},
+  sl:{},
+  plane(){ return Plane({ox:350,oy:230,S:ZS[M2.s.zi],rect:[0,0,VW,VH]}); },
+  bar(){
+    segBtns("",[["solve","Solve"],["derive","Derive"]],M2.s.mode,v=>{M2.s.mode=v;render();});
+    M2.sl.a=slider("a",-5,5,M2.s.a,v=>{M2.s.a=v;update();bTitle.textContent=M2.title();},true);
+    M2.sl.b=slider("b",-10,10,M2.s.b,v=>{M2.s.b=v;update();bTitle.textContent=M2.title();});
+    M2.sl.c=slider("c",-10,10,M2.s.c,v=>{M2.s.c=v;update();bTitle.textContent=M2.title();});
+    if(M2.s.mode==="derive"){
+      btn("◀ Back",()=>{M2.s.dstep=Math.max(0,M2.s.dstep-1);update();},null,"Previous step");
+      btn("Next step ▶",()=>{M2.s.dstep=Math.min(6,M2.s.dstep+1);update();},"primary");
+    }
+    btn("−",()=>{M2.s.zi=Math.min(ZS.length-1,M2.s.zi+1);update();},null,"Zoom out");
+    btn("+",()=>{M2.s.zi=Math.max(0,M2.s.zi-1);update();},null,"Zoom in");
+    snapChk();
+  },
+  drag(id,p){ const P=M2.plane(); let y=P.S2W(p)[1]; y=snap?Math.round(y):Math.round(y*10)/10; y=clamp(y,Math.ceil(P.ymin),Math.floor(P.ymax)); M2.s.c=y; if(M2.sl.c)M2.sl.c.set(y); bTitle.textContent=M2.title(); },
+  draw(){
+    const {a,b,c}=M2.s, P=M2.plane(), g=drawPlane(P), Q=qSolve(a,b,c), xv=Q.p, yv=a*xv*xv+b*xv+c;
+    const V=P.W2S([xv,yv]);
+    sseg(g,[V[0],0],[V[0],VH],"#94A3B8",1.6,"6 6");
+    curve(g,P,x=>a*x*x+b*x+c,"var(--vert)");
+    if(Q.kind!=="neg"){
+      Q.vals.forEach((r,i)=>{ const s=P.W2S([r[0],0]); sdot(g,s,"var(--magenta)",7);
+        label(g,s,[i===0?-0.4:0.4,(a>0?-1:1)*(Q.kind==="zero"?-1:1)*(i===0?1:1)],(Q.kind==="zero"?"double root x = ":"x ≈ ")+num(r[0]),"#C0185F"); });
+    } else stext(g,[350,VH-22],"No x-intercepts → two complex (non-real) roots","sm","#6D28D9");
+    if(Q.kind!=="zero"){ sdot(g,V,"var(--vert)",5); label(g,V,[0,a>0?1:-1],"vertex ("+num(xv)+", "+num(yv)+")","#6D28D9"); }
+    const C0=P.W2S([0,c]); sgrab(g,C0,"c","var(--hand)"); label(g,C0,[1,a>0?-0.2:0.2],"c = "+fr(c),"#C2410C");
+    infoBox(g,12,12,["D = b² − 4ac = "+fr(Q.D), Q.kind==="pos"?"two real roots":Q.kind==="zero"?"one repeated root":"two complex roots"],Q.kind==="pos"?"#047857":Q.kind==="zero"?"#A16207":"#6D28D9");
+  },
+  panel(){
+    const {a,b,c}=M2.s, W=qWork(a,b,c), Q=W.Q;
+    const meter=`<div class="panel"><h3>Discriminant meter</h3><div class="pad">
+      <p>The <span class="term">discriminant</span> D = b² − 4ac is the part under the square root. It decides the kind of roots before you finish solving.</p>
+      ${meterSVG(Q.D)}<p>${classHTML(Q)} &nbsp;<span class="mono">D = ${fr(b*b)} ${4*a*c<0?"+":"−"} ${fr(Math.abs(4*a*c))} = ${fr(Q.D)}</span></p>
+      <p>Drag the orange <b>c</b> handle on the graph. Raising c (when a &gt; 0) lifts the parabola until it touches the x-axis (D = 0) and then leaves it (D &lt; 0).</p></div></div>`;
+    if(M2.s.mode==="derive"){
+      const ds=derivSteps(a,b,c), k=M2.s.dstep;
+      side.innerHTML=`<div class="panel"><h3>Deriving the formula</h3><div class="pad"><p>The quadratic formula is just <b>completing the square</b> done once on the general equation ax² + bx + c = 0. Each step shows the general form and, in green, the same step for your equation.</p></div>
+        <ol class="stepl">${ds.map((s,i)=>`<li class="${i===k?"on":i<k?"done":"todo"}"><span class="sn">${i+1}</span>${s[0]}<span class="ex">${esc(s[1])}</span><span class="nx">${esc(s[2])}</span></li>`).join("")}</ol></div>`+meter+
+        tryPanel(`<p>1. At step 4, why is the right side (b² − 4ac)/4a² and not b² − 4ac? Multiply −c/a by 4a/4a to see.</p><p>2. What would go wrong at step 2 if a = 0? What kind of equation is it then?</p>`);
+      return;
+    }
+    side.innerHTML=`<div class="panel"><h3>Calculator · any a, b, c</h3><div class="pad">
+      <div class="calc3"><div><label class="fld" for="qa">a</label><input type="text" id="qa" value="${fr(a)}" inputmode="decimal"></div>
+      <div><label class="fld" for="qb">b</label><input type="text" id="qb" value="${fr(b)}" inputmode="decimal"></div>
+      <div><label class="fld" for="qc">c</label><input type="text" id="qc" value="${fr(c)}" inputmode="decimal"></div></div>
+      <div style="margin-top:12px"><button class="go" id="qgo" type="button">Solve ${esc("ax² + bx + c = 0")}</button></div>
+      <p class="fmt">Integers, decimals or fractions like <code>-3/4</code>. Exact radicals are shown when a, b, c are rational.</p>
+      <div id="qerr"></div>
+      <div class="eq">${esc(W.text)}<small>Roots are where the graph crosses the x-axis${Q.kind==="neg"?" — this graph never does, so the roots are complex":""}.</small></div></div></div>`+meter+
+      tryPanel(`<p>1. Solve x² − 2x − 3 = 0, then drag c upward. At what value of c do the two roots merge into one?</p><p>2. Find a, b, c so the roots are 2 ± √3. (Hint: the vertex is at x = 2.)</p><p>3. Keep b and c fixed and flip the sign of a. When does that change the number of real roots?</p>`);
+    const go=()=>{ const v=["qa","qb","qc"].map(id=>{const z=parseC(document.getElementById(id).value); return z&&Math.abs(z[1])<1e-12?z[0]:NaN;});
+      if(v.some(x=>!isFinite(x))){ document.getElementById("qerr").innerHTML=`<div class="verdict bad" style="margin:12px 0 0"><b>I can't read that.</b> Use numbers like 2, −1.5 or 3/4.</div>`; return; }
+      if(Math.abs(v[0])<1e-12){ document.getElementById("qerr").innerHTML=`<div class="verdict bad" style="margin:12px 0 0"><b>a can't be 0.</b> Then there's no x² term and the equation is linear, not quadratic.</div>`; return; }
+      M2.s.a=v[0];M2.s.b=v[1];M2.s.c=v[2]; render(); };
+    document.getElementById("qgo").onclick=go;
+    ["qa","qb","qc"].forEach(id=>document.getElementById(id).addEventListener("keydown",e=>{if(e.key==="Enter")go();}));
+  }
+};
+
+/* ══════════════════════ TAB 3 · imaginary unit ══════════════════════ */
+const IP=["1","i","−1","−i"], IPV=[[1,0],[0,1],[-1,0],[0,-1]];
+function bigMod4(str){ const s=String(str).trim().replace(/[−–]/g,"-"); if(!/^-?\d{1,400}$/.test(s))return null; try{ const n=BigInt(s); return Number(((n%4n)+4n)%4n); }catch(_){ return null; } }
+const M3={
+  tab:"Imaginary unit", lesson:"N-CN.A.1", accent:"var(--mint)",
+  title:()=>"Powers of i are quarter turns: i"+sup(M3.s.n)+" = "+IP[M3.s.n%4],
+  s:{n:1,z:[3,1]},
+  sl:null,
+  plane(){ return Plane({ox:350,oy:230,S:52,rect:[0,0,VW,VH]}); },
+  bar(){
+    btn("× i  (turn 90°)",()=>{ if(M3.s.n<12){M3.s.n++; M3.sl.set(M3.s.n);} update(); bTitle.textContent=M3.title(); },"primary");
+    M3.sl=slider("n",0,12,M3.s.n,v=>{M3.s.n=v;update();bTitle.textContent=M3.title();});
+    btn("Reset",()=>{M3.s.n=1;M3.s.z=[3,1];render();});
+    snapChk(()=>{ if(snap)M3.s.z=M3.s.z.map(Math.round); if(!M3.s.z[0]&&!M3.s.z[1])M3.s.z=[1,0]; });
+  },
+  drag(id,p){ const P=M3.plane(); let w=P.S2W(p); w=w.map(v=>snap?Math.round(v):Math.round(v*10)/10); w=[clamp(w[0],-5,5),clamp(w[1],-4,4)]; if(!w[0]&&!w[1])return false; M3.s.z=w; },
+  draw(){
+    const P=M3.plane(), g=drawPlane(P,{xl:"real",yl:"imaginary",imag:true}), O=P.W2S([0,0]), n=M3.s.n, z=M3.s.z, r=cabs(z), th=cargD(z);
+    g.appendChild(E("circle",{cx:O[0],cy:O[1],r:P.S,fill:"none",stroke:"#A78BFA","stroke-width":2,"stroke-dasharray":"5 4"}));
+    g.appendChild(E("circle",{cx:O[0],cy:O[1],r:r*P.S,fill:"none",stroke:"#94A3B8","stroke-width":1.4,"stroke-dasharray":"3 5"}));
+    // spiral of quarter turns
+    for(let k=0;k<n;k++){ const a0=th+90*k; arc(g,O,r*P.S+5*k,a0,a0+90,k===n-1?"var(--magenta)":"rgba(219,39,119,.45)",2.6,k===n-1); }
+    for(let k=0;k<n;k++){ const a0=90*k; arc(g,O,P.S*0.55+3*k,a0,a0+90,"rgba(5,150,105,.75)",2.2,k===n-1); }
+    IPV.forEach((v,i)=>{ const s=P.W2S(v); sdot(g,s,i===n%4?"#059669":"#64748B",i===n%4?7:5); label(g,s,[v[0]||-.6,-(v[1])||.9],IP[i],i===n%4?"#047857":"#475569"); });
+    const names=["z","iz","−z","−iz"];
+    for(let k=1;k<4;k++){ const w=cmul(z,IPV[k]); const s=P.W2S(w); sdot(g,s,"#CBD5E1",5); }
+    const res=cmul(z,IPV[n%4]), rs=P.W2S(res);
+    arrow(g,O,P.W2S(z),"var(--corr)",3); if(n%4){ arrow(g,O,rs,"var(--magenta)",3.4); }
+    sgrab(g,P.W2S(z),"z","var(--corr)");
+    label(g,P.W2S(z),[z[0]||.3,-z[1]||-.3],"z = "+cstr(z,v=>fr(v)),"#0369A1");
+    if(n%4) label(g,rs,[res[0]||.3,-res[1]||-.3],"i"+sup(n)+"·z = "+cstr(res,v=>fr(v)),"#C0185F");
+    for(let k=1;k<4;k++){ if(k===n%4)continue; const w=cmul(z,IPV[k]); label(g,P.W2S(w),[w[0]||.3,-w[1]||-.3],names[k],"#94A3B8"); }
+    infoBox(g,12,12,["i"+sup(n)+" = "+IP[n%4],n+" quarter turn"+(n===1?"":"s")+" = "+(90*n)+"°"],"#047857");
+  },
+  panel(){
+    const n=M3.s.n;
+    side.innerHTML=`<div class="panel"><h3>The imaginary unit</h3><div class="pad">
+      <p>No real number squares to a negative, so mathematicians defined a new number <span class="term">i</span> with <b>i² = −1</b>. Then √(−1) = i, and every negative has a square root: √(−n) = i√n.</p>
+      <p>A <span class="term">complex number</span> has the form a + bi, with real part a and imaginary part b. Plot it like the point (a, b) on the <b>complex plane</b>.</p>
+      <p>Multiplying by i turns a point <b>90° counterclockwise</b> around 0. Four turns is 360°, so the powers of i repeat every 4.</p>
+      <div class="eq">i¹ = i   i² = −1   i³ = −i   i⁴ = 1\niⁿ = i^(remainder of n ÷ 4)</div></div></div>
+      <div class="panel"><h3>The cycle</h3><table class="cyc">${[0,1,2,3].map(k=>`<tr class="${k===n%4?"on":""}"><td>n ÷ 4 leaves ${k}</td><td>i${sup(k)}${k===2?" = i·i":k===3?" = i²·i":""}</td><td>= ${IP[k]}</td></tr>`).join("")}</table></div>
+      <div class="panel"><h3>iⁿ for any whole number n</h3><div class="pad">
+        <label class="fld" for="ibig" style="margin:0 0 7px">n</label><input type="text" id="ibig" value="2026" inputmode="numeric">
+        <div class="eq" id="iout"></div>
+        <label class="fld" for="irad" style="margin:4px 0 7px">Simplify √(−n), n =</label><input type="text" id="irad" value="48" inputmode="numeric">
+        <div class="eq" id="rout"></div></div></div>`+
+      tryPanel(`<p>1. Press <b>× i</b> four times. Where does z end up, and why?</p><p>2. Without the calculator: what is i¹⁰⁰? i¹⁰³? Check your answers.</p><p>3. Careful: √(−4)·√(−9) is (2i)(3i) = 6i² = −6, <b>not</b> √36 = 6. Why can't you combine them first?</p>`);
+    const fi=()=>{ const v=document.getElementById("ibig").value, o=document.getElementById("iout"), r=bigMod4(v);
+      if(r===null){ o.textContent="Type a whole number, e.g. 2026 or −7."; return; }
+      const s=String(v).trim().replace(/[−–]/g,"-"); const neg=s[0]==="-";
+      o.textContent=`${minus(s)} ÷ 4 leaves remainder ${r}${neg?" (counting down from a multiple of 4)":""}\ni^${minus(s)} = i^${r} = ${IP[r]}`; };
+    const fr2=()=>{ const v=document.getElementById("irad").value.trim().replace(/^[−-]/,""), o=document.getElementById("rout");
+      if(!/^\d{1,9}$/.test(v)||+v===0){ o.textContent="Type a positive whole number."; return; }
+      const N=+v, [k,r]=simpRad(N);
+      let t=`√(−${N}) = √(−1) · √${N} = i√${N}`;
+      if(r===1) t+=`\n= ${k===1?"":k}i`; else if(k>1) t+=`\n= i√(${k*k} · ${r}) = ${k}i√${r}`;
+      t+=`\n≈ ${num(Math.sqrt(N),3)}i`; o.textContent=t; };
+    document.getElementById("ibig").addEventListener("input",fi); document.getElementById("irad").addEventListener("input",fr2); fi(); fr2();
+  }
+};
+function sup(n){ const m={"0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹","-":"⁻"}; return String(n).split("").map(c=>m[c]||c).join(""); }
+
+/* ══════════════════════ TAB 4 · complex arithmetic ══════════════════════ */
+const CZ=[60,45,30,20,12,8,5];
+const OPS=[["add","z₁ + z₂"],["sub","z₁ − z₂"],["mul","z₁ · z₂"],["conj","conjugate"],["div","z₁ ÷ z₂"]];
+const M4={
+  tab:"Complex arithmetic", lesson:"N-CN.A.2 · N-CN.A.3", accent:"var(--lavender)",
+  title:()=>({add:"Addition is vector addition",sub:"Subtraction adds the opposite",mul:"Multiplication: moduli multiply, angles add",conj:"Conjugates reflect across the real axis",div:"Divide by multiplying by the conjugate"})[M4.s.op],
+  s:{z1:[3,2],z2:[1,-2],op:"add",zi:2},
+  plane(){ return Plane({ox:350,oy:230,S:CZ[M4.s.zi],rect:[0,0,VW,VH]}); },
+  bar(){
+    segBtns("",OPS,M4.s.op,v=>{M4.s.op=v; if(v==="mul"&&M4.s.zi<3)M4.s.zi=3; render();});
+    btn("−",()=>{M4.s.zi=Math.min(CZ.length-1,M4.s.zi+1);update();},null,"Zoom out");
+    btn("+",()=>{M4.s.zi=Math.max(0,M4.s.zi-1);update();},null,"Zoom in");
+    snapChk(()=>{ if(snap){M4.s.z1=M4.s.z1.map(Math.round);M4.s.z2=M4.s.z2.map(Math.round);} });
+    btn("Reset",()=>{M4.s.z1=[3,2];M4.s.z2=[1,-2];M4.s.zi=M4.s.op==="mul"?3:2;render();});
+  },
+  drag(id,p){ const P=M4.plane(); let w=P.S2W(p).map(v=>snap?Math.round(v):Math.round(v*10)/10);
+    w=[clamp(w[0],Math.ceil(P.xmin),Math.floor(P.xmax)),clamp(w[1],Math.ceil(P.ymin),Math.floor(P.ymax))];
+    if(id==="z2"&&M4.s.op==="div"&&!w[0]&&!w[1])return false; M4.s[id]=w; },
+  fz(v){ return snap? fr(v) : (isInt(v*10)? fr(v,10) : num(v,2)); },
+  draw(){
+    const P=M4.plane(), g=drawPlane(P,{xl:"real",yl:"imaginary",imag:true}), O=P.W2S([0,0]), {z1,z2,op}=M4.s, W=P.W2S, f=v=>M4.fz(v);
+    const cs=z=>cstr(z,f);
+    const B1="#0284C7", B2="#059669", R="#DB2777";
+    const lab=(z,t,col,away)=>{ const s=W(z); let d=away? sub(s,W(away)) : sub(s,O); if(len(d)<1)d=[1,-1]; label(g,s,d,t,col); };
+    if(op==="add"||op==="sub"){
+      const w2= op==="add"? z2 : [-z2[0],-z2[1]], res=cadd(z1,w2);
+      if(op==="sub"){ arrow(g,O,W(w2),"#94A3B8",2.4,"7 5"); lab(w2,"−z₂","#64748B"); arrow(g,W(z2),W(z1),"rgba(219,39,119,.55)",2.2,"4 4"); }
+      sseg(g,W(z1),W(res),"#94A3B8",1.8,"6 5"); sseg(g,W(w2),W(res),"#94A3B8",1.8,"6 5");
+      arrow(g,O,W(z1),B1,3.2); arrow(g,O,W(z2),B2,3.2); arrow(g,O,W(res),R,3.6);
+      sdot(g,W(res),R,6); lab(res,(op==="add"?"z₁ + z₂ = ":"z₁ − z₂ = ")+cs(res),"#BE185D");
+    }
+    if(op==="mul"||op==="div"){
+      const res= op==="mul"? cmul(z1,z2) : (cabs(z2)>0? cdiv(z1,z2) : null);
+      const t1=cargD(z1), t2=cargD(z2);
+      arc(g,O,30,0,t1,B1,2.4,false); arc(g,O,44,0,t2,B2,2.4,false);
+      arrow(g,O,W(z1),B1,3.2); arrow(g,O,W(z2),B2,3.2);
+      if(res){ const tr=cargD(res); arc(g,O,60,0,tr,R,2.6,true); arrow(g,O,W(res),R,3.6); sdot(g,W(res),R,6);
+        const sr=W(res); const off=sr[0]<-5||sr[0]>VW+5||sr[1]<-5||sr[1]>VH+5;
+        if(off) stext(g,[350,VH-20],"Result is off the board — zoom out (−)","sm","#BE185D");
+        else lab(res,(op==="mul"?"z₁z₂ = ":"z₁/z₂ = ")+cstr(res,v=>op==="div"?(snap?fr(v):num(v,2)):f(v)),"#BE185D"); }
+    }
+    if(op==="conj"){
+      const cj=[z1[0],-z1[1]], m=[cabs(z1)**2,0];
+      sseg(g,W(z1),W(cj),"#94A3B8",1.8,"6 5");
+      arrow(g,O,W(z1),B1,3.2); arrow(g,O,W(cj),"#7C3AED",3.2);
+      sdot(g,W(m),R,6); lab(m,"z·z̄ = "+f(m[0]),"#BE185D",[m[0],1]);
+      lab(cj,"z̄₁ = "+cs(cj),"#6D28D9");
+    }
+    sgrab(g,W(z1),"z1",B1); lab(z1,"z₁ = "+cs(z1),"#0369A1");
+    if(op!=="conj"){ sgrab(g,W(z2),"z2",B2); lab(z2,"z₂ = "+cs(z2),"#047857"); }
+  },
+  panel(){
+    const {z1,z2,op}=M4.s, f=v=>M4.fz(v), [a,b]=z1, [c,d]=z2, cs=z=>cstr(z,f);
+    const pz=z=>"("+cs(z)+")";
+    let h="", t="";
+    if(op==="add"){ const r=cadd(z1,z2);
+      t=`${pz(z1)} + ${pz(z2)}\n= (${f(a)} + ${par(f(c))}) + (${f(b)} + ${par(f(d))})i\n= ${cs(r)}`;
+      h=`<p>Add the <b>real parts</b> and add the <b>imaginary parts</b> — exactly like combining like terms in (3 + 2x) + (1 − 2x).</p><p>On the complex plane this is <span class="term">vector addition</span>: put z₂'s arrow at the tip of z₁. The sum is the diagonal of the parallelogram.</p>`; }
+    if(op==="sub"){ const r=csub(z1,z2);
+      t=`${pz(z1)} − ${pz(z2)}\n= (${f(a)} − ${par(f(c))}) + (${f(b)} − ${par(f(d))})i\n= ${cs(r)}`;
+      h=`<p>Subtracting is adding the opposite: z₁ − z₂ = z₁ + (−z₂). The grey dashed arrow is −z₂, z₂ turned halfway around.</p><p>The pink dashed arrow from z₂ to z₁ is the same vector as z₁ − z₂, so |z₁ − z₂| is the <b>distance</b> between the two points.</p>`; }
+    if(op==="mul"){ const r=cmul(z1,z2), m1=cabs(z1), m2=cabs(z2), t1=cargD(z1), t2=cargD(z2), tr=cargD(r);
+      t=`${pz(z1)}${pz(z2)}\n= ${f(a)}·${par(f(c))} + ${f(a)}·${par(f(d))}i + ${f(b)}·${par(f(c))}i + ${f(b)}·${par(f(d))}i²\n= ${f(a*c)} ${a*d+b*c<0?"−":"+"} ${f(Math.abs(a*d+b*c))}i ${b*d<0?"−":"+"} ${f(Math.abs(b*d))}(−1)      ← i² = −1\n= ${cs(r)}`;
+      h=`<p>Multiply like binomials (distribute / FOIL), then replace <b>i² with −1</b> and combine like terms.</p><p>Geometrically: the <span class="term">modulus</span> (length) multiplies and the <span class="term">argument</span> (angle from the positive real axis) adds. Multiplying by z₂ <b>stretches</b> z₁ by |z₂| and <b>rotates</b> it by z₂'s angle.</p>
+        <div class="eq">|z₁| · |z₂| = ${num(m1)} · ${num(m2)} ≈ ${num(m1*m2)} = |z₁z₂|\nθ₁ + θ₂ = ${num(t1,1)}° + ${par(num(t2,1))}° = ${num(t1+t2,1)}°${Math.abs(t1+t2-tr)>0.5&&cabs(r)>1e-9?"  ≡ "+num(tr,1)+"° (same direction)":""}<small>Blue arc θ₁, green arc θ₂, pink arc the product's angle.</small></div>`; }
+    if(op==="conj"){ const n2=a*a+b*b;
+      t=`z₁ = ${cs(z1)}   z̄₁ = ${cs([a,-b])}\nz₁ · z̄₁ = (${f(a)})² − (${f(b)}i)²\n        = ${f(a*a)} − (${f(b*b)})(−1)\n        = ${f(n2)} = |z₁|²\n|z₁| = √${f(n2)}${isInt(Math.sqrt(n2))?" = "+f(Math.sqrt(n2)):" ≈ "+num(Math.sqrt(n2))}`;
+      h=`<p>The <span class="term">complex conjugate</span> of a + bi is a − bi: same real part, opposite imaginary part. On the plane it is the <b>reflection across the real axis</b>.</p><p>A number times its conjugate is always a <b>real</b>, non-negative number: (a + bi)(a − bi) = a² + b², the square of the <span class="term">modulus</span> |z|. That fact is the key to division.</p>`; }
+    if(op==="div"){
+      if(cabs(z2)===0){ t="z₂ = 0: division by zero is undefined."; }
+      else { const n2=c*c+d*d, re=a*c+b*d, im=b*c-a*d, F=v=>snap?fr(v):num(v,3);
+        const fin=cstr([re/n2,im/n2],v=>snap?fr(v):num(v,3)), split=`${F(re)}/${F(n2)} ${im<0?"−":"+"} (${F(Math.abs(im))}/${F(n2)})i`;
+        t=`${pz(z1)} / ${pz(z2)}\nMultiply top and bottom by the conjugate ${cs([c,-d])}:\n= ${pz(z1)}${pz([c,-d])} / (${pz(z2)}${pz([c,-d])})\n= (${cstr([re,im],F)}) / (${f(c*c)} + ${f(d*d)})\n= ${split}${split!==fin?"\n= "+fin:""}`; }
+      h=`<p>You can't leave i in a denominator. Multiply the top and bottom by the <b>conjugate of the denominator</b>: the bottom becomes c² + d², a real number, and you can split into a + bi form.</p><p>Geometrically division undoes multiplication: moduli <b>divide</b> and angles <b>subtract</b>.</p>${cabs(z2)>0?`<div class="eq">|z₁| / |z₂| ≈ ${num(cabs(z1))} / ${num(cabs(z2))} ≈ ${num(cabs(z1)/cabs(z2))}\nθ₁ − θ₂ ≈ ${num(cargD(z1)-cargD(z2),1)}°</div>`:""}`; }
+    side.innerHTML=`<div class="panel"><h3>${OPS.find(o=>o[0]===op)[1]}</h3><div class="pad">${h}<div class="eq">${esc(t)}</div></div></div>
+      <div class="panel"><h3>Measurements</h3>
+        <div class="rel"><span class="dot" style="background:#0284C7"></span><span class="nm">z₁ <em>modulus · argument</em></span><span class="val">${num(cabs(z1))} · ${num(cargD(z1),1)}°</span></div>
+        <div class="rel"><span class="dot" style="background:#059669"></span><span class="nm">z₂ <em>modulus · argument</em></span><span class="val">${num(cabs(z2))} · ${num(cargD(z2),1)}°</span></div></div>`+
+      tryPanel(`<p>1. Choose <b>z₁ · z₂</b> and drag z₂ to i (0, 1). What does multiplying by i do to z₁? Now try z₂ = 2.</p><p>2. In <b>z₁ ÷ z₂</b>, make z₁ = z₂. What is the quotient, and why?</p><p>3. With <b>conjugate</b>, find a z₁ where z₁ · z̄₁ = 25. How many can you find?</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 5 · complex solutions ══════════════════════ */
+const M5={
+  tab:"Complex solutions", lesson:"N-CN.C.7 · A-REI.B.4b", accent:"var(--magenta)",
+  title:()=>"Solve "+quad(M5.s.a,M5.s.b,M5.s.c)+" = 0",
+  s:{a:1,b:-2,c:5}, sl:{},
+  planes(){ const {a,b,c}=M5.s, k=c-b*b/(4*a), S=26, oy=a>0? clamp(370,80+k*S,420+k*S) : clamp(90,40+k*S,380+k*S); return [Plane({ox:220,oy,S,rect:[0,0,440,VH]}), Plane({ox:575,oy:230,S:24,rect:[448,0,252,VH]})]; },
+  bar(){
+    M5.sl.a=slider("a",-3,3,M5.s.a,v=>{M5.s.a=v;update();bTitle.textContent=M5.title();},true);
+    M5.sl.b=slider("b",-10,10,M5.s.b,v=>{M5.s.b=v;update();bTitle.textContent=M5.title();});
+    M5.sl.c=slider("c",-10,10,M5.s.c,v=>{M5.s.c=v;update();bTitle.textContent=M5.title();});
+    btn("Random D < 0",()=>{ let a,b,c; do{ a=pick([1,1,1,2,-1,3,-2]); b=rnd(-8,8); c=rnd(-10,10); }while(b*b-4*a*c>=0||Math.abs(b/(2*a))>6); M5.s.a=a;M5.s.b=b;M5.s.c=c; render(); },"primary");
+  },
+  drag(id,p){ const [P]=M5.planes(), a=M5.s.a; if(p[0]>440)return false; const w=P.S2W(p);
+    const b=clamp(Math.round(-2*a*w[0]),-10,10), c=clamp(Math.round(w[1]+b*b/(4*a)),-10,10);
+    if(b===M5.s.b&&c===M5.s.c)return false; M5.s.b=b;M5.s.c=c; M5.sl.b.set(b); M5.sl.c.set(c); bTitle.textContent=M5.title(); },
+  draw(){
+    const {a,b,c}=M5.s, [P,Z]=M5.planes(), Q=qSolve(a,b,c), xv=Q.p, k=c-b*b/(4*a);
+    const g=drawPlane(P), V=P.W2S([xv,k]), X0=P.W2S([xv,0]);
+    sseg(g,[V[0],0],[V[0],VH],"#94A3B8",1.6,"6 6");
+    curve(g,P,x=>a*x*x+b*x+c,"var(--vert)");
+    sdot(g,X0,"var(--magenta)",6); label(g,X0,[0.5,a>0?1:-1],"x = p = "+fr(xv),"#C0185F");
+    if(Q.kind==="neg"){ sseg(g,X0,V,"#F59E0B",3,"2 5"); label(g,[(X0[0]+V[0])/2,(X0[1]+V[1])/2],[1,0],"k = "+fr(k),"#B45309"); }
+    else Q.vals.forEach(r=>sdot(g,P.W2S([r[0],0]),"#059669",7));
+    sgrab(g,V,"v","var(--vert)"); label(g,V,[-1,a>0?-1:1],"vertex ("+fr(xv)+", "+fr(k)+")","#6D28D9");
+    stext(g,[220,a>0?24:VH-20],Q.kind==="neg"?"never touches the x-axis":"crosses/touches the x-axis: real roots","sm",Q.kind==="neg"?"#6D28D9":"#047857");
+    // separator & complex plane
+    cv.appendChild(E("rect",{x:440,y:0,width:8,height:VH,fill:"#E2E8F0"}));
+    const gz=drawPlane(Z,{xl:"real",yl:"imag",imag:true,gap:36});
+    stext(gz,[575,VH-16],FS>1?"roots":"roots in the complex plane","sm","var(--ink)");
+    const pts=Q.kind==="neg"? [[Q.p,Q.q],[Q.p,-Q.q]] : Q.vals;
+    if(Q.kind==="neg") sseg(gz,Z.W2S(pts[0]),Z.W2S(pts[1]),"#94A3B8",1.8,"6 5");
+    pts.forEach((r,i)=>{ const s=Z.W2S(r); sdot(gz,s,Q.kind==="neg"?"var(--magenta)":"#059669",7);
+      label(gz,s,[0.3,Q.kind==="neg"?(i?1:-1):(i?-1:1)],cstr(r,v=>{const t=fr(v); return isFrac(t)||t.length<6?t:num(v,2);}),Q.kind==="neg"?"#BE185D":"#047857",Z.rect); });
+  },
+  panel(){
+    const {a,b,c}=M5.s, W=qWork(a,b,c), Q=W.Q, k=c-b*b/(4*a);
+    const conn= Q.kind==="neg"? `<div class="eq">p = −b/(2a) = ${fr(Q.p)} = x-coordinate of the vertex\nq = √(−D)/(2|a|) = √${fr(-Q.D)}/${fr(2*Math.abs(a))} = ${sqrtRat(Q.q*Q.q)}${isInt(Q.q)?"":" ≈ "+num(Q.q,3)}\nq² = k/a = ${fr(k)}/${par(fr(a))} = ${fr(k/a)}<small>The roots are p ± qi: a conjugate pair centered on the axis of symmetry.</small></div>`
+      : `<p>Right now D = ${fr(Q.D)} ≥ 0, so the roots are real and the graph meets the x-axis. Raise the vertex (a &gt; 0) or press <b>Random D &lt; 0</b>.</p>`;
+    side.innerHTML=`<div class="panel"><h3>When D &lt; 0</h3><div class="pad">
+      <p>If b² − 4ac is negative, the quadratic formula asks for the square root of a negative number. Using √(−n) = i√n, the roots become <b>complex</b>: x = p ± qi.</p>
+      <p>The graph shows why there are no <b>real</b> roots: the vertex is ${a>0?"above":"below"} the x-axis and the parabola opens ${a>0?"up":"down"}, so it never crosses.</p>
+      <div class="eq">${esc(W.text)}</div>${classHTML(Q)}</div></div>
+      <div class="panel"><h3>Connection to the graph</h3><div class="pad">
+      <p>Both roots share the real part <b>p</b>, and p is exactly the vertex's x-coordinate. The ± part sits on the imaginary axis, so the two roots are <span class="term">complex conjugates</span>.</p>${conn}
+      <p>A quadratic with real coefficients always has complex roots in <b>conjugate pairs</b>: if p + qi is a root, so is p − qi.</p></div></div>`+
+      tryPanel(`<p>1. Drag the vertex straight up. p stays fixed — what happens to q?</p><p>2. Make the vertex sit exactly on the x-axis. What are the roots? What is q?</p><p>3. Check by multiplying: (x − (p + qi))(x − (p − qi)) = x² − 2px + (p² + q²). Compare with your equation divided by a.</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+const KINDS=[["mix","Mix"],["vform","Vertex form"],["solve","Quadratic formula"],["disc","Discriminant"],["ipow","Powers of i"],["cadd","Add / subtract"],["cmul","Multiply"],["cdiv","Divide"]];
+const KNAME={vform:"vertex form",solve:"quadratic formula",disc:"discriminant",ipow:"powers of i",cadd:"complex add / subtract",cmul:"complex multiply",cdiv:"complex divide"};
+function genProblem(kind){
+  if(kind==="mix")kind=pick(["vform","solve","solve","disc","ipow","cadd","cmul","cdiv"]);
+  const pr={kind};
+  if(kind==="vform"){
+    const a=pick([1,1,1,2,3,-1,-2]); let h=rnd(-6,6); if(!h)h=3; let k=rnd(-9,9);
+    if(a===1&&Math.random()<.3){ h=(2*rnd(-4,3)+1)/2; k=rnd(-8,8)-0.25; }
+    pr.a=a; pr.b=-2*a*h; pr.c=a*h*h+k; pr.h=h; pr.k=k;
+    pr.q=`Complete the square to write <b>y = ${quad(pr.a,pr.b,pr.c)}</b> in vertex form y = a(x − h)² + k.`;
+    pr.ph="e.g. 2(x-3)^2+5"; pr.fmt=`Type the right side, like <code>2(x-3)^2+5</code> or <code>(x+1/2)^2-13/4</code>.`;
+  }
+  if(kind==="solve"||kind==="disc"){
+    const want= kind==="disc"? pick(["pos","zero","neg"]) : pick(["rat","irr","neg","neg"]);
+    let a,b,c,Q;
+    for(let t=0;t<500;t++){ a=pick([1,1,1,2,-1,3]); b=rnd(-8,8); c=rnd(-10,10);
+      if(want==="zero"){ const r=rnd(-5,5); a=pick([1,1,2,-1,4]); b=-2*a*r; c=a*r*r; if(a===4){ b=4*rnd(-2,2)+2*pick([1,-1]); c=b*b/16; } }
+      Q=qSolve(a,b,c); const D=Q.D, sq=D>0&&isInt(Math.sqrt(D));
+      if(want==="pos"&&D>0)break; if(want==="zero"&&D===0)break; if(want==="neg"&&D<0)break;
+      if(want==="rat"&&sq)break; if(want==="irr"&&D>0&&!sq&&simpRad(D)[0]>1)break; }
+    pr.a=a;pr.b=b;pr.c=c;pr.Q=Q;
+    if(kind==="solve"){ pr.q=`Use the quadratic formula to solve <b>${quad(a,b,c)} = 0</b>. Give every solution.`;
+      pr.ph="e.g. 2±sqrt(3)  or  1±2i  or  -3, 5"; pr.fmt=`Separate answers with a comma, or use ± once: <code>-3, 5</code> · <code>2±sqrt(3)</code> · <code>(1±√5)/2</code> · <code>1±2i</code>. Decimals to the nearest tenth are fine.`; }
+    else pr.q=`Without solving, use the discriminant to classify the roots of <b>${quad(a,b,c)} = 0</b>.`;
+  }
+  if(kind==="ipow"){
+    if(Math.random()<.7){ pr.n=rnd(5,999)+(Math.random()<.2?2000:0); pr.ans=[IPV[pr.n%4]]; pr.q=`Simplify <b>i${sup(pr.n)}</b>.`; }
+    else { pr.m1=rnd(3,40); pr.m2=rnd(3,40); pr.n=pr.m1+pr.m2; pr.ans=[IPV[pr.n%4]]; pr.q=`Simplify <b>i${sup(pr.m1)} · i${sup(pr.m2)}</b>.`; }
+    pr.ph="1, -1, i or -i"; pr.fmt=`Answer with <code>1</code>, <code>-1</code>, <code>i</code> or <code>-i</code>.`;
+  }
+  if(kind==="cadd"||kind==="cmul"||kind==="cdiv"){
+    const R=kind==="cadd"?9:kind==="cmul"?6:5; const rz=()=>{ let z; do{ z=[rnd(-R,R),rnd(-R,R)]; }while(!z[1]); return z; };
+    pr.z1=rz(); pr.z2=rz();
+    if(kind==="cadd"){ pr.op=pick(["+","−"]); pr.ans=[pr.op==="+"?cadd(pr.z1,pr.z2):csub(pr.z1,pr.z2)]; }
+    if(kind==="cmul"){ pr.op="·"; pr.ans=[cmul(pr.z1,pr.z2)]; }
+    if(kind==="cdiv"){ pr.op="÷"; pr.ans=[cdiv(pr.z1,pr.z2)]; pr.tol=0.011; }
+    const pz=z=>"("+cstr(z)+")";
+    pr.q= kind==="cdiv"? `Divide and write in a + bi form: <b>${pz(pr.z1)} ÷ ${pz(pr.z2)}</b>.` : `Simplify and write in a + bi form: <b>${pz(pr.z1)} ${pr.op==="·"?"":pr.op+" "}${pr.op==="·"?"":""}${pr.op==="·"?pz(pr.z2):pz(pr.z2)}</b>.`;
+    pr.ph="e.g. 3-2i"; pr.fmt= kind==="cdiv"? `Type <code>a+bi</code>; fractions are fine: <code>-1/5+7/5i</code>, or decimals to the nearest hundredth.` : `Type <code>a+bi</code>, like <code>3-2i</code>, <code>-7i</code> or <code>4</code>.`;
+  }
+  return pr;
+}
+function csText(pr){ const R=csSteps(pr.a,pr.b,pr.c); return R.st.slice(0,-1).map(s=>s.ex+(s.nx?"\n"+s.nx:"")).join("\n"); }
+function solText(pr){
+  if(pr.kind==="vform")return csText(pr);
+  if(pr.kind==="solve")return qWork(pr.a,pr.b,pr.c).text;
+  if(pr.kind==="disc"){ const Q=pr.Q; return `D = b² − 4ac = ${par(fr(pr.b))}² − 4·${par(fr(pr.a))}·${par(fr(pr.c))} = ${fr(Q.D)}\n${Q.kind==="pos"?"D > 0 → two distinct real roots":Q.kind==="zero"?"D = 0 → one repeated real root (the vertex is on the x-axis)":"D < 0 → two complex (non-real) roots, a conjugate pair"}`; }
+  if(pr.kind==="ipow"){ const n=pr.n; return (pr.m1?`i${sup(pr.m1)} · i${sup(pr.m2)} = i${sup(n)}   (add exponents)\n`:"")+`${n} = 4·${Math.floor(n/4)} + ${n%4}\ni${sup(n)} = (i⁴)${sup(Math.floor(n/4))} · i${sup(n%4)} = 1 · i${sup(n%4)} = ${IP[n%4]}`; }
+  const [a,b]=pr.z1,[c,d]=pr.z2;
+  if(pr.kind==="cadd"){ const s=pr.op==="+"?1:-1; return `real: ${a} ${pr.op} ${par(minus(c))} = ${minus(a+s*c)}\nimaginary: ${minus(b)} ${pr.op} ${par(minus(d))} = ${minus(b+s*d)}\nanswer: ${cstr(pr.ans[0])}`.replace(/-/g,"−"); }
+  if(pr.kind==="cmul"){ return `(${cstr(pr.z1)})(${cstr(pr.z2)})\n= ${minus(a*c)} + ${par(minus(a*d))}i + ${par(minus(b*c))}i + ${par(minus(b*d))}i²\n= ${minus(a*c)} + ${par(minus(a*d+b*c))}i − ${par(minus(b*d))}\n= ${cstr(pr.ans[0])}`; }
+  if(pr.kind==="cdiv"){ const n2=c*c+d*d; return `Multiply top and bottom by the conjugate ${cstr([c,-d])}:\nnumerator: (${cstr(pr.z1)})(${cstr([c,-d])}) = ${cstr([a*c+b*d,b*c-a*d])}\ndenominator: ${c}² + ${par(minus(d))}² = ${n2}\n= ${cstr([a*c+b*d,0])}/${n2} ${b*c-a*d<0?"−":"+"} (${Math.abs(b*c-a*d)}/${n2})i\n= ${cstr(pr.ans[0])}  ≈ ${cstr(pr.ans[0],v=>num(v,2))}`.replace(/-/g,"−"); }
+}
+function hintText(pr,vals){
+  if(pr.kind==="vform"){ const p=pr.b/pr.a; return `${near(pr.a,1)?"":`Factor a = ${fr(pr.a)} out of the x-terms first: ${aPre(pr.a)}(${quad(1,p,0)})${sgnT(pr.c)}. `}Half of ${fr(p)} is ${fr(p/2)}; its square is ${fr(p*p/4)}. Add and subtract it inside${near(pr.a,1)?"":", and remember the subtracted part comes out multiplied by a"}.`; }
+  if(pr.kind==="solve"){ const Q=pr.Q; return `Here a = ${fr(pr.a)}, b = ${fr(pr.b)}, c = ${fr(pr.c)}. Compute D = b² − 4ac first (it should be ${fr(Q.D)}${Q.D<0?" — negative, so expect ±i":""}). Then x = (−b ± √D) / (2a). Did you give both solutions?`; }
+  if(pr.kind==="disc")return `Compute b² − 4ac carefully — watch the sign of 4ac when a or c is negative.`;
+  if(pr.kind==="ipow")return `Divide the exponent ${pr.m1?"(after adding "+pr.m1+" + "+pr.m2+") ":""}by 4 and keep only the remainder: i⁰ = 1, i¹ = i, i² = −1, i³ = −i.`;
+  if(pr.kind==="cadd")return `Combine real parts with real parts and imaginary parts with imaginary parts.${pr.op==="−"?" Subtracting a negative is adding.":""}`;
+  if(pr.kind==="cmul")return `Distribute all four products, then replace i² with −1 — that term moves to the real part with its sign flipped.`;
+  if(pr.kind==="cdiv")return `Multiply top and bottom by ${cstr([pr.z2[0],-pr.z2[1]])}, the conjugate of the denominator. The new denominator is ${pr.z2[0]}² + ${pr.z2[1]}² = ${pr.z2[0]**2+pr.z2[1]**2}.`;
+  return "";
+}
+function vformShape(s){
+  const t=String(s).toLowerCase().replace(/[−–]/g,"-").replace(/\s+/g,"").replace(/²/g,"^2").replace(/^y=/,"").replace(/\*/g,"");
+  return /^[-+]?(\d+(\.\d+)?(\/\d+)?|\(\d+(\/\d+)?\))?\(x[-+]\d+(\.\d+)?(\/\d+)?\)\^2([-+]\d+(\.\d+)?(\/\d+)?)?$/.test(t)||/^[-+]?(\d+(\.\d+)?)?x\^2([-+]\d+(\.\d+)?(\/\d+)?)?$/.test(t);
+}
+const M6={
+  tab:"Challenge", lesson:"A-REI.B.4 · N-CN.A.1–2 · N-CN.C.7", accent:"var(--coral)",
+  title:()=>"Practice: "+KNAME[M6.s.pr?M6.s.pr.kind:"vform"],
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  streakEl:null,
+  newProb(){ M6.s.pr=genProblem(M6.s.kind); M6.s.state="open"; M6.s.reveal=false; M6.s.tries=0; },
+  bar(){
+    btn("New problem",()=>{M6.newProb();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    KINDS.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=M6.s.kind; sel.onchange=()=>{M6.s.kind=sel.value;M6.newProb();render();}; bar.appendChild(sel);
+    M6.streakEl=spacer(""); M6.upStreak();
+  },
+  upStreak(){ if(M6.streakEl)M6.streakEl.textContent="Streak "+M6.s.streak+" · Best "+M6.s.best+" · Solved "+M6.s.solved; },
+  draw(){
+    if(!M6.s.pr)M6.newProb();
+    const pr=M6.s.pr, show=M6.s.state==="right"||M6.s.reveal;
+    if(pr.kind==="vform"||pr.kind==="solve"||pr.kind==="disc"){
+      const {a,b,c}=pr, xv=-b/(2*a), yv=a*xv*xv+b*xv+c, S=26;
+      let ox=clamp(350-xv*S,40,660), oy=230+clamp(yv+(a>0?4:-4),-14,14)*S*0.5; oy=clamp(oy,30,430);
+      const P=Plane({ox,oy,S,rect:[0,0,VW,VH]}), g=drawPlane(P);
+      if(!show){ { const t="The graph appears after you answer."; infoBox(g,350-(t.length*8.1*FS+20)/2,VH/2-30,[t],"#475569"); }; return; }
+      curve(g,P,x=>a*x*x+b*x+c,"var(--vert)");
+      const V=P.W2S([xv,yv]); sdot(g,V,"var(--vert)",6); label(g,V,[0,a>0?1:-1],"vertex ("+fr(xv)+", "+fr(yv)+")","#6D28D9");
+      const Q=qSolve(a,b,c); if(Q.kind!=="neg")Q.vals.forEach((r,i)=>{ const s=P.W2S([r[0],0]); sdot(g,s,"var(--magenta)",7); label(g,s,[i?0.5:-0.5,a>0?-1:1],"x ≈ "+num(r[0]),"#C0185F"); });
+      else stext(g,[350,VH-22],"never touches the x-axis → roots "+qValsStr(Q),"sm","#6D28D9");
+      return;
+    }
+    const P=Plane({ox:350,oy:230,S:pr.kind==="ipow"?90:(pr.kind==="cmul"?6:22),rect:[0,0,VW,VH]}), g=drawPlane(P,{xl:"real",yl:"imaginary",imag:true}), O=P.W2S([0,0]);
+    if(pr.kind==="ipow"){
+      g.appendChild(E("circle",{cx:O[0],cy:O[1],r:P.S,fill:"none",stroke:"#A78BFA","stroke-width":2,"stroke-dasharray":"5 4"}));
+      IPV.forEach((v,i)=>{ const s=P.W2S(v); sdot(g,s,show&&i===pr.n%4?"var(--magenta)":"#64748B",show&&i===pr.n%4?8:5); label(g,s,[v[0]||-.6,-(v[1])||.9],IP[i],"#475569"); });
+      if(show){ const m=pr.n%4; arc(g,O,P.S*0.6,0,90*m,"var(--magenta)",2.6,true); stext(g,[350,VH-22],pr.n+" quarter turns = "+Math.floor(pr.n/4)+" full turns + "+m,"sm","#BE185D"); }
+      return;
+    }
+    const W=P.W2S;
+    arrow(g,O,W(pr.z1),"#0284C7",3); arrow(g,O,W(pr.z2),"#059669",3);
+    label(g,W(pr.z1),sub(W(pr.z1),O),"z₁ = "+cstr(pr.z1),"#0369A1"); label(g,W(pr.z2),sub(W(pr.z2),O),"z₂ = "+cstr(pr.z2),"#047857");
+    if(show){ const r=pr.ans[0]; arrow(g,O,W(r),"#DB2777",3.4); label(g,W(r),sub(W(r),O),"= "+cstr(r),"#BE185D"); }
+  },
+  panel(full){
+    const pr=M6.s.pr;
+    if(!full&&document.getElementById("chk"))return;
+    const giv={kind:pr.kind,a:pr.a,b:pr.b,c:pr.c,n:pr.n,z1:pr.z1,z2:pr.z2,op:pr.op};
+    const choice= pr.kind==="disc";
+    let h=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob" data-given='${JSON.stringify(giv)}'>${pr.q}</p></div>`;
+    if(choice) h+=`<div class="choices" id="chs">${[["pos","Two real roots","D > 0"],["zero","One repeated real root","D = 0"],["neg","Two complex roots","D < 0"]].map(([k,t,s])=>`<button class="choice" type="button" data-k="${k}">${t}<small>${s}</small></button>`).join("")}</div>`;
+    else h+=`<div class="fldwrap"><label class="fld" for="ans0" style="margin:4px 0 7px">${pr.kind==="vform"?"y =":pr.kind==="solve"?"x =":"answer"}</label><input type="text" id="ans0" autocomplete="off" spellcheck="false" placeholder="${esc(pr.ph)}"><p class="fmt">${pr.fmt}</p></div>`;
+    h+=`<div class="fldwrap" style="margin:12px 0 4px;display:flex;gap:10px;flex-wrap:wrap">${choice?"":`<button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button>`}
+        <button id="sol" class="ghost" type="button">Show solution</button></div><div id="fb6"></div><div style="height:4px"></div></div>
+      <div class="panel"><h3>How answers are checked</h3><div class="pad">
+      <p>Equivalent forms all count: <b>3/2</b> = <b>1.5</b>, <b>2±sqrt(3)</b> = <b>2+√3, 2−√3</b>, <b>(2-4i)/2</b> = <b>1−2i</b>. Vertex form is checked by testing it at several x-values <i>and</i> making sure it really is a(x − h)² + k.</p>
+      <p>A first-try correct answer grows your streak. A wrong answer resets it, gives a hint, and lets you try again.</p></div></div>`;
+    side.innerHTML=h;
+    if(choice&&!document.getElementById("chk")){ const hid=document.createElement("span"); hid.id="chk"; hid.hidden=true; side.appendChild(hid); }
+    const fb=document.getElementById("fb6");
+    const showSol=good=>{ fb.innerHTML=(good||"")+`<div class="fldwrap"><div class="eq">${esc(solText(pr))}</div></div>`; };
+    const win=()=>{ M6.s.state="right"; if(M6.s.tries===0&&!M6.s.reveal){M6.s.streak++;M6.s.best=Math.max(M6.s.best,M6.s.streak);} M6.s.solved++; M6.upStreak(); clear(); M6.draw();
+      showSol(`<div class="verdict good"><b>Correct!</b> ${M6.s.tries||M6.s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+M6.s.streak+"."} Compare with the full work below, then press <b>New problem</b>.</div>`); };
+    const lose=extra=>{ M6.s.tries++; M6.s.streak=0; M6.upStreak(); fb.innerHTML=`<div class="verdict bad"><b>Not quite.</b> ${extra||""}${hintText(pr)}</div>`; };
+    if(choice){
+      side.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{ if(M6.s.state==="right")return;
+        if(b.dataset.k===pr.Q.kind){ b.classList.add("right"); side.querySelectorAll(".choice").forEach(x=>x.disabled=true); win(); }
+        else { b.classList.add("wrong"); lose(); } });
+    } else {
+      const inp=document.getElementById("ans0");
+      const check=()=>{
+        if(M6.s.state==="right")return; const v=inp.value;
+        if(pr.kind==="vform"){
+          const xs=[-2.3,-0.6,0.7,1.9,3.4], f=x=>pr.a*x*x+pr.b*x+pr.c;
+          const ok=xs.every(x=>{const z=parseC(v,x); return z&&Math.abs(z[1])<1e-9&&Math.abs(z[0]-f(x))<1e-6*Math.max(1,Math.abs(f(x)));});
+          if(xs.some(x=>!parseC(v,x))){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Try something like 2(x-3)^2+5.</div>`; return; }
+          if(ok&&vformShape(v)) win(); else if(ok) lose(`That expression is equal to y, but it isn't in vertex form a(x − h)² + k yet. `); else lose();
+          return; }
+        if(pr.kind==="solve"){
+          const L=parseList(v); if(!L){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Examples: <b>-3, 5</b> · <b>2±sqrt(3)</b> · <b>1±2i</b>.</div>`; return; }
+          const want=pr.Q.vals; if(sameSet(L,want,0.051)) win();
+          else { const part=L.some(g=>want.some(w=>Math.abs(g[0]-w[0])<=.051&&Math.abs(g[1]-w[1])<=.051)); lose(part?"One of your answers is right, but the set of solutions isn't complete. ":""); }
+          return; }
+        const z=parseC(v); if(!z){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Write it as a + bi, like 3-2i.</div>`; return; }
+        const w=pr.ans[0], tol=pr.tol||1e-6;
+        if(Math.abs(z[0]-w[0])<=tol&&Math.abs(z[1]-w[1])<=tol) win();
+        else { const which= Math.abs(z[0]-w[0])<=tol? "Your real part is right; check the imaginary part. " : Math.abs(z[1]-w[1])<=tol? "Your imaginary part is right; check the real part. " : ""; lose(pr.kind==="ipow"?"":which); }
+      };
+      document.getElementById("chk").onclick=check; inp.addEventListener("keydown",e=>{if(e.key==="Enter")check();});
+    }
+    document.getElementById("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){M6.s.streak=0;M6.upStreak();} clear(); M6.draw();
+      showSol(`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
+function update(){ setFS(); clipN=0; const M=MODS[cur]; clear(); M.draw(); M.panel(false); }
+function render(){
+  setFS(); clipN=0; const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M6&&!M6.s.pr)M6.newProb();
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  bar.innerHTML=""; M.bar();
+  clear(); M.draw(); M.panel(true);
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>

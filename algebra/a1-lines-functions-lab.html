@@ -1,0 +1,1389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lines &amp; Functions Lab — Algebra 1 Unit 3</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M10 50L54 14' stroke='%2300E5FF' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M22 40H38V27' stroke='%23FFD93D' stroke-width='4' fill='none'/%3E%3Ccircle cx='10' cy='50' r='6' fill='%23FF3D8A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:normal;text-align:right}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict.info{background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .verdict b{color:#fff}
+
+  /* ── drawing ── */
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible,.choice:focus-visible,.del:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:120px}
+  .rng output{min-width:34px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .axt{font-family:var(--ui);font-size:14px;font-weight:700;fill:#4B5B7C}
+  .mv{font-family:var(--mono);font-weight:700;font-size:22px;fill:var(--ink)}
+  .mh{font-family:var(--display);font-weight:600;font-size:15px;fill:var(--graphite)}
+  .mhs{font-family:var(--mono);font-size:12px;font-weight:600;fill:#7C8AAB;letter-spacing:.08em}
+  .tv{font-family:var(--mono);font-weight:700;font-size:22px;fill:var(--ink)}
+  .bn{font-family:var(--mono);font-weight:700;font-size:20px;fill:var(--ink)}
+  .bdg{font-family:var(--display);font-weight:600;font-size:15px}
+  @media (max-width:560px){ svg.canvas .sm{font-size:21px;stroke-width:5} svg.canvas .mk{font-size:27px} svg.canvas .num{font-size:22px} svg.canvas .ax{font-size:17px} svg.canvas .axt{font-size:20px}
+    svg.canvas .mv,svg.canvas .tv{font-size:30px} svg.canvas .mh{font-size:22px} svg.canvas .mhs{font-size:17px} svg.canvas .bn{font-size:28px} svg.canvas .bdg{font-size:22px} }
+  .uterms{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+  .uterms span{font-family:var(--mono);font-size:12px;font-weight:600;padding:5px 11px;border-radius:100px;
+    border:1px solid var(--edge);color:var(--dim);opacity:.55}
+  .uterms span.on{opacity:1;color:#0A0A1F;background:var(--accent);border-color:var(--accent)}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px}
+  .choice{font-family:var(--ui);font-size:15px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:14px;padding:13px 12px;cursor:pointer;text-align:left;line-height:1.5;transition:.15s}
+  .choice:hover{background:rgba(255,255,255,.12)}
+  .choice.right{border-color:var(--mint);background:rgba(94,234,212,.16)}
+  .choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.14)}
+  .choice small{display:block;font-weight:400;color:var(--dim);font-size:12.5px}
+  .stepl{list-style:none;margin:0;padding:6px 0}
+  .stepl li{padding:10px 20px;border-left:3px solid transparent;color:var(--dim);font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li.done{color:#CFCFEA}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li b{color:#fff}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 140px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff;font-family:var(--mono)}
+  .fmt{font-size:13px;color:var(--dim);padding:8px 20px 0}
+
+  /* ── Lines & Functions Lab additions ── */
+  .wk{display:flex;flex-direction:column;gap:2px;margin:12px 0;border-left:4px solid var(--accent);background:rgba(0,0,0,.28);
+    border-radius:0 12px 12px 0;border-top:1px solid var(--edge);border-right:1px solid var(--edge);border-bottom:1px solid var(--edge);padding:8px 0}
+  .wk .wr{padding:6px 15px}
+  .wk .st{display:block;font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;overflow-wrap:anywhere}
+  .wk .rs{display:block;font-size:12.5px;color:var(--dim);margin-top:1px}
+  .wk .wr.hl .st{color:var(--mint)}
+  .wk .sub{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);padding:8px 15px 0}
+  table.dt{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.dt th{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--accent);text-align:left;padding:10px 8px 6px;font-weight:700}
+  table.dt td{padding:5px 8px;border-bottom:1px solid rgba(196,181,253,.11);font-family:var(--mono);font-weight:600;color:#E7E9FA;white-space:nowrap}
+  table.dt th:first-child,table.dt td:first-child{padding-left:20px}
+  table.dt th:last-child,table.dt td:last-child{padding-right:20px}
+  table.dt input{padding:8px 9px;border-radius:9px;font-family:var(--mono);font-weight:600;min-width:58px}
+  table.dt tr.badrow td{background:rgba(255,107,107,.12)}
+  table.dt td.okc{color:var(--mint)} table.dt td.noc{color:var(--coral)} table.dt td.dimc{color:var(--dim)}
+  .del{background:transparent;border:1px solid var(--edge);color:var(--dim);border-radius:100px;width:34px;height:34px;cursor:pointer;font-size:14px}
+  .del:hover{color:#fff;background:rgba(255,255,255,.08)}
+  .big{font-family:var(--mono);font-size:19px;font-weight:700;color:#fff}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  @media (max-width:560px){
+    .choices{grid-template-columns:1fr}
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:92px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+    .bar .spacer{margin-left:0;width:100%}
+    table.dt th:first-child,table.dt td:first-child{padding-left:14px}
+    table.dt th:last-child,table.dt td:last-child{padding-right:14px}
+    table.dt td,table.dt th{padding-left:5px;padding-right:5px}
+    table.dt input{min-width:48px;padding:7px 6px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Lines &amp; Functions Lab</h1>
+    <div class="eyebrow">Algebra 1 · Unit 3 · Graphing Lines &amp; Functions</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Graph of lines and functions"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every graph is live and every number is computed from the drawing — drag a point or move a slider and the work follows. Vocabulary follows Common Core / Eureka Math (EngageNY) Algebra I.
+    <div class="links"><a href="/algebra/">← Algebra courses</a><a href="/math/#algebra">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460, S=30, OX=350, OY=230;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const near=(a,b,e)=>Math.abs(a-b)<(e||1e-9);
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const lcm=(a,b)=>Math.abs(a*b)/gcd(a,b);
+const minus=s=>String(s).replace(/-/g,"−");
+function num(v,dp){ dp=(dp==null?1:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+function fracND(v){
+  if(!isFinite(v))return null;
+  for(let d=1;d<=1000;d++){ const n=Math.round(v*d); if(Math.abs(n/d-v)<1e-9*Math.max(1,Math.abs(v))){ const g=gcd(n,d); return [n/g,d/g]; } }
+  return null;
+}
+// exact fraction when the denominator is small, otherwise a decimal
+function fx(v){ if(Math.abs(v)<1e-12)return "0"; const f=fracND(v); if(f&&f[1]<=60) return f[1]===1? minus(f[0]) : minus(f[0]+"/"+f[1]); return num(v,2); }
+function fxa(v){ const s=fx(v); return s.indexOf("/")>=0? s+" ≈ "+num(v,2) : s; }
+const nm=v=>num(v,2);
+const pt=p=>"("+nm(p[0])+", "+nm(p[1])+")";
+const ptx=p=>"("+fx(p[0])+", "+fx(p[1])+")";
+const par=v=>v<-1e-12? "("+nm(v)+")" : nm(v);
+const same=(p,q)=>near(p[0],q[0],1e-9)&&near(p[1],q[1],1e-9);
+const sub=(p,q)=>[p[0]-q[0],p[1]-q[1]];
+const add=(p,q)=>[p[0]+q[0],p[1]+q[1]];
+const mul=(p,k)=>[p[0]*k,p[1]*k];
+const len=v=>Math.hypot(v[0],v[1]);
+const unit=v=>{const l=len(v)||1;return [v[0]/l,v[1]/l];};
+const money=v=>(v<0?"−":"")+"$"+Math.abs(v).toFixed(2);
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+
+/* ── line-equation formatting ── */
+function coefX(m,v){ v=v||"x";
+  if(near(m,1))return v; if(near(m,-1))return "−"+v;
+  const f=fx(Math.abs(m)); return (m<0?"−":"")+(f.indexOf("/")>=0? "("+f+")"+v : f+v); }
+function exprMX(m,c){ // mx + c
+  if(Math.abs(m)<1e-12)return fx(c);
+  let t=coefX(m); if(Math.abs(c)>1e-12)t+=(c<0?" − ":" + ")+fx(Math.abs(c)); return t; }
+const slopeInt=(m,b)=>"y = "+exprMX(m,b);
+const vsub=(v,name)=> Math.abs(v)<1e-12? name : (v<0? `${name} + ${fx(-v)}` : `${name} − ${fx(v)}`);
+function mCoef(m){ if(near(m,1))return ""; if(near(m,-1))return "−"; const f=fx(m); return f.indexOf("/")>=0? "("+f+")" : f; }
+function pointSlope(m,x1,y1){
+  const L=vsub(y1,"y");
+  if(Math.abs(m)<1e-12)return L+" = 0";
+  if(Math.abs(x1)<1e-12)return L+" = "+coefX(m);
+  return L+" = "+mCoef(m)+"("+vsub(x1,"x")+")";
+}
+function stdStr(A,B,C){ // Ax + By = C (works for fractional coefficients too)
+  let t="";
+  if(Math.abs(A)>1e-12)t+=coefX(A,"x");
+  if(Math.abs(B)>1e-12){ if(t)t+=(B<0?" − ":" + ")+coefX(Math.abs(B),"y"); else t+=coefX(B,"y"); }
+  return (t||"0")+" = "+fx(C);
+}
+function toStd(a,b,c){ // integer A,B,C with A ≥ 0 for ax + by = c
+  const fs=[a,b,c].map(v=>fracND(v));
+  if(!fs.every(f=>f&&f[1]<=100)) { let A=a,B=b,C=c; if(A<0||(Math.abs(A)<1e-12&&B<0)){A=-A;B=-B;C=-C;} return {A,B,C,approx:true}; }
+  let L=1; fs.forEach(f=>{L=lcm(L,f[1]);});
+  let A=Math.round(a*L),B=Math.round(b*L),C=Math.round(c*L); const g=gcd(gcd(A,B),C); A/=g;B/=g;C/=g;
+  if(A<0||(A===0&&B<0)){A=-A;B=-B;C=-C;}
+  return {A,B,C};
+}
+function lineObjPts(P,Q){ const dx=Q[0]-P[0], dy=Q[1]-P[1];
+  if(Math.abs(dx)<1e-9)return {vert:true,k:P[0],dx,dy}; const m=dy/dx; return {vert:false,m,b:P[1]-m*P[0],dx,dy}; }
+function lineStd(L){ return L.vert? toStd(1,0,L.k) : toStd(-L.m,1,L.b); }
+function lineEqStr(L){ return L.vert? "x = "+fx(L.k) : slopeInt(L.m,L.b); }
+
+/* ── worked steps ── */
+function wk(rows){ return `<div class="wk">${rows.map(r=>r.sub?`<div class="sub">${r.sub}</div>`:`<div class="wr${r[2]?" hl":""}"><span class="st">${r[0]}</span>${r[1]?`<span class="rs">${r[1]}</span>`:""}</div>`).join("")}</div>`; }
+function stepsPS2SI(m,x1,y1){
+  const b=y1-m*x1, R=[[pointSlope(m,x1,y1),`point-slope form, m = ${fx(m)}, (x₁, y₁) = ${ptx([x1,y1])}`]];
+  if(Math.abs(m)>1e-12&&Math.abs(x1)>1e-12) R.push([`${vsub(y1,"y")} = ${exprMX(m,-m*x1)}`,`distribute ${fx(m)}`]);
+  else if(Math.abs(m)<1e-12&&Math.abs(y1)>1e-12) R.push([`${vsub(y1,"y")} = 0`,`a slope of 0 times anything is 0`]);
+  if(Math.abs(y1)>1e-12) R.push([slopeInt(m,b),(y1>0?`add ${fx(y1)} to`:`subtract ${fx(-y1)} from`)+` both sides`,true]);
+  else R[R.length-1][2]=true;
+  return R;
+}
+function stepsSI2Std(m,b){
+  const R=[[slopeInt(m,b),"slope-intercept form"]];
+  if(Math.abs(m)>1e-12) R.push([stdStr(-m,1,b),(m>0?`subtract ${coefX(m)} from`:`add ${coefX(-m)} to`)+" both sides"]);
+  const st=toStd(-m,1,b);
+  if(st.approx){ R.push([stdStr(st.A,st.B,st.C),"coefficients are decimals here because the points are off the grid",true]); return R; }
+  const k=st.B; // the y-coefficient started as 1, so k is the multiplier used
+  if(k===-1) R.push([stdStr(st.A,st.B,st.C),"multiply both sides by −1 so A is positive"]);
+  else if(k<0) R.push([stdStr(st.A,st.B,st.C),`multiply both sides by ${minus(k)} to clear fractions and make A positive`]);
+  else if(k>1) R.push([stdStr(st.A,st.B,st.C),`multiply both sides by ${k} to clear fractions`]);
+  R[R.length-1][2]=true;
+  return R;
+}
+function stepsStd2SI(A,B,C){
+  const R=[[stdStr(A,B,C),"standard form Ax + By = C"]];
+  if(Math.abs(B)<1e-12){ R.push([`x = ${fx(C/A)}`,`divide by ${fx(A)}: a vertical line, slope undefined, no slope-intercept form`,true]); return R; }
+  if(Math.abs(A)>1e-12) R.push([`${coefX(B,"y")} = ${exprMX(-A,C)}`,(A>0?`subtract ${coefX(A,"x")} from`:`add ${coefX(-A,"x")} to`)+" both sides"]);
+  if(!near(B,1)) R.push([slopeInt(-A/B,C/B),`divide every term by ${fx(B)}`,true]); else R[R.length-1][2]=true;
+  return R;
+}
+function coverUp(A,B,C){
+  const R=[{sub:"Cover-up method"}];
+  if(Math.abs(A)>1e-12) R.push([`x-intercept: cover the y-term → ${coefX(A,"x")} = ${fx(C)} → x = ${fx(C/A)}`,`point ${ptx([C/A,0])}`]);
+  else R.push([`x-intercept: none`,`A = 0, so the line is horizontal (unless C = 0)`]);
+  if(Math.abs(B)>1e-12) R.push([`y-intercept: cover the x-term → ${coefX(B,"y")} = ${fx(C)} → y = ${fx(C/B)}`,`point ${ptx([0,C/B])}`]);
+  else R.push([`y-intercept: none`,`B = 0, so the line is vertical`]);
+  return R;
+}
+function nicePoint(m,b){ // a lattice point on y = mx + b other than the y-intercept, when one is close
+  for(const x of [1,-1,2,-2,3,-3,4,-4,5,-5,6,-6]){ const y=m*x+b; if(near(y,Math.round(y),1e-9)&&Math.abs(y)<=7)return [x,Math.round(y)]; }
+  return [0,b];
+}
+
+/* ── answer / equation parser (linear expressions in x and y) ── */
+function tokenize(s){
+  s=s.replace(/[−–—]/g,"-").replace(/[·×∙]/g,"*").replace(/÷/g,"/").replace(/\s+/g,"").toLowerCase();
+  s=s.replace(/f\(x\)/g,"y");
+  const T=[]; let i=0;
+  while(i<s.length){ const ch=s[i];
+    if(/[0-9.]/.test(ch)){ let j=i; while(j<s.length&&/[0-9.]/.test(s[j]))j++; const t=s.slice(i,j); if((t.match(/\./g)||[]).length>1||t===".")throw new Error("num"); T.push({t:"n",v:parseFloat(t)}); i=j; continue; }
+    if(ch==="x"||ch==="y"){T.push({t:"v",v:ch});i++;continue;}
+    if("+-*/()=".indexOf(ch)>=0){T.push({t:ch});i++;continue;}
+    throw new Error("char");
+  }
+  return T;
+}
+function parseLinear(T){
+  let i=0; const peek=()=>T[i], next=()=>T[i++];
+  const L=(x,y,c)=>({x,y,c});
+  const isC=a=>Math.abs(a.x)<1e-12&&Math.abs(a.y)<1e-12;
+  const scale=(a,k)=>L(a.x*k,a.y*k,a.c*k);
+  const mulL=(a,b)=>{ if(isC(a))return scale(b,a.c); if(isC(b))return scale(a,b.c); throw new Error("nonlinear"); };
+  function primary(){ const p=next(); if(!p)throw new Error("end");
+    if(p.t==="n")return L(0,0,p.v); if(p.t==="v")return p.v==="x"?L(1,0,0):L(0,1,0);
+    if(p.t==="("){ const a=expr(); const q=next(); if(!q||q.t!==")")throw new Error("paren"); return a; }
+    throw new Error("tok"); }
+  function unary(){ const p=peek(); if(p&&(p.t==="-"||p.t==="+")){ next(); const a=unary(); return p.t==="-"?scale(a,-1):a; } return primary(); }
+  function term(){ let a=unary();
+    for(;;){ const p=peek(); if(!p)break;
+      if(p.t==="*"||p.t==="/"){ next(); const b=unary(); if(p.t==="*")a=mulL(a,b); else { if(!isC(b)||Math.abs(b.c)<1e-12)throw new Error("div"); a=scale(a,1/b.c); } }
+      else if(p.t==="n"||p.t==="v"||p.t==="("){ a=mulL(a,primary()); }
+      else break; }
+    return a; }
+  function expr(){ let a=term(); while(peek()&&(peek().t==="+"||peek().t==="-")){ const op=next().t, b=term(); const k=op==="+"?1:-1; a=L(a.x+k*b.x,a.y+k*b.y,a.c+k*b.c); } return a; }
+  const r=expr(); if(i!==T.length)throw new Error("trail"); return r;
+}
+function parseEq(s){ // → {x,y,c} meaning x·X + y·Y + c = 0, or null
+  try{ const T=tokenize(s); const k=T.findIndex(t=>t.t==="="); if(k<1||k===T.length-1||T.slice(k+1).some(t=>t.t==="="))return null;
+    const l=parseLinear(T.slice(0,k)), r=parseLinear(T.slice(k+1)); const E={x:l.x-r.x,y:l.y-r.y,c:l.c-r.c};
+    if(Math.abs(E.x)<1e-12&&Math.abs(E.y)<1e-12)return null; return E; }catch(_){ return null; }
+}
+const eqLine=E=> Math.abs(E.y)>1e-12? {vert:false,m:-E.x/E.y,b:-E.c/E.y} : {vert:true,k:-E.c/E.x};
+function parseNum(s){
+  s=String(s).trim(); if(!s)return {bad:true};
+  if(/^(undefined|undef|none|no slope|dne|no)$/i.test(s))return {undef:true};
+  const m=/^\(\s*([^,]+)\s*,\s*([^,]+)\s*\)$/.exec(s);
+  if(m){ const a=parseNum(m[1]), b=parseNum(m[2]); if(a.v!=null&&b.v!=null)return {pt:[a.v,b.v]}; return {bad:true}; }
+  try{ const T=tokenize(s); if(T.some(t=>t.t==="="||t.t==="v"))return {bad:true}; const r=parseLinear(T); return isFinite(r.c)?{v:r.c}:{bad:true}; }catch(_){ return {bad:true}; }
+}
+
+/* ══════════════════════ views & drawing ══════════════════════ */
+function mkView(o){
+  const L=o.L||0,T=o.T||0,R=(o.R==null?VW:o.R),Bt=(o.B==null?VH:o.B);
+  const sx=(R-L)/(o.xmax-o.xmin), sy=(Bt-T)/(o.ymax-o.ymin);
+  return Object.assign({},o,{L,T,R,Bt,sx,sy,
+    W2S:p=>[L+(p[0]-o.xmin)*sx, T+(o.ymax-p[1])*sy],
+    S2W:p=>[o.xmin+(p[0]-L)/sx, o.ymax-(p[1]-T)/sy]});
+}
+const STD=mkView({xmin:-OX/S,xmax:(VW-OX)/S,ymin:-(VH-OY)/S,ymax:OY/S});
+let VIEW=STD;
+const W2S=p=>VIEW.W2S(p), S2W=p=>VIEW.S2W(p);
+let snap=true, FS=1, cur=0;
+
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+function gridStd(){
+  VIEW=STD;
+  const d=E("defs"); d.innerHTML='<clipPath id="fr"><rect width="'+VW+'" height="'+VH+'"/></clipPath>'; cv.appendChild(d);
+  cv.appendChild(E("rect",{width:VW,height:VH,fill:"rgba(255,255,255,0)"}));
+  const gg=E("g",{});
+  for(let x=-11;x<=11;x++){const sx=OX+x*S; gg.appendChild(E("line",{x1:sx,y1:0,x2:sx,y2:VH,style:"stroke:var(--grid)","stroke-width":1}));}
+  for(let y=-7;y<=7;y++){const sy=OY-y*S; gg.appendChild(E("line",{x1:0,y1:sy,x2:VW,y2:sy,style:"stroke:var(--grid)","stroke-width":1}));}
+  gg.appendChild(E("line",{x1:0,y1:OY,x2:VW,y2:OY,stroke:"#8FA3C8","stroke-width":1.8}));
+  gg.appendChild(E("line",{x1:OX,y1:0,x2:OX,y2:VH,stroke:"#8FA3C8","stroke-width":1.8}));
+  for(let x=-10;x<=10;x+=2){ if(!x)continue; const t=E("text",{x:OX+x*S,y:OY+15*FS,class:"ax","text-anchor":"middle"}); t.textContent=minus(x); gg.appendChild(t);}
+  for(let y=-6;y<=6;y+=2){ if(!y)continue; const t=E("text",{x:OX-6,y:OY-y*S+4*FS,class:"ax","text-anchor":"end"}); t.textContent=minus(y); gg.appendChild(t);}
+  const o=E("text",{x:OX-6,y:OY+15*FS,class:"ax","text-anchor":"end"}); o.textContent="0"; gg.appendChild(o);
+  const xl=E("text",{x:VW-10,y:OY-7,class:"ax","text-anchor":"end"}); xl.textContent="x"; gg.appendChild(xl);
+  const yl=E("text",{x:OX+8,y:14*FS,class:"ax"}); yl.textContent="y"; gg.appendChild(yl);
+  cv.appendChild(gg);
+  const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
+}
+function niceStep(span,target){ const raw=span/(target||8), p=Math.pow(10,Math.floor(Math.log10(raw))); for(const k of [1,2,5,10]) if(k*p>=raw-1e-12) return k*p; return 10*p; }
+// labelled grid for a general window (context graphs and tables)
+function gridCtx(V){
+  VIEW=V;
+  const d=E("defs"); d.innerHTML=`<clipPath id="pc"><rect x="${V.L-14}" y="${V.T-14}" width="${V.R-V.L+28}" height="${V.Bt-V.T+28}"/></clipPath>`; cv.appendChild(d);
+  cv.appendChild(E("rect",{width:VW,height:VH,fill:"rgba(255,255,255,0)"}));
+  const gg=E("g",{}), fmtT=V.fmtT||(v=>minus(num(v,2)));
+  const ticks=(a,b,s)=>{ const out=[]; for(let i=Math.ceil(a/s-1e-9);i*s<=b+1e-9;i++)out.push(+(i*s).toFixed(10)); return out; };
+  const xs=ticks(V.xmin,V.xmax,V.xstep), ys=ticks(V.ymin,V.ymax,V.ystep);
+  xs.forEach(x=>{ const sx=V.W2S([x,0])[0]; gg.appendChild(E("line",{x1:sx,y1:V.T,x2:sx,y2:V.Bt,style:"stroke:var(--grid)","stroke-width":1})); });
+  ys.forEach(y=>{ const sy=V.W2S([0,y])[1]; gg.appendChild(E("line",{x1:V.L,y1:sy,x2:V.R,y2:sy,style:"stroke:var(--grid)","stroke-width":1})); });
+  const ax0= (V.ymin<=0&&V.ymax>=0)? V.W2S([0,0])[1] : V.Bt, ay0=(V.xmin<=0&&V.xmax>=0)? V.W2S([0,0])[0] : V.L;
+  gg.appendChild(E("line",{x1:V.L,y1:ax0,x2:V.R,y2:ax0,stroke:"#8FA3C8","stroke-width":2}));
+  gg.appendChild(E("line",{x1:ay0,y1:V.T,x2:ay0,y2:V.Bt,stroke:"#8FA3C8","stroke-width":2}));
+  const every=FS>1?2:1;
+  xs.forEach((x,i)=>{ if(i%every)return; const t=E("text",{x:V.W2S([x,0])[0],y:V.Bt+16*FS,class:"ax","text-anchor":"middle"}); t.textContent=fmtT(x,"x"); gg.appendChild(t); });
+  ys.forEach((y,i)=>{ if(i%every)return; const t=E("text",{x:V.L-7,y:V.W2S([0,y])[1]+4*FS,class:"ax","text-anchor":"end"}); t.textContent=fmtT(y,"y"); gg.appendChild(t); });
+  if(V.xl){ const t=E("text",{x:(V.L+V.R)/2,y:VH-8,class:"axt","text-anchor":"middle"}); t.textContent=V.xl; gg.appendChild(t); }
+  if(V.yl){ const t=E("text",{x:0,y:0,class:"axt","text-anchor":"middle",transform:`translate(${FS>1?20:16},${(V.T+V.Bt)/2}) rotate(-90)`}); t.textContent=V.yl; gg.appendChild(t); }
+  cv.appendChild(gg);
+  const g=E("g",{"clip-path":"url(#pc)"}); cv.appendChild(g); return g;
+}
+function sseg(g,p,q,style,w,dash){
+  const a={x1:p[0],y1:p[1],x2:q[0],y2:q[1],style:"stroke:"+(style||"var(--graphite)"),"stroke-width":w||2.8,"stroke-linecap":"round",fill:"none"};
+  if(dash)a["stroke-dasharray"]=dash; const n=E("line",a); g.appendChild(n); return n;
+}
+function sdot(g,p,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:(r||5)*(FS>1?1.25:1),style:"fill:"+(color||"var(--ink)"),stroke:"#fff","stroke-width":2,"pointer-events":"none"})); }
+function sring(g,p,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||11,style:"stroke:"+color,fill:"none","stroke-width":3,"pointer-events":"none"})); }
+function sgrab(g,p,id,color){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?26:16,class:"grab","data-drag":id})); sdot(g,p,color); }
+function stext(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("style","fill:"+color); t.textContent=s; g.appendChild(t); return t;
+}
+function arrowHead(g,tip,dir,color){
+  const n=[-dir[1],dir[0]], b=[tip[0]-dir[0]*13,tip[1]-dir[1]*13];
+  g.appendChild(E("polygon",{points:[tip,[b[0]+n[0]*6,b[1]+n[1]*6],[b[0]-n[0]*6,b[1]-n[1]*6]].map(p=>p.join(",")).join(" "),style:"fill:"+(color||"var(--graphite)")}));
+}
+function sarrow(g,p,q,color,w,dash){ if(len(sub(q,p))<4)return; sseg(g,p,q,color,w,dash); arrowHead(g,q,unit(sub(q,p)),color); }
+function clipLine(p,q,V,tmin){
+  const dx=q[0]-p[0], dy=q[1]-p[1]; let t0=(tmin==null?-Infinity:tmin), t1=Infinity;
+  const P=[-dx,dx,-dy,dy], Q=[p[0]-V.L,V.R-p[0],p[1]-V.T,V.Bt-p[1]];
+  for(let i=0;i<4;i++){ if(Math.abs(P[i])<1e-12){ if(Q[i]<0)return null; continue; } const t=Q[i]/P[i]; if(P[i]<0)t0=Math.max(t0,t); else t1=Math.min(t1,t); }
+  if(t0>=t1)return null; return [[p[0]+t0*dx,p[1]+t0*dy],[p[0]+t1*dx,p[1]+t1*dy]];
+}
+function wline(g,P,Q,color,w,dash,ray){ if(same(P,Q))return null; const c=clipLine(W2S(P),W2S(Q),VIEW,ray?0:null); return c? sseg(g,c[0],c[1],color,w,dash) : null; }
+const wlineMB=(g,m,b,c,w,d)=>wline(g,[0,b],[1,m+b],c,w,d);
+const wlineL=(g,L,c,w,d)=> L.vert? wline(g,[L.k,0],[L.k,1],c,w,d) : wlineMB(g,L.m,L.b,c,w,d);
+function wpath(g,pl,color,w){ if(pl.length<2)return; g.appendChild(E("path",{d:"M"+pl.map(p=>W2S(p).map(v=>v.toFixed(1)).join(",")).join("L"),style:"stroke:"+color,"stroke-width":w||3,fill:"none","stroke-linejoin":"round","stroke-linecap":"round"})); }
+function inView(P,pad){ const s=W2S(P); pad=pad||0; return s[0]>=VIEW.L-pad&&s[0]<=VIEW.R+pad&&s[1]>=VIEW.T-pad&&s[1]<=VIEW.Bt+pad; }
+function smartLabel(g,anchor,dir,text,color,cls){
+  const w=text.length*8.3*FS+4, h=16*FS, d=unit(dir), off=19*FS;
+  let cx=anchor[0]+d[0]*(off+w/2*Math.abs(d[0])), cy=anchor[1]+d[1]*(off+h/2*Math.abs(d[1])+2);
+  cx=clamp(cx,w/2+6,VW-w/2-6); cy=clamp(cy,h/2+6,VH-h/2-6);
+  return stext(g,[cx,cy],text,cls||"sm",color);
+}
+function snormal(p,q,r){ const d=unit(sub(q,p)); let n=[-d[1],d[0]]; const m=[(p[0]+q[0])/2,(p[1]+q[1])/2]; if((r[0]-m[0])*n[0]+(r[1]-m[1])*n[1]>0)n=[-n[0],-n[1]]; return n; }
+function banner(text){
+  const fs=FS>1?28:20, w=text.length*fs*0.61+30, h=fs+20;
+  cv.appendChild(E("rect",{x:12,y:12,width:w,height:h,rx:12,fill:"#fff",stroke:"#B9C7E6","stroke-width":1.5}));
+  const t=E("text",{x:27,y:12+h/2+1,class:"bn","dominant-baseline":"middle"}); t.textContent=text; cv.appendChild(t);
+}
+function badge(ok,txtOk,txtNo,top){
+  const t=ok?(txtOk||"✓ Function"):(txtNo||"✗ Not a function"), fs=FS>1?22:15, w=t.length*fs*0.78+26, h=fs+18, x=(VIEW===STD?VW:VIEW.R)-w-12, y=top?(VIEW===STD?0:VIEW.T)+12:(VIEW===STD?VH:VIEW.Bt)-h-12;
+  cv.appendChild(E("rect",{x,y,width:w,height:h,rx:h/2,fill:ok?"#D1FAE5":"#FFE4E6",stroke:ok?"#059669":"#E11D48","stroke-width":2}));
+  const tx=E("text",{x:x+w/2,y:y+h/2+1,class:"bdg","text-anchor":"middle","dominant-baseline":"middle",style:"fill:"+(ok?"#065F46":"#9F1239")}); tx.textContent=t; cv.appendChild(tx);
+}
+const snapStd=(sp,free)=>{ const w=STD.S2W(sp); let x=clamp(w[0],-11,11), y=clamp(w[1],-7,7);
+  if(snap&&!free){x=Math.round(x);y=Math.round(y);} else {x=Math.round(x*10)/10;y=Math.round(y*10)/10;} return [x,y]; };
+const snapTo=(v,s)=>Math.round(v/s)*s;
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null;
+function svgPt(e){ const m=cv.getScreenCTM(); if(!m)return [0,0]; const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y]; }
+cv.addEventListener("pointerdown",e=>{ const id=e.target.dataset&&e.target.dataset.drag; if(id){ dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); } });
+cv.addEventListener("pointermove",e=>{ if(!dragId)return; const M=MODS[cur]; if(!M.drag)return; if(M.drag(dragId,svgPt(e))!==false)update(); });
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{ if(dragId){ dragId=null; const M=MODS[cur]; if(M.dragEnd){M.dragEnd(); update();} } }));
+
+/* bar builders */
+function btn(label,fn,cls){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(opts,val,fn,lab){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(lab)s.setAttribute("aria-label",lab);
+  opts.forEach(([k,l])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=l; b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s;
+}
+function chips(opts,val,fn,color){
+  const row=document.createElement("div"); row.className="chiprow";
+  opts.forEach(([k,l])=>{ const b=document.createElement("button"); b.type="button"; b.style.setProperty("--c",color||"var(--accent)"); b.textContent=l; b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); row.appendChild(b); });
+  bar.appendChild(row); return row;
+}
+function chk(label,val,fn){ const l=document.createElement("label"); l.className="chk"; const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked); l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i; }
+function snapChk(){ return chk("Snap to grid",snap,v=>{snap=v; MODS.forEach(M=>M.resnap&&M.resnap()); update();}); }
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function slider(label,min,max,step,val,fn,fmt){
+  const l=document.createElement("label"); l.className="rng"; l.textContent=label+" ";
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=step; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); fmt=fmt||(v=>minus(v)); o.textContent=fmt(+val);
+  i.oninput=()=>{ o.textContent=fmt(+i.value); fn(+i.value); };
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l); return i;
+}
+const tryPanel=html=>`<div class="panel"><h3>Try this</h3><div class="pad">${html}</div></div>`;
+const panelH=(h,body)=>`<div class="panel"><h3>${h}</h3>${body}</div>`;
+const $=id=>document.getElementById(id);
+
+/* ══════════════════════ shared relation drawings (tabs 1 & 6) ══════════════════════ */
+function relInfo(pairs){
+  const mp=new Map(); pairs.forEach(p=>{ const k=+p[0]; if(!mp.has(k))mp.set(k,new Set()); mp.get(k).add(+p[1]); });
+  const bad=[...mp].filter(e=>e[1].size>1).map(e=>e[0]);
+  const dom=[...mp.keys()].sort((a,b)=>a-b), ran=[...new Set(pairs.map(p=>+p[1]))].sort((a,b)=>a-b);
+  return {mp,bad,isFn:bad.length===0,dom,ran};
+}
+const setStr=a=>"{"+a.map(nm).join(", ")+"}";
+function drawMapping(pairs,bad){
+  const I=relInfo(pairs), D=I.dom, R=I.ran, n=Math.max(D.length,R.length,1), gap=Math.min(50,290/n);
+  const cy=258, yD=i=>cy+(i-(D.length-1)/2)*gap, yR=i=>cy+(i-(R.length-1)/2)*gap, ry=n*gap/2+30, LX=205, RX=495;
+  [[LX,"INPUT x","Domain"],[RX,"OUTPUT y","Range"]].forEach(([x,a,b])=>{
+    cv.appendChild(E("ellipse",{cx:x,cy,rx:78,ry,style:"fill:#F5F8FF;stroke:#9DB0D6","stroke-width":2}));
+    const t=E("text",{x,y:cy-ry-30*FS,class:"mh","text-anchor":"middle"}); t.textContent=b; cv.appendChild(t);
+    const u=E("text",{x,y:cy-ry-12,class:"mhs","text-anchor":"middle"}); u.textContent=a; cv.appendChild(u);
+  });
+  const g=E("g",{}); cv.appendChild(g); const seen=new Set();
+  pairs.forEach(p=>{ const k=p[0]+","+p[1]; if(seen.has(k))return; seen.add(k);
+    const i=D.indexOf(+p[0]), j=R.indexOf(+p[1]), isBad=bad&&bad.has(+p[0]);
+    const a=[LX+34,yD(i)], b=[RX-36,yR(j)], d=unit(sub(b,a));
+    sarrow(g,add(a,mul(d,4)),b,isBad?"#E11D48":"var(--corr)",isBad?3.2:2.4);
+  });
+  D.forEach((v,i)=>{ const isBad=bad&&bad.has(v); stext(cv,[LX,yD(i)],nm(v),"mv",isBad?"#E11D48":null); });
+  R.forEach((v,j)=>stext(cv,[RX,yR(j)],nm(v),"mv"));
+}
+function drawTableSvg(pairs,bad){
+  const n=pairs.length, cw=Math.min(76,(VW-150)/n), hw=78, rh=FS>1?70:58, tw=hw+n*cw, x0=(VW-tw)/2, y0=150;
+  const g=E("g",{}); cv.appendChild(g);
+  const cell=(x,y,w,fill)=>g.appendChild(E("rect",{x,y,width:w,height:rh,style:"fill:"+fill+";stroke:#9DB0D6","stroke-width":1.6}));
+  cell(x0,y0,hw,"#E4ECFB"); cell(x0,y0+rh,hw,"#E4ECFB");
+  stext(g,[x0+hw/2,y0+rh/2],"x","tv"); stext(g,[x0+hw/2,y0+rh*1.5],"y","tv");
+  pairs.forEach((p,i)=>{ const x=x0+hw+i*cw, isBad=bad&&bad.has(+p[0]);
+    cell(x,y0,cw,isBad?"#FFE4E6":"#fff"); cell(x,y0+rh,cw,isBad?"#FFE4E6":"#fff");
+    stext(g,[x+cw/2,y0+rh/2],nm(p[0]),"tv",isBad?"#BE123C":null); stext(g,[x+cw/2,y0+rh*1.5],nm(p[1]),"tv",isBad?"#BE123C":null); });
+  const t=E("text",{x:VW/2,y:y0-28,class:"mh","text-anchor":"middle"}); t.textContent="Each column is one ordered pair (x, y)"; g.appendChild(t);
+}
+function drawPairsSvg(pairs,bad){
+  const per=FS>1?2:3, lines=[]; for(let i=0;i<pairs.length;i+=per)lines.push(pairs.slice(i,i+per).map((p,j)=>[p,i+j]));
+  const lh=FS>1?64:50, y0=VH/2-(lines.length-1)*lh/2-10;
+  const t0=E("text",{x:VW/2,y:y0-56,class:"mh","text-anchor":"middle"}); t0.textContent="A relation as a set of ordered pairs"; cv.appendChild(t0);
+  lines.forEach((ln,li)=>{
+    const t=E("text",{x:VW/2,y:y0+li*lh,class:"mv","text-anchor":"middle","dominant-baseline":"middle"});
+    if(li===0){ const s=E("tspan",{}); s.textContent="{ "; t.appendChild(s); }
+    ln.forEach(([p,i],k)=>{ const isBad=bad&&bad.has(+p[0]); const s=E("tspan",{style:isBad?"fill:#E11D48":""});
+      s.textContent="("+nm(p[0])+", "+nm(p[1])+")"; t.appendChild(s);
+      const c=E("tspan",{}); c.textContent=(i===pairs.length-1)?" }":", "; t.appendChild(c); });
+    cv.appendChild(t);
+  });
+}
+const CURVES={
+  line:{label:"Line",fn:true,rule:"f(x) = −(1/2)x + 2",dom:"all real numbers",ran:"all real numbers",ys:x=>[-0.5*x+2]},
+  para:{label:"Parabola",fn:true,rule:"f(x) = (1/2)x² − 5",dom:"all real numbers",ran:"y ≥ −5",ys:x=>[0.5*x*x-5]},
+  abs:{label:"Absolute value",fn:true,rule:"f(x) = |x − 1| − 3",dom:"all real numbers",ran:"y ≥ −3",ys:x=>[Math.abs(x-1)-3]},
+  root:{label:"Square root",fn:true,rule:"f(x) = 2√(x + 4)",dom:"x ≥ −4",ran:"y ≥ 0",ys:x=>x>=-4-1e-9?[2*Math.sqrt(Math.max(0,x+4))]:[]},
+  circle:{label:"Circle",fn:false,rule:"x² + y² = 25",dom:"−5 ≤ x ≤ 5",ran:"−5 ≤ y ≤ 5",wit:0,
+    ys:x=>{ const r=25-x*x; if(r<-1e-9)return []; const y=Math.sqrt(Math.max(0,r)); return y<1e-9?[0]:[y,-y]; },
+    paths:()=>{ const a=[]; for(let i=0;i<=200;i++){const t=i/200*2*Math.PI; a.push([5*Math.cos(t),5*Math.sin(t)]);} return [a]; }},
+  side:{label:"Sideways parabola",fn:false,rule:"x = (1/2)y² − 4",dom:"x ≥ −4",ran:"all real numbers",wit:4,
+    ys:x=>{ const r=2*(x+4); if(r<-1e-9)return []; const y=Math.sqrt(Math.max(0,r)); return y<1e-9?[0]:[y,-y]; },
+    paths:()=>{ const a=[]; for(let y=-8;y<=8.001;y+=0.1)a.push([0.5*y*y-4,y]); return [a]; }}
+};
+function curvePaths(C){
+  if(C.paths)return C.paths(); const out=[]; let curp=[];
+  for(let x=-12;x<=12.001;x+=0.04){ const ys=C.ys(x); if(ys.length&&Math.abs(ys[0])<40){curp.push([x,ys[0]]);} else { if(curp.length>1)out.push(curp); curp=[]; } }
+  if(curp.length>1)out.push(curp); return out;
+}
+function drawCurveVLT(g,C,k){
+  curvePaths(C).forEach(pl=>wpath(g,pl,"var(--vert)",3.4));
+  const ys=C.ys(k), sx=W2S([k,0])[0];
+  wline(g,[k,0],[k,1],"var(--magenta)",2.6,"10 6");
+  ys.forEach(y=>{ if(Math.abs(y)<8){ sdot(g,W2S([k,y]),"var(--magenta)",7); smartLabel(g,W2S([k,y]),[1,y>=0?-0.6:0.6],pt([k,y]),"#BE185D"); } });
+  sgrab(g,[sx,34],"vl","var(--magenta)");
+  smartLabel(g,[sx,34],[sx>VW-170?-1:1,0],`x = ${nm(k)} meets the graph ${ys.length} time${ys.length===1?"":"s"}`,"#BE185D");
+}
+
+/* ══════════════════════ TAB 1 · What is a function? ══════════════════════ */
+const PRE1={ fn:[[-3,1],[-1,2],[0,-2],[2,3],[4,3]], not:[[-2,-1],[1,2],[1,-3],[3,0],[5,2]] };
+const M1={
+  tab:"What is a function?", lesson:"F-IF.A.1 · F-IF.A.2", accent:"var(--cyan)",
+  s:{rep:"map",pairs:PRE1.not.map(p=>p.slice()),vx:1,cv:"circle",cx:0,evalX:3},
+  title:()=>({map:"Mapping diagram",table:"Table of values",pairs:"Set of ordered pairs",graph:"Graph · vertical line test",curve:"Vertical line test on curves"})[M1.s.rep],
+  bar(){
+    const s=M1.s;
+    segBtns([["map","Mapping"],["table","Table"],["pairs","Ordered pairs"],["graph","Graph"],["curve","Curves"]],s.rep,k=>{s.rep=k;render();},"Representation");
+    if(s.rep==="curve"){ chips(Object.keys(CURVES).map(k=>[k,CURVES[k].label]),s.cv,k=>{s.cv=k;render();}); spacer("Drag the dashed vertical line"); }
+    else {
+      btn("Function example",()=>{s.pairs=PRE1.fn.map(p=>p.slice());render();});
+      btn("Not a function",()=>{s.pairs=PRE1.not.map(p=>p.slice());render();});
+      btn("Random",()=>{ const n=rnd(4,6), xs=shuffle([-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6]).slice(0,n); const P=xs.map(x=>[x,rnd(-6,6)]);
+        if(Math.random()<.5){ const q=pick(P); let y; do{y=rnd(-6,6);}while(y===q[1]); P.push([q[0],y]); } s.pairs=shuffle(P); render(); });
+      spacer(s.rep==="graph"?"Drag points · drag the vertical line":"Edit pairs in the side panel");
+    }
+  },
+  draw(){
+    const s=M1.s;
+    if(s.rep==="curve"){ const g=gridStd(), C=CURVES[s.cv]; drawCurveVLT(g,C,s.cx); badge(C.fn); return; }
+    const I=relInfo(s.pairs), bad=new Set(I.bad);
+    if(s.rep==="map")drawMapping(s.pairs,bad);
+    else if(s.rep==="table")drawTableSvg(s.pairs,bad);
+    else if(s.rep==="pairs")drawPairsSvg(s.pairs,bad);
+    else {
+      const g=gridStd(), sx=W2S([s.vx,0])[0];
+      wline(g,[s.vx,0],[s.vx,1],"var(--magenta)",2.6,"10 6");
+      s.pairs.forEach((p,i)=>{ const P=[clamp(p[0],-11,11),clamp(p[1],-7,7)], isBad=bad.has(+p[0]);
+        if(near(p[0],s.vx))sring(g,W2S(P),"var(--magenta)",FS>1?17:12);
+        sgrab(g,W2S(P),"p"+i,isBad?"#E11D48":"var(--ink)");
+        smartLabel(g,W2S(P),[1,-1],pt(p),isBad?"#BE123C":"var(--ink)"); });
+      const hits=new Set(s.pairs.filter(p=>near(p[0],s.vx)).map(p=>+p[1])).size;
+      sgrab(g,[sx,34],"vl","var(--magenta)");
+      smartLabel(g,[sx,34],[sx>VW-170?-1:1,0],`x = ${nm(s.vx)} meets ${hits} point${hits===1?"":"s"}`,"#BE185D");
+    }
+    badge(I.isFn);
+  },
+  drag(id,sp){
+    const s=M1.s;
+    if(id==="vl"){ const x=STD.S2W(sp)[0]; if(s.rep==="curve")s.cx=clamp(Math.round(x*10)/10,-11,11); else s.vx=clamp(Math.round(x),-11,11); return; }
+    const i=+id.slice(1); const p=STD.S2W(sp); s.pairs[i]=[clamp(Math.round(p[0]),-11,11),clamp(Math.round(p[1]),-7,7)];
+  },
+  side(){
+    const s=M1.s, curve=s.rep==="curve";
+    let h=panelH("Relations and functions",`<div class="pad">
+      <p>A <span class="term">relation</span> pairs inputs with outputs. It is a <span class="term">function</span> when <b>each input is assigned to exactly one output</b>.</p>
+      <p>Two inputs can share an output (2 → 3 and 4 → 3 is fine). What breaks a function is <b>one input with two different outputs</b>.</p>
+      ${curve||s.rep==="graph"?`<p><b>Vertical line test:</b> a graph shows y as a function of x when no vertical line meets it more than once. A vertical line is a single input x, so two hits means two outputs.</p>`:`<p>The set of inputs is the <span class="term">domain</span>; the set of outputs is the <span class="term">range</span>.</p>`}
+      <div class="eq">f(x) = y  ↔  the point (x, y) is on the graph<small>Read f(3) as "f of 3": the output when the input is 3.</small></div></div>`);
+    h+=`<div class="panel"><h3>Verdict</h3><div id="live1"></div></div>`;
+    if(!curve){
+      h+=`<div class="panel"><h3>Edit the ordered pairs</h3><table class="dt"><thead><tr><th>#</th><th>x (input)</th><th>y (output)</th><th></th></tr></thead><tbody>`+
+        s.pairs.map((p,i)=>`<tr id="pr${i}"><td>${i+1}</td><td><input type="number" step="1" id="px${i}" value="${p[0]}" aria-label="x of pair ${i+1}"></td><td><input type="number" step="1" id="py${i}" value="${p[1]}" aria-label="y of pair ${i+1}"></td><td><button type="button" class="del" data-i="${i}" aria-label="Remove pair ${i+1}">✕</button></td></tr>`).join("")+
+        `</tbody></table><div class="fldwrap" style="padding:12px 20px 16px"><button type="button" class="ghost" id="addp" ${s.pairs.length>=8?"disabled":""}>+ Add a pair</button></div></div>`;
+    }
+    h+=`<div class="panel"><h3>Function notation</h3><label class="fld" for="fxin">Evaluate f at x =</label><div class="fldwrap"><input type="number" id="fxin" value="${curve?nm(s.cx):s.evalX}" step="${curve?0.5:1}" ${curve?"disabled":""}></div><div id="fxo"></div></div>`;
+    h+=tryPanel(curve?`Pick <b>Circle</b>. Find a vertical line that meets it only once. Does that make the circle a function? (No — the test fails if <b>any</b> vertical line hits twice.)`:
+      `Start with <b>Not a function</b>. Change <b>one number</b> so it becomes a function. Then make a function where every input has the <b>same</b> output — is that allowed?`);
+    return h;
+  },
+  wire(){
+    const s=M1.s; if(s.rep==="curve")return;
+    s.pairs.forEach((p,i)=>{ ["px","py"].forEach((pre,k)=>{ const el=$(pre+i); el.oninput=()=>{ const v=parseFloat(el.value); if(!isFinite(v))return; s.pairs[i][k]=clamp(Math.round(v*10)/10,-99,99); clear(); M1.draw(); M1.live(); }; }); });
+    side.querySelectorAll(".del").forEach(b=>b.onclick=()=>{ if(s.pairs.length<=1)return; s.pairs.splice(+b.dataset.i,1); render(); });
+    $("addp").onclick=()=>{ if(s.pairs.length>=8)return; s.pairs.push([rnd(-6,6),rnd(-5,5)]); render(); };
+    $("fxin").oninput=()=>{ const v=parseFloat($("fxin").value); if(isFinite(v)){s.evalX=v; M1.live();} };
+  },
+  live(){
+    const s=M1.s, el=$("live1"); if(!el)return;
+    if(s.rep==="curve"){
+      const C=CURVES[s.cv], ys=C.ys(s.cx);
+      let v=C.fn? `<div class="verdict good"><b>Function.</b> Every vertical line meets this graph at most once, so each input x has exactly one output.</div>`
+        : `<div class="verdict bad"><b>Not a function.</b> The vertical line x = ${C.wit} meets the graph at ${ptx([C.wit,C.ys(C.wit)[0]])} and ${ptx([C.wit,C.ys(C.wit)[1]])}: one input, two outputs.</div>`;
+      v+=`<div class="rel"><span class="dot" style="background:var(--vert)"></span><span class="nm">Relation<em>${C.label}</em></span><span class="val">${C.rule}</span></div>
+        <div class="rel"><span class="dot" style="background:var(--cyan)"></span><span class="nm">Domain<em>all inputs x</em></span><span class="val">${C.dom}</span></div>
+        <div class="rel"><span class="dot" style="background:var(--magenta)"></span><span class="nm">Range<em>all outputs y</em></span><span class="val">${C.ran}</span></div>
+        <div class="rel"><span class="dot" style="background:var(--yellow)"></span><span class="nm">Your line x = ${nm(s.cx)}<em>points hit</em></span><span class="val">${ys.length}</span></div>`;
+      el.innerHTML=v;
+      $("fxin").value=nm(s.cx);
+      $("fxo").innerHTML=C.fn? (ys.length? `<div class="fldwrap"><div class="eq">f(${nm(s.cx)}) = ${nm(ys[0])}<small>The point (${nm(s.cx)}, ${nm(ys[0])}) is on the graph. Drag the vertical line to evaluate somewhere else.</small></div></div>`
+          : `<div class="verdict info">x = ${nm(s.cx)} is not in the domain (${C.dom}), so f(${nm(s.cx)}) is undefined.</div>`)
+        : `<div class="verdict info">This relation is not a function, so f(x) notation does not apply: "f(${nm(s.cx)})" could name ${ys.length===2?"two outputs":"more than one output for some inputs"}.</div>`;
+      return;
+    }
+    const I=relInfo(s.pairs);
+    let v;
+    if(I.isFn){ const shared=I.ran.find(y=>s.pairs.filter(p=>+p[1]===y).map(p=>+p[0]).filter((x,i,a)=>a.indexOf(x)===i).length>1);
+      const ex=shared!=null? s.pairs.filter(p=>+p[1]===shared).map(p=>+p[0]).filter((x,i,a)=>a.indexOf(x)===i) : null;
+      v=`<div class="verdict good"><b>Function.</b> Each input x is paired with exactly one output y.${ex?` Inputs ${ex.map(nm).join(" and ")} share the output ${nm(shared)} — that is allowed.`:""}</div>`; }
+    else { const x=I.bad[0], ys=[...I.mp.get(x)];
+      v=`<div class="verdict bad"><b>Not a function.</b> The input <b>${nm(x)}</b> is paired with ${ys.length} different outputs: ${ys.map(nm).join(" and ")}.${I.bad.length>1?` (Inputs ${I.bad.map(nm).join(", ")} all have this problem.)`:""} ${s.rep==="graph"?`The vertical line x = ${nm(x)} would meet ${ys.length} points.`:""}</div>`; }
+    v+=`<div class="rel"><span class="dot" style="background:var(--cyan)"></span><span class="nm">Domain<em>set of inputs</em></span><span class="val">${setStr(I.dom)}</span></div>
+      <div class="rel"><span class="dot" style="background:var(--magenta)"></span><span class="nm">Range<em>set of outputs</em></span><span class="val">${setStr(I.ran)}</span></div>`;
+    el.innerHTML=v;
+    s.pairs.forEach((p,i)=>{ ["px","py"].forEach((pre,k)=>{ const inp=$(pre+i); if(inp&&document.activeElement!==inp&&+inp.value!==p[k])inp.value=p[k]; });
+      const tr=$("pr"+i); if(tr)tr.classList.toggle("badrow",I.bad.indexOf(+p[0])>=0); });
+    const x=s.evalX, ys=I.mp.get(x);
+    $("fxo").innerHTML=!I.isFn? `<div class="verdict info">This relation is not a function, so f(x) notation does not apply. Fix the repeated input first.</div>`
+      : ys? `<div class="fldwrap"><div class="eq">f(${nm(x)}) = ${nm([...ys][0])}<small>Because the pair (${nm(x)}, ${nm([...ys][0])}) is in the relation.</small></div></div>`
+      : `<div class="verdict info">${nm(x)} is not in the domain ${setStr(I.dom)}, so f(${nm(x)}) is undefined. Try an input from the domain.</div>`;
+  }
+};
+
+/* ══════════════════════ TAB 2 · Slope ══════════════════════ */
+const CTX2=[
+  {name:"Buying notebooks",xl:"Notebooks bought",yl:"Total cost ($)",xmax:12,ymax:45,xstep:1,ystep:5,sx:1,sy:0.5,ux:["notebook","notebooks"],money:true,A:[2,7],B:[8,28]},
+  {name:"Road trip",xl:"Time (hours)",yl:"Distance (miles)",xmax:8,ymax:400,xstep:1,ystep:50,sx:0.5,sy:5,ux:["hour","hours"],uy:["mile","miles"],A:[1,80],B:[5,300]},
+  {name:"Phone battery",xl:"Time (hours)",yl:"Battery charge (%)",xmax:10,ymax:100,xstep:1,ystep:10,sx:0.5,sy:5,ux:["hour","hours"],uy:["percent","percent"],A:[1,90],B:[6,40]}
+];
+function ctxView(c){ return mkView({xmin:0,xmax:c.xmax,ymin:0,ymax:c.ymax,L:72,T:22,R:VW-26,B:VH-56,xstep:c.xstep,ystep:c.ystep,xl:c.xl,yl:c.yl,fmtT:(v,a)=>a==="y"&&c.money?"$"+num(v,2):minus(num(v,2))}); }
+const fmtYc=(c,v)=>c.money? money(v) : num(v,2)+" "+(Math.abs(v)===1?c.uy[0]:c.uy[1]);
+const fmtXc=(c,v)=>num(v,2)+" "+(Math.abs(v)===1?c.ux[0]:c.ux[1]);
+const M2={
+  tab:"Slope", lesson:"F-IF.B.6 · 8.EE.B.6", accent:"var(--yellow)",
+  s:{mode:"grid",P:[-4,-2],Q:[2,2],ci:0,C:CTX2.map(c=>({A:c.A.slice(),B:c.B.slice()}))},
+  title:()=>M2.s.mode==="grid"?"Slope = rise / run":"Slope as a rate: "+CTX2[M2.s.ci].name.toLowerCase(),
+  resnap(){ const s=M2.s; if(snap){ s.P=s.P.map(Math.round); s.Q=s.Q.map(Math.round); } },
+  bar(){
+    const s=M2.s;
+    segBtns([["grid","Coordinate grid"],["rate","Rate of change"]],s.mode,k=>{s.mode=k;render();});
+    if(s.mode==="grid"){
+      btn("Positive",()=>{s.P=[-4,-2];s.Q=[2,2];update();}); btn("Negative",()=>{s.P=[-3,4];s.Q=[3,-1];update();});
+      btn("Zero",()=>{s.P=[-5,3];s.Q=[4,3];update();}); btn("Undefined",()=>{s.P=[2,-4];s.Q=[2,5];update();});
+      snapChk();
+    } else { chips(CTX2.map((c,i)=>[i,c.name]),s.ci,k=>{s.ci=k;render();}); spacer("Drag either point"); }
+  },
+  draw(){
+    const s=M2.s;
+    if(s.mode==="grid"){
+      const g=gridStd(), P=s.P, Q=s.Q, C=[Q[0],P[1]];
+      if(!same(P,Q)){
+        wline(g,P,Q,"var(--vert)",3.2);
+        const p=W2S(P),q=W2S(Q),c=W2S(C);
+        if(!near(P[0],Q[0])){ sarrow(g,p,c,"var(--lin)",3,"9 5"); }
+        if(!near(P[1],Q[1])){ sarrow(g,c,q,"var(--corr)",3,"9 5"); }
+        if(!near(P[0],Q[0])&&!near(P[1],Q[1])){ const u=unit(sub(p,c)), v=unit(sub(q,c)); const s1=11; g.appendChild(E("polyline",{points:[add(c,mul(u,s1)),add(add(c,mul(u,s1)),mul(v,s1)),add(c,mul(v,s1))].map(z=>z.join(",")).join(" "),class:"rt"})); }
+        const dx=Q[0]-P[0], dy=Q[1]-P[1];
+        if(!near(dx,0)) smartLabel(g,[(p[0]+c[0])/2,c[1]],[0,dy>=0?1:-1],"run = "+fx(dx),"#C2410C");
+        if(!near(dy,0)) smartLabel(g,[c[0],(c[1]+q[1])/2],[dx>=0?1:-1,0],"rise = "+fx(dy),"#0369A1");
+      }
+      sgrab(g,W2S(P),"P","var(--ink)"); sgrab(g,W2S(Q),"Q","var(--ink)");
+      const d=same(P,Q)?[0,-1]:unit(sub(W2S(P),W2S(Q)));
+      smartLabel(g,W2S(P),add(d,[0,-.01]),"A"+pt(P),"var(--ink)"); smartLabel(g,W2S(Q),mul(d,-1),"B"+pt(Q),"var(--ink)");
+    } else {
+      const c=CTX2[s.ci], st=s.C[s.ci], V=ctxView(c), g=gridCtx(V), A=st.A, B=st.B, C=[B[0],A[1]];
+      if(!same(A,B)) wline(g,A,B,"var(--vert)",3.2);
+      const a=W2S(A),b=W2S(B),cc=W2S(C), dx=B[0]-A[0], dy=B[1]-A[1];
+      if(!near(dx,0)) sarrow(g,a,cc,"var(--lin)",3,"9 5");
+      if(!near(dy,0)) sarrow(g,cc,b,"var(--corr)",3,"9 5");
+      if(!near(dx,0)) smartLabel(g,[(a[0]+cc[0])/2,cc[1]],[0,dy>=0?1:-1],"Δx = "+fmtXc(c,dx),"#C2410C");
+      if(!near(dy,0)) smartLabel(g,[cc[0],(cc[1]+b[1])/2],[dx>=0?1:-1,0],"Δy = "+(c.money?(dy<0?"−":"+")+money(Math.abs(dy)):(dy>0?"+":"")+fmtYc(c,dy)),"#0369A1");
+      sgrab(g,a,"A","var(--ink)"); sgrab(g,b,"B","var(--ink)");
+      const fy=v=>c.money?money(v):nm(v);
+      const d=same(A,B)?[0,-1]:unit(sub(a,b));
+      smartLabel(g,a,add(d,[0,-.3]),"("+nm(A[0])+", "+fy(A[1])+")","var(--ink)"); smartLabel(g,b,add(mul(d,-1),[0,-.3]),"("+nm(B[0])+", "+fy(B[1])+")","var(--ink)");
+    }
+  },
+  drag(id,sp){
+    const s=M2.s;
+    if(s.mode==="grid"){ const p=snapStd(sp); if(id==="P")s.P=p; else s.Q=p; return; }
+    const c=CTX2[s.ci], w=VIEW.S2W(sp), p=[clamp(snapTo(w[0],c.sx),0,c.xmax),clamp(snapTo(w[1],c.sy),0,c.ymax)];
+    s.C[s.ci][id]=p;
+  },
+  side(){
+    const s=M2.s;
+    if(s.mode==="grid") return panelH("What slope measures",`<div class="pad">
+      <p><span class="term">Slope</span> tells how steep a line is and which way it tilts. Pick any two points on the line: the vertical change is the <b>rise</b>, the horizontal change is the <b>run</b>.</p>
+      <p>Going left to right, a <b>positive</b> slope rises, a <b>negative</b> slope falls, a <b>zero</b> slope is flat, and a vertical line has <b>undefined</b> slope (the run is 0, and we can't divide by 0).</p>
+      <div class="eq">m = rise / run = (y₂ − y₁) / (x₂ − x₁)<small>Subtract in the same order on top and bottom.</small></div></div>`)+
+      `<div class="panel"><h3>Live slope</h3><div id="live2"></div></div>`+
+      tryPanel(`Keep A fixed and drag B so the slope is exactly <b>2/3</b>. Now find a <b>different</b> B that also gives 2/3. Why do both work? (Every pair of points on a line gives the same slope.)`);
+    const c=CTX2[s.ci];
+    return panelH("Slope as a rate of change",`<div class="pad">
+      <p>In a real situation the slope is a <span class="term">rate of change</span>: how much the output changes for each 1-unit increase in the input.</p>
+      <p>Its units are always <b>output units per input unit</b> — here, ${c.money?"dollars":c.uy[1]} per ${c.ux[0]}. A negative rate means the quantity is going down.</p>
+      <div class="eq">rate of change = Δy / Δx = (change in output) / (change in input)</div></div>`)+
+      `<div class="panel"><h3>Live rate</h3><div id="live2"></div></div>`+
+      tryPanel(c.money?`Move the points so the rate is <b>$4.50 per notebook</b>. What would 10 notebooks cost if the line starts at (0, $0)?`
+        : c.uy[0]==="mile"?`Make the car travel at <b>60 miles per hour</b>. How far does it go in 2.5 hours at that rate?`
+        :`Make the battery drain at <b>15 percent per hour</b>. From 100%, how long until the phone dies?`);
+  },
+  live(){
+    const s=M2.s, el=$("live2"); if(!el)return;
+    if(s.mode==="grid"){
+      const P=s.P,Q=s.Q, dx=Q[0]-P[0], dy=Q[1]-P[1];
+      if(same(P,Q)){ el.innerHTML=`<div class="verdict info">A and B are the same point. Slope needs two <b>different</b> points.</div>`; return; }
+      const kind=near(dx,0)?"undefined":near(dy,0)?"zero":(dy/dx>0?"positive":"negative");
+      let t=`m = (y₂ − y₁)/(x₂ − x₁)\n  = (${nm(Q[1])} − ${par(P[1])})/(${nm(Q[0])} − ${par(P[0])})\n  = ${nm(dy)}/${nm(dx)}`;
+      if(kind==="undefined") t+=`  → undefined`;
+      else { const f=fx(dy/dx); if(f!==nm(dy)+"/"+nm(dx))t+=` = ${f}`; if(f.indexOf("/")>=0)t+=` ≈ ${num(dy/dx,3)}`; }
+      const msg={positive:"The line <b>rises</b> from left to right.",negative:"The line <b>falls</b> from left to right.",zero:"The line is <b>horizontal</b>: the rise is 0, so m = 0/run = 0.",undefined:"The line is <b>vertical</b>: the run is 0, and division by 0 is undefined."}[kind];
+      el.innerHTML=`<div class="pad"><div class="eq">${t}</div>
+        <div class="rel" style="padding:8px 0"><span class="dot" style="background:var(--lin)"></span><span class="nm">run (Δx)</span><span class="val">${fx(dx)}</span></div>
+        <div class="rel" style="padding:8px 0"><span class="dot" style="background:var(--corr)"></span><span class="nm">rise (Δy)</span><span class="val">${fx(dy)}</span></div>
+        <div class="rel" style="padding:8px 0"><span class="dot" style="background:var(--vert)"></span><span class="nm">slope m<em>exact · decimal</em></span><span class="val">${kind==="undefined"?"undefined":fx(dy/dx)+" · "+num(dy/dx,3)}</span></div>
+        <div class="uterms" style="margin:10px 0">${["positive","negative","zero","undefined"].map(k=>`<span class="${k===kind?"on":""}">${k}</span>`).join("")}</div>
+        <p style="margin:0">${msg}</p></div>`;
+      return;
+    }
+    const c=CTX2[s.ci], A=s.C[s.ci].A, B=s.C[s.ci].B, dx=B[0]-A[0], dy=B[1]-A[1];
+    if(near(dx,0)){ el.innerHTML=`<div class="verdict info">The two points have the same ${c.ux[1]} value. Move one sideways — a rate needs a change in the input.</div>`; return; }
+    const r=dy/dx, fy=v=>c.money?money(v):nm(v);
+    const rateStr=(c.money?money(r):num(r,2)+" "+c.uy[1])+" per "+c.ux[0];
+    let t=`rate = Δy/Δx\n     = (${fy(B[1])} − ${fy(A[1])}) / (${nm(B[0])} − ${nm(A[0])}) ${c.ux[1]}\n     = ${c.money?money(dy):nm(dy)+" "+c.uy[1]} / ${fmtXc(c,dx)}\n     = ${rateStr}`;
+    const f=fx(r); if(!c.money&&f.indexOf("/")>=0) t+=`  (exactly ${f})`;
+    const meaning=near(r,0)?`The ${c.money?"cost":c.uy[0]==="mile"?"distance":"charge"} is <b>not changing</b>.`
+      : r>0? `Each additional ${c.ux[0]} adds <b>${c.money?money(r):num(r,2)+" "+c.uy[1]}</b>.` : `Each ${c.ux[0]} the ${c.uy?c.uy[0]==="percent"?"battery charge":"amount":"amount"} goes <b>down by ${num(-r,2)} ${c.uy?c.uy[1]:""}</b>.`;
+    el.innerHTML=`<div class="pad"><div class="eq">${t}</div><p>${meaning}</p>
+      <div class="uterms">${["positive","negative","zero"].map(k=>`<span class="${(k==="positive"&&r>1e-9)||(k==="negative"&&r<-1e-9)||(k==="zero"&&near(r,0))?"on":""}">${k} rate</span>`).join("")}</div></div>`;
+  }
+};
+
+/* ══════════════════════ TAB 3 · Slope-intercept form ══════════════════════ */
+const SLOPES=[[-5,1],[-4,1],[-3,1],[-5,2],[-2,1],[-5,3],[-3,2],[-4,3],[-1,1],[-3,4],[-2,3],[-1,2],[-1,3],[-1,4],[0,1],[1,4],[1,3],[1,2],[2,3],[3,4],[1,1],[4,3],[3,2],[5,3],[2,1],[5,2],[3,1],[4,1],[5,1]];
+const sv=i=>SLOPES[i][0]/SLOPES[i][1];
+const sIdx=(n,d)=>SLOPES.findIndex(f=>f[0]===n&&f[1]===d);
+function slopeTri(g,P,n,d,lbl){ // from P: rise n then run d
+  const a=W2S(P), b=W2S([P[0],P[1]+n]), c=W2S([P[0]+d,P[1]+n]);
+  if(n) sarrow(g,a,b,"var(--corr)",2.8,"8 5"); sarrow(g,b,c,"var(--lin)",2.8,"8 5");
+  if(lbl){ if(n) smartLabel(g,[a[0],(a[1]+b[1])/2],[-1,0],"rise "+minus(n),"#0369A1"); smartLabel(g,[(b[0]+c[0])/2,b[1]],[0,n>0?-1:1],"run "+d,"#C2410C"); }
+}
+function interceptMarks(g,m,b,yc,xc){
+  const yi=[0,b]; let xi=null; if(Math.abs(m)>1e-12)xi=[-b/m,0];
+  if(xi&&same(xi,yi)){ sdot(g,W2S(yi),"var(--magenta)",7); smartLabel(g,W2S(yi),[-1,-1],"(0, 0)","#BE185D"); return; }
+  if(inView(yi)){ sdot(g,W2S(yi),"var(--magenta)",7); smartLabel(g,W2S(yi),m>0?[-1,-.7]:[-1,.7],"(0, "+fx(b)+")",yc||"#BE185D"); }
+  if(xi&&inView(xi)){ sdot(g,W2S(xi),"var(--alt)",7); smartLabel(g,W2S(xi),m>0?[1,.8]:[1,-.8],"("+fx(xi[0])+", 0)",xc||"#047857"); }
+}
+const M3={
+  tab:"Slope-intercept form", lesson:"F-IF.C.7a · A-CED.A.2", accent:"var(--mint)",
+  s:{mode:"explore",mi:sIdx(1,2),b:1,tri:true,walk:null,match:null,score:0},
+  title(){ const s=M3.s; if(s.mode==="walk")return "Graph "+slopeInt(SLOPES[s.walk.mi][0]/SLOPES[s.walk.mi][1],s.walk.b); if(s.mode==="match")return "Match the graph"; return slopeInt(sv(s.mi),s.b); },
+  newWalk(){ let mi,b,n,d; do{ mi=rnd(0,SLOPES.length-1); [n,d]=SLOPES[mi]; b=rnd(-4,4); }while(n===0||Math.abs(n)>4||Math.abs(b+2*n)>6.5||(M3.s.walk&&M3.s.walk.mi===mi&&M3.s.walk.b===b)); M3.s.walk={mi,b,step:0}; },
+  newMatch(){ let ti,tb; do{ ti=rnd(0,SLOPES.length-1); tb=rnd(-5,5); }while(Math.abs(sv(ti))>3||(ti===M3.s.mi&&tb===M3.s.b)); M3.s.match={ti,tb,done:false}; },
+  bar(){
+    const s=M3.s;
+    segBtns([["explore","Explore"],["walk","Graph from equation"],["match","Match game"]],s.mode,k=>{s.mode=k; if(k==="walk"&&!s.walk)M3.newWalk(); if(k==="match"&&!s.match)M3.newMatch(); render();});
+    if(s.mode==="walk"){
+      btn("New equation",()=>{M3.newWalk();render();},"primary");
+      btn("Back",()=>{s.walk.step=Math.max(0,s.walk.step-1);render();});
+      btn("Next step",()=>{s.walk.step=Math.min(4,s.walk.step+1);render();});
+      spacer("Step "+(s.walk.step+1)+" of 5");
+      return;
+    }
+    if(s.mode==="match") btn("New target",()=>{M3.newMatch();render();},"primary");
+    slider("m",0,SLOPES.length-1,1,s.mi,v=>{s.mi=v; M3.checkMatch(); update();},v=>fx(sv(v)));
+    slider("b",-6,6,1,s.b,v=>{s.b=v; M3.checkMatch(); update();});
+    if(s.mode==="explore") chk("Slope triangle",s.tri,v=>{s.tri=v;update();});
+    else M3.scoreEl=spacer("Matched: "+s.score);
+  },
+  checkMatch(){ const s=M3.s; if(s.mode!=="match"||!s.match||s.match.done)return; if(s.mi===s.match.ti&&s.b===s.match.tb){ s.match.done=true; s.score++; if(M3.scoreEl)M3.scoreEl.textContent="Matched: "+s.score; } },
+  draw(){
+    const s=M3.s, g=gridStd();
+    if(s.mode==="walk"){
+      const w=s.walk, [n,d]=SLOPES[w.mi], b=w.b, B0=[0,b], B1=[d,b+n], B2=[2*d,b+2*n], Bm=[-d,b-n];
+      if(w.step>=4){ wlineMB(g,n/d,b,"var(--vert)",3.4); }
+      if(w.step>=1){ sdot(g,W2S(B0),"var(--magenta)",7); smartLabel(g,W2S(B0),[1,n>0?1:-1],"(0, "+fx(b)+")","#BE185D"); }
+      if(w.step>=2){ slopeTri(g,B0,n,d,true); sdot(g,W2S(B1),"var(--ink)",6); }
+      if(w.step>=3){ slopeTri(g,B1,n,d,false); sdot(g,W2S(B2),"var(--ink)",6); slopeTri(g,Bm,n,d,false); sdot(g,W2S(Bm),"var(--ink)",6); }
+      banner(slopeInt(n/d,b));
+      return;
+    }
+    const m=sv(s.mi), b=s.b;
+    if(s.mode==="match"){ const t=s.match; wlineMB(g,sv(t.ti),t.tb,"rgba(255,61,138,.45)",9);
+      if(t.done){ interceptMarks(g,m,b); }
+      wlineMB(g,m,b,t.done?"var(--alt)":"var(--vert)",3.2);
+      if(t.done) badge(true,"✓ Matched!");
+      return; }
+    wlineMB(g,m,b,"var(--vert)",3.4);
+    if(s.tri&&Math.abs(m)>1e-12){ const [n,d]=SLOPES[s.mi]; slopeTri(g,[0,b],n,d,true); }
+    interceptMarks(g,m,b);
+    if(Math.abs(m)<1e-12&&b!==0) smartLabel(g,W2S([7,b]),[0,-1],"no x-intercept","#047857");
+  },
+  side(){
+    const s=M3.s;
+    if(s.mode==="walk"){
+      const w=s.walk, [n,d]=SLOPES[w.mi], b=w.b, up=n>0;
+      const steps=[
+        `<b>Read the equation.</b> In y = mx + b, the slope is m = ${fx(n/d)}${d===1?" = "+minus(n)+"/1":""} and the y-intercept is b = ${fx(b)}.`,
+        `<b>Plot the y-intercept</b> (0, ${fx(b)}) on the y-axis. Every line in slope-intercept form crosses the y-axis at b.`,
+        `<b>Count the slope from there.</b> Rise ${minus(n)} (${up?"up":"down"} ${Math.abs(n)}), then run ${d} (right ${d}). Plot the point (${d}, ${fx(b+n)}).`,
+        `<b>Repeat</b> the rise and run to get another point, (${2*d}, ${fx(b+2*n)}). Going backwards (${up?"down":"up"} ${Math.abs(n)}, left ${d}) gives (${-d}, ${fx(b-n)}).`,
+        `<b>Draw the line</b> through the points, with arrows on both ends. Check: does (${d}, ${fx(b+n)}) make the equation true? ${fx(n/d)}·${d} + ${par(b)} = ${fx(b+n)} ✓`
+      ];
+      return panelH("Graph from an equation",`<div class="pad"><div class="eq">${slopeInt(n/d,b)}<small>m = ${fx(n/d)}, b = ${fx(b)}</small></div></div><ol class="stepl">`+
+        steps.map((t,i)=>`<li class="${i===w.step?"on":i<w.step?"done":""}"><span class="sn">${i+1}</span>${t}</li>`).join("")+`</ol>`)+
+        tryPanel(`Before pressing <b>Next step</b>, say out loud where the next point goes. Then press <b>New equation</b> and graph it on paper first.`);
+    }
+    if(s.mode==="match") return panelH("Match the graph",`<div class="pad"><p>The thick pink line is the <b>target</b>. Move the <b>m</b> and <b>b</b> sliders until your line lies exactly on top of it.</p>
+      <p>Tip: find where the target crosses the y-axis first (that's b), then count rise over run between two lattice points (that's m).</p></div>`)+
+      `<div class="panel"><h3>Feedback</h3><div id="live3"></div></div>`+tryPanel(`Match three targets in a row. For each one, write its equation on paper <b>before</b> you touch the sliders.`);
+    return panelH("y = mx + b",`<div class="pad">
+      <p>A line written as <span class="term">y = mx + b</span> is in <b>slope-intercept form</b>. The number in front of x, <b>m</b>, is the slope; the constant <b>b</b> is the y-intercept, where the line crosses the y-axis at (0, b).</p>
+      <p>The <b>x-intercept</b> is where y = 0. Set y = 0 and solve: 0 = mx + b gives x = −b/m.</p>
+      <div class="eq">y = mx + b    m = slope,  (0, b) = y-intercept</div></div>`)+
+      `<div class="panel"><h3>This line</h3><div id="live3"></div></div>`+
+      tryPanel(`Keep b fixed and slide m. Which point never moves? Now keep m fixed and slide b. What stays the same about the lines? (They're parallel.)`);
+  },
+  live(){
+    const s=M3.s, el=$("live3"); if(!el)return;
+    const m=sv(s.mi), b=s.b;
+    if(s.mode==="match"){ const t=s.match, tm=sv(t.ti);
+      if(t.done){ el.innerHTML=`<div class="verdict good"><b>Matched!</b> The target is <b>${slopeInt(tm,t.tb)}</b>: slope ${fx(tm)}, y-intercept (0, ${fx(t.tb)}). Press <b>New target</b>.</div>`; return; }
+      const hb= b===t.tb? `<span class="ok">✓ y-intercept is right.</span>` : `Your line crosses the y-axis <b>${b>t.tb?"too high":"too low"}</b>.`;
+      let hm; if(s.mi===t.ti)hm=`<span class="ok">✓ slope is right.</span>`;
+      else if(Math.sign(m)!==Math.sign(tm)) hm=tm===0?`The target is <b>horizontal</b>.`:`Your line tilts the <b>wrong way</b> — the target ${tm>0?"rises":"falls"} left to right.`;
+      else hm=Math.abs(m)>Math.abs(tm)?`Your line is <b>too steep</b>.`:`Your line is <b>not steep enough</b>.`;
+      el.innerHTML=`<div class="pad"><p>${hb}</p><p>${hm}</p><p style="color:var(--dim)">Your line: ${slopeInt(m,b)}</p></div>`; return; }
+    let xi; if(Math.abs(m)<1e-12) xi= b===0? "every point (the line is the x-axis)" : "none — a horizontal line y = "+b+" never meets the x-axis";
+    else xi=ptx([-b/m,0]);
+    let work=Math.abs(m)>1e-12? `0 = ${exprMX(m,b)}\n${coefX(m)} = ${fx(-b)}\nx = ${fxa(-b/m)}` : `0 = ${fx(b)}${b===0?"  (always true)":"  (never true)"}`;
+    el.innerHTML=`<div class="pad"><div class="eq" style="font-size:18px">${slopeInt(m,b)}</div>
+      <div class="rel" style="padding:8px 0"><span class="dot" style="background:var(--vert)"></span><span class="nm">slope m<em>rise/run = ${minus(SLOPES[s.mi][0])}/${SLOPES[s.mi][1]}</em></span><span class="val">${fx(m)}</span></div>
+      <div class="rel" style="padding:8px 0"><span class="dot" style="background:var(--magenta)"></span><span class="nm">y-intercept<em>set x = 0</em></span><span class="val">(0, ${fx(b)})</span></div>
+      <div class="rel" style="padding:8px 0"><span class="dot" style="background:var(--alt)"></span><span class="nm">x-intercept<em>set y = 0</em></span><span class="val">${xi}</span></div>
+      <div class="eq">${work}<small>Finding the x-intercept: replace y with 0 and solve.</small></div></div>`;
+  }
+};
+
+/* ══════════════════════ TAB 4 · Point-slope & standard form ══════════════════════ */
+const M4={
+  tab:"Point-slope & standard", lesson:"A-CED.A.2 · F-LE.A.2", accent:"var(--lavender)",
+  s:{mode:"ps",P:[2,1],mi:sIdx(3,4),A:[-3,-2],B:[3,2],sA:2,sB:3,sC:6,conv:"y − 4 = −1/2(x + 2)"},
+  title(){ return {ps:"Point + slope → equation",two:"Two points → equation",std:"Standard form Ax + By = C",conv:"Convert between forms"}[M4.s.mode]; },
+  resnap(){ const s=M4.s; if(snap){ ["P","A","B"].forEach(k=>s[k]=s[k].map(Math.round)); } },
+  line(){ const s=M4.s;
+    if(s.mode==="ps"){ const m=sv(s.mi); return {vert:false,m,b:s.P[1]-m*s.P[0]}; }
+    if(s.mode==="two") return same(s.A,s.B)?null:lineObjPts(s.A,s.B);
+    if(s.mode==="std"){ if(s.sA===0&&s.sB===0)return null; return s.sB===0? {vert:true,k:s.sC/s.sA} : {vert:false,m:-s.sA/s.sB,b:s.sC/s.sB}; }
+    const Eq=parseEq(s.conv); return Eq? eqLine(Eq) : null; },
+  bar(){
+    const s=M4.s;
+    segBtns([["ps","Point + slope"],["two","Two points"],["std","Standard form"],["conv","Convert"]],s.mode,k=>{s.mode=k;render();});
+    if(s.mode==="ps"){ slider("m",0,SLOPES.length-1,1,s.mi,v=>{s.mi=v;update();},v=>fx(sv(v))); snapChk(); spacer("Drag the point"); }
+    if(s.mode==="two"){ snapChk(); spacer("Drag A and B"); }
+    if(s.mode==="std"){ slider("A",-6,6,1,s.sA,v=>{s.sA=v;update();}); slider("B",-6,6,1,s.sB,v=>{s.sB=v;update();}); slider("C",-12,12,1,s.sC,v=>{s.sC=v;update();}); }
+    if(s.mode==="conv") chips([["y = 2x − 3","y = 2x − 3"],["y − 4 = −1/2(x + 2)","y − 4 = −1/2(x + 2)"],["3x + 2y = 12","3x + 2y = 12"],["x − 3y = 6","x − 3y = 6"]],s.conv,k=>{s.conv=k;render();});
+  },
+  draw(){
+    const s=M4.s, g=gridStd(), L=M4.line();
+    if(L) wlineL(g,L,"var(--vert)",3.4);
+    if(L&&!L.vert) interceptMarks(g,L.m,L.b);
+    if(L&&L.vert&&Math.abs(L.k)<=11){ sdot(g,W2S([L.k,0]),"var(--alt)",7); smartLabel(g,W2S([L.k,0]),[1,.8],"("+fx(L.k)+", 0)","#047857"); }
+    if(s.mode==="ps"){ const [n,d]=SLOPES[s.mi]; if(n)slopeTri(g,s.P,n,d,true); else slopeTri(g,s.P,0,d,true);
+      sgrab(g,W2S(s.P),"P","var(--hand)"); smartLabel(g,W2S(s.P),[n>0?-1:1,-1],"(x₁, y₁) = "+pt(s.P),"#C2410C"); }
+    if(s.mode==="two"){ sgrab(g,W2S(s.A),"A","var(--ink)"); sgrab(g,W2S(s.B),"B","var(--ink)");
+      const d=same(s.A,s.B)?[0,-1]:unit(sub(W2S(s.A),W2S(s.B))), nn=[-d[1],d[0]];
+      smartLabel(g,W2S(s.A),add(d,mul(nn,.8)),"A"+pt(s.A),"var(--ink)"); smartLabel(g,W2S(s.B),add(mul(d,-1),mul(nn,.8)),"B"+pt(s.B),"var(--ink)"); }
+    if(s.mode==="conv"&&!L) banner("Can't read that equation yet");
+    else if(s.mode!=="ps"&&s.mode!=="two"&&L) banner(s.mode==="std"?stdStr(s.sA,s.sB,s.sC):lineEqStr(L));
+  },
+  drag(id,sp){ const s=M4.s, p=snapStd(sp); s[id]=p; },
+  side(){
+    const s=M4.s;
+    const intro={
+      ps:`<p>If you know <b>one point</b> (x₁, y₁) and the <b>slope</b> m, write the line in <span class="term">point-slope form</span>. It comes straight from the slope formula: (y − y₁)/(x − x₁) = m.</p><p>Distribute and isolate y to reach slope-intercept form; move the x-term and clear fractions to reach standard form.</p>`,
+      two:`<p>With <b>two points</b>, first find the slope. Then use point-slope form with <b>either</b> point — the equations look different but simplify to the same line.</p>`,
+      std:`<p><span class="term">Standard form</span> is Ax + By = C, with integers A, B, C and A ≥ 0. It is handy for finding intercepts with the <b>cover-up method</b>: cover one variable's term (it's 0 at that intercept) and solve for the other.</p>`,
+      conv:`<p>Type a line in <b>any</b> form. The lab reads it, graphs it, and rewrites it in all three forms with the steps shown.</p><p>All three forms describe the same line; each makes a different feature easy to see.</p>`
+    }[s.mode];
+    let h=panelH("The idea",`<div class="pad">${intro}<div class="eq">point-slope:     y − y₁ = m(x − x₁)\nslope-intercept: y = mx + b\nstandard:        Ax + By = C</div></div>`);
+    if(s.mode==="conv") h+=panelH("Your equation",`<label class="fld" for="convin">Equation of a line</label><div class="fldwrap"><input type="text" id="convin" autocomplete="off" spellcheck="false" value="${s.conv}"></div><p class="fmt">Use x, y, numbers, fractions like 1/2, + − and parentheses. Example: 4x − 2y = 8</p><div style="height:12px"></div>`);
+    h+=`<div class="panel"><h3>Steps</h3><div class="pad" id="live4"></div></div>`;
+    h+=tryPanel({ps:`Drag the point along the line (keep it on the line). The point-slope equation changes, but the slope-intercept form stays the same. Why?`,
+      two:`Put A at (−2, 5) and B at (4, −1). Write point-slope form using A, then using B. Show both simplify to y = −x + 3.`,
+      std:`Set A = 0. What kind of line do you get? Now set B = 0. Which form can't describe that line?`,
+      conv:`Type <b>y = 3</b>, then <b>x = −2</b>. Which forms work for each? Then type <b>2(y − 1) = 4x</b> — what is its slope?`}[s.mode]);
+    return h;
+  },
+  wire(){ const s=M4.s; if(s.mode==="conv"){ $("convin").oninput=()=>{ s.conv=$("convin").value; clear(); M4.draw(); M4.live(); bTitle.textContent=M4.title(); }; } },
+  live(){
+    const s=M4.s, el=$("live4"); if(!el)return; const L=M4.line();
+    if(s.mode==="ps"){ const m=sv(s.mi), P=s.P, b=P[1]-m*P[0];
+      el.innerHTML=wk([{sub:"Point-slope → slope-intercept"},...stepsPS2SI(m,P[0],P[1]),{sub:"Slope-intercept → standard"},...stepsSI2Std(m,b)]); return; }
+    if(s.mode==="two"){
+      if(!L){ el.innerHTML=`<div class="verdict info" style="margin:0">A and B are the same point — one point isn't enough to fix a line.</div>`; return; }
+      const A=s.A,B=s.B;
+      if(L.vert){ el.innerHTML=wk([[`m = (${nm(B[1])} − ${par(A[1])})/(${nm(B[0])} − ${par(A[0])}) = ${nm(L.dy)}/0`,"undefined slope: the line is vertical"],[`x = ${fx(L.k)}`,"every point has x = "+fx(L.k)+" — this is also its standard form (1x + 0y = "+fx(L.k)+")",true],["No point-slope or slope-intercept form","both need a slope m"]]); return; }
+      const sl=[`m = (y₂ − y₁)/(x₂ − x₁) = (${nm(B[1])} − ${par(A[1])})/(${nm(B[0])} − ${par(A[0])}) = ${nm(L.dy)}/${nm(L.dx)}${fx(L.m)!==nm(L.dy)+"/"+nm(L.dx)?" = "+fx(L.m):""}`,"slope formula"];
+      el.innerHTML=wk([{sub:"Slope"},sl,{sub:"Point-slope using A, then simplify"},...stepsPS2SI(L.m,A[0],A[1]),{sub:"Standard form"},...stepsSI2Std(L.m,L.b).slice(1),{sub:"Using B instead"},[pointSlope(L.m,B[0],B[1]),"looks different, simplifies to the same "+slopeInt(L.m,L.b)]]); return; }
+    if(s.mode==="std"){
+      if(!L){ el.innerHTML=`<div class="verdict info" style="margin:0">A and B can't both be 0 — then there's no x or y left, so it isn't a line.</div>`; return; }
+      const R=[...coverUp(s.sA,s.sB,s.sC),{sub:"Standard → slope-intercept"},...stepsStd2SI(s.sA,s.sB,s.sC)];
+      if(!L.vert){ const P=nicePoint(L.m,L.b); R.push({sub:"Point-slope (using a point on the line)"},[pointSlope(L.m,P[0],P[1]),`slope ${fx(L.m)} through ${ptx(P)}`]); }
+      const st=toStd(s.sA,s.sB,s.sC); if(st.A!==s.sA||st.B!==s.sB||st.C!==s.sC) R.unshift([`Simplest standard form: ${stdStr(st.A,st.B,st.C)}`, "divide by a common factor and/or multiply by −1 so A ≥ 0 — same line"]);
+      el.innerHTML=wk(R); return; }
+    // convert
+    const Eq=parseEq(s.conv);
+    if(!Eq){ el.innerHTML=`<div class="verdict bad" style="margin:0"><b>I can't read that as a line.</b> Use one "=" sign, the letters x and y, numbers, fractions, + − and parentheses. Squares or x·y terms aren't linear.</div>`; return; }
+    const raw=s.conv.replace(/\s+/g,"").replace(/[−–]/g,"-").toLowerCase();
+    let form="another form";
+    if(/^y=[^y]*$/.test(raw)) form="slope-intercept form"; else if(/^y[-+][^=]+=[^xy]*\(x[-+][^)]+\)$|^y[-+][^=]+=[^=]*\(x[-+][^)]+\)[^xy]*$/.test(raw)) form="point-slope form";
+    else if(/^[^=]*x[^=]*y[^=]*=[^xy]+$|^[^=]*y[^=]*x[^=]*=[^xy]+$/.test(raw)) form="standard form"; else if(/^x=[^xy]+$/.test(raw)) form="a vertical line";
+    const a=Eq.x,b=Eq.y,c=-Eq.c, st=toStd(a,b,c);
+    const R=[[s.conv.replace(/-/g,"−"),"you typed this — it's in "+form]];
+    R.push({sub:"→ Standard form"},[stdStr(a,b,c),"move x- and y-terms to the left, constants to the right"]);
+    if(!st.approx&&(Math.abs(st.A-a)>1e-9||Math.abs(st.B-b)>1e-9)) R.push([stdStr(st.A,st.B,st.C),"multiply/divide so A, B, C are integers with no common factor and A ≥ 0",true]); else R[R.length-1][2]=true;
+    if(L.vert){ R.push({sub:"Vertical line"},[`x = ${fx(L.k)}`,"slope undefined, so there is no slope-intercept or point-slope form",true]); }
+    else { R.push({sub:"→ Slope-intercept form"},...stepsStd2SI(st.A,st.B,st.C).slice(1));
+      const P=nicePoint(L.m,L.b); R.push({sub:"→ Point-slope form"},[pointSlope(L.m,P[0],P[1]),`slope ${fx(L.m)} through ${ptx(P)} (any point on the line works)`,true]);
+      R.push({sub:"Intercepts"},[`x-intercept ${Math.abs(L.m)>1e-12?ptx([-L.b/L.m,0]):"none"},  y-intercept ${ptx([0,L.b])}`,""]); }
+    el.innerHTML=wk(R);
+  }
+};
+
+/* ══════════════════════ TAB 5 · Linear or not? ══════════════════════ */
+const PRE5={
+  lin:{label:"Linear",xs:[0,1,2,3,4,5],ys:[-3,-1,1,3,5,7]},
+  quad:{label:"Quadratic",xs:[-2,-1,0,1,2,3],ys:[4,1,0,1,4,9]},
+  exp:{label:"Exponential",xs:[0,1,2,3,4,5],ys:[1,2,4,8,16,32]},
+  uneven:{label:"Uneven x-steps",xs:[0,1,3,4,7,8],ys:[1,3,7,9,15,17]},
+  dec:{label:"Decreasing",xs:[0,2,4,6,8,10],ys:[20,17,14,11,8,5]}
+};
+const CTX5=[
+  {name:"Taxi fare",xl:"Distance (miles)",yl:"Fare ($)",xmax:12,ymax:45,xstep:1,ystep:5,b:3,m:2.5,xh:10,bs:0.5,ms:0.25,ts:0.5,ux:["mile","miles"],money:true,what:"fare",bmean:"the base fare you pay just for getting in",x0mean:"",tx:6},
+  {name:"Phone plan",xl:"Data used (GB)",yl:"Monthly bill ($)",xmax:10,ymax:100,xstep:1,ystep:10,b:30,m:5,xh:8,bs:1,ms:0.5,ts:0.5,ux:["GB","GB"],money:true,what:"bill",bmean:"the fixed monthly charge before any data",x0mean:"",tx:4},
+  {name:"Draining a pool",xl:"Time (minutes)",yl:"Water left (gallons)",xmax:20,ymax:700,xstep:2,ystep:100,b:600,m:-40,xh:10,bs:10,ms:5,ts:0.5,ux:["minute","minutes"],uy:["gallon","gallons"],what:"amount of water",bmean:"the water in the pool when draining starts",x0mean:"the pool is empty",tx:5}
+];
+function tblInfo(xs,ys){
+  const n=xs.length, dx=[],dy=[],r=[];
+  for(let i=1;i<n;i++){ dx.push(xs[i]-xs[i-1]); dy.push(ys[i]-ys[i-1]); r.push(near(xs[i],xs[i-1])?NaN:(ys[i]-ys[i-1])/(xs[i]-xs[i-1])); }
+  const eqDx=dx.every(v=>near(v,dx[0],1e-9)), lin=r.every(v=>isFinite(v)&&near(v,r[0],1e-9));
+  const dupX=new Set(xs).size<xs.length, incX=dx.every(v=>v>0);
+  const ratios=[]; for(let i=1;i<n;i++)ratios.push(near(ys[i-1],0)?NaN:ys[i]/ys[i-1]);
+  const expo=eqDx&&!lin&&ratios.every(v=>isFinite(v)&&near(v,ratios[0],1e-9)&&!near(v,1));
+  const d2=[]; for(let i=1;i<dy.length;i++)d2.push(dy[i]-dy[i-1]);
+  const quad=eqDx&&!lin&&d2.length>0&&d2.every(v=>near(v,d2[0],1e-9))&&!near(d2[0],0);
+  return {dx,dy,r,eqDx,lin,dupX,incX,ratios,expo,quad,d2};
+}
+const M5={
+  tab:"Linear or not?", lesson:"F-LE.A.1 · F-IF.B.4", accent:"var(--magenta)",
+  s:{mode:"tbl",pre:"lin",xs:PRE5.lin.xs.slice(),ys:PRE5.lin.ys.slice(),ci:0,C:CTX5.map(c=>({b:c.b,m:c.m,tx:c.tx}))},
+  view:null,
+  title(){ return M5.s.mode==="tbl"?"Tables: constant rate of change?":CTX5[M5.s.ci].name+": reading a linear model"; },
+  bar(){
+    const s=M5.s;
+    segBtns([["tbl","Tables of values"],["ctx","Real contexts"]],s.mode,k=>{s.mode=k;M5.view=null;render();});
+    if(s.mode==="tbl"){ chips(Object.keys(PRE5).map(k=>[k,PRE5[k].label]),s.pre,k=>{s.pre=k;s.xs=PRE5[k].xs.slice();s.ys=PRE5[k].ys.slice();M5.view=null;render();}); spacer("Drag points up/down or edit the table"); }
+    else { chips(CTX5.map((c,i)=>[i,c.name]),s.ci,k=>{s.ci=k;render();}); btn("Reset model",()=>{const c=CTX5[s.ci];s.C[s.ci]={b:c.b,m:c.m,tx:c.tx};update();}); spacer("Drag the orange handles and the trace point"); }
+  },
+  autoView(){ const s=M5.s;
+    const xlo=Math.min(...s.xs), xhi=Math.max(...s.xs), ylo=Math.min(...s.ys,0), yhi=Math.max(...s.ys,0);
+    const xs=niceStep(Math.max(xhi-xlo,1),10), ys=niceStep(Math.max(yhi-ylo,1),7);
+    return mkView({xmin:xlo-xs*0.8,xmax:xhi+xs*0.8,ymin:ylo-ys*0.8,ymax:yhi+ys*0.8,L:56,T:20,R:VW-22,B:VH-46,xstep:xs,ystep:ys,xl:"x",yl:"y"}); },
+  dragEnd(){ M5.view=null; },
+  draw(){
+    const s=M5.s;
+    if(s.mode==="tbl"){
+      if(!M5.view||!dragId)M5.view=M5.autoView();
+      const g=gridCtx(M5.view), I=tblInfo(s.xs,s.ys), P=s.xs.map((x,i)=>[x,s.ys[i]]);
+      if(I.lin&&I.incX){ wline(g,P[0],P[1],"rgba(124,58,237,.35)",2.4,"8 6"); }
+      for(let i=1;i<P.length;i++){ const a=W2S(P[i-1]), c=W2S([P[i][0],P[i-1][1]]), b=W2S(P[i]);
+        const ok=isFinite(I.r[i-1])&&near(I.r[i-1],I.r[0],1e-9), col=ok?"#059669":"#E11D48";
+        sseg(g,a,c,"#94A3B8",2,"5 4"); sseg(g,c,b,col,3);
+        const lab=(I.dy[i-1]>=0?"+":"")+nm(I.dy[i-1]);
+        stext(g,[c[0]+(FS>1?24:16)*(1),(c[1]+b[1])/2],lab,"sm",col,"start");
+        stext(g,[(a[0]+c[0])/2,c[1]+(I.dy[i-1]>=0?13:-13)*FS],"+"+nm(I.dx[i-1]),"sm","#64748B"); }
+      P.forEach((p,i)=>{ sgrab(g,W2S(p),"t"+i,"var(--vert)"); });
+      badge(I.lin&&I.incX,"✓ Linear","✗ Not linear");
+      return;
+    }
+    const c=CTX5[s.ci], st=s.C[s.ci], V=ctxView(c), g=gridCtx(V), f=x=>st.b+st.m*x;
+    wline(g,[0,st.b],[1,f(1)],"var(--vert)",3.4,null,true);
+    if(st.m<0){ const x0=-st.b/st.m; if(x0>=0&&x0<=c.xmax){ sdot(g,W2S([x0,0]),"var(--alt)",7); smartLabel(g,W2S([x0,0]),[1,-1],"("+nm(x0)+", 0)","#047857"); } }
+    const H0=[0,st.b], H1=[c.xh,f(c.xh)], T=[st.tx,f(st.tx)];
+    if(inView(T)){ sseg(g,W2S([st.tx,0]),W2S(T),"#94A3B8",1.8,"5 4"); sseg(g,W2S([0,T[1]]),W2S(T),"#94A3B8",1.8,"5 4");
+      sgrab(g,W2S(T),"T","var(--magenta)"); smartLabel(g,W2S(T),[st.m>=0?-1:1,-1],"("+nm(st.tx)+", "+(c.money?money(T[1]):nm(T[1]))+")","#BE185D"); }
+    sgrab(g,W2S(H0),"H0","var(--hand)"); smartLabel(g,W2S(H0),[1,st.m>=0?-1:1],"(0, "+(c.money?money(st.b):nm(st.b))+")","#C2410C");
+    if(inView(H1,4)) sgrab(g,W2S(H1),"H1","var(--hand)");
+    badge(st.m>=0, st.m>0?"↗ Increasing":"→ Constant","↘ Decreasing",st.m<0);
+  },
+  drag(id,sp){
+    const s=M5.s;
+    if(s.mode==="tbl"){ const i=+id.slice(1), w=VIEW.S2W(sp), stp=VIEW.ystep>=5?VIEW.ystep/5:VIEW.ystep>=2?1:0.5; s.ys[i]=Math.round(snapTo(w[1],stp)*100)/100; s.pre="mine"; return; }
+    const c=CTX5[s.ci], st=s.C[s.ci], w=VIEW.S2W(sp);
+    if(id==="H0"){ st.b=clamp(snapTo(w[1],c.bs),0,c.ymax); }
+    else if(id==="H1"){ const y=clamp(w[1],0,c.ymax); st.m=snapTo((y-st.b)/c.xh,c.ms); }
+    else if(id==="T"){ st.tx=clamp(snapTo(w[0],c.ts),0,c.xmax); }
+  },
+  side(){
+    const s=M5.s;
+    if(s.mode==="tbl"){
+      return panelH("Equal differences over equal intervals",`<div class="pad">
+        <p>A function is <span class="term">linear</span> when its <b>rate of change is constant</b>: over equal steps in x, y changes by the same amount.</p>
+        <p>Careful when the x-steps are uneven — compare <b>Δy/Δx</b>, not just Δy. If instead y is <b>multiplied</b> by the same factor each step, the function is <span class="term">exponential</span>.</p>
+        <div class="eq">linear  ⇔  Δy/Δx is the same between every pair of rows</div></div>`)+
+        `<div class="panel"><h3>Table &amp; differences</h3><table class="dt" id="tbl5"></table><div id="live5"></div></div>`+
+        tryPanel(`Choose <b>Uneven x-steps</b>. The Δy column isn't constant — so why is it still linear? Then drag one point to break the pattern and watch which rates turn red.`);
+    }
+    const c=CTX5[s.ci];
+    return panelH("Interpreting a linear model",`<div class="pad">
+      <p>In context, the <span class="term">y-intercept</span> is the starting value (when the input is 0) and the <span class="term">slope</span> is the rate of change, with units.</p>
+      <p>Drag the left orange handle to change the starting value and the right one to change the rate. Drag the pink point to read values off the graph.</p>
+      <div class="eq">output = (starting value) + (rate)·(input)</div></div>`)+
+      `<div class="panel"><h3>Key features</h3><div id="live5"></div></div>`+
+      tryPanel(c.money?`Two ${c.name.toLowerCase()}s: one charges $${c.b} + $${c.m}/${c.ux[0]}, the other $${c.b+4} + $${c.m-1}/${c.ux[0]}. Set each and use the trace point — where is the second one cheaper?`
+        :`Make the pool drain in exactly <b>12 minutes</b> starting from 600 gallons. What rate does that need? Check the x-intercept.`);
+  },
+  wire(){
+    const s=M5.s; if(s.mode!=="tbl")return;
+    const tb=$("tbl5");
+    tb.innerHTML=`<thead><tr><th>x</th><th>y</th><th>Δx</th><th>Δy</th><th>Δy/Δx</th></tr></thead><tbody>`+
+      s.xs.map((x,i)=>`<tr><td><input type="number" id="tx${i}" value="${x}" aria-label="x in row ${i+1}"></td><td><input type="number" id="ty${i}" value="${s.ys[i]}" aria-label="y in row ${i+1}"></td><td id="dx${i}"></td><td id="dy${i}"></td><td id="rr${i}"></td></tr>`).join("")+`</tbody>`;
+    s.xs.forEach((_,i)=>{ [["tx","xs"],["ty","ys"]].forEach(([pre,key])=>{ const el=$(pre+i); el.oninput=()=>{ const v=parseFloat(el.value); if(!isFinite(v))return; s[key][i]=v; s.pre="mine"; M5.view=null; clear(); M5.draw(); M5.live(); }; }); });
+  },
+  live(){
+    const s=M5.s, el=$("live5"); if(!el)return;
+    if(s.mode==="tbl"){
+      const I=tblInfo(s.xs,s.ys);
+      s.xs.forEach((x,i)=>{ ["tx","ty"].forEach((pre,k)=>{ const inp=$(pre+i), v=k?s.ys[i]:x; if(inp&&document.activeElement!==inp&&+inp.value!==v)inp.value=v; });
+        const D=$("dx"+i),Y=$("dy"+i),R=$("rr"+i); if(!D)return;
+        if(i===0){D.textContent="";Y.textContent="";R.textContent="";return;}
+        D.textContent=(I.dx[i-1]>=0?"+":"")+nm(I.dx[i-1]); Y.textContent=(I.dy[i-1]>=0?"+":"")+nm(I.dy[i-1]);
+        const r=I.r[i-1]; R.textContent=isFinite(r)?fx(r):"—"; R.className=isFinite(r)&&near(r,I.r[0],1e-9)?"okc":"noc"; D.className="dimc"; });
+      let v;
+      if(I.dupX) v=`<div class="verdict bad"><b>Repeated x-value.</b> Two rows share an input, so this table isn't even a function — let alone linear.</div>`;
+      else if(!I.incX) v=`<div class="verdict info">List the x-values in increasing order to compare rates of change.</div>`;
+      else if(I.lin){ const m=I.r[0], b=s.ys[0]-m*s.xs[0];
+        v=`<div class="verdict good"><b>Linear.</b> Every Δy/Δx equals <b>${fx(m)}</b>, so the rate of change is constant.${I.eqDx?"":" (The x-steps are uneven, so Δy alone changes — but the rate doesn't.)"} The rule is <b>${slopeInt(m,b).replace("y =","f(x) =")}</b>.</div>`; }
+      else if(I.expo) v=`<div class="verdict bad"><b>Not linear — exponential.</b> Differences change, but each y is <b>multiplied by ${fx(I.ratios[0])}</b> over equal x-steps (a constant ratio).</div>`;
+      else if(I.quad) v=`<div class="verdict bad"><b>Not linear.</b> The first differences change, but the <b>second differences</b> are constant (${nm(I.d2[0])}) — the pattern of a quadratic.</div>`;
+      else { const k=I.r.findIndex(r=>!near(r,I.r[0],1e-9));
+        v=`<div class="verdict bad"><b>Not linear.</b> The rate of change is ${fx(I.r[0])} at first, but ${fx(I.r[k])} between x = ${nm(s.xs[k])} and x = ${nm(s.xs[k+1])}.</div>`; }
+      el.innerHTML=v; return;
+    }
+    const c=CTX5[s.ci], st=s.C[s.ci], f=x=>st.b+st.m*x, fy=v=>c.money?money(v):num(v,2)+" "+c.uy[1];
+    const rate=(c.money?money(Math.abs(st.m)):num(Math.abs(st.m),2)+" "+c.uy[1])+" per "+c.ux[0];
+    const dir=st.m>0?"increasing":st.m<0?"decreasing":"constant";
+    let xint;
+    if(st.m<0){ const x0=-st.b/st.m; xint=`<b>(${nm(x0)}, 0)</b>: after ${num(x0,2)} ${c.ux[1]} the ${c.what} reaches 0${c.x0mean?" — "+c.x0mean:""}.`; }
+    else if(near(st.b,0)) xint=`<b>(0, 0)</b>: it starts at 0.`;
+    else xint=`None for x ≥ 0 — the ${c.what} never reaches 0. (The full line would cross at x = ${num(-st.b/(st.m||1e-9),2)}, which isn't meaningful here.)`;
+    if(st.m===0&&!near(st.b,0)) xint=`None — the ${c.what} stays at ${fy(st.b)}.`;
+    const T=f(st.tx);
+    el.innerHTML=`<div class="pad"><div class="eq">f(x) = ${exprMX(st.m,st.b)}<small>x = ${c.xl.toLowerCase()}, f(x) = ${c.yl.toLowerCase()}</small></div></div>
+      <div class="rel"><span class="dot" style="background:var(--vert)"></span><span class="nm">Slope ${fx(st.m)}<em>rate of change</em></span><span class="val">${st.m<0?"−":""}${rate}</span></div>
+      <div class="pad" style="padding-top:0">${st.m>0?`Each additional ${c.ux[0]} adds ${fy(st.m)} to the ${c.what}.`:st.m<0?`Each ${c.ux[0]}, the ${c.what} goes down by ${fy(-st.m)}.`:`The ${c.what} doesn't change.`}</div>
+      <div class="rel"><span class="dot" style="background:var(--hand)"></span><span class="nm">y-intercept<em>starting value</em></span><span class="val">(0, ${c.money?money(st.b):nm(st.b)})</span></div>
+      <div class="pad" style="padding-top:0">At 0 ${c.ux[1]}, the ${c.what} is ${fy(st.b)} — ${c.bmean}.</div>
+      <div class="rel"><span class="dot" style="background:var(--alt)"></span><span class="nm">x-intercept</span><span class="val"></span></div>
+      <div class="pad" style="padding-top:0">${xint}</div>
+      <div class="rel"><span class="dot" style="background:var(--yellow)"></span><span class="nm">Behavior</span><span class="val">${dir}</span></div>
+      <div class="pad" style="padding-top:0">The graph is ${dir} because the slope is ${st.m>0?"positive":st.m<0?"negative":"zero"}.</div>
+      <div class="rel"><span class="dot" style="background:var(--magenta)"></span><span class="nm">Trace point</span><span class="val">f(${nm(st.tx)}) = ${c.money?money(T):nm(T)}</span></div>
+      <div class="pad" style="padding-top:0">${T<0?`The model gives a negative value here — outside the sensible domain (the ${c.what} can't go below 0).`:`At ${num(st.tx,2)} ${c.ux[1]}, the ${c.what} is ${fy(T)}.`}</div>`;
+  }
+};
+
+/* ══════════════════════ TAB 6 · Challenge ══════════════════════ */
+const KINDS=[["mix","Mixed practice"],["slope","Slope from two points"],["mb","Slope & intercept from an equation"],["eq","Equation through two points"],["int","x- and y-intercepts"],["eval","Evaluate f(x)"],["fn","Function or not?"]];
+const NICE=[[1,1],[2,1],[3,1],[4,1],[1,2],[3,2],[1,3],[2,3],[4,3],[1,4],[3,4],[5,2]];
+const niceM=()=>{ const f=pick(NICE); return (Math.random()<.5?-1:1)*f[0]/f[1]; };
+function polyStr(a,b,c){ let t=""; const term=(k,v)=>{ if(Math.abs(k)<1e-12)return; const body=v?(near(Math.abs(k),1)?v:nm(Math.abs(k))+v):nm(Math.abs(k)); t+= t?(k<0?" − ":" + ")+body : (k<0?"−":"")+body; };
+  term(a,"x²"); term(b,"x"); term(c,""); return t||"0"; }
+function genProblem(kind){
+  if(kind==="mix")kind=pick(["slope","mb","eq","int","eval","fn"]);
+  const pr={kind};
+  const twoPts=(vp)=>{ let A,B; do{ A=[rnd(-8,8),rnd(-6,6)]; const r=Math.random(); if(r<vp)B=[A[0],rnd(-6,6)]; else if(r<vp+0.1)B=[rnd(-8,8),A[1]]; else B=[rnd(-8,8),rnd(-6,6)]; }while(same(A,B)||len(sub(A,B))<3); return [A,B]; };
+  if(kind==="slope"){ const [A,B]=twoPts(0.12); pr.A=A; pr.B=B; pr.L=lineObjPts(A,B);
+    pr.q=`Find the slope of the line through <b>A${pt(A)}</b> and <b>B${pt(B)}</b>.`; pr.fields=["slope m"]; pr.ph=["e.g. −3/4, 2, or undefined"]; }
+  if(kind==="mb"){ const m=niceM(), form=pick(["si","ps","std"]); let b,eqs,coef;
+    if(form==="si"){ b=rnd(-6,6); eqs=slopeInt(m,b); }
+    else if(form==="ps"){ let x1; do{x1=rnd(-5,5);}while(!x1); const y1=rnd(-5,5); b=y1-m*x1; eqs=pointSlope(m,x1,y1); pr.p1=[x1,y1]; }
+    else { let A,B,C; do{ A=rnd(1,6); B=pick([-6,-5,-4,-3,-2,-1,1,2,3,4,5,6]); C=rnd(-12,12); }while(gcd(gcd(A,B),C)>1); pr.m=-A/B; eqs=stdStr(A,B,C); b=C/B; pr.std=[A,B,C]; }
+    pr.m=pr.m!=null?pr.m:m; pr.b=b; pr.form=form; pr.eqs=eqs; pr.L={vert:false,m:pr.m,b};
+    pr.q=`For the line <b>${eqs}</b>, find the slope and the y-intercept.`; pr.fields=["slope m","y-intercept b"]; pr.ph=["e.g. −2/3","e.g. 5 or (0, 5)"]; }
+  if(kind==="eq"){ const [A,B]=twoPts(0.1); pr.A=A; pr.B=B; pr.L=lineObjPts(A,B);
+    pr.q=`Write an equation of the line through <b>A${pt(A)}</b> and <b>B${pt(B)}</b>.`; pr.fields=["equation"]; pr.ph=["e.g. y = 2x + 1  or  y − 3 = 2(x − 1)"]; pr.isEq=true; }
+  if(kind==="int"){ if(Math.random()<.6){ let A,B,C; do{ A=rnd(1,6); B=pick([-6,-5,-4,-3,-2,-1,1,2,3,4,5,6]); C=pick([-12,-10,-8,-6,-4,6,8,10,12,rnd(-12,12)]); }while(gcd(gcd(A,B),C)>1||C===0);
+      pr.eqs=stdStr(A,B,C); pr.L={vert:false,m:-A/B,b:C/B}; pr.std=[A,B,C]; }
+    else { const m=niceM(); let b; do{b=rnd(-6,6);}while(!b); pr.eqs=slopeInt(m,b); pr.L={vert:false,m,b}; }
+    pr.xi=-pr.L.b/pr.L.m; pr.yi=pr.L.b;
+    pr.q=`Find the x-intercept and the y-intercept of <b>${pr.eqs}</b>.`; pr.fields=["x-intercept (x-value)","y-intercept (y-value)"]; pr.ph=["e.g. 4 or (4, 0)","e.g. −3 or (0, −3)"]; }
+  if(kind==="eval"){ const t=pick(["lin","lin","quad","solve"]);
+    if(t==="quad"){ const a=pick([1,-1,2]), b=rnd(-5,5), c=rnd(-6,6), x0=rnd(-4,4); pr.f={a,b,c}; pr.x0=x0; pr.ans=a*x0*x0+b*x0+c; pr.fs=polyStr(a,b,c);
+      pr.q=`If <b>f(x) = ${pr.fs}</b>, find <b>f(${minus(x0)})</b>.`; }
+    else { let a; do{a=rnd(-5,5);}while(!a); const c=rnd(-9,9), x0=rnd(-6,6); pr.f={a:0,b:a,c}; pr.fs=exprMX(a,c);
+      if(t==="solve"){ pr.solve=true; pr.k=a*x0+c; pr.ans=x0; pr.q=`If <b>f(x) = ${pr.fs}</b>, find the value of x for which <b>f(x) = ${minus(pr.k)}</b>.`; }
+      else { pr.x0=x0; pr.ans=a*x0+c; pr.q=`If <b>f(x) = ${pr.fs}</b>, find <b>f(${minus(x0)})</b>.`; } }
+    pr.fields=[pr.solve?"x":"value"]; pr.ph=["e.g. −7"]; }
+  if(kind==="fn"){ const rep=pick(["map","table","pairs","graph","curve"]); pr.rep=rep;
+    if(rep==="curve"){ pr.cv=pick(Object.keys(CURVES)); pr.isFn=CURVES[pr.cv].fn; }
+    else { const n=rnd(4,6), xs=shuffle([-5,-4,-3,-2,-1,0,1,2,3,4,5]).slice(0,n), P=xs.map(x=>[x,rnd(-6,6)]);
+      if(Math.random()<.5){ const q=pick(P); let y; do{y=rnd(-6,6);}while(y===q[1]); P.push([q[0],y]); }
+      else if(Math.random()<.5){ const q=pick(P), r=pick(P.filter(z=>z!==q)); r[1]=q[1]; }
+      pr.pairs=rep==="table"||rep==="pairs"?shuffle(P):P; pr.isFn=relInfo(P).isFn; }
+    pr.q=`Does this ${{map:"mapping diagram",table:"table",pairs:"set of ordered pairs",graph:"graph of points",curve:"graph"}[rep]} represent <b>y as a function of x</b>?`; pr.fields=[]; pr.choice=true; }
+  return pr;
+}
+function solText(pr){
+  const L=pr.L;
+  if(pr.kind==="slope"){ const A=pr.A,B=pr.B; return wk([[`m = (y₂ − y₁)/(x₂ − x₁) = (${nm(B[1])} − ${par(A[1])})/(${nm(B[0])} − ${par(A[0])})`,"slope formula"],
+    [`m = ${nm(L.dy)}/${nm(L.dx)}${L.vert?"  → undefined":(fx(L.m)!==nm(L.dy)+"/"+nm(L.dx)?" = "+fx(L.m):"")}`,L.vert?"a vertical line: the run is 0":near(L.m,0)?"a horizontal line: the rise is 0":"simplify",true]]); }
+  if(pr.kind==="mb"){ if(pr.form==="si") return wk([[pr.eqs,"already y = mx + b"],[`m = ${fx(pr.m)},  b = ${fx(pr.b)}`,"read the coefficient of x and the constant",true]]);
+    if(pr.form==="std") return wk([...stepsStd2SI(...pr.std),[`m = ${fx(pr.m)},  b = ${fx(pr.b)}  (y-intercept (0, ${fx(pr.b)}))`,"",true]]);
+    const x1=pr.p1; return wk([...stepsPS2SI(pr.m,x1[0],x1[1]),[`m = ${fx(pr.m)},  b = ${fx(pr.b)}`,"",true]]); }
+  if(pr.kind==="eq"){ const A=pr.A,B=pr.B;
+    if(L.vert) return wk([[`m = (${nm(B[1])} − ${par(A[1])})/(${nm(B[0])} − ${par(A[0])}) = ${nm(L.dy)}/0`,"undefined slope — vertical line"],[`x = ${nm(A[0])}`,"every point on the line has this x",true]]);
+    return wk([[`m = (${nm(B[1])} − ${par(A[1])})/(${nm(B[0])} − ${par(A[0])}) = ${fx(L.m)}`,"slope formula"],...stepsPS2SI(L.m,A[0],A[1]),[stdStr(...Object.values(toStd(-L.m,1,L.b)).slice(0,3)),"standard form — any of these forms is accepted"]]); }
+  if(pr.kind==="int"){ if(pr.std) return wk(coverUp(...pr.std).concat([[`x-intercept ${ptx([pr.xi,0])},  y-intercept ${ptx([0,pr.yi])}`,"",true]]));
+    return wk([[`y-intercept: x = 0 → y = ${fx(pr.yi)}`,"b in y = mx + b"],[`x-intercept: 0 = ${exprMX(L.m,L.b)} → ${coefX(L.m)} = ${fx(-L.b)} → x = ${fx(pr.xi)}`,"set y = 0 and solve"],[`x-intercept ${ptx([pr.xi,0])},  y-intercept ${ptx([0,pr.yi])}`,"",true]]); }
+  if(pr.kind==="eval"){ const f=pr.f;
+    if(pr.solve) return wk([[`${pr.fs} = ${minus(pr.k)}`,"set the rule equal to "+minus(pr.k)],[`${coefX(f.b)} = ${minus(pr.k-f.c)}`,f.c>=0?`subtract ${f.c}`:`add ${-f.c}`],[`x = ${minus(pr.ans)}`,`divide by ${minus(f.b)}`,true]]);
+    const sub1=subPoly(f,pr.x0);
+    return wk([[`f(${minus(pr.x0)}) = ${sub1}`,"substitute the input for every x, in parentheses"],[`f(${minus(pr.x0)}) = ${minus(pr.ans)}`,"evaluate (exponents, then multiply, then add)",true]]); }
+  if(pr.kind==="fn"){ if(pr.rep==="curve"){ const C=CURVES[pr.cv]; return C.fn? `<div class="pad">Every vertical line meets the graph of <b>${C.rule}</b> at most once, so it <b>is</b> a function.</div>`
+      : `<div class="pad">The vertical line x = ${C.wit} meets <b>${C.rule}</b> twice, at ${ptx([C.wit,C.ys(C.wit)[0]])} and ${ptx([C.wit,C.ys(C.wit)[1]])}. It is <b>not</b> a function.</div>`; }
+    const I=relInfo(pr.pairs); if(I.isFn) return `<div class="pad">Every input appears with only one output: domain ${setStr(I.dom)}. It <b>is</b> a function${I.ran.length<I.dom.length?" (some inputs share an output, which is allowed)":""}.</div>`;
+    const x=I.bad[0]; return `<div class="pad">The input <b>${nm(x)}</b> is paired with ${[...I.mp.get(x)].map(nm).join(" and ")}. One input, two outputs: <b>not</b> a function.</div>`; }
+}
+function subPoly(f,x0){ // e.g. 2(−3)² − 4(−3) + 1
+  const X="("+minus(x0)+")", parts=[];
+  const term=(k,body)=>{ if(!k)return; const s=near(Math.abs(k),1)&&body?body:nm(Math.abs(k))+body; parts.push([k<0,s]); };
+  term(f.a,X+"²"); term(f.b,X); term(f.c,"");
+  return parts.map((p,i)=>i? (p[0]?" − ":" + ")+p[1] : (p[0]?"−":"")+p[1]).join("")||"0";
+}
+function hintText(pr,vals){
+  if(pr.kind==="slope") return `Slope = (y₂ − y₁)/(x₂ − x₁). Subtract in the <b>same order</b> on top and bottom, and watch double negatives. Same x-values → <b>undefined</b>; same y-values → <b>0</b>.`;
+  if(pr.kind==="mb") return {si:`In y = mx + b, m is the number multiplying x and b is the constant (keep its sign).`,
+    ps:`In y − y₁ = m(x − x₁), m is in front of the parentheses. For b, distribute m and then undo the y₁ to get y alone.`,
+    std:`Solve for y: subtract the x-term from both sides, then divide <b>every</b> term by the coefficient of y.`}[pr.form];
+  if(pr.kind==="int") return `x-intercept: set y = 0 (cover up the y-term) and solve. y-intercept: set x = 0 (cover up the x-term) and solve.`;
+  if(pr.kind==="eval") return pr.solve? `Write ${pr.fs} = ${minus(pr.k)} and solve for x with inverse operations.` : `Replace every x with (${minus(pr.x0)}) — keep the parentheses so negatives and squares come out right.`;
+  return "";
+}
+const M6={
+  tab:"Challenge", lesson:"F-IF · A-CED.A.2 · F-LE", accent:"var(--coral)",
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  streakEl:null,
+  title:()=>"Practice: "+({slope:"slope from two points",mb:"slope & y-intercept",eq:"equation of a line",int:"intercepts",eval:"function notation",fn:"function or not?"})[M6.s.pr?M6.s.pr.kind:"slope"],
+  newProb(){ M6.s.pr=genProblem(M6.s.kind); M6.s.state="open"; M6.s.reveal=false; M6.s.tries=0; },
+  bar(){
+    btn("New problem",()=>{M6.newProb();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    KINDS.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=M6.s.kind; sel.onchange=()=>{M6.s.kind=sel.value;M6.newProb();render();}; bar.appendChild(sel);
+    M6.streakEl=spacer(""); M6.upStreak();
+  },
+  upStreak(){ if(M6.streakEl)M6.streakEl.textContent="Streak "+M6.s.streak+" · Best "+M6.s.best+" · Solved "+M6.s.solved; },
+  draw(){
+    if(!M6.s.pr)M6.newProb();
+    const pr=M6.s.pr, show=M6.s.state==="right"||M6.s.reveal;
+    if(pr.kind==="fn"){
+      const bad=show?new Set(relInfo(pr.pairs||[]).bad):null;
+      if(pr.rep==="curve"){ const g=gridStd(); curvePaths(CURVES[pr.cv]).forEach(pl=>wpath(g,pl,"var(--vert)",3.4)); if(show){ const C=CURVES[pr.cv]; drawCurveVLT(g,C,C.fn?2:C.wit); } }
+      else if(pr.rep==="map")drawMapping(pr.pairs,bad);
+      else if(pr.rep==="table")drawTableSvg(pr.pairs,bad);
+      else if(pr.rep==="pairs")drawPairsSvg(pr.pairs,bad);
+      else { const g=gridStd(); pr.pairs.forEach(p=>{ const b=bad&&bad.has(p[0]); sdot(g,W2S(p),b?"#E11D48":"var(--vert)",7); smartLabel(g,W2S(p),[1,-1],pt(p),b?"#BE123C":"var(--ink)"); }); }
+      if(show)badge(pr.isFn);
+      return;
+    }
+    const g=gridStd();
+    if(pr.kind==="slope"||pr.kind==="eq"){
+      if(show){ wlineL(g,pr.L,"var(--alt)",3.2); if(pr.kind==="slope"&&!pr.L.vert&&!near(pr.L.dy,0)){ const C=[pr.B[0],pr.A[1]]; sarrow(g,W2S(pr.A),W2S(C),"var(--lin)",2.6,"8 5"); sarrow(g,W2S(C),W2S(pr.B),"var(--corr)",2.6,"8 5"); } }
+      sdot(g,W2S(pr.A),"var(--ink)",6); sdot(g,W2S(pr.B),"var(--ink)",6);
+      const d=unit(sub(W2S(pr.A),W2S(pr.B)));
+      smartLabel(g,W2S(pr.A),d,"A"+pt(pr.A),"var(--ink)"); smartLabel(g,W2S(pr.B),mul(d,-1),"B"+pt(pr.B),"var(--ink)");
+      return;
+    }
+    if(pr.kind==="mb"||pr.kind==="int"){ banner(pr.eqs); if(show){ wlineL(g,pr.L,"var(--alt)",3.2); interceptMarks(g,pr.L.m,pr.L.b); } return; }
+    if(pr.kind==="eval"){ banner("f(x) = "+pr.fs);
+      if(show){ const f=pr.f, F=x=>f.a*x*x+f.b*x+f.c, pl=[]; for(let x=-12;x<=12;x+=0.05)pl.push([x,F(x)]); wpath(g,pl.filter(p=>Math.abs(p[1])<30),"var(--alt)",3);
+        const X=pr.solve?pr.ans:pr.x0, P=[X,F(X)]; if(inView(P)){ sdot(g,W2S(P),"var(--magenta)",7); smartLabel(g,W2S(P),[1,-1],ptx(P),"#BE185D"); } }
+    }
+  },
+  side(){
+    const pr=M6.s.pr;
+    const giv={kind:pr.kind,A:pr.A,B:pr.B,eq:pr.eqs,m:pr.L&&!pr.L.vert?pr.L.m:null,b:pr.L&&!pr.L.vert?pr.L.b:null,f:pr.f,x0:pr.x0,k:pr.k,solve:!!pr.solve,pairs:pr.pairs,cv:pr.cv};
+    let h=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob" data-given='${JSON.stringify(giv)}'>${pr.q}</p></div>`;
+    if(pr.choice) h+=`<div class="choices"><button type="button" class="choice" id="cyes">Yes — a function<small>each input has exactly one output</small></button><button type="button" class="choice" id="cno">No — not a function<small>some input has two outputs</small></button></div>`;
+    else h+=`<div class="ansrow">${pr.fields.map((f,i)=>`<div style="${pr.isEq?"flex-basis:100%":""}"><label class="fld" for="ans${i}">${f}</label><input type="text" id="ans${i}" autocomplete="off" spellcheck="false" placeholder="${pr.ph[i]}"></div>`).join("")}</div>
+      <p class="fmt">${pr.isEq?"Any correct form works: y = mx + b, point-slope y − y₁ = m(x − x₁), or standard Ax + By = C. Fractions like 2/3 are fine; use x = k for a vertical line."
+        : pr.kind==="slope"?"Type an integer, a fraction like −5/3, or a decimal. Type <b>undefined</b> for a vertical line."
+        : "Integers, fractions like −7/2, or decimals (to the nearest hundredth)."+(pr.kind==="int"||pr.kind==="mb"?" A point like (0, 5) also works.":"")}</p>
+      <div class="fldwrap" style="margin:14px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button>
+        <button id="sol" class="ghost" type="button">Show solution</button></div>`;
+    h+=`<div id="fb6"></div><div style="height:4px"></div></div>`;
+    h+=panelH("How it works",`<div class="pad"><p>Answers are checked by value, so 0.5, 1/2 and 2/4 are all accepted. Equations are compared by <b>slope and y-intercept</b>, so any equivalent form counts.</p><p>A first-try correct answer grows your streak. A wrong answer resets it and gives a hint — you can try again.</p></div>`);
+    return h;
+  },
+  wire(){
+    const pr=M6.s.pr, fb=$("fb6");
+    const right=(msg)=>{ const s=M6.s; s.state="right"; if(s.tries===0&&!s.reveal){ s.streak++; s.best=Math.max(s.best,s.streak); } s.solved++; M6.upStreak(); clear(); M6.draw();
+      fb.innerHTML=`<div class="verdict good"><b>Correct!</b> ${msg||""} ${s.tries||s.reveal?"The streak counts first-try answers only.":"Streak "+s.streak+"."} Press <b>New problem</b> for another.</div>`+solText(pr); };
+    const wrong=(msg)=>{ M6.s.tries++; M6.s.streak=0; M6.upStreak(); fb.innerHTML=`<div class="verdict bad">${msg}</div>`; };
+    if(pr.choice){
+      [["cyes",true],["cno",false]].forEach(([id,v])=>{ $(id).onclick=()=>{ if(M6.s.state==="right")return;
+        if(v===pr.isFn){ $(id).classList.add("right"); right(""); }
+        else { $(id).classList.add("wrong"); wrong(`<b>Not quite.</b> ${pr.rep==="curve"?"Imagine sliding a vertical line across the graph. Does it ever cross the graph twice?":"Look for an input x that appears more than once. Does it go to <b>different</b> outputs each time? (Different inputs sharing an output is fine.)"}`); } }; });
+      return;
+    }
+    const ins=pr.fields.map((_,i)=>$("ans"+i));
+    const check=()=>{
+      if(M6.s.state==="right")return;
+      if(pr.isEq){
+        const Eq=parseEq(ins[0].value);
+        if(!Eq){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that equation.</b> Use one "=" with x, y, numbers, fractions, + − and parentheses, e.g. y − 2 = 3(x + 1).</div>`; return; }
+        const U=eqLine(Eq), T=pr.L;
+        const ok= T.vert? (U.vert&&near(U.k,T.k,1e-6)) : (!U.vert&&near(U.m,T.m,1e-6)&&near(U.b,T.b,1e-6));
+        if(ok){ right(`Your line has ${T.vert?"x = "+fx(T.k):"slope "+fx(T.m)+" and y-intercept "+fx(T.b)} — the same line.`); ins[0].disabled=true; return; }
+        const on=P=>Math.abs(Eq.x*P[0]+Eq.y*P[1]+Eq.c)<1e-6;
+        const oa=on(pr.A), ob=on(pr.B);
+        wrong(`<b>Not quite.</b> ${oa&&!ob?`A${pt(pr.A)} is on your line, but B${pt(pr.B)} isn't — check your slope.`:!oa&&ob?`B${pt(pr.B)} is on your line, but A${pt(pr.A)} isn't — check your slope or intercept.`:`Neither point satisfies your equation.`} Your line has ${U.vert?"undefined slope":"slope "+fx(U.m)}. ${T.vert?"Look at the x-coordinates of A and B.":"Find m = (y₂ − y₁)/(x₂ − x₁) first, then use point-slope with either point."}`);
+        return;
+      }
+      const vals=ins.map((x,i)=>{ const r=parseNum(x.value); if(r.pt){ return {v:pr.kind==="int"? r.pt[i===0?0:1] : r.pt[1]}; } return r; });
+      if(vals.some(v=>v.bad)){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Use integers, fractions like 7/3, or decimals${pr.kind==="slope"?", or the word undefined":""}.</div>`; return; }
+      let exp;
+      if(pr.kind==="slope") exp=[pr.L.vert?"undef":pr.L.m];
+      if(pr.kind==="mb") exp=[pr.m,pr.b];
+      if(pr.kind==="int") exp=[pr.xi,pr.yi];
+      if(pr.kind==="eval") exp=[pr.ans];
+      const okEach=vals.map((v,i)=> exp[i]==="undef"? !!v.undef : (v.v!=null&&Math.abs(v.v-exp[i])<=0.011));
+      if(okEach.every(Boolean)){ right(""); ins.forEach(x=>x.disabled=true); }
+      else { const which=pr.fields.length>1? pr.fields.filter((_,i)=>!okEach[i]).join(" and ") : "";
+        let extra="";
+        if(pr.kind==="slope"&&vals[0].v!=null&&!pr.L.vert&&near(vals[0].v,-pr.L.m,1e-6)&&!near(pr.L.m,0)) extra=" Your answer has the wrong sign — did you subtract in different orders?";
+        if(pr.kind==="slope"&&vals[0].v!=null&&!pr.L.vert&&near(vals[0].v,1/pr.L.m,1e-6)&&!near(Math.abs(pr.L.m),1)) extra=" You may have computed run/rise — slope is rise/run.";
+        if(pr.kind==="slope"&&pr.L.vert&&!vals[0].undef) extra=" Look at the x-coordinates: the run is 0.";
+        if(pr.kind==="slope"&&vals[0].undef&&!pr.L.vert) extra=" The x-coordinates differ, so the run isn't 0.";
+        wrong(`<b>Not quite${which?" — check the "+which:""}.</b>${extra} ${hintText(pr)}`); }
+    };
+    $("chk").onclick=check;
+    ins.forEach(x=>x.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); }));
+    $("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){M6.s.streak=0;M6.upStreak();} clear(); M6.draw(); fb.innerHTML=`<div class="verdict info"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`+solText(pr); };
+  },
+  live(){}
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
+function update(){ setFS(); const M=MODS[cur]; clear(); M.draw(); if(M.live)M.live(); bTitle.textContent=M.title(); }
+function render(){
+  setFS(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  if(M===M6&&!M6.s.pr)M6.newProb();
+  bar.innerHTML=""; M.bar();
+  clear(); M.draw();
+  side.innerHTML=M.side(); if(M.wire)M.wire(); if(M.live)M.live();
+  bTitle.textContent=M.title();
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>

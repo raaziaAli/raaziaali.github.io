@@ -1,0 +1,1376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit Circle &amp; Trig Graphs Lab — Algebra 2 Unit 8</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='%2300E5FF' stroke-width='5'/%3E%3Cpath d='M32 32L46 18' stroke='%23FFD93D' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='46' cy='18' r='5' fill='%23FF3D8A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict.info{background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td,table.facts th{padding:9px 12px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top;text-align:left}
+  table.facts th{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:700;letter-spacing:.06em}
+  table.facts td{font-family:var(--mono);font-size:13.5px;color:#E7E9FA;white-space:nowrap}
+  table.facts tr.on td{background:rgba(255,255,255,.08);color:#fff}
+
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── drawing ── */
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+
+  /* ── Unit Circle Lab additions (shared with Coordinate Line Lab) ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.go:focus-visible,.ghost:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:44px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .lg{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .xs{font-family:var(--mono);font-weight:600;font-size:11.5px;paint-order:stroke;stroke:#fff;stroke-width:3.5;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB;paint-order:stroke;stroke:#F4F8FF;stroke-width:3}
+  @media (max-width:560px){ svg.canvas .sm{font-size:20px;stroke-width:5} svg.canvas .lg{font-size:22px} svg.canvas .xs{font-size:16px} svg.canvas .mk{font-size:26px} svg.canvas .ax{font-size:16px} }
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  .fmt{font-size:13px;color:var(--dim);padding:8px 20px 0}
+  .conv{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .conv .out{font-family:var(--mono);font-size:13.5px;color:var(--mint);margin-top:6px;min-height:22px}
+  .astc{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+  .astc div{border:1px solid var(--edge);border-radius:12px;padding:8px 10px;font-size:13.5px;color:var(--dim)}
+  .astc div b{display:block;font-family:var(--mono);color:#fff}
+  .astc div.on{border-color:var(--accent);background:rgba(255,255,255,.08);color:#fff}
+  .tblwrap{overflow-x:auto}
+  @media (max-width:560px){
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+    .conv{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Unit Circle &amp; Trig Graphs Lab</h1>
+    <div class="eyebrow">Algebra 2 · Unit 8 · Trigonometry Basics</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Unit circle and trigonometric graph figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every figure is live and every number is computed from the drawing — drag a point and the values follow. Vocabulary follows Common Core / Eureka Math (EngageNY) Algebra II, Module 2.
+    <div class="links"><a href="/algebra/">← Algebra courses</a><a href="/math/#algebra">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const PI=Math.PI, TAU=2*Math.PI, D2R=PI/180;
+const norm=d=>((d%360)+360)%360;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const near=(a,b,e)=>Math.abs(a-b)<(e||1e-9);
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+function num(v,dp){ dp=(dp==null?2:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+const f3=v=>minus((Math.abs(v)<5e-4?0:v).toFixed(3));
+const f2=v=>minus((Math.abs(v)<5e-3?0:v).toFixed(2));
+function fracParts(v,maxD){
+  for(let d=1;d<=maxD;d++){ const n=Math.round(v*d); if(Math.abs(n/d-v)<1e-9){ const g=gcd(n,d); return [n/g,d/g]; } }
+  return null;
+}
+function frac(v,maxD){ const p=fracParts(v,maxD||24); if(!p)return null; return p[1]===1? minus(String(p[0])) : minus(p[0]+"/"+p[1]); }
+// exact multiple of π, e.g. "5π/6", "−π", "0"; null if not a nice multiple
+function piStr(rad,maxD){
+  const p=fracParts(rad/PI,maxD||24); if(!p)return null;
+  const n=p[0], d=p[1]; if(n===0)return "0";
+  const a=Math.abs(n); return (n<0?"−":"")+(a===1?"":a)+"π"+(d===1?"":"/"+d);
+}
+const degS=d=>num(d,1)+"°";
+// √n = k√r
+function sqrtParts(n){ n=Math.round(n); let k=1,r=n; for(let i=Math.floor(Math.sqrt(n));i>1;i--){ if(n%(i*i)===0){k=i;r=n/(i*i);break;} } return [k,r]; }
+function rootStr(n){ n=Math.round(n); if(n===0)return "0"; const [k,r]=sqrtParts(n); if(r===1)return String(k); return (k>1?k:"")+"√"+r; }
+// sign·√(P/Q) simplified and rationalised
+function radFrac(P,Q,sign){
+  if(P===0)return "0";
+  let [k,r]=sqrtParts(P*Q); let den=Q; const g=gcd(k,den); k/=g; den/=g;
+  const top=r===1? String(k) : (k===1?"":k)+"√"+r;
+  return (sign<0?"−":"")+(den===1? top : top+"/"+den);
+}
+const QN=["","I","II","III","IV"];
+function quadOf(d){ d=norm(d); const e=1e-7; if(near(d,0,e)||near(d,90,e)||near(d,180,e)||near(d,270,e)||near(d,360,e))return 0; return 1+Math.floor(d/90); }
+function axisName(d){ d=Math.round(norm(d)); return {0:"positive x-axis",90:"positive y-axis",180:"negative x-axis",270:"negative y-axis",360:"positive x-axis"}[d]||""; }
+function refAngle(d){ d=norm(d); if(d<=90)return d; if(d<=180)return 180-d; if(d<=270)return d-180; return 360-d; }
+const SPEC={0:["1","0","0"],30:["√3/2","1/2","√3/3"],45:["√2/2","√2/2","1"],60:["1/2","√3/2","√3"],90:["0","1","undefined"]};
+const SPECIAL=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
+function cl(v){ return Math.abs(v)<1e-12?0:v; }
+function exactTrig(deg){
+  if(!near(deg,Math.round(deg),1e-7))return null;
+  const d=norm(Math.round(deg)); if(d%30!==0&&d%45!==0)return null;
+  const r=refAngle(d), b=SPEC[r], c=cl(Math.cos(d*D2R)), s=cl(Math.sin(d*D2R));
+  const sg=(v,str)=>str==="0"?"0":(v<0?"−":"")+str;
+  const t= r===90? "undefined" : (b[2]==="0"? "0" : ((c*s<0)?"−":"")+b[2]);
+  return {c:sg(c,b[0]), s:sg(s,b[1]), t, ref:r};
+}
+function trigVals(deg){ const c=cl(Math.cos(deg*D2R)), s=cl(Math.sin(deg*D2R)); return {c,s,t:Math.abs(c)<1e-9?NaN:s/c}; }
+const fmtH=v=>num(v,2);
+
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+const sub=(p,q)=>[p[0]-q[0],p[1]-q[1]];
+const add=(p,q)=>[p[0]+q[0],p[1]+q[1]];
+const mul=(p,k)=>[p[0]*k,p[1]*k];
+const len=v=>Math.hypot(v[0],v[1]);
+const unit=v=>{const l=len(v)||1;return [v[0]/l,v[1]/l];};
+const angOf=(c,p)=>norm(Math.atan2(-(p[1]-c[1]),p[0]-c[0])/D2R);
+const PT=(c,r,deg)=>[c[0]+r*Math.cos(deg*D2R), c[1]-r*Math.sin(deg*D2R)];
+let FS=1;
+
+function sseg(g,p,q,style,w,dash,op){
+  const a={x1:p[0],y1:p[1],x2:q[0],y2:q[1],style:"stroke:"+(style||"var(--graphite)"),"stroke-width":w||2.8,"stroke-linecap":"round",fill:"none"};
+  if(dash)a["stroke-dasharray"]=dash; if(op)a.opacity=op; const n=E("line",a); g.appendChild(n); return n;
+}
+function sdot(g,p,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||5,style:"fill:"+(color||"var(--ink)"),stroke:"#fff","stroke-width":2,"pointer-events":"none"})); }
+function sgrab(g,p,id,color){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?26:16,class:"grab","data-drag":id})); sdot(g,p,color,6); }
+function stext(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("style","fill:"+color);
+  t.textContent=s; g.appendChild(t); return t;
+}
+function pathD(pts){ return pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(""); }
+function spath(g,d,color,w,dash,extra){ const a={d,fill:"none",style:"stroke:"+color,"stroke-width":w||3,"stroke-linecap":"round","stroke-linejoin":"round"}; if(dash)a["stroke-dasharray"]=dash; if(extra)for(const k in extra)a[k]=extra[k]; const n=E("path",a); g.appendChild(n); return n; }
+function arrowHead(g,tip,dir,color,sz){ sz=sz||13;
+  const n=[-dir[1],dir[0]], b=[tip[0]-dir[0]*sz,tip[1]-dir[1]*sz];
+  g.appendChild(E("polygon",{points:[tip,[b[0]+n[0]*sz*.46,b[1]+n[1]*sz*.46],[b[0]-n[0]*sz*.46,b[1]-n[1]*sz*.46]].map(p=>p.join(",")).join(" "),style:"fill:"+(color||"var(--graphite)")}));
+}
+function smartLabel(g,anchor,dir,text,color,cls){
+  const cw=(cls==="xs"?7.1:cls==="lg"?9.8:8.3);
+  const w=text.length*cw*FS+4, h=16*FS, d=unit(dir), off=14*FS;
+  let cx=anchor[0]+d[0]*(off+w/2*Math.abs(d[0])), cy=anchor[1]+d[1]*(off+h/2*Math.abs(d[1])+2);
+  cx=clamp(cx,w/2+6,VW-w/2-6); cy=clamp(cy,h/2+6,VH-h/2-6);
+  return stext(g,[cx,cy],text,cls||"sm",color);
+}
+function rightMark(g,c,u,v,s){ s=s||12;
+  const a=[c[0]+u[0]*s,c[1]+u[1]*s], b=[a[0]+v[0]*s,a[1]+v[1]*s], e=[c[0]+v[0]*s,c[1]+v[1]*s];
+  g.appendChild(E("polyline",{points:[a,b,e].map(p=>p.join(",")).join(" "),class:"rt"}));
+}
+function arcPts(c,r,a0,a1,step){ step=step||2; const n=Math.max(2,Math.ceil(Math.abs(a1-a0)/step)); const pts=[]; for(let i=0;i<=n;i++)pts.push(PT(c,r,a0+(a1-a0)*i/n)); return pts; }
+function wedge(g,c,r,a0,a1,fill,stroke){ const pts=arcPts(c,r,a0,a1); g.appendChild(E("path",{d:"M"+c[0]+" "+c[1]+"L"+pathD(pts).slice(1)+"Z",style:"fill:"+fill+";stroke:"+(stroke||"none"),"stroke-width":1.6})); }
+// spiral r = r0 + k·|a|/360, from 0 to a (degrees)
+const spiralPt=(c,r0,k,a)=>PT(c,r0+k*Math.abs(a)/360,a);
+function spiralPts(c,r0,k,a1){ const n=Math.max(2,Math.ceil(Math.abs(a1)/3)); const pts=[]; for(let i=0;i<=n;i++)pts.push(spiralPt(c,r0,k,a1*i/n)); return pts; }
+function infoBox(g,x,y,lines,color,anchorRight){
+  const lh=19*FS, w=Math.max(...lines.map(s=>s.length))*8.4*FS+20, h=lines.length*lh+12;
+  const x0=anchorRight? x-w : x;
+  g.appendChild(E("rect",{x:x0,y:y,width:w,height:h,rx:10,fill:"rgba(255,255,255,.88)",stroke:"#C7D2E8","stroke-width":1.2}));
+  lines.forEach((s,i)=>{ const t=E("text",{x:x0+10,y:y+6+lh*(i+.5),class:"sm","dominant-baseline":"middle",style:"fill:"+(i===0?(color||"var(--ink)"):"#334155")}); t.textContent=s; g.appendChild(t); });
+}
+
+// unit-circle backdrop: light grid every quarter unit + axes; returns a clipped group
+function gridUC(C,R,opt){
+  opt=opt||{};
+  cv.appendChild(E("defs",{})).innerHTML='<clipPath id="fr"><rect width="'+VW+'" height="'+VH+'"/></clipPath>';
+  cv.appendChild(E("rect",{width:VW,height:VH,fill:"rgba(255,255,255,0)"}));
+  const gg=E("g",{}), st=R/4;
+  for(let k=Math.ceil(-C[0]/st);k<=Math.floor((VW-C[0])/st);k++){ const x=C[0]+k*st; gg.appendChild(E("line",{x1:x,y1:0,x2:x,y2:VH,style:"stroke:var(--grid)","stroke-width":k%4===0?1.4:1})); }
+  for(let k=Math.ceil(-C[1]/st);k<=Math.floor((VH-C[1])/st);k++){ const y=C[1]+k*st; gg.appendChild(E("line",{x1:0,y1:y,x2:VW,y2:y,style:"stroke:var(--grid)","stroke-width":k%4===0?1.4:1})); }
+  gg.appendChild(E("line",{x1:0,y1:C[1],x2:VW,y2:C[1],stroke:"#8FA3C8","stroke-width":1.8}));
+  gg.appendChild(E("line",{x1:C[0],y1:0,x2:C[0],y2:VH,stroke:"#8FA3C8","stroke-width":1.8}));
+  if(!opt.noTicks){
+    [[1,0],[-1,0]].forEach(([s])=>{ const t=E("text",{x:C[0]+s*R+(s>0?6:-6),y:C[1]+15,class:"ax","text-anchor":s>0?"start":"end"}); t.textContent=s>0?"1":"−1"; gg.appendChild(t); });
+    [1,-1].forEach(s=>{ const t=E("text",{x:C[0]-6,y:C[1]-s*R+(s>0?-6:14),class:"ax","text-anchor":"end"}); t.textContent=s>0?"1":"−1"; gg.appendChild(t); });
+  }
+  const xl=E("text",{x:VW-10,y:C[1]-7,class:"ax","text-anchor":"end"}); xl.textContent="x"; gg.appendChild(xl);
+  const yl=E("text",{x:C[0]+8,y:13,class:"ax"}); yl.textContent="y"; gg.appendChild(yl);
+  cv.appendChild(gg);
+  const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
+}
+
+/* function-graph windows */
+function mkWin(x0,x1,y0,y1,rect){
+  rect=rect||{L:0,T:0,W:VW,H:VH};
+  const sx=x=>rect.L+(x-x0)/(x1-x0)*rect.W, sy=y=>rect.T+rect.H-(y-y0)/(y1-y0)*rect.H;
+  return {x0,x1,y0,y1,rect,sx,sy,S:p=>[sx(p[0]),sy(p[1])],
+    ix:X=>x0+(X-rect.L)/rect.W*(x1-x0), iy:Y=>y0+(rect.T+rect.H-Y)/rect.H*(y1-y0)};
+}
+function niceStep(range,n){ const raw=range/n, p=Math.pow(10,Math.floor(Math.log10(raw))); const m=raw/p; return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p; }
+// grid + axes. xs:{step, lab(v)->string|null}, ys:{step, lab}
+function drawWin(W,xs,ys,names){
+  const r=W.rect, id="cw"+Math.floor(Math.random()*1e6);
+  cv.appendChild(E("defs",{})).innerHTML='<clipPath id="'+id+'"><rect x="'+r.L+'" y="'+r.T+'" width="'+r.W+'" height="'+r.H+'"/></clipPath>';
+  cv.appendChild(E("rect",{width:VW,height:VH,fill:"rgba(255,255,255,0)"}));
+  const gg=E("g",{});
+  for(let k=Math.ceil(W.x0/xs.step-1e-9);k*xs.step<=W.x1+1e-9;k++){ const X=W.sx(k*xs.step); gg.appendChild(E("line",{x1:X,y1:r.T,x2:X,y2:r.T+r.H,style:"stroke:var(--grid)","stroke-width":1})); }
+  for(let k=Math.ceil(W.y0/ys.step-1e-9);k*ys.step<=W.y1+1e-9;k++){ const Y=W.sy(k*ys.step); gg.appendChild(E("line",{x1:r.L,y1:Y,x2:r.L+r.W,y2:Y,style:"stroke:var(--grid)","stroke-width":1})); }
+  const ax=clamp(W.sy(0),r.T,r.T+r.H), ay=clamp(W.sx(0),r.L,r.L+r.W);
+  gg.appendChild(E("line",{x1:r.L,y1:ax,x2:r.L+r.W,y2:ax,stroke:"#8FA3C8","stroke-width":1.8}));
+  gg.appendChild(E("line",{x1:ay,y1:r.T,x2:ay,y2:r.T+r.H,stroke:"#8FA3C8","stroke-width":1.8}));
+  const lyx=clamp(ax+15,r.T+12,VH-6);
+  for(let k=Math.ceil(W.x0/xs.step-1e-9);k*xs.step<=W.x1+1e-9;k++){ const v=k*xs.step; if(Math.abs(v)<1e-9)continue; const s=xs.lab(v,k); if(!s)continue; const X=W.sx(v); if(X<r.L+10||X>r.L+r.W-10)continue;
+    const t=E("text",{x:X,y:lyx,class:"ax","text-anchor":"middle"}); t.textContent=s; gg.appendChild(t); }
+  for(let k=Math.ceil(W.y0/ys.step-1e-9);k*ys.step<=W.y1+1e-9;k++){ const v=k*ys.step; if(Math.abs(v)<1e-9)continue; const s=ys.lab(v,k); if(!s)continue; const Y=W.sy(v); if(Y<r.T+8||Y>r.T+r.H-6)continue;
+    const t=E("text",{x:ay-6,y:Y+4,class:"ax","text-anchor":"end"}); t.textContent=s; gg.appendChild(t); }
+  if(names){ const xl=E("text",{x:r.L+r.W-6,y:ax-7,class:"ax","text-anchor":"end"}); xl.textContent=names[0]; gg.appendChild(xl);
+    const yl=E("text",{x:ay+8,y:r.T+13,class:"ax"}); yl.textContent=names[1]; gg.appendChild(yl); }
+  cv.appendChild(gg);
+  const g=E("g",{"clip-path":"url(#"+id+")"}); cv.appendChild(g); return g;
+}
+// sampled path; branch(x) returns an integer that changes across a discontinuity
+function plotD(W,f,branch,xa,xb){
+  xa=(xa==null?W.x0:xa); xb=(xb==null?W.x1:xb);
+  const n=Math.max(60,Math.round((W.sx(xb)-W.sx(xa))*1.5)); let d="", pen=false, lastB=null;
+  const lim=(W.y1-W.y0)*4;
+  for(let i=0;i<=n;i++){ const x=xa+(xb-xa)*i/n, y=f(x), b=branch?branch(x):0;
+    if(!isFinite(y)||Math.abs(y-(W.y0+W.y1)/2)>lim||b!==lastB){ pen=false; lastB=b; if(!isFinite(y)||Math.abs(y-(W.y0+W.y1)/2)>lim)continue; }
+    d+=(pen?"L":"M")+W.sx(x).toFixed(1)+" "+W.sy(y).toFixed(1); pen=true; }
+  return d;
+}
+const piLab=(den)=>(v)=>piStr(v,den)||null;
+
+/* answers: numbers, fractions, radicals, π, "undefined" */
+function parseExpr(s){
+  if(!s)return NaN;
+  let i=0;
+  const peek=()=>s[i];
+  function expr(){ let v=term(); while(peek()==="+"||peek()==="-"){ const o=s[i++]; const r=term(); v=o==="+"?v+r:v-r; } return v; }
+  function term(){ let v=unary(); for(;;){ const c=peek();
+      if(c==="*"||c==="/"){ i++; const r=unary(); v=c==="*"?v*r:v/r; }
+      else if(c==="√"||c==="("||c==="π"){ v*=power(); }
+      else break; } return v; }
+  function unary(){ if(peek()==="-"){i++;return -unary();} if(peek()==="+"){i++;return unary();} return power(); }
+  function power(){ const b=atom(); if(peek()==="^"){i++;return Math.pow(b,unary());} return b; }
+  function atom(){ const c=peek();
+    if(c==="("){ i++; const v=expr(); if(peek()!==")")throw 0; i++; return v; }
+    if(c==="√"){ i++; return Math.sqrt(power()); }
+    if(c==="π"){ i++; return PI; }
+    const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)); if(!m)throw 0; i+=m[0].length; return parseFloat(m[0]); }
+  try{ const v=expr(); if(i!==s.length)return NaN; return v; }catch(_){ return NaN; }
+}
+function parseAns(str){
+  let s=String(str||"").trim().toLowerCase();
+  if(/^(undefined|undef|und|dne|none|does not exist|no value|∞|infinity|inf)$/.test(s)) return {undef:true,v:NaN,raw:s};
+  s=s.replace(/[−–]/g,"-").replace(/[×·]/g,"*").replace(/÷/g,"/").replace(/\s+/g,"")
+     .replace(/^(y|x|h|θ|t)=/,"").replace(/radians?|rad/g,"").replace(/°|degrees?|deg/g,"")
+     .replace(/sqrt/g,"√").replace(/pi/g,"π");
+  return {undef:false,v:parseExpr(s),raw:s};
+}
+function parseSign(str){
+  const s=String(str||"").trim().toLowerCase().replace(/[−–]/g,"-");
+  if(/^(\+|pos|positive|\+ ?positive)$/.test(s))return 1;
+  if(/^(-|neg|negative)$/.test(s))return -1;
+  return 0;
+}
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null, cur=0;
+function svgPt(e){
+  const m=cv.getScreenCTM(); if(!m)return [0,0];
+  const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y];
+}
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag, M=MODS[cur];
+  if(id){ dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); return; }
+  const any=M.anyDrag&&M.anyDrag();
+  if(any){ dragId=any; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); if(M.drag(dragId,svgPt(e))!==false)update(); }
+});
+cv.addEventListener("pointermove",e=>{
+  if(!dragId)return; const M=MODS[cur]; if(!M.drag)return;
+  if(M.drag(dragId,svgPt(e))!==false)update();
+});
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+
+/* bar builders */
+function btn(label,fn,cls){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(opts,val,fn,lab){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(lab)s.setAttribute("aria-label",lab);
+  opts.forEach(([k,l])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=l;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s;
+}
+function chk(label,val,fn){
+  const l=document.createElement("label"); l.className="chk";
+  const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i;
+}
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+// integer-index slider with a display formatter
+function islider(label,min,max,val,fmt,fn){
+  const l=document.createElement("label"); l.className="rng"; l.textContent=label+" ";
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=1; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); o.textContent=fmt(val);
+  i.oninput=()=>{o.textContent=fmt(+i.value); fn(+i.value);};
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l);
+  return {set(v){ i.value=v; o.textContent=fmt(v); }, el:i};
+}
+function tryPanel(html){ return `<div class="panel"><h3>Try this</h3><div class="pad">${html}</div></div>`; }
+const rel=(color,name,sub,val)=>`<div class="rel"><span class="dot" style="background:${color}"></span><span class="nm">${name}${sub?`<em>${sub}</em>`:""}</span><span class="val">${val}</span></div>`;
+const setHTML=(id,h)=>{ const n=document.getElementById(id); if(n)n.innerHTML=h; };
+
+/* ══════════════════════ TAB 1 · angles & radians ══════════════════════ */
+const C1=[350,232], R1=158;
+function radExact(deg){ const r=Math.round(deg*1e6)/1e6; return near(r,Math.round(r),1e-9)? piStr(Math.round(r)*D2R,180) : null; }
+function turnsText(th){
+  const n=Math.trunc(th/360), rem=th-360*n;
+  if(Math.abs(th)<1e-9)return "no rotation";
+  const dir=th>0?"counterclockwise":"clockwise";
+  if(n===0)return `${degS(Math.abs(rem))} ${dir}`;
+  const t=Math.abs(n)+" full turn"+(Math.abs(n)>1?"s":"");
+  return Math.abs(rem)<1e-9? `${t} ${dir}` : `${t} + ${degS(Math.abs(rem))} ${dir}`;
+}
+const M1={
+  tab:"Angles & radians", lesson:"F-TF.A.1", accent:"var(--cyan)",
+  title:()=>"Angle in standard position · θ = "+degS(M1.s.th),
+  s:{raw:60,th:60,snap:true,ticks:true},
+  anyDrag:()=>"T",
+  set(d){ d=clamp(d,-1080,1080); M1.s.raw=d; M1.s.th=d; update(); },
+  bar(){
+    btn("−15°",()=>M1.set(M1.s.th-15)); btn("+15°",()=>M1.set(M1.s.th+15));
+    btn("−360°",()=>M1.set(M1.s.th-360)); btn("+360°",()=>M1.set(M1.s.th+360));
+    btn("Change sign",()=>M1.set(-M1.s.th)); btn("Reset",()=>M1.set(60),"primary");
+    chk("Snap 15°",M1.s.snap,v=>{M1.s.snap=v; if(v)M1.set(Math.round(M1.s.th/15)*15);});
+    chk("1-radian ticks",M1.s.ticks,v=>{M1.s.ticks=v;update();});
+  },
+  drag(id,p){
+    if(len(sub(p,C1))<8)return false;
+    const a=angOf(C1,p); const delta=((a-norm(M1.s.raw))%360+540)%360-180;
+    M1.s.raw=clamp(M1.s.raw+delta,-1080,1080);
+    M1.s.th=M1.s.snap? Math.round(M1.s.raw/15)*15 : Math.round(M1.s.raw);
+  },
+  draw(){
+    const g=gridUC(C1,R1), th=M1.s.th, A=Math.abs(th), sg=th<0?-1:1, rad=th*D2R;
+    g.appendChild(E("circle",{cx:C1[0],cy:C1[1],r:R1,fill:"none",stroke:"#64748B","stroke-width":2}));
+    if(M1.s.ticks){ for(let k=1;k<=6;k++){ const a=k/D2R; sseg(g,PT(C1,R1-7,a),PT(C1,R1+7,a),"#0F766E",2.4); stext(g,PT(C1,R1-19,a),String(k),"xs","#0F766E"); } }
+    // arc length on the unit circle (spirals outward once per lap so laps are visible)
+    if(A>0.5){ spath(g,pathD(spiralPts(C1,R1,9,th)),"var(--lin)",5.5,null,{opacity:.85}); }
+    // initial and terminal sides
+    const ip=PT(C1,R1+50,0); sseg(g,C1,ip,"var(--graphite)",3.4); arrowHead(g,ip,[1,0],"var(--graphite)");
+    stext(g,[ip[0]-4,ip[1]-12],"initial side","xs","#334155","end");
+    const tip=PT(C1,R1+50,th); sseg(g,C1,tip,"var(--corr)",3.6); arrowHead(g,tip,unit(sub(tip,C1)),"var(--corr)");
+    // rotation spiral with arrow
+    if(A>0.5){
+      const pts=spiralPts(C1,30,11,th); spath(g,pathD(pts),"var(--vert)",2.6);
+      const e=pts[pts.length-1], pv=spiralPt(C1,30,11,th-sg*4); arrowHead(g,e,unit(sub(e,pv)),"var(--vert)",11);
+      const mid=th-sg*Math.min(A,360)/2;
+      smartLabel(g,spiralPt(C1,30,11,mid),sub(PT(C1,1,mid),C1),"θ = "+degS(th),"#6D28D9");
+      const am=th-sg*Math.min(A,360)*0.5, ap=PT(C1,R1+9*Math.abs(am)/360+4,am);
+      smartLabel(g,ap,sub(ap,C1),"s = "+f2(Math.abs(rad)),"#C2410C");
+    }
+    const tp=PT(C1,R1,th);
+    { const lp=PT(C1,R1+72,th); stext(g,[clamp(lp[0],56,VW-56),clamp(lp[1],12,VH-12)],"terminal side","xs","#0369A1"); }
+    sgrab(g,tp,"T","var(--corr)");
+    // axis direction hints
+    stext(g,[VW-14,24],"+ counterclockwise","xs","#6D28D9","end");
+    stext(g,[VW-14,42],"− clockwise","xs","#6D28D9","end");
+  },
+  panel(full){
+    const th=M1.s.th, rad=th*D2R, ex=radExact(th), q=quadOf(th), p=norm(th);
+    if(full){
+      side.innerHTML=`<div class="panel"><h3>Measures of θ</h3><div id="l1a"></div></div>
+      <div class="panel"><h3>Radian measure = arc length</h3><div class="pad">
+        <p>An angle is in <span class="term">standard position</span> when its vertex is at the origin and its <b>initial side</b> lies on the positive x-axis. Rotating <b>counterclockwise</b> gives a <b>positive</b> angle; <b>clockwise</b> gives a negative one.</p>
+        <p>On a circle of radius r, an angle of <b>1 radian</b> cuts off an arc of length r. On the <b>unit circle</b> (r = 1) the radian measure of θ <i>is</i> the length of the orange arc. One full turn is the whole circumference, 2π ≈ 6.28 — count the teal 1-radian ticks.</p>
+        <div class="eq" id="l1b"></div></div></div>
+      <div class="panel"><h3>Degrees ↔ radians</h3><div class="pad">
+        <p>Since 360° = 2π radians, 180° = π radians. Multiply by π/180 to go to radians and by 180/π to go to degrees.</p>
+        <div class="eq" id="l1c"></div>
+        <div class="conv"><div><label class="fld" style="margin:6px 0" for="cvD">degrees → radians</label><input type="text" id="cvD" placeholder="e.g. 135" autocomplete="off"><div class="out" id="cvDo"></div></div>
+        <div><label class="fld" style="margin:6px 0" for="cvR">radians → degrees</label><input type="text" id="cvR" placeholder="e.g. 5pi/6" autocomplete="off"><div class="out" id="cvRo"></div></div></div></div></div>
+      <div class="panel"><h3>Coterminal angles</h3><div class="pad">
+        <p>Angles that share a terminal side are <span class="term">coterminal</span>. Adding or subtracting whole turns (360° or 2π) does not move the terminal side.</p>
+        <div class="eq" id="l1d"></div></div></div>`+
+      tryPanel(`<p>1. Drag the terminal side to <b>−90°</b>. Which positive angle less than 360° is coterminal with it?</p><p>2. Drag around past one full turn to <b>405°</b>. How many wraps does the panel count, and what is the radian measure as an exact multiple of π?</p><p>3. Turn on the ticks: about how many radians make a half turn? Why is the exact answer π?</p>`);
+      const D=document.getElementById("cvD"), R=document.getElementById("cvR");
+      D.oninput=()=>{ const a=parseAns(D.value); const o=document.getElementById("cvDo");
+        if(!D.value.trim()){o.textContent="";return;} if(!isFinite(a.v)){o.textContent="type a number of degrees";return;}
+        const e=radExact(a.v); o.textContent=`${num(a.v,3)} × π/180 = ${e?e+" ≈ ":""}${num(a.v*D2R,4)} rad`; };
+      R.oninput=()=>{ const a=parseAns(R.value); const o=document.getElementById("cvRo");
+        if(!R.value.trim()){o.textContent="";return;} if(!isFinite(a.v)){o.textContent="type radians, e.g. 2pi/3 or 1.5";return;}
+        o.textContent=`${R.value.trim()} × 180/π = ${num(a.v/D2R,2)}°`; };
+    }
+    setHTML("l1a",
+      rel("var(--corr)","Degrees","rotation from the initial side",degS(th))+
+      rel("var(--lin)","Radians",ex?"exact multiple of π":"decimal",(ex? ex+" ≈ ":"")+f3(rad))+
+      rel("var(--vert)","Direction",th===0?"":"positive = counterclockwise",th>0?"counterclockwise (+)":th<0?"clockwise (−)":"none")+
+      rel("#0F766E","Wraps",turnsText(th),Math.abs(Math.trunc(th/360))+" full")+
+      rel("var(--yellow)","Terminal side",q?"in Quadrant "+QN[q]:"on an axis (quadrantal)",q?"Q"+QN[q]:axisName(th)));
+    setHTML("l1b",`s = r · θ   (θ in radians)\nunit circle, r = 1:  s = θ\ns = 1 · ${f3(Math.abs(rad))} = ${f3(Math.abs(rad))}<small>${Math.abs(th)>=360?"The arc wraps past one full lap, so it spirals outward each lap.":"Arc length is a distance, so it is never negative; the sign of θ only tells the direction."}</small>`);
+    setHTML("l1c",`${num(th,0)}° × π/180 = ${num(th,0)}π/180${ex&&ex!==num(th,0)+"π/180"?" = "+ex:""}\n          ≈ ${f3(rad)} rad`);
+    const cot=[-720,-360,360,720].map(k=>th+k).filter(v=>Math.abs(v)<=1440);
+    setHTML("l1d",`θ + 360°·k  (k any integer)\n`+cot.map(v=>`${degS(v).padStart(7)}   = ${radExact(v)||f3(v*D2R)}`).join("\n")+`\nIn [0°, 360°):  ${degS(p)} = ${radExact(p)||f3(p*D2R)}<small>θ = ${degS(th)} is ${turnsText(th)}.</small>`);
+  }
+};
+
+/* ══════════════════════ TAB 2 · the unit circle ══════════════════════ */
+const C2=[282,230], R2=172;
+function angLabelDR(d,fmt){ return fmt==="rad"? (piStr(d*D2R,12)||f2(d*D2R)) : degS(d); }
+const M2={
+  tab:"The unit circle", lesson:"F-TF.A.2 · F-TF.A.3", accent:"var(--magenta)",
+  title:()=>M2.s.mode==="quiz"?"Fill the unit circle":"cos θ = x,  sin θ = y  ·  θ = "+degS(M2.s.deg),
+  s:{deg:30,snap:true,mode:"explore",quiz:{filled:{},target:null,fmt:"deg",tries:0,msg:""}},
+  anyDrag:()=>M2.s.mode==="explore"?"P":null,
+  bar(){
+    segBtns([["explore","Explore"],["quiz","Fill-the-circle quiz"]],M2.s.mode,k=>{M2.s.mode=k; if(k==="quiz"&&M2.s.quiz.target==null)M2.nextTarget(); render();},"Mode");
+    if(M2.s.mode==="explore"){
+      chk("Snap to special angles",M2.s.snap,v=>{M2.s.snap=v;update();});
+      [[30,"30°"],[45,"45°"],[60,"60°"]].forEach(([d,l])=>btn(l+" family",()=>{ const fam=SPECIAL.filter(a=>refAngle(a)===d); const i=fam.indexOf(M2.s.deg); M2.s.deg=fam[(i+1)%fam.length]; update(); }));
+    } else {
+      btn("Skip",()=>{M2.nextTarget();M2.s.quiz.msg="";render();});
+      btn("Reset quiz",()=>{M2.s.quiz.filled={};M2.s.quiz.msg="";M2.nextTarget();render();});
+      btn("Fill all (answer key)",()=>{SPECIAL.forEach(a=>M2.s.quiz.filled[a]=true);M2.s.quiz.target=null;M2.s.quiz.msg="";render();});
+    }
+  },
+  nextTarget(){ const Q=M2.s.quiz, open=SPECIAL.filter(a=>!Q.filled[a]&&a!==Q.target); const left=SPECIAL.filter(a=>!Q.filled[a]);
+    Q.target=open.length?pick(open):(left.length?left[0]:null); Q.fmt=pick(["deg","rad"]); Q.tries=0; },
+  drag(id,p){
+    if(len(sub(p,C2))<6)return false;
+    let a=angOf(C2,p);
+    if(M2.s.snap){ let best=null,bd=99; SPECIAL.concat([360]).forEach(s=>{ const d=Math.abs(a-s); if(d<bd){bd=d;best=s;} }); a=bd<6?norm(best):Math.round(a); }
+    else a=Math.round(a);
+    M2.s.deg=norm(a);
+  },
+  quadTags(g,q){
+    const T=[[1,C2[0]+108,22,"QI · A","all +"],[2,C2[0]-108,22,"QII · S","sin +"],[3,C2[0]-108,VH-22,"QIII · T","tan +"],[4,C2[0]+108,VH-22,"QIV · C","cos +"]];
+    T.forEach(([k,x,y,a,b])=>{ const on=k===q, w=126*(FS>1?1.45:1), h=24*(FS>1?1.4:1);
+      g.appendChild(E("rect",{x:x-w/2,y:y-h/2,width:w,height:h,rx:h/2,fill:on?"#FFD93D":"rgba(255,255,255,.85)",stroke:on?"#CA8A04":"#C7D2E8","stroke-width":1.3}));
+      stext(g,[x,y+1],a+" "+b,"xs",on?"#0A0A1F":"#64748B"); });
+  },
+  draw(){
+    const g=gridUC(C2,R2);
+    g.appendChild(E("circle",{cx:C2[0],cy:C2[1],r:R2,fill:"none",stroke:"#475569","stroke-width":2.2}));
+    if(M2.s.mode==="quiz")return M2.drawQuiz(g);
+    const d=M2.s.deg, V=trigVals(d), X=exactTrig(d), q=quadOf(d);
+    const S=(x,y)=>[C2[0]+x*R2,C2[1]-y*R2];
+    const P=S(V.c,V.s), F=S(V.c,0), O=C2;
+    M2.quadTags(g,q);
+    // tangent line x = 1
+    const tx=C2[0]+R2; sseg(g,[tx,6],[tx,VH-40],"#059669",1.6,"5 6",.7);
+    stext(g,[tx+6,VH-48],"x = 1","xs","#047857","start");
+    // reference angle wedge
+    if(q){ const base=(q===1)?0:(q===4)?360:180; wedge(g,O,54,base,d,"rgba(255,217,61,.45)","#CA8A04");
+      const mid=(base+d)/2; stext(g,PT(O,72,mid),"ref "+degS(refAngle(d)),"xs","#A16207"); }
+    // θ arc
+    if(d>0.5){ spath(g,pathD(arcPts(O,28,0,d)),"var(--vert)",2.4); }
+    // tangent segment
+    if(!isNaN(V.t)){
+      const ty=C2[1]-V.t*R2, tyc=clamp(ty,8,VH-8), TP=[tx,tyc];
+      const far=[tx,ty]; sseg(g,V.c>0?O:P,clamp(ty,-4000,4000)===ty?far:far,"#059669",1.8,"7 5");
+      sseg(g,[tx,C2[1]],TP,"#059669",5);
+      if(ty!==tyc)arrowHead(g,TP,[0,ty<tyc?-1:1],"#059669");
+      sdot(g,TP,"#059669",4.5);
+      const ly=clamp((C2[1]+tyc)/2,24,VH-60);
+      stext(g,[tx+10,ly],"tan θ = "+(X?X.t:f3(V.t)),"sm","#047857","start");
+    } else stext(g,[tx+10,C2[1]-20],"tan θ undefined","sm","#047857","start");
+    // cos and sin segments
+    sseg(g,O,F,"var(--corr)",5.5);
+    sseg(g,F,P,"var(--magenta)",5.5);
+    sseg(g,O,P,"var(--graphite)",2.6);
+    if(Math.abs(V.c)>1e-9&&Math.abs(V.s)>1e-9) rightMark(g,F,[V.c>0?-1:1,0],[0,V.s>0?-1:1],11);
+    const cy=C2[1]+(V.s>=0?18:-16)*FS;
+    stext(g,[(O[0]+F[0])/2,cy],"cos θ = "+(X?X.c:f3(V.c)),"sm","#0369A1");
+    const sx=F[0]+(V.c>=0?12:-12), syy=(C2[1]+P[1])/2;
+    if(Math.abs(V.s)>0.14) stext(g,[sx,syy],"sin θ = "+(X?X.s:f3(V.s)),"sm","#BE185D",V.c>=0?"start":"end");
+    else stext(g,[P[0]+(V.c>=0?-8:8),P[1]+(V.s>=0?-40:40)],"sin θ = "+(X?X.s:f3(V.s)),"sm","#BE185D",V.c>=0?"end":"start");
+    // radius label
+    const m=[(O[0]+P[0])/2,(O[1]+P[1])/2], nrm=[-(P[1]-O[1]),P[0]-O[0]], nu=unit(nrm); const side=(nu[0]*(F[0]-m[0])+nu[1]*(F[1]-m[1]))>0?-1:1;
+    stext(g,add(m,mul(nu,13*side*FS)),"1","sm","var(--graphite)");
+    sgrab(g,P,"P","var(--magenta)");
+    const lab="P"+(X?`(${X.c}, ${X.s})`:`(${f2(V.c)}, ${f2(V.s)})`);
+    smartLabel(g,P,sub(P,O),lab,"var(--ink)");
+  },
+  drawQuiz(g){
+    const Q=M2.s.quiz;
+    SPECIAL.forEach(a=>{ const P=PT(C2,R2,a), X=exactTrig(a), on=Q.filled[a], tg=a===Q.target;
+      if(tg){ sseg(g,C2,P,"var(--magenta)",2.6); g.appendChild(E("circle",{cx:P[0],cy:P[1],r:15,fill:"rgba(255,61,138,.2)",stroke:"var(--magenta)","stroke-width":2.5})); }
+      sdot(g,P,on?"var(--alt)":tg?"var(--magenta)":"#94A3B8",on||tg?6:4.5);
+      const inner=PT(C2,R2-(a%90===0?24:30),a);
+      if(on||tg) stext(g,inner,angLabelDR(a,tg?Q.fmt:"rad"),"xs",tg?"#BE185D":"#475569");
+      if(on){ const c=Math.cos(a*D2R), s=Math.sin(a*D2R); const anc=Math.abs(c)<.01?"middle":(c>0?"start":"end");
+        const o=PT(C2,R2+12,a); stext(g,[o[0],o[1]+(Math.abs(c)<.01?(s>0?-8:10):0)],`(${X.c}, ${X.s})`,"xs","#047857",anc); }
+    });
+    if(Q.target==null) stext(g,[C2[0],C2[1]+40],"Circle complete!","lg","#047857");
+    else stext(g,[C2[0]+R2+90,40],"θ = "+angLabelDR(Q.target,Q.fmt)+" ?","lg","#BE185D");
+  },
+  panel(full){
+    if(M2.s.mode==="quiz"){ if(full)M2.quizPanel(); return; }
+    const d=M2.s.deg, V=trigVals(d), X=exactTrig(d), q=quadOf(d), r=refAngle(d), ex=radExact(d);
+    if(full){
+      side.innerHTML=`<div class="panel"><h3>Coordinates on the unit circle</h3><div id="l2a"></div></div>
+      <div class="panel"><h3>The definitions</h3><div class="pad">
+        <p>Let the terminal side of θ meet the unit circle (radius 1) at P(x, y). Then <b>cos θ = x</b> and <b>sin θ = y</b> — the blue and pink segments. Because the radius is 1, these work for <i>every</i> angle, not just acute ones.</p>
+        <p><b>tan θ = y/x</b>, the slope of the terminal side. It is also the height where the terminal line meets the tangent line x = 1 (green). When x = 0 the line never meets x = 1, so tan θ is undefined.</p>
+        <div class="eq" id="l2b"></div></div></div>
+      <div class="panel"><h3>Special triangles</h3><div class="pad" id="l2c"></div></div>
+      <div class="panel"><h3>Reference angles &amp; signs (ASTC)</h3><div class="pad">
+        <p>The <span class="term">reference angle</span> is the acute angle between the terminal side and the <b>x-axis</b> (shaded yellow). It gives the size of the values; the quadrant gives the signs.</p>
+        <div class="astc" id="l2d"></div></div></div>`+
+      tryPanel(`<p>1. Use the <b>30° family</b> button. Which coordinates stay the same size and which signs change as you move through 30°, 150°, 210°, 330°?</p><p>2. Find two angles between 0° and 360° with sin θ = −√2/2.</p><p>3. Drag P toward 90°. What happens to the green tan segment, and why is tan 90° undefined?</p>`);
+    }
+    const tv=isNaN(V.t)?"undefined":(X?X.t:f3(V.t));
+    setHTML("l2a",
+      rel("var(--vert)","θ",ex?"radians: "+ex:"",degS(d))+
+      rel("var(--yellow)","Quadrant · reference angle",q?"":"quadrantal: on the "+axisName(d),q?`Q${QN[q]} · ${degS(r)}`:"—")+
+      rel("var(--corr)","cos θ = x",X?"exact":"rounded",X?`${X.c}${X.c.includes("√")?" ≈ "+f3(V.c):""}`:f3(V.c))+
+      rel("var(--magenta)","sin θ = y",X?"exact":"rounded",X?`${X.s}${X.s.includes("√")?" ≈ "+f3(V.s):""}`:f3(V.s))+
+      rel("#059669","tan θ = y/x","",tv));
+    setHTML("l2b",`P = (cos θ, sin θ) = (${X?X.c:f3(V.c)}, ${X?X.s:f3(V.s)})\ntan θ = y/x = ${isNaN(V.t)?"undefined (x = 0)":(X?`(${X.s})/(${X.c}) = ${X.t}`:`${f3(V.s)}/${f3(V.c)} = ${f3(V.t)}`)}`);
+    let tri;
+    if(q&&(r===30||r===60)) tri=`<p><b>30-60-90 triangle</b> (reference angle ${r}°). Cut an equilateral triangle of side 1 in half: the short leg is <b>1/2</b>, the hypotenuse is 1, and the long leg is √(1 − 1/4) = <b>√3/2</b>.</p><p>The short leg is always across from 30°, so ${r===30?"for 30° the height (sin) is 1/2 and the run (cos) is √3/2":"for 60° the run (cos) is 1/2 and the height (sin) is √3/2"}. Then attach the quadrant signs.</p>`;
+    else if(q&&r===45) tri=`<p><b>45-45-90 triangle</b> (reference angle 45°). Both legs are equal: x² + x² = 1 gives x = 1/√2 = <b>√2/2</b>. So |cos| = |sin| = √2/2 and |tan| = 1.</p>`;
+    else if(!q) tri=`<p>θ = ${degS(d)} is <b>quadrantal</b>: P sits on an axis at (${X?X.c:f3(V.c)}, ${X?X.s:f3(V.s)}), so one coordinate is 0 and the other is ±1. No triangle is needed.</p>`;
+    else tri=`<p>Snap to a <b>special angle</b> (multiples of 30° or 45°) to get exact values from the 30-60-90 and 45-45-90 triangles. At ${degS(d)} the values are irrational decimals we can only approximate.</p>`;
+    setHTML("l2c",tri);
+    setHTML("l2d",[[2,"QII · S","Sine + only"],[1,"QI · A","All +"],[3,"QIII · T","Tangent + only"],[4,"QIV · C","Cosine + only"]]
+      .map(([k,a,b])=>`<div class="${k===q?"on":""}"><b>${a}</b>${b}</div>`).join(""));
+  },
+  quizPanel(){
+    const Q=M2.s.quiz, n=SPECIAL.filter(a=>Q.filled[a]).length;
+    let h=`<div class="panel"><h3>Fill the unit circle · ${n}/16</h3>`;
+    if(Q.target==null){ h+=`<div class="verdict good"><b>Complete!</b> All 16 special angles are filled. Look for the patterns: each quadrant repeats the same three values with different signs.</div>`; }
+    else{
+      h+=`<div class="pad"><p class="prob">Give the exact coordinates of the point on the unit circle at <b>θ = ${angLabelDR(Q.target,Q.fmt)}</b>.</p></div>
+      <div class="ansrow"><div><label class="fld" for="qx">x = cos θ</label><input type="text" id="qx" autocomplete="off" spellcheck="false" placeholder="e.g. -sqrt(3)/2"></div>
+      <div><label class="fld" for="qy">y = sin θ</label><input type="text" id="qy" autocomplete="off" spellcheck="false" placeholder="e.g. 1/2"></div></div>
+      <p class="fmt">Type exact values: 1/2, √3/2 or sqrt(3)/2, -√2/2, 0, 1.</p>
+      <div class="fldwrap" style="margin:14px 0 4px"><button id="qchk" class="go" type="button">Check</button></div>`;
+    }
+    h+=`<div id="qfb">${Q.msg||""}</div><div style="height:4px"></div></div>
+      <div class="panel"><h3>Strategy</h3><div class="pad"><p>1. Find the <b>reference angle</b> (30°, 45° or 60°, i.e. π/6, π/4, π/3).</p><p>2. Use the triangle: the values are only ever 1/2, √2/2 and √3/2. The bigger angle (60°) has the bigger height.</p><p>3. Attach signs from the quadrant: <b>A</b>ll · <b>S</b>ine · <b>T</b>angent · <b>C</b>osine.</p></div></div>`;
+    side.innerHTML=h;
+    const b=document.getElementById("qchk"); if(!b)return;
+    const ix=document.getElementById("qx"), iy=document.getElementById("qy");
+    const check=()=>{
+      const a=parseAns(ix.value), c=parseAns(iy.value), X=exactTrig(Q.target), cx=Math.cos(Q.target*D2R), sy=Math.sin(Q.target*D2R);
+      if(!isFinite(a.v)||!isFinite(c.v)){ document.getElementById("qfb").innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Try forms like √3/2, sqrt(2)/2, -1/2 or 0.</div>`; return; }
+      const okx=Math.abs(a.v-cx)<0.0015, oky=Math.abs(c.v-sy)<0.0015;
+      if(okx&&oky){ Q.filled[Q.target]=true; const was=Q.target; M2.nextTarget();
+        Q.msg=`<div class="verdict good"><b>Correct!</b> ${angLabelDR(was,"deg")} = ${piStr(was*D2R,12)} → (${X.c}, ${X.s}).</div>`; render(); }
+      else { Q.tries++; const r=refAngle(Q.target), q=quadOf(Q.target);
+        document.getElementById("qfb").innerHTML=`<div class="verdict bad"><b>Not quite${okx?" — x is right, check y":oky?" — y is right, check x":""}.</b> ${q?`The reference angle is ${r}° (${piStr(r*D2R,12)}) and the point is in Quadrant ${QN[q]}, where x is ${cx>0?"positive":"negative"} and y is ${sy>0?"positive":"negative"}.`:`This point is on the ${axisName(Q.target)}, so one coordinate is 0 and the other is ±1.`}${Q.tries>=2?` Answer: (${X.c}, ${X.s}).`:""}</div>`; }
+    };
+    b.onclick=check; [ix,iy].forEach(x=>x.addEventListener("keydown",e=>{if(e.key==="Enter")check();}));
+  }
+};
+
+/* ══════════════════════ TAB 3 · right-triangle ratios ══════════════════════ */
+const O3=[66,418], U3=150;
+const TRIPLES=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]];
+function genGiven(){
+  const kind=pick(["sin","cos","tan"]); let X2,Y2,R2;
+  if(Math.random()<.65){ const t=pick(TRIPLES), sw=Math.random()<.5; const p=sw?t[1]:t[0], q=sw?t[0]:t[1]; Y2=p*p; X2=q*q; R2=t[2]*t[2]; }
+  else if(kind==="tan"){ let a,b; do{a=rnd(1,6);b=rnd(1,6);}while(gcd(a,b)!==1||a===b); Y2=a*a;X2=b*b;R2=a*a+b*b; }
+  else { let a,c; do{c=rnd(3,9);a=rnd(1,c-1);}while(gcd(a,c)!==1||(2*a===c));
+    if(kind==="sin"){Y2=a*a;R2=c*c;X2=c*c-a*a;} else {X2=a*a;R2=c*c;Y2=c*c-a*a;} }
+  const q=rnd(1,4), sx=(q===1||q===4)?1:-1, sy=(q<=2)?1:-1;
+  const G={kind,X2,Y2,R2,q,sx,sy};
+  G.val={sin:radFrac(Y2,R2,sy),cos:radFrac(X2,R2,sx),tan:radFrac(Y2,X2,sx*sy)};
+  G.num={sin:sy*Math.sqrt(Y2/R2),cos:sx*Math.sqrt(X2/R2),tan:sx*sy*Math.sqrt(Y2/X2)};
+  G.others=["sin","cos","tan"].filter(k=>k!==kind);
+  return G;
+}
+function givenSteps(G){
+  const xs=(G.sx<0?"−":"")+rootStr(G.X2), ys=(G.sy<0?"−":"")+rootStr(G.Y2), rs=rootStr(G.R2);
+  const par=s=>s.startsWith("−")?"("+s+")":s;
+  let t="";
+  if(G.kind==="sin"){ t+=`sin θ = y/r = ${G.val.sin}  →  y = ${ys}, r = ${rs}\n`;
+    t+=`x² + y² = r²  →  x² = ${G.R2} − ${G.Y2} = ${G.X2}  →  x = ±${rootStr(G.X2)}\n`;
+    t+=`Quadrant ${QN[G.q]}: x is ${G.sx>0?"positive":"negative"}, so x = ${xs}\n`; }
+  if(G.kind==="cos"){ t+=`cos θ = x/r = ${G.val.cos}  →  x = ${xs}, r = ${rs}\n`;
+    t+=`x² + y² = r²  →  y² = ${G.R2} − ${G.X2} = ${G.Y2}  →  y = ±${rootStr(G.Y2)}\n`;
+    t+=`Quadrant ${QN[G.q]}: y is ${G.sy>0?"positive":"negative"}, so y = ${ys}\n`; }
+  if(G.kind==="tan"){ t+=`tan θ = y/x = ${G.val.tan}, Quadrant ${QN[G.q]}\n  → x ${G.sx>0?">":"<"} 0 and y ${G.sy>0?">":"<"} 0, so x = ${xs}, y = ${ys}\n`;
+    t+=`r² = x² + y² = ${G.X2} + ${G.Y2} = ${G.R2}  →  r = ${rs}  (r > 0)\n`; }
+  G.others.forEach(k=>{
+    if(k==="sin")t+=`sin θ = y/r = ${ys}/${rs} = ${G.val.sin}\n`;
+    if(k==="cos")t+=`cos θ = x/r = ${xs}/${rs} = ${G.val.cos}\n`;
+    if(k==="tan")t+=`tan θ = y/x = ${par(ys)}/${par(xs)} = ${G.val.tan}\n`;
+  });
+  t+=`Check: sin²θ + cos²θ = ${G.Y2}/${G.R2} + ${G.X2}/${G.R2} = 1 ✓`;
+  return t;
+}
+const M3={
+  tab:"Right-triangle ratios", lesson:"G-SRT.C.6 · F-TF.C.8", accent:"var(--yellow)",
+  title:()=>M3.s.mode==="tri"?"SOH-CAH-TOA meets the unit circle":"Given one ratio and the quadrant",
+  s:{mode:"tri",B:[1.6,1.2],snap:true,ex:null,reveal:false},
+  init(){ M3.s.ex=genGiven(); },
+  bar(){
+    segBtns([["tri","Scale the triangle"],["given","Given one ratio"]],M3.s.mode,k=>{M3.s.mode=k;render();},"Mode");
+    if(M3.s.mode==="tri"){
+      chk("Snap to 0.1",M3.s.snap,v=>{M3.s.snap=v;update();});
+      btn("3-4-5",()=>{M3.s.B=[1.6,1.2];update();}); btn("45°",()=>{M3.s.B=[1.5,1.5];update();}); btn("30°",()=>{M3.s.B=[Math.sqrt(3),1];update();});
+    } else {
+      btn("New example",()=>{M3.s.ex=genGiven();M3.s.reveal=false;render();},"primary");
+      btn(M3.s.reveal?"Hide solution":"Reveal solution",()=>{M3.s.reveal=!M3.s.reveal;render();});
+    }
+  },
+  drag(id,p){
+    let x=(p[0]-O3[0])/U3, y=(O3[1]-p[1])/U3;
+    let a=Math.atan2(y,x)/D2R, r=Math.hypot(x,y); a=clamp(a,6,84); r=clamp(r,0.45,2.5);
+    x=r*Math.cos(a*D2R); y=r*Math.sin(a*D2R);
+    if(M3.s.snap){ x=Math.max(0.1,Math.round(x*10)/10); y=Math.max(0.1,Math.round(y*10)/10); if(Math.hypot(x,y)>2.55)return false; }
+    M3.s.B=[x,y];
+  },
+  vals(){ const [x,y]=M3.s.B, r=Math.hypot(x,y); return {x,y,r,th:Math.atan2(y,x)/D2R,s:y/r,c:x/r,t:y/x}; },
+  draw(){
+    if(M3.s.mode==="given")return M3.drawGiven();
+    cv.appendChild(E("rect",{width:VW,height:VH,fill:"rgba(255,255,255,0)"}));
+    const g=E("g",{}); cv.appendChild(g);
+    const S=(x,y)=>[O3[0]+x*U3,O3[1]-y*U3];
+    for(let k=0;k<=12;k++){ const X=O3[0]+k*U3/4; if(X>460)break; sseg(g,[X,18],[X,O3[1]],"var(--grid)",1); }
+    for(let k=0;k<=12;k++){ const Y=O3[1]-k*U3/4; if(Y<18)break; sseg(g,[O3[0],Y],[460,Y],"var(--grid)",1); }
+    sseg(g,[O3[0]-10,O3[1]],[462,O3[1]],"#8FA3C8",1.8); sseg(g,[O3[0],O3[1]+10],[O3[0],16],"#8FA3C8",1.8);
+    [1,2].forEach(k=>{ stext(g,[O3[0]+k*U3,O3[1]+14],String(k),"ax"); stext(g,[O3[0]-10,O3[1]-k*U3],String(k),"ax"); });
+    spath(g,pathD(arcPts(O3,U3,0,90)),"#64748B",2,"6 5");
+    stext(g,PT(O3,U3+14,88),"unit circle","xs","#64748B","start");
+    const V=M3.vals(), B=S(V.x,V.y), A=S(V.x,0), b=S(V.c,V.s), a=S(V.c,0);
+    // big triangle
+    g.appendChild(E("polygon",{points:[O3,A,B].map(p=>p.join(",")).join(" "),style:"fill:rgba(255,217,61,.20);stroke:#CA8A04","stroke-width":3,"stroke-linejoin":"round"}));
+    rightMark(g,A,[-1,0],[0,-1],12);
+    // unit triangle
+    g.appendChild(E("polygon",{points:[O3,a,b].map(p=>p.join(",")).join(" "),style:"fill:rgba(2,132,199,.16);stroke:var(--corr)","stroke-width":2.4,"stroke-dasharray":"7 4","stroke-linejoin":"round"}));
+    sseg(g,a,b,"var(--magenta)",4);
+    sdot(g,b,"var(--magenta)",5);
+    // angle
+    spath(g,pathD(arcPts(O3,40,0,V.th)),"var(--vert)",2.4);
+    stext(g,PT(O3,58,V.th/2),"θ","mk","#6D28D9");
+    // labels: big triangle outside, unit triangle inside
+    stext(g,[(O3[0]+A[0])/2,O3[1]+22*FS],"adj = "+f2(V.x),"sm","#A16207");
+    stext(g,[A[0]+10,(A[1]+B[1])/2],"opp = "+f2(V.y),"sm","#A16207","start");
+    const hn=unit([V.s,V.c]); // normal below-right of hypotenuse (screen)
+    const hm=[(O3[0]+B[0])/2,(O3[1]+B[1])/2];
+    { const t=V.r>1.25?0.68:0.95, hp=[O3[0]+(B[0]-O3[0])*t,O3[1]+(B[1]-O3[1])*t];
+      stext(g,[hp[0]-V.s*14*FS,hp[1]-V.c*14*FS-4],"hyp = "+f2(V.r),"sm","#A16207","end"); }
+    if(Math.abs(V.r-1)>0.18){
+      stext(g,[b[0]-8,(a[1]+b[1])/2],"sin θ","sm","#BE185D","end");
+      stext(g,[(O3[0]+a[0])/2+ (V.c<0.35?14:0),O3[1]-12*FS],"cos θ","sm","#0369A1");
+    }
+    sgrab(g,B,"B","#CA8A04");
+    // identity bars
+    const bx=482, bw=196;
+    stext(g,[bx,46],"sin²θ + cos²θ = 1","sm","var(--ink)","start");
+    g.appendChild(E("rect",{x:bx,y:64,width:bw*V.s*V.s,height:26,fill:"var(--magenta)",opacity:.85}));
+    g.appendChild(E("rect",{x:bx+bw*V.s*V.s,y:64,width:bw*V.c*V.c,height:26,fill:"var(--corr)",opacity:.85}));
+    g.appendChild(E("rect",{x:bx,y:64,width:bw,height:26,fill:"none",stroke:"var(--ink)","stroke-width":1.6}));
+    stext(g,[bx,108],"sin²θ = "+f3(V.s*V.s),"xs","#BE185D","start");
+    stext(g,[bx,126],"cos²θ = "+f3(V.c*V.c),"xs","#0369A1","start");
+    stext(g,[bx,144],"sum = "+f3(V.s*V.s+V.c*V.c),"xs","var(--ink)","start");
+    stext(g,[bx,186],"Same θ, same ratios:","xs","#475569","start");
+    stext(g,[bx,206],"opp/hyp = "+f3(V.s),"xs","#A16207","start");
+    stext(g,[bx,224],"adj/hyp = "+f3(V.c),"xs","#A16207","start");
+    stext(g,[bx,242],"opp/adj = "+f3(V.t),"xs","#A16207","start");
+    stext(g,[bx,282],"θ = "+num(V.th,1)+"°","sm","#6D28D9","start");
+  },
+  drawGiven(){
+    const G=M3.s.ex, C=[350,232], k=165/Math.sqrt(G.R2), show=M3.s.reveal;
+    const x=G.sx*Math.sqrt(G.X2), y=G.sy*Math.sqrt(G.Y2);
+    const g=gridUC(C,165,{noTicks:true});
+    const qx=G.sx>0?C[0]:0, qy=G.sy>0?0:C[1];
+    g.appendChild(E("rect",{x:qx,y:qy,width:G.sx>0?VW-C[0]:C[0],height:G.sy>0?C[1]:VH-C[1],fill:"rgba(255,217,61,.13)"}));
+    stext(g,[G.sx>0?VW-70:70,G.sy>0?26:VH-26],"Quadrant "+QN[G.q],"sm","#A16207");
+    g.appendChild(E("circle",{cx:C[0],cy:C[1],r:165,fill:"none",stroke:"#64748B","stroke-width":1.8,"stroke-dasharray":"6 5"}));
+    const P=[C[0]+x*k,C[1]-y*k], F=[C[0]+x*k,C[1]];
+    g.appendChild(E("polygon",{points:[C,F,P].map(p=>p.join(",")).join(" "),style:"fill:rgba(255,217,61,.25);stroke:#CA8A04","stroke-width":3,"stroke-linejoin":"round"}));
+    rightMark(g,F,[x>0?-1:1,0],[0,y>0?-1:1],12);
+    const th=norm(Math.atan2(y,x)/D2R);
+    spath(g,pathD(arcPts(C,30,0,th)),"var(--vert)",2.4); stext(g,PT(C,46,th/2),"θ","mk","#6D28D9");
+    const xs=(G.sx<0?"−":"")+rootStr(G.X2), ys=(G.sy<0?"−":"")+rootStr(G.Y2), rs=rootStr(G.R2);
+    const knownX=G.kind!=="sin"||show, knownY=G.kind!=="cos"||show, knownR=G.kind!=="tan"||show;
+    stext(g,[(C[0]+F[0])/2,C[1]+(y>0?20:-16)*FS],"x = "+(knownX?xs:"?"),"sm","#0369A1");
+    stext(g,[F[0]+(x>0?12:-12),(C[1]+P[1])/2],"y = "+(knownY?ys:"?"),"sm","#BE185D",x>0?"start":"end");
+    const m=[(C[0]+P[0])/2,(C[1]+P[1])/2], n=unit([-(P[1]-C[1]),P[0]-C[0]]); const sd=(n[0]*(F[0]-m[0])+n[1]*(F[1]-m[1]))>0?-1:1;
+    stext(g,add(m,mul(n,18*sd*FS)),"r = "+(knownR?rs:"?"),"sm","var(--ink)");
+    sdot(g,P,"var(--magenta)",6);
+    smartLabel(g,P,sub(P,C),show?`(${xs}, ${ys})`:"P(x, y)","var(--ink)");
+    infoBox(g,12,12,["Given: "+G.kind+" θ = "+G.val[G.kind],"θ in Quadrant "+QN[G.q]],"#A16207");
+  },
+  panel(full){
+    if(M3.s.mode==="given"){ if(!full)return; const G=M3.s.ex;
+      side.innerHTML=`<div class="panel"><h3>The problem</h3><div class="pad"><p class="prob"><b>${G.kind} θ = ${G.val[G.kind]}</b> and θ is in <b>Quadrant ${QN[G.q]}</b>. Find ${G.others.map(k=>k+" θ").join(" and ")}.</p>
+        <p>Think of P(x, y) on a circle of radius r: <b>sin θ = y/r, cos θ = x/r, tan θ = y/x</b>. The given ratio fixes two of x, y, r; the Pythagorean theorem gives the third; the quadrant fixes its sign. (r is a distance, so it is always positive.)</p>
+        ${M3.s.reveal?`<div class="eq">${givenSteps(G)}</div>`:`<div class="verdict info" style="margin:0"><b>Your turn.</b> Work it out, then press <b>Reveal solution</b>.</div>`}</div></div>
+        <div class="panel"><h3>Why the identity works</h3><div class="pad"><p>Divide x² + y² = r² by r²: (x/r)² + (y/r)² = 1, which is <b>cos²θ + sin²θ = 1</b>. So you can also go straight from the identity: cos²θ = 1 − sin²θ, then choose the sign from the quadrant.</p></div></div>`+
+        tryPanel(`<p>Press <b>New example</b> until you get a tan problem. Why must you use the quadrant to decide the signs of <b>both</b> x and y, but never of r?</p>`);
+      return; }
+    const V=M3.vals();
+    if(full){
+      side.innerHTML=`<div class="panel"><h3>SOH-CAH-TOA, live</h3><div class="pad"><div class="eq" id="l3a"></div>
+        <p>All right triangles with the same acute angle θ are <b>similar</b>, so the ratios depend only on θ — not on the size of the triangle. Drag the corner farther out: the sides grow, the ratios do not.</p></div></div>
+      <div class="panel"><h3>Scale by the hypotenuse</h3><div class="pad"><p>Divide every side by the hypotenuse. The new triangle (dashed blue) has hypotenuse <b>1</b>, so it fits in the unit circle with legs <b>adj/hyp = cos θ</b> and <b>opp/hyp = sin θ</b>. That is why the unit-circle point is (cos θ, sin θ).</p><div class="eq" id="l3b"></div></div></div>
+      <div class="panel"><h3>Pythagorean identity</h3><div class="pad"><div class="eq" id="l3c"></div><p>The bar on the board is always exactly full: sin²θ and cos²θ share the whole 1.</p></div></div>`+
+      tryPanel(`<p>1. Press <b>3-4-5</b>, then drag the corner to (2.4, 1.8). The sides change — check that sin θ is still 0.6.</p><p>2. Press <b>30°</b>. Which leg is half the hypotenuse? Compare with sin 30° = 1/2.</p>`);
+    }
+    setHTML("l3a",`sin θ = opp/hyp = ${f2(V.y)}/${f2(V.r)} = ${f3(V.s)}\ncos θ = adj/hyp = ${f2(V.x)}/${f2(V.r)} = ${f3(V.c)}\ntan θ = opp/adj = ${f2(V.y)}/${f2(V.x)} = ${f3(V.t)}<small>θ = ${num(V.th,1)}°.  tan θ also equals sin θ / cos θ = ${f3(V.s/V.c)}.</small>`);
+    setHTML("l3b",`(adj, opp) ÷ ${f2(V.r)}  →  (${f3(V.c)}, ${f3(V.s)})\n= (cos θ, sin θ) on the unit circle`);
+    setHTML("l3c",`opp² + adj² = hyp²\n${f2(V.y)}² + ${f2(V.x)}² = ${f2(V.r)}²\n${f3(V.y*V.y)} + ${f3(V.x*V.x)} = ${f3(V.r*V.r)}\n÷ hyp²:  sin²θ + cos²θ = 1\n${f3(V.s*V.s)} + ${f3(V.c*V.c)} = ${f3(V.s*V.s+V.c*V.c)}`);
+  }
+};
+
+/* ══════════════════════ TAB 4 · graphing sine & cosine ══════════════════════ */
+const CC4=[118,230], R4=96, GX0=252, GW=430;
+let raf=null, lastTs=0;
+function stopAnim(){ if(raf)cancelAnimationFrame(raf); raf=null; lastTs=0; M4.s.play=false; if(M4.playBtn)M4.playBtn.textContent="▶ Play"; }
+function loop(ts){
+  if(!M4.s.play||MODS[cur]!==M4){ raf=null; return; }
+  const dt=lastTs?Math.min(0.05,(ts-lastTs)/1000):0; lastTs=ts;
+  M4.s.t+=dt*0.9; if(M4.s.t>M4.s.per*TAU+1e-9){ M4.s.t=0; }
+  update(); raf=requestAnimationFrame(loop);
+}
+function tStr(t){ const p=piStr(t,12); return p&&near(t/PI*12,Math.round(t/PI*12),1e-6)? p : f2(t); }
+const M4={
+  tab:"Graphing sine & cosine", lesson:"F-TF.A.2 · F-IF.C.7e", accent:"var(--mint)",
+  title:()=>"Unwrapping the unit circle · x = "+tStr(M4.s.t),
+  s:{t:PI/3,play:false,which:"sin",per:1,full:false,keys:true,snap:true},
+  playBtn:null,
+  anyDrag:()=>"P",
+  bar(){
+    M4.playBtn=btn(M4.s.play?"❚❚ Pause":"▶ Play",()=>{ if(M4.s.play){stopAnim();} else { M4.s.play=true; M4.playBtn.textContent="❚❚ Pause"; lastTs=0; if(M4.s.t>=M4.s.per*TAU-1e-6)M4.s.t=0; raf=requestAnimationFrame(loop);} },"primary");
+    btn("Step +π/4",()=>{ stopAnim(); M4.s.t=Math.round((M4.s.t+PI/4)/(PI/4))*(PI/4); if(M4.s.t>M4.s.per*TAU+1e-9)M4.s.t=0; update(); });
+    btn("Reset",()=>{stopAnim();M4.s.t=0;update();});
+    segBtns([["sin","y = sin x"],["cos","y = cos x"],["both","Both"]],M4.s.which,k=>{M4.s.which=k;render();},"Function");
+    segBtns([[1,"1 period"],[2,"2 periods"]],M4.s.per,k=>{M4.s.per=k; M4.s.t=Math.min(M4.s.t,k*TAU); render();},"Domain");
+    chk("Full curve",M4.s.full,v=>{M4.s.full=v;update();});
+    chk("Key points",M4.s.keys,v=>{M4.s.keys=v;update();});
+    chk("Snap π/12",M4.s.snap,v=>{M4.s.snap=v;update();});
+  },
+  drag(id,p){
+    if(p[0]>GX0-10){ // dragging on the graph sets x directly
+      let t=clamp((p[0]-GX0)/GW*M4.s.per*TAU,0,M4.s.per*TAU); if(M4.s.snap)t=Math.round(t/(PI/12))*(PI/12); stopAnim(); M4.s.t=t; return; }
+    if(len(sub(p,CC4))<6)return false;
+    stopAnim();
+    const a=angOf(CC4,p)*D2R, cur0=((M4.s.t%TAU)+TAU)%TAU; let delta=a-cur0; delta=((delta+PI)%TAU+TAU)%TAU-PI;
+    let t=clamp(M4.s.t+delta,0,M4.s.per*TAU); if(M4.s.snap)t=Math.round(t/(PI/12))*(PI/12); M4.s.t=t;
+  },
+  draw(){
+    cv.appendChild(E("rect",{width:VW,height:VH,fill:"rgba(255,255,255,0)"}));
+    const g=E("g",{}); cv.appendChild(g);
+    const t=M4.s.t, per=M4.s.per, xs=GW/(per*TAU), cy=CC4[1], W=M4.s.which;
+    const GXs=x=>GX0+x*xs, GYs=y=>cy-y*R4;
+    // circle panel
+    for(let k=-1;k<=1;k++){ sseg(g,[CC4[0]-R4-14,cy+k*R4],[GX0+GW+6,cy+k*R4],"var(--grid)",1); }
+    sseg(g,[CC4[0]-R4-14,cy],[CC4[0]+R4+14,cy],"#8FA3C8",1.6); sseg(g,[CC4[0],cy-R4-16],[CC4[0],cy+R4+16],"#8FA3C8",1.6);
+    g.appendChild(E("circle",{cx:CC4[0],cy:cy,r:R4,fill:"none",stroke:"#475569","stroke-width":2.2}));
+    // graph axes
+    for(let k=0;k<=per*4;k++){ const X=GXs(k*PI/2); sseg(g,[X,cy-R4-20],[X,cy+R4+20],"var(--grid)",1); }
+    sseg(g,[GX0-8,cy],[GX0+GW+12,cy],"#8FA3C8",1.8); sseg(g,[GX0,cy-R4-30],[GX0,cy+R4+30],"#8FA3C8",1.8);
+    for(let k=1;k<=per*4;k++){ if(per===2&&k%2===1&&FS>1)continue; stext(g,[GXs(k*PI/2),cy+R4+38],piStr(k*PI/2,2),"ax"); }
+    stext(g,[GX0-8,GYs(1)],"1","ax",null,"end"); stext(g,[GX0-8,GYs(-1)],"−1","ax",null,"end");
+    stext(g,[GX0+GW+8,cy-10],"x","ax",null,"end");
+    const sinOn=W!=="cos", cosOn=W!=="sin";
+    const curve=(f,col,a,b,w,dash,op)=>{ const pts=[]; const n=Math.max(2,Math.ceil((b-a)*xs/2)); for(let i=0;i<=n;i++){const x=a+(b-a)*i/n; pts.push([GXs(x),GYs(f(x))]);} return spath(g,pathD(pts),col,w,dash,op?{opacity:op}:null); };
+    if(M4.s.full){ if(sinOn)curve(Math.sin,"#F9A8D4",0,per*TAU,2.4,"6 5"); if(cosOn)curve(Math.cos,"#93C5FD",0,per*TAU,2.4,"6 5"); }
+    if(t>0.001){ if(sinOn)curve(Math.sin,"var(--magenta)",0,t,4); if(cosOn)curve(Math.cos,"var(--corr)",0,t,4); }
+    // unwrapped arc: same length on the circle and along the x-axis
+    if(t>0.001){
+      const lap=Math.floor(t/TAU-1e-9), rem=t-lap*TAU;
+      if(lap>=1) g.appendChild(E("circle",{cx:CC4[0],cy:cy,r:R4,fill:"none",style:"stroke:var(--lin)","stroke-width":3,opacity:.35}));
+      spath(g,pathD(arcPts(CC4,R4,0,rem/D2R)),"var(--lin)",5,null,{opacity:.9});
+      sseg(g,[GX0,cy],[GXs(t),cy],"var(--lin)",5,null,.9);
+      stext(g,[(GX0+GXs(t))/2,cy+(Math.sin(t)>=0||W==="cos"?16:-14)*FS],"arc "+tStr(t),"xs","#C2410C");
+    }
+    const P=PT(CC4,R4,t/D2R), s=Math.sin(t), c=Math.cos(t), F=[P[0],cy];
+    if(cosOn){ sseg(g,CC4,F,"var(--corr)",4.5); sseg(g,[GXs(t),cy],[GXs(t),GYs(c)],"var(--corr)",3.5,"5 3"); sdot(g,[GXs(t),GYs(c)],"var(--corr)",6); }
+    if(sinOn){ sseg(g,F,P,"var(--magenta)",4.5); sseg(g,P,[GXs(t),GYs(s)],"var(--magenta)",1.6,"5 5",.8); sseg(g,[GXs(t),cy],[GXs(t),GYs(s)],"var(--magenta)",3.5); sdot(g,[GXs(t),GYs(s)],"var(--magenta)",6.5); }
+    sseg(g,CC4,P,"var(--graphite)",2.2);
+    // key points
+    if(M4.s.keys){
+      for(let k=0;k<=per*4;k++){ const x=k*PI/2;
+        if(sinOn){ const y=Math.round(Math.sin(x)); sdot(g,[GXs(x),GYs(y)],"#BE185D",4.5);
+          if(W==="sin"&&k<=4&&(per===1||FS===1)){ const lab=`(${piStr(x,2)}, ${minus(y)})`; stext(g,[GXs(x)+(k===0?4:0),GYs(y)+(y>0?-14:y<0?16:(k%4===0?-12:14))*FS],lab,"xs","#9D174D",k===0?"start":"middle"); } }
+        if(cosOn){ const y=Math.round(Math.cos(x)); sdot(g,[GXs(x),GYs(y)],"#0369A1",4.5);
+          if(W==="cos"&&k<=4&&(per===1||FS===1)){ const lab=`(${piStr(x,2)}, ${minus(y)})`; stext(g,[GXs(x)+(k===0?4:0),GYs(y)+(y>0?-14:y<0?16:14)*FS],lab,"xs","#075985",k===0?"start":"middle"); } }
+      }
+    }
+    sgrab(g,P,"P","var(--ink)");
+    stext(g,[CC4[0],cy-R4-26],"unit circle","xs","#475569");
+    stext(g,[GX0+GW,24],W==="sin"?"y = sin x":W==="cos"?"y = cos x":"y = sin x  ·  y = cos x","sm",W==="cos"?"#0369A1":"#BE185D","end");
+    if(cosOn&&!sinOn) stext(g,[CC4[0],cy+R4+30],"x-value = cos x","xs","#0369A1");
+    if(sinOn) stext(g,[CC4[0],cy+R4+30],cosOn?"x → cos, y → sin":"y-value = sin x","xs","#BE185D");
+  },
+  panel(full){
+    const t=M4.s.t, s=Math.sin(t), c=Math.cos(t), d=t/D2R;
+    if(full){
+      side.innerHTML=`<div class="panel"><h3>The point right now</h3><div id="l4a"></div></div>
+      <div class="panel"><h3>Unwrapping the circle</h3><div class="pad">
+        <p>As P travels around the unit circle, the distance it has travelled (the orange arc) is the angle x in radians. Lay that arc flat along the x-axis: the <b>height of P</b> becomes the graph <b>y = sin x</b>, and its <b>horizontal coordinate</b> becomes <b>y = cos x</b>.</p>
+        <p>After one lap (x = 2π) P is back where it started, so the graph repeats. A function that repeats like this is <span class="term">periodic</span>; the length of one cycle is its <b>period</b>.</p>
+        <div class="eq">period = 2π    amplitude = 1\nmidline: y = 0    range: −1 ≤ y ≤ 1<small>Sine starts on the midline going up; cosine starts at its maximum.</small></div></div></div>
+      <div class="panel"><h3>Key points of one period</h3><div class="tblwrap"><table class="facts"><tr><th>x</th><th>sin x</th><th>cos x</th><th></th></tr>`+
+        [0,1,2,3,4].map(k=>`<tr id="kp${k}"><td>${piStr(k*PI/2,2)}</td><td>${minus(Math.round(Math.sin(k*PI/2)))}</td><td>${minus(Math.round(Math.cos(k*PI/2)))}</td><td style="font-family:var(--ui);font-size:12.5px;color:var(--dim)">${["start","quarter","half","three-quarter","end"][k]}</td></tr>`).join("")+
+      `</table></div><div class="pad"><p>The five key points split a period into four equal quarters: zeros, maximums and minimums of sine and cosine all happen at multiples of π/2.</p></div></div>`+
+      tryPanel(`<p>1. Pause at x = π/6. Read sin x off the graph and compare it to the unit circle value 1/2.</p><p>2. Switch to <b>Both</b>. Where do the curves cross? (Hint: where is sin x = cos x on the unit circle?)</p><p>3. With <b>2 periods</b> on, explain why sin(x + 2π) = sin x.</p>`);
+    }
+    const ex=exactTrig(d);
+    setHTML("l4a",rel("var(--lin)","x (arc length)",near(t/PI*12,Math.round(t/PI*12),1e-6)?degS(d):"",tStr(t)+(piStr(t,12)&&near(t/PI*12,Math.round(t/PI*12),1e-6)&&t>0?" ≈ "+f2(t):""))+
+      rel("var(--magenta)","sin x","height of P",ex?ex.s:f3(s))+
+      rel("var(--corr)","cos x","horizontal coordinate of P",ex?ex.c:f3(c))+
+      rel("var(--vert)","Lap",t>TAU+1e-9?"second time around":"first time around",t>TAU+1e-9?"2":"1"));
+    [0,1,2,3,4].forEach(k=>{ const r=document.getElementById("kp"+k); if(r)r.className=near(((t%TAU)+TAU)%TAU,k*PI/2,1e-6)||(k===4&&near(t,TAU,1e-6))?"on":""; });
+  }
+};
+
+/* ══════════════════════ TAB 5 · transformations ══════════════════════ */
+const ALIST=[-4,-3.5,-3,-2.5,-2,-1.5,-1,-0.5,0.5,1,1.5,2,2.5,3,3.5,4];
+const BLIST=[1/4,1/3,1/2,2/3,3/4,1,3/2,2,5/2,3,4];
+const ZOOMS=[{x0:-PI/2,x1:5*PI/2,y:3.5},{x0:-PI,x1:3*PI,y:5.5},{x0:-2*PI,x1:4*PI,y:9}];
+function trigEq(fn,A,B,C,D,v,lhs){
+  v=v||"x"; lhs=lhs||"y";
+  const Bs=frac(B,12)||f2(B), Cs=piStr(Math.abs(C),12)||f2(Math.abs(C));
+  const xs=Math.abs(C)<1e-9? v : `${v} ${C>0?"−":"+"} ${Cs}`;
+  let inner;
+  if(near(B,1)) inner=xs;
+  else if(Math.abs(C)<1e-9) inner=(Bs.includes("/")?"("+Bs+")":Bs)+v;
+  else inner=(Bs.includes("/")?"("+Bs+")":Bs)+"("+xs+")";
+  const As=near(A,1)?"":near(A,-1)?"−":fmtH(A)+" ";
+  let s=`${lhs} = ${As}${fn}(${inner})`;
+  if(Math.abs(D)>1e-9)s+=(D>0?" + ":" − ")+fmtH(Math.abs(D));
+  return s;
+}
+function genScenario(type){
+  if(type==="ferris"){ const r=pick([10,15,20,25]), b=pick([1,2,3]), T=pick([4,5,6,8,10]);
+    return {type,r,b,T,D:r+b,f:t=>-r*Math.cos(TAU*t/T)+r+b, x1:2*T, y1:Math.max(2*r+b+6,r*3.9), unit:"min", hu:"m"}; }
+  const H=pick([7,7.5,8,8.5,9,9.5,10,10.5,11]), L=pick([0.5,1,1.5,2,2.5,3]), th=rnd(1,6), T=12.4;
+  return {type,H,L,th,T,A:(H-L)/2,D:(H+L)/2,f:t=>(H-L)/2*Math.cos(TAU*(t-th)/T)+(H+L)/2, x1:24, y1:H+3, unit:"h", hu:"ft"};
+}
+const hm=t=>{ const h=Math.floor(t+1e-9), m=Math.round((t-h)*60); const hh=(h+(m===60?1:0))%24, mm=m===60?0:m; return (hh%12===0?12:hh%12)+":"+String(mm).padStart(2,"0")+(hh<12?" a.m.":" p.m."); };
+const M5={
+  tab:"Transformations", lesson:"F-TF.B.5 · F-BF.B.3", accent:"var(--lavender)",
+  title:()=>M5.s.mode==="fn"?trigEq(M5.s.fn,M5.A(),M5.B(),M5.C(),M5.D()):(M5.s.mode==="ferris"?"Model a Ferris wheel":"Model the tides"),
+  s:{mode:"fn",fn:"sin",iA:11,iB:7,iC:2,iD:2,zoom:1,parent:true,
+     ctx:null,cA:10,cT:6,cC:0,cD:20,ti:12,show:false},
+  sl:{},
+  A:()=>ALIST[M5.s.iA], B:()=>BLIST[M5.s.iB], C:()=>M5.s.iC*PI/12, D:()=>M5.s.iD/2,
+  base:()=>M5.s.fn==="tan"?PI:TAU, P:()=>M5.base()/M5.B(),
+  f(x){ const A=M5.A(),B=M5.B(),C=M5.C(),D=M5.D(), u=B*(x-C); return A*(M5.s.fn==="sin"?Math.sin(u):M5.s.fn==="cos"?Math.cos(u):Math.tan(u))+D; },
+  win(){ const z=ZOOMS[M5.s.zoom]; return mkWin(z.x0,z.x1,-z.y,z.y); },
+  newCtx(type){ const s=M5.s; s.ctx=genScenario(type); s.show=false; s.ti=0;
+    if(type==="ferris"){ s.cA=10; s.cT=6; s.cC=0; s.cD=15; } else { s.cA=3; s.cT=12; s.cC=0; s.cD=5; } },
+  ctxT:()=>M5.s.ti/96*M5.s.ctx.x1,
+  model(t){ const s=M5.s; return s.cA*Math.cos(TAU/s.cT*(t-s.cC))+s.cD; },
+  bar(){
+    const s=M5.s;
+    segBtns([["fn","Functions"],["ferris","Ferris wheel"],["tides","Tides"]],s.mode,k=>{ s.mode=k; if(k!=="fn"&&(!s.ctx||s.ctx.type!==k))M5.newCtx(k); render(); },"Mode");
+    if(s.mode==="fn"){
+      segBtns([["sin","sin"],["cos","cos"],["tan","tan"]],s.fn,k=>{s.fn=k;render();},"Function");
+      M5.sl.A=islider("A",0,ALIST.length-1,s.iA,i=>fmtH(ALIST[i]),i=>{s.iA=i;update();});
+      M5.sl.B=islider("B",0,BLIST.length-1,s.iB,i=>frac(BLIST[i],12),i=>{s.iB=i;update();});
+      M5.sl.C=islider("C",-12,12,s.iC,i=>piStr(i*PI/12,12),i=>{s.iC=i;update();});
+      M5.sl.D=islider("D",-8,8,s.iD,i=>fmtH(i/2),i=>{s.iD=i;update();});
+      btn("Zoom −",()=>{s.zoom=Math.min(2,s.zoom+1);update();}); btn("Zoom +",()=>{s.zoom=Math.max(0,s.zoom-1);update();});
+      chk("Parent graph",s.parent,v=>{s.parent=v;update();});
+      btn("Parent (reset)",()=>{s.iA=9;s.iB=5;s.iC=0;s.iD=0;M5.sync();update();});
+    } else {
+      const c=s.ctx, fer=s.mode==="ferris";
+      btn("New scenario",()=>{M5.newCtx(s.mode);render();},"primary");
+      M5.sl.t=islider("time t",0,96,s.ti,i=>f2(i/96*c.x1)+" "+c.unit,i=>{s.ti=i;update();});
+      const st=fer?{A:[-35,35,1],T:[2,30,0.5],C:[0,60,0.25],D:[0,40,1]}:{A:[-32,32,0.25],T:[30,90,0.2],C:[0,60,0.2],D:[0,40,0.25]};
+      M5.sl.cA=islider("A",st.A[0],st.A[1],Math.round(s.cA/st.A[2]),i=>fmtH(i*st.A[2]),i=>{s.cA=i*st.A[2];update();});
+      M5.sl.cT=islider("period",st.T[0],st.T[1],Math.round(s.cT/st.T[2]),i=>fmtH(i*st.T[2]),i=>{s.cT=i*st.T[2];update();});
+      M5.sl.cC=islider("C",st.C[0],st.C[1],Math.round(s.cC/st.C[2]),i=>fmtH(i*st.C[2]),i=>{s.cC=Math.round(i*st.C[2]*100)/100;update();});
+      M5.sl.cD=islider("D",st.D[0],st.D[1],Math.round(s.cD/st.D[2]),i=>fmtH(i*st.D[2]),i=>{s.cD=i*st.D[2];update();});
+      chk("Show the answer curve",s.show,v=>{s.show=v;update();panelFull();});
+    }
+  },
+  sync(){ const s=M5.s; if(s.mode!=="fn")return; if(M5.sl.A){M5.sl.A.set(s.iA);M5.sl.B.set(s.iB);M5.sl.C.set(s.iC);M5.sl.D.set(s.iD);} },
+  handles(){
+    const A=M5.A(),C=M5.C(),D=M5.D(),P=M5.P(),fn=M5.s.fn;
+    const h1=fn==="cos"?[C,D+A]:[C,D];
+    const h2=fn==="cos"?[C+P/2,D-A]:[C+P/4,D+A];
+    return [h1,h2];
+  },
+  drag(id,p){
+    const s=M5.s; if(s.mode!=="fn")return false; const W=M5.win(), x=W.ix(p[0]), y=W.iy(p[1]);
+    if(id==="h1"){ s.iC=clamp(Math.round(x/(PI/12)),-12,12); const yy=s.fn==="cos"?y-M5.A():y; s.iD=clamp(Math.round(yy*2),-8,8); }
+    if(id==="h2"){ const C=M5.C(), D=M5.D(), dx=x-C; const fr=s.fn==="cos"?0.5:0.25;
+      if(dx>0.05){ const Bt=M5.base()*fr/dx; let bi=0,bd=1e9; BLIST.forEach((b,i)=>{const e=Math.abs(Math.log(b/Bt)); if(e<bd){bd=e;bi=i;}}); s.iB=bi; }
+      const At=s.fn==="cos"?D-y:y-D; let ai=s.iA,ad=1e9; ALIST.forEach((a,i)=>{const e=Math.abs(a-At); if(e<ad){ad=e;ai=i;}}); s.iA=ai; }
+    M5.sync();
+  },
+  draw(){ if(M5.s.mode==="fn")M5.drawFn(); else M5.drawCtx(); },
+  drawFn(){
+    const s=M5.s, W=M5.win(), z=ZOOMS[s.zoom], A=M5.A(), B=M5.B(), C=M5.C(), D=M5.D(), P=M5.P(), fn=s.fn;
+    const xstep=s.zoom===2?PI:PI/2, ystep=z.y>6?2:1;
+    const g=drawWin(W,{step:xstep,lab:piLab(2)},{step:ystep,lab:v=>minus(v)},["x","y"]);
+    const parentF=fn==="sin"?Math.sin:fn==="cos"?Math.cos:Math.tan;
+    const br=(B0,C0)=>x=>Math.floor((B0*(x-C0)+PI/2)/PI);
+    if(s.parent) spath(g,plotD(W,parentF,fn==="tan"?br(1,0):null),"#94A3B8",2.2,"6 5");
+    if(fn!=="tan"){
+      const amp=Math.abs(A);
+      sseg(g,[0,W.sy(D)],[VW,W.sy(D)],"var(--vert)",2,"9 6");
+      sseg(g,[0,W.sy(D+amp)],[VW,W.sy(D+amp)],"#A78BFA",1.2,"2 5"); sseg(g,[0,W.sy(D-amp)],[VW,W.sy(D-amp)],"#A78BFA",1.2,"2 5");
+      stext(g,[VW-10,W.sy(D)-11],"midline y = "+fmtH(D),"sm","#6D28D9","end");
+      spath(g,plotD(W,x=>M5.f(x)),"var(--lin)",3.8);
+      // key points of one cycle
+      const ys=fn==="sin"?[0,1,0,-1,0]:[1,0,-1,0,1];
+      ys.forEach((k,i)=>sdot(g,W.S([C+i*P/4,D+A*k]),"#C2410C",4.5));
+      // amplitude arrow at the first maximum
+      const ki=fn==="sin"?(A>0?1:3):(A>0?0:2); const xm=C+ki*P/4; const top=W.S([xm,D+amp]), mid=W.S([xm,D]);
+      if(Math.abs(top[1]-mid[1])>18){ sseg(g,mid,top,"#0F766E",2.4); arrowHead(g,top,[0,-1],"#0F766E",10); arrowHead(g,mid,[0,1],"#0F766E",10); }
+      stext(g,[top[0]+10,(top[1]+mid[1])/2],"amplitude "+fmtH(amp),"sm","#0F766E","start");
+      // period bracket
+      let yb=W.sy(D-amp)+24; let lblDy=16; if(yb>VH-26){ yb=W.sy(D+amp)-24; lblDy=-14; }
+      const xa=W.sx(C), xb=W.sx(C+P);
+      sseg(g,[xa,yb],[xb,yb],"#1D4ED8",2.2); sseg(g,[xa,yb-7],[xa,yb+7],"#1D4ED8",2.2); sseg(g,[xb,yb-7],[xb,yb+7],"#1D4ED8",2.2);
+      stext(g,[(xa+xb)/2,yb+lblDy*FS],"period "+(piStr(P,24)||f2(P)),"sm","#1D4ED8");
+      // phase shift arrow
+      const y0=fn==="sin"?D:D+A;
+      if(Math.abs(C)>1e-9){ const p0=W.S([0,y0]), p1=W.S([C,y0]); sseg(g,p0,p1,"#DB2777",2.6); arrowHead(g,p1,[Math.sign(C),0],"#DB2777",11);
+        stext(g,[(p0[0]+p1[0])/2,p0[1]-12*FS],"shift "+piStr(Math.abs(C),12)+(C>0?" right":" left"),"xs","#BE185D"); }
+    } else {
+      const k0=Math.floor((B*(W.x0-C)-PI/2)/PI)-1, k1=Math.ceil((B*(W.x1-C)-PI/2)/PI)+1;
+      for(let k=k0;k<=k1;k++){ const xa=C+(PI/2+k*PI)/B; if(xa<W.x0||xa>W.x1)continue; sseg(g,[W.sx(xa),0],[W.sx(xa),VH],"var(--unk)",1.8,"8 6"); }
+      sseg(g,[0,W.sy(D)],[VW,W.sy(D)],"var(--vert)",1.6,"9 6");
+      stext(g,[VW-10,W.sy(D)-11],"center line y = "+fmtH(D),"sm","#6D28D9","end");
+      spath(g,plotD(W,x=>M5.f(x),br(B,C)),"var(--lin)",3.8);
+      const xa=W.sx(C-P/2), xb=W.sx(C+P/2), yb=Math.min(VH-30,W.sy(D)+Math.max(60,Math.abs(W.sy(D+A)-W.sy(D))+30));
+      sseg(g,[xa,yb],[xb,yb],"#1D4ED8",2.2); sseg(g,[xa,yb-7],[xa,yb+7],"#1D4ED8",2.2); sseg(g,[xb,yb-7],[xb,yb+7],"#1D4ED8",2.2);
+      stext(g,[(xa+xb)/2,yb+16*FS],"period π/B = "+(piStr(P,24)||f2(P)),"sm","#1D4ED8");
+      stext(g,[W.sx(C+P/2)+6,VH-14],"asymptote","xs","#BE123C","start");
+    }
+    const H=M5.handles();
+    sgrab(g,W.S(H[0]),"h1","#C2410C"); sgrab(g,W.S(H[1]),"h2","#7C3AED");
+    infoBox(g,10,10,[trigEq(fn,A,B,C,D)],"#C2410C");
+  },
+  drawCtx(){
+    const s=M5.s, c=s.ctx, fer=c.type==="ferris";
+    const rect={L:236,T:22,W:440,H:368};
+    const W=mkWin(0,c.x1,0,c.y1,rect);
+    const xst=fer?(c.T/2>=2?c.T/2:1):2, yst=niceStep(c.y1,8);
+    const g=drawWin(W,{step:xst,lab:v=>num(v,2)},{step:yst,lab:v=>num(v,2)},["t ("+c.unit+")","h ("+c.hu+")"]);
+    const outer=E("g",{}); cv.appendChild(outer);
+    const t=M5.ctxT(), h=c.f(t);
+    // data points from the situation
+    const n=fer?16:20; for(let i=0;i<=n;i++){ const tt=c.x1*i/n; sdot(g,W.S([tt,c.f(tt)]),"#64748B",3.5); }
+    if(s.show) spath(g,plotD(W,c.f),"#475569",2.4,"7 5");
+    spath(g,plotD(W,x=>M5.model(x)),"var(--lavender)",4.6,null,{style:"stroke:#7C3AED"});
+    // context picture on the left, on the same vertical scale
+    const gy=W.sy(0);
+    sseg(outer,[6,gy],[rect.L-6,gy],"#65A30D",3);
+    if(fer){
+      const R=c.r*rect.H/c.y1, cx=112, cyy=W.sy(c.D);
+      sseg(outer,[cx,cyy],[cx-R*0.55,gy],"#64748B",3); sseg(outer,[cx,cyy],[cx+R*0.55,gy],"#64748B",3);
+      outer.appendChild(E("circle",{cx,cy:cyy,r:R,fill:"rgba(124,58,237,.06)",stroke:"#7C3AED","stroke-width":2.4}));
+      for(let k=0;k<8;k++){ sseg(outer,[cx,cyy],PT([cx,cyy],R,k*45+360*t/c.T),"#A78BFA",1.2); }
+      const rp=PT([cx,cyy],R,-90+360*t/c.T);
+      sseg(outer,rp,W.S([t,h]),"var(--magenta)",1.6,"5 5",.8);
+      sdot(outer,rp,"var(--magenta)",7); sdot(outer,[cx,cyy],"#475569",4);
+      stext(outer,[cx,Math.max(14,cyy-R-12)],"diameter "+(2*c.r)+" m","xs","#6D28D9");
+    } else {
+      const px=112, top=W.sy(c.y1*0.98);
+      outer.appendChild(E("rect",{x:20,y:W.sy(h),width:rect.L-34,height:gy-W.sy(h),fill:"rgba(2,132,199,.28)"}));
+      sseg(outer,[20,W.sy(h)],[rect.L-14,W.sy(h)],"#0284C7",2.6);
+      outer.appendChild(E("rect",{x:px-7,y:top,width:14,height:gy-top,fill:"#A16207",rx:3}));
+      for(let v=0;v<=c.y1;v+=yst){ sseg(outer,[px-7,W.sy(v)],[px-16,W.sy(v)],"#A16207",1.6); stext(outer,[px-20,W.sy(v)],num(v,1),"xs","#78350F","end"); }
+      sseg(outer,[rect.L-14,W.sy(h)],W.S([t,h]),"var(--magenta)",1.6,"5 5",.8);
+      stext(outer,[px+14,Math.max(14,top+8)],"tide gauge","xs","#78350F","start");
+    }
+    sdot(g,W.S([t,h]),"var(--magenta)",7);
+    smartLabel(g,W.S([t,h]),[1,-0.35],`(${f2(t)}, ${f2(h)})`,"#BE185D","xs");
+    const v=fer?"t":"t", L=fer?"h(t)":"h(t)";
+    infoBox(outer,VW-10,VH-38,["model: "+L+" = "+fmtH(s.cA)+" cos((2π/"+fmtH(s.cT)+")("+v+" − "+fmtH(s.cC)+")) + "+fmtH(s.cD)],"#6D28D9",true);
+  },
+  match(){ const s=M5.s, c=s.ctx; let worst=0; for(let i=0;i<=120;i++){ const t=c.x1*i/120; worst=Math.max(worst,Math.abs(M5.model(t)-c.f(t))); } return worst; },
+  panel(full){
+    const s=M5.s;
+    if(s.mode==="fn"){
+      const A=M5.A(),B=M5.B(),C=M5.C(),D=M5.D(),P=M5.P(),fn=s.fn;
+      if(full){
+        side.innerHTML=`<div class="panel"><h3>Reading the equation</h3><div class="pad"><div class="eq" id="l5a"></div></div></div>
+        <div class="panel"><h3>What each parameter does</h3><div class="pad">
+          <p><b>A</b> stretches vertically. Its absolute value is the <span class="term">amplitude</span> — the distance from the midline to a maximum. A negative A reflects the graph over the midline.</p>
+          <p><b>B</b> squeezes horizontally. One cycle needs B·x to cover 2π, so the <b>period is 2π/B</b> (π/B for tangent). Bigger B → shorter period.</p>
+          <p><b>C</b> is the <span class="term">phase shift</span>: x − C shifts the graph C units right. <b>D</b> shifts it up; the <span class="term">midline</span> is y = D.</p>
+          <p id="l5t">${fn==="tan"?"Tangent has <b>no amplitude</b> (it has no maximum). It has vertical <b>asymptotes</b> wherever the cosine inside it is 0: B(x − C) = π/2 + kπ.":"Drag the orange handle to move the start of a cycle (C and D). Drag the purple handle to change A and B."}</p></div></div>`+
+        tryPanel(`<p>1. Build y = 3 sin(2x) − 1 with the sliders. Where are the maximums? Check: midline −1, amplitude 3 → max 2.</p><p>2. Make the sine graph match y = cos x exactly. What phase shift C works? (C = −π/2 since cos x = sin(x + π/2).)</p><p>3. Switch to tan and set B = 1/2. How far apart are the asymptotes now?</p>`);
+      }
+      const per=piStr(P,24)||f2(P), Bs=frac(B,12);
+      const asy= fn==="tan"? `\nasymptotes: x = ${piStr(C+PI/(2*B),24)||f2(C+PI/(2*B))} + ${per}·k` : "";
+      setHTML("l5a",`${trigEq(fn,A,B,C,D)}\n\n`+(fn==="tan"?`vertical stretch  A = ${fmtH(A)} (no amplitude)\n`:`amplitude  |A| = ${fmtH(Math.abs(A))}\n`)+
+        `period     ${fn==="tan"?"π":"2π"}/B = ${fn==="tan"?"π":"2π"}/(${Bs}) = ${per}\nphase shift C = ${piStr(C,12)} (${Math.abs(C)<1e-9?"none":C>0?"right":"left"})\n${fn==="tan"?"center line":"midline"}    y = ${fmtH(D)}`+
+        (fn!=="tan"?`\nmax ${fmtH(D+Math.abs(A))}, min ${fmtH(D-Math.abs(A))}`:asy)+
+        `<small>${fn==="sin"?"A cycle of sine starts on the midline at x = C.":fn==="cos"?"A cycle of cosine starts at a "+(A>0?"maximum":"minimum")+" at x = C.":"Tangent passes through its center (C, D) and repeats every π/B."}</small>`);
+      return;
+    }
+    const c=s.ctx, fer=c.type==="ferris", w=M5.match(), ok=w<(fer?0.75:0.2);
+    if(full){
+      const story=fer? `A Ferris wheel has a diameter of <b>${2*c.r} m</b>. Its hub (center) is <b>${c.D} m</b> above the ground and it makes one full revolution every <b>${c.T} minutes</b>. You board at the <b>lowest point</b> at t = 0.`
+        : `At a harbor the water reaches high tide of <b>${num(c.H,1)} ft</b> at <b>${hm(c.th)}</b>, and the next low tide of <b>${num(c.L,1)} ft</b> comes at <b>${hm(c.th+6.2)}</b>. Tides repeat about every <b>12.4 hours</b>. Let t be hours after midnight.`;
+      side.innerHTML=`<div class="panel"><h3>The situation</h3><div class="pad"><p>${story}</p><p>Drag the <b>time</b> slider to watch the ${fer?"rider":"water"} move, then set A, period, C and D so the purple model runs through every gray data point.</p></div></div>
+      <div class="panel"><h3>Your model</h3><div class="pad"><div class="eq" id="l5b"></div></div><div id="l5c"></div></div>
+      <div class="panel"><h3>Modeling recipe</h3><div class="pad">
+        <p><b>Midline D</b> = (max + min)/2. <b>Amplitude |A|</b> = (max − min)/2.</p>
+        <p><b>Period</b> = time for one full cycle, so B = 2π/period.</p>
+        <p>With cosine, a cycle starts at a <b>maximum</b> when A &gt; 0 — so C is the time of a maximum. Or use A &lt; 0 to start at a minimum.</p>
+        ${s.show?`<div class="eq">${fer?`h(t) = −${c.r} cos((2π/${c.T})t) + ${c.D}\n   or ${c.r} cos((2π/${c.T})(t − ${num(c.T/2,2)})) + ${c.D}`:`h(t) = ${fmtH(c.A)} cos((2π/12.4)(t − ${c.th})) + ${fmtH(c.D)}`}</div>`:""}</div></div>`;
+    }
+    const t=M5.ctxT();
+    const mx=fer?2*c.r+c.b:c.H, mn=fer?c.b:c.L;
+    setHTML("l5b",`h(t) = ${fmtH(s.cA)} cos((2π/${fmtH(s.cT)})(t − ${fmtH(s.cC)})) + ${fmtH(s.cD)}\nB = 2π/${fmtH(s.cT)} ≈ ${f3(TAU/s.cT)}\nat t = ${f2(t)}: actual ${f2(c.f(t))} ${c.hu}, model ${f2(M5.model(t))} ${c.hu}<small>max ${num(mx,2)}, min ${num(mn,2)} → midline ${num((mx+mn)/2,2)}, amplitude ${num((mx-mn)/2,2)}</small>`);
+    const chkm=(good,txt)=>`<span class="${good?"ok":"no"}">${good?"✓":"✗"}</span> ${txt}`;
+    const T0=fer?c.T:12.4;
+    const items=[chkm(near(Math.abs(s.cA),(mx-mn)/2,0.01),"amplitude"),chkm(near(s.cD,(mx+mn)/2,0.01),"midline"),chkm(near(s.cT,T0,0.01),"period"),chkm(Math.abs(M5.model(0)-c.f(0))<(fer?0.75:0.2),"starting value h(0)")];
+    setHTML("l5c",ok?`<div class="verdict good"><b>Match!</b> Your equation fits every data point (largest gap ${f2(w)} ${c.hu}). Press <b>New scenario</b> for another.</div>`
+      :`<div class="verdict bad"><b>Not yet</b> — largest gap ${f2(w)} ${c.hu}.<br>${items.join(" &nbsp; ")}</div>`);
+  }
+};
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+const KINDS=[["mix","Mix"],["conv","Degrees ↔ radians"],["exact","Exact values"],["ref","Reference angle & sign"],["graph","Amplitude · period · midline"],["other","Other ratios"]];
+const signWord=v=>v>0?"positive (+)":"negative (−)";
+function numField(label,ans,tol,ph,closeMsg){ return {label,ph,check(raw){ const a=parseAns(raw); if(!isFinite(a.v))return "unread"; if(Math.abs(a.v-ans)<=tol)return "ok"; if(closeMsg&&Math.abs(a.v-ans)<=Math.max(0.02,tol*20))return "close"; return "bad"; }}; }
+function trigField(label,ansNum,undef){ return {label,ph:"e.g. -√3/2 or undefined",check(raw){ const a=parseAns(raw);
+  if(undef) return a.undef?"ok":(isFinite(a.v)?"bad":"unread");
+  if(a.undef)return "bad"; if(!isFinite(a.v))return "unread"; if(Math.abs(a.v-ansNum)<=0.0015)return "ok"; if(Math.abs(a.v-ansNum)<=0.02)return "close"; return "bad"; }}; }
+function genProblem(kind){
+  if(kind==="mix")kind=pick(["conv","exact","ref","graph","other"]);
+  const pr={kind};
+  if(kind==="conv"){
+    const toRad=Math.random()<.5;
+    if(toRad){ let d; do{ d=Math.random()<.75? rnd(-24,48)*15 : rnd(-36,72)*10; }while(d===0); pr.deg=d; pr.dir="d2r";
+      const ex=radExact(d); pr.q=`Convert <b>${degS(d)}</b> to radians. Give an exact multiple of π (like 5π/6) or a decimal to 3 places.`;
+      pr.fields=[numField("radians",d*D2R,0.0015,"e.g. 5pi/6")]; pr.sol=`radians = degrees × π/180\n${num(d,0)} × π/180 = ${num(d,0)}π/180 = ${ex} ≈ ${f3(d*D2R)}`;
+      pr.hint=`Multiply by π/180, then reduce the fraction ${num(d,0)}/180 to lowest terms.`; pr.ang=d; }
+    else { let n,dd; if(Math.random()<.8){ dd=pick([2,3,4,6,12,9,5,10,18]); do{n=rnd(-2*dd,4*dd);}while(n===0||gcd(n,dd)!==1); pr.rad=n*PI/dd; pr.rs=piStr(pr.rad,24); }
+      else { const v=pick([1,2,3,4,0.5,1.5,2.5]); pr.rad=v; pr.rs=num(v,1); }
+      pr.dir="r2d"; const deg=pr.rad/D2R; pr.ang=deg;
+      pr.q=`Convert <b>${pr.rs}</b> radians to degrees.${pr.rs.includes("π")?"":" Round to the nearest tenth of a degree."}`;
+      pr.fields=[numField("degrees",deg,pr.rs.includes("π")?0.051:0.06,"e.g. 150")];
+      pr.sol=`degrees = radians × 180/π\n${pr.rs} × 180/π = ${pr.rs.includes("π")?num(deg,2)+"°":`${num(pr.rad*180,2)}/π ≈ ${num(deg,1)}°`}`;
+      pr.hint=pr.rs.includes("π")?`Multiply by 180/π: the π's cancel. Example: π/3 × 180/π = 60°.`:`There is no π to cancel, so divide by π: ${pr.rs} × 180/π ≈ ${pr.rs} × 57.3.`; }
+  }
+  if(kind==="exact"){
+    const s=pick(SPECIAL), k=pick([-1,0,0,1]), d=s+360*k, fn=pick(["sin","cos","tan"]), useRad=Math.random()<.55;
+    const X=exactTrig(d), V=trigVals(d); pr.ang=d; pr.fn=fn;
+    const as=useRad?piStr(d*D2R,12):degS(d);
+    pr.q=`Find the exact value of <b>${fn} ${as}</b>.`;
+    const undef=fn==="tan"&&isNaN(V.t), ansN=fn==="sin"?V.s:fn==="cos"?V.c:V.t, ansS=fn==="sin"?X.s:fn==="cos"?X.c:X.t;
+    pr.fields=[trigField(fn+" "+as,ansN,undef)]; pr.exactAns=ansS;
+    const q=quadOf(d), r=refAngle(d);
+    pr.sol=q? `${as}${useRad?" = "+degS(norm(d))+" (coterminal)":norm(d)!==d?" is coterminal with "+degS(norm(d)):""}\nQuadrant ${QN[q]}, reference angle ${degS(r)} = ${piStr(r*D2R,12)}\n${fn} ${degS(r)} = ${SPEC[r][fn==="sin"?1:fn==="cos"?0:2]}\nsign in Q${QN[q]}: ${(fn==="sin"?V.s:fn==="cos"?V.c:V.t)>0?"+":"−"}\n${fn} ${as} = ${ansS}`
+      : `${as} lands on the ${axisName(d)}, at (${X.c}, ${X.s}).\ncos = x = ${X.c},  sin = y = ${X.s},  tan = y/x = ${X.t}\n${fn} ${as} = ${ansS}`;
+    pr.hint=q?`Reference angle ${degS(r)}; Quadrant ${QN[q]}, where ${fn} is ${signWord(fn==="sin"?V.s:fn==="cos"?V.c:V.t)}. Values come from the 30-60-90 or 45-45-90 triangle.`:`The angle is on an axis. Find the point (x, y) on the unit circle there; ${fn==="tan"?"tan = y/x (undefined if x = 0 — type \"undefined\")":fn+" is the "+(fn==="cos"?"x":"y")+"-coordinate"}.`;
+  }
+  if(kind==="ref"){
+    let d, useRad=Math.random()<.45;
+    if(useRad){ const s=pick(SPECIAL.filter(a=>a%90!==0)); d=s+360*pick([-1,0,0,1]); }
+    else { do{ d=rnd(1,71)*5; }while(d%90===0); d+=360*pick([-1,0,0,0,1]); }
+    const fn=pick(["sin","cos","tan"]), V=trigVals(d), q=quadOf(d), r=refAngle(d), as=useRad?piStr(d*D2R,12):degS(d);
+    pr.ang=d; pr.fn=fn; pr.useRad=useRad;
+    pr.q=`For θ = <b>${as}</b>: find the <b>reference angle</b> and the <b>sign of ${fn} θ</b>.`;
+    pr.fields=[{label:"reference angle"+(useRad?" (radians)":" (degrees)"),ph:useRad?"e.g. pi/6":"e.g. 40",check(raw){ const a=parseAns(raw); if(!isFinite(a.v))return "unread"; return (Math.abs(a.v-r)<0.051||Math.abs(a.v-r*D2R)<0.0015)?"ok":"bad"; }},
+      {label:"sign of "+fn+" θ",ph:"+ or −",check(raw){ const sg=parseSign(raw); if(!sg)return "unread"; const v=fn==="sin"?V.s:fn==="cos"?V.c:V.t; return sg===Math.sign(v)?"ok":"bad"; }}];
+    const how=q===1?`${degS(r)} (already acute)`:q===2?`180° − ${degS(norm(d))} = ${degS(r)}`:q===3?`${degS(norm(d))} − 180° = ${degS(r)}`:`360° − ${degS(norm(d))} = ${degS(r)}`;
+    pr.sol=`${as}${norm(d)!==d||useRad?" → coterminal "+degS(norm(d)):""} is in Quadrant ${QN[q]}\nreference angle = ${how}${useRad?" = "+piStr(r*D2R,12):""}\nQ${QN[q]}: ${["","all positive","only sin positive","only tan positive","only cos positive"][q]}\n${fn} θ is ${signWord(fn==="sin"?V.s:fn==="cos"?V.c:V.t)}`;
+    pr.hint=`First find the coterminal angle between 0° and 360° (${degS(norm(d))}). The reference angle is measured to the <b>x-axis</b>, never the y-axis. Then use ASTC for the sign.`;
+  }
+  if(kind==="graph"){
+    const fn=pick(["sin","cos"]), A=pick([1,2,3,4,0.5,1.5,5])*pick([1,-1]), D=rnd(-4,4);
+    let B,C,Bs,piB=Math.random()<.25;
+    if(piB){ const k=pick([1,2,3,4,6]); B=PI/k; C=0; Bs="π/"+k; }
+    else { B=pick([1/2,1/3,1,2,3,4,2/3,3/2]); C=pick([0,0,PI/6,-PI/6,PI/4,-PI/4,PI/3,-PI/2,PI/2]); }
+    const P=TAU/B; pr.fn=fn; pr.A=A; pr.B=B; pr.C=C; pr.D=D; pr.P=P; pr.piB=piB;
+    let eqs; if(piB){ const As=near(A,1)?"":near(A,-1)?"−":fmtH(A)+" "; eqs=`y = ${As}${fn}((${Bs})x)${D?(D>0?" + ":" − ")+Math.abs(D):""}`; } else eqs=trigEq(fn,A,B,C,D);
+    pr.eq=eqs;
+    pr.q=`For <b>${eqs}</b>, find the amplitude, the period and the midline.`;
+    const Ps=piB? num(P,3) : (piStr(P,24)||f3(P));
+    pr.fields=[numField("amplitude",Math.abs(A),0.011,"e.g. 3"),numField("period",P,0.002,"e.g. 2pi/3"),numField("midline  y =",D,0.011,"e.g. -1")];
+    pr.sol=`amplitude = |A| = |${fmtH(A)}| = ${fmtH(Math.abs(A))}\nperiod = 2π/B = 2π/(${piB?Bs:frac(B,12)}) = ${Ps}\nmidline: y = D = ${fmtH(D)}${C?`\n(phase shift ${piStr(Math.abs(C),12)} ${C>0?"right":"left"} — it does not change these)`:""}`;
+    pr.hint=`Match to y = A ${fn}(B(x − C)) + D. Amplitude is |A| (never negative), period is 2π divided by the coefficient of x, and the midline is y = D.`;
+  }
+  if(kind==="other"){
+    const G=genGiven(); pr.G=G;
+    pr.q=`<b>${G.kind} θ = ${G.val[G.kind]}</b> and θ is in <b>Quadrant ${QN[G.q]}</b>. Find ${G.others.map(k=>k+" θ").join(" and ")}.`;
+    pr.fields=G.others.map(k=>trigField(k+" θ",G.num[k],false));
+    pr.sol=givenSteps(G);
+    pr.hint=`Sketch the reference triangle in Quadrant ${QN[G.q]} with legs x, y and hypotenuse r. Use x² + y² = r² for the missing side; in Quadrant ${QN[G.q]}, x is ${G.sx>0?"positive":"negative"} and y is ${G.sy>0?"positive":"negative"}.`;
+  }
+  return pr;
+}
+const C6=[350,232], R6=170;
+const M6={
+  tab:"Challenge", lesson:"F-TF.A.1–3 · F-TF.B.5 · F-TF.C.8", accent:"var(--coral)",
+  title:()=>"Practice: "+({conv:"degrees ↔ radians",exact:"exact trig values",ref:"reference angle & sign",graph:"amplitude, period & midline",other:"find the other ratios"}[M6.s.pr?M6.s.pr.kind:"conv"]),
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  streakEl:null,
+  newProb(){ M6.s.pr=genProblem(M6.s.kind); M6.s.state="open"; M6.s.reveal=false; M6.s.tries=0; },
+  bar(){
+    btn("New problem",()=>{M6.newProb();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    KINDS.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=M6.s.kind; sel.onchange=()=>{M6.s.kind=sel.value;M6.newProb();render();}; bar.appendChild(sel);
+    M6.streakEl=spacer(""); M6.upStreak();
+  },
+  upStreak(){ if(M6.streakEl)M6.streakEl.textContent="Streak "+M6.s.streak+" · Best "+M6.s.best+" · Solved "+M6.s.solved; },
+  draw(){
+    if(!M6.s.pr)M6.newProb();
+    const pr=M6.s.pr, show=M6.s.state==="right"||M6.s.reveal;
+    if(pr.kind==="graph")return M6.drawGraph(pr,show);
+    const g=gridUC(C6,R6,{noTicks:pr.kind==="other"});
+    g.appendChild(E("circle",{cx:C6[0],cy:C6[1],r:R6,fill:"none",stroke:"#475569","stroke-width":2}));
+    if(pr.kind==="other"){ const G=pr.G;
+      const qx=G.sx>0?C6[0]:0, qy=G.sy>0?0:C6[1];
+      g.appendChild(E("rect",{x:qx,y:qy,width:G.sx>0?VW-C6[0]:C6[0],height:G.sy>0?C6[1]:VH-C6[1],fill:"rgba(255,217,61,.14)"}));
+      stext(g,[G.sx>0?VW-70:70,G.sy>0?26:VH-26],"Quadrant "+QN[G.q],"sm","#A16207");
+      if(show){ const k=R6/Math.sqrt(G.R2), x=G.sx*Math.sqrt(G.X2), y=G.sy*Math.sqrt(G.Y2), P=[C6[0]+x*k,C6[1]-y*k], F=[P[0],C6[1]];
+        g.appendChild(E("polygon",{points:[C6,F,P].map(p=>p.join(",")).join(" "),style:"fill:rgba(255,217,61,.3);stroke:#CA8A04","stroke-width":3}));
+        const xs=(G.sx<0?"−":"")+rootStr(G.X2), ys=(G.sy<0?"−":"")+rootStr(G.Y2);
+        stext(g,[(C6[0]+F[0])/2,C6[1]+(y>0?18:-16)*FS],"x = "+xs,"sm","#0369A1");
+        stext(g,[F[0]+(x>0?10:-10),(C6[1]+P[1])/2],"y = "+ys,"sm","#BE185D",x>0?"start":"end");
+        smartLabel(g,P,sub(P,C6),"r = "+rootStr(G.R2),"var(--ink)"); sdot(g,P,"var(--magenta)",6); }
+      return;
+    }
+    const d=pr.ang, A=Math.abs(d), sg=d<0?-1:1;
+    const tip=PT(C6,R6+30,d); sseg(g,C6,PT(C6,R6+30,0),"var(--graphite)",3); sseg(g,C6,tip,"var(--corr)",3.4); arrowHead(g,tip,unit(sub(tip,C6)),"var(--corr)");
+    if(A>0.5){ const pts=spiralPts(C6,30,11,d); spath(g,pathD(pts),"var(--vert)",2.6); const e=pts[pts.length-1], pv=spiralPt(C6,30,11,d-sg*4); arrowHead(g,e,unit(sub(e,pv)),"var(--vert)",11); }
+    const P=PT(C6,R6,d); sdot(g,P,"var(--magenta)",6);
+    if(show){
+      const q=quadOf(d), X=exactTrig(d), V=trigVals(d);
+      if(q){ const base=(q===1)?0:(q===4)?360:180, nd=norm(d); wedge(g,C6,56,base,nd,"rgba(255,217,61,.45)","#CA8A04"); stext(g,PT(C6,76,(base+nd)/2),"ref "+degS(refAngle(d)),"xs","#A16207");
+        const F=[P[0],C6[1]]; sseg(g,C6,F,"var(--corr)",4.5); sseg(g,F,P,"var(--magenta)",4.5); }
+      smartLabel(g,P,sub(P,C6),X?`(${X.c}, ${X.s})`:`(${f3(V.c)}, ${f3(V.s)})`,"var(--ink)");
+      if(pr.kind==="conv") infoBox(g,12,12,[degS(d)+" = "+(radExact(d)||f3(d*D2R))+" rad"],"#0369A1");
+    } else infoBox(g,12,12,[pr.kind==="conv"&&pr.dir==="r2d"?"θ = "+pr.rs+" rad":"θ = "+(pr.kind==="conv"?degS(d):(pr.useRad||pr.kind==="exact"?"?":degS(d)))],"#0369A1");
+  },
+  drawGraph(pr,show){
+    const P=pr.P, amp=Math.abs(pr.A);
+    const x0=Math.min(0,pr.C)-P/8, x1=Math.max(0,pr.C)+2*P+P/8;
+    const y0=Math.min(-1,pr.D-amp-1.2), y1=Math.max(1,pr.D+amp+1.2);
+    const W=mkWin(x0,x1,y0,y1);
+    let xs; if(pr.piB){ xs={step:niceStep(x1-x0,10),lab:v=>num(v,2)}; }
+    else { const cand=[PI/12,PI/6,PI/4,PI/2,PI,2*PI,4*PI]; let st=cand.find(c=>(x1-x0)/c<=12)||8*PI; xs={step:st,lab:piLab(12)}; }
+    const g=drawWin(W,xs,{step:niceStep(y1-y0,8),lab:v=>num(v,2)},["x","y"]);
+    if(show){
+      const f=x=>pr.A*(pr.fn==="sin"?Math.sin(pr.B*(x-pr.C)):Math.cos(pr.B*(x-pr.C)))+pr.D;
+      sseg(g,[0,W.sy(pr.D)],[VW,W.sy(pr.D)],"var(--vert)",2,"9 6");
+      stext(g,[VW-10,W.sy(pr.D)-11],"midline y = "+fmtH(pr.D),"sm","#6D28D9","end");
+      spath(g,plotD(W,f),"var(--lin)",3.8);
+      const xa=W.sx(pr.C), xb=W.sx(pr.C+P), yb=Math.min(VH-28,W.sy(pr.D-amp)+24);
+      sseg(g,[xa,yb],[xb,yb],"#1D4ED8",2.2); sseg(g,[xa,yb-7],[xa,yb+7],"#1D4ED8",2.2); sseg(g,[xb,yb-7],[xb,yb+7],"#1D4ED8",2.2);
+    } else stext(g,[VW/2,VH/2+60],"The graph appears when you solve it.","sm","#64748B");
+    infoBox(g,10,10,[pr.eq],"#C2410C");
+  },
+  panel(full){
+    const pr=M6.s.pr;
+    if(!full&&document.getElementById("chk"))return;
+    let h=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob" data-kind="${pr.kind}">${pr.q}</p></div>
+      <div class="ansrow">${pr.fields.map((f,i)=>`<div><label class="fld" for="ans${i}">${f.label}</label><input type="text" id="ans${i}" autocomplete="off" spellcheck="false" placeholder="${f.ph}"></div>`).join("")}</div>
+      <p class="fmt">Accepted: 2pi/3 or 2π/3, sqrt(3)/2 or √3/2, fractions like -1/2, decimals, "undefined"; signs as + or −.</p>
+      <div class="fldwrap" style="margin:14px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button>
+        <button id="sol" class="ghost" type="button">Show solution</button>
+      </div><div id="fb6"></div><div style="height:4px"></div></div>
+      <div class="panel"><h3>How answers are checked</h3><div class="pad">
+      <p>Exact values should be exact: √3/2 is accepted, and so is a decimal correct to 3 places (0.866). A rounder decimal like 0.87 is marked <b>close</b>.</p>
+      <p>Get one right on the first try to grow your streak. A wrong answer resets it, gives you a hint, and lets you try again.</p></div></div>`;
+    side.innerHTML=h;
+    const ins=pr.fields.map((_,i)=>document.getElementById("ans"+i));
+    const fb=document.getElementById("fb6");
+    const showSol=(good)=>{ fb.innerHTML=(good||"")+`<div class="fldwrap"><div class="eq">${pr.sol}</div></div>`; };
+    const check=()=>{
+      if(M6.s.state==="right")return;
+      const res=pr.fields.map((f,i)=>f.check(ins[i].value));
+      if(res.some(r=>r==="unread")){ fb.innerHTML=`<div class="verdict bad"><b>I can't read ${pr.fields.length>1?"one of those":"that"}.</b> Use numbers, fractions like 5/6, π as pi or π (e.g. 3pi/4), roots as sqrt(2) or √2, "undefined", or + / − for a sign.</div>`; return; }
+      if(res.every(r=>r==="ok")){
+        M6.s.state="right"; if(M6.s.tries===0&&!M6.s.reveal){ M6.s.streak++; M6.s.best=Math.max(M6.s.best,M6.s.streak); } M6.s.solved++; M6.upStreak();
+        clear(); M6.draw();
+        showSol(`<div class="verdict good"><b>Correct!</b> ${M6.s.tries||M6.s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+M6.s.streak+"."} Compare your work, then press <b>New problem</b>.</div>`);
+        ins.forEach(x=>x.disabled=true);
+      } else {
+        M6.s.tries++; M6.s.streak=0; M6.upStreak();
+        const close=res.some(r=>r==="close")&&!res.some(r=>r==="bad");
+        const which=pr.fields.length>1? pr.fields.filter((_,i)=>res[i]!=="ok").map(f=>f.label).join(" and ") : "";
+        fb.innerHTML=close? `<div class="verdict bad"><b>Close!</b> Give the exact value (like √3/2) or a decimal to 3 places.</div>`
+          : `<div class="verdict bad"><b>Not quite${which?" — check "+which:""}.</b> ${pr.hint}</div>`;
+      }
+    };
+    document.getElementById("chk").onclick=check;
+    ins.forEach(x=>x.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); }));
+    document.getElementById("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){M6.s.streak=0;M6.upStreak();} clear(); M6.draw(); showSol(`<div class="verdict info"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+function setFS(){ FS=(window.innerWidth<=560)?1.5:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
+function update(){ setFS(); const M=MODS[cur]; bTitle.textContent=M.title(); clear(); M.draw(); M.panel(false); }
+function panelFull(){ MODS[cur].panel(true); }
+function render(){
+  setFS(); const M=MODS[cur];
+  if(M!==M4&&M4.s.play)stopAnim();
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  if(M===M6&&!M6.s.pr)M6.newProb();
+  bar.innerHTML=""; M.sl&&(M.sl={}); M.bar();
+  clear(); M.draw(); M.panel(true);
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+M3.init(); M5.newCtx("ferris");
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>

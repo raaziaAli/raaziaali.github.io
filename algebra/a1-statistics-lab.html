@@ -1,0 +1,1240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data &amp; Regression Lab — Algebra 1 Unit 7</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M10 52L54 16' stroke='%2300E5FF' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='40' r='5' fill='%23FF3D8A'/%3E%3Ccircle cx='30' cy='36' r='5' fill='%23FFD93D'/%3E%3Ccircle cx='44' cy='20' r='5' fill='%23FF3D8A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap;text-align:right}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text],textarea{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus,textarea:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict.info{background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .verdict b{color:#fff}
+
+  /* ── drawing ── */
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .hit{fill:transparent;cursor:grab}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── lab additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible,.choice:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:120px}
+  .rng output{min-width:34px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .axt{font-family:var(--ui);font-weight:700;font-size:13px;fill:#4B5B7C}
+  .hd{font-family:var(--mono);font-weight:700;font-size:11.5px;letter-spacing:.12em;fill:#5B6B8C;paint-order:stroke;stroke:#fff;stroke-width:4}
+  .tiny{font-family:var(--mono);font-weight:600;font-size:11px;paint-order:stroke;stroke:#fff;stroke-width:3.5;stroke-linejoin:round}
+  .tb{font-family:var(--ui);font-weight:600;font-size:14px;fill:#14213D}
+  .tbn{font-family:var(--mono);font-weight:700;font-size:15px;fill:#14213D}
+  .cellhit{fill:transparent;cursor:pointer}
+  @media (max-width:560px){
+    svg.canvas .sm{font-size:20px;stroke-width:5} svg.canvas .mk{font-size:26px} svg.canvas .num{font-size:22px}
+    svg.canvas .ax{font-size:16px} svg.canvas .axt{font-size:18px} svg.canvas .hd{font-size:15px}
+    svg.canvas .tiny{font-size:15px} svg.canvas .tb{font-size:18px} svg.canvas .tbn{font-size:20px}
+  }
+  .choices{display:grid;grid-template-columns:1fr;gap:10px;padding:16px 20px}
+  .choice{font-family:var(--ui);font-size:15px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:14px;padding:13px 14px;cursor:pointer;text-align:left;line-height:1.5;transition:.15s}
+  .choice:hover{background:rgba(255,255,255,.12)}
+  .choice.right{border-color:var(--mint);background:rgba(94,234,212,.16)}
+  .choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.14)}
+  .choices.rs{grid-template-columns:1fr 1fr}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  .fmt{font-size:13px;color:var(--dim);padding:6px 20px 0}
+  table.grid2{width:100%;border-collapse:collapse;font-size:14px}
+  table.grid2 th,table.grid2 td{padding:6px 5px;text-align:center;border-bottom:1px solid rgba(196,181,253,.12)}
+  table.grid2 th{font-weight:600;color:#DDDDF2;font-size:13px}
+  table.grid2 th:first-child{text-align:left}
+  table.grid2 input{padding:8px 6px;text-align:center;font-family:var(--mono);font-weight:600;border-radius:9px;min-width:54px}
+  table.grid2 td.tot{font-family:var(--mono);color:var(--dim);font-weight:600}
+  table.cmp{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.cmp th,table.cmp td{padding:10px 20px;border-bottom:1px solid rgba(196,181,253,.12);text-align:right}
+  table.cmp th:first-child,table.cmp td:first-child{text-align:left;color:#fff;font-weight:500}
+  table.cmp td{font-family:var(--mono);font-weight:600;color:#DDDDF2}
+  table.cmp th{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--accent)}
+  .swatch{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:6px}
+  .ok b,.no b{color:inherit}
+  @media (max-width:560px){
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:90px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+    .choices.rs{grid-template-columns:1fr 1fr}
+    table.cmp th,table.cmp td{padding:9px 14px}
+    .rel .val{white-space:normal;max-width:52vw}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Data &amp; Regression Lab</h1>
+    <div class="eyebrow">Algebra 1 · Unit 7 · Descriptive Statistics</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Statistics figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every graph is live and every statistic is computed from the data on the board — add, drag or edit a value and the numbers follow. Quartiles use the median-of-halves method taught in Algebra 1 (the median is left out of both halves when n is odd). Vocabulary follows Common Core / Eureka Math (EngageNY) Algebra I.
+    <div class="links"><a href="/algebra/">← Algebra courses</a><a href="/math/#algebra">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700; let VH=460;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const C={ink:"#14213D",blue:"#0284C7",orange:"#EA580C",green:"#059669",pink:"#DB2777",purple:"#7C3AED",
+  red:"#DC2626",hand:"#FF6B35",grid:"#DCE6F7",axis:"#8FA3C8",mute:"#7C8AAB",teal:"#0891B2",yellow:"#F59E0B"};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;};
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+function num(v,dp){ dp=(dp==null?1:dp); if(!isFinite(v))return "—"; const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+function frac(v,maxD){ maxD=maxD||24;
+  for(let d=1;d<=maxD;d++){ const n=Math.round(v*d); if(Math.abs(n/d-v)<1e-9){ const g=gcd(n,d); return {n:n/g,d:d/g}; } }
+  return null; }
+// exact value when it is a short decimal or a fraction with a small denominator, otherwise a rounded decimal
+function ex(v,maxD){
+  if(!isFinite(v))return "—";
+  if(Math.abs(v*1000-Math.round(v*1000))<1e-6) return num(v,3);
+  const f=frac(v,maxD||60); if(f) return minus(f.n+"/"+f.d)+" ≈ "+num(v,2);
+  return "≈ "+num(v,2); }
+const fr=(a,b)=>`${a}/${b}`;
+function pct(v){ return num(v*100,1)+"%"; }
+function sgn(v,dp){ return (v>=0?"+":"")+num(v,dp); }
+// seeded RNG for repeatable presets
+function mulberry(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function gauss(R){ let u=0,v=0; while(u===0)u=R(); while(v===0)v=R(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+function niceStep(span,target){ if(span<=0)return 1; const raw=span/target, p=Math.pow(10,Math.floor(Math.log10(raw))), f=raw/p; return (f<1.5?1:f<3?2:f<7?5:10)*p; }
+
+/* statistics */
+const sum=a=>a.reduce((s,v)=>s+v,0);
+const mean=a=>a.length?sum(a)/a.length:NaN;
+const sorted=a=>a.slice().sort((x,y)=>x-y);
+function medianS(s){ const n=s.length; if(!n)return NaN; return n%2? s[(n-1)/2] : (s[n/2-1]+s[n/2])/2; }
+function summary(a){
+  const s=sorted(a), n=s.length, Q={s,n};
+  Q.min=s[0]; Q.max=s[n-1]; Q.med=medianS(s);
+  const lo=s.slice(0,Math.floor(n/2)), hi=s.slice(Math.ceil(n/2));
+  Q.q1=lo.length?medianS(lo):s[0]; Q.q3=hi.length?medianS(hi):s[n-1];
+  Q.iqr=Q.q3-Q.q1; Q.lf=Q.q1-1.5*Q.iqr; Q.uf=Q.q3+1.5*Q.iqr;
+  Q.isOut=v=>v<Q.lf-1e-9||v>Q.uf+1e-9;
+  Q.out=s.filter(Q.isOut);
+  const inl=s.filter(v=>!Q.isOut(v)); Q.wlo=inl.length?inl[0]:Q.min; Q.whi=inl.length?inl[inl.length-1]:Q.max;
+  Q.mean=mean(s); Q.ss=sum(s.map(v=>(v-Q.mean)*(v-Q.mean)));
+  Q.sd=Math.sqrt(Q.ss/n); Q.s1=n>1?Math.sqrt(Q.ss/(n-1)):NaN; Q.range=Q.max-Q.min;
+  return Q;
+}
+function shapeOf(Q){
+  if(Q.n<6) return {k:"few",t:"Too few values to judge"};
+  const sd=Q.sd||1, s1=3*(Q.mean-Q.med)/sd, s2=Q.iqr>0?(Q.q3+Q.q1-2*Q.med)/Q.iqr:0, c=(s1+s2)/2;
+  if(c>0.2) return {k:"right",t:"Skewed right",c}; if(c<-0.2) return {k:"left",t:"Skewed left",c};
+  return {k:"sym",t:"Approximately symmetric",c};
+}
+function linreg(P){
+  const n=P.length; if(n<2)return null;
+  const mx=mean(P.map(p=>p[0])), my=mean(P.map(p=>p[1])); let sxx=0,sxy=0,syy=0;
+  P.forEach(([x,y])=>{ sxx+=(x-mx)*(x-mx); sxy+=(x-mx)*(y-my); syy+=(y-my)*(y-my); });
+  if(sxx<1e-12)return null;
+  const m=sxy/sxx; return {m,b:my-m*mx,r:syy>1e-12?sxy/Math.sqrt(sxx*syy):0,mx,my,n};
+}
+const ssr=(P,m,b)=>sum(P.map(([x,y])=>{const e=y-(m*x+b);return e*e;}));
+// R² of a quadratic fit (used to detect a curved residual pattern)
+function quadR2(xs,ys){
+  const n=xs.length; if(n<5)return 0;
+  const S=k=>sum(xs.map(x=>Math.pow(x,k))), Sy=k=>sum(xs.map((x,i)=>Math.pow(x,k)*ys[i]));
+  const A=[[n,S(1),S(2)],[S(1),S(2),S(3)],[S(2),S(3),S(4)]], B=[Sy(0),Sy(1),Sy(2)];
+  for(let c=0;c<3;c++){ let p=c; for(let r=c+1;r<3;r++)if(Math.abs(A[r][c])>Math.abs(A[p][c]))p=r;
+    [A[c],A[p]]=[A[p],A[c]]; [B[c],B[p]]=[B[p],B[c]]; if(Math.abs(A[c][c])<1e-12)return 0;
+    for(let r=0;r<3;r++)if(r!==c){ const f=A[r][c]/A[c][c]; for(let k=c;k<3;k++)A[r][k]-=f*A[c][k]; B[r]-=f*B[c]; } }
+  const co=B.map((v,i)=>v/A[i][i]), my=mean(ys);
+  let sst=0,sse=0; xs.forEach((x,i)=>{ const f=co[0]+co[1]*x+co[2]*x*x; sse+=(ys[i]-f)**2; sst+=(ys[i]-my)**2; });
+  return sst>1e-12?1-sse/sst:0;
+}
+function strength(r){ const a=Math.abs(r); const s=a>=0.8?"strong":a>=0.5?"moderate":a>=0.3?"weak":"very weak or no";
+  return a<0.3? "very weak or no linear association" : s+" "+(r>0?"positive":"negative")+" linear association"; }
+function eqStr(m,b,dm,db){ return `ŷ = ${num(m,dm)}x ${b<0?"−":"+"} ${num(Math.abs(b),db)}`; }
+function parseNum(str){
+  let s=String(str).trim().replace(/−/g,"-").replace(/\s+/g,""); if(!s)return NaN;
+  let p=false; if(s.endsWith("%")){p=true;s=s.slice(0,-1);}
+  const m=/^([-+]?(?:\d+\.?\d*|\.\d+))(?:\/((?:\d+\.?\d*|\.\d+)))?$/.exec(s); if(!m)return NaN;
+  let v=parseFloat(m[1]); if(m[2]!=null){ const d=parseFloat(m[2]); if(!d)return NaN; v/=d; }
+  return p?v/100:v;
+}
+
+/* svg */
+function E(tag,a){ const n=document.createElementNS(NS,tag); for(const k in a)n.setAttribute(k,a[k]); return n; }
+function clear(){ while(cv.firstChild)cv.removeChild(cv.firstChild); }
+function setVH(h){ VH=h; cv.setAttribute("viewBox","0 0 "+VW+" "+h); }
+function root(){ const g=E("g",{}); cv.appendChild(g); return g; }
+function Ln(g,x1,y1,x2,y2,c,w,dash,op){ const a={x1,y1,x2,y2,stroke:c||C.ink,"stroke-width":w||2,"stroke-linecap":"round"}; if(dash)a["stroke-dasharray"]=dash; if(op!=null)a.opacity=op; return g.appendChild(E("line",a)); }
+function Ci(g,x,y,r,fill,o){ const a={cx:x,cy:y,r,fill:fill||C.ink,stroke:"#fff","stroke-width":1.6}; if(o)Object.assign(a,o); return g.appendChild(E("circle",a)); }
+function Rc(g,x,y,w,h,o){ const a={x,y,width:Math.max(0,w),height:Math.max(0,h)}; Object.assign(a,o||{}); return g.appendChild(E("rect",a)); }
+function T(g,x,y,s,o){ o=o||{};
+  const t=E("text",{x,y,class:o.cls||"sm","text-anchor":o.a||"middle","dominant-baseline":"middle"});
+  if(o.fill)t.style.fill=o.fill; if(o.rot!=null)t.setAttribute("transform",`rotate(${o.rot} ${x} ${y})`);
+  t.textContent=s; g.appendChild(t); return t; }
+// centred label that stays on the board
+function TC(g,x,y,s,o){ o=o||{}; const k=(o.cls==="tiny"?6.7:o.cls==="ax"?6.6:8)*FS, w=s.length*k; return T(g,clamp(x,w/2+4,VW-w/2-4),y,s,o); }
+let clipN=0;
+function clipG(g,x,y,w,h){ const id="clp"+(++clipN); const d=E("defs",{}); d.innerHTML=`<clipPath id="${id}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath>`; g.appendChild(d); return g.appendChild(E("g",{"clip-path":`url(#${id})`})); }
+// labelled number line
+function axisX(g,X,y,lo,hi,step,o){ o=o||{};
+  Ln(g,X(lo),y,X(hi),y,C.axis,1.8); let k=0;
+  for(let v=Math.ceil(lo/step-1e-9)*step; v<=hi+1e-9; v+=step,k++){ const vv=+v.toFixed(6), x=X(vv);
+    Ln(g,x,y,x,y+5,C.axis,1.5); if(FS===1||k%2===0) T(g,x,y+(FS>1?19:15),num(vv,3),{cls:"ax"}); }
+  if(o.title) T(g,X(hi),y+(FS>1?40:31),o.title,{cls:"ax",a:"end"});
+}
+// 2-D frame with grid, ticks and axis titles
+function frame(g,F){
+  const X=v=>F.L+(v-F.xr[0])/(F.xr[1]-F.xr[0])*(F.R-F.L), Y=v=>F.B-(v-F.yr[0])/(F.yr[1]-F.yr[0])*(F.B-F.T);
+  const Xi=p=>F.xr[0]+(p-F.L)/(F.R-F.L)*(F.xr[1]-F.xr[0]), Yi=p=>F.yr[0]+(F.B-p)/(F.B-F.T)*(F.yr[1]-F.yr[0]);
+  Rc(g,F.L,F.T,F.R-F.L,F.B-F.T,{fill:"#fff","fill-opacity":.6,stroke:C.axis,"stroke-width":1.2});
+  let k=0;
+  for(let v=Math.ceil(F.xr[0]/F.xs-1e-9)*F.xs; v<=F.xr[1]+1e-9; v+=F.xs,k++){ const vv=+v.toFixed(6), x=X(vv);
+    Ln(g,x,F.T,x,F.B,C.grid,1); if(F.noXlab)continue; if(FS===1||k%2===0) T(g,x,F.B+(FS>1?19:14),num(vv,3),{cls:"ax"}); }
+  k=0;
+  for(let v=Math.ceil(F.yr[0]/F.ys-1e-9)*F.ys; v<=F.yr[1]+1e-9; v+=F.ys,k++){ const vv=+v.toFixed(6), y=Y(vv);
+    Ln(g,F.L,y,F.R,y,C.grid,1); if(FS===1||k%2===0) T(g,F.L-6,y,num(vv,3),{cls:"ax",a:"end"}); }
+  if(F.zero&&F.yr[0]<0&&F.yr[1]>0) Ln(g,F.L,Y(0),F.R,Y(0),"#5B6B8C",1.8);
+  Rc(g,F.L,F.T,F.R-F.L,F.B-F.T,{fill:"none",stroke:C.axis,"stroke-width":1.4});
+  if(F.xt) T(g,(F.L+F.R)/2,F.B+(FS>1?42:32),F.xt,{cls:"axt"});
+  if(F.yt) T(g,F.yl||16,(F.T+F.B)/2,F.yt,{cls:"axt",rot:-90});
+  const pg=clipG(g,F.L,F.T,F.R-F.L,F.B-F.T);
+  return {X,Y,Xi,Yi,F,pg};
+}
+// box plot
+function drawBox(g,Q,X,yc,h,col,o){ o=o||{};
+  const y0=yc-h/2, y1=yc+h/2;
+  if(o.fences){ [Q.lf,Q.uf].forEach((f,i)=>{ if(f>=o.lo&&f<=o.hi){ const x=X(f);
+    Ln(g,x,y0-6,x,y1+6,C.pink,1.6,"5 4"); TC(g,x,y0-14,(i?"upper":"lower")+" fence "+num(f,2),{cls:"tiny",fill:C.pink}); } }); }
+  Ln(g,X(Q.wlo),yc,X(Q.q1),yc,col,2.2); Ln(g,X(Q.q3),yc,X(Q.whi),yc,col,2.2);
+  Ln(g,X(Q.wlo),yc-h/4,X(Q.wlo),yc+h/4,col,2.2); Ln(g,X(Q.whi),yc-h/4,X(Q.whi),yc+h/4,col,2.2);
+  Rc(g,X(Q.q1),y0,X(Q.q3)-X(Q.q1),h,{fill:col,"fill-opacity":.16,stroke:col,"stroke-width":2.2,rx:3});
+  Ln(g,X(Q.med),y0,X(Q.med),y1,col,3.4);
+  Q.out.forEach(v=>{ Ci(g,X(v),yc,5.5,C.pink); });
+  if(o.labels&&FS===1){
+    const L=[["min",Q.wlo],["Q1",Q.q1],["Med",Q.med],["Q3",Q.q3],["max",Q.whi]]; let last=-1e9;
+    L.forEach(([s,v])=>{ const x=X(v); if(x-last>=26){ T(g,x,y1+11,s,{cls:"tiny",fill:"#5B6B8C"}); last=x; } });
+  }
+}
+function heading(g,x,y,s,a){ return T(g,x,y,s,{cls:"hd",a:a||"start"}); }
+
+/* drag plumbing */
+let dragId=null, FS=1;
+function svgPt(e){ const m=cv.getScreenCTM(); if(!m)return [0,0]; const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y]; }
+cv.addEventListener("pointerdown",e=>{
+  const t=e.target.closest?e.target.closest("[data-drag]"):null, M=MODS[cur];
+  if(t&&t.dataset.drag){ dragId=t.dataset.drag; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); if(M.grab)M.grab(dragId); return; }
+  if(M.place){ if(M.place(svgPt(e))!==false)update(); }
+});
+cv.addEventListener("pointermove",e=>{ if(!dragId)return; const M=MODS[cur]; if(!M.drag)return; if(M.drag(dragId,svgPt(e))!==false)update(); });
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{ if(dragId){ dragId=null; const M=MODS[cur]; if(M.drop)M.drop(); } }));
+
+/* bar builders */
+function btn(label,fn,cls){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(opts,val,fn,lab){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(lab)s.setAttribute("aria-label",lab);
+  opts.forEach(([k,l])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=l;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s;
+}
+function chips(opts,val,fn,color){
+  const row=document.createElement("div"); row.className="chiprow";
+  opts.forEach(([k,l])=>{ const b=document.createElement("button"); b.type="button"; b.style.setProperty("--c",color||"var(--cyan)");
+    b.textContent=l; b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); row.appendChild(b); });
+  bar.appendChild(row); return row;
+}
+function chk(label,val,fn){
+  const l=document.createElement("label"); l.className="chk";
+  const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i;
+}
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function slider(label,min,max,step,val,fn,fmt){
+  fmt=fmt||(v=>String(v));
+  const l=document.createElement("label"); l.className="rng"; l.textContent=label+" ";
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=step; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); o.textContent=fmt(val);
+  i.oninput=()=>{ o.textContent=fmt(+i.value); fn(+i.value); };
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l); return {i,o};
+}
+const tryPanel=h=>`<div class="panel"><h3>Try this</h3><div class="pad">${h}</div></div>`;
+const relRow=(color,name,sub,val)=>`<div class="rel"><span class="dot" style="background:${color}"></span><span class="nm">${name}${sub?`<em>${sub}</em>`:""}</span><span class="val">${val}</span></div>`;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ══════════════════════ TAB 1 · distributions ══════════════════════ */
+const PRE1={
+  scores:{name:"Test scores",v:"test score",u:"points",lo:30,hi:100,bw:10,
+    data:[42,61,65,68,70,72,74,75,76,78,79,80,81,82,83,84,85,86,87,88,89,90,92,94,97]},
+  heights:{name:"Heights",v:"height",u:"inches",lo:56,hi:78,bw:2,
+    data:[59,61,62,62,63,63,64,64,64,65,65,65,66,66,66,66,67,67,67,68,68,68,69,69,70,70,71,72,73,75]},
+  commute:{name:"Commute times",v:"commute time",u:"minutes",lo:0,hi:80,bw:5,
+    data:[3,5,6,7,8,8,9,10,10,11,12,12,13,14,15,15,16,18,20,22,24,25,28,30,35,42,55,70]}
+};
+const L1=60, R1=665, YD1=165;
+const M1={
+  tab:"Distributions", lesson:"S-ID.A.1 · S-ID.A.3", accent:"var(--cyan)",
+  s:{pre:"scores",data:null,bw:10,mode:"add",fences:true},
+  title:()=>"Three views of one data set: "+PRE1[M1.s.pre].name.toLowerCase(),
+  vh:()=>FS>1?510:500,
+  init(){ M1.load("scores"); },
+  load(k){ const P=PRE1[k]; M1.s.pre=k; M1.s.data=P.data.slice(); M1.s.bw=P.bw; },
+  range(){ const P=PRE1[M1.s.pre], d=M1.s.data, bw=M1.s.bw; let lo=P.lo, hi=P.hi;
+    if(d.length){ const mn=Math.min(...d), mx=Math.max(...d); lo=Math.min(lo,Math.floor(mn/bw)*bw); hi=Math.max(hi,(Math.floor(mx/bw)+1)*bw); }
+    return [lo,hi]; },
+  bar(){
+    segBtns(Object.keys(PRE1).map(k=>[k,PRE1[k].name]),M1.s.pre,k=>{M1.load(k);render();},"Data set");
+    segBtns([["add","Tap adds a value"],["del","Tap removes a value"]],M1.s.mode,k=>{M1.s.mode=k;render();},"Tap mode");
+    slider("Bin width",1,20,1,M1.s.bw,v=>{M1.s.bw=v;update();});
+    chk("Show fences",M1.s.fences,v=>{M1.s.fences=v;update();});
+  },
+  place(p){
+    if(p[1]<24||p[1]>YD1+14) return false;
+    const [lo,hi]=M1.range(), d=M1.s.data; const v=lo+(p[0]-L1)/(R1-L1)*(hi-lo);
+    if(v<lo-2||v>hi+2) return false;
+    if(M1.s.mode==="add"){ if(d.length<200) d.push(clamp(Math.round(v),Math.ceil(lo),Math.floor(hi))); }
+    else { if(d.length<=4) return false; let bi=-1,bd=1e9; d.forEach((x,i)=>{const dd=Math.abs(x-v); if(dd<bd){bd=dd;bi=i;}});
+      if(bi>=0&&bd<=Math.max(2,(hi-lo)*0.03)) d.splice(bi,1); else return false; }
+  },
+  draw(){
+    const d=M1.s.data, [lo,hi]=M1.range(), X=v=>L1+(v-lo)/(hi-lo)*(R1-L1);
+    const step=niceStep(hi-lo,FS>1?7:12), g=root(), P=PRE1[M1.s.pre];
+    const Q=d.length?summary(d):null;
+    // ── dot plot
+    heading(g,14,16,"DOT PLOT");
+    Rc(g,L1-14,24,R1-L1+28,YD1-14,{fill:"transparent",style:"cursor:"+(M1.s.mode==="add"?"copy":"pointer")});
+    if(Q){ const sh=shapeOf(Q); T(g,R1,16,"Shape: "+sh.t.toLowerCase(),{cls:"tiny",a:"end",fill:C.purple}); }
+    const stacks={}; d.forEach(v=>{ const k=Math.round(v); (stacks[k]=stacks[k]||[]).push(v); });
+    const maxS=Math.max(1,...Object.values(stacks).map(a=>a.length));
+    const ppu=(R1-L1)/(hi-lo), rmax=clamp(ppu*0.46,2.4,7*FS); let sp=Math.min(2*rmax+1.5,(YD1-36)/maxS); const r=Math.max(1.6,Math.min(rmax,sp/2-0.4));
+    Object.keys(stacks).forEach(k=>{ stacks[k].sort((a,b)=>a-b).forEach((v,i)=>{ const out=Q&&Q.isOut(v);
+      Ci(g,X(+k),YD1-r-3-i*sp,r,out?C.pink:C.blue,{"stroke-width":r>3?1.4:0.6}); }); });
+    axisX(g,X,YD1,lo,hi,step);
+    // ── histogram
+    const bw=M1.s.bw, top=230, base=345;
+    heading(g,14,200,"HISTOGRAM · bin width "+bw);
+    if(d.length){
+      const mn=Math.min(...d), mx=Math.max(...d), b0=Math.floor(mn/bw)*bw, nb=Math.floor((mx-b0)/bw+1e-9)+1, cnt=new Array(nb).fill(0);
+      d.forEach(v=>{ cnt[clamp(Math.floor((v-b0)/bw+1e-9),0,nb-1)]++; });
+      const mc=Math.max(...cnt), cs=Math.max(1,Math.ceil(niceStep(mc,4))), cmax=Math.ceil(mc/cs)*cs, H=(base-top)/cmax;
+      for(let c=0;c<=cmax;c+=cs){ const y=base-c*H; Ln(g,L1,y,R1,y,C.grid,1); T(g,L1-6,y,String(c),{cls:"ax",a:"end"}); }
+      T(g,22,(top+base)/2,"count",{cls:"ax",rot:-90});
+      const bpx=bw*ppu, every=Math.max(1,Math.ceil(30*FS/bpx));
+      for(let i=0;i<nb;i++){ const a=b0+i*bw, x0=X(a), h=cnt[i]*H;
+        Rc(g,x0,base-h,bpx,h,{fill:"rgba(2,132,199,.22)",stroke:C.blue,"stroke-width":1.6});
+        if(cnt[i]&&bpx>=15*FS) T(g,x0+bpx/2,base-h-9,String(cnt[i]),{cls:"tiny",fill:C.blue}); }
+      Ln(g,X(b0),base,X(b0+nb*bw),base,C.axis,1.8);
+      for(let i=0;i<=nb;i++){ const x=X(b0+i*bw); Ln(g,x,base,x,base+5,C.axis,1.5); if(i%every===0) T(g,x,base+(FS>1?19:15),num(b0+i*bw,2),{cls:"ax"}); }
+    }
+    // ── box plot
+    heading(g,14,382,"BOX PLOT");
+    if(Q){ drawBox(g,Q,X,422,30,C.purple,{fences:M1.s.fences,lo,hi,labels:true}); }
+    axisX(g,X,458,lo,hi,step,{});
+    T(g,R1,FS>1?502:494,P.u==="points"?"test score (points)":P.v+" ("+P.u+")",{cls:"ax",a:"end"});
+  },
+  panel(){
+    const P=PRE1[M1.s.pre];
+    side.innerHTML=`<div class="panel"><h3>Summary · ${esc(P.name)}</h3><div id="s1"></div></div>
+    <div class="panel"><h3>Edit the data</h3><div class="pad"><p>Type or paste values separated by commas or spaces, then press <b>Apply</b>. Or tap the dot plot to add (or remove) values.</p>
+      <textarea id="d1" rows="4" aria-label="Data values"></textarea>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap"><button class="go" id="ap1" type="button" style="flex:1 1 120px">Apply</button><button class="ghost" id="so1" type="button">Sort</button></div>
+      <div id="e1"></div></div></div>
+    <div class="panel"><h3>Reading a distribution</h3><div class="pad">
+      <p>All three graphs show the <b>same</b> data. A <span class="term">dot plot</span> shows every value. A <span class="term">histogram</span> groups values into equal-width bins and shows how many fall in each; change the bin width and the picture changes, but the data does not. A <span class="term">box plot</span> shows the five-number summary: minimum, Q1, median, Q3, maximum.</p>
+      <p><b>Shape:</b> if the long tail stretches to the right (toward larger values) the data is <b>skewed right</b>; a tail to the left is <b>skewed left</b>; mirror-image halves are <b>symmetric</b>.</p>
+      <div class="eq">IQR = Q3 − Q1
+lower fence = Q1 − 1.5·IQR
+upper fence = Q3 + 1.5·IQR<small>Any value below the lower fence or above the upper fence is an outlier (shown in pink). The whiskers stop at the most extreme values that are not outliers.</small></div>
+      <p>Quartiles here use the median of each half; when n is odd the median is not included in either half.</p></div></div>
+    ${tryPanel(`<p>Choose <b>Commute times</b>. Which way is it skewed, and which values are outliers? Now tap the dot plot near 75 a few times. Do the fences move? Why does adding big values push the upper fence up?</p><p>Then drag the bin width from 1 to 20. Which bin width shows the shape best?</p>`)}`;
+    $("ap1").onclick=()=>{ const vals=$("d1").value.split(/[\s,;]+/).filter(Boolean).map(Number);
+      const bad=vals.filter(v=>!isFinite(v)).length, good=vals.filter(v=>isFinite(v)).slice(0,200);
+      if(good.length<4){ $("e1").innerHTML=`<div class="verdict bad" style="margin:12px 0 0"><b>Need at least 4 numbers.</b></div>`; return; }
+      M1.s.data=good; $("e1").innerHTML=bad?`<div class="verdict info" style="margin:12px 0 0">Skipped ${bad} entr${bad>1?"ies":"y"} that ${bad>1?"were not numbers":"was not a number"}.</div>`:""; update(); };
+    $("so1").onclick=()=>{ M1.s.data=sorted(M1.s.data); update(); };
+  },
+  live(){
+    const d=M1.s.data, P=PRE1[M1.s.pre]; const ta=$("d1");
+    if(ta&&document.activeElement!==ta) ta.value=d.map(v=>num(v,3).replace("−","-")).join(", ");
+    if(!d.length){ $("s1").innerHTML=`<div class="pad">No data.</div>`; return; }
+    const Q=summary(d), sh=shapeOf(Q);
+    $("s1").innerHTML=
+      relRow(C.blue,"n","number of values",Q.n)+
+      relRow(C.purple,"Five-number summary","min · Q1 · median · Q3 · max",[Q.min,Q.q1,Q.med,Q.q3,Q.max].map(v=>num(v,2)).join(" · "))+
+      relRow(C.purple,"IQR = Q3 − Q1",num(Q.q3,2)+" − "+num(Q.q1,2),num(Q.iqr,2)+" "+P.u)+
+      relRow(C.pink,"Fences","Q1 − 1.5·IQR and Q3 + 1.5·IQR",num(Q.lf,2)+" and "+num(Q.uf,2))+
+      relRow(C.pink,"Outliers",Q.out.length?"outside the fences":"no value is outside the fences",Q.out.length?Q.out.map(v=>num(v,2)).join(", "):"none")+
+      relRow(C.green,"Shape",sh.k==="few"?"":sh.k==="sym"?"mean ≈ median; balanced tails":sh.k==="right"?"long tail toward larger values; mean "+num(Q.mean,1)+" > median "+num(Q.med,1):"long tail toward smaller values; mean "+num(Q.mean,1)+" < median "+num(Q.med,1),sh.t);
+  }
+};
+
+/* ══════════════════════ TAB 2 · center & spread ══════════════════════ */
+const S2=[62,68,70,72,75,75,78,80,84,86], P2=[66,70,72,74,75,75,76,78,80,84], Q2=[48,55,62,70,75,78,85,90,94,93];
+const L2=50, R2=670, X2=v=>L2+v/100*(R2-L2), Xi2=p=>(p-L2)/(R2-L2)*100;
+const M2={
+  tab:"Center & spread", lesson:"S-ID.A.2 · S-ID.A.3", accent:"var(--mint)",
+  s:{mode:"one",S:null,P:null,Q:null,hl:9,start:null,moved:false},
+  title:()=>M2.s.mode==="one"?"Mean vs median: drag the orange point":"Compare two classes: same center, different spread",
+  vh:()=>M2.s.mode==="one"?520:(FS>1?484:470),
+  init(){ M2.reset(); },
+  reset(){ M2.s.S=S2.slice(); M2.s.P=P2.slice(); M2.s.Q=Q2.slice(); M2.s.hl=9; const q=summary(M2.s.S); M2.s.start={mean:q.mean,med:q.med}; M2.s.moved=false; },
+  bar(){
+    segBtns([["one","One data set"],["two","Compare two sets"]],M2.s.mode,k=>{M2.s.mode=k;render();},"View");
+    if(M2.s.mode==="one"){
+      btn("Make it an outlier",()=>{ M2.s.S[M2.s.hl]=M2.s.S[M2.s.hl]>40?6:99; M2.s.moved=true; update(); },"primary");
+      btn("Add a value",()=>{ const q=summary(M2.s.S); if(M2.s.S.length<16)M2.s.S.push(clamp(Math.round(q.med+rnd(-8,8)),0,100)); update(); });
+      btn("Remove a value",()=>{ const a=M2.s.S; if(a.length<=4)return; let i=a.length-1; if(i===M2.s.hl)i--; a.splice(i,1); if(i<M2.s.hl)M2.s.hl--; update(); });
+    }
+    btn("Reset",()=>{M2.reset();update();});
+  },
+  sets(){ return M2.s.mode==="one"?[["S",M2.s.S]]:[["P",M2.s.P],["Q",M2.s.Q]]; },
+  drag(id,p){ const set=id[0], i=+id.slice(1), arr=M2.s[set]; if(!arr||i>=arr.length)return false;
+    const v=clamp(Math.round(Xi2(p[0])),0,100); if(arr[i]===v)return false; arr[i]=v; if(set==="S"&&i===M2.s.hl)M2.s.moved=true; },
+  dots(g,arr,set,base,maxH,colorFn){
+    const order=arr.map((v,i)=>[v,i]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]), cnt={}; order.forEach(([v])=>cnt[v]=(cnt[v]||0)+1);
+    const maxS=Math.max(1,...Object.values(cnt)), r=7, sp=Math.min(15,maxH/maxS), seen={};
+    const top={};
+    order.forEach(([v,i])=>{ const k=seen[v]=(seen[v]||0); seen[v]++; const y=base-r-3-k*sp, x=X2(v);
+      Ci(g,x,y,Math.min(r,sp/2+1),colorFn(i)); top[v]=y;
+      g.appendChild(E("circle",{cx:x,cy:y,r:FS>1?20:12,class:"hit","data-drag":set+i})); });
+    return top;
+  },
+  markers(g,Q,yTop,base,rowA,rowB){
+    const xm=X2(Q.mean), xd=X2(Q.med);
+    Ln(g,xd,yTop,xd,base,C.green,2.6,"7 4"); Ln(g,xm,yTop,xm,base,C.pink,2.6);
+    g.appendChild(E("polygon",{points:`${xm},${base-1} ${xm-8},${base+11} ${xm+8},${base+11}`,fill:C.pink}));
+    const a="x̄ = "+num(Q.mean,2), b="median = "+num(Q.med,2);
+    TC(g,xm,rowA,a,{fill:C.pink}); TC(g,xd,rowB,b,{fill:C.green});
+  },
+  draw(){
+    const g=root();
+    if(M2.s.mode==="one"){
+      const a=M2.s.S, Q=summary(a), base=175;
+      heading(g,14,16,"DOT PLOT · drag any dot");
+      // ghost markers where mean and median started
+      const st=M2.s.start; if(M2.s.moved){ Ln(g,X2(st.mean),60,X2(st.mean),base,C.pink,1.4,"2 4",.55); Ln(g,X2(st.med),60,X2(st.med),base,C.green,1.4,"2 4",.55); }
+      M2.markers(g,Q,62,base,FS>1?40:38,FS>1?62:56);
+      const top=M2.dots(g,a,"S",base,100,i=>i===M2.s.hl?C.hand:C.blue);
+      if(!M2.s.moved){ const v=a[M2.s.hl]; TC(g,X2(v),top[v]-20,"drag me",{cls:"tiny",fill:C.hand}); }
+      axisX(g,X2,base+14,0,100,FS>1?20:10);
+      // deviation rows
+      const ds=Q.s.map(v=>v-Q.mean), n=ds.length, y0=246, rh=Math.min(15,100/n), xm=X2(Q.mean);
+      heading(g,14,226,"DEVIATIONS FROM THE MEAN  x − x̄");
+      Ln(g,xm,y0-8,xm,y0+n*rh,C.pink,1.6,"4 3");
+      Q.s.forEach((v,i)=>{ const y=y0+i*rh+rh/2, c=ds[i]<0?C.blue:C.orange;
+        Ln(g,xm,y,X2(v),y,c,Math.max(2,Math.min(5,rh*.38)));
+        Ci(g,X2(v),y,Math.min(4,rh/2),c,{"stroke-width":1});
+        if(rh>=12&&FS===1&&Math.abs(ds[i])>1.2){ const right=ds[i]>0; T(g,X2(v)+(right?8:-8),y,sgn(ds[i],1),{cls:"tiny",a:right?"start":"end",fill:c}); } });
+      // squares of deviations
+      const yb=508, mh=126, abs=ds.map(Math.abs), sa=sum(abs), mx=Math.max(...abs,1e-9);
+      const k=Math.min(6.2,mh/mx,(R2-L2-3*(n-1)-44)/((sa+Q.sd)||1));
+      heading(g,14,360,"SQUARES OF DEVIATIONS");
+      T(g,R2,360,FS>1?"σ = "+num(Q.sd,2):"Σ(x − x̄)² = "+num(Q.ss,1)+" · σ² = "+num(Q.ss/n,2)+" · σ = "+num(Q.sd,2),{cls:"tiny",a:"end",fill:C.purple});
+      let x=L2;
+      ds.forEach((dv,i)=>{ const s=abs[i]*k, c=dv<0?C.blue:C.orange;
+        if(s<1.2){ Ln(g,x,yb,x+2,yb,c,2); x+=5; return; }
+        Rc(g,x,yb-s,s,s,{fill:c,"fill-opacity":.18,stroke:c,"stroke-width":1.4}); x+=s+3; });
+      x+=26; const ss=Q.sd*k;
+      Rc(g,x,yb-ss,ss,ss,{fill:C.purple,"fill-opacity":.22,stroke:C.purple,"stroke-width":2,"stroke-dasharray":"5 3"});
+      T(g,x+ss/2,yb-ss-10,"average square",{cls:"tiny",fill:C.purple});
+      if(ss>18) T(g,x+ss/2,yb+0-ss/2,"σ²",{cls:"sm",fill:C.purple});
+      T(g,x-8,yb-ss/2,"σ",{cls:"tiny",a:"end",fill:C.purple});
+      T(g,L2,378,k>=6.19?"drawn to the same scale as the number line":"scaled down to fit",{cls:"tiny",a:"start",fill:C.mute});
+    } else {
+      const rows=[["P",M2.s.P,"CLASS A",C.blue],["Q",M2.s.Q,"CLASS B",C.orange]];
+      rows.forEach(([set,arr,name,col],j)=>{ const off=j*232, base=off+150, Q=summary(arr);
+        heading(g,14,off+16,name+" · drag any dot");
+        M2.markers(g,Q,off+66,base,off+(FS>1?38:36),off+(FS>1?58:52));
+        M2.dots(g,arr,set,base,72,()=>col);
+        axisX(g,X2,base+14,0,100,FS>1?20:10);
+        drawBox(g,Q,X2,base+(FS>1?58:50),22,col,{});
+      });
+    }
+  },
+  panel(){
+    if(M2.s.mode==="one"){
+      side.innerHTML=`<div class="panel"><h3>Live statistics</h3><div id="s2"></div></div>
+      <div class="panel"><h3>Center: mean or median?</h3><div class="pad">
+        <p>The <span class="term">mean</span> x̄ is the balance point: the deviations to its left and right always cancel (their sum is exactly 0). The <span class="term">median</span> is the middle value of the sorted list.</p>
+        <p>Drag the orange point far away. The mean chases it, because every value counts in the sum. The median barely moves, because only the <b>order</b> matters. For skewed data or data with outliers, the median (with the IQR) is the better summary.</p>
+        <div class="eq">x̄ = (Σx) / n
+σ = √( Σ(x − x̄)² / n )<small>σ is the population standard deviation: square every deviation, average the squares (σ², the variance), then take the square root. The purple square's area is the average of the other squares, so its side is σ.</small></div>
+        <p>Your calculator also reports s, which divides by n − 1 instead of n. It is slightly larger and is used when the data is a sample.</p></div></div>
+      ${tryPanel(`<p>Press <b>Make it an outlier</b>. By how much did the mean move? The median? The IQR? The standard deviation?</p><p>Can you drag points so that the mean is 80 but the median is 70? Which way is that data skewed?</p>`)}`;
+    } else {
+      side.innerHTML=`<div class="panel"><h3>Side by side</h3><div id="s2"></div></div>
+      <div class="panel"><h3>Comparing distributions</h3><div class="pad">
+        <p>To compare two data sets, compare their <b>center</b> (mean or median) <i>and</i> their <b>spread</b> (IQR or standard deviation), and mention shape and outliers.</p>
+        <p>These two classes have the same mean, yet Class B's scores are far more spread out: a larger IQR and a larger standard deviation. Saying "the classes did the same" would hide that difference.</p>
+        <div class="eq">Use median & IQR when the data is skewed or has outliers.
+Use mean & σ when it is roughly symmetric.</div></div></div>
+      ${tryPanel(`<p>Drag dots in Class A until its IQR matches Class B's without changing its median. Then drag one Class B score to 0. Which statistics changed the most?</p>`)}`;
+    }
+  },
+  live(){
+    if(M2.s.mode==="one"){
+      const Q=summary(M2.s.S), st=M2.s.start, n=Q.n;
+      $("s2").innerHTML=
+        relRow(C.blue,"n","values",n)+
+        relRow(C.pink,"Mean x̄","Σx / n = "+num(sum(Q.s),2)+" / "+n,ex(Q.mean,n))+
+        relRow(C.green,"Median",n%2?"the middle (#"+((n+1)/2)+") value":"average of #"+(n/2)+" and #"+(n/2+1),num(Q.med,2))+
+        relRow(C.pink,"Mean moved","since reset",sgn(Q.mean-st.mean,2))+
+        relRow(C.green,"Median moved","since reset",sgn(Q.med-st.med,2))+
+        relRow(C.purple,"IQR","Q3 − Q1 = "+num(Q.q3,2)+" − "+num(Q.q1,2),num(Q.iqr,2))+
+        relRow(C.purple,"Σ(x − x̄)²","sum of the squares",num(Q.ss,2))+
+        relRow(C.purple,"σ","√(Σ(x − x̄)² / n)",num(Q.sd,2))+
+        relRow(C.mute,"s","√(Σ(x − x̄)² / (n − 1))",num(Q.s1,2))+
+        relRow(C.mute,"Sum of deviations","Σ(x − x̄) is always 0",num(sum(Q.s.map(v=>v-Q.mean)),6));
+    } else {
+      const A=summary(M2.s.P), B=summary(M2.s.Q), row=(n,a,b)=>`<tr><td>${n}</td><td>${a}</td><td>${b}</td></tr>`;
+      const more=(a,b,lbl)=>Math.abs(a-b)<0.05?`about the same ${lbl}`:(a>b?"Class A":"Class B")+" has the larger "+lbl;
+      $("s2").innerHTML=`<table class="cmp"><tr><th></th><th><span class="swatch" style="background:${C.blue}"></span>A</th><th><span class="swatch" style="background:${C.orange}"></span>B</th></tr>
+        ${row("Mean x̄",num(A.mean,2),num(B.mean,2))}${row("Median",num(A.med,2),num(B.med,2))}
+        ${row("Q1 · Q3",num(A.q1,1)+" · "+num(A.q3,1),num(B.q1,1)+" · "+num(B.q3,1))}
+        ${row("IQR",num(A.iqr,2),num(B.iqr,2))}${row("σ",num(A.sd,2),num(B.sd,2))}${row("Range",num(A.range,1),num(B.range,1))}
+        ${row("Outliers",A.out.length?A.out.join(", "):"none",B.out.length?B.out.join(", "):"none")}</table>
+        <div class="pad"><p><b>Center:</b> ${Math.abs(A.mean-B.mean)<0.5?"the means are about equal ("+num(A.mean,1)+" vs "+num(B.mean,1)+")":more(A.mean,B.mean,"mean")}. <b>Spread:</b> ${more(A.iqr,B.iqr,"IQR")} and ${more(A.sd,B.sd,"standard deviation")}.</p></div>`;
+    }
+  }
+};
+
+/* ══════════════════════ TAB 3 · two-way tables ══════════════════════ */
+const PRE3={
+  bf:{name:"Breakfast & tardiness",rv:"Breakfast",cv:"Arrival",rows:["Ate breakfast","Skipped"],cols:["On time","Late"],n:[[86,14],[34,26]],
+    q:"Is there an association between eating breakfast and arriving late?", who:"students"},
+  pets:{name:"Pet by grade",rv:"Grade",cv:"Favorite pet",rows:["Grade 9","Grade 10","Grade 11"],cols:["Dog","Cat","Neither"],n:[[40,25,15],[42,26,12],[39,24,17]],
+    q:"Is there an association between grade level and favorite pet?", who:"students"},
+  phone:{name:"Phone & sleep",rv:"Phone at night",cv:"Sleep",rows:["In bedroom","Not in bedroom"],cols:["Under 7 h","7 h or more"],n:[[58,42],[18,32]],
+    q:"Is there an association between keeping a phone in the bedroom and sleep?", who:"students"}
+};
+function tTotals(T){ const rt=T.n.map(r=>sum(r)), ct=T.cols.map((_,j)=>sum(T.n.map(r=>r[j]))); return {rt,ct,tot:sum(rt)}; }
+function tCount(T,tt,i,j){ const nr=T.rows.length,nc=T.cols.length; return i<nr&&j<nc?T.n[i][j]:i<nr?tt.rt[i]:j<nc?tt.ct[j]:tt.tot; }
+function tDen(T,tt,mode,i,j){ const nr=T.rows.length,nc=T.cols.length;
+  if(mode==="joint")return tt.tot; if(mode==="row")return i<nr?tt.rt[i]:tt.tot; if(mode==="col")return j<nc?tt.ct[j]:tt.tot; return 1; }
+function tDenCell(T,mode,i,j){ const nr=T.rows.length,nc=T.cols.length;
+  if(mode==="joint")return [nr,nc]; if(mode==="row")return [i<nr?i:nr,nc]; if(mode==="col")return [nr,j<nc?j:nc]; return null; }
+// draw a two-way table; returns geometry for hit-testing
+function drawTable(g,TB,mode,sel,ox,oy,W,rh,hl){
+  const nr=TB.rows.length,nc=TB.cols.length, tt=tTotals(TB), lw=Math.round(W*(FS>1?0.33:0.3)), cw=(W-lw)/(nc+1);
+  TB.cols.concat(["Total"]).forEach((c,j)=>{ T_(g,ox+lw+cw*j+cw/2,oy+rh/2,c,true); });
+  T(g,ox+lw+cw*nc/2,oy-12,TB.cv,{cls:"hd"});
+  T_(g,ox+8,oy+rh/2,TB.rv,true,"start",C.mute);
+  function T_(g2,x,y,s,b,a,f){ T(g2,x,y,s,{cls:"tb",a:a||"middle",fill:f}); }
+  const dc=hl||(sel?tDenCell(TB,mode,sel[0],sel[1]):null);
+  for(let i=0;i<=nr;i++){ const y=oy+rh*(i+1), isT=i===nr;
+    Rc(g,ox,y,W,rh,{fill:isT?"#E8EEFB":(i%2?"#F7F9FE":"#FFFFFF"),stroke:"#C9D5EE","stroke-width":1});
+    T_(g,ox+8,y+rh/2,isT?"Total":TB.rows[i],false,"start",isT?C.mute:C.ink);
+    for(let j=0;j<=nc;j++){ const x=ox+lw+cw*j, c=tCount(TB,tt,i,j), den=tDen(TB,tt,mode,i,j);
+      const isNum=sel&&sel[0]===i&&sel[1]===j, isDen=dc&&dc[0]===i&&dc[1]===j;
+      if(j===nc||isT) Rc(g,x,y,cw,rh,{fill:"#E8EEFB"});
+      if(isNum) Rc(g,x+2,y+2,cw-4,rh-4,{fill:"#FDE68A",rx:6});
+      if(isDen) Rc(g,x+2,y+2,cw-4,rh-4,{fill:isNum?"#FDE68A":"none",stroke:C.pink,"stroke-width":3,rx:6});
+      const s=mode==="count"?String(c):(den?num(c/den,2):"—");
+      T(g,x+cw/2,y+rh/2,s,{cls:"tbn",fill:(j===nc||isT)?"#4B5B7C":C.ink});
+      g.appendChild(E("rect",{x,y,width:cw,height:rh,class:"cellhit","data-cell":i+","+j}));
+    } }
+  Ln(g,ox+lw,oy,ox+lw,oy+rh*(nr+2),"#9FB0D3",1.4); Ln(g,ox+lw+cw*nc,oy,ox+lw+cw*nc,oy+rh*(nr+2),"#9FB0D3",1.4);
+  return {ox,oy,lw,cw,rh,nr,nc};
+}
+const CAT=[C.blue,C.orange,C.green,C.purple];
+const M3={
+  tab:"Two-way tables", lesson:"S-ID.B.5", accent:"var(--yellow)",
+  s:{pre:"bf",T:null,mode:"row",sel:[1,1],geo:null},
+  title:()=>"Two-way table: "+PRE3[M3.s.pre].name.toLowerCase(),
+  vh:()=>{ const T=M3.s.T, rh=FS>1?36:32, nb=M3.s.mode==="col"?T.cols.length:T.rows.length; return Math.round(32+rh*(T.rows.length+2)+28+22+16+nb*52+14); },
+  init(){ M3.load("bf"); },
+  load(k){ const P=PRE3[k]; M3.s.pre=k; M3.s.T=JSON.parse(JSON.stringify(P)); M3.s.sel=[1,1]; },
+  bar(){
+    segBtns(Object.keys(PRE3).map(k=>[k,PRE3[k].name]),M3.s.pre,k=>{M3.load(k);render();},"Table");
+    segBtns([["count","Counts"],["joint","Joint ÷ total"],["row","Row ÷ row total"],["col","Column ÷ column total"]],M3.s.mode,k=>{M3.s.mode=k;render();},"Show");
+    spacer("Tap a cell to focus on it");
+  },
+  place(p){ const G=M3.s.geo; if(!G)return false;
+    const j=Math.floor((p[0]-G.ox-G.lw)/G.cw), i=Math.floor((p[1]-G.oy-G.rh)/G.rh);
+    if(i<0||i>G.nr||j<0||j>G.nc)return false; M3.s.sel=[i,j]; },
+  draw(){
+    const g=root(), TB=M3.s.T, nr=TB.rows.length, nc=TB.cols.length, tt=tTotals(TB), mode=M3.s.mode;
+    const rh=FS>1?36:32;
+    M3.s.geo=drawTable(g,TB,mode,M3.s.sel,30,32,640,rh);
+    // segmented bar chart
+    const byCol=mode==="col", bars=byCol?TB.cols:TB.rows, segs=byCol?TB.rows:TB.cols;
+    const y0=32+rh*(nr+2)+28;
+    heading(g,14,y0,"SEGMENTED BAR CHART · "+(byCol?"each column = 100%":"each row = 100%"));
+    let lx=30; const ly=y0+22;
+    segs.forEach((s,k)=>{ Rc(g,lx,ly-6,12,12,{fill:CAT[k],rx:2}); const t=T(g,lx+18,ly,s,{cls:"tiny",a:"start",fill:C.ink}); lx+=18+s.length*(6.8*FS)+22; });
+    const bx=FS>1?200:160, bw=640-bx+30, bh=40;
+    bars.forEach((b,i)=>{ const y=ly+16+i*(bh+12), tot=byCol?tt.ct[i]:tt.rt[i];
+      T(g,bx-10,y+bh/2,b,{cls:"tb",a:"end"}); let x=bx;
+      segs.forEach((s,k)=>{ const c=byCol?TB.n[k][i]:TB.n[i][k], w=tot?c/tot*bw:0;
+        const isSel=byCol?(M3.s.sel[0]===k&&M3.s.sel[1]===i):(M3.s.sel[0]===i&&M3.s.sel[1]===k);
+        Rc(g,x,y,w,bh,{fill:CAT[k],"fill-opacity":isSel?1:.7,stroke:isSel?C.ink:"#fff","stroke-width":isSel?2.5:1});
+        if(w>40*FS) T(g,x+w/2,y+bh/2,num(c/tot*100,0)+"%",{cls:"tiny",fill:C.ink});
+        x+=w; }); });
+  },
+  panel(){
+    const T=M3.s.T;
+    side.innerHTML=`<div class="panel"><h3>Focus cell</h3><div class="pad" id="f3"></div></div>
+    <div class="panel"><h3>Association?</h3><div class="pad" id="a3"></div></div>
+    <div class="panel"><h3>Edit the counts</h3><div class="pad" style="padding:10px 14px">
+      <table class="grid2" id="g3"><tr><th></th>${T.cols.map(c=>`<th>${esc(c)}</th>`).join("")}<th>Total</th></tr>
+      ${T.rows.map((r,i)=>`<tr><th>${esc(r)}</th>${T.cols.map((_,j)=>`<td><input type="number" min="0" step="1" inputmode="numeric" data-i="${i}" data-j="${j}" value="${T.n[i][j]}" aria-label="${esc(r)}, ${esc(T.cols[j])}"></td>`).join("")}<td class="tot" id="rt${i}"></td></tr>`).join("")}
+      <tr><th>Total</th>${T.cols.map((_,j)=>`<td class="tot" id="ct${j}"></td>`).join("")}<td class="tot" id="gt"></td></tr></table></div></div>
+    <div class="panel"><h3>Relative frequencies</h3><div class="pad">
+      <p>A <span class="term">joint relative frequency</span> is one inside cell divided by the <b>grand total</b>. A <span class="term">marginal relative frequency</span> is a row or column total divided by the grand total.</p>
+      <p>A <span class="term">conditional relative frequency</span> divides a cell by its <b>row total</b> (or <b>column total</b>): it answers "<i>of the people in this group</i>, what fraction…?"</p>
+      <div class="eq">conditional = cell ÷ row (or column) total<small>Yellow = the numerator. Pink outline = the denominator.</small></div>
+      <p>If the conditional relative frequencies are about the same for every row, there is <b>no association</b> between the two variables. Big differences suggest an association (not necessarily cause and effect).</p></div></div>
+    ${tryPanel(`<p>On <b>Pet by grade</b>, change the counts so that 9th graders clearly prefer cats while the other grades still prefer dogs. Watch the segmented bars. How different must the percentages be before you'd call it an association?</p>`)}`;
+    side.querySelectorAll("#g3 input").forEach(inp=>inp.addEventListener("input",()=>{
+      const v=Math.max(0,Math.floor(+inp.value||0)); M3.s.T.n[+inp.dataset.i][+inp.dataset.j]=Math.min(v,99999); update(); }));
+  },
+  live(){
+    const T=M3.s.T, tt=tTotals(T), nr=T.rows.length, nc=T.cols.length, [i,j]=M3.s.sel;
+    tt.rt.forEach((v,k)=>{ const e=$("rt"+k); if(e)e.textContent=v; }); tt.ct.forEach((v,k)=>{ const e=$("ct"+k); if(e)e.textContent=v; }); if($("gt"))$("gt").textContent=tt.tot;
+    const c=tCount(T,tt,i,j), rn=i<nr?T.rows[i]:null, cn=j<nc?T.cols[j]:null, q=(a,b)=>b?`${a}/${b} ≈ <b>${num(a/b,3)}</b> (${pct(a/b)})`:"—";
+    let h="";
+    if(rn&&cn){
+      h=`<p>Cell: <b>${esc(rn)}</b> and <b>${esc(cn)}</b> → ${c} ${T.who}.</p>
+      <p><span class="term">Joint:</span> ${q(c,tt.tot)} of all ${T.who} are both.</p>
+      <p><span class="term">Conditional on row:</span> of the ${tt.rt[i]} who are “${esc(rn)}”, ${q(c,tt.rt[i])} are “${esc(cn)}”.</p>
+      <p><span class="term">Conditional on column:</span> of the ${tt.ct[j]} who are “${esc(cn)}”, ${q(c,tt.ct[j])} are “${esc(rn)}”.</p>
+      <p style="color:var(--dim);font-size:14px">The two conditionals use the same cell but different denominators, so they answer different questions.</p>`;
+    } else if(rn||cn){
+      h=`<p>Total for <b>${esc(rn||cn)}</b>: ${c} ${T.who}.</p><p><span class="term">Marginal relative frequency:</span> ${q(c,tt.tot)} of all ${T.who}.</p>`;
+    } else h=`<p>Grand total: <b>${tt.tot}</b> ${T.who}. Every joint and marginal relative frequency is divided by this number.</p>`;
+    h+=`<div class="eq" style="margin-bottom:0">${M3.s.mode==="count"?"Pick a mode in the bar to see the table as relative frequencies.":M3.s.mode==="joint"?"each cell ÷ "+tt.tot+" (grand total)":M3.s.mode==="row"?"each cell ÷ its row total  (each row sums to 1)":"each cell ÷ its column total  (each column sums to 1)"}</div>`;
+    $("f3").innerHTML=h;
+    // association: compare row-conditional distributions
+    let best={d:-1,c:0,vals:[]};
+    for(let k=0;k<nc;k++){ const vals=T.n.map((r,a)=>tt.rt[a]?r[k]/tt.rt[a]:0); const d=Math.max(...vals)-Math.min(...vals); if(d>best.d)best={d,c:k,vals}; }
+    const verdict=best.d<0.05?["good","Little or no association."]:best.d<0.12?["info","Weak association, if any."]:["bad","Yes — evidence of an association."];
+    $("a3").innerHTML=`<p><b>${esc(T.q)}</b></p><p>Compare the conditional relative frequencies of <b>${esc(T.cols[best.c])}</b> across the rows:</p>
+      <div class="eq">${T.rows.map((r,a)=>`${r}: ${T.n[a][best.c]}/${tt.rt[a]} ≈ ${pct(best.vals[a])}`).join("\n")}<small>The biggest gap is ${num(best.d*100,1)} percentage points.</small></div>
+      <div class="verdict ${verdict[0]==="bad"?"good":verdict[0]}" style="margin:0">${verdict[0]==="bad"?"<b>Yes — evidence of an association.</b> The percentages differ a lot between rows, so knowing the row helps predict the column.":verdict[0]==="good"?"<b>Little or no association.</b> The percentages are nearly the same in every row.":"<b>Weak association, if any.</b> The percentages differ a little; a larger sample would help decide."}</div>`;
+  }
+};
+
+/* ══════════════════════ TAB 4 · scatter plots & lines of fit ══════════════════════ */
+const PRE4={
+  study:{name:"Study hours vs score",xr:[0,10],yr:[40,100],xs:1,ys:10,xt:"Hours studied",yt:"Test score (points)",snap:[0.5,1],
+    xn:"hours studied",xu1:"hour",yn:"test score",yu:"points",int:"a student who studies 0 hours",dm:2,db:1,
+    pts:[[1,52],[1.5,55],[2,63],[2.5,58],[3,61],[3.5,67],[4,70],[4.5,66],[5,72],[6,78],[6.5,74],[7,83],[8,85],[9,91]],H:[[1,47],[9,80]]},
+  ice:{name:"Temperature vs ice cream sales",xr:[50,100],yr:[0,800],xs:5,ys:100,xt:"High temperature (°F)",yt:"Ice cream sales ($)",snap:[1,10],
+    xn:"high temperature",xu1:"degree Fahrenheit",yn:"daily ice cream sales",yu:"dollars",int:"a day with a high temperature of 0 °F",dm:2,db:0,
+    pts:[[58,180],[62,215],[65,260],[68,250],[71,330],[74,345],[77,400],[80,430],[83,470],[85,520],[88,540],[91,610],[94,640],[96,700]],H:[[55,260],[95,560]]},
+  own:{name:"Your own data",xr:[0,10],yr:[0,10],xs:1,ys:1,xt:"x",yt:"y",snap:[1,1],
+    xn:"x",xu1:"unit",yn:"y",yu:"units",int:"x = 0",dm:2,db:2,pts:[],H:[[1,2],[9,7]]}
+};
+const F4={L:80,R:675,T:16,B:392};
+const M4={
+  tab:"Lines of fit", lesson:"S-ID.B.6a · B.6c · C.7", accent:"var(--magenta)",
+  s:{pre:"study",P:null,H:null,snap:true,ls:false,sq:"mine"},
+  title:()=>M4.s.ls?"Your line vs the least-squares line":"Draw a line of fit: drag the two orange handles",
+  vh:()=>FS>1?470:460,
+  init(){ M4.load("study"); },
+  load(k){ const P=PRE4[k]; M4.s.pre=k; M4.s.P=P.pts.map(p=>p.slice()); M4.s.H=P.H.map(p=>p.slice()); M4.s.ls=false; },
+  fr(){ const P=PRE4[M4.s.pre]; return Object.assign({},F4,{xr:P.xr,yr:P.yr,xs:P.xs,ys:P.ys,xt:P.xt,yt:P.yt}); },
+  map(){ const F=M4.fr(); return {X:v=>F.L+(v-F.xr[0])/(F.xr[1]-F.xr[0])*(F.R-F.L), Y:v=>F.B-(v-F.yr[0])/(F.yr[1]-F.yr[0])*(F.B-F.T),
+    Xi:p=>F.xr[0]+(p-F.L)/(F.R-F.L)*(F.xr[1]-F.xr[0]), Yi:p=>F.yr[0]+(F.B-p)/(F.B-F.T)*(F.yr[1]-F.yr[0]),F}; },
+  toData(p){ const m=M4.map(), F=m.F, S=PRE4[M4.s.pre].snap; let x=clamp(m.Xi(p[0]),F.xr[0],F.xr[1]), y=clamp(m.Yi(p[1]),F.yr[0],F.yr[1]);
+    if(M4.s.snap){ x=Math.round(x/S[0])*S[0]; y=Math.round(y/S[1])*S[1]; } else { x=+x.toFixed(2); y=+y.toFixed(2); } return [x,y]; },
+  bar(){
+    segBtns(Object.keys(PRE4).map(k=>[k,PRE4[k].name]),M4.s.pre,k=>{M4.load(k);render();},"Data set");
+    btn(M4.s.ls?"Hide least-squares line":"Reveal least-squares line",()=>{M4.s.ls=!M4.s.ls; if(M4.s.ls&&M4.s.sq==="mine")M4.s.sq="mine"; render();},"primary");
+    segBtns([["mine","Squares: my line"],["ls","Squares: LS line"],["off","No squares"]],M4.s.sq,k=>{M4.s.sq=k;if(k==="ls")M4.s.ls=true;render();},"Squares");
+    btn("Remove last point",()=>{M4.s.P.pop();update();});
+    btn("Clear points",()=>{M4.s.P=[];update();});
+    chk("Snap",M4.s.snap,v=>{M4.s.snap=v;});
+    spacer("Tap empty space to add a point");
+  },
+  place(p){ const F=F4; if(p[0]<F.L||p[0]>F.R||p[1]<F.T||p[1]>F.B||M4.s.P.length>=60)return false; M4.s.P.push(M4.toData(p)); },
+  drag(id,p){ const d=M4.toData(p);
+    if(id[0]==="h"){ const i=+id[1], o=M4.s.H[1-i]; if(Math.abs(d[0]-o[0])<1e-9)return false; M4.s.H[i]=d; }
+    else { const i=+id.slice(1); if(M4.s.P[i])M4.s.P[i]=d; } },
+  userLine(){ const [a,b]=M4.s.H, m=(b[1]-a[1])/(b[0]-a[0]); return {m,b:a[1]-m*a[0]}; },
+  draw(){
+    const g=root(), fm=frame(g,Object.assign(M4.fr(),{yl:18})), {X,Y,pg}=fm, F=fm.F, P=M4.s.P;
+    const U=M4.userLine(), LS=linreg(P);
+    const lineAt=(m,b,c,w,dash)=>Ln(pg,X(F.xr[0]),Y(m*F.xr[0]+b),X(F.xr[1]),Y(m*F.xr[1]+b),c,w,dash);
+    const squares=(m,b,c)=>{ P.forEach(([x,y])=>{ const px=X(x), py=Y(y), pl=Y(m*x+b), s=Math.abs(py-pl); if(s<0.5)return;
+      const sx=px+s>F.R?px-s:px; Rc(pg,sx,Math.min(py,pl),s,s,{fill:c,"fill-opacity":.13,stroke:c,"stroke-width":1.2}); Ln(pg,px,py,px,pl,c,1.8); }); };
+    if(M4.s.sq==="mine") squares(U.m,U.b,C.orange);
+    if(M4.s.sq==="ls"&&LS) squares(LS.m,LS.b,C.green);
+    if(M4.s.ls&&LS) lineAt(LS.m,LS.b,C.green,3.2,"10 6");
+    lineAt(U.m,U.b,C.orange,3.2);
+    P.forEach(([x,y],i)=>{ Ci(g,X(x),Y(y),5.5,C.blue); g.appendChild(E("circle",{cx:X(x),cy:Y(y),r:FS>1?18:11,class:"hit","data-drag":"p"+i})); });
+    M4.s.H.forEach(([x,y],i)=>{ g.appendChild(E("circle",{cx:X(x),cy:Y(y),r:FS>1?24:15,class:"grab","data-drag":"h"+i})); Ci(g,X(x),Y(y),5,C.hand); });
+    // live readout
+    const S=PRE4[M4.s.pre]; let ry=F.T+16;
+    const tag=(s,c)=>{ T(g,F.L+10,ry,s,{a:"start",fill:c}); ry+=FS>1?26:20; };
+    tag("My line: "+eqStr(U.m,U.b,S.dm,S.db)+(P.length?" · SSR = "+num(ssr(P,U.m,U.b),S.db>0?1:0):""),C.orange);
+    if(M4.s.ls&&LS) tag("LS line: "+eqStr(LS.m,LS.b,S.dm,S.db)+" · SSR = "+num(ssr(P,LS.m,LS.b),S.db>0?1:0),C.green);
+    if(!P.length) T(g,(F.L+F.R)/2,(F.T+F.B)/2,"Tap to add data points",{fill:C.mute});
+  },
+  panel(){
+    side.innerHTML=`<div class="panel"><h3>Sum of squared residuals</h3><div id="s4"></div></div>
+    <div class="panel"><h3>Interpret in context</h3><div class="pad" id="i4"></div>
+      <label class="fld" for="x4">Predict: enter x</label><div class="fldwrap"><input type="text" id="x4" inputmode="decimal" value="${M4.s.pre==="ice"?"75":"5"}"></div><div class="pad" id="p4" style="padding-top:10px"></div></div>
+    <div class="panel"><h3>Residuals and least squares</h3><div class="pad">
+      <p>A <span class="term">residual</span> is actual − predicted: <b>y − ŷ</b>. It is the vertical gap from a point to the line (positive above the line, negative below).</p>
+      <p>Each square on the board has a residual for its side, so its area is the <b>squared residual</b>. Add all the areas to get the <b>sum of squared residuals</b> (SSR). Drag your handles to make the total area as small as you can.</p>
+      <div class="eq">ŷ = mx + b
+SSR = Σ(y − ŷ)²<small>The least-squares regression line is the one line with the smallest possible SSR. It always passes through (x̄, ȳ).</small></div></div></div>
+    ${tryPanel(`<p>Move your handles until your SSR is within 5% of the least-squares SSR, then reveal it. How close were your slope and intercept?</p><p>Add one point far below the others at the right edge. Which line changes more, and why do squared residuals make one far point so powerful?</p>`)}`;
+    $("x4").addEventListener("input",()=>M4.live());
+  },
+  live(){
+    const P=M4.s.P, S=PRE4[M4.s.pre], U=M4.userLine(), LS=linreg(P);
+    const su=P.length?ssr(P,U.m,U.b):NaN, sl=LS?ssr(P,LS.m,LS.b):NaN, dp=S.db>0?2:0;
+    let h=relRow(C.orange,"My line",eqStr(U.m,U.b,S.dm,S.db),"SSR "+num(su,dp));
+    if(LS){
+      h+=relRow(C.green,"Least-squares line",M4.s.ls?eqStr(LS.m,LS.b,S.dm,S.db):"hidden — press Reveal",M4.s.ls?"SSR "+num(sl,dp):"?");
+      if(M4.s.ls){ const diff=su-sl, same=diff<=Math.max(0.005*sl,1e-6*(1+sl)); h+=relRow(C.purple,"Compare",same?"Your line is essentially the least-squares line!":"Your SSR is larger by",same?"✓":sl>1e-9?num(diff/sl*100,1)+"%":num(diff,dp));
+        h+=relRow(C.blue,"Correlation r","n = "+P.length,num(LS.r,3)); }
+    } else h+=`<div class="pad">Add at least two points with different x-values to compute a regression line.</div>`;
+    $("s4").innerHTML=h;
+    const use=(M4.s.ls&&LS)?{m:LS.m,b:LS.b,n:"least-squares line"}:{m:U.m,b:U.b,n:"your line"};
+    const xs=P.map(p=>p[0]), mn=xs.length?Math.min(...xs):0, mx=xs.length?Math.max(...xs):0;
+    const far=xs.length>1&&(mn>0? mn>0.5*(mx-mn) : mx<0? -mx>0.5*(mx-mn) : false);
+    $("i4").innerHTML=`<p>Using ${use.n} <b>${eqStr(use.m,use.b,S.dm,S.db)}</b>:</p>
+      <p><span class="term">Slope ${num(use.m,S.dm)}:</span> for each additional ${S.xu1} of ${S.xn}, the predicted ${S.yn} ${use.m>=0?"increases":"decreases"} by about <b>${num(Math.abs(use.m),S.dm)} ${S.yu}</b>.</p>
+      <p><span class="term">y-intercept ${num(use.b,S.db)}:</span> the model predicts ${S.yn} of ${num(use.b,S.db)} ${S.yu} for ${S.int}. ${far?`<span class="no">But x = 0 is far outside the data (x from ${num(mn,2)} to ${num(mx,2)}), so the intercept is an extrapolation with no real meaning here.</span>`:xs.length>1?`x = 0 is near the data, so this has a sensible meaning.`:""}</p>`;
+    const xv=parseNum($("x4").value);
+    $("p4").innerHTML=isFinite(xv)?`ŷ = ${num(use.m,S.dm)}(${num(xv,3)}) ${use.b<0?"−":"+"} ${num(Math.abs(use.b),S.db)} ≈ <b>${num(use.m*xv+use.b,2)}</b> ${S.yu}${xs.length>1&&(xv<mn||xv>mx)?` <span class="no">(outside the data: extrapolation, use with caution)</span>`:""}`:`<span style="color:var(--dim)">Type a number for x.</span>`;
+  }
+};
+
+/* ══════════════════════ TAB 5 · residuals & correlation ══════════════════════ */
+function genSet(kind){
+  const R=mulberry(kind==="lin"?11:kind==="quad"?23:37), P=[];
+  if(kind==="lin") for(let x=1;x<=12;x++) P.push([x,+(28-2*x+gauss(R)*1.3).toFixed(1)]);
+  if(kind==="quad") for(let v=15;v<=70;v+=5) P.push([v,Math.round(1.1*v+0.055*v*v+gauss(R)*7)]);
+  if(kind==="exp") for(let w=0;w<=12;w++) P.push([w,Math.round(50*Math.pow(1.3,w)*(1+gauss(R)*0.05))]);
+  return P;
+}
+const PRE5={
+  lin:{name:"Car age vs value",xr:[0,13],yr:[0,30],xs:1,ys:5,xt:"Age of car (years)",yt:"Value ($1000)",snap:[1,0.5]},
+  quad:{name:"Speed vs stopping distance",xr:[10,75],yr:[0,400],xs:5,ys:50,xt:"Speed (mph)",yt:"Stopping distance (ft)",snap:[1,5]},
+  exp:{name:"Weeks vs followers",xr:[0,13],yr:[0,1400],xs:1,ys:200,xt:"Week",yt:"Followers",snap:[1,10]}
+};
+const CAUSE={
+  ice:{name:"Ice cream & sunburns",xt:"Ice cream cones sold (hundreds)",yt:"Sunburn cases",xr:[0,8],yr:[0,30],xs:1,ys:5,lv:"daily high temperature",lu:"°F",lr:[60,100],
+    gen:(L,R)=>[2+0.12*(L-60)+gauss(R)*0.45, 3+0.5*(L-60)+gauss(R)*2.6],
+    claim:"“Eating ice cream causes sunburns.”",why:"Hot, sunny days make people buy more ice cream <b>and</b> spend more time in the sun. Temperature is a <span class=\"term\">lurking variable</span> that drives both."},
+  shoe:{name:"Foot length & reading",xt:"Foot length (cm)",yt:"Reading score",xr:[14,26],yr:[150,320],xs:2,ys:25,lv:"age",lu:"years",lr:[6,12],
+    gen:(L,R)=>[17+1.1*(L-6)+gauss(R)*0.7, 200+15*(L-6)+gauss(R)*11],
+    claim:"“Bigger feet make children better readers.”",why:"Older children have bigger feet <b>and</b> have had more years of reading practice. Age is the lurking variable."},
+  fire:{name:"Firefighters & damage",xt:"Firefighters at the fire",yt:"Damage ($1000)",xr:[0,50],yr:[0,450],xs:5,ys:50,lv:"size of the fire",lu:"(1–10 scale)",lr:[1,10],
+    gen:(L,R)=>[5+4*L+gauss(R)*3, 20+38*L+gauss(R)*35],
+    claim:"“Sending more firefighters causes more damage.”",why:"Bigger fires bring more firefighters <b>and</b> cause more damage. The size of the fire is the lurking variable — the firefighters actually reduce damage."}
+};
+function genCause(k){ const D=CAUSE[k], R=mulberry(k.length*97+5), out=[];
+  for(let i=0;i<30;i++){ const L=D.lr[0]+R()*(D.lr[1]-D.lr[0]); const [x,y]=D.gen(L,R); out.push([+x.toFixed(2),+y.toFixed(1),L]); } return out; }
+function genCorr(seed,n){ const R=mulberry(seed), a=[],b=[]; for(let i=0;i<n;i++){a.push(gauss(R));b.push(gauss(R));}
+  const st=v=>{const m=mean(v),s=Math.sqrt(sum(v.map(x=>(x-m)**2))/v.length);return v.map(x=>(x-m)/s);};
+  const x=st(a); const zb=st(b); const k=sum(x.map((v,i)=>v*zb[i]))/n; const e=st(zb.map((v,i)=>v-k*x[i]));
+  return {x,e}; }
+function corrPts(base,rho){ const s=Math.sqrt(Math.max(0,1-rho*rho)); const y=base.x.map((v,i)=>rho*v+s*base.e[i]);
+  const mx=Math.max(...base.x.map(Math.abs),...y.map(Math.abs)), k=Math.min(1.35,4.4/mx); return base.x.map((v,i)=>[5+k*v,5+k*y[i]]); }
+const M5={
+  tab:"Residuals & correlation", lesson:"S-ID.B.6b · C.8 · C.9", accent:"var(--lavender)",
+  s:{mode:"res",set:"lin",P:null,rho:0.7,seed:7,base:null,CP:null,cdrag:false,cz:"ice",CZ:null,color:false,reveal:false,lsr:true},
+  title:()=>({res:"Residual plot: is a line the right model?",r:"Correlation coefficient r",cause:"Correlation is not causation"})[M5.s.mode],
+  vh:()=>M5.s.mode==="res"?(FS>1?530:520):(FS>1?470:460),
+  init(){ M5.s.P=genSet("lin"); M5.s.base=genCorr(M5.s.seed,40); M5.s.CP=corrPts(M5.s.base,M5.s.rho); M5.s.CZ=genCause("ice"); },
+  bar(){
+    segBtns([["res","Residual plot"],["r","Correlation r"],["cause","Causation?"]],M5.s.mode,k=>{M5.s.mode=k;render();},"Lesson part");
+    if(M5.s.mode==="res"){ chips(Object.keys(PRE5).map(k=>[k,PRE5[k].name]),M5.s.set,k=>{M5.s.set=k;M5.s.P=genSet(k);render();},"var(--lavender)");
+      btn("Reset data",()=>{M5.s.P=genSet(M5.s.set);update();}); spacer("Drag points in the top plot"); }
+    if(M5.s.mode==="r"){
+      const sl=slider("Target r",-100,100,5,Math.round(M5.s.rho*100),v=>{ M5.s.rho=v/100; M5.s.CP=corrPts(M5.s.base,M5.s.rho); M5.s.cdrag=false; update(); },v=>num(v/100,2));
+      btn("New sample",()=>{ M5.s.seed=rnd(1,99999); M5.s.base=genCorr(M5.s.seed,40); M5.s.CP=corrPts(M5.s.base,M5.s.rho); M5.s.cdrag=false; update(); });
+      chk("Show LS line",M5.s.lsr,v=>{M5.s.lsr=v;update();});
+    }
+    if(M5.s.mode==="cause"){ chips(Object.keys(CAUSE).map(k=>[k,CAUSE[k].name]),M5.s.cz,k=>{M5.s.cz=k;M5.s.CZ=genCause(k);M5.s.reveal=false;M5.s.color=false;render();},"var(--lavender)");
+      chk("Color by lurking variable",M5.s.color,v=>{M5.s.color=v;if(v)M5.s.reveal=true;render();}); }
+  },
+  F(){ if(M5.s.mode==="res"){ const P=PRE5[M5.s.set]; return Object.assign({L:80,R:675,T:30,B:240,noXlab:true,yl:18},P,{xt:null}); }
+    if(M5.s.mode==="r") return {L:80,R:675,T:14,B:392,xr:[0,10],yr:[0,10],xs:1,ys:1,xt:"x",yt:"y",yl:18};
+    const D=CAUSE[M5.s.cz]; return {L:80,R:675,T:14,B:392,xr:D.xr,yr:D.yr,xs:D.xs,ys:D.ys,xt:D.xt,yt:D.yt,yl:18}; },
+  inv(p){ const F=M5.F(); return [F.xr[0]+(p[0]-F.L)/(F.R-F.L)*(F.xr[1]-F.xr[0]), F.yr[0]+(F.B-p[1])/(F.B-F.T)*(F.yr[1]-F.yr[0])]; },
+  drag(id,p){ const F=M5.F(); let [x,y]=M5.inv(p); x=clamp(x,F.xr[0],F.xr[1]); y=clamp(y,F.yr[0],F.yr[1]);
+    if(M5.s.mode==="res"){ const S=PRE5[M5.s.set].snap; M5.s.P[+id.slice(1)]=[Math.round(x/S[0])*S[0],Math.round(y/S[1])*S[1]]; }
+    else if(M5.s.mode==="r"){ M5.s.CP[+id.slice(1)]=[x,y]; M5.s.cdrag=true; } },
+  draw(){
+    const g=root(), F=M5.F(), mode=M5.s.mode;
+    if(mode==="res"){
+      const fm=frame(g,F), P=M5.s.P, LS=linreg(P);
+      if(LS) Ln(fm.pg,fm.X(F.xr[0]),fm.Y(LS.m*F.xr[0]+LS.b),fm.X(F.xr[1]),fm.Y(LS.m*F.xr[1]+LS.b),C.green,3);
+      P.forEach(([x,y],i)=>{ Ci(g,fm.X(x),fm.Y(y),5.5,C.blue); g.appendChild(E("circle",{cx:fm.X(x),cy:fm.Y(y),r:FS>1?18:11,class:"hit","data-drag":"p"+i})); });
+      if(LS){ T(g,F.L,15,"LS line "+eqStr(LS.m,LS.b,2,1)+" · r = "+num(LS.r,3),{a:"start",fill:C.green}); }
+      // residual plot
+      const res=LS?P.map(([x,y])=>y-(LS.m*x+LS.b)):P.map(()=>0), mr=Math.max(1e-9,...res.map(Math.abs));
+      const ys=niceStep(mr*2.4,4), ym=Math.ceil(mr*1.15/ys)*ys;
+      const G={L:80,R:675,T:268,B:FS>1?458:462,xr:F.xr,yr:[-ym,ym],xs:F.xs,ys:ys,xt:PRE5[M5.s.set].xt,yt:"Residual",zero:true,yl:18};
+      heading(g,F.L,256,"RESIDUAL PLOT · residual = y − ŷ");
+      const rm=frame(g,G);
+      P.forEach(([x],i)=>{ const c=res[i]>=0?C.orange:C.blue; Ln(rm.pg,rm.X(x),rm.Y(0),rm.X(x),rm.Y(res[i]),c,1.6,"3 3"); Ci(g,rm.X(x),rm.Y(res[i]),5,c); });
+    } else if(mode==="r"){
+      const fm=frame(g,F), P=M5.s.CP, LS=linreg(P);
+      if(LS&&M5.s.lsr) Ln(fm.pg,fm.X(0),fm.Y(LS.b),fm.X(10),fm.Y(LS.m*10+LS.b),C.green,2.6,"9 6");
+      P.forEach(([x,y],i)=>{ Ci(g,fm.X(x),fm.Y(y),5.5,C.purple); g.appendChild(E("circle",{cx:fm.X(x),cy:fm.Y(y),r:FS>1?16:10,class:"hit","data-drag":"c"+i})); });
+      if(LS){ T(g,F.L+12,F.T+18,"r = "+num(LS.r,3),{cls:"num",a:"start",fill:C.purple}); T(g,F.L+12,F.T+(FS>1?48:40),strength(LS.r),{cls:"tiny",a:"start",fill:C.purple}); }
+    } else {
+      const fm=frame(g,F), D=CAUSE[M5.s.cz], P=M5.s.CZ, LS=linreg(P.map(p=>[p[0],p[1]]));
+      if(LS) Ln(fm.pg,fm.X(F.xr[0]),fm.Y(LS.m*F.xr[0]+LS.b),fm.X(F.xr[1]),fm.Y(LS.m*F.xr[1]+LS.b),C.green,2.6,"9 6");
+      const col=t=>{ const a=[2,132,199], b=[220,38,38]; return `rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*t)).join(",")})`; };
+      P.forEach(([x,y,L])=>{ Ci(g,fm.X(x),fm.Y(y),6,M5.s.color?col((L-D.lr[0])/(D.lr[1]-D.lr[0])):C.blue); });
+      if(LS) T(g,F.L+12,F.T+18,"r = "+num(LS.r,3),{cls:"num",a:"start",fill:C.ink});
+      if(M5.s.color){ const lx=F.R-200, ly=F.B-26; for(let i=0;i<20;i++) Rc(g,lx+i*9,ly,9,12,{fill:col(i/19)});
+        T(g,lx,ly-10,D.lv+": "+D.lr[0],{cls:"tiny",a:"start",fill:C.blue}); T(g,lx+180,ly+26,D.lr[1]+" "+D.lu,{cls:"tiny",a:"end",fill:C.red}); }
+    }
+  },
+  panel(){
+    const mode=M5.s.mode;
+    if(mode==="res"){
+      side.innerHTML=`<div class="panel"><h3>Fit check</h3><div id="s5"></div></div>
+      <div class="panel"><h3>Reading a residual plot</h3><div class="pad">
+        <p>A <span class="term">residual plot</span> graphs each residual (y − ŷ) against x. The dashed bars show how far each point sits above (orange) or below (blue) the regression line.</p>
+        <p>If a line is a good model, the residuals look like <b>random scatter</b> around 0 with no pattern. A <b>curved (U or ∩) pattern</b> means the data bends, so a linear model is not appropriate — try a quadratic or exponential function.</p>
+        <div class="eq">residual = actual − predicted = y − ŷ<small>Least-squares residuals always add to 0.</small></div></div></div>
+      ${tryPanel(`<p>Compare <b>Car age</b> with <b>Stopping distance</b>. Both have r close to 1 — yet one is clearly curved. Why is a high r not enough to prove a line fits? Drag points on the curved set until the residual pattern disappears.</p>`)}`;
+    } else if(mode==="r"){
+      side.innerHTML=`<div class="panel"><h3>Correlation</h3><div id="s5"></div></div>
+      <div class="panel"><h3>What r measures</h3><div class="pad">
+        <p>The <span class="term">correlation coefficient</span> r measures the <b>direction</b> and <b>strength</b> of a <b>linear</b> association. It is always between −1 and 1.</p>
+        <p>r near 1: points hug a rising line. r near −1: they hug a falling line. r near 0: no linear pattern. r has no units, and swapping x and y does not change it.</p>
+        <div class="eq">−1 ≤ r ≤ 1
+|r| ≥ 0.8 strong · 0.5–0.8 moderate · below 0.5 weak<small>These cut-offs are common classroom guidelines, not strict rules.</small></div>
+        <p>Drag any point to see how one point can change r a lot.</p></div></div>
+      ${tryPanel(`<p>Set r = 0. Can you drag just <b>one</b> point to make r greater than 0.4? Where does it have to go? Then set r = 0.95 and drag one point into the far corner.</p>`)}`;
+    } else {
+      const D=CAUSE[M5.s.cz];
+      side.innerHTML=`<div class="panel"><h3>The claim</h3><div class="pad"><p style="font-size:17px;color:#fff">${D.claim}</p><p id="s5"></p>
+        <button class="go" id="rv5" type="button">${M5.s.reveal?"Hide":"What's really going on?"}</button><div id="w5"></div></div></div>
+      <div class="panel"><h3>Correlation vs causation</h3><div class="pad">
+        <p>A strong correlation tells you two variables move together. It does <b>not</b> tell you that one <b>causes</b> the other.</p>
+        <p>Often a third, <span class="term">lurking variable</span> drives both. Sometimes it is just coincidence, or the cause runs the other way.</p>
+        <div class="eq">correlation ≠ causation<small>Only a well-designed randomized experiment can show cause and effect.</small></div></div></div>
+      ${tryPanel(`<p>Think of your own example: two things that rise together in the summer, but neither causes the other. What is the lurking variable?</p>`)}`;
+      $("rv5").onclick=()=>{ M5.s.reveal=!M5.s.reveal; if(!M5.s.reveal)M5.s.color=false; render(); };
+    }
+  },
+  live(){
+    const mode=M5.s.mode;
+    if(mode==="res"){
+      const P=M5.s.P, LS=linreg(P); if(!LS){ $("s5").innerHTML=""; return; }
+      const res=P.map(([x,y])=>y-(LS.m*x+LS.b)), q=quadR2(P.map(p=>p[0]),res);
+      const curved=q>0.45;
+      $("s5").innerHTML=relRow(C.green,"Regression line",eqStr(LS.m,LS.b,2,1),"")+
+        relRow(C.purple,"Correlation r",strength(LS.r),num(LS.r,3))+
+        relRow(C.orange,"Sum of residuals","always 0 for the LS line",num(sum(res),6))+
+        relRow(curved?C.red:C.green,"Residual pattern",curved?"a curve explains "+num(q*100,0)+"% of the residuals' variation":"no clear pattern (curve explains "+num(q*100,0)+"%)",curved?"curved":"random")+
+        `<div class="verdict ${curved?"bad":"good"}">${curved?`<b>A linear model is not appropriate.</b> The residuals bend in a ${res[0]>0&&res[res.length-1]>0?"U":"∩"} shape — the data curves. Try a ${M5.s.set==="exp"?"exponential":"quadratic or exponential"} model.`:`<b>A linear model looks appropriate.</b> The residuals scatter randomly above and below 0.`}</div>`;
+    } else if(mode==="r"){
+      const LS=linreg(M5.s.CP); if(!LS)return;
+      $("s5").innerHTML=relRow(C.purple,"r (computed from the points)",strength(LS.r),num(LS.r,3))+
+        relRow(C.mute,"Slider target",M5.s.cdrag?"you dragged points, so r no longer matches":"the sample is built to match exactly",num(M5.s.rho,2))+
+        relRow(C.green,"r²","fraction of y-variation explained by the line",num(LS.r*LS.r,3))+
+        relRow(C.green,"LS line",eqStr(LS.m,LS.b,2,2),"");
+    } else {
+      const D=CAUSE[M5.s.cz], LS=linreg(M5.s.CZ.map(p=>[p[0],p[1]]));
+      $("s5").innerHTML=`The data shows r = <b>${num(LS.r,3)}</b>, a ${strength(LS.r)}.`;
+      $("w5").innerHTML=M5.s.reveal?`<div class="verdict info" style="margin:14px 0 0"><b>Lurking variable: ${D.lv}.</b> ${D.why} Turn on <b>Color by lurking variable</b>: the points sort from blue (low ${D.lv}) to red (high).</div>`:"";
+    }
+  }
+};
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+const KINDS=[["mix","Mix"],["center","Mean / median / IQR"],["outlier","Outliers"],["cond","Conditional rel. freq."],["predict","Predict with a line"],["slope","Interpret slope"],["r","Estimate r"]];
+const TT=[
+  {rv:"Breakfast",cv:"Arrival",rows:["Ate breakfast","Skipped"],cols:["On time","Late"],rp:["ate breakfast","skipped breakfast"],cp:["were on time","were late"]},
+  {rv:"Sport",cv:"Pet",rows:["Plays a sport","No sport"],cols:["Owns a pet","No pet"],rp:["play a sport","do not play a sport"],cp:["own a pet","do not own a pet"]},
+  {rv:"Grade",cv:"Travel",rows:["9th grade","10th grade"],cols:["Bus","Car","Walk"],rp:["are in 9th grade","are in 10th grade"],cp:["ride the bus","come by car","walk"]}
+];
+const CT=[
+  {xn:"hours studied",xu1:"hour",xs:"hours",yn:"test score",yu:"points",m:()=>rnd(25,60)/10,b:()=>rnd(40,58),xr:[0,10],x0:()=>rnd(1,8)+pick([0,0.5]),pre:"a student who studies ",post:"",xt:"Hours studied",yt:"Score"},
+  {xn:"high temperature",xu1:"degree Fahrenheit",xs:"°F",yn:"ice cream sales",yu:"dollars",m:()=>rnd(100,150)/10,b:()=>-rnd(20,35)*10,xr:[50,100],x0:()=>rnd(60,95),pre:"a day with a high temperature of ",post:"",xt:"High temp (°F)",yt:"Sales ($)"},
+  {xn:"age of a car",xu1:"year",xs:"years",yn:"value",yu:"thousand dollars",m:()=>-rnd(15,24)/10,b:()=>rnd(28,35),xr:[0,10],x0:()=>rnd(1,9),pre:"a car that is ",post:" old",xt:"Age (years)",yt:"Value ($1000)"},
+  {xn:"hours worked",xu1:"hour",xs:"hours",yn:"weekly earnings",yu:"dollars",m:()=>rnd(110,180)/10,b:()=>rnd(0,40),xr:[0,40],x0:()=>rnd(5,38),pre:"a student who works ",post:" hours",xt:"Hours worked",yt:"Earnings ($)"}
+];
+CT[3].xs=""; // the post text already says "hours"
+function genProblem(kind){
+  if(kind==="mix")kind=pick(["center","outlier","cond","predict","slope","r"]);
+  const pr={kind};
+  if(kind==="center"){
+    const n=rnd(7,10), base=rnd(10,40); pr.data=Array.from({length:n},()=>base+rnd(0,24));
+    pr.stat=pick(["mean","median","IQR"]); const Q=summary(pr.data); pr.Q=Q;
+    pr.ans=pr.stat==="mean"?Q.mean:pr.stat==="median"?Q.med:Q.iqr; pr.tol=0.051;
+    pr.q=`Find the <b>${pr.stat==="IQR"?"interquartile range (IQR)":pr.stat}</b> of this data set:<br><b style="font-family:var(--mono)">${pr.data.join(", ")}</b>`;
+    pr.field=pr.stat; pr.fmt="Enter a number. Decimals (rounded to the nearest tenth) or fractions like 151/6 are fine. Quartiles use the median of each half.";
+  }
+  if(kind==="outlier"){
+    let d,Q,ok=false; for(let t=0;t<400&&!ok;t++){
+      const n=rnd(9,12), base=rnd(20,50), w=rnd(10,20); d=Array.from({length:n},()=>base+rnd(0,w));
+      const k=pick([0,1,1,2]); for(let i=0;i<k;i++){ d[i]= Math.random()<0.6? base+w+rnd(Math.round(w*1.4),w*3) : Math.max(0,base-rnd(Math.round(w*1.2),w*2)); }
+      d=shuffle(d); Q=summary(d); ok=d.every(v=>Math.abs(v-Q.lf)>=1.5&&Math.abs(v-Q.uf)>=1.5)&&Q.out.length===k; }
+    pr.data=d; pr.Q=Q; pr.ans=Q.out.slice();
+    pr.q=`Use the <b>1.5·IQR rule</b> to find every outlier in this data set:<br><b style="font-family:var(--mono)">${d.join(", ")}</b>`;
+    pr.field="outlier(s)"; pr.fmt="List the outliers separated by commas (e.g. 12, 95), or type none.";
+  }
+  if(kind==="cond"){
+    const t=pick(TT), T={rv:t.rv,cv:t.cv,rows:t.rows,cols:t.cols,n:t.rows.map(()=>t.cols.map(()=>rnd(8,60)))}, tt=tTotals(T);
+    const i=rnd(0,t.rows.length-1), j=rnd(0,t.cols.length-1), by=pick(["row","col"]);
+    pr.T=T; pr.i=i; pr.j=j; pr.by=by; pr.num=T.n[i][j]; pr.den=by==="row"?tt.rt[i]:tt.ct[j]; pr.ans=pr.num/pr.den; pr.tol=0.006;
+    pr.q=by==="row"?`Of the students who <b>${t.rp[i]}</b>, what proportion <b>${t.cp[j]}</b>?`:`Of the students who <b>${t.cp[j]}</b>, what proportion <b>${t.rp[i]}</b>?`;
+    pr.field="relative frequency"; pr.fmt="Enter a decimal (to the nearest hundredth), a fraction like 26/60, or a percent like 43%.";
+  }
+  if(kind==="predict"||kind==="slope"){
+    const c=pick(CT), m=c.m(), b=c.b(); pr.c=c; pr.m=m; pr.b=b;
+    const R=mulberry(rnd(1,1e6)), span=c.xr[1]-c.xr[0], noise=Math.abs(m)*span*0.06+1;
+    pr.pts=Array.from({length:14},()=>{ const x=c.xr[0]+span*(0.08+0.84*R()); return [x,m*x+b+gauss(R)*noise]; });
+    const ys=pr.pts.map(p=>p[1]).concat([m*c.xr[0]+b,m*c.xr[1]+b]); const lo=Math.min(...ys), hi=Math.max(...ys), st=niceStep(hi-lo,5);
+    pr.yr=[Math.floor(lo/st)*st,Math.ceil(hi/st)*st]; pr.ys=st;
+    const eq=`ŷ = ${num(m,1)}x ${b<0?"−":"+"} ${num(Math.abs(b),0)}`; pr.eq=eq;
+    if(kind==="predict"){ const x0=c.x0(); pr.x0=x0; pr.ans=m*x0+b; pr.tol=0.051;
+      pr.q=`The least-squares line <b>${eq}</b> models ${c.yn} (${c.yu}) from ${c.xn} (x). Predict the ${c.yn} for ${c.pre}${num(x0,1)}${c.xs?" "+c.xs:""}${c.post}.`;
+      pr.field="predicted "+c.yn; pr.fmt="Enter a number, rounded to the nearest tenth if needed."; }
+    else {
+      const up=m>=0?"increases":"decreases", dn=m>=0?"decreases":"increases", am=num(Math.abs(m),1);
+      const right=`For each additional ${c.xu1} of ${c.xn}, the predicted ${c.yn} ${up} by about ${am} ${c.yu}.`;
+      const wrong=[
+        [`For each additional ${c.xu1} of ${c.xn}, the predicted ${c.yn} ${up} by about ${num(Math.abs(b),0)} ${c.yu}.`,`That number is the y-intercept, not the slope.`],
+        [`For each additional 1 ${c.yu.replace(/s$/,"")} of ${c.yn}, the predicted ${c.xn} ${up} by about ${am} ${c.xs||"hours"}.`,`This swaps the variables. The slope is the change in <b>y</b> (${c.yn}) per 1-unit change in <b>x</b> (${c.xn}).`],
+        [`When ${c.xn} is 0, the predicted ${c.yn} is ${am} ${c.yu}.`,`The value of ŷ when x = 0 is the y-intercept (${num(b,0)}), not the slope.`],
+        [`For each additional ${c.xu1} of ${c.xn}, the predicted ${c.yn} ${dn} by about ${am} ${c.yu}.`,`Check the sign: the slope is ${m>=0?"positive":"negative"}, so ${c.yn} ${up}.`]];
+      const pickW=shuffle(wrong).slice(0,3); pr.choices=shuffle([[right,null]].concat(pickW)); pr.ans=pr.choices.findIndex(x=>x[1]===null);
+      pr.q=`The least-squares line <b>${eq}</b> models ${c.yn} (y, in ${c.yu}) from ${c.xn} (x). Which statement correctly interprets the <b>slope</b>?`;
+    }
+  }
+  if(kind==="r"){
+    const opts=[-0.9,-0.5,0,0.5,0.9], t=pick(opts); pr.rho=t; pr.pts=corrPts(genCorr(rnd(1,1e6),36),t);
+    const others=shuffle(opts.filter(v=>v!==t)).slice(0,3); pr.choices=shuffle([t].concat(others)).map(v=>[num(v,1),v===t?null:v]);
+    pr.ans=pr.choices.findIndex(x=>x[1]===null); pr.real=linreg(pr.pts).r;
+    pr.q=`Which value is the best estimate of the correlation coefficient <b>r</b> for the scatter plot on the board?`;
+  }
+  return pr;
+}
+function solText(pr){
+  if(pr.kind==="center"||pr.kind==="outlier"){ const Q=pr.Q, n=Q.n;
+    let t=`Sorted: ${Q.s.join(", ")}   (n = ${n})\n`;
+    if(pr.kind==="center"&&pr.stat==="mean") return t+`x̄ = Σx / n = ${sum(Q.s)} / ${n} = ${ex(Q.mean,n)}`;
+    t+=`median = ${num(Q.med,2)}${n%2?"  (middle value)":"  (average of the two middle values)"}\n`;
+    t+=`lower half: ${Q.s.slice(0,Math.floor(n/2)).join(", ")} → Q1 = ${num(Q.q1,2)}\nupper half: ${Q.s.slice(Math.ceil(n/2)).join(", ")} → Q3 = ${num(Q.q3,2)}\n`;
+    if(pr.kind==="center"&&pr.stat==="median") return t.split("\n").slice(0,2).join("\n");
+    t+=`IQR = ${num(Q.q3,2)} − ${num(Q.q1,2)} = ${num(Q.iqr,2)}`;
+    if(pr.kind==="center") return t;
+    return t+`\nlower fence = ${num(Q.q1,2)} − 1.5(${num(Q.iqr,2)}) = ${num(Q.lf,2)}\nupper fence = ${num(Q.q3,2)} + 1.5(${num(Q.iqr,2)}) = ${num(Q.uf,2)}\noutliers: ${Q.out.length?Q.out.join(", "):"none"}`; }
+  if(pr.kind==="cond"){ const T=pr.T; return `${pr.by==="row"?"Row":"Column"} “${pr.by==="row"?T.rows[pr.i]:T.cols[pr.j]}” total = ${pr.den}\ncell “${T.rows[pr.i]} & ${T.cols[pr.j]}” = ${pr.num}\n${pr.num}/${pr.den} ≈ ${num(pr.ans,3)} = ${pct(pr.ans)}`; }
+  if(pr.kind==="predict") return `${pr.eq}\nŷ = ${num(pr.m,1)}(${num(pr.x0,1)}) ${pr.b<0?"−":"+"} ${num(Math.abs(pr.b),0)}\nŷ = ${num(pr.m*pr.x0,2)} ${pr.b<0?"−":"+"} ${num(Math.abs(pr.b),0)} = ${num(pr.ans,2)} ${pr.c.yu}`;
+  if(pr.kind==="slope") return `slope = ${num(pr.m,1)} ${pr.c.yu} per ${pr.c.xu1}\n${pr.choices[pr.ans][0]}`;
+  if(pr.kind==="r") return `The points ${pr.rho===0?"show no linear trend":`${pr.rho>0?"rise":"fall"} from left to right and ${Math.abs(pr.rho)>0.8?"hug a line tightly":"form a loose, wide band"}`}, so r ≈ ${num(pr.rho,1)}.\n(Exact r for these points: ${num(pr.real,3)}.)`;
+}
+function hintText(pr){
+  if(pr.kind==="center"){ if(pr.stat==="mean")return `Add all ${pr.data.length} values and divide by ${pr.data.length}.`;
+    if(pr.stat==="median")return `Sort the values first. With ${pr.data.length} values, the median is ${pr.data.length%2?"the middle one":"the average of the two middle ones"}.`;
+    return `Sort, split into a lower and an upper half (leave the median out if n is odd), take the median of each half to get Q1 and Q3, then subtract Q3 − Q1.`; }
+  if(pr.kind==="outlier")return `Find Q1 and Q3, then IQR = Q3 − Q1. Values below Q1 − 1.5·IQR or above Q3 + 1.5·IQR are outliers. There may be none.`;
+  if(pr.kind==="cond")return `"Of the students who ${pr.by==="row"?"…" :"…"}" names the group you divide by. Use that ${pr.by==="row"?"row":"column"}'s total (${pr.by==="row"?"right-hand Total column":"bottom Total row"}) as the denominator, not the grand total.`;
+  if(pr.kind==="predict")return `Substitute x = ${num(pr.x0,1)} into the equation and evaluate: multiply by the slope first, then add the intercept.`;
+  return "";
+}
+const M6={
+  tab:"Challenge", lesson:"S-ID.A–C", accent:"var(--coral)",
+  title:()=>"Practice: "+({center:"center & spread",outlier:"outliers",cond:"conditional relative frequency",predict:"predict with a regression line",slope:"interpret the slope",r:"estimate r"}[M6.s.pr?M6.s.pr.kind:"center"]),
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  streakEl:null,
+  vh:()=>FS>1?470:460,
+  newProb(){ M6.s.pr=genProblem(M6.s.kind); M6.s.state="open"; M6.s.reveal=false; M6.s.tries=0; },
+  bar(){
+    btn("New problem",()=>{M6.newProb();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    KINDS.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=M6.s.kind; sel.onchange=()=>{M6.s.kind=sel.value;M6.newProb();render();}; bar.appendChild(sel);
+    M6.streakEl=spacer(""); M6.upStreak();
+  },
+  upStreak(){ if(M6.streakEl)M6.streakEl.textContent="Streak "+M6.s.streak+" · Best "+M6.s.best+" · Solved "+M6.s.solved; },
+  draw(){
+    if(!M6.s.pr)M6.newProb();
+    const g=root(), pr=M6.s.pr, show=M6.s.state==="right"||M6.s.reveal;
+    if(pr.kind==="center"||pr.kind==="outlier"){
+      const d=pr.data, per=FS>1?6:8, tw=FS>1?96:72, th=FS>1?54:44, rows=Math.ceil(d.length/per);
+      heading(g,20,20,"THE DATA");
+      d.forEach((v,i)=>{ const r=Math.floor(i/per), c=i%per, cnt=Math.min(per,d.length-r*per), x0=(VW-cnt*(tw+10)+10)/2+c*(tw+10), y0=36+r*(th+12);
+        const out=show&&pr.kind==="outlier"&&pr.Q.isOut(v);
+        Rc(g,x0,y0,tw,th,{rx:10,fill:out?"#FCE7F3":"#EEF4FF",stroke:out?C.pink:C.blue,"stroke-width":2});
+        T(g,x0+tw/2,y0+th/2,String(v),{cls:"num",fill:out?C.pink:C.ink}); });
+      if(show){ const Q=pr.Q, lo0=Math.min(Q.min,Q.lf), hi0=Math.max(Q.max,Q.uf), st=niceStep(hi0-lo0,8), lo=Math.floor(lo0/st)*st, hi=Math.ceil(hi0/st)*st;
+        const X=v=>60+(v-lo)/(hi-lo)*580, yb=60+rows*(th+12)+150;
+        heading(g,20,yb-150+12,"DOT PLOT & BOX PLOT");
+        const cnt={}; Q.s.forEach(v=>{ const k=cnt[v]=(cnt[v]||0); cnt[v]++; Ci(g,X(v),yb-60-k*12,5,Q.isOut(v)?C.pink:C.blue); });
+        drawBox(g,Q,X,yb-22,26,C.purple,{fences:pr.kind==="outlier",lo,hi,labels:true});
+        axisX(g,X,yb+10,lo,hi,st); }
+    }
+    if(pr.kind==="cond"){
+      heading(g,20,20,"TWO-WAY FREQUENCY TABLE (COUNTS)");
+      const TB=pr.T; const hl=show?(pr.by==="row"?[pr.i,TB.cols.length]:[TB.rows.length,pr.j]):null;
+      drawTable(g,TB,"count",show?[pr.i,pr.j]:null,30,70,640,FS>1?46:40,hl);
+      if(show) T(g,350,70+(FS>1?46:40)*(TB.rows.length+2)+40,`${pr.num} ÷ ${pr.den} ≈ ${num(pr.ans,3)}`,{cls:"num",fill:C.pink});
+    }
+    if(pr.kind==="predict"||pr.kind==="slope"){
+      const c=pr.c, span=c.xr[1]-c.xr[0];
+      const fm=frame(g,{L:86,R:675,T:16,B:392,xr:c.xr,yr:pr.yr,xs:niceStep(span,10),ys:pr.ys,xt:c.xt,yt:c.yt,yl:18}), {X,Y,pg}=fm;
+      Ln(pg,X(c.xr[0]),Y(pr.m*c.xr[0]+pr.b),X(c.xr[1]),Y(pr.m*c.xr[1]+pr.b),C.green,3);
+      pr.pts.forEach(([x,y])=>Ci(g,X(x),Y(y),5,C.blue));
+      T(g,100,32,pr.eq,{a:"start",fill:C.green});
+      if(show&&pr.kind==="predict"){ const px=X(pr.x0), py=Y(pr.ans); Ln(pg,px,392,px,py,C.pink,2,"6 4"); Ln(pg,86,py,px,py,C.pink,2,"6 4"); Ci(g,px,py,7,C.pink); TC(g,px,py-18,"("+num(pr.x0,1)+", "+num(pr.ans,1)+")",{fill:C.pink}); }
+      if(show&&pr.kind==="slope"){ const x1=c.xr[0]+span*0.45, x2=x1+(c.xr[1]-c.xr[0])/10*1, step=c.xr[1]>50?10:1; const xa=c.xr[0]+span*0.45, xb=xa+step;
+        Ln(g,X(xa),Y(pr.m*xa+pr.b),X(xb),Y(pr.m*xa+pr.b),C.pink,2.6); Ln(g,X(xb),Y(pr.m*xa+pr.b),X(xb),Y(pr.m*xb+pr.b),C.pink,2.6);
+        TC(g,X(xb)+10,(Y(pr.m*xa+pr.b)+Y(pr.m*xb+pr.b))/2,"rise "+num(pr.m*step,1)+" per "+step,{fill:C.pink}); }
+    }
+    if(pr.kind==="r"){
+      const fm=frame(g,{L:80,R:675,T:16,B:392,xr:[0,10],yr:[0,10],xs:1,ys:1,xt:"x",yt:"y",yl:18});
+      pr.pts.forEach(([x,y])=>Ci(g,fm.X(x),fm.Y(y),5.5,C.purple));
+      if(show){ const LS=linreg(pr.pts); Ln(fm.pg,fm.X(0),fm.Y(LS.b),fm.X(10),fm.Y(LS.m*10+LS.b),C.green,2.6,"9 6"); T(g,94,36,"r = "+num(pr.real,3),{cls:"num",a:"start",fill:C.purple}); }
+    }
+  },
+  panel(){
+    const pr=M6.s.pr, mc=pr.kind==="slope"||pr.kind==="r";
+    let h=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob">${pr.q}</p></div>`;
+    if(mc){ h+=`<div class="choices${pr.kind==="r"?" rs":""}" id="ch6">${pr.choices.map((c,i)=>`<button type="button" class="choice" data-i="${i}">${c[0]}</button>`).join("")}</div>`; }
+    else { h+=`<div class="ansrow"><div><label class="fld" for="ans0">${pr.field}</label><input type="text" id="ans0" autocomplete="off" spellcheck="false" inputmode="${pr.kind==="outlier"?"text":"decimal"}"></div></div>
+      <div class="fmt">${pr.fmt}</div>
+      <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap"><button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button><button id="sol" class="ghost" type="button">Show solution</button></div>`; }
+    h+=`<div id="fb6"></div><div style="height:4px"></div></div>
+    <div class="panel"><h3>How it works</h3><div class="pad"><p>Problems are generated at random — press <b>New problem</b> for another, or choose a type from the menu.</p><p>A first-try correct answer grows your streak. A wrong answer resets it and gives you a hint; you can try again.</p></div></div>`;
+    side.innerHTML=h;
+    const fb=$("fb6");
+    const showSol=pre=>{ fb.innerHTML=(pre||"")+`<div class="fldwrap"><div class="eq">${solText(pr)}</div></div>`; };
+    const win=()=>{ M6.s.state="right"; if(M6.s.tries===0&&!M6.s.reveal){ M6.s.streak++; M6.s.best=Math.max(M6.s.best,M6.s.streak); } M6.s.solved++; M6.upStreak(); clear(); M6.draw();
+      showSol(`<div class="verdict good"><b>Correct!</b> ${M6.s.tries||M6.s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+M6.s.streak+"."} Press <b>New problem</b> for another.</div>`); };
+    const lose=msg=>{ M6.s.tries++; M6.s.streak=0; M6.upStreak(); fb.innerHTML=`<div class="verdict bad"><b>Not quite.</b> ${msg}</div>`; };
+    if(mc){
+      side.querySelectorAll("#ch6 .choice").forEach(b=>b.onclick=()=>{ if(M6.s.state==="right")return; const i=+b.dataset.i;
+        if(i===pr.ans){ b.classList.add("right"); side.querySelectorAll("#ch6 .choice").forEach(x=>x.disabled=true); win(); }
+        else { b.classList.add("wrong"); b.disabled=true;
+          lose(pr.kind==="slope"?pr.choices[i][1]+" The slope tells how much ŷ changes for each 1-unit increase in x.":
+            `r = ${num(pr.choices[i][1],1)} would mean ${pr.choices[i][1]===0?"no linear trend":(pr.choices[i][1]>0?"a rising":"a falling")+" pattern that is "+(Math.abs(pr.choices[i][1])>0.8?"tightly packed around a line":"loose")}. Look at the direction first (sign), then how tightly the points hug a line (size).`); } });
+    } else {
+      const inp=$("ans0");
+      const check=()=>{ if(M6.s.state==="right")return; const s=inp.value.trim();
+        if(pr.kind==="outlier"){
+          let vals; if(/^none$/i.test(s)||s==="")vals=s===""?null:[]; else vals=s.split(/[\s,;]+/).filter(Boolean).map(parseNum);
+          if(!vals||vals.some(v=>!isFinite(v))){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> List numbers separated by commas, or type none.</div>`; return; }
+          const a=sorted(vals), b=sorted(pr.ans);
+          if(a.length===b.length&&a.every((v,i)=>Math.abs(v-b[i])<1e-9)){ inp.disabled=true; win(); }
+          else lose((a.length>b.length?"You listed a value that is inside the fences. ":a.length<b.length?"You missed at least one outlier"+(b.length?"":"")+". ":"")+hintText(pr));
+          return; }
+        let v=parseNum(s); if(!isFinite(v)){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Use a number like 12.5, a fraction like 3/8${pr.kind==="cond"?", or a percent like 43%":""}.</div>`; return; }
+        if(pr.kind==="cond"&&v>1&&v<=100&&!/%/.test(s)) v=v/100;
+        if(Math.abs(v-pr.ans)<=pr.tol){ inp.disabled=true; win(); }
+        else { let extra="";
+          if(pr.kind==="cond"){ const tt=tTotals(pr.T); if(Math.abs(v-pr.num/tt.tot)<=pr.tol)extra="You divided by the grand total — that is a joint relative frequency. ";
+            else if(Math.abs(v-pr.num/(pr.by==="row"?tt.ct[pr.j]:tt.rt[pr.i]))<=pr.tol)extra=`You divided by the ${pr.by==="row"?"column":"row"} total — that answers the reverse question. `; }
+          if(pr.kind==="center"&&pr.stat==="median"&&Math.abs(v-medianS(pr.data.slice(0)))<=pr.tol&&false)extra="";
+          if(pr.kind==="center"&&pr.stat==="median"&&Math.abs(v-(pr.data.length%2?pr.data[(pr.data.length-1)/2]:(pr.data[pr.data.length/2-1]+pr.data[pr.data.length/2])/2))<=pr.tol)extra="That is the middle of the <b>unsorted</b> list. ";
+          if(pr.kind==="center"&&pr.stat==="IQR"&&Math.abs(v-pr.Q.range)<=pr.tol)extra="That is the range (max − min), not Q3 − Q1. ";
+          lose(extra+hintText(pr)); } };
+      $("chk").onclick=check; inp.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); });
+      $("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){M6.s.streak=0;M6.upStreak();} clear(); M6.draw();
+        showSol(`<div class="verdict info"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+    }
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+let cur=0;
+function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)render(); });
+function update(){ setFS(); const M=MODS[cur]; setVH(M.vh?M.vh():460); bTitle.textContent=M.title(); clear(); M.draw(); if(M.live)M.live(); }
+function render(){
+  setFS(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M6&&!M6.s.pr)M6.newProb();
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  bar.innerHTML=""; M.bar();
+  setVH(M.vh?M.vh():460); clear(); M.draw(); M.panel(); if(M.live)M.live();
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+MODS.forEach(M=>M.init&&M.init());
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>

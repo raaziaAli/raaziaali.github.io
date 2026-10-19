@@ -1,0 +1,1257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Probability &amp; Statistics Lab — Algebra 2 Unit 9</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M6 50C22 50 24 13 32 13S42 50 58 50' stroke='%2300E5FF' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='13' r='5' fill='%23FF3D8A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .rel[data-pair]{cursor:pointer}
+  .rel[data-pair]:hover{background:rgba(255,255,255,.05)}
+  .rel.active{background:rgba(255,255,255,.09);box-shadow:inset 3px 0 0 var(--accent)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top}
+  table.facts .ab{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  table.facts .st{color:#DDDDF2}
+  table.facts .st i{display:block;color:var(--dim);font-style:normal;font-size:13px;margin-top:4px}
+  .cathead{padding-top:18px!important;padding-bottom:6px!important;font-family:var(--display);font-weight:600;
+    font-size:13px;letter-spacing:.02em;color:var(--yellow);border-bottom:none!important}
+  .chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-right:9px}
+  .chip.assume{background:rgba(255,217,61,.18);color:var(--yellow)}
+  .chip.proved{background:rgba(94,234,212,.16);color:var(--mint)}
+  ol.chain{margin:0;padding:6px 20px 18px 38px;font-size:15px;color:#CFCFEA}
+  ol.chain li{padding:8px 0} ol.chain li::marker{color:var(--accent);font-weight:700}
+  ol.chain li b{color:#fff}
+
+  .steps{width:100%;border-collapse:collapse;font-size:15px}
+  .steps td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:middle}
+  .steps .stmt{font-family:var(--mono);font-size:14px;font-weight:600;color:#fff;white-space:nowrap}
+  .steps .why{width:56%}
+  .steps tr.right .stmt{color:var(--mint)}
+  .steps tr.right select{border-color:rgba(94,234,212,.6)}
+  .steps tr.wrong select{border-color:var(--coral)}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.8;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.4;fill:none;stroke-dasharray:9 6}
+  .wedge{stroke-width:2.4;fill-opacity:.17;cursor:pointer}
+  .wedge.flat{cursor:default}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── shared additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible,.choice:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:16px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  @media (max-width:560px){ svg.canvas .sm{font-size:21px;stroke-width:5} svg.canvas .mk{font-size:27px} svg.canvas .num{font-size:22px} svg.canvas .ax{font-size:16px} }
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .leg{stroke-width:3;fill:none;stroke-dasharray:8 5;stroke-linecap:round}
+  .tick{stroke:var(--graphite);stroke-width:2.2}
+  .ghostdot{fill:#9AA8C7;stroke:#fff;stroke-width:2}
+  .nt{position:relative;display:inline-block;padding-top:.42em;line-height:1.05;font-family:var(--mono);font-weight:700;color:#fff;white-space:nowrap}
+  .nt::before{content:"";position:absolute;left:.06em;right:.06em;top:.2em;border-top:2px solid currentColor}
+  .nt.ray::after,.nt.line::after{content:"";position:absolute;right:-.12em;top:calc(.2em - 3.5px);border-left:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .nt.line .la{position:absolute;left:-.12em;top:calc(.2em - 3.5px);border-right:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .uterms{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+  .uterms span{font-family:var(--mono);font-size:12px;font-weight:600;padding:5px 11px;border-radius:100px;
+    border:1px solid var(--edge);color:var(--dim);opacity:.55}
+  .uterms span.on{opacity:1;color:#0A0A1F;background:var(--accent);border-color:var(--accent)}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px}
+  .choice{font-family:var(--ui);font-size:15px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:14px;padding:13px 12px;cursor:pointer;text-align:left;line-height:1.5;transition:.15s}
+  .choice:hover{background:rgba(255,255,255,.12)}
+  .choice.right{border-color:var(--mint);background:rgba(94,234,212,.16)}
+  .choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.14)}
+  .choice small{display:block;font-weight:400;color:var(--dim);font-size:12.5px}
+  .stepl{list-style:none;margin:0;padding:6px 0}
+  .stepl li{padding:10px 20px;border-left:3px solid transparent;color:var(--dim);font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li.done{color:#CFCFEA}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li b{color:#fff}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  @media (max-width:560px){
+    .choices{grid-template-columns:1fr}
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+  }
+  /* ── Probability & Statistics Lab additions ── */
+  .brk{flex-basis:100%;height:0}
+  .nfld{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:13.5px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:4px 5px 4px 14px}
+  .nfld input{width:64px;padding:6px 8px;border-radius:100px;font-family:var(--mono);font-size:14px}
+  .lbl{font-family:var(--mono)} .uil{font-family:var(--ui)}
+  .halo{paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+  svg .hit{cursor:pointer} svg .hand{cursor:grab}
+  .edit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:8px;padding:6px 20px 16px}
+  .edit input{padding:9px 11px;font-size:14px}
+  .edit .sh{grid-column:1/-1;font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-top:10px}
+  table.pt{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}
+  table.pt th,table.pt td{padding:7px 14px;border-bottom:1px solid rgba(196,181,253,.12);text-align:right;white-space:nowrap}
+  table.pt th{color:var(--dim);font-weight:600;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase}
+  table.pt th:first-child,table.pt td:first-child{text-align:left;color:#fff}
+  table.pt tr.in td{background:rgba(255,61,138,.13)}
+  table.pt input{width:72px;padding:7px 8px;font-family:var(--mono);font-size:14px;text-align:right}
+  .tblwrap{overflow-x:auto;max-width:100%}
+  .stage>aside,.stage>section{min-width:0}
+  .pascal{padding:14px 8px;font-family:var(--mono);font-size:12px;text-align:center;overflow-x:auto}
+  .pascal div{display:flex;justify-content:center;gap:4px;margin:3px 0}
+  .pascal span{min-width:30px;padding:3px 3px;border-radius:7px;background:rgba(255,255,255,.05);color:var(--dim)}
+  .pascal div.row span{color:#fff;background:rgba(196,181,253,.12)}
+  .pascal span.par{outline:1.5px dashed var(--accent);color:#fff}
+  .pascal span.hl{background:var(--accent)!important;color:#0A0A1F!important;font-weight:700}
+  .ss{display:flex;flex-wrap:wrap;gap:6px;padding:14px 20px;max-height:240px;overflow:auto}
+  .ss span{font-family:var(--mono);font-size:12px;padding:4px 9px;border-radius:8px;background:rgba(255,255,255,.05);color:var(--dim);border:1px solid transparent}
+  .ss span.in{background:rgba(255,61,138,.22);color:#fff;border-color:var(--magenta)}
+  .evrow{display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding:8px 20px 0}
+  .evrow .tag{font-family:var(--mono);font-weight:700;font-size:13px;color:#fff;min-width:64px}
+  .mini{font-family:var(--mono);font-size:12.5px;font-weight:600;padding:6px 10px;border-radius:9px;border:1.5px solid var(--c,var(--edge));
+    background:rgba(255,255,255,.05);color:#E7E9FA;cursor:pointer;min-width:34px;transition:.12s}
+  .mini:hover{background:rgba(255,255,255,.12)}
+  .mini[aria-pressed="true"]{background:var(--c,var(--accent));color:#0A0A1F;border-color:var(--c,var(--accent));font-weight:700}
+  .mini:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  s.x{text-decoration:line-through;text-decoration-color:var(--coral);text-decoration-thickness:2px;opacity:.55}
+  .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.25;margin:0 3px;text-align:center}
+  .fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 4px 1px}
+  .fr>span:last-child{padding:1px 4px 0}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-family:var(--mono);font-size:13.5px;margin:6px 0}
+  .kv span:nth-child(odd){color:var(--dim)} .kv span:nth-child(even){color:#fff;font-weight:600}
+  .pill{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:700;padding:3px 9px;border-radius:100px;margin:0 2px}
+  .pill.y{background:rgba(94,234,212,.18);color:var(--mint)} .pill.n{background:rgba(255,107,107,.16);color:var(--coral)}
+  .fmt{font-size:13px;color:var(--dim);padding:6px 20px 0}
+  @media (max-width:560px){
+    .edit{grid-template-columns:1fr}
+    .nfld input{width:56px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Probability &amp; Statistics Lab</h1>
+    <div class="eyebrow">Algebra 2 · Unit 9 · Probability &amp; Statistics</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Probability figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"><div id="sTop"></div><div id="sLive"></div><div id="sBot"></div></aside>
+  </div>
+  <footer class="foot">Every figure is live and every probability is computed from what is on the board — change a choice, run more trials or drag a value and the work follows. Vocabulary follows Common Core / Eureka Math (EngageNY) Algebra II.
+    <div class="links"><a href="/algebra/">← Algebra courses</a><a href="/math/#algebra">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      sTop=document.getElementById("sTop"), sLive=document.getElementById("sLive"), sBot=document.getElementById("sBot"),
+      tabsEl=document.getElementById("tabs"), bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const C={ink:"#14213D",gr:"#22314F",grid:"#DCE6F7",ax:"#7C8AAB",vert:"#7C3AED",lin:"#EA580C",corr:"#0284C7",alt:"#059669",
+  altx:"#DB2777",red:"#DC2626",cyan:"#0891B2",mag:"#E11D74",yel:"#CA8A04",hand:"#FF6B35",soft:"#94A3B8"};
+const PAL=["#0284C7","#EA580C","#059669","#DB2777","#7C3AED","#0891B2","#CA8A04","#DC2626"];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const range=(a,b)=>{const r=[];for(let i=a;i<=b;i++)r.push(i);return r;};
+function num(v,dp){ dp=(dp==null?2:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+const big=n=>minus(Math.round(n).toLocaleString("en-US"));
+const pct=(v,dp)=>num(v*100,dp==null?1:dp)+"%";
+function fact(n){ let p=1; for(let i=2;i<=n;i++)p*=i; return p; }
+function nPr(n,r){ let p=1; for(let i=0;i<r;i++)p*=(n-i); return p; }
+function nCr(n,r){ if(r<0||r>n)return 0; r=Math.min(r,n-r); let p=1; for(let i=1;i<=r;i++)p=p*(n-r+i)/i; return Math.round(p); }
+/* rationals as [n,d] */
+function rr(n,d){ if(d<0){n=-n;d=-d;} const g=gcd(n,d); return [n/g,d/g]; }
+const radd=(a,b)=>rr(a[0]*b[1]+b[0]*a[1],a[1]*b[1]);
+const rsub=(a,b)=>rr(a[0]*b[1]-b[0]*a[1],a[1]*b[1]);
+const rmul=(a,b)=>rr(a[0]*b[0],a[1]*b[1]);
+const req=(a,b)=>a[0]*b[1]===b[0]*a[1];
+const rv=a=>a[0]/a[1];
+function fs(n,d){ if(Array.isArray(n)){d=n[1];n=n[0];} if(!d)return "undefined"; const q=rr(n,d); return q[1]===1? minus(q[0]) : minus(q[0]+"/"+q[1]); }
+function fh(a,b){ return `<span class="fr"><span>${a}</span><span>${b}</span></span>`; }
+function fhr(n,d){ if(Array.isArray(n)){d=n[1];n=n[0];} const q=rr(n,d); return q[1]===1? minus(q[0]) : fh(minus(q[0]),q[1]); }
+// "a/b ≈ 0.xxx" with exact fraction and decimal
+function fdec(n,d,dp){ if(Array.isArray(n)){dp=d;d=n[1];n=n[0];} if(!d)return "undefined"; const q=rr(n,d); return q[1]===1? minus(q[0]) : fs(q)+" ≈ "+num(q[0]/q[1],dp==null?3:dp); }
+
+let W=700,H=460,FS=1,cur=0,narrow=false;
+function E(tag,a,p){ const n=document.createElementNS(NS,tag); for(const k in a){ if(a[k]!=null)n.setAttribute(k,a[k]); } if(p)p.appendChild(n); return n; }
+function T(p,x,y,s,o){ o=o||{};
+  const t=E("text",{x:x,y:y,"text-anchor":o.a||"middle"},p);
+  t.style.fontFamily=o.f==="ui"?"var(--ui)":o.f==="d"?"var(--display)":"var(--mono)";
+  t.style.fontSize=((o.s||13)*(o.nofs?1:FS))+"px"; t.style.fontWeight=o.w||600; t.style.fill=o.c||C.ink;
+  if(o.halo!==false)t.setAttribute("class","halo");
+  if(o.mid)t.setAttribute("dominant-baseline","central");
+  t.textContent=s; return t; }
+function Ln(p,x1,y1,x2,y2,c,w,d){ return E("line",{x1:x1,y1:y1,x2:x2,y2:y2,stroke:c||C.gr,"stroke-width":w||2,"stroke-dasharray":d||null,"stroke-linecap":"round"},p); }
+function Rc(p,x,y,w,h,o){ o=o||{}; return E("rect",{x:x,y:y,width:Math.max(0,w),height:Math.max(0,h),rx:o.rx||0,fill:o.fill||"none",stroke:o.st||null,"stroke-width":o.sw||null,"stroke-dasharray":o.d||null,opacity:o.op==null?null:o.op},p); }
+function Ci(p,cx,cy,r,o){ o=o||{}; return E("circle",{cx:cx,cy:cy,r:r,fill:o.fill||"none",stroke:o.st||null,"stroke-width":o.sw||null,"stroke-dasharray":o.d||null,class:o.cls||null,opacity:o.op==null?null:o.op},p); }
+function clear(){ while(cv.firstChild)cv.removeChild(cv.firstChild); }
+function setVB(w,h){ H=h; cv.setAttribute("viewBox","0 0 "+w+" "+h); }
+
+/* ── normal distribution ── */
+function erf(x){ // Abramowitz & Stegun 7.1.26, |error| < 1.5e-7
+  const sg=x<0?-1:1; x=Math.abs(x);
+  const t=1/(1+0.3275911*x);
+  const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);
+  return sg*y; }
+const Phi=z=>0.5*(1+erf(z/Math.SQRT2));
+const pdf=(x,m,s)=>Math.exp(-0.5*((x-m)/s)*((x-m)/s))/(s*Math.sqrt(2*Math.PI));
+// normal plot: returns {X,Y,invX}
+function normPlot(g,o){
+  const X=x=>o.px0+(x-o.lo)/(o.hi-o.lo)*(o.px1-o.px0);
+  const invX=px=>o.lo+(px-o.px0)/(o.px1-o.px0)*(o.hi-o.lo);
+  const Y=v=>o.base-v*o.k;
+  return {X:X,Y:Y,invX:invX,
+    curve(m,s,col,w){ let d=""; const n=360; for(let i=0;i<=n;i++){ const x=o.lo+(o.hi-o.lo)*i/n; d+=(i?"L":"M")+X(x).toFixed(2)+","+Math.max(o.top-30,Y(pdf(x,m,s))).toFixed(2); }
+      return E("path",{d:d,fill:"none",stroke:col||C.ink,"stroke-width":w||3,"stroke-linejoin":"round"},g); },
+    shade(m,s,a,b,col,op){ a=Math.max(a,o.lo); b=Math.min(b,o.hi); if(b<=a)return null; let d="M"+X(a)+","+o.base; const n=Math.max(8,Math.round((b-a)/(o.hi-o.lo)*300));
+      for(let i=0;i<=n;i++){ const x=a+(b-a)*i/n; d+="L"+X(x).toFixed(2)+","+Math.max(o.top-30,Y(pdf(x,m,s))).toFixed(2); }
+      d+="L"+X(b)+","+o.base+"Z"; return E("path",{d:d,fill:col,opacity:op==null?1:op,stroke:"none"},g); }};
+}
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null, dragStart=null, dragMoved=false;
+function svgPt(e){
+  const m=cv.getScreenCTM(); if(!m)return [0,0];
+  const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y];
+}
+cv.addEventListener("pointerdown",e=>{
+  const t=e.target.closest?e.target.closest("[data-drag]"):null, M=MODS[cur];
+  if(t){ dragId=t.getAttribute("data-drag"); dragStart=svgPt(e); dragMoved=false; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault();
+    if(M.dragStart)M.dragStart(dragId,dragStart); return; }
+  const hit=e.target.closest?e.target.closest("[data-hit]"):null;
+  if(hit&&M.hit){ M.hit(hit.getAttribute("data-hit")); update(); }
+});
+cv.addEventListener("pointermove",e=>{
+  if(!dragId)return; const M=MODS[cur]; if(!M.drag)return; const p=svgPt(e);
+  if(!dragMoved&&dragStart&&Math.hypot(p[0]-dragStart[0],p[1]-dragStart[1])>5)dragMoved=true;
+  if(!dragMoved&&M.tapOK)return;
+  if(M.drag(dragId,p)!==false)update();
+});
+function endDrag(e){ if(!dragId)return; const M=MODS[cur], id=dragId; dragId=null;
+  if(M.dragEnd){ M.dragEnd(id,e&&e.clientX!=null?svgPt(e):dragStart,dragMoved); update(); } }
+cv.addEventListener("pointerup",endDrag);
+cv.addEventListener("pointercancel",endDrag);
+
+/* bar builders */
+function btn(label,fn,cls){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(opts,val,fn,aria){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(aria)s.setAttribute("aria-label",aria);
+  opts.forEach(([k,lab])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=lab;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s;
+}
+function chk(label,val,fn){
+  const l=document.createElement("label"); l.className="chk";
+  const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i;
+}
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t||""; bar.appendChild(s); return s; }
+function brk(){ const d=document.createElement("div"); d.className="brk"; bar.appendChild(d); }
+function slider(label,min,max,step,val,fn,fmt){
+  const l=document.createElement("label"); l.className="rng"; l.textContent=label+" ";
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=step; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); o.textContent=fmt?fmt(val):val;
+  i.oninput=()=>{ o.textContent=fmt?fmt(+i.value):i.value; fn(+i.value); };
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l); return {inp:i,out:o,set(v){i.value=v;o.textContent=fmt?fmt(v):v;}};
+}
+function stepper(label,val,min,max,fn){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); s.setAttribute("aria-label",label);
+  const m=document.createElement("button"); m.type="button"; m.textContent="−"; m.setAttribute("aria-label","Decrease "+label); m.disabled=val<=min;
+  const sp=document.createElement("span"); sp.className="nfld"; sp.style.padding="8px 14px"; sp.textContent=label+" = "+val;
+  const p=document.createElement("button"); p.type="button"; p.textContent="+"; p.setAttribute("aria-label","Increase "+label); p.disabled=val>=max;
+  m.onclick=()=>fn(Math.max(min,val-1)); p.onclick=()=>fn(Math.min(max,val+1));
+  s.appendChild(m); s.appendChild(sp); s.appendChild(p); bar.appendChild(s); return s;
+}
+function tryPanel(html){ return `<div class="panel"><h3>Try this</h3><div class="pad">${html}</div></div>`; }
+function miniBtns(items,isOn,attr,color){ return items.map((it,j)=>`<button type="button" class="mini" ${attr}="${j}" aria-pressed="${isOn(j)}" style="--c:${color||"var(--accent)"}">${esc(it)}</button>`).join(""); }
+
+/* ══════════════════════ TAB 1 · counting principle ══════════════════════ */
+const PRE1={
+  outfit:{label:"Outfits",stages:[{name:"Shirt",opts:["Red","Blue","White"]},{name:"Pants",opts:["Jeans","Khakis"]},{name:"Shoes",opts:["Sneakers","Boots"]}]},
+  menu:{label:"Menu",stages:[{name:"Entrée",opts:["Chicken","Pasta","Tacos","Salad"]},{name:"Side",opts:["Fries","Rice"]},{name:"Drink",opts:["Water","Juice","Milk"]}]},
+  code:{label:"Codes",stages:[{name:"Letter",opts:["A","B"]},{name:"Digit",opts:["1","2","3"]},{name:"Symbol",opts:["#","!"]}]}
+};
+const M1={
+  tab:"Counting principle", lesson:"S-CP.A.1 · S-CP.B.9", accent:"var(--cyan)", narrowW:470,
+  s:{pre:"outfit",k:3,st:null,ev:[[],[],[]]},
+  sp:null,
+  load(p){ const s=M1.s; s.pre=p; s.st=PRE1[p].stages.map(x=>({name:x.name,opts:x.opts.slice()})); s.k=3; s.ev=[[],[],[]]; },
+  init(){ M1.load("outfit"); },
+  title(){ return "Tree diagrams & the counting principle"; },
+  stages(){ return M1.s.st.slice(0,M1.s.k); },
+  leaves(){ let out=[[]]; M1.stages().forEach(S=>{ const nx=[]; out.forEach(o=>S.opts.forEach((_,j)=>nx.push(o.concat(j)))); out=nx; }); return out; },
+  match(l){ return l.every((j,i)=>!M1.s.ev[i].length||M1.s.ev[i].includes(j)); },
+  active(){ return M1.s.ev.slice(0,M1.s.k).some(e=>e.length); },
+  evText(){ const st=M1.stages(), parts=[];
+    st.forEach((S,i)=>{ const e=M1.s.ev[i]; if(e.length)parts.push(S.name+" is "+e.map(j=>S.opts[j]).join(" or ")); });
+    return parts.join(" and "); },
+  bar(){
+    segBtns(Object.keys(PRE1).map(k=>[k,PRE1[k].label]),M1.s.pre,k=>{M1.load(k);render();},"Example");
+    segBtns([[1,"1 stage"],[2,"2 stages"],[3,"3 stages"]],M1.s.k,k=>{M1.s.k=k;render();},"Number of stages");
+    btn("Clear event",()=>{M1.s.ev=[[],[],[]];M1.wireEv();update();});
+    M1.sp=spacer("");
+  },
+  draw(){
+    const s=M1.s, st=M1.stages(), lv=M1.leaves(), n=lv.length, act=M1.active(), sizes=st.map(S=>S.opts.length);
+    const top=50*FS; let lh=Math.min(48,(460-top-14)/n); lh=Math.max(lh,17*FS);
+    const h=Math.max(460,top+n*lh+14); setVB(W,h);
+    const fsz=narrow?(lh<26*FS?8.5:9.5):lh<22*FS?10.5:lh<30*FS?12:13.5, fszGuess=fsz;
+    const g=E("g",{},cv);
+    const outW=narrow?44:225, x0=22, lastHalf=Math.max(...st[s.k-1].opts.map(o=>o.length))*0.62*fszGuess*FS/2+8, colW=(W-x0-outW-lastHalf-24)/s.k, X=d=>x0+d*colW;
+    const span=d=>sizes.slice(d).reduce((a,b)=>a*b,1);
+    const nodeY=(d,p)=>{ const sp=span(d); return top+(p*sp+sp/2)*lh; };
+    const mt=lv.map(l=>M1.match(l));
+    const anyIn=(d,p)=>{ const sp=span(d); for(let j=p*sp;j<(p+1)*sp;j++) if(mt[j])return true; return false; };
+
+    st.forEach((S,i)=>T(g,X(i+1),20*FS,narrow?S.name.slice(0,8)+" ("+S.opts.length+")":S.name+" ("+S.opts.length+")",{s:narrow?9.5:12,c:C.corr,w:700}));
+    T(g,W-outW+4,20*FS,narrow?"#":"Outcome",{a:"start",s:narrow?9.5:12,c:C.corr,w:700});
+    Ln(g,12,30*FS,W-12,30*FS,C.grid,1.5);
+    // edges
+    for(let d=1;d<=s.k;d++){
+      const cnt=sizes.slice(0,d).reduce((a,b)=>a*b,1);
+      for(let p=0;p<cnt;p++){
+        const pp=Math.floor(p/sizes[d-1]), px=X(d-1), py=d===1?nodeY(0,0):nodeY(d-1,pp);
+        const hl=act&&anyIn(d,p);
+        Ln(g,px,py,X(d),nodeY(d,p),hl?C.mag:act?"#C7D0E3":C.gr,hl?3.2:1.8);
+      }
+    }
+    // leaf connectors + labels
+    const lx=W-outW+4; let maxc=1;
+    const lab=lv.map(l=>l.map((j,i)=>st[i].opts[j]).join(", ")); lab.forEach(t=>maxc=Math.max(maxc,t.length));
+    const lfs=Math.min(fsz,(outW-34)/(maxc*0.62)/FS);
+    lv.forEach((l,j)=>{ const y=nodeY(s.k,j);
+      Ln(g,X(s.k)+lastHalf,y,lx-4,y,act&&mt[j]?C.mag:"#D5DCEB",1.2,"3 4");
+      if(act&&mt[j])Rc(g,lx-2,y-lh*0.42,outW-8,lh*0.84,{rx:6,fill:"#FCE7F3"});
+      T(g,lx+2,y,(j+1)+(narrow?"":". "),{a:"start",s:narrow?10:Math.min(lfs,11),c:act&&mt[j]?"#9D174D":C.ax,mid:true,halo:false,w:narrow?700:500});
+      if(!narrow)T(g,lx+24*FS,y,lab[j],{a:"start",s:lfs,c:act&&mt[j]?"#9D174D":C.ink,mid:true,halo:false,w:act&&mt[j]?700:500});
+    });
+    // nodes
+    Ci(g,X(0),nodeY(0,0),6,{fill:C.ink});
+    for(let d=1;d<=s.k;d++){
+      const cnt=sizes.slice(0,d).reduce((a,b)=>a*b,1);
+      for(let p=0;p<cnt;p++){ const j=p%sizes[d-1], hl=act&&anyIn(d,p);
+        T(g,X(d),nodeY(d,p),st[d-1].opts[j],{s:fsz,c:hl?"#9D174D":C.ink,mid:true,w:700}); }
+    }
+    const m=mt.filter(Boolean).length;
+    if(M1.sp)M1.sp.textContent=sizes.join(" × ")+" = "+n+" outcomes"+(act?" · E has "+m:"");
+  },
+  top(){ const s=M1.s; let h=`<div class="panel"><h3>Edit the stages</h3><div class="edit">`;
+    for(let i=0;i<s.k;i++) h+=`<div class="sh">Stage ${i+1}</div><input type="text" id="sn${i}" aria-label="Stage ${i+1} name" value="${esc(s.st[i].name)}"><input type="text" id="so${i}" aria-label="Stage ${i+1} choices, separated by commas" value="${esc(s.st[i].opts.join(", "))}">`;
+    h+=`</div><p class="fmt" style="padding:0 20px 14px">Stage name on the left, choices separated by commas on the right (1 to 4 choices per stage).</p></div>
+    <div class="panel"><h3>Choose an event E</h3><div id="evbox" style="padding-bottom:14px"></div></div>`;
+    return h; },
+  wire(){ const s=M1.s;
+    for(let i=0;i<s.k;i++){
+      document.getElementById("sn"+i).addEventListener("input",e=>{ s.st[i].name=e.target.value.trim()||("Stage "+(i+1)); M1.wireEv(); update(); });
+      document.getElementById("so"+i).addEventListener("input",e=>{ let o=e.target.value.split(",").map(x=>x.trim()).filter(Boolean).slice(0,4); if(!o.length)o=["?"];
+        s.st[i].opts=o; s.ev[i]=s.ev[i].filter(j=>j<o.length); M1.wireEv(); update(); });
+    }
+    M1.wireEv(); },
+  wireEv(){ const box=document.getElementById("evbox"); if(!box)return; const s=M1.s, st=M1.stages();
+    box.innerHTML=st.map((S,i)=>`<div class="evrow"><span class="tag">${esc(S.name)}</span>${miniBtns(S.opts,j=>s.ev[i].includes(j),"data-e"+i,"var(--magenta)")}</div>`).join("")+
+      `<p class="fmt">Within a stage, choices join with <b>or</b>; across stages, with <b>and</b>. A stage with nothing selected means "any".</p>`;
+    st.forEach((S,i)=>box.querySelectorAll("[data-e"+i+"]").forEach(b=>b.onclick=()=>{ const j=+b.getAttribute("data-e"+i), e=s.ev[i], k=e.indexOf(j);
+      if(k>=0)e.splice(k,1); else e.push(j); e.sort((a,b)=>a-b); M1.wireEv(); update(); })); },
+  live(){ const s=M1.s, st=M1.stages(), sz=st.map(S=>S.opts.length), n=sz.reduce((a,b)=>a*b,1), lv=M1.leaves(), act=M1.active(), m=lv.filter(l=>M1.match(l)).length;
+    let h=`<div class="panel"><h3>Fundamental Counting Principle</h3><div class="pad">
+      <div class="eq">${st.map(S=>esc(S.name)).join(" × ")}\n${sz.join(" × ")} = ${n} outcomes<small>Every choice at one stage can be paired with every choice at the next, so the counts multiply. That is why the tree has ${n} leaves.</small></div>`;
+    if(act){ const ez=st.map((S,i)=>s.ev[i].length||S.opts.length);
+      h+=`<div class="eq">E: ${esc(M1.evText())}\nn(E) = ${ez.join(" × ")} = ${m}\nP(E) = ${fh("n(E)","n(S)")} = ${fh(m,n)} = ${fdec(m,n)}<small>Assumes each outcome is equally likely (choices made at random). P(not E) = ${fs(n-m,n)}.</small></div>`; }
+    else h+=`<p>Tap choices under <b>Choose an event E</b> to highlight the matching branches and outcomes, then find P(E).</p>`;
+    h+=`</div></div><div class="panel"><h3>Sample space S · ${n} outcomes</h3><div class="ss">${lv.map(l=>`<span class="${act&&M1.match(l)?"in":""}">(${l.map((j,i)=>esc(st[i].opts[j])).join(", ")})</span>`).join("")}</div></div>`;
+    return h; },
+  bot(){ return `<div class="panel"><h3>The idea</h3><div class="pad">
+    <p>The <span class="term">sample space</span> S is the list of every possible outcome. A <b>tree diagram</b> builds it one stage at a time: each branch splits into one new branch for every choice at the next stage.</p>
+    <p>The <span class="term">Fundamental Counting Principle</span>: if one choice can be made in m ways and a second in n ways, the pair can be made in m · n ways. More stages just keep multiplying.</p>
+    <p>An <span class="term">event</span> is a subset of the sample space. When outcomes are equally likely, P(E) = (number of outcomes in E) ÷ (number of outcomes in S).</p></div></div>`+
+    tryPanel(`With the Outfits example, add a 4th shirt color. Predict the new total before you look. Then pick the event "Shoes is Boots". Why is P(E) the same no matter how many shirts there are?`); }
+};
+
+/* ══════════════════════ TAB 2 · permutations & combinations ══════════════════════ */
+const LET="ABCDEFG";
+function kComb(n,k){ const out=[]; (function rec(st,a){ if(a.length===k){out.push(a.slice());return;} for(let i=st;i<n;i++){a.push(i);rec(i+1,a);a.pop();} })(0,[]); return out; }
+function perms(a){ if(a.length<=1)return [a.slice()]; const out=[]; a.forEach((x,i)=>{ perms(a.slice(0,i).concat(a.slice(i+1))).forEach(p=>out.push([x].concat(p))); }); return out; }
+const ORD=["1st","2nd","3rd","4th"];
+const M2={
+  tab:"Permutations & combinations", lesson:"S-CP.B.9", accent:"var(--magenta)",
+  s:{n:5,r:3,mode:"perm",slots:[1,3,0],drag:null},
+  tapOK:true,
+  title(){ return M2.s.mode==="perm"?"Permutations: order matters":"Combinations: order does not matter"; },
+  setNR(n,r){ const s=M2.s; s.n=n; s.r=clamp(r,1,Math.min(4,n)); s.slots=new Array(s.r).fill(null); },
+  bar(){ const s=M2.s;
+    stepper("n",s.n,2,7,v=>{M2.setNR(v,s.r);render();});
+    stepper("r",s.r,1,Math.min(4,s.n),v=>{M2.setNR(s.n,v);render();});
+    segBtns([["perm","Order matters · nPr"],["comb","Order doesn't · nCr"]],s.mode,k=>{s.mode=k;render();},"Counting mode");
+    brk();
+    btn("Random pick",()=>{ const a=perms(range(0,s.n-1)); const p=pick(a).slice(0,s.r); s.slots=p; update(); },"primary");
+    btn("Rearrange",()=>{ if(s.slots.some(v=>v==null))return; const cur=s.slots.join(); let p; do{ p=pick(perms(s.slots)); }while(s.r>1&&p.join()===cur); s.slots=p; update(); });
+    btn("Clear",()=>{ s.slots=new Array(s.r).fill(null); update(); });
+    spacer("Drag or tap tokens");
+  },
+  geom(){ const s=M2.s, gap=Math.min(76,(W-50)/s.n), sg=Math.min(100,(W-50)/s.r), R=Math.min(22*FS,gap*0.4);
+    return {R:R,poolY:66,slotY:158,poolX:i=>W/2+(i-(s.n-1)/2)*gap,slotX:j=>W/2+(j-(s.r-1)/2)*sg}; },
+  layout(){ const s=M2.s, combos=kComb(s.n,s.r), rf=fact(s.r), np=nPr(s.n,s.r);
+    const sw=(s.r*9.4+12)*FS, pc=s.r<=2?1:s.r===3?2:4, lineH=15*FS, rows=Math.ceil(rf/pc);
+    const bw=pc*sw+14, bh=24*FS+rows*lineH+8, gap=8, gpr=Math.max(1,Math.floor((W-24+gap)/(bw+gap)));
+    const listAll=np<=120, nb=listAll?combos.length:1, grows=Math.ceil(nb/gpr);
+    return {combos,rf,np,sw,pc,lineH,bw,bh,gap,gpr,listAll,grows,y0:236}; },
+  draw(){
+    const s=M2.s, G=M2.geom(), Lo=M2.layout();
+    const h=Math.max(460,Lo.y0+16+Lo.grows*(Lo.bh+Lo.gap)+12); setVB(W,h);
+    const g=E("g",{},cv);
+    T(g,14,24*FS,"Pool: n = "+s.n+" distinct items",{a:"start",s:12.5,c:C.corr,w:700});
+    T(g,14,G.slotY-G.R-18,"Your pick: r = "+s.r+(s.mode==="perm"?" (in order)":" (as a group)"),{a:"start",s:12.5,c:C.mag,w:700});
+    // slots
+    for(let j=0;j<s.r;j++){ const x=G.slotX(j);
+      Rc(g,x-G.R-7,G.slotY-G.R-7,2*G.R+14,2*G.R+14,{rx:14,fill:"#F8FAFF",st:s.mode==="perm"?C.mag:C.soft,sw:2,d:"6 4"});
+      T(g,x,G.slotY+G.R+22,s.mode==="perm"?ORD[j]:"pick",{s:11.5,c:C.ax,halo:false});
+      if(j<s.r-1&&s.mode==="perm")T(g,(x+G.slotX(j+1))/2,G.slotY,"→",{s:15,c:C.soft,mid:true,halo:false}); }
+    // ghosts in pool
+    for(let i=0;i<s.n;i++) if(s.slots.includes(i)) Ci(g,G.poolX(i),G.poolY,G.R,{st:C.soft,sw:1.6,d:"4 3",fill:"#F1F5F9"});
+    const tok=(i,x,y,lift)=>{ const tg=E("g",{"data-drag":"t"+i,class:"hand",role:"button","aria-label":"Token "+LET[i]},g);
+      if(lift)Ci(tg,x+2,y+4,G.R,{fill:"rgba(20,33,61,.25)"});
+      Ci(tg,x,y,G.R,{fill:PAL[i],st:"#fff",sw:3});
+      T(tg,x,y+1,LET[i],{s:G.R*0.9/FS,c:"#fff",mid:true,halo:false,w:700,f:"d"}); };
+    for(let i=0;i<s.n;i++){ if(s.drag&&s.drag.i===i)continue; const j=s.slots.indexOf(i);
+      if(j>=0)tok(i,G.slotX(j),G.slotY); else tok(i,G.poolX(i),G.poolY); }
+    // grouped arrangements
+    const chosen=s.slots.filter(v=>v!=null), full=chosen.length===s.r, selKey=chosen.slice().sort((a,b)=>a-b).join(), arr=s.slots.join();
+    const nc=Lo.combos.length;
+    Ln(g,12,Lo.y0-26*FS,W-12,Lo.y0-26*FS,C.grid,1.5);
+    const head=Lo.listAll?(s.mode==="perm"?`All ${Lo.np} permutations, grouped by which ${s.r} items are used`:`${nc} combinations: each group of ${s.r}! = ${Lo.rf} arrangements counts once`)
+      :`${Lo.np} permutations is too many to list (${nc} groups of ${Lo.rf}). Your pick's group:`;
+    T(g,14,Lo.y0-8*FS,head,{a:"start",s:narrow?10.5:12,c:C.ink,w:700,halo:false});
+    let list=Lo.listAll?Lo.combos:(full?[chosen.slice().sort((a,b)=>a-b)]:[]);
+    if(!Lo.listAll&&!full)T(g,W/2,Lo.y0+50,"Fill every slot to see its group.",{s:13,c:C.ax,halo:false});
+    list.forEach((c,ci)=>{ const gx=12+(ci%Lo.gpr)*(Lo.bw+Lo.gap), gy=Lo.y0+6+Math.floor(ci/Lo.gpr)*(Lo.bh+Lo.gap);
+      const isSel=full&&c.join()===selKey, part=!full&&chosen.length&&chosen.every(v=>c.includes(v));
+      Rc(g,gx,gy,Lo.bw,Lo.bh,{rx:9,fill:isSel?"#FCE7F3":part?"#FDF2F8":"#F8FAFF",st:isSel?C.mag:"#CBD5E1",sw:isSel?3:1.2});
+      T(g,gx+Lo.bw/2,gy+15*FS,"{"+c.map(i=>LET[i]).join(",")+"}",{s:11.5,c:s.mode==="comb"?(isSel?C.mag:C.vert):C.ax,w:700,halo:false});
+      perms(c).forEach((p,pi)=>{ const px=gx+7+(pi%Lo.pc)*Lo.sw+Lo.sw/2, py=gy+24*FS+Math.floor(pi/Lo.pc)*Lo.lineH+Lo.lineH*0.62;
+        const me=isSel&&p.join()===arr;
+        if(me)Rc(g,px-Lo.sw/2+1,py-Lo.lineH*0.55,Lo.sw-2,Lo.lineH*0.95,{rx:4,fill:C.mag});
+        T(g,px,py,p.map(i=>LET[i]).join(""),{s:11,c:me?"#fff":s.mode==="perm"?C.ink:"#9AA6BF",mid:true,halo:false,w:s.mode==="perm"||me?700:500}); });
+    });
+    if(s.drag)tok(s.drag.i,s.drag.x,s.drag.y,true);
+  },
+  dragStart(id,p){ M2.s.drag=null; },
+  drag(id,p){ const i=+id.slice(1); M2.s.drag={i:i,x:clamp(p[0],10,W-10),y:clamp(p[1],10,H-10)}; },
+  dragEnd(id,p,moved){ const s=M2.s, i=+id.slice(1), G=M2.geom(), cur=s.slots.indexOf(i); s.drag=null;
+    if(!moved){ if(cur>=0)s.slots[cur]=null; else { const e=s.slots.indexOf(null); if(e>=0)s.slots[e]=i; } return; }
+    let best=-1,bd=1e9; for(let j=0;j<s.r;j++){ const d=Math.hypot(p[0]-G.slotX(j),p[1]-G.slotY); if(d<bd){bd=d;best=j;} }
+    if(bd<G.R*2.6){ const occ=s.slots[best]; if(cur>=0)s.slots[cur]=(occ===i?null:occ); s.slots[best]=i; }
+    else if(cur>=0)s.slots[cur]=null; },
+  cancelHTML(n,r){ const k=n-r, top=[], bot=[];
+    for(let i=n;i>=1;i--) top.push(i<=k?`<s class="x">${i}</s>`:String(i));
+    for(let i=k;i>=1;i--) bot.push(`<s class="x">${i}</s>`);
+    return fh(top.join("·"),k>0?bot.join("·"):"0! = 1"); },
+  live(){ const s=M2.s, n=s.n, r=s.r, np=nPr(n,r), nc=nCr(n,r), rf=fact(r), chosen=s.slots.filter(v=>v!=null), full=chosen.length===r;
+    const sub=(a,b,L)=>`<sub>${a}</sub>${L}<sub>${b}</sub>`;
+    let h=`<div class="panel"><h3>Count it</h3><div class="pad">
+      <div class="eq" style="${s.mode==="perm"?"":"opacity:.75"}">Slots: ${range(0,r-1).map(i=>n-i).join(" × ")} = ${np}\n${sub(n,r,"P")} = ${fh(n+"!","("+n+" − "+r+")!")} = ${M2.cancelHTML(n,r)} = ${np}<small>Permutations: ${n} choices for 1st, ${n-1} for 2nd, … The factors at the end of n! cancel with (n − r)!.</small></div>
+      <div class="eq" style="${s.mode==="comb"?"":"opacity:.75"}">${sub(n,r,"C")} = ${fh(n+"!",r+"! · ("+n+" − "+r+")!")} = ${fh(sub(n,r,"P"),r+"!")} = ${fh(np,rf)} = ${nc}<small>Combinations: every group of ${r} shows up ${r}! = ${rf} times among the permutations, so divide by ${r}!.</small></div>`;
+    if(full){ const g=chosen.slice().sort((a,b)=>a-b);
+      h+=`<p>Your pick <b>${chosen.map(i=>LET[i]).join(" → ")}</b> is one of ${np} permutations. As a combination it is the group <b>{${g.map(i=>LET[i]).join(", ")}}</b>, the same choice as all ${rf} of its rearrangements: ${perms(g).map(p=>p.map(i=>LET[i]).join("")).join(", ")}.</p>`; }
+    else h+=`<p>Drag ${r} tokens into the slots (or tap a token to drop it in the next open slot). Highlighted groups are the ones your pick could still land in.</p>`;
+    h+=`</div></div>`;
+    // Pascal
+    let p=`<div class="pascal" aria-label="Pascal's triangle">`;
+    for(let row=0;row<=n;row++){ p+=`<div class="${row===n?"row":""}">`; for(let k=0;k<=row;k++){
+      const cls=(row===n&&k===r)?"hl":(row===n-1&&(k===r-1||k===r))?"par":""; p+=`<span class="${cls}">${nCr(row,k)}</span>`; } p+=`</div>`; }
+    p+=`</div>`;
+    h+=`<div class="panel"><h3>Pascal's triangle link</h3>${p}<div class="pad" style="padding-top:0"><p>Row ${n}, entry ${r} (count from 0) is ${sub(n,r,"C")} = <b>${nc}</b>. It is the sum of the two entries above it: ${sub(n-1,r-1,"C")} + ${sub(n-1,r,"C")} = ${nCr(n-1,r-1)} + ${nCr(n-1,r)} = ${nc}. (Either item ${LET[n-1]} is in the group, or it is not.)</p></div></div>`;
+    return h; },
+  bot(){ return `<div class="panel"><h3>The idea</h3><div class="pad">
+    <p>A <span class="term">permutation</span> is an arrangement where <b>order matters</b>: ABC and BAC are different (think president, vice-president, secretary). Count with <sub>n</sub>P<sub>r</sub> = n! ÷ (n − r)!.</p>
+    <p>A <span class="term">combination</span> is a selection where <b>order does not matter</b>: {A, B, C} is one committee no matter who was picked first. Count with <sub>n</sub>C<sub>r</sub> = n! ÷ (r!(n − r)!).</p>
+    <p>The board shows why: the permutations fall into groups, one group per combination, and every group has exactly r! members. So <sub>n</sub>P<sub>r</sub> = <sub>n</sub>C<sub>r</sub> · r!.</p></div></div>`+
+    tryPanel(`Set n = 6. Compare <sub>6</sub>C<sub>2</sub> and <sub>6</sub>C<sub>4</sub>. Why are they equal? (Choosing 2 to take is the same as choosing 4 to leave.) Then switch r from 2 to 3 and watch each group grow from 2 to 6 arrangements.`); }
+};
+
+/* ══════════════════════ TAB 3 · probability & simulation ══════════════════════ */
+const MCOL={R:{n:"red",c:"#DC2626"},B:{n:"blue",c:"#2563EB"},G:{n:"green",c:"#16A34A"}};
+const M3={
+  tab:"Probability & simulation", lesson:"S-CP.A.1–3 · S-IC.A.2", accent:"var(--yellow)",
+  s:{ex:"dice",coins:2,spin:[{l:"Red",w:3},{l:"Blue",w:2},{l:"Green",w:1}],mar:{R:3,B:2,G:0},repl:false,
+     A:0,B:1,N:0,cnt:{},nA:0,nB:0,nAB:0,hist:[],last:null},
+  /* atoms: [{key, p:[n,d], cat, data}] */
+  model(){ const s=M3.s;
+    if(s.ex==="coins"){ const k=s.coins, d=1<<k, at=[];
+      for(let m=0;m<d;m++){ const seq=range(0,k-1).map(i=>(m>>(k-1-i))&1?"T":"H"); at.push({key:seq.join(""),p:[1,d],cat:String(seq.filter(c=>c==="H").length),seq}); }
+      const cats=range(0,k).map(String);
+      const ev=[["At least one head",a=>a.seq.includes("H")],["First coin is heads",a=>a.seq[0]==="H"]];
+      if(k>=2)ev.push(["Second coin is heads",a=>a.seq[1]==="H"],["All coins match",a=>a.seq.every(c=>c===a.seq[0])],["Exactly one head",a=>a.cat==="1"]);
+      ev.push(["Even number of heads",a=>(+a.cat)%2===0],["No heads",a=>a.cat==="0"]);
+      return {at,cats,catName:"number of heads",ev}; }
+    if(s.ex==="dice"){ const at=[]; for(let a=1;a<=6;a++)for(let b=1;b<=6;b++)at.push({key:a+","+b,p:[1,36],cat:String(a+b),a,b});
+      return {at,cats:range(2,12).map(String),catName:"sum of two dice",ev:[
+        ["Sum is 7",x=>x.a+x.b===7],["Sum is even",x=>(x.a+x.b)%2===0],["Sum is 9 or more",x=>x.a+x.b>=9],["Doubles",x=>x.a===x.b],
+        ["First die is 6",x=>x.a===6],["At least one 6",x=>x.a===6||x.b===6],["First die is even",x=>x.a%2===0],["Sum is 2, 3 or 12",x=>[2,3,12].includes(x.a+x.b)]]}; }
+    if(s.ex==="spin"){ const tot=s.spin.reduce((a,b)=>a+b.w,0)||1;
+      const at=s.spin.map((q,i)=>({key:q.l+"#"+i,p:[q.w,tot],cat:q.l+(s.spin.filter(z=>z.l===q.l).length>1?" "+(i+1):""),i}));
+      const ev=s.spin.map((q,i)=>["Lands on "+at[i].cat,a=>a.i===i]);
+      ev.push(["Lands on sector 1 or 2",a=>a.i<=1],["Not sector 1",a=>a.i!==0]);
+      return {at,cats:at.map(a=>a.cat),catName:"sector",ev}; }
+    // marbles
+    const M=s.mar, cols=Object.keys(MCOL).filter(c=>M[c]>0), tot=cols.reduce((a,c)=>a+M[c],0), at=[];
+    cols.forEach(c1=>cols.forEach(c2=>{ let p;
+      if(s.repl)p=rr(M[c1]*M[c2],tot*tot);
+      else { const second=M[c2]-(c1===c2?1:0); p=rr(M[c1]*Math.max(0,second),tot*(tot-1)); }
+      if(p[0]>0)at.push({key:c1+c2,p,cat:c1+c2,c1,c2}); }));
+    const ev=[];
+    cols.forEach(c=>ev.push(["1st is "+MCOL[c].n,a=>a.c1===c],["2nd is "+MCOL[c].n,a=>a.c2===c]));
+    ev.push(["Both the same color",a=>a.c1===a.c2],["At least one "+MCOL[cols[0]].n,a=>a.c1===cols[0]||a.c2===cols[0]]);
+    return {at,cats:at.map(a=>a.cat),catName:"colors drawn (1st, 2nd)",ev};
+  },
+  reset(){ const s=M3.s; s.N=0; s.cnt={}; s.nA=s.nB=s.nAB=0; s.hist=[]; s.last=null; },
+  run(k){ const s=M3.s, md=M3.model(), at=md.at, cum=[]; let c=0;
+    if(!at.length)return;
+    at.forEach(a=>{ c+=rv(a.p); cum.push(c); });
+    const eA=md.ev[s.A][1], eB=md.ev[s.B][1];
+    for(let t=0;t<k;t++){ const u=Math.random()*c; let j=0; while(j<cum.length-1&&u>=cum[j])j++;
+      const a=at[j]; s.cnt[a.cat]=(s.cnt[a.cat]||0)+1; s.N++; const ia=eA(a), ib=eB(a); if(ia)s.nA++; if(ib)s.nB++; if(ia&&ib)s.nAB++;
+      s.last=a; if(s.hist.length<6000||s.N%Math.ceil(s.N/6000)===0)s.hist.push([s.N,s.nA/s.N]); } },
+  probs(){ const s=M3.s, md=M3.model(), eA=md.ev[s.A][1], eB=md.ev[s.B][1]; let A=[0,1],B=[0,1],AB=[0,1];
+    md.at.forEach(a=>{ const ia=eA(a), ib=eB(a); if(ia)A=radd(A,a.p); if(ib)B=radd(B,a.p); if(ia&&ib)AB=radd(AB,a.p); });
+    return {A,B,AB,U:rsub(radd(A,B),AB),nA:[1,1]&&rsub([1,1],A)}; },
+  title(){ return {coins:"Flip coins",dice:"Roll two dice",spin:"Spin the spinner",marb:"Draw two marbles"}[M3.s.ex]+" · law of large numbers"; },
+  bar(){ const s=M3.s;
+    segBtns([["coins","Coins"],["dice","Dice sums"],["spin","Spinner"],["marb","Marbles"]],s.ex,k=>{s.ex=k;s.A=0;s.B=1;M3.reset();render();},"Experiment");
+    brk();
+    [1,10,100,1000].forEach((k,i)=>btn((i?"":"Run ")+k+(k===1?" trial":""),()=>{M3.run(k);update();},i===2?"primary":""));
+    btn("Reset",()=>{M3.reset();update();});
+    M3.sp=spacer("");
+  },
+  lay(){ return narrow? {pic:[10,10,680,190],ch:[10,215,680,300],ln:[10,540,680,200],vn:[10,770,680,250],H:1030}
+                     : {pic:[8,8,205,260],ch:[225,8,467,300],ln:[8,320,400,232],vn:[420,320,272,232],H:560}; },
+  draw(){ const s=M3.s, md=M3.model(), L=M3.lay(); setVB(W,L.H); const g=E("g",{},cv), P=M3.probs();
+    // panels frame
+    [L.pic,L.ch,L.ln,L.vn].forEach(b=>Rc(g,b[0],b[1],b[2],b[3],{rx:12,fill:"rgba(255,255,255,.7)",st:"#E2E8F4",sw:1.2}));
+    M3.drawPic(g,L.pic,md);
+    // bar chart
+    { const [x,y,w,h]=L.ch, cats=md.cats, n=cats.length, px0=x+44, px1=x+w-12, py0=y+34*FS, py1=y+h-26*FS-22;
+      const th={}; md.at.forEach(a=>{ th[a.cat]=(th[a.cat]||0)+rv(a.p); });
+      let mx=0; cats.forEach(c=>{ mx=Math.max(mx,th[c]||0,s.N?(s.cnt[c]||0)/s.N:0); }); let nt=Math.min(10,Math.ceil(mx*10+0.3)); if(nt>5&&nt%2)nt++; mx=nt/10; const tstep=nt>5?0.2:0.1;
+      const Y=v=>py1-v/mx*(py1-py0);
+      T(g,x+12,y+18*FS,"Relative frequency vs. theoretical · "+md.catName,{a:"start",s:11.5,c:C.ink,w:700,halo:false});
+      for(let v0=0;v0<=mx+1e-9;v0+=tstep){ const v=Math.round(v0*10)/10, yy=Y(v); Ln(g,px0,yy,px1,yy,C.grid,1); T(g,px0-5,yy+4,num(v,1),{a:"end",s:9.5,c:C.ax,halo:false,w:500}); }
+      const bw=(px1-px0)/n;
+      cats.forEach((c,i)=>{ const cx=px0+bw*(i+0.5), f=s.N?(s.cnt[c]||0)/s.N:0, bwi=Math.min(46,bw*0.62);
+        const col=s.ex==="spin"?PAL[i%PAL.length]:C.corr;
+        if(s.N)Rc(g,cx-bwi/2,Y(f),bwi,py1-Y(f),{fill:col,op:.82,rx:2});
+        const t=th[c]||0; Ln(g,cx-bwi/2-4,Y(t),cx+bwi/2+4,Y(t),C.mag,3);
+        const lab=s.ex==="marb"?"":c; if(lab)T(g,cx,py1+14*FS,lab.length>8?lab.slice(0,7)+"…":lab,{s:n>8?9.5:10.5,c:C.ink,halo:false});
+        if(s.ex==="marb"){ Ci(g,cx-8,py1+13,5.5,{fill:MCOL[c[0]].c}); Ci(g,cx+8,py1+13,5.5,{fill:MCOL[c[1]].c}); } });
+      Ln(g,px0,py1,px1,py1,C.gr,1.6);
+      const ly=y+h-7; Rc(g,px1-200,ly-8,12,8,{fill:C.corr,op:.82}); T(g,px1-184,ly,"simulated",{a:"start",s:10,c:C.ink,halo:false,w:500});
+      Ln(g,px1-110,ly-4,px1-96,ly-4,C.mag,3); T(g,px1-92,ly,"theoretical",{a:"start",s:10,c:C.ink,halo:false,w:500});
+      if(!s.N)T(g,(px0+px1)/2,(py0+py1)/2,"Run some trials →",{s:14,c:C.ax,halo:false}); }
+    // LLN line
+    { const [x,y,w,h]=L.ln, px0=x+40, px1=x+w-14, py0=y+34*FS, py1=y+h-26*FS, pA=rv(P.A), N=Math.max(10,s.N);
+      const X=n=>px0+Math.log10(n)/Math.log10(N)*(px1-px0), Y=v=>py1-v*(py1-py0);
+      T(g,x+12,y+18*FS,"Running relative frequency of A",{a:"start",s:11.5,c:C.ink,w:700,halo:false});
+      [0,.25,.5,.75,1].forEach(v=>{ Ln(g,px0,Y(v),px1,Y(v),C.grid,1); T(g,px0-5,Y(v)+4,num(v,2),{a:"end",s:9.5,c:C.ax,halo:false,w:500}); });
+      for(let p=1;p<=N;p*=10){ T(g,X(p),py1+13*FS,big(p),{s:9.5,c:C.ax,halo:false,w:500}); }
+      T(g,px1,py1+13*FS+(narrow?16:12),"trials (log scale)",{a:"end",s:9,c:C.ax,halo:false,w:500});
+      Ln(g,px0,Y(pA),px1,Y(pA),C.mag,2.2,"7 5");
+      T(g,px1-2,Y(pA)+(pA>0.85?16:-6),"P(A) = "+fs(P.A),{a:"end",s:10.5,c:C.mag});
+      if(s.hist.length){ let d=""; s.hist.forEach((q,i)=>{ d+=(i?"L":"M")+X(q[0]).toFixed(1)+","+Y(q[1]).toFixed(1); }); E("path",{d,fill:"none",stroke:C.corr,"stroke-width":2.4,"stroke-linejoin":"round"},g);
+        const q=s.hist[s.hist.length-1]; Ci(g,X(q[0]),Y(q[1]),4.5,{fill:C.corr,st:"#fff",sw:2}); } }
+    // Venn
+    M3.venn(g,L.vn,md,P);
+    if(M3.sp)M3.sp.textContent="n = "+big(s.N)+" trials";
+  },
+  drawPic(g,b,md){ const s=M3.s, [x,y,w,h]=b, cx=x+w/2, cy=y+h/2+6, last=s.last;
+    T(g,x+12,y+18*FS,"Last trial",{a:"start",s:11.5,c:C.ink,w:700,halo:false});
+    if(s.ex==="coins"){ const k=s.coins, r=Math.min(30,(w-30)/(k*2.3)); const seq=last?last.seq:new Array(k).fill(null);
+      seq.forEach((c,i)=>{ const xx=cx+(i-(k-1)/2)*r*2.4; Ci(g,xx,cy,r,{fill:c==="H"?"#FBBF24":c==="T"?"#94A3B8":"#F1F5F9",st:"#64748B",sw:2});
+        T(g,xx,cy+1,c||"?",{s:r*0.85/FS,c:C.ink,mid:true,halo:false,w:700,f:"d"}); });
+      if(last)T(g,cx,cy+r+24*FS,last.cat+" head"+(last.cat==="1"?"":"s"),{s:13,c:C.corr}); }
+    else if(s.ex==="dice"){ const z=Math.min(58,w/3.4);
+      const die=(xx,v)=>{ Rc(g,xx-z/2,cy-z/2,z,z,{rx:10,fill:"#fff",st:C.gr,sw:2.2});
+        if(!v){T(g,xx,cy+1,"?",{s:z*0.5/FS,c:C.ax,mid:true,halo:false});return;}
+        const P={1:[[0,0]],2:[[-1,-1],[1,1]],3:[[-1,-1],[0,0],[1,1]],4:[[-1,-1],[1,-1],[-1,1],[1,1]],5:[[-1,-1],[1,-1],[0,0],[-1,1],[1,1]],6:[[-1,-1],[1,-1],[-1,0],[1,0],[-1,1],[1,1]]}[v];
+        P.forEach(p=>Ci(g,xx+p[0]*z*0.27,cy+p[1]*z*0.27,z*0.085,{fill:C.ink})); };
+      die(cx-z*0.65,last&&last.a); die(cx+z*0.65,last&&last.b);
+      if(last)T(g,cx,cy+z/2+24*FS,"sum = "+last.cat,{s:13,c:C.corr}); }
+    else if(s.ex==="spin"){ const R=Math.min(w,h-40)/2-14, tot=s.spin.reduce((a,q)=>a+q.w,0)||1; let a0=-Math.PI/2;
+      const yc=cy+4;
+      s.spin.forEach((q,i)=>{ const a1=a0+q.w/tot*2*Math.PI;
+        if(q.w>0){ const big=(a1-a0)>Math.PI?1:0;
+          const d=(q.w===tot)?null:`M${cx},${yc}L${cx+R*Math.cos(a0)},${yc+R*Math.sin(a0)}A${R},${R} 0 ${big} 1 ${cx+R*Math.cos(a1)},${yc+R*Math.sin(a1)}Z`;
+          if(d)E("path",{d,fill:PAL[i%PAL.length],stroke:"#fff","stroke-width":2,opacity:.88},g); else Ci(g,cx,yc,R,{fill:PAL[i%PAL.length],op:.88});
+          const am=(a0+a1)/2; T(g,cx+R*0.62*Math.cos(am),yc+R*0.62*Math.sin(am),fs(q.w,tot),{s:10.5,c:"#fff",mid:true,halo:false,w:700}); }
+        a0=a1; });
+      Ci(g,cx,yc,R,{st:C.gr,sw:2});
+      if(last){ let acc=0; for(let i=0;i<last.i;i++)acc+=s.spin[i].w; const fr=(acc+s.spin[last.i].w*(0.25+0.5*((s.N*0.618)%1)))/tot, an=-Math.PI/2+fr*2*Math.PI;
+        Ln(g,cx,yc,cx+R*0.92*Math.cos(an),yc+R*0.92*Math.sin(an),C.ink,4); }
+      Ci(g,cx,yc,6,{fill:C.ink});
+      if(last)T(g,cx,y+h-10,last.cat,{s:12.5,c:C.corr}); }
+    else { const M=s.mar, cols=Object.keys(MCOL), bag=[]; cols.forEach(c=>{ for(let i=0;i<M[c];i++)bag.push(c); });
+      const bx=x+16, by=y+30*FS+6, bw=w-32, bh=h*0.55; Rc(g,bx,by,bw,bh,{rx:22,fill:"#F8FAFF",st:C.soft,sw:2});
+      const per=Math.max(4,Math.ceil(Math.sqrt(bag.length*bw/bh))), rr2=Math.min(11,bw/per/2.4);
+      bag.forEach((c,i)=>{ const xx=bx+bw/2+((i%per)-(Math.min(per,bag.length)-1)/2)*rr2*2.4, yy=by+bh-rr2-8-Math.floor(i/per)*rr2*2.3; Ci(g,xx,yy,rr2,{fill:MCOL[c].c,st:"#fff",sw:1.5}); });
+      T(g,cx,by+bh+18*FS,(s.repl?"with":"without")+" replacement",{s:11,c:C.ax,halo:false});
+      if(last){ [last.c1,last.c2].forEach((c,i)=>{ const xx=cx+(i?28:-28), yy=y+h-22; Ci(g,xx,yy,13,{fill:MCOL[c].c,st:"#fff",sw:2}); T(g,xx,yy+1,i?"2nd":"1st",{s:8.5,c:"#fff",mid:true,halo:false,nofs:true}); }); } }
+  },
+  venn(g,b,md,P){ const s=M3.s, [x,y,w,h]=b, cy=y+h/2+12, r=Math.min(h*0.33,w*0.24), cxA=x+w/2-r*0.6, cxB=x+w/2+r*0.6;
+    T(g,x+12,y+18*FS,"Venn diagram (theoretical)",{a:"start",s:11.5,c:C.ink,w:700,halo:false});
+    Rc(g,x+10,y+28*FS,w-20,h-28*FS-10,{rx:6,st:C.soft,sw:1.2,fill:"#fff"});
+    Ci(g,cxA,cy,r,{fill:"rgba(2,132,199,.18)",st:C.corr,sw:2.4}); Ci(g,cxB,cy,r,{fill:"rgba(234,88,12,.16)",st:C.lin,sw:2.4});
+    T(g,cxA-r*0.7,cy-r-6,"A",{s:15,c:C.corr,f:"d"}); T(g,cxB+r*0.7,cy-r-6,"B",{s:15,c:C.lin,f:"d"});
+    const onlyA=rsub(P.A,P.AB), onlyB=rsub(P.B,P.AB), nei=rsub([1,1],P.U);
+    T(g,cxA-r*0.55,cy+4,fs(onlyA),{s:12,c:C.ink}); T(g,(cxA+cxB)/2,cy+4,fs(P.AB),{s:12,c:C.vert});
+    T(g,cxB+r*0.55,cy+4,fs(onlyB),{s:12,c:C.ink}); T(g,x+w-18,y+h-18,"neither "+fs(nei),{a:"end",s:10.5,c:C.ax});
+  },
+  top(){ const s=M3.s, md=M3.model(); let h="";
+    if(s.ex==="coins") h+=`<div class="panel"><h3>Setup</h3><div class="evrow" style="padding:14px 20px"><span class="tag">Coins</span>${[1,2,3,4].map(k=>`<button type="button" class="mini" data-coins="${k}" aria-pressed="${s.coins===k}">${k}</button>`).join("")}</div></div>`;
+    if(s.ex==="spin") h+=`<div class="panel"><h3>Edit the spinner sectors</h3><div class="edit" style="grid-template-columns:2fr 1fr">${s.spin.map((q,i)=>`<input type="text" id="sl${i}" aria-label="Sector ${i+1} label" value="${esc(q.l)}"><input type="number" id="sw${i}" min="0" max="20" aria-label="Sector ${i+1} size" value="${q.w}">`).join("")}</div>
+      <div class="fldwrap" style="display:flex;gap:8px;padding-bottom:14px"><button type="button" class="ghost" id="spAdd" style="padding:9px 14px">+ sector</button><button type="button" class="ghost" id="spDel" style="padding:9px 14px">− sector</button></div><p class="fmt" style="padding:0 20px 14px">Each sector's probability is its size ÷ total size.</p></div>`;
+    if(s.ex==="marb") h+=`<div class="panel"><h3>Bag of marbles</h3><div class="edit" style="grid-template-columns:1fr 1fr 1fr">${Object.keys(MCOL).map(c=>`<label class="fmt" style="padding:0">${MCOL[c].n}<input type="number" id="mc${c}" min="0" max="9" value="${s.mar[c]}"></label>`).join("")}</div>
+      <div class="evrow" style="padding:0 20px 14px"><button type="button" class="mini" id="rpY" aria-pressed="${s.repl}">With replacement</button><button type="button" class="mini" id="rpN" aria-pressed="${!s.repl}">Without replacement</button></div></div>`;
+    const opt=j=>md.ev.map((e,i)=>`<option value="${i}" ${i===j?"selected":""}>${esc(e[0])}</option>`).join("");
+    h+=`<div class="panel"><h3>Events</h3><div class="ansrow"><div><label class="fld" for="evA">Event A</label><select id="evA">${opt(s.A)}</select></div><div><label class="fld" for="evB">Event B</label><select id="evB">${opt(s.B)}</select></div></div><p class="fmt" style="padding:8px 20px 14px">Changing an event resets the trial counts.</p></div>`;
+    return h; },
+  wire(){ const s=M3.s, re=()=>{M3.reset();render();};
+    document.querySelectorAll("[data-coins]").forEach(b=>b.onclick=()=>{s.coins=+b.dataset.coins;s.A=0;s.B=1;re();});
+    const eA=document.getElementById("evA"), eB=document.getElementById("evB");
+    eA.onchange=()=>{s.A=+eA.value;M3.reset();update();}; eB.onchange=()=>{s.B=+eB.value;M3.reset();update();};
+    if(s.ex==="spin"){ s.spin.forEach((q,i)=>{
+        document.getElementById("sl"+i).addEventListener("input",e=>{ q.l=e.target.value.trim().slice(0,12)||("S"+(i+1)); M3.reset(); update(); M3.refreshEv(); });
+        document.getElementById("sw"+i).addEventListener("input",e=>{ const v=Math.round(+e.target.value); q.w=clamp(isFinite(v)?v:0,0,20); if(s.spin.every(z=>z.w===0))q.w=1; M3.reset(); update(); }); });
+      document.getElementById("spAdd").onclick=()=>{ if(s.spin.length<6){s.spin.push({l:["Yellow","Purple","Pink","Teal"][s.spin.length-2]||"New",w:1});re();} };
+      document.getElementById("spDel").onclick=()=>{ if(s.spin.length>2){s.spin.pop(); s.A=Math.min(s.A,s.spin.length+1); s.B=Math.min(s.B,s.spin.length+1); re();} }; }
+    if(s.ex==="marb"){ Object.keys(MCOL).forEach(c=>document.getElementById("mc"+c).addEventListener("change",e=>{ const v=Math.round(+e.target.value); s.mar[c]=clamp(isFinite(v)?v:0,0,9);
+        if(Object.values(s.mar).reduce((a,b)=>a+b,0)<2)s.mar[c]=Math.max(s.mar[c],2); s.A=0; s.B=1; re(); }));
+      document.getElementById("rpY").onclick=()=>{s.repl=true;re();}; document.getElementById("rpN").onclick=()=>{s.repl=false;re();}; } },
+  refreshEv(){ const md=M3.model(), s=M3.s; ["evA","evB"].forEach((id,k)=>{ const el=document.getElementById(id); if(!el)return; [...el.options].forEach((o,i)=>{ if(md.ev[i])o.textContent=md.ev[i][0]; }); }); },
+  live(){ const s=M3.s, md=M3.model(), P=M3.probs(), N=s.N, eAn=md.ev[s.A][0], eBn=md.ev[s.B][0];
+    const sf=(k)=>N?num(k/N,3):"—";
+    const prod=rmul(P.A,P.B), ind=req(prod,P.AB), excl=P.AB[0]===0;
+    let h=`<div class="panel"><h3>Theoretical vs. simulated</h3><div class="pad"><p><b>A</b>: ${esc(eAn)}<br><b>B</b>: ${esc(eBn)}</p></div>
+      <div class="tblwrap"><table class="pt"><tr><th>Probability</th><th>Theoretical</th><th>Simulated</th></tr>
+      <tr><td>P(A)</td><td>${fdec(P.A)}</td><td>${sf(s.nA)}</td></tr>
+      <tr><td>P(A′) = 1 − P(A)</td><td>${fdec(rsub([1,1],P.A))}</td><td>${N?num(1-s.nA/N,3):"—"}</td></tr>
+      <tr><td>P(B)</td><td>${fdec(P.B)}</td><td>${sf(s.nB)}</td></tr>
+      <tr><td>P(A and B)</td><td>${fdec(P.AB)}</td><td>${sf(s.nAB)}</td></tr>
+      <tr><td>P(A or B)</td><td>${fdec(P.U)}</td><td>${sf(s.nA+s.nB-s.nAB)}</td></tr></table></div>
+      <div class="pad"><div class="eq">Addition rule\nP(A or B) = P(A) + P(B) − P(A and B)\n         = ${fs(P.A)} + ${fs(P.B)} − ${fs(P.AB)} = ${fs(P.U)}<small>${excl?"A and B are <b>mutually exclusive</b> (they cannot both happen), so nothing is subtracted.":"Subtract the overlap so outcomes in both A and B are not counted twice."}</small></div>
+      <div class="eq">Independence check\nP(A) · P(B) = ${fs(P.A)} · ${fs(P.B)} = ${fs(prod)}\nP(A and B) = ${fs(P.AB)}  ${ind?'<span class="pill y">equal → independent</span>':'<span class="pill n">not equal → dependent</span>'}<small>${ind?"Knowing that B happened does not change the chance of A.":"Knowing whether B happened changes the chance of A."}${N>=100?" Simulated: "+num(s.nA/N,3)+" × "+num(s.nB/N,3)+" ≈ "+num(s.nA*s.nB/N/N,3)+" vs "+num(s.nAB/N,3)+".":""}</small></div></div></div>`;
+    return h; },
+  bot(){ return `<div class="panel"><h3>The idea</h3><div class="pad">
+    <p>A <span class="term">theoretical probability</span> comes from the model: count equally likely outcomes, or use sector sizes or marble counts. A <span class="term">relative frequency</span> (experimental probability) comes from data: the fraction of trials where the event happened.</p>
+    <p>The <span class="term">law of large numbers</span>: as the number of trials grows, relative frequencies settle down near the theoretical probabilities. With 10 trials the bars jump around; with thousands they hug the pink lines.</p>
+    <p>Events A and B are <span class="term">independent</span> when P(A and B) = P(A) · P(B). Drawing marbles <b>with</b> replacement keeps draws independent; <b>without</b> replacement the first draw changes the bag.</p></div></div>`+
+    tryPanel(`Choose Marbles with 3 red and 2 blue. Set A = "1st is red" and B = "2nd is red". Check independence with replacement, then switch to without replacement. Which one is dependent, and why? Run 1000 trials to see the simulation agree.`); }
+};
+
+/* ══════════════════════ TAB 4 · conditional probability ══════════════════════ */
+const Q4=[["AgB","P(A | B)"],["BgA","P(B | A)"],["AgBn","P(A | B′)"],["BgAn","P(B | A′)"],["AandB","P(A and B)"],["A","P(A)"]];
+const M4={
+  tab:"Conditional probability", lesson:"S-CP.A.3–5 · S-CP.B.6", accent:"var(--mint)",
+  s:{mode:"table",lab:{A:"Plays a sport",An:"No sport",B:"Junior",Bn:"Senior"},t:[42,38,28,52],q:"AgB",
+     med:{pop:10000,prev:2,sens:95,spec:90}},
+  title(){ return M4.s.mode==="table"?"Two-way tables & conditional probability":"Medical test: the false-positive surprise"; },
+  /* t = [A∩B, A∩B', A'∩B, A'∩B'] */
+  T(){ const s=M4.s; if(s.mode==="table")return {t:s.t,L:s.lab};
+    const m=s.med, D=m.prev*m.pop/100, TP=Math.round(D*m.sens/100), FN=Math.round(D)-TP, H=m.pop-Math.round(D), TN=Math.round(H*m.spec/100), FP=H-TN;
+    return {t:[TP,FN,FP,TN],L:{A:"Has disease",An:"No disease",B:"Tests positive",Bn:"Tests negative"}}; },
+  cond(){ const q=M4.s.q; return q==="AgB"?"B":q==="BgA"?"A":q==="AgBn"?"Bn":q==="BgAn"?"An":null; },
+  calc(){ const {t}=M4.T(), [a,b,c,d]=t, N=a+b+c+d, q=M4.s.q;
+    const map={AgB:[a,a+c],BgA:[a,a+b],AgBn:[b,b+d],BgAn:[c,c+d],AandB:[a,N],A:[a+b,N]}; return {num:map[q][0],den:map[q][1],N,a,b,c,d}; },
+  bar(){ const s=M4.s;
+    segBtns([["table","Two-way table"],["med","Medical test"]],s.mode,k=>{s.mode=k; if(k==="med")s.q="AgB"; render();},"Example");
+    brk();
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Probability to find");
+    Q4.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);}); sel.value=s.q;
+    sel.onchange=()=>{s.q=sel.value;update();}; bar.appendChild(sel);
+    if(s.mode==="table")btn("Random table",()=>{ s.t=[rnd(5,60),rnd(5,60),rnd(5,60),rnd(5,60)]; render(); });
+    spacer("Tap a row or column header");
+  },
+  hit(id){ M4.s.q={B:"AgB",A:"BgA",Bn:"AgBn",An:"BgAn"}[id]||M4.s.q; const sel=bar.querySelector("select"); if(sel)sel.value=M4.s.q; },
+  draw(){ const s=M4.s, {t,L}=M4.T(), [a,b,c,d]=t, N=a+b+c+d, cnd=M4.cond(), q=s.q;
+    const h=narrow?880:470; setVB(W,h); const g=E("g",{},cv);
+    // ── two-way table
+    const tx=narrow?20:14, ty=narrow?16:14, cw0=narrow?250:124, cw=narrow?136:78, rh=narrow?50:38;
+    const cols=[["B",L.B],["Bn",L.Bn],["T","Total"]], rows=[["A",L.A,[a,b,a+b]],["An",L.An,[c,d,c+d]],["T","Total",[a+c,b+d,N]]];
+    const inCond=(ri,ci)=>{ if(!cnd)return true; if(cnd==="B")return ci===0; if(cnd==="Bn")return ci===1; if(cnd==="A")return ri===0; return ri===1; };
+    const isNum=(ri,ci)=>{ const m={AgB:[0,0],BgA:[0,0],AgBn:[0,1],BgAn:[1,0],AandB:[0,0]}[q]; if(q==="A")return ri===0&&ci===2; return m&&m[0]===ri&&m[1]===ci; };
+    const isDen=(ri,ci)=>{ if(!cnd)return ri===2&&ci===2; if(cnd==="B")return ri===2&&ci===0; if(cnd==="Bn")return ri===2&&ci===1; if(cnd==="A")return ri===0&&ci===2; return ri===1&&ci===2; };
+    const fit=(str,wpx,base)=>Math.min(base,wpx/(Math.max(1,str.length)*0.6*FS));
+    cols.forEach((cc,ci)=>{ const x=tx+cw0+ci*cw; const hg=E("g",cc[0]!=="T"?{"data-hit":cc[0],class:"hit"}:{},g);
+      Rc(hg,x,ty,cw,rh,{fill:cnd===cc[0]?"#D1FAE5":"#EEF2FA",st:"#CBD5E1",sw:1});
+      T(hg,x+cw/2,ty+rh/2,cc[1],{s:fit(cc[1],cw-8,12),c:cc[0]==="T"?C.ax:C.lin,mid:true,halo:false,w:700}); });
+    rows.forEach((rw,ri)=>{ const y=ty+(ri+1)*rh; const hg=E("g",rw[0]!=="T"?{"data-hit":rw[0],class:"hit"}:{},g);
+      Rc(hg,tx,y,cw0,rh,{fill:cnd===rw[0]?"#D1FAE5":"#EEF2FA",st:"#CBD5E1",sw:1});
+      T(hg,tx+8,y+rh/2,rw[1],{a:"start",s:fit(rw[1],cw0-14,12),c:rw[0]==="T"?C.ax:C.corr,mid:true,halo:false,w:700});
+      rw[2].forEach((v,ci)=>{ const x=tx+cw0+ci*cw, inn=inCond(ri,ci), nu=isNum(ri,ci), de=isDen(ri,ci);
+        Rc(g,x,y,cw,rh,{fill:nu?"#FBCFE8":de?"#A7F3D0":inn&&cnd?"#ECFDF5":"#fff",st:"#CBD5E1",sw:1,op:!inn?0.6:1});
+        if(nu||de)Rc(g,x+2,y+2,cw-4,rh-4,{st:nu?C.mag:C.alt,sw:2.4,rx:3});
+        T(g,x+cw/2,y+rh/2,big(v),{s:14,c:inn?C.ink:"#B6C0D4",mid:true,halo:false,w:ci===2||ri===2?600:700}); }); });
+    const pc=M4.calc();
+    T(g,tx,ty+4*rh+24*FS,Q4.find(z=>z[0]===q)[1]+" = "+big(pc.num)+" / "+big(pc.den)+" = "+fdec(pc.num,pc.den),{a:"start",s:13.5,c:C.mag,w:700});
+    // ── Venn
+    const vx=narrow?20:14, vy=narrow?ty+4*rh+60:ty+4*rh+42, vw=narrow?660:cw0+3*cw, vh=narrow?260:(h-vy-12);
+    Rc(g,vx,vy,vw,vh,{rx:8,fill:"#fff",st:C.soft,sw:1.2,op:cnd==="An"||cnd==="Bn"?1:1});
+    const r=Math.min(vh*0.38,vw*0.2), cy=vy+vh/2+6, cA=vx+vw/2-r*0.62, cB=vx+vw/2+r*0.62;
+    const dim=cnd!=null;
+    // shading by condition
+    const id="m4clip"+Math.random().toString(36).slice(2,7);
+    const defs=E("defs",{},g); const cpA=E("clipPath",{id:id+"A"},defs); Ci(cpA,cA,cy,r,{}); const cpB=E("clipPath",{id:id+"B"},defs); Ci(cpB,cB,cy,r,{});
+    const mk=E("mask",{id:id+"m"},defs);
+    if(cnd==="A")Ci(mk,cA,cy,r,{fill:"#fff"});
+    else if(cnd==="B")Ci(mk,cB,cy,r,{fill:"#fff"});
+    else if(cnd==="An"){ Rc(mk,vx,vy,vw,vh,{fill:"#fff"}); Ci(mk,cA,cy,r,{fill:"#000"}); }
+    else if(cnd==="Bn"){ Rc(mk,vx,vy,vw,vh,{fill:"#fff"}); Ci(mk,cB,cy,r,{fill:"#000"}); }
+    if(dim){ const sh=Rc(g,vx,vy,vw,vh,{fill:"#A7F3D0",op:.55}); sh.setAttribute("mask","url(#"+id+"m)"); }
+    // numerator region highlight
+    const numG=E("g",{},g);
+    if(q==="AgB"||q==="BgA"||q==="AandB"){ const z=Ci(numG,cB,cy,r,{fill:"#F472B6",op:.5}); z.setAttribute("clip-path","url(#"+id+"A)"); }
+    else if(q==="A"){ Ci(numG,cA,cy,r,{fill:"#F472B6",op:.45}); }
+    else if(q==="AgBn"){ const m2=E("mask",{id:id+"n"},defs); Ci(m2,cA,cy,r,{fill:"#fff"}); Ci(m2,cB,cy,r,{fill:"#000"}); const z=Ci(numG,cA,cy,r,{fill:"#F472B6",op:.5}); z.setAttribute("mask","url(#"+id+"n)"); }
+    else if(q==="BgAn"){ const m2=E("mask",{id:id+"n"},defs); Ci(m2,cB,cy,r,{fill:"#fff"}); Ci(m2,cA,cy,r,{fill:"#000"}); const z=Ci(numG,cB,cy,r,{fill:"#F472B6",op:.5}); z.setAttribute("mask","url(#"+id+"n)"); }
+    Ci(g,cA,cy,r,{st:C.corr,sw:2.4}); Ci(g,cB,cy,r,{st:C.lin,sw:2.4});
+    const ttl=(str,x,y,col,anc)=>T(g,x,y,str.length>18?str.slice(0,17)+"…":str,{s:11,c:col,a:anc,w:700});
+    ttl("A: "+L.A,cA-r*0.2,cy-r-8,C.corr,"end"); ttl("B: "+L.B,cB+r*0.2,cy-r-8,C.lin,"start");
+    T(g,cA-r*0.55,cy,big(b),{s:14,c:C.ink,mid:true}); T(g,(cA+cB)/2,cy,big(a),{s:14,c:C.ink,mid:true}); T(g,cB+r*0.55,cy,big(c),{s:14,c:C.ink,mid:true});
+    T(g,vx+vw-10,vy+vh-12,"neither: "+big(d),{a:"end",s:11.5,c:C.ax}); T(g,vx+10,vy+18*FS,"N = "+big(N),{a:"start",s:11.5,c:C.ax});
+    // ── tree
+    const gx=narrow?20:tx+cw0+3*cw+24, gy=narrow?vy+vh+20:14, gw=narrow?660:W-gx-10, gh=narrow?h-gy-10:h-24;
+    T(g,gx,gy+14*FS,"Tree diagram",{a:"start",s:12,c:C.ink,w:700,halo:false});
+    const x0=gx+6, x1=gx+gw*0.34, x2=gx+gw*0.64, yc=gy+gh/2+12;
+    const yA=gy+gh*0.28+10, yAn=gy+gh*0.76+4, dy=gh*0.13;
+    const P=[a+b,c+d], br=[[a,b],[c,d]], lab1=[L.A,L.An], lab2=[L.B,L.Bn];
+    const pathOn=(i,j)=>{ if(q==="AandB")return i===0&&j===0; if(q==="BgA")return i===0&&j===0; if(q==="BgAn")return i===1&&j===0; return false; };
+    const sh=str=>str.length>14?str.slice(0,13)+"…":str;
+    [yA,yAn].forEach((y1,i)=>{ const on1=(q==="AandB"||q==="BgA")&&i===0||q==="BgAn"&&i===1||q==="A"&&i===0;
+      Ln(g,x0,yc,x1,y1,on1?C.mag:C.gr,on1?3.4:2);
+      T(g,(x0+x1)/2+6,(yc+y1)/2+(i?-6:16)*FS,fs(P[i],N),{s:11.5,c:on1?C.mag:C.corr,a:"start"});
+      T(g,x1-4,y1+(i?20:-12)*FS,sh(lab1[i]),{a:"end",s:10.5,c:C.corr,w:700});
+      [y1-dy,y1+dy].forEach((y2,j)=>{ const on2=pathOn(i,j);
+        Ln(g,x1,y1,x2,y2,on2?C.mag:C.gr,on2?3.4:1.8);
+        T(g,(x1+x2)/2,(y1+y2)/2+(j?16:-7)*FS,P[i]?fs(br[i][j],P[i]):"—",{s:10.5,c:on2?C.mag:C.lin});
+        T(g,x2+6,y2-2,sh(lab2[j]),{a:"start",s:10,c:C.lin,w:700,mid:true});
+        T(g,x2+6,y2+12*FS,"= "+fs(br[i][j],N),{a:"start",s:10,c:on2?C.mag:C.ax,mid:true}); }); });
+    Ci(g,x0,yc,5,{fill:C.ink});
+  },
+  top(){ const s=M4.s; let h="";
+    if(s.mode==="table"){ const L=s.lab;
+      h+=`<div class="panel"><h3>Edit the two-way table</h3><div class="tblwrap"><table class="pt"><tr><th></th><th><input type="text" id="lB" aria-label="Column B label" value="${esc(L.B)}" style="width:96px;text-align:left"></th><th><input type="text" id="lBn" aria-label="Column not-B label" value="${esc(L.Bn)}" style="width:96px;text-align:left"></th></tr>
+        <tr><td><input type="text" id="lA" aria-label="Row A label" value="${esc(L.A)}" style="width:118px;text-align:left"></td><td><input type="number" min="0" id="c0" aria-label="A and B count" value="${s.t[0]}"></td><td><input type="number" min="0" id="c1" aria-label="A and not B count" value="${s.t[1]}"></td></tr>
+        <tr><td><input type="text" id="lAn" aria-label="Row not-A label" value="${esc(L.An)}" style="width:118px;text-align:left"></td><td><input type="number" min="0" id="c2" aria-label="not A and B count" value="${s.t[2]}"></td><td><input type="number" min="0" id="c3" aria-label="not A and not B count" value="${s.t[3]}"></td></tr></table></div><p class="fmt" style="padding:8px 20px 14px">Rows are event A and its complement A′; columns are B and B′. Counts must be whole numbers.</p></div>`; }
+    else { const m=s.med;
+      h+=`<div class="panel"><h3>Test settings · population ${big(m.pop)}</h3><div class="ansrow">
+        <div><label class="fld" for="mp">Prevalence %</label><input type="number" id="mp" min="1" max="50" value="${m.prev}"></div>
+        <div><label class="fld" for="ms">Sensitivity %</label><input type="number" id="ms" min="50" max="100" value="${m.sens}"></div>
+        <div><label class="fld" for="mf">Specificity %</label><input type="number" id="mf" min="50" max="100" value="${m.spec}"></div></div>
+        <p class="fmt" style="padding:10px 20px 14px"><b>Prevalence</b>: share of people who have the disease. <b>Sensitivity</b> = P(positive | disease). <b>Specificity</b> = P(negative | no disease). Whole-number percents.</p></div>`; }
+    return h; },
+  wire(){ const s=M4.s;
+    if(s.mode==="table"){ ["A","An","B","Bn"].forEach(k=>document.getElementById("l"+k).addEventListener("input",e=>{ s.lab[k]=e.target.value.trim()||k.replace("n","′"); update(); }));
+      for(let i=0;i<4;i++)document.getElementById("c"+i).addEventListener("input",e=>{ const v=Math.round(+e.target.value); s.t[i]=clamp(isFinite(v)?v:0,0,99999); if(s.t.every(z=>z===0))s.t[i]=1; update(); }); }
+    else { const m=s.med; [["mp","prev",1,50],["ms","sens",50,100],["mf","spec",50,100]].forEach(([id,k,lo,hi])=>document.getElementById(id).addEventListener("change",e=>{ const v=Math.round(+e.target.value); m[k]=clamp(isFinite(v)?v:lo,lo,hi); e.target.value=m[k]; update(); })); } },
+  live(){ const s=M4.s, {t,L}=M4.T(), [a,b,c,d]=t, N=a+b+c+d, pc=M4.calc(), q=s.q, cnd=M4.cond();
+    const nm={A:L.A,An:L.An,B:L.B,Bn:L.Bn};
+    let h=`<div class="panel"><h3>${Q4.find(z=>z[0]===q)[1]}</h3><div class="pad">`;
+    if(cnd){ const tgt={AgB:"A",BgA:"B",AgBn:"A",BgAn:"B"}[q];
+      h+=`<p>The bar "|" means <b>given</b>. Restrict to the <b style="color:var(--mint)">${esc(nm[cnd])}</b> ${cnd[0]==="B"?"column":"row"} only (${big(pc.den)} outcomes), then ask how many of those are also <b>${esc(nm[tgt])}</b> (${big(pc.num)}).</p>
+        <div class="eq">${Q4.find(z=>z[0]===q)[1]} = ${fh("n("+tgt+" and "+cnd.replace("n","′")+")","n("+cnd.replace("n","′")+")")} = ${fh(big(pc.num),big(pc.den))}\n         = ${fdec(pc.num,pc.den)}\n         = ${fh("P("+tgt+" and "+cnd.replace("n","′")+")","P("+cnd.replace("n","′")+")")} = ${fh(fs(pc.num,N),fs(pc.den,N))}</div>`; }
+    else h+=`<div class="eq">${Q4.find(z=>z[0]===q)[1]} = ${fh(big(pc.num),big(N))} = ${fdec(pc.num,N)}<small>No condition, so the whole table (N = ${big(N)}) is the sample space.</small></div>`;
+    const PA=[a+b,N], PAgB=[a,a+c], PB=[a+c,N], ind=(a+c)>0&&req(rr(a,a+c),rr(a+b,N));
+    h+=`<div class="eq">Multiplication rule\nP(A and B) = P(A) · P(B | A)\n           = ${fs(a+b,N)} · ${a+b?fs(a,a+b):"0"} = ${fs(a,N)}</div>
+      <div class="eq">Independence test\nP(A | B) = ${a+c?fdec(a,a+c):"undefined"}\nP(A)     = ${fdec(a+b,N)}   ${ind?'<span class="pill y">equal → independent</span>':'<span class="pill n">not equal → dependent</span>'}<small>${ind?"Being in B does not change the chance of A.":"Knowing B changes the chance of A, so A and B are not independent."}</small></div>`;
+    if(s.mode==="med"){ const m=s.med;
+      h+=`<p><b>The surprise:</b> even with a ${m.sens}% sensitive test, only <b>${pct(a/(a+c||1))}</b> of people who test positive actually have the disease. With low prevalence, the ${big(c)} false positives from the large healthy group outnumber the ${big(a)} true positives.</p>`; }
+    h+=`</div></div>`; return h; },
+  bot(){ return `<div class="panel"><h3>The idea</h3><div class="pad">
+    <p>A <span class="term">conditional probability</span> P(A | B) is the probability of A <b>given that</b> B happened. Knowing B shrinks the sample space to B, so P(A | B) = P(A and B) ÷ P(B).</p>
+    <p>In a <span class="term">two-way frequency table</span>, that means using only the B column (or row): divide the cell count by that column's total, not the grand total. P(A | B) and P(B | A) usually differ because the denominators differ.</p>
+    <p>Rearranged, it becomes the <span class="term">multiplication rule</span>: P(A and B) = P(A) · P(B | A), which is what the tree multiplies along each path. A and B are <span class="term">independent</span> exactly when P(A | B) = P(A).</p></div></div>`+
+    tryPanel(`In the table, change the counts so that P(Plays a sport | Junior) equals P(Plays a sport). (Hint: make the two columns have the same ratio, such as 30 : 20 and 60 : 40.) Then open Medical test and find the prevalence where P(disease | positive) first passes 50%.`); }
+};
+
+/* ══════════════════════ TAB 5 · normal distributions ══════════════════════ */
+function gauss(){ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+const M5={
+  tab:"Normal distributions", lesson:"S-ID.A.4", accent:"var(--lavender)",
+  s:{mode:"emp",mu:50,sd:10,x1:62,x2:38,shade:"left",emp:[1,1,1],
+     cmp:[{n:"SAT Math",mu:520,sd:110,x:650},{n:"ACT Math",mu:21,sd:5,x:28}],
+     dn:200,shape:"norm",data:null},
+  sliders:null,
+  title(){ return {emp:"The empirical rule (68-95-99.7)",z:"z-scores & area under the curve",cmp:"Comparing scores with z-scores",data:"Data histograms vs. the normal model"}[M5.s.mode]; },
+  sample(){ const s=M5.s, d=[]; for(let i=0;i<s.dn;i++){ let v;
+      if(s.shape==="norm")v=s.mu+s.sd*gauss();
+      else { // right-skewed: gamma(k=2) scaled to mean mu, sd sd
+        const k=2, th=s.sd/Math.sqrt(k); v=s.mu-k*th+th*(-Math.log(Math.random())-Math.log(Math.random())); }
+      d.push(Math.round(v*10)/10); } s.data=d; },
+  bar(){ const s=M5.s;
+    segBtns([["emp","Empirical rule"],["z","z-scores"],["cmp","Compare"],["data","Data"]],s.mode,k=>{s.mode=k; if(k==="data"&&!s.data)M5.sample(); render();},"View");
+    brk();
+    if(s.mode!=="cmp"){
+      slider("μ",30,70,1,s.mu,v=>{s.mu=v; if(s.mode==="data")M5.sample(); update();});
+      slider("σ",4,15,0.5,s.sd,v=>{s.sd=v; if(s.mode==="data")M5.sample(); update();});
+    }
+    if(s.mode==="z")segBtns([["left","P(X < x)"],["right","P(X > x)"],["between","Between"]],s.shade,k=>{s.shade=k;render();},"Area");
+    if(s.mode==="emp")[1,2,3].forEach(k=>chk("±"+k+"σ",!!s.emp[k-1],v=>{s.emp[k-1]=v;update();}));
+    if(s.mode==="data"){ segBtns([[50,"n = 50"],[200,"200"],[1000,"1000"]],s.dn,k=>{s.dn=k;M5.sample();render();},"Sample size");
+      segBtns([["norm","Normal-ish"],["skew","Skewed"]],s.shape,k=>{s.shape=k;M5.sample();render();},"Shape");
+      btn("New sample",()=>{M5.sample();update();},"primary"); }
+    if(s.mode==="z"||s.mode==="cmp")spacer("Drag the orange handle");
+  },
+  axisTicks(g,pl,lo,hi,base,step,mu,sd,lbl){
+    Ln(g,pl.X(lo),base,pl.X(hi),base,C.gr,2);
+    for(let v=Math.ceil(lo/step)*step;v<=hi+1e-9;v+=step){ Ln(g,pl.X(v),base,pl.X(v),base+5,C.gr,1.5); T(g,pl.X(v),base+18*FS,num(v,1),{s:10.5,c:C.ax,halo:false,w:500}); }
+    if(lbl)T(g,pl.X(hi),base+34*FS,lbl,{a:"end",s:10,c:C.ax,halo:false,w:500});
+  },
+  handle(g,x,y,id,lab,col){ const hg=E("g",{"data-drag":id,class:"hand",role:"slider","aria-label":lab},g);
+    E("path",{d:`M${x},${y-2}l-12,20h24z`,fill:col||C.hand,stroke:"#fff","stroke-width":2},hg);
+    Ci(hg,x,y+10,24,{fill:"rgba(255,107,53,.001)"}); },
+  draw(){ const s=M5.s; if(s.mode==="cmp")return M5.drawCmp(); if(s.mode==="data")return M5.drawData();
+    setVB(W,460); const g=E("g",{},cv), mu=s.mu, sd=s.sd;
+    const o={lo:0,hi:100,px0:30,px1:W-30,base:380,top:40,k:300/pdf(0,0,4)};
+    const pl=normPlot(g,o); M5.pl=pl;
+    if(s.mode==="emp"){ const cols=["#C4B5FD","#93C5FD","#99F6E4"];
+      [3,2,1].forEach(k=>{ if(s.emp[k-1])pl.shade(mu,sd,mu-k*sd,mu+k*sd,cols[k-1],0.75); });
+      pl.curve(mu,sd,C.vert,3.2);
+      for(let k=-3;k<=3;k++){ const x=mu+k*sd; if(x<o.lo||x>o.hi)continue; Ln(g,pl.X(x),o.base,pl.X(x),pl.Y(pdf(x,mu,sd)),k?C.soft:C.vert,k?1.4:2,k?"4 4":null);
+        T(g,pl.X(x),o.base+36*FS,k?(k>0?"+":"−")+Math.abs(k)+"σ":"μ",{s:11,c:C.vert,halo:false}); }
+      const pcts=[68,95,99.7]; [1,2,3].forEach(k=>{ if(!s.emp[k-1])return; const y=o.top+30+(3-k)*30*FS, xl=pl.X(mu-k*sd), xr=pl.X(mu+k*sd);
+        Ln(g,Math.max(o.px0,xl),y,Math.min(o.px1,xr),y,C.ink,1.6); [xl,xr].forEach(xx=>{ if(xx>=o.px0&&xx<=o.px1)Ln(g,xx,y-5,xx,y+5,C.ink,1.6); });
+        T(g,pl.X(mu),y-6,"≈ "+pcts[k-1]+"%  ("+num(mu-k*sd,1)+" to "+num(mu+k*sd,1)+")",{s:11.5,c:C.ink}); });
+      M5.axisTicks(g,pl,0,100,o.base,10,mu,sd,"x");
+    } else {
+      const x1=s.x1, x2=s.x2, z1=(x1-mu)/sd, z2=(x2-mu)/sd, col="#FDBA74";
+      if(s.shade==="left")pl.shade(mu,sd,o.lo,x1,col,0.85); else if(s.shade==="right")pl.shade(mu,sd,x1,o.hi,col,0.85); else pl.shade(mu,sd,Math.min(x1,x2),Math.max(x1,x2),col,0.85);
+      pl.curve(mu,sd,C.vert,3.2);
+      Ln(g,pl.X(mu),o.base,pl.X(mu),pl.Y(pdf(mu,mu,sd)),C.vert,1.6,"5 4");
+      const area=M5.area();
+      const lines=[[x1,z1,"x"]]; if(s.shade==="between")lines.push([x2,z2,"x₂"]);
+      lines.forEach(([x,z,n],i)=>{ Ln(g,pl.X(x),o.base,pl.X(x),Math.min(o.base-4,pl.Y(pdf(x,mu,sd))-8),C.lin,2.4);
+        const ly=o.top+(i?40:8)*FS; T(g,clamp(pl.X(x),70,W-70),ly,(i?"x₂":"x")+" = "+num(x,1)+",  z = "+num(z,2),{s:12,c:C.lin});
+        M5.handle(g,pl.X(x),o.base+2,"x"+(i+1),"value "+(i+1)); });
+      const ax=s.shade==="left"?(o.lo+x1)/2:s.shade==="right"?(x1+o.hi)/2:(x1+x2)/2;
+      T(g,clamp(pl.X(clamp(ax,mu-2.5*sd,mu+2.5*sd)),60,W-60),o.base-40,"area ≈ "+num(area,4),{s:13,c:"#9A3412"});
+      M5.axisTicks(g,pl,0,100,o.base+26,10,mu,sd,null);
+      // z axis
+      for(let k=-3;k<=3;k++){ const x=mu+k*sd; if(x<o.lo||x>o.hi)continue; T(g,pl.X(x),o.base+26+34*FS,"z = "+minus(k),{s:9.5,c:C.vert,halo:false,w:500}); }
+    }
+  },
+  area(){ const s=M5.s, z1=(s.x1-s.mu)/s.sd, z2=(s.x2-s.mu)/s.sd;
+    return s.shade==="left"?Phi(z1):s.shade==="right"?1-Phi(z1):Math.abs(Phi(z1)-Phi(z2)); },
+  drawCmp(){ const s=M5.s; setVB(W,470); const g=E("g",{},cv); M5.cpl=[];
+    s.cmp.forEach((D,i)=>{ const y0=i?250:20, o={lo:D.mu-3.6*D.sd,hi:D.mu+3.6*D.sd,px0:40,px1:W-40,base:y0+150,top:y0+30,k:120/pdf(0,0,D.sd)};
+      const pl=normPlot(g,o); M5.cpl[i]={pl,o};
+      pl.shade(D.mu,D.sd,o.lo,D.x,i?"#FDBA74":"#93C5FD",0.8); pl.curve(D.mu,D.sd,i?C.lin:C.corr,3);
+      const z=(D.x-D.mu)/D.sd;
+      T(g,40,y0+14*FS,D.n+":  μ = "+num(D.mu,1)+", σ = "+num(D.sd,1),{a:"start",s:12,c:i?C.lin:C.corr,w:700});
+      T(g,W-40,y0+14*FS,"score "+num(D.x,1)+" → z = "+num(z,2)+" · "+M5.ord(Phi(z)),{a:"end",s:12,c:C.ink,w:700});
+      Ln(g,pl.X(D.x),o.base,pl.X(D.x),pl.Y(pdf(D.x,D.mu,D.sd))-6,C.ink,2.2);
+      Ln(g,o.px0,o.base,o.px1,o.base,C.gr,2);
+      for(let k=-3;k<=3;k++){ const x=D.mu+k*D.sd; Ln(g,pl.X(x),o.base,pl.X(x),o.base+5,C.gr,1.4);
+        T(g,pl.X(x),o.base+17*FS,num(x,1),{s:10,c:C.ax,halo:false,w:500}); T(g,pl.X(x),o.base+31*FS,"z="+minus(k),{s:9.5,c:C.vert,halo:false,w:500}); }
+      M5.handle(g,pl.X(D.x),o.base+2,"c"+i,D.n+" score"); });
+  },
+  ord(p){ const n=Math.round(p*100); const v=clamp(n,1,99); const suf=(v%100>=11&&v%100<=13)?"th":["th","st","nd","rd"][v%10]||"th"; return "≈ "+v+suf+" percentile"; },
+  drawData(){ const s=M5.s; if(!s.data)M5.sample(); setVB(W,460); const g=E("g",{},cv), d=s.data, n=d.length;
+    const m=d.reduce((a,b)=>a+b,0)/n, sdv=Math.sqrt(d.reduce((a,b)=>a+(b-m)*(b-m),0)/(n-1));
+    M5.st={m,sdv,n};
+    const lo=0,hi=100,bw=s.sd/2, o={lo,hi,px0:30,px1:W-30,base:390,top:50};
+    const nb=Math.ceil((hi-lo)/bw), cnt=new Array(nb).fill(0); let out=0; d.forEach(v=>{ const k=Math.floor((v-lo)/bw); if(k>=0&&k<nb)cnt[k]++; else out++; });
+    const peak=Math.max(Math.max(...cnt)/(n*bw),pdf(0,0,sdv)); o.k=(o.base-o.top-20)/peak;
+    const pl=normPlot(g,o);
+    cnt.forEach((c,k)=>{ if(!c)return; const x=lo+k*bw, hgt=c/(n*bw)*o.k; Rc(g,pl.X(x)+0.5,o.base-hgt,pl.X(x+bw)-pl.X(x)-1,hgt,{fill:"#93C5FD",st:"#3B82F6",sw:1}); });
+    pl.curve(m,sdv,C.vert,3);
+    Ln(g,pl.X(m),o.base,pl.X(m),o.top,C.vert,1.6,"5 4");
+    T(g,pl.X(m),o.top-8,"x̄ = "+num(m,1)+",  s = "+num(sdv,1),{s:12,c:C.vert});
+    M5.axisTicks(g,pl,0,100,o.base,10,0,1,"x");
+    T(g,W-30,24*FS,"histogram (density) with normal curve N(x̄, s)",{a:"end",s:11,c:C.ax,halo:false,w:500});
+  },
+  dragStart(){},
+  drag(id,p){ const s=M5.s;
+    if(id[0]==="x"){ const v=clamp(Math.round(M5.pl.invX(p[0])*2)/2,0,100); if(id==="x1")s.x1=v; else s.x2=v; }
+    else { const i=+id[1], D=s.cmp[i], o=M5.cpl[i]; D.x=Math.round(clamp(o.pl.invX(p[0]),o.o.lo,o.o.hi)*(D.sd>=20?1:10))/(D.sd>=20?1:10);
+      const el=document.getElementById("cx"+i); if(el)el.value=D.x; } },
+  dragEnd(){},
+  top(){ const s=M5.s; if(s.mode!=="cmp")return "";
+    return `<div class="panel"><h3>Two tests, two scales</h3>${s.cmp.map((D,i)=>`<div class="ansrow"><div style="flex-basis:100%"><label class="fld" style="color:${i?"#FB923C":"#38BDF8"}">${esc(D.n)}</label></div>
+      <div><label class="fld" for="cm${i}">Mean μ</label><input type="number" id="cm${i}" value="${D.mu}"></div>
+      <div><label class="fld" for="cs${i}">SD σ</label><input type="number" id="cs${i}" min="0.1" value="${D.sd}"></div>
+      <div><label class="fld" for="cx${i}">Score</label><input type="number" id="cx${i}" value="${D.x}"></div></div>`).join("")}<div style="height:16px"></div></div>`; },
+  wire(){ const s=M5.s; if(s.mode!=="cmp")return;
+    s.cmp.forEach((D,i)=>{ [["cm","mu"],["cs","sd"],["cx","x"]].forEach(([p,k])=>document.getElementById(p+i).addEventListener("input",e=>{ const v=+e.target.value; if(!isFinite(v)||e.target.value==="")return; if(k==="sd"&&v<=0)return; D[k]=v; update(); })); }); },
+  live(){ const s=M5.s, mu=s.mu, sd=s.sd;
+    if(s.mode==="emp"){ const r=[1,2,3].map(k=>Phi(k)-Phi(-k));
+      return `<div class="panel"><h3>For μ = ${mu}, σ = ${num(sd,1)}</h3><div class="pad">
+        <div class="eq">μ ± 1σ: ${num(mu-sd,1)} to ${num(mu+sd,1)}  ≈ 68%\nμ ± 2σ: ${num(mu-2*sd,1)} to ${num(mu+2*sd,1)}  ≈ 95%\nμ ± 3σ: ${num(mu-3*sd,1)} to ${num(mu+3*sd,1)}  ≈ 99.7%<small>Computed areas: ${r.map(v=>pct(v,2)).join(", ")}. The rule rounds these.</small></div>
+        <p>By symmetry, each tail beyond ±1σ holds about (100 − 68) ÷ 2 = <b>16%</b>, beyond ±2σ about <b>2.5%</b>, and beyond ±3σ about <b>0.15%</b>.</p>
+        <p>Change σ: the curve gets taller and narrower or shorter and wider, but the total area always stays 1 (100%).</p></div></div>`; }
+    if(s.mode==="z"){ const z1=(s.x1-mu)/sd, z2=(s.x2-mu)/sd, A=M5.area();
+      let w=`z = ${fh("x − μ","σ")} = ${fh(num(s.x1,1)+" − "+mu,num(sd,1))} = ${num(z1,3)}`;
+      if(s.shade==="between")w+=`\nz₂ = ${fh(num(s.x2,1)+" − "+mu,num(sd,1))} = ${num(z2,3)}`;
+      const lo=Math.min(z1,z2), hi=Math.max(z1,z2);
+      const ar=s.shade==="left"?`P(X < ${num(s.x1,1)}) = Φ(${num(z1,2)}) ≈ ${num(A,4)}`:s.shade==="right"?`P(X > ${num(s.x1,1)}) = 1 − Φ(${num(z1,2)}) ≈ ${num(A,4)}`:
+        `P(${num(Math.min(s.x1,s.x2),1)} < X < ${num(Math.max(s.x1,s.x2),1)})\n = Φ(${num(hi,2)}) − Φ(${num(lo,2)}) ≈ ${num(A,4)}`;
+      return `<div class="panel"><h3>z-score and area</h3><div class="pad"><div class="eq">${w}</div><div class="eq">${ar}  (${pct(A,2)})<small>Φ(z) is the area to the left of z under the standard normal curve. Computed here with Φ(z) = ½(1 + erf(z/√2)), using a polynomial approximation of erf accurate to about 0.0000002.</small></div>
+        <p>A z-score counts <b>how many standard deviations</b> x is from the mean: z = ${num(z1,2)} means ${num(Math.abs(z1),2)} SDs ${z1>=0?"above":"below"} μ.</p></div></div>`; }
+    if(s.mode==="cmp"){ const z=s.cmp.map(D=>(D.x-D.mu)/D.sd), bi=z[0]>z[1]?0:1;
+      return `<div class="panel"><h3>Which score is better?</h3><div class="pad">${s.cmp.map((D,i)=>`<div class="eq">${esc(D.n)}: z = ${fh(num(D.x,1)+" − "+num(D.mu,1),num(D.sd,1))} = ${num(z[i],2)}<small>Area to the left Φ(${num(z[i],2)}) ≈ ${num(Phi(z[i]),3)}: ${M5.ord(Phi(z[i])).slice(2)}.</small></div>`).join("")}
+        <p>${Math.abs(z[0]-z[1])<0.005?"The z-scores are equal, so the two scores are equally impressive.":`The <b>${esc(s.cmp[bi].n)}</b> score is relatively better: it is ${num(Math.abs(z[0]-z[1]),2)} SD further above its own mean.`} Raw scores on different scales cannot be compared directly; z-scores put both on the same scale.</p></div></div>`; }
+    const st=M5.st||{m:0,sdv:1,n:0}, d=s.data||[]; const w=[1,2,3].map(k=>d.filter(v=>Math.abs(v-st.m)<=k*st.sdv).length/(d.length||1));
+    return `<div class="panel"><h3>Does the normal model fit?</h3><div class="pad"><div class="eq">n = ${d.length},  x̄ = ${num(st.m,2)},  s = ${num(st.sdv,2)}</div>
+      <div class="tblwrap"><table class="pt"><tr><th>Within</th><th>Data</th><th>Normal</th></tr>${[1,2,3].map((k,i)=>`<tr><td>x̄ ± ${k}s</td><td>${pct(w[i])}</td><td>${["68%","95%","99.7%"][i]}</td></tr>`).join("")}</table></div>
+      <p style="margin-top:12px">${s.shape==="norm"?"The histogram is roughly symmetric and bell-shaped, so the normal model and the empirical rule are reasonable.":"This data set is <b>skewed right</b>. The normal curve spills into values that never occur and misses the long right tail, so estimating percents with a normal model would be <b>inappropriate</b>."}</p></div></div>`; },
+  bot(){ return `<div class="panel"><h3>The idea</h3><div class="pad">
+    <p>A <span class="term">normal distribution</span> is a symmetric, bell-shaped model described by its mean μ (the center) and standard deviation σ (the spread). The total area under the curve is 1, and area equals probability or percent of the population.</p>
+    <p>The <span class="term">empirical rule</span>: about 68% of values lie within 1σ of μ, 95% within 2σ, and 99.7% within 3σ.</p>
+    <p>A <span class="term">z-score</span>, z = (x − μ) ÷ σ, measures position in standard deviations. Software or a table turns z into an area. Only use the normal model when the data really are roughly bell-shaped.</p></div></div>`+
+    tryPanel(`In z-scores, set μ = 50 and σ = 10 and choose Between. Drag the handles to 40 and 60: is the area close to 68%? Now find x so that P(X &lt; x) ≈ 0.90. (The z-score should be about 1.28.)`); }
+};
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+function parseAns(str,pctMode){
+  let t=String(str).trim().replace(/[−–]/g,"-").replace(/\s+/g,"").replace(/,/g,"");
+  if(!t)return NaN; let isP=false; if(/%$/.test(t)){ isP=true; t=t.slice(0,-1); }
+  let v; const m=/^(-?\d*\.?\d+)\/(-?\d*\.?\d+)$/.exec(t);
+  if(m){ const d=+m[2]; v=d===0?NaN:(+m[1])/d; } else if(/^-?\d*\.?\d+(e-?\d+)?$/i.test(t)) v=+t; else return NaN;
+  if(pctMode) return v;           // percent questions: "68" and "68%" both mean 68 percent
+  return isP? v/100 : v;
+}
+const KINDS=[["mix","Mixed practice"],["count","Counting principle"],["pc","nPr / nCr"],["draw","With / without replacement"],["cond","Conditional (table)"],["z","z-scores"],["emp","Percent in a range"]];
+const CTX=[
+  {w:"A café offers",st:[["sandwiches",3,6],["soups",2,4],["drinks",3,5]]},
+  {w:"A student is choosing",st:[["shirts",3,7],["pairs of pants",2,5],["pairs of shoes",2,4]]},
+  {w:"A license plate pattern uses",st:[["letters (any of 26)",26,26],["digits (any of 10)",10,10],["digits (any of 10)",10,10]]},
+  {w:"An ice-cream shop has",st:[["flavors",4,12],["cone types",2,4],["toppings",3,8]]}];
+function genProblem(kind){
+  if(kind==="mix")kind=pick(["count","pc","pc","draw","cond","z","emp"]);
+  const pr={kind,tol:0.0051};
+  if(kind==="count"){ const c=pick(CTX), k=c.st[0][1]===26?3:rnd(2,3), st=c.st.slice(0,k).map(x=>[x[0],rnd(x[1],x[2])]);
+    pr.st=st; pr.ans=st.reduce((a,b)=>a*b[1],1); pr.tol=0.01;
+    pr.q=`${c.w} ${st.map(x=>`<b>${x[1]}</b> ${x[0]}`).join(", ")}. If one choice is made from each category, how many different outcomes are possible?`;
+    pr.sol=`Fundamental Counting Principle: multiply the number of choices at each stage.\n${st.map(x=>x[1]).join(" × ")} = ${big(pr.ans)}`;
+    pr.hint=`Each choice in one category can pair with every choice in the others. Multiply, do not add.`; pr.fmt="a whole number"; }
+  else if(kind==="pc"){ const perm=Math.random()<0.5, n=rnd(5,10), r=rnd(2,Math.min(4,n-1));
+    const sc=perm?pick([[`A club of <b>${n}</b> members elects a president, vice-president${r>2?", secretary":""}${r>3?", and treasurer":""}`,r>2?(r>3?4:3):2],
+                        [`In a race with <b>${n}</b> runners, ribbons go to 1st${r>1?", 2nd":""}${r>2?", 3rd":""}${r>3?" and 4th":""} place`,r]])
+                 :pick([[`A teacher chooses a committee of <b>${r}</b> students from <b>${n}</b> volunteers`,r],[`You pick <b>${r}</b> toppings from <b>${n}</b> choices for a pizza`,r]]);
+    const rr2=sc[1]; pr.n=n; pr.r=rr2; pr.perm=perm; pr.ans=perm?nPr(n,rr2):nCr(n,rr2); pr.tol=0.01;
+    pr.q=`${sc[0]}. How many ${perm?"ways can this be done (order matters)":"different groups are possible"}?`;
+    pr.sol=perm?`Order matters → permutation.\n${n}P${rr2} = ${n}!/(${n}−${rr2})! = ${range(0,rr2-1).map(i=>n-i).join(" × ")} = ${big(pr.ans)}`
+               :`Order does not matter → combination.\n${n}C${rr2} = ${n}!/(${rr2}!·(${n}−${rr2})!) = ${big(nPr(n,rr2))}/${fact(rr2)} = ${big(pr.ans)}`;
+    pr.hint=perm?`Different positions or places mean order matters: use nPr = n!/(n − r)!.`:`A group is the same no matter what order it was chosen in: use nCr = nPr ÷ r!.`; pr.fmt="a whole number"; }
+  else if(kind==="draw"){ const R=rnd(2,7), B=rnd(2,7), repl=Math.random()<0.5, cs=pick([["red","red"],["red","blue"],["blue","blue"],["blue","red"]]), T0=R+B;
+    const n1=cs[0]==="red"?R:B, n2=(cs[1]==="red"?R:B)-(!repl&&cs[0]===cs[1]?1:0), d2=repl?T0:T0-1;
+    pr.ans=n1*n2/(T0*d2); pr.R=R; pr.B=B; pr.tol=0.0051;
+    pr.q=`A bag holds <b>${R}</b> red and <b>${B}</b> blue marbles. Two marbles are drawn <b>${repl?"with":"without"}</b> replacement. Find P(1st is ${cs[0]} and 2nd is ${cs[1]}).`;
+    pr.sol=`P(1st ${cs[0]}) = ${n1}/${T0}\nP(2nd ${cs[1]} | 1st ${cs[0]}) = ${n2}/${d2}${repl?"  (marble put back)":"  (one fewer marble)"}\nP = ${n1}/${T0} · ${n2}/${d2} = ${fdec(n1*n2,T0*d2,4)}`;
+    pr.hint=repl?`With replacement the bag is the same for both draws, so multiply ${n1}/${T0} by the same kind of fraction.`:`Without replacement, the second draw has ${T0-1} marbles${cs[0]===cs[1]?` and one fewer ${cs[0]}`:""}.`; pr.fmt="a fraction like 3/14 or a decimal (to 0.01)"; }
+  else if(kind==="cond"){ const sc=pick([{A:"Has a pet",An:"No pet",B:"9th grade",Bn:"10th grade"},{A:"Likes math",An:"Doesn't",B:"Girls",Bn:"Boys"},{A:"Bikes to school",An:"Doesn't",B:"Lives < 2 mi",Bn:"Lives ≥ 2 mi"}]);
+    const t=[rnd(8,45),rnd(8,45),rnd(8,45),rnd(8,45)], q=pick(["AgB","BgA","AgBn","AandB"]);
+    pr.t=t; pr.L=sc; pr.qk=q; const [a,b,c,d]=t, N=a+b+c+d;
+    const m={AgB:[a,a+c,`P(${sc.A} | ${sc.B})`,`Use only the ${sc.B} column: total ${a+c}.`],BgA:[a,a+b,`P(${sc.B} | ${sc.A})`,`Use only the ${sc.A} row: total ${a+b}.`],
+             AgBn:[b,b+d,`P(${sc.A} | ${sc.Bn})`,`Use only the ${sc.Bn} column: total ${b+d}.`],AandB:[a,N,`P(${sc.A} and ${sc.B})`,`"And" uses the whole table: divide by N = ${N}.`]}[q];
+    pr.ans=m[0]/m[1]; pr.tol=0.0051;
+    pr.q=`Use the two-way table on the board. Find <b>${esc(m[2])}</b>.`;
+    pr.sol=`${m[3]}\n${m[2]} = ${m[0]}/${m[1]} = ${fdec(m[0],m[1],4)}`; pr.hint=m[3]+` The numerator is the cell in both.`; pr.fmt="a fraction like 12/37 or a decimal (to 0.01)"; }
+  else if(kind==="z"){ const sc=pick([["test scores",rnd(60,80),rnd(5,12)],["heights (cm)",rnd(150,175),rnd(6,10)],["battery life (hours)",rnd(20,40),rnd(2,5)]]);
+    const mu=sc[1], sd=sc[2], z=rnd(-25,25)/10, x=Math.round((mu+z*sd)*10)/10;
+    pr.mu=mu; pr.sd=sd; pr.x=x; pr.ans=(x-mu)/sd; pr.tol=0.011;
+    pr.q=`${sc[0][0].toUpperCase()+sc[0].slice(1)} are normally distributed with mean μ = <b>${mu}</b> and standard deviation σ = <b>${sd}</b>. Find the z-score of x = <b>${x}</b>.`;
+    pr.sol=`z = (x − μ)/σ = (${x} − ${mu})/${sd} = ${num(x-mu,2)}/${sd} = ${num(pr.ans,3)}`;
+    pr.hint=`Subtract the mean first, then divide by the standard deviation. A value below the mean has a negative z-score.`; pr.fmt="a decimal to the nearest hundredth"; }
+  else { const mu=rnd(4,16)*5, sd=rnd(2,6), useRule=Math.random()<0.55;
+    pr.mu=mu; pr.sd=sd;
+    if(useRule){ const opts=[[-1,1,68],[-2,2,95],[-3,3,99.7],[0,1,34],[0,2,47.5],[-1,0,34],[-2,1,81.5],[-1,2,81.5],[1,99,16],[2,99,2.5],[-99,-1,16],[-99,2,97.5],[1,2,13.5]];
+      const o=pick(opts); pr.lo=o[0]; pr.hi=o[1]; pr.ans=o[2]; pr.tol=0.051; pr.rule=true;
+      const xl=mu+o[0]*sd, xh=mu+o[1]*sd;
+      pr.q=o[0]===-99?`A normal distribution has μ = <b>${mu}</b> and σ = <b>${sd}</b>. Use the empirical rule to find the percent of values <b>below ${xh}</b>.`:
+           o[1]===99?`A normal distribution has μ = <b>${mu}</b> and σ = <b>${sd}</b>. Use the empirical rule to find the percent of values <b>above ${xl}</b>.`:
+           `A normal distribution has μ = <b>${mu}</b> and σ = <b>${sd}</b>. Use the empirical rule to find the percent of values <b>between ${xl} and ${xh}</b>.`;
+      const zl=o[0]===-99?"−∞":minus(o[0]), zh=o[1]===99?"∞":minus(o[1]);
+      pr.sol=`Convert to z-scores: from z = ${zl} to z = ${zh}.\nUse 68-95-99.7 and symmetry (34%, 13.5%, 2.35%, 0.15% per band):\npercent ≈ ${pr.ans}%`;
+      pr.hint=`Half of 68% is 34% (μ to 1σ), half of 95% is 47.5% (μ to 2σ), and each tail beyond 1σ is 16%.`; pr.fmt="a percent, like 81.5 or 81.5%"; }
+    else { const a=Math.round((mu+rnd(-20,10)/10*sd)*10)/10, b=Math.round((a+rnd(5,25)/10*sd)*10)/10; pr.lo=a; pr.hi=b; pr.rule=false;
+      const za=(a-mu)/sd, zb=(b-mu)/sd; pr.ans=(Phi(zb)-Phi(za))*100; pr.tol=1.01;
+      pr.q=`A normal distribution has μ = <b>${mu}</b> and σ = <b>${sd}</b>. What percent of values lie <b>between ${a} and ${b}</b>? (Use the normal curve area; answers within 1 percentage point are accepted.)`;
+      pr.sol=`z₁ = (${a} − ${mu})/${sd} = ${num(za,3)},  z₂ = (${b} − ${mu})/${sd} = ${num(zb,3)}\nArea = Φ(${num(zb,2)}) − Φ(${num(za,2)}) = ${num(Phi(zb),4)} − ${num(Phi(za),4)} = ${num(pr.ans/100,4)}\npercent ≈ ${num(pr.ans,1)}%`;
+      pr.hint=`Convert both values to z-scores. The percent is the area to the left of z₂ minus the area to the left of z₁ (try tab 05 to check).`; pr.fmt="a percent, like 42.3 or 42.3%"; } }
+  return pr;
+}
+const M6={
+  tab:"Challenge", lesson:"S-CP · S-ID.A.4", accent:"var(--coral)",
+  title:()=>"Practice: "+({count:"counting principle",pc:M6.s.pr&&M6.s.pr.perm?"permutations":"combinations",draw:"drawing marbles",cond:"conditional probability",z:"z-scores",emp:"percent in a range"}[M6.s.pr?M6.s.pr.kind:"count"]),
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  streakEl:null,
+  newProb(){ M6.s.pr=genProblem(M6.s.kind); M6.s.state="open"; M6.s.reveal=false; M6.s.tries=0; },
+  bar(){
+    btn("New problem",()=>{M6.newProb();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    KINDS.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=M6.s.kind; sel.onchange=()=>{M6.s.kind=sel.value;M6.newProb();render();}; bar.appendChild(sel);
+    M6.streakEl=spacer(""); M6.upStreak();
+  },
+  upStreak(){ if(M6.streakEl)M6.streakEl.textContent="Streak "+M6.s.streak+" · Best "+M6.s.best+" · Solved "+M6.s.solved; },
+  draw(){ if(!M6.s.pr)M6.newProb(); const pr=M6.s.pr, show=M6.s.state==="right"||M6.s.reveal; setVB(W,400); const g=E("g",{},cv);
+    if(pr.kind==="count"){ const k=pr.st.length, bw=Math.min(190,(W-60)/k-30);
+      pr.st.forEach((x,i)=>{ const cx=W/2+(i-(k-1)/2)*(bw+40);
+        Rc(g,cx-bw/2,120,bw,110,{rx:16,fill:"#EFF6FF",st:C.corr,sw:2});
+        T(g,cx,166,String(x[1]),{s:34,c:C.corr,f:"d"}); T(g,cx,206,x[0].split(" (")[0],{s:12,c:C.ink,halo:false});
+        if(i<k-1)T(g,cx+bw/2+20,175,"×",{s:26,c:C.gr,mid:true,halo:false}); });
+      T(g,W/2,300,show?"= "+big(pr.ans)+" outcomes":"= ? outcomes",{s:22,c:show?C.alt:C.ax,f:"d"}); }
+    else if(pr.kind==="pc"){ const R=Math.min(24,(W-40)/pr.n/2.6);
+      for(let i=0;i<pr.n;i++){ const x=W/2+(i-(pr.n-1)/2)*R*2.6; Ci(g,x,110,R,{fill:PAL[i%PAL.length],st:"#fff",sw:2}); T(g,x,111,String(i+1),{s:R*0.8/FS,c:"#fff",mid:true,halo:false,f:"d"}); }
+      for(let j=0;j<pr.r;j++){ const x=W/2+(j-(pr.r-1)/2)*90; Rc(g,x-30,180,60,60,{rx:12,st:pr.perm?C.mag:C.soft,sw:2,d:"6 4",fill:"#fff"}); T(g,x,262,pr.perm?ORD[j]:"pick",{s:11,c:C.ax,halo:false}); }
+      T(g,W/2,40,"n = "+pr.n+",  r = "+pr.r+"  ·  "+(pr.perm?"order matters":"order does not matter"),{s:14,c:C.ink});
+      if(show)T(g,W/2,320,(pr.perm?pr.n+"P"+pr.r:pr.n+"C"+pr.r)+" = "+big(pr.ans),{s:22,c:C.alt,f:"d"}); }
+    else if(pr.kind==="draw"){ const all=[]; for(let i=0;i<pr.R;i++)all.push("R"); for(let i=0;i<pr.B;i++)all.push("B");
+      Rc(g,W/2-200,90,400,190,{rx:40,fill:"#F8FAFF",st:C.soft,sw:2.4});
+      all.forEach((c,i)=>{ const per=7, x=W/2+((i%per)-3)*46, y=250-Math.floor(i/per)*46; Ci(g,x,y,18,{fill:MCOL[c].c,st:"#fff",sw:2}); });
+      T(g,W/2,60,pr.R+" red, "+pr.B+" blue  ·  total "+(pr.R+pr.B),{s:14,c:C.ink});
+      if(show)T(g,W/2,330,"P = "+fdec(Math.round(pr.ans*1e6),1e6,4).split(" ≈ ").pop(),{s:20,c:C.alt,f:"d"}); }
+    else if(pr.kind==="cond"){ const [a,b,c,d]=pr.t, L=pr.L, x0=narrow?20:90, cw0=narrow?220:180, cw=narrow?146:130, rh=narrow?56:48, y0=60;
+      const rows=[[L.A,[a,b,a+b]],[L.An,[c,d,c+d]],["Total",[a+c,b+d,a+b+c+d]]];
+      [L.B,L.Bn,"Total"].forEach((s,i)=>{ Rc(g,x0+cw0+i*cw,y0,cw,rh,{fill:"#EEF2FA",st:"#CBD5E1"}); T(g,x0+cw0+i*cw+cw/2,y0+rh/2,s,{s:12,c:C.lin,mid:true,halo:false,w:700}); });
+      rows.forEach((r,ri)=>{ const y=y0+(ri+1)*rh; Rc(g,x0,y,cw0,rh,{fill:"#EEF2FA",st:"#CBD5E1"}); T(g,x0+10,y+rh/2,r[0],{a:"start",s:12,c:C.corr,mid:true,halo:false,w:700});
+        r[1].forEach((v,ci)=>{ const hl=show&&((pr.qk==="AgB"&&((ri===0&&ci===0)||(ri===2&&ci===0)))||(pr.qk==="BgA"&&((ri===0&&ci===0)||(ri===0&&ci===2)))||(pr.qk==="AgBn"&&((ri===0&&ci===1)||(ri===2&&ci===1)))||(pr.qk==="AandB"&&((ri===0&&ci===0)||(ri===2&&ci===2))));
+          Rc(g,x0+cw0+ci*cw,y,cw,rh,{fill:hl?"#FBCFE8":"#fff",st:"#CBD5E1"}); T(g,x0+cw0+ci*cw+cw/2,y+rh/2,String(v),{s:15,c:C.ink,mid:true,halo:false,w:700}); }); }); }
+    else { const mu=pr.mu, sd=pr.sd, o={lo:mu-4*sd,hi:mu+4*sd,px0:30,px1:W-30,base:320,top:40,k:250/pdf(0,0,sd)}, pl=normPlot(g,o);
+      if(pr.kind==="emp"&&show){ const a=pr.rule?(pr.lo===-99?o.lo:mu+pr.lo*sd):pr.lo, b=pr.rule?(pr.hi===99?o.hi:mu+pr.hi*sd):pr.hi; pl.shade(mu,sd,a,b,"#FDBA74",0.85); }
+      pl.curve(mu,sd,C.vert,3); Ln(g,o.px0,o.base,o.px1,o.base,C.gr,2);
+      for(let k=-3;k<=3;k++){ const x=mu+k*sd; Ln(g,pl.X(x),o.base,pl.X(x),o.base+5,C.gr,1.4); T(g,pl.X(x),o.base+18*FS,num(x,1),{s:10.5,c:C.ax,halo:false,w:500}); T(g,pl.X(x),o.base+34*FS,k?"z="+minus(k):"μ",{s:9.5,c:C.vert,halo:false,w:500}); }
+      if(pr.kind==="z"){ Ln(g,pl.X(pr.x),o.base,pl.X(pr.x),pl.Y(pdf(pr.x,mu,sd))-6,C.lin,2.6); T(g,pl.X(pr.x),pl.Y(pdf(pr.x,mu,sd))-14,"x = "+pr.x+(show?",  z = "+num(pr.ans,2):""),{s:13,c:C.lin}); }
+      if(pr.kind==="emp"&&!pr.rule){ [pr.lo,pr.hi].forEach(x=>Ln(g,pl.X(x),o.base,pl.X(x),pl.Y(pdf(x,mu,sd)),C.lin,2.2,"5 4")); }
+      if(pr.kind==="emp"&&show)T(g,W/2,o.top-6,"≈ "+num(pr.ans,1)+"%",{s:18,c:"#9A3412",f:"d"}); }
+  },
+  top(){ const pr=M6.s.pr;
+    return `<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob">${pr.q}</p></div>
+      <div class="ansrow"><div><label class="fld" for="ans0">Your answer</label><input type="text" id="ans0" autocomplete="off" spellcheck="false" inputmode="text" placeholder="${pr.kind==="emp"?"e.g. 34":pr.kind==="draw"||pr.kind==="cond"?"e.g. 3/14":"e.g. 120"}"></div></div>
+      <p class="fmt">Enter ${pr.fmt}.</p>
+      <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button>
+        <button id="sol" class="ghost" type="button">Show solution</button>
+      </div><div id="fb6"></div><div style="height:4px"></div></div>`; },
+  wire(){ const pr=M6.s.pr, inp=document.getElementById("ans0"), fb=document.getElementById("fb6");
+    const showSol=good=>{ fb.innerHTML=(good||"")+`<div class="fldwrap"><div class="eq">${pr.sol}</div></div>`; };
+    const check=()=>{ if(M6.s.state==="right")return;
+      const pm=pr.kind==="emp", v=parseAns(inp.value,pm);
+      if(!isFinite(v)){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Use a whole number, a decimal, or a fraction like 5/12${pm?", or a percent like 34%":""}.</div>`; return; }
+      if(Math.abs(v-pr.ans)<=pr.tol){
+        M6.s.state="right"; if(M6.s.tries===0&&!M6.s.reveal){ M6.s.streak++; M6.s.best=Math.max(M6.s.best,M6.s.streak); } M6.s.solved++; M6.upStreak();
+        clear(); M6.draw(); inp.disabled=true;
+        showSol(`<div class="verdict good"><b>Correct!</b> ${M6.s.tries||M6.s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+M6.s.streak+"."} Compare with the full work below, then press <b>New problem</b>.</div>`);
+      } else { M6.s.tries++; M6.s.streak=0; M6.upStreak();
+        let extra=""; if(!pm&&v>1&&(pr.kind==="draw"||pr.kind==="cond"))extra=" A probability is never more than 1.";
+        fb.innerHTML=`<div class="verdict bad"><b>Not quite.</b> ${pr.hint}${extra}</div>`; } };
+    document.getElementById("chk").onclick=check;
+    inp.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); });
+    document.getElementById("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){M6.s.streak=0;M6.upStreak();} clear(); M6.draw();
+      showSol(`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); }; },
+  live(){ return ""; },
+  bot(){ return `<div class="panel"><h3>How answers are checked</h3><div class="pad">
+    <p>Counts must be exact whole numbers. Probabilities may be fractions like <b>5/12</b> or decimals within 0.005 (so round to at least two places; 41.7% also works). z-scores are checked to the nearest hundredth.</p>
+    <p>Percent questions accept <b>34</b> or <b>34%</b>. Empirical-rule answers must match the 68-95-99.7 value; computed-area answers may be off by up to 1 percentage point.</p>
+    <p>A first-try correct answer grows your streak. A wrong answer resets it and gives a hint; you can keep trying.</p></div></div>`; }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+function setFS(){ narrow=window.innerWidth<=560; FS=narrow?1.4:1; }
+window.addEventListener("resize",()=>{ const o=narrow; setFS(); if(o!==narrow)render(); });
+function setW(M){ W=(narrow&&M.narrowW)?M.narrowW:700; }
+function update(){ setFS(); const M=MODS[cur]; setW(M); clear(); M.draw(); sLive.innerHTML=M.live(); if(M.after)M.after(); }
+function render(){
+  setFS(); const M=MODS[cur]; setW(M);
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M6&&!M6.s.pr)M6.newProb();
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  bar.innerHTML=""; M.bar();
+  sTop.innerHTML=M.top?M.top():""; sBot.innerHTML=M.bot();
+  clear(); M.draw(); sLive.innerHTML=M.live();
+  if(M.wire)M.wire();
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+M1.init();
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>
