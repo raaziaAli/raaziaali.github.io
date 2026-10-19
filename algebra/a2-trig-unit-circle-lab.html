@@ -359,7 +359,7 @@ function drawWin(W,xs,ys,names){
   const ax=clamp(W.sy(0),r.T,r.T+r.H), ay=clamp(W.sx(0),r.L,r.L+r.W);
   gg.appendChild(E("line",{x1:r.L,y1:ax,x2:r.L+r.W,y2:ax,stroke:"#8FA3C8","stroke-width":1.8}));
   gg.appendChild(E("line",{x1:ay,y1:r.T,x2:ay,y2:r.T+r.H,stroke:"#8FA3C8","stroke-width":1.8}));
-  const lyx=clamp(ax+15,r.T+12,r.T+r.H-4);
+  const lyx=clamp(ax+15,r.T+12,VH-6);
   for(let k=Math.ceil(W.x0/xs.step-1e-9);k*xs.step<=W.x1+1e-9;k++){ const v=k*xs.step; if(Math.abs(v)<1e-9)continue; const s=xs.lab(v,k); if(!s)continue; const X=W.sx(v); if(X<r.L+10||X>r.L+r.W-10)continue;
     const t=E("text",{x:X,y:lyx,class:"ax","text-anchor":"middle"}); t.textContent=s; gg.appendChild(t); }
   for(let k=Math.ceil(W.y0/ys.step-1e-9);k*ys.step<=W.y1+1e-9;k++){ const v=k*ys.step; if(Math.abs(v)<1e-9)continue; const s=ys.lab(v,k); if(!s)continue; const Y=W.sy(v); if(Y<r.T+8||Y>r.T+r.H-6)continue;
@@ -1077,7 +1077,7 @@ const M5={
       const xa=W.sx(C-P/2), xb=W.sx(C+P/2), yb=Math.min(VH-30,W.sy(D)+Math.max(60,Math.abs(W.sy(D+A)-W.sy(D))+30));
       sseg(g,[xa,yb],[xb,yb],"#1D4ED8",2.2); sseg(g,[xa,yb-7],[xa,yb+7],"#1D4ED8",2.2); sseg(g,[xb,yb-7],[xb,yb+7],"#1D4ED8",2.2);
       stext(g,[(xa+xb)/2,yb+16*FS],"period π/B = "+(piStr(P,24)||f2(P)),"sm","#1D4ED8");
-      stext(g,[W.sx(C+P/2)+6,26],"asymptote","xs","#BE123C","start");
+      stext(g,[W.sx(C+P/2)+6,VH-14],"asymptote","xs","#BE123C","start");
     }
     const H=M5.handles();
     sgrab(g,W.S(H[0]),"h1","#C2410C"); sgrab(g,W.S(H[1]),"h2","#7C3AED");
@@ -1085,7 +1085,7 @@ const M5={
   },
   drawCtx(){
     const s=M5.s, c=s.ctx, fer=c.type==="ferris";
-    const rect={L:236,T:22,W:446,H:392};
+    const rect={L:236,T:22,W:440,H:368};
     const W=mkWin(0,c.x1,0,c.y1,rect);
     const xst=fer?(c.T/2>=2?c.T/2:1):2, yst=niceStep(c.y1,8);
     const g=drawWin(W,{step:xst,lab:v=>num(v,2)},{step:yst,lab:v=>num(v,2)},["t ("+c.unit+")","h ("+c.hu+")"]);
@@ -1117,9 +1117,9 @@ const M5={
       stext(outer,[px+14,Math.max(14,top+8)],"tide gauge","xs","#78350F","start");
     }
     sdot(g,W.S([t,h]),"var(--magenta)",7);
-    smartLabel(g,W.S([t,h]),[1,-1],`(${f2(t)}, ${f2(h)})`,"#BE185D","xs");
+    smartLabel(g,W.S([t,h]),[1,-0.35],`(${f2(t)}, ${f2(h)})`,"#BE185D","xs");
     const v=fer?"t":"t", L=fer?"h(t)":"h(t)";
-    infoBox(outer,VW-10,VH-40,["model: "+L+" = "+fmtH(s.cA)+" cos((2π/"+fmtH(s.cT)+")("+v+" − "+fmtH(s.cC)+")) + "+fmtH(s.cD)],"#6D28D9",true);
+    infoBox(outer,VW-10,VH-38,["model: "+L+" = "+fmtH(s.cA)+" cos((2π/"+fmtH(s.cT)+")("+v+" − "+fmtH(s.cC)+")) + "+fmtH(s.cD)],"#6D28D9",true);
   },
   match(){ const s=M5.s, c=s.ctx; let worst=0; for(let i=0;i<=120;i++){ const t=c.x1*i/120; worst=Math.max(worst,Math.abs(M5.model(t)-c.f(t))); } return worst; },
   panel(full){

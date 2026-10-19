@@ -948,13 +948,13 @@ const M5={
     const md=t=>S.C+F.a*Math.pow(F.b,t);
     plot(g,md,"var(--corr)",3.4);
     s.data.forEach(p=>sdot(g,P2(p[0],p[1]),"#94A3B8",4.5));
+    legend(g,[{color:"var(--corr)",text:"y = "+(S.C?S.C+" + ":"")+fmt(F.a)+"("+f4(F.b)+")^{t}"},{color:"#94A3B8",w:6,text:s.reg?"data (fit to all)":"data · drag the 2 orange points"}],S.b>1?"tl":"tr");
     const yp=md(s.tp); wline(g,s.tp,yl,s.tp,yp,"var(--alt)",1.8,"5 4"); sdot(g,P2(s.tp,yp),"var(--alt)",6);
     smartLabel(g,P2(s.tp,yp),[1,-1],"predict ("+fmt(s.tp)+", "+fmt(yp)+")","#047857");
     wline(g,W.x0,s.tg,W.x1,s.tg,"var(--yellow)",2,"3 5");
     const tt=lg((s.tg-S.C)/F.a,F.b);
     if(isFinite(tt)&&tt>=W.x0&&tt<=W.x1){ sdot(g,P2(tt,s.tg),"#CA8A04",6); wline(g,tt,yl,tt,s.tg,"#CA8A04",1.6,"4 4"); smartLabel(g,P2(tt,s.tg),[-1,-1],"reaches "+fmt(s.tg)+" at t ≈ "+fmt(tt),"#A16207"); }
     s.pts.forEach((p,i)=>{ sgrab(g,P2(p[0],p[1]),"p"+i,s.reg?"#94A3B8":"var(--hand)"); smartLabel(g,P2(p[0],p[1]),[i?1:-0.4,i?0.8:-1],"("+fmt(p[0])+", "+fmt(p[1])+")",s.reg?"#64748B":"#C2410C"); });
-    legend(g,[{color:"var(--corr)",text:"y = "+(S.C?S.C+" + ":"")+fmt(F.a)+"("+f4(F.b)+")^{t}"},{color:"#94A3B8",w:6,text:s.reg?"data (fit to all)":"data · drag the 2 orange points"}],S.b>1?"tl":"tr");
   },
   panel(){ const s=M5.s;
     if(s.mode==="model") return M5.panelModel();
