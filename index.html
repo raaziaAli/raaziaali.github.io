@@ -676,11 +676,11 @@ const store = {
   };
 
   const SIMS = { math, photo, earth }, ORDER = ['math', 'photo', 'earth'];
-  let cur = null, sim = null, value = 0, auto = !REDUCED, manual = false, started = 0, last = 0, visible = true, rafOn = false;
+  let cur = null, sim = null, value = 0, auto = !REDUCED, manual = false, started = 0, last = 0, visible = true, rafOn = false, prog = 0;
 
   function show(k, keepAuto) {
     cur = k; sim = SIMS[k];
-    tabs.forEach(t => { const on = t.dataset.k === k; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; t.querySelector('.tt-bar').style.width = '0'; });
+    tabs.forEach(t => { const on = t.dataset.k === k; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; t.querySelector('.tt-bar').style.width = '0%'; });
     stage.dataset.k = k; stage.setAttribute('aria-labelledby', 'tt-' + k);
     document.getElementById('stRoom').textContent = sim.room;
     document.getElementById('stTitle').textContent = sim.title;
@@ -689,7 +689,7 @@ const store = {
     const enter = document.getElementById('stEnter'); enter.textContent = sim.enter; enter.href = sim.href;
     Object.assign(slider, { min: sim.min, max: sim.max, step: sim.step });
     svg.textContent = ''; svg.setAttribute('aria-label', sim.title); sim.setup();
-    manual = false; started = performance.now();
+    manual = false; started = performance.now(); prog = 0;
     value = sim.auto(0); if (REDUCED) value = Math.round((sim.min + sim.max) / 2);
     paint(0);
   }
@@ -702,22 +702,22 @@ const store = {
     if (!visible) { rafOn = false; return; }
     const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0; last = ts;
     if (auto && !manual) {
-      const p = (ts - started) / DURATION;
+      const p = (ts - started) / DURATION; prog = Math.min(1, p);
       tabs.find(t => t.dataset.k === cur).querySelector('.tt-bar').style.width = Math.min(100, p * 100) + '%';
       if (p >= 1) { show(ORDER[(ORDER.indexOf(cur) + 1) % 3]); }
       else value = sim.auto(p);
     }
     paint(dt);
-    if (!REDUCED) requestAnimationFrame(loop); else rafOn = false;
+    if (!REDUCED || auto) requestAnimationFrame(loop); else rafOn = false;
   }
   function setAuto(on) {
     auto = on;
     toggle.setAttribute('aria-pressed', String(!on));
     document.getElementById('tourIcon').textContent = on ? '❚❚' : '▶';
     document.getElementById('tourText').textContent = on ? 'Pause tour' : 'Play tour';
-    if (on) { manual = false; started = performance.now() - (tabs.find(t => t.dataset.k === cur).querySelector('.tt-bar').style.width.replace('%', '') || 0) / 100 * DURATION; }
+    if (on) { manual = false; started = performance.now() - prog * DURATION; kick(); }
   }
-  slider.addEventListener('input', () => { manual = true; value = +slider.value; tabs.forEach(t => t.querySelector('.tt-bar').style.width = '0'); if (auto) setAuto(false); paint(0); });
+  slider.addEventListener('input', () => { manual = true; prog = 0; value = +slider.value; tabs.forEach(t => t.querySelector('.tt-bar').style.width = '0%'); if (auto) setAuto(false); paint(0); });
   tabs.forEach((t, i) => {
     t.addEventListener('click', () => { show(t.dataset.k); if (auto) setAuto(false); });
     t.addEventListener('keydown', e => {
@@ -729,7 +729,7 @@ const store = {
   toggle.addEventListener('click', () => setAuto(!auto));
   if (REDUCED) setAuto(false);
   show('math');
-  const kick = () => { if (!REDUCED && !rafOn) { rafOn = true; last = 0; requestAnimationFrame(loop); } };
+  function kick() { if ((!REDUCED || auto) && visible && !rafOn) { rafOn = true; last = 0; requestAnimationFrame(loop); } }
   if ('IntersectionObserver' in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) kick(); }).observe(stage);
   kick();
 })();
