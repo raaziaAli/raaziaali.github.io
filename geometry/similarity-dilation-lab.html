@@ -495,8 +495,8 @@ const M1={
       if(!k0){ seg(g,Os,Is,{stroke:COL.img,w:4,op:.55}); }
       seg(g,Os,As,{stroke:COL.pre,w:4,op:.55});
       const mA=mul(add(Os,As),.5), mI=mul(add(Os,Is),.5);
-      txt(g,add(mA,mul(nn,-16)),"OA = "+fm(dist(O,P[0])),"sl",COL.pre);
-      if(!k0) txt(g,add(mI,mul(nn,16)),"OA′ = "+fm(dist(O,I[0])),"sl",COL.img);
+      if(dist(Os,As)>80) txt(g,add(mA,mul(nn,-20)),"OA = "+fm(dist(O,P[0])),"sl",COL.pre);
+      if(!k0&&dist(Os,Is)>80) txt(g,add(mI,mul(nn,20)),"OA′ = "+fm(dist(O,I[0])),"sl",COL.img);
     }
     poly(g,P.map(S),{fill:COL.pre,stroke:COL.pre});
     if(!k0){ poly(g,I.map(S),{fill:COL.img,stroke:COL.img}); labelsS(g,I.map(S),nm.map(s=>s+"′"),COL.img,17); }
@@ -678,18 +678,24 @@ function triFromAngles(A,B){ // base 1 along +x, apex up (screen y negative)
   const C=180-A-B, b=Math.sin(B*D2R)/Math.sin(C*D2R);
   return [b*Math.cos(A*D2R), b*Math.sin(A*D2R)]; // x, height
 }
-function aaLayout(bases){
+function aaScale(bases){
+  const ap=triFromAngles(T3.A,T3.B), w=Math.max(1,ap[0])-Math.min(0,ap[0]);
+  const sw=bases.reduce((t,b)=>t+b*w,0), mh=Math.max(...bases)*ap[1];
+  return Math.min(40,(650-26-2*64)/sw,370/mh);
+}
+function aaLayout(bases,sc){
+  const u=sc||(T3.frz?T3.frz.sc:aaScale(bases));
   const ap=triFromAngles(T3.A,T3.B), mnx=Math.min(0,ap[0]), mxx=Math.max(1,ap[0]);
   let cur0=26; const out=[]; let maxH=0;
   bases.forEach(b=>{
-    const x0=cur0-mnx*b*U3, yb=452;
-    const L=[x0,yb], R=[x0+b*U3,yb], Ap=[x0+ap[0]*b*U3, yb-ap[1]*b*U3];
-    out.push({L:L,R:R,C:Ap,start:cur0,span:(1-mnx)*U3});
-    cur0=x0+mxx*b*U3+44; maxH=Math.max(maxH,ap[1]*b*U3);
+    const x0=cur0-mnx*b*u, yb=452;
+    const L=[x0,yb], R=[x0+b*u,yb], Ap=[x0+ap[0]*b*u, yb-ap[1]*b*u];
+    out.push({L:L,R:R,C:Ap,start:cur0,span:(1-mnx)*u});
+    cur0=x0+mxx*b*u+64; maxH=Math.max(maxH,ap[1]*b*u);
   });
-  return {tris:out,fits:cur0-44<=684&&maxH<=380};
+  return {tris:out,fits:cur0-64<=664&&maxH<=400,sc:u};
 }
-function fitAA(){ let n=0; while(!aaLayout(T3.bases).fits&&n<200){ T3.bases=T3.bases.map(b=>Math.max(0.6,b*0.96)); n++; } }
+function fitAA(){}
 function sssBuild(){
   const P=T3.P, k=T3.k, c0=dist(P[0],P[1]), a0=dist(P[1],P[2]), b0=dist(P[2],P[0]);
   let c,a,b;
@@ -766,8 +772,8 @@ const M3={
   },
   drag(id,q){
     if(T3.mode==="AA"){
-      const i=+id[1]; if(!T3.frz)T3.frz=aaLayout(T3.bases).tris.map(t=>({start:t.start,span:t.span}));
-      const f=T3.frz[i], nb=clamp((q[0]-f.start)/f.span,0.8,12);
+      const i=+id[1]; if(!T3.frz){const L=aaLayout(T3.bases); T3.frz={sc:L.sc,t:L.tris.map(t=>({start:t.start,span:t.span}))};}
+      const f=T3.frz.t[i], nb=clamp((q[0]-f.start)/f.span,0.8,12);
       const old=T3.bases[i]; T3.bases[i]=Math.round(nb*10)/10;
       if(!aaLayout(T3.bases).fits)T3.bases[i]=old;
     } else {
@@ -1021,8 +1027,8 @@ const M5={
       const th=T5.th*D2R, H=T5.H, st=H/Math.tan(th), sp=T5.hp/Math.tan(th);
       const top=[TX,GY-H*PXM], tip=[TX+st*PXM,GY], pTop=[T5.xp,GY-T5.hp*PXM], pTip=[T5.xp+sp*PXM,GY];
       const dir=unit([-Math.cos(th),-Math.sin(th)]);
-      // sun
-      const sun=[350+330*dir[0],GY+330*dir[1]];
+      // sun sits on the person's sun ray, well clear of the tree
+      const sun=sunPos();
       for(let j=-3;j<=3;j++){ const o=mul([-dir[1],dir[0]],j*60); seg(g,add(sun,o),add(add(sun,o),mul(dir,-900)),{stroke:"#F59E0B",w:1,op:.25,dash:"2 8"}); }
       g.appendChild(E("circle",{cx:sun[0],cy:sun[1],r:24,fill:"#FCD34D",stroke:"#F59E0B","stroke-width":3}));
       poly(g,[[TX,GY],top,tip],{fill:COL.grn,fo:0.15,nodots:true});
@@ -1032,8 +1038,8 @@ const M5={
       seg(g,add(top,mul(dir,60)),tip,{stroke:"#F59E0B",w:2.4}); seg(g,add(pTop,mul(dir,60)),pTip,{stroke:"#F59E0B",w:2.4});
       angArc(g,tip,top,[TX,GY],34,COL.gold,{label:T5.th+"°",lr:16}); angArc(g,pTip,pTop,[T5.xp,GY],26,COL.gold,{});
       rightMarkS(g,[TX,GY],[1,0],[0,-1],12); rightMarkS(g,[T5.xp,GY],[1,0],[0,-1],10);
-      dimLine(g,[TX,GY],tip,"tree shadow "+fm(st)+" m",COL.grn,-30);
-      dimLine(g,[T5.xp,GY],pTip,fm(sp)+" m",COL.img,-30);
+      dimLine(g,[TX,GY],tip,"tree shadow "+fm(st)+" m",COL.grn,16);
+      dimLine(g,[T5.xp,GY],pTip,fm(sp)+" m",COL.img,16);
       txt(g,[TX+14,top[1]-14],"H = "+(T5.hide?"?":fm(H)+" m"),"sl",COL.grn,"start");
       txt(g,[T5.xp-10,pTop[1]-14],fm(T5.hp)+" m","sl",COL.img,"end");
       grab(g,top,"tree"); grab(g,pTop,"ph"); grab(g,[T5.xp,GY],"px"); grab(g,sun,"sun");
@@ -1052,16 +1058,16 @@ const M5={
       cdot(g,eye,M.aligned?COL.grn:COL.red,5);
       if(!M.aligned&&hitP[1]>0) g.appendChild(E("circle",{cx:hitP[0],cy:hitP[1],r:6,fill:"none",stroke:COL.gold,"stroke-width":2}));
       rightMarkS(g,[XB,GY],[-1,0],[0,-1],12); rightMarkS(g,[T5.xp2,GY],[1,0],[0,-1],10);
-      dimLine(g,[T5.xp2,GY],mir,fm(M.d1)+" m",COL.img,-28);
-      dimLine(g,mir,[XB,GY],fm(M.d2)+" m",COL.grn,-28);
+      dimLine(g,[T5.xp2,GY],mir,fm(M.d1)+" m",COL.img,16);
+      dimLine(g,mir,[XB,GY],fm(M.d2)+" m",COL.grn,16);
       txt(g,[XB+40,roof[1]-16],"H = "+(T5.hide?"?":fm(T5.Hb)+" m"),"sl",COL.grn);
       txt(g,[T5.xp2-12,eye[1]],"eye "+fm(T5.he)+" m","sl",COL.img,"end");
-      txt(g,[T5.xm,GY+30],"mirror","sl","#0E7490");
+      txt(g,[T5.xm,GY-16],"mirror","sl","#0E7490");
       grab(g,mir,"m"); grab(g,eye,"eye"); grab(g,[T5.xp2,GY],"p2"); grab(g,roof,"roof");
     }
   },
   drag(id,q){
-    if(id==="sun"){ let a=Math.atan2(GY-q[1],350-q[0])/D2R; a=clamp(Math.round(a),20,70);
+    if(id==="sun"){ const tp=T5.xp+T5.hp/Math.tan(T5.th*D2R)*PXM; let a=Math.atan2(GY-q[1],tp-q[0])/D2R; a=clamp(Math.round(a),20,70);
       T5.th=Math.max(a,Math.ceil(Math.atan(T5.H/tShadowMax())/D2R)); fitPerson(); if(M5.rt)M5.rt.set(T5.th); return; }
     if(id==="tree"){ let H=Math.round((GY-q[1])/PXM*10)/10; H=clamp(H,3,16); if(H/Math.tan(T5.th*D2R)>tShadowMax())H=Math.floor(tShadowMax()*Math.tan(T5.th*D2R)*10)/10; T5.H=H; return; }
     if(id==="ph"){ T5.hp=clamp(Math.round((GY-q[1])/PXM*10)/10,1,2.4); fitPerson(); return; }
@@ -1105,6 +1111,8 @@ const M5={
     $("t5eq").innerHTML=e; $("t5v").innerHTML=v;
   }
 };
+function sunPos(){ const th=T5.th*D2R, tp=[T5.xp+T5.hp/Math.tan(th)*PXM,GY], R=Math.min(330,(GY-50)/Math.sin(th),(tp[0]-36)/Math.cos(th));
+  return [tp[0]-R*Math.cos(th), GY-R*Math.sin(th)]; }
 function fitPerson(){ const sp=T5.hp/Math.tan(T5.th*D2R); if(T5.xp+sp*PXM>690)T5.xp=Math.max(TX+40,690-sp*PXM); }
 
 /* ══════════════════════ TAB 6 · challenge ══════════════════════ */
@@ -1248,7 +1256,7 @@ const M6={
       seg(g,[fx,GY],top,{stroke:"#475569",w:5});
       const px=Math.min(560,Math.max(tip[0]+60,420)), ps=60/p.hp, ptop=[px,GY-p.hp*ps], ptip=[px+p.sp*ps,GY];
       poly(g,[[px,GY],ptop,ptip],{fill:COL.img,stroke:COL.img,fo:0.15,w:2});
-      dimLine(g,[fx,GY],tip,fm(p.S2)+" ft",COL.grn,-26); dimLine(g,[px,GY],ptip,fm(p.sp)+" ft",COL.img,-26);
+      dimLine(g,[fx,GY],tip,fm(p.S2)+" ft",COL.grn,16); dimLine(g,[px,GY],ptip,fm(p.sp)+" ft",COL.img,16);
       txt(g,[fx-10,(GY+top[1])/2],T6.checked?fm(p.H)+" ft":"H","sl",COL.grn,"end"); txt(g,[px-10,(GY+ptop[1])/2],fm(p.hp)+" ft","sl",COL.img,"end");
       txt(g,[350,30],"Not to scale: the student's triangle is enlarged","tk",null,"middle");
     } else {
@@ -1258,7 +1266,7 @@ const M6={
       poly(g,[[xb,GY],roof,[xm,GY]],{fill:COL.grn,stroke:COL.grn,fo:0.12,w:2});
       poly(g,[[xp,GY],eye,[xm,GY]],{fill:COL.img,stroke:COL.img,fo:0.15,w:2});
       g.appendChild(E("rect",{x:xm-12,y:GY-3,width:24,height:6,fill:"#22D3EE",stroke:"#0E7490"}));
-      dimLine(g,[xp,GY],[xm,GY],fm(p.d1)+" m",COL.img,-26); dimLine(g,[xm,GY],[xb,GY],fm(p.d2)+" m",COL.grn,-26);
+      dimLine(g,[xp,GY],[xm,GY],fm(p.d1)+" m",COL.img,16); dimLine(g,[xm,GY],[xb,GY],fm(p.d2)+" m",COL.grn,16);
       txt(g,[xp+10,(GY+eye[1])/2],fm(p.he)+" m","sl",COL.img,"start"); txt(g,[xb-10,(GY+roof[1])/2],T6.checked?fm(p.ans)+" m":"H","sl",COL.grn,"end");
       txt(g,[350,30],"Not to scale","tk",null,"middle");
     }
