@@ -69,7 +69,7 @@
   .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
   .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
     color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
-  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+  svg.canvas{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
 
   .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
   .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
@@ -872,7 +872,7 @@ const M4={
       chk("Snap",s.snap,v=>{s.snap=v;});
       btn("Parallelogram",()=>{s.Q=[[160,352],[448,352],[544,128],[256,128]];refresh();});
       btn("Isosceles-trapezoid trap",()=>{s.Q=[[128,352],[544,352],[448,128],[224,128]];refresh();});
-      btn("Kite trap",()=>{s.Q=[[352,64],[192,224],[352,416],[512,224]];refresh();});
+      btn("Equal-diagonals trap",()=>{s.Q=[[352,64],[192,160],[352,384],[512,160]];refresh();});
     } else {
       const sel=el("select"); sel.setAttribute("aria-label","choose a proof");
       PROOFS.forEach((p,i)=>{const o=el("option",{value:i,textContent:(i+1)+". "+p.name});sel.appendChild(o);});
@@ -947,7 +947,7 @@ const M4={
         <p>The theorems say "<i>if</i> it is a parallelogram, <i>then</i> …". Their <span class="term">converses</span> run the other way and are how you <b>prove</b> a quadrilateral is a parallelogram. Each one below is enough <b>by itself</b>:</p>
         <ol class="chain" style="padding:0 0 0 18px"><li>both pairs of opposite sides parallel (definition)</li><li>both pairs of opposite sides congruent</li><li>both pairs of opposite angles congruent</li><li>diagonals bisect each other</li><li>one pair of opposite sides both parallel <b>and</b> congruent</li></ol>
         <p>Watch out for the traps in yellow: one pair parallel plus the <i>other</i> pair congruent is an isosceles trapezoid, and congruent diagonals alone prove nothing.</p></div></div>
-      <div class="panel"><h3>Try this</h3><div class="pad"><p>Press <b>Isosceles-trapezoid trap</b>. Which tests pass, and why is the shape still not a parallelogram? Then drag one vertex a single grid square at a time until all five tests turn green together.</p></div></div>`;
+      <div class="panel"><h3>Try this</h3><div class="pad"><p>Press <b>Isosceles-trapezoid trap</b>, then <b>Equal-diagonals trap</b>. Which tests pass, and why is the shape still not a parallelogram? Then drag one vertex a single grid square at a time until all five tests turn green together.</p></div></div>`;
     else M4.proofPanel();
   },
   proofPanel(){ const s=M4.s, p=PROOFS[s.pi];
@@ -1036,7 +1036,10 @@ function drawCoordQuad(g,Pc,o){ o=o||{};
       g.appendChild(E("circle",{cx:m2[0],cy:m2[1],r:4,fill:"var(--altx)"})); } }
   poly(g,P,{class:"line"});
   P.forEach((p,i)=>{ let d=unit(sub(p,ctr)); if(vlen(sub(p,ctr))<1)d=[0,-1];
-    const lp=add(p,mul(d,26)); const t=txt(g,lp,"ABCD"[i]+"("+nS(Pc[i][0])+", "+nS(Pc[i][1])+")","num sm","var(--ink)",d[0]>0.35?"start":d[0]<-0.35?"end":"middle");
+    const lp=add(p,mul(d,26)); let anc=d[0]>0.35?"start":d[0]<-0.35?"end":"middle";
+    if(lp[0]>VW-80){anc="end";lp[0]=Math.min(lp[0],VW-6);} if(lp[0]<80){anc="start";lp[0]=Math.max(lp[0],6);}
+    lp[1]=clamp(lp[1],14,VH-14);
+    const t=txt(g,lp,"ABCD"[i]+"("+nS(Pc[i][0])+", "+nS(Pc[i][1])+")","num sm","var(--ink)",anc);
     t.setAttribute("font-size","13"); });
   if(o.handles) P.forEach((p,i)=>grab(g,p,String(i))); else P.forEach(p=>dot0(g,p));
 }
@@ -1127,6 +1130,7 @@ function genQuad(target){
     const dx=randInt(-9-Math.min(...xs), 9-Math.max(...xs)), dy=randInt(-5-Math.min(...ys), 5-Math.max(...ys));
     if(isNaN(dx)||isNaN(dy))continue;
     P=P.map(p=>[p[0]+dx,p[1]+dy]);
+    if(P.some(p=>Math.abs(p[0])>9||Math.abs(p[1])>5))continue;
     if(!isConvex(P))continue;
     const c=classifyQ(P,1e-7,1e-9); if(c.name!==target)continue;
     // rotate labels so A is a random vertex
@@ -1224,7 +1228,7 @@ function newProblem(){
       const l2=PT(l1,L,90+half-e), r2=PT(r1,L,90-half+e);
       seg(g,l2,l1,"line"); seg(g,l1,V,"line"); seg(g,V,r1,"line"); seg(g,r1,r2,"line");
       seg(g,l2,PT(l2,50,90+half-2*e),"ext"); seg(g,r2,PT(r2,50,90-half+2*e),"ext");
-      if(ext){ seg(g,V,PT(V,90,-90+half+180-180),"ext"); const din=dirA(sub(V,l1)), dout=dirA(sub(r1,V));
+      if(ext){ const din=dirA(sub(V,l1)), dout=dirA(sub(r1,V));
         seg(g,V,PT(V,90,din),"ext"); wedge(g,V,din,dout,36,"var(--unk)",{op:.25,label:fmt(e)+"°",lr:22}); }
       else wedge(g,V,90-half,90+half,36,"var(--unk)",{op:.25,label:fmt(it)+"°",lr:24});
       [l2,l1,V,r1,r2].forEach(p=>dot0(g,p,4));
@@ -1268,12 +1272,13 @@ function newProblem(){
         txt(g,PT(A,124,(aB+aC)/2-4),"("+ex(c,d)+")°","num","var(--corr)",null); txt(g,PT(A,124,(aC+aD)/2+6),"("+ex(a,b)+")°","num","var(--altx)");
         labelQuad(g,Q); }; } }
   else if(kind==="rect"){ const x=rnd(2,12), a=rnd(2,6); let c=rnd(1,8); while(c===a)c=rnd(1,8); const half=Math.random()<0.4;
+    if(half)while(c===2*a||c===a)c=rnd(1,8);
     const val=rnd(Math.max(a,c)*x+4,Math.max(a,c)*x+30); P.unit="x"; P.ans=x;
-    if(half){ const fullV=2*(a*x+ (val%2?0:0)); // AE = a x + b, BD = c x + d with BD = 2 AE
+    if(half){ // AE = a x + b, BD = c x + d with BD = 2 AE
       const b=rnd(1,12), AEv=a*x+b, d=2*AEv-c*x;
       P.ask=`ABCD is a rectangle whose diagonals meet at E. AE = ${ex(a,b)} and BD = ${ex(c,d)}. Find <b>x</b>.`;
       P.work=`The diagonals of a rectangle are congruent and bisect each other, so BD = AC = 2 · AE: ${ex(c,d)} = 2(${ex(a,b)}) = ${ex(2*a,2*b)} ⇒ ${nS(c-2*a)}x = ${nS(2*b-d)} ⇒ x = <b>${x}</b>.`;
-      P.lab=["AE = "+ex(a,b),"BD = "+ex(c,d)]; void fullV; }
+      P.lab=["AE = "+ex(a,b),"BD = "+ex(c,d)]; }
     else { const b=val-a*x, d=val-c*x;
       P.ask=`ABCD is a rectangle. AC = ${ex(a,b)} and BD = ${ex(c,d)}. Find <b>x</b>.`;
       P.work=`The diagonals of a rectangle are congruent: ${ex(a,b)} = ${ex(c,d)} ⇒ ${nS(a-c)}x = ${nS(d-b)} ⇒ x = <b>${x}</b>. (Each diagonal is ${val}.)`;
