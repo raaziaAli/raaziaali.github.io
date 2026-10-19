@@ -507,8 +507,8 @@ function banner(text){
   cv.appendChild(E("rect",{x:12,y:12,width:w,height:h,rx:12,fill:"#fff",stroke:"#B9C7E6","stroke-width":1.5}));
   const t=E("text",{x:27,y:12+h/2+1,class:"bn","dominant-baseline":"middle"}); t.textContent=text; cv.appendChild(t);
 }
-function badge(ok,txtOk,txtNo){
-  const t=ok?(txtOk||"✓ Function"):(txtNo||"✗ Not a function"), fs=FS>1?22:15, w=t.length*fs*0.78+26, h=fs+18, x=(VIEW===STD?VW:VIEW.R)-w-12, y=(VIEW===STD?VH:VIEW.Bt)-h-12;
+function badge(ok,txtOk,txtNo,top){
+  const t=ok?(txtOk||"✓ Function"):(txtNo||"✗ Not a function"), fs=FS>1?22:15, w=t.length*fs*0.78+26, h=fs+18, x=(VIEW===STD?VW:VIEW.R)-w-12, y=top?(VIEW===STD?0:VIEW.T)+12:(VIEW===STD?VH:VIEW.Bt)-h-12;
   cv.appendChild(E("rect",{x,y,width:w,height:h,rx:h/2,fill:ok?"#D1FAE5":"#FFE4E6",stroke:ok?"#059669":"#E11D48","stroke-width":2}));
   const tx=E("text",{x:x+w/2,y:y+h/2+1,class:"bdg","text-anchor":"middle","dominant-baseline":"middle",style:"fill:"+(ok?"#065F46":"#9F1239")}); tx.textContent=t; cv.appendChild(tx);
 }
@@ -902,7 +902,7 @@ const M3={
     if(s.mode==="walk"){
       const w=s.walk, [n,d]=SLOPES[w.mi], b=w.b, up=n>0;
       const steps=[
-        `<b>Read the equation.</b> In y = mx + b, the slope is m = ${fx(n/d)} = ${minus(n)}/${d} and the y-intercept is b = ${fx(b)}.`,
+        `<b>Read the equation.</b> In y = mx + b, the slope is m = ${fx(n/d)}${d===1?" = "+minus(n)+"/1":""} and the y-intercept is b = ${fx(b)}.`,
         `<b>Plot the y-intercept</b> (0, ${fx(b)}) on the y-axis. Every line in slope-intercept form crosses the y-axis at b.`,
         `<b>Count the slope from there.</b> Rise ${minus(n)} (${up?"up":"down"} ${Math.abs(n)}), then run ${d} (right ${d}). Plot the point (${d}, ${fx(b+n)}).`,
         `<b>Repeat</b> the rise and run to get another point, (${2*d}, ${fx(b+2*n)}). Going backwards (${up?"down":"up"} ${Math.abs(n)}, left ${d}) gives (${-d}, ${fx(b-n)}).`,
@@ -1093,7 +1093,7 @@ const M5={
       sgrab(g,W2S(T),"T","var(--magenta)"); smartLabel(g,W2S(T),[st.m>=0?-1:1,-1],"("+nm(st.tx)+", "+(c.money?money(T[1]):nm(T[1]))+")","#BE185D"); }
     sgrab(g,W2S(H0),"H0","var(--hand)"); smartLabel(g,W2S(H0),[1,st.m>=0?-1:1],"(0, "+(c.money?money(st.b):nm(st.b))+")","#C2410C");
     if(inView(H1,4)) sgrab(g,W2S(H1),"H1","var(--hand)");
-    badge(st.m>=0, st.m>0?"↗ Increasing":"→ Constant","↘ Decreasing");
+    badge(st.m>=0, st.m>0?"↗ Increasing":"→ Constant","↘ Decreasing",st.m<0);
   },
   drag(id,sp){
     const s=M5.s;
