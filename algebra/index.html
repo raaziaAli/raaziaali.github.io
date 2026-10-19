@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Algebra 1 & Algebra 2 — Mrs. Ali's Classroom</title>
+<meta name="description" content="Free interactive Algebra 1 and Algebra 2 simulations: expressions, equations, lines, systems, polynomials, quadratics, statistics, functions, complex numbers, exponentials and logarithms, matrices, sequences, trigonometry and probability.">
+<meta name="author" content="Raazia Ali">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10 85 Q50 -20 90 85' fill='none' stroke='%2300E5FF' stroke-width='10' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;position:relative}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  a{color:var(--cyan)}
+  .wrap{max-width:1180px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  .top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:46px}
+  .top a.back{font-family:var(--mono);font-size:13px;font-weight:600;text-decoration:none;color:var(--dim);
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+  .top a.back:hover{color:#fff}
+  .top nav{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .top nav a{font-size:14px;font-weight:600;color:var(--dim);text-decoration:none;padding:7px 12px;border-radius:100px}
+  .top nav a:hover{color:#fff;background:rgba(255,255,255,.06)}
+
+  .hero{display:grid;grid-template-columns:1.3fr 1fr;gap:30px;align-items:center;margin-bottom:56px}
+  @media (max-width:860px){.hero{grid-template-columns:1fr}.hero svg{max-width:340px;margin:0 auto}}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+  h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,6vw,62px);line-height:1.05;margin:10px 0 18px;letter-spacing:-.02em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:18px;color:#CFCFEA;max-width:560px;margin:0 0 22px}
+  .stats{display:flex;gap:28px;flex-wrap:wrap}
+  .stats div{display:flex;flex-direction:column}
+  .stats b{font-family:var(--display);font-size:28px;color:#fff}
+  .stats span{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+
+  .unitnav{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:56px}
+  @media (max-width:860px){.unitnav{grid-template-columns:1fr 1fr}}
+  .unitnav a{display:block;text-decoration:none;color:var(--text);background:var(--card);border:1px solid var(--edge);
+    border-radius:16px;padding:16px 18px;transition:.18s}
+  .unitnav a:hover{transform:translateY(-3px);border-color:var(--u)}
+  .unitnav .n{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--u)}
+  .unitnav .t{display:block;font-family:var(--display);font-weight:600;font-size:14.5px;line-height:1.35;margin-top:4px}
+
+  section.unit{margin-bottom:64px;scroll-margin-top:20px}
+  .unit-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--edge);padding-bottom:14px;margin-bottom:22px}
+  .unit-head .num{font-family:var(--display);font-weight:800;font-size:56px;line-height:.85;color:var(--u);opacity:.9}
+  .unit-head h2{font-family:var(--display);font-weight:600;font-size:clamp(20px,3vw,28px);margin:0;line-height:1.2}
+  .unit-head p{margin:4px 0 0;color:var(--dim);font-size:15px}
+  .unit-head .codes{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--u);text-align:right}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px}
+  @media (max-width:400px){.grid{grid-template-columns:1fr}}
+  .studio{background:var(--card);border:1px solid var(--edge);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:.2s}
+  .studio:hover{border-color:var(--u);box-shadow:0 0 30px -10px var(--u);transform:translateY(-3px)}
+  .studio .art{background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);height:150px;display:flex;align-items:center;justify-content:center}
+  .studio .art svg{height:120px;width:auto}
+  .studio .body{padding:18px 20px 20px;display:flex;flex-direction:column;flex:1}
+  .studio .tag{align-self:flex-start;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    padding:3px 10px;border-radius:100px;margin-bottom:10px}
+  .tag.new{background:rgba(255,217,61,.15);color:var(--yellow);border:1px solid rgba(255,217,61,.4)}
+  .tag.live{background:rgba(94,234,212,.12);color:var(--mint);border:1px solid rgba(94,234,212,.35)}
+  .studio h3{font-family:var(--display);font-weight:600;font-size:18px;margin:0 0 6px;line-height:1.3}
+  .studio .std{font-family:var(--mono);font-size:12px;color:var(--u);margin-bottom:12px}
+  .studio ol{margin:0 0 16px;padding-left:22px;color:#CFCFEA;font-size:14.5px}
+  .studio ol li{padding:2px 0}
+  .studio ol li::marker{color:var(--u);font-weight:700;font-family:var(--mono);font-size:12px}
+  .studio .acts{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .btn{font-family:var(--ui);font-size:14.5px;font-weight:700;text-decoration:none;cursor:pointer;
+    padding:10px 18px;border-radius:100px;border:1px solid var(--edge);background:rgba(255,255,255,.06);color:var(--text);transition:.16s}
+  .btn:hover{background:rgba(255,255,255,.13)}
+  .btn.go{background:var(--u);border-color:var(--u);color:#0A0A1F}
+  .btn.go:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .btn:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+
+  .embed-box{background:var(--card);border:1px solid var(--edge);border-radius:18px;padding:22px 24px;margin-bottom:40px}
+  .embed-box h2{font-family:var(--display);font-weight:600;font-size:20px;margin:0 0 8px}
+  .embed-box p{color:#CFCFEA;margin:0 0 12px}
+  pre{font-family:var(--mono);font-size:13px;background:#0F0F26;border:1px solid var(--edge);border-left:4px solid var(--cyan);
+    border-radius:0 12px 12px 0;padding:14px 16px;overflow-x:auto;color:#fff;margin:0 0 12px;white-space:pre-wrap;word-break:break-all}
+  .copied{font-family:var(--mono);font-size:13px;color:var(--mint);margin-left:10px}
+
+  dialog{border:1px solid var(--edge);border-radius:18px;background:var(--bg-lift);color:var(--text);padding:0;width:min(1100px,96vw);max-height:94vh}
+  dialog::backdrop{background:rgba(5,5,18,.75)}
+  dialog .dh{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--edge)}
+  dialog .dh b{font-family:var(--display);font-weight:600;font-size:15px}
+  dialog .dh .btn{margin-left:auto;padding:7px 14px}
+  dialog iframe{display:block;width:100%;height:min(80vh,820px);border:0;background:var(--bg)}
+
+  .coursepick{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px}
+  @media (max-width:600px){.coursepick{grid-template-columns:1fr}}
+  .coursepick button{font-family:var(--display);font-weight:800;font-size:clamp(18px,3vw,26px);text-align:left;cursor:pointer;
+    background:var(--card);border:2px solid var(--edge);color:var(--text);border-radius:18px;padding:18px 22px;transition:.18s}
+  .coursepick button span{display:block;font-family:var(--ui);font-weight:500;font-size:14px;color:var(--dim);margin-top:4px}
+  .coursepick button:hover{transform:translateY(-3px)}
+  .coursepick button[aria-selected="true"]{border-color:var(--u);box-shadow:0 0 30px -8px var(--u);background:linear-gradient(180deg,rgba(255,255,255,.05),var(--card))}
+  .coursepick button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+  .unitnav{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+  .course-head{margin:0 0 30px}
+  .course-head h2{font-family:var(--display);font-weight:800;font-size:clamp(26px,4vw,40px);margin:0 0 6px;color:var(--u)}
+  .course-head p{color:#CFCFEA;margin:0;max-width:760px}
+  footer{border-top:1px solid var(--edge);padding-top:20px;color:var(--dim);font-size:14px;display:flex;gap:18px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="back" href="/math/#algebra">← Mrs. Ali's Classroom</a>
+    <nav aria-label="Units">
+      <a href="#algebra-1">Algebra 1</a><a href="#algebra-2">Algebra 2</a><a href="#embed">Embed</a>
+    </nav>
+  </div>
+
+  <header class="hero">
+    <div>
+      <div class="eyebrow">// High school algebra · Common Core aligned</div>
+      <h1>Algebra 1 &amp; Algebra 2.</h1>
+      <p class="lede">Two courses, one studio per unit, every graph live. Drag a slider and every equation, table and step follows. Each studio ends with endless practice problems.</p>
+      <div class="stats" id="stats"></div>
+    </div>
+    <svg viewBox="0 0 320 240" role="img" aria-label="A parabola and a line crossing on a grid">
+      <defs><linearGradient id="hg" x1="0" x2="1"><stop offset="0" stop-color="#00E5FF"/><stop offset=".55" stop-color="#C4B5FD"/><stop offset="1" stop-color="#FF3D8A"/></linearGradient></defs>
+      <g stroke="rgba(196,181,253,.15)" stroke-width="1">
+        <line x1="20" y1="40" x2="300" y2="40"/><line x1="20" y1="80" x2="300" y2="80"/><line x1="20" y1="160" x2="300" y2="160"/><line x1="20" y1="200" x2="300" y2="200"/>
+        <line x1="60" y1="20" x2="60" y2="220"/><line x1="100" y1="20" x2="100" y2="220"/><line x1="180" y1="20" x2="180" y2="220"/><line x1="220" y1="20" x2="220" y2="220"/><line x1="260" y1="20" x2="260" y2="220"/>
+      </g>
+      <line x1="20" y1="120" x2="300" y2="120" stroke="#A5A5C9" stroke-width="2"/><line x1="140" y1="20" x2="140" y2="220" stroke="#A5A5C9" stroke-width="2"/>
+      <path d="M 60 30 Q 140 210 220 30" fill="none" stroke="url(#hg)" stroke-width="4" stroke-linecap="round"/>
+      <line x1="40" y1="200" x2="290" y2="30" stroke="#FFD93D" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="140" cy="120" r="5" fill="#fff"/>
+      <circle cx="198" cy="92" r="7" fill="#FF3D8A"/><circle cx="93" cy="164" r="7" fill="#00E5FF"/>
+      <text x="226" y="106" font-family="JetBrains Mono" font-size="14" font-weight="700" fill="#FFD93D">y = mx + b</text>
+      <text x="78" y="24" font-family="JetBrains Mono" font-size="14" font-weight="700" fill="#C4B5FD">y = ax² + c</text>
+    </svg>
+  </header>
+
+  <div class="coursepick" id="coursepick" role="tablist" aria-label="Course"></div>
+  <div class="unitnav" id="unitnav"></div>
+  <div id="units"></div>
+
+  <section class="embed-box" id="embed">
+    <h2>Embed a studio</h2>
+    <p>Every studio runs on its own page. Add <code>?embed=1</code> to hide its header for a clean fit inside a Google Site, LMS page or slide, and add <code>#tab-3</code> to open a specific lesson tab.</p>
+    <pre id="embedCode"></pre>
+    <label for="embedPick" style="font-size:14px;color:var(--dim)">Studio:</label>
+    <select id="embedPick" style="max-width:100%;font-family:var(--ui);font-size:14px;background:#0F0F26;color:#fff;border:1px solid var(--edge);border-radius:10px;padding:8px 10px;margin:0 8px 0 4px"></select>
+    <button class="btn" id="copyEmbed" style="--u:var(--cyan)">Copy code</button><span class="copied" id="copiedMsg" aria-live="polite"></span>
+  </section>
+
+  <footer>
+    <span>Built by Raazia Ali, a practicing math teacher. Free, no ads, no sign-ups.</span>
+    <a href="/math/">Mrs. Ali's Classroom</a>
+    <a href="/privacy.html">Privacy</a>
+  </footer>
+</div>
+
+<dialog id="preview" aria-label="Studio preview">
+  <div class="dh"><b id="pvTitle"></b><a class="btn" id="pvOpen" href="#" style="--u:var(--cyan)">Open full page ↗</a><button class="btn" id="pvClose" style="margin-left:0">Close</button></div>
+  <iframe id="pvFrame" title="Studio preview" loading="lazy"></iframe>
+</dialog>
+
+<script>
+(function(){
+"use strict";
+/* ─────────── Course data: add a studio by adding an entry here ─────────── */
+const ART = {
+  expr:`<text x="65" y="58" text-anchor="middle" font-family="JetBrains Mono" font-size="22" font-weight="700" fill="#22314F">3(x+2)</text><text x="65" y="92" text-anchor="middle" font-family="JetBrains Mono" font-size="22" font-weight="700" fill="#7C3AED">3x+6</text><line x1="65" y1="64" x2="65" y2="74" stroke="#EA580C" stroke-width="3"/>`,
+  balance:`<line x1="65" y1="30" x2="65" y2="100" stroke="#22314F" stroke-width="4"/><line x1="20" y1="36" x2="110" y2="36" stroke="#22314F" stroke-width="4" stroke-linecap="round"/><rect x="18" y="44" width="26" height="22" rx="4" fill="#7C3AED"/><text x="31" y="60" text-anchor="middle" font-family="JetBrains Mono" font-size="14" font-weight="700" fill="#fff">x</text><circle cx="94" cy="55" r="11" fill="#EA580C"/><path d="M45 100 h40" stroke="#22314F" stroke-width="5" stroke-linecap="round"/>`,
+  line:`<g stroke="#DCE6F7" stroke-width="2"><line x1="10" y1="40" x2="120" y2="40"/><line x1="10" y1="80" x2="120" y2="80"/><line x1="40" y1="10" x2="40" y2="115"/><line x1="90" y1="10" x2="90" y2="115"/></g><line x1="10" y1="60" x2="120" y2="60" stroke="#A5A5C9" stroke-width="2"/><line x1="65" y1="10" x2="65" y2="115" stroke="#A5A5C9" stroke-width="2"/><line x1="15" y1="108" x2="115" y2="18" stroke="#0284C7" stroke-width="4" stroke-linecap="round"/><circle cx="65" cy="63" r="6" fill="#DB2777"/>`,
+  systems:`<line x1="10" y1="60" x2="120" y2="60" stroke="#A5A5C9" stroke-width="2"/><line x1="65" y1="10" x2="65" y2="115" stroke="#A5A5C9" stroke-width="2"/><line x1="12" y1="100" x2="118" y2="20" stroke="#0284C7" stroke-width="4" stroke-linecap="round"/><line x1="12" y1="25" x2="118" y2="95" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/><circle cx="66" cy="60" r="7" fill="#DB2777"/>`,
+  poly:`<rect x="20" y="20" width="60" height="60" fill="rgba(124,58,237,.25)" stroke="#7C3AED" stroke-width="3"/><rect x="80" y="20" width="22" height="60" fill="rgba(5,150,105,.25)" stroke="#059669" stroke-width="3"/><rect x="20" y="80" width="60" height="22" fill="rgba(5,150,105,.25)" stroke="#059669" stroke-width="3"/><rect x="80" y="80" width="22" height="22" fill="rgba(234,88,12,.3)" stroke="#EA580C" stroke-width="3"/>`,
+  quad:`<line x1="10" y1="90" x2="120" y2="90" stroke="#A5A5C9" stroke-width="2"/><path d="M18 15 Q65 160 112 15" fill="none" stroke="#7C3AED" stroke-width="4"/><circle cx="65" cy="87" r="6" fill="#DB2777"/><line x1="65" y1="10" x2="65" y2="115" stroke="#EA580C" stroke-width="2" stroke-dasharray="5 4"/>`,
+  stats:`<line x1="12" y1="108" x2="120" y2="108" stroke="#A5A5C9" stroke-width="2"/><line x1="12" y1="10" x2="12" y2="108" stroke="#A5A5C9" stroke-width="2"/><g fill="#0284C7"><circle cx="25" cy="92" r="5"/><circle cx="38" cy="80" r="5"/><circle cx="50" cy="84" r="5"/><circle cx="62" cy="64" r="5"/><circle cx="76" cy="58" r="5"/><circle cx="88" cy="44" r="5"/><circle cx="104" cy="34" r="5"/></g><line x1="15" y1="100" x2="118" y2="26" stroke="#DB2777" stroke-width="3"/>`,
+  transform:`<line x1="10" y1="95" x2="120" y2="95" stroke="#A5A5C9" stroke-width="2"/><path d="M15 25 L45 95 L75 25" fill="none" stroke="#A5A5C9" stroke-width="3" stroke-dasharray="6 4"/><path d="M45 15 L80 75 L115 15" fill="none" stroke="#DB2777" stroke-width="4"/><path d="M50 90 Q62 80 72 82" fill="none" stroke="#EA580C" stroke-width="2.5"/>`,
+  complex:`<line x1="10" y1="65" x2="120" y2="65" stroke="#A5A5C9" stroke-width="2"/><line x1="55" y1="10" x2="55" y2="115" stroke="#A5A5C9" stroke-width="2"/><line x1="55" y1="65" x2="100" y2="30" stroke="#7C3AED" stroke-width="4"/><circle cx="100" cy="30" r="6" fill="#7C3AED"/><path d="M75 65 A20 20 0 0 0 71 53" fill="none" stroke="#EA580C" stroke-width="3"/><text x="104" y="25" font-family="JetBrains Mono" font-size="14" font-weight="700" fill="#22314F">i</text>`,
+  rational:`<line x1="10" y1="62" x2="120" y2="62" stroke="#A5A5C9" stroke-width="2"/><line x1="65" y1="10" x2="65" y2="115" stroke="#EA580C" stroke-width="2" stroke-dasharray="5 4"/><path d="M12 70 Q50 72 60 110" fill="none" stroke="#0284C7" stroke-width="4"/><path d="M70 12 Q80 52 118 54" fill="none" stroke="#0284C7" stroke-width="4"/>`,
+  expo:`<line x1="10" y1="100" x2="120" y2="100" stroke="#A5A5C9" stroke-width="2"/><line x1="20" y1="10" x2="20" y2="110" stroke="#A5A5C9" stroke-width="2"/><path d="M15 96 Q80 92 100 15" fill="none" stroke="#059669" stroke-width="4"/><path d="M26 118 Q34 40 118 30" fill="none" stroke="#7C3AED" stroke-width="4"/><line x1="12" y1="112" x2="118" y2="12" stroke="#A5A5C9" stroke-width="2" stroke-dasharray="4 4"/>`,
+  radical:`<line x1="10" y1="100" x2="120" y2="100" stroke="#A5A5C9" stroke-width="2"/><path d="M20 100 Q24 60 50 52 T118 30" fill="none" stroke="#DB2777" stroke-width="4"/><text x="30" y="40" font-family="JetBrains Mono" font-size="18" font-weight="700" fill="#22314F">√x</text>`,
+  matrix:`<path d="M20 20 h-8 v80 h8 M110 20 h8 v80 h-8" fill="none" stroke="#22314F" stroke-width="4"/><g font-family="JetBrains Mono" font-size="17" font-weight="700" fill="#22314F" text-anchor="middle"><text x="40" y="48">2</text><text x="90" y="48" fill="#EA580C">1</text><text x="40" y="86" fill="#0284C7">−3</text><text x="90" y="86">4</text></g>`,
+  seq:`<line x1="10" y1="108" x2="120" y2="108" stroke="#A5A5C9" stroke-width="2"/><g fill="#0284C7"><rect x="16" y="96" width="12" height="12"/><rect x="32" y="84" width="12" height="24"/><rect x="48" y="72" width="12" height="36"/><rect x="64" y="60" width="12" height="48"/></g><g fill="#EA580C"><rect x="82" y="100" width="10" height="8"/><rect x="96" y="84" width="10" height="24"/><rect x="110" y="40" width="10" height="68"/></g>`,
+  trig:`<circle cx="45" cy="62" r="34" fill="none" stroke="#22314F" stroke-width="3"/><line x1="45" y1="62" x2="69" y2="38" stroke="#7C3AED" stroke-width="3"/><circle cx="69" cy="38" r="5" fill="#DB2777"/><path d="M80 62 Q90 22 100 62 T120 62" fill="none" stroke="#DB2777" stroke-width="3.5"/><line x1="69" y1="38" x2="88" y2="38" stroke="#EA580C" stroke-width="2" stroke-dasharray="4 3"/>`,
+  prob:`<path d="M10 100 C40 100 45 22 65 22 C85 22 90 100 120 100" fill="rgba(5,150,105,.18)" stroke="#059669" stroke-width="4"/><line x1="65" y1="22" x2="65" y2="100" stroke="#22314F" stroke-width="2" stroke-dasharray="4 4"/><rect x="88" y="10" width="26" height="26" rx="5" fill="#fff" stroke="#22314F" stroke-width="3"/><circle cx="96" cy="18" r="2.5" fill="#22314F"/><circle cx="106" cy="28" r="2.5" fill="#22314F"/>`
+};
+
+const COURSES = [
+  { id:'algebra-1', title:'Algebra 1', color:'var(--cyan)', tagline:'Linear relationships, foundational expressions and basic quadratic patterns.',
+    units:[
+      { n:'01', title:'Foundations & Expressions', sub:'Order of operations, combining like terms, evaluating variable expressions.', codes:'A-SSE.A.1–2',
+        studio:{ url:'/algebra/a1-expressions-lab.html', art:'expr', title:'Expressions Lab', std:'A-SSE.A.1 · A-SSE.A.2 · A-CED.A.1',
+          lessons:['Order of operations','Algebra tiles & like terms','Distributive property','Evaluating expressions','Writing expressions','Challenge'] } },
+      { n:'02', title:'Linear Equations & Inequalities', sub:'One-step, two-step and multi-step equations and inequalities in one and two variables.', codes:'A-REI.A.1 · A-REI.B.3 · A-REI.D.12 · A-CED.A.4',
+        studio:{ url:'/algebra/a1-equations-inequalities-lab.html', art:'balance', title:'Equations & Inequalities Lab', std:'A-REI.A.1 · B.3 · D.12 · A-CED.A.4',
+          lessons:['Balance scale','Multi-step solver','Inequalities on a number line','Literal equations','Two-variable inequalities','Challenge'] } },
+      { n:'03', title:'Graphing Lines & Functions', sub:'Slope, intercepts, slope-intercept, point-slope and standard form.', codes:'F-IF.A.1–2 · F-IF.B.6 · F-IF.C.7a · F-LE.A',
+        studio:{ url:'/algebra/a1-lines-functions-lab.html', art:'line', title:'Lines & Functions Lab', std:'F-IF.A.1 · F-IF.B.6 · F-IF.C.7a · A-CED.A.2',
+          lessons:['What is a function?','Slope','Slope-intercept form','Point-slope & standard form','Linear vs not','Challenge'] } },
+      { n:'04', title:'Systems of Linear Equations', sub:'Solving systems by graphing, substitution and elimination.', codes:'A-REI.C.5–6 · A-REI.D.11 · A-CED.A.3',
+        studio:{ url:'/algebra/a1-systems-lab.html', art:'systems', title:'Systems Lab', std:'A-REI.C.5 · A-REI.C.6 · A-CED.A.3',
+          lessons:['Solving by graphing','Substitution','Elimination','Which method?','Word problems','Challenge'] } },
+      { n:'05', title:'Exponents & Polynomials', sub:'Integer exponent rules; adding, subtracting and multiplying polynomials; basic factoring.', codes:'N-RN.A.1 · A-APR.A.1 · A-SSE.A.2',
+        studio:{ url:'/algebra/a1-exponents-polynomials-lab.html', art:'poly', title:'Exponents & Polynomials Lab', std:'A-APR.A.1 · A-SSE.A.2 · A-SSE.B.3a',
+          lessons:['Exponent rules','Adding & subtracting','Multiplying polynomials','Factoring','Closure','Challenge'] } },
+      { n:'06', title:'Quadratic Functions (Intro)', sub:'Parabolas, vertex form and solving quadratic equations by factoring.', codes:'F-IF.C.7a · F-IF.C.8a · A-REI.B.4b · F-BF.B.3',
+        studio:{ url:'/algebra/a1-quadratics-lab.html', art:'quad', title:'Quadratics Lab', std:'F-IF.C.7a · F-IF.C.8a · A-REI.B.4b',
+          lessons:['Meet the parabola','Vertex form','Three forms','Solving by factoring','Modeling','Challenge'] } },
+      { n:'07', title:'Descriptive Statistics', sub:'Data distributions, scatter plots and basic linear regression.', codes:'S-ID.A.1–3 · S-ID.B.5–6 · S-ID.C.7–9',
+        studio:{ url:'/algebra/a1-statistics-lab.html', art:'stats', title:'Data & Regression Lab', std:'S-ID.A · S-ID.B · S-ID.C',
+          lessons:['Distributions','Center & spread','Two-way tables','Scatter plots & lines of fit','Residuals & correlation','Challenge'] } }
+    ],
+    earlier:[
+      { url:'/Algebra-1/functions-and-graphs.html', art:'line', title:'Functions & Their Graphs', std:'F-IF · 10 modules', lessons:['The original Algebra 1 functions course'] },
+      { url:'/Function-Junction/', art:'transform', title:'Function Junction', std:'Functions practice arena', lessons:['Game-style function practice'] },
+      { url:'/Algebra-1/m3-review.html', art:'expo', title:'Function Explorers — M3 Review', std:'Module 3 · 12 missions', lessons:['Deep-space review game'] }
+    ]},
+  { id:'algebra-2', title:'Algebra 2', color:'var(--magenta)', tagline:'Advanced function families, complex numbers and higher-degree equations.',
+    units:[
+      { n:'01', title:'Advanced Functions & Transformations', sub:'Composition, inverses, piecewise functions and graph transformations.', codes:'F-BF.A.1c · F-BF.B.3–4 · F-IF.C.7b',
+        studio:{ url:'/algebra/a2-functions-transformations-lab.html', art:'transform', title:'Function Transformations Lab', std:'F-BF.B.3 · F-BF.B.4 · F-BF.A.1c · F-IF.C.7b',
+          lessons:['Transformations','Piecewise functions','Composition','Inverse functions','Key features','Challenge'] } },
+      { n:'02', title:'Quadratic Equations & Complex Numbers', sub:'The quadratic formula, completing the square and imaginary/complex numbers.', codes:'A-REI.B.4 · A-SSE.B.3b · N-CN.A · N-CN.C.7',
+        studio:{ url:'/algebra/a2-quadratics-complex-lab.html', art:'complex', title:'Quadratics & Complex Numbers Lab', std:'A-REI.B.4 · N-CN.A.1–3 · N-CN.C.7',
+          lessons:['Completing the square','The quadratic formula','Imaginary unit','Complex arithmetic','Complex solutions','Challenge'] } },
+      { n:'03', title:'Polynomial & Rational Functions', sub:'Long and synthetic division, finding roots and analyzing rational expressions.', codes:'A-APR.B.2–3 · A-APR.D.6 · F-IF.C.7c–d',
+        studio:{ url:'/algebra/a2-polynomial-rational-lab.html', art:'rational', title:'Polynomial & Rational Functions Lab', std:'A-APR.B.2–3 · A-APR.D.6 · F-IF.C.7c–d',
+          lessons:['Polynomial graphs','Long division','Synthetic division & remainder theorem','Rational functions','Rational expressions','Challenge'] } },
+      { n:'04', title:'Exponential & Logarithmic Functions', sub:'Modeling growth and decay; logarithms as inverses of exponents.', codes:'F-LE.A.1–4 · F-BF.B.5 · F-IF.C.8b',
+        studio:{ url:'/algebra/a2-exponential-log-lab.html', art:'expo', title:'Exponential & Logarithm Lab', std:'F-LE.A · F-BF.B.4–5 · F-IF.C.8b',
+          lessons:['Growth & decay','Compound interest & e','Logarithms as inverses','Log properties','Solving & modeling','Challenge'] } },
+      { n:'05', title:'Radical & Power Functions', sub:'Rational exponents and solving radical equations.', codes:'N-RN.A.1–2 · A-REI.A.2 · F-IF.C.7b',
+        studio:{ url:'/algebra/a2-radicals-power-lab.html', art:'radical', title:'Radicals & Power Functions Lab', std:'N-RN.A.1–2 · A-REI.A.2 · F-IF.C.7b',
+          lessons:['Rational exponents','Simplifying radicals','Power & radical graphs','Solving radical equations','Equations & inverses','Challenge'] } },
+      { n:'06', title:'Systems & Matrices', sub:'Three-variable systems, matrix operations and determinants.', codes:'A-REI.C.6 · A-REI.C.8–9 · N-VM.C',
+        studio:{ url:'/algebra/a2-systems-matrices-lab.html', art:'matrix', title:'Systems & Matrices Lab', std:'A-REI.C.6 · A-REI.C.8–9 · N-VM.C.6–12',
+          lessons:['Three-variable systems','Matrix operations','Determinants','Inverse matrices & solving','Row reduction','Challenge'] } },
+      { n:'07', title:'Sequences & Series', sub:'Arithmetic and geometric sequences, explicit and recursive formulas, series sums.', codes:'F-IF.A.3 · F-BF.A.2 · F-LE.A.2 · A-SSE.B.4',
+        studio:{ url:'/algebra/a2-sequences-series-lab.html', art:'seq', title:'Sequences & Series Lab', std:'F-IF.A.3 · F-BF.A.2 · A-SSE.B.4',
+          lessons:['Arithmetic sequences','Geometric sequences','Arithmetic series','Geometric series','Recognize & model','Challenge'] } },
+      { n:'08', title:'Trigonometry Basics', sub:'The unit circle, trigonometric ratios and periodic graphs.', codes:'F-TF.A.1–3 · F-TF.B.5 · F-TF.C.8',
+        studio:{ url:'/algebra/a2-trig-unit-circle-lab.html', art:'trig', title:'Unit Circle & Trig Graphs Lab', std:'F-TF.A.1–3 · F-TF.B.5 · F-IF.C.7e',
+          lessons:['Angles & radians','The unit circle','Right-triangle ratios','Graphing sine & cosine','Periodic transformations','Challenge'] } },
+      { n:'09', title:'Probability & Statistics', sub:'Combinatorics, counting principles and normal distributions.', codes:'S-CP.A–B · S-ID.A.4 · S-IC.A.2',
+        studio:{ url:'/algebra/a2-probability-statistics-lab.html', art:'prob', title:'Probability & Statistics Lab', std:'S-CP.A.1–5 · S-CP.B.6–9 · S-ID.A.4',
+          lessons:['Counting principle','Permutations & combinations','Probability & simulation','Conditional probability','Normal distributions','Challenge'] } }
+    ]}
+];
+
+/* ─────────── render ─────────── */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let nStudios = 0, nLessons = 0;
+COURSES.forEach(c => c.units.forEach(u => { nStudios++; nLessons += u.studio.lessons.length; }));
+document.getElementById('stats').innerHTML =
+  `<div><b>2</b><span>Courses</span></div><div><b>${nStudios}</b><span>Studios</span></div><div><b>${nLessons}</b><span>Lessons</span></div><div><b>∞</b><span>Practice</span></div>`;
+
+function card(s, u, color, tag){
+  return `
+      <article class="studio" style="--u:${color}">
+        <div class="art"><svg viewBox="0 0 130 120" aria-hidden="true">${ART[s.art]}</svg></div>
+        <div class="body">
+          <span class="tag ${tag}">${u ? 'Unit ' + u.n + ' · ' + esc(u.title) : 'Live'}</span>
+          <h3>${esc(s.title)}</h3>
+          <div class="std">${esc(s.std)}</div>
+          ${u ? `<p style="margin:0 0 10px;color:var(--dim);font-size:14px">${esc(u.sub)}</p>` : ''}
+          <ol>${s.lessons.map(l => `<li>${esc(l)}</li>`).join('')}</ol>
+          <div class="acts">
+            <a class="btn go" href="${s.url}">Open studio →</a>
+            ${u ? `<button class="btn" data-preview="${s.url}" data-title="${esc(s.title)}">Preview</button>` : ''}
+          </div>
+        </div>
+      </article>`;
+}
+
+document.getElementById('coursepick').innerHTML = COURSES.map(c =>
+  `<button role="tab" data-course="${c.id}" style="--u:${c.color}" aria-selected="false">${c.title}<span>${c.units.length} units · ${esc(c.tagline)}</span></button>`).join('');
+
+document.getElementById('units').innerHTML = COURSES.map(c => `
+  <div class="course" id="${c.id}" style="--u:${c.color}" hidden>
+    <div class="course-head"><h2>${c.title}</h2><p>${esc(c.tagline)}</p></div>
+    <section class="unit" style="--u:${c.color}">
+      <div class="unit-head"><div><h2>${c.units.length} units · one studio each</h2><p>Open a studio, or preview it here first.</p></div><div class="codes">${c.title}</div></div>
+      <div class="grid">${c.units.map(u => `<div id="${c.id}-unit-${+u.n}" style="display:contents">${card(u.studio, u, c.color, 'new')}</div>`).join('')}</div>
+    </section>
+    ${c.earlier ? `
+    <section class="unit" style="--u:${c.color}">
+      <div class="unit-head"><div><h2>More Algebra 1 tools</h2><p>Earlier interactives and games that pair with these units.</p></div></div>
+      <div class="grid">${c.earlier.map(s => card(s, null, c.color, 'live')).join('')}</div>
+    </section>` : ''}
+  </div>`).join('');
+
+function showCourse(id, scroll){
+  const c = COURSES.find(x => x.id === id) || COURSES[0];
+  document.querySelectorAll('#coursepick button').forEach(b => b.setAttribute('aria-selected', b.dataset.course === c.id));
+  document.querySelectorAll('.course').forEach(el => el.hidden = el.id !== c.id);
+  document.getElementById('unitnav').innerHTML = c.units.map(u =>
+    `<a href="#${c.id}-unit-${+u.n}" style="--u:${c.color}"><span class="n">UNIT ${u.n}</span><span class="t">${esc(u.title)}</span></a>`).join('');
+  if (scroll) document.getElementById('coursepick').scrollIntoView({behavior:'smooth'});
+}
+document.getElementById('coursepick').addEventListener('click', e => {
+  const b = e.target.closest('button[data-course]'); if (!b) return;
+  history.replaceState(null, '', '#' + b.dataset.course); showCourse(b.dataset.course, false);
+});
+function fromHash(scroll){
+  const h = location.hash.slice(1);
+  const c = COURSES.find(x => h === x.id || h.startsWith(x.id + '-'));
+  showCourse(c ? c.id : 'algebra-1', scroll && !!c);
+  if (c && h !== c.id) { const el = document.getElementById(h); if (el && el.firstElementChild) el.firstElementChild.scrollIntoView(); }
+}
+window.addEventListener('hashchange', () => fromHash(true));
+fromHash(false);
+
+/* ─────────── preview dialog ─────────── */
+const dlg = document.getElementById('preview'), frame = document.getElementById('pvFrame');
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-preview]');
+  if (!b) return;
+  document.getElementById('pvTitle').textContent = b.dataset.title;
+  document.getElementById('pvOpen').href = b.dataset.preview;
+  frame.src = b.dataset.preview + '?embed=1';
+  if (dlg.showModal) dlg.showModal(); else location.href = b.dataset.preview;
+});
+document.getElementById('pvClose').onclick = () => dlg.close();
+dlg.addEventListener('close', () => { frame.src = 'about:blank'; });
+dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+
+/* ─────────── embed code helper ─────────── */
+const pick = document.getElementById('embedPick'), code = document.getElementById('embedCode');
+COURSES.forEach(c => c.units.forEach(u => pick.insertAdjacentHTML('beforeend', `<option value="${u.studio.url}">${c.title} · ${esc(u.studio.title)}</option>`)));
+function snippet(){
+  return `<iframe src="https://raaziaali.github.io${pick.value}?embed=1" width="100%" height="820" style="border:0;border-radius:12px" loading="lazy" title="${pick.options[pick.selectedIndex].text.replace(/"/g,'')}"></iframe>`;
+}
+function showCode(){ code.textContent = snippet(); }
+pick.onchange = showCode; showCode();
+document.getElementById('copyEmbed').onclick = async () => {
+  const msg = document.getElementById('copiedMsg');
+  try { await navigator.clipboard.writeText(snippet()); msg.textContent = 'Copied!'; }
+  catch (e) { msg.textContent = 'Select the code above and copy it.'; }
+  setTimeout(() => msg.textContent = '', 2500);
+};
+})();
+</script>
+</body>
+</html>
