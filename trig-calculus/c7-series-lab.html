@@ -1,0 +1,1478 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Infinite Series Lab — Calculus Unit 7</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M10 52V30h8v22M22 52V40h8v12M34 52V45h8v7M46 52V48h8v4' fill='%2300E5FF'/%3E%3Cpath d='M8 24Q30 12 56 12' stroke='%23FF3D8A' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .rel[data-pair]{cursor:pointer}
+  .rel[data-pair]:hover{background:rgba(255,255,255,.05)}
+  .rel.active{background:rgba(255,255,255,.09);box-shadow:inset 3px 0 0 var(--accent)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top}
+  table.facts .ab{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  table.facts .st{color:#DDDDF2}
+  table.facts .st i{display:block;color:var(--dim);font-style:normal;font-size:13px;margin-top:4px}
+  .cathead{padding-top:18px!important;padding-bottom:6px!important;font-family:var(--display);font-weight:600;
+    font-size:13px;letter-spacing:.02em;color:var(--yellow);border-bottom:none!important}
+  .chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-right:9px}
+  .chip.assume{background:rgba(255,217,61,.18);color:var(--yellow)}
+  .chip.proved{background:rgba(94,234,212,.16);color:var(--mint)}
+  ol.chain{margin:0;padding:6px 20px 18px 38px;font-size:15px;color:#CFCFEA}
+  ol.chain li{padding:8px 0} ol.chain li::marker{color:var(--accent);font-weight:700}
+  ol.chain li b{color:#fff}
+
+  .steps{width:100%;border-collapse:collapse;font-size:15px}
+  .steps td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:middle}
+  .steps .stmt{font-family:var(--mono);font-size:14px;font-weight:600;color:#fff;white-space:nowrap}
+  .steps .why{width:56%}
+  .steps tr.right .stmt{color:var(--mint)}
+  .steps tr.right select{border-color:rgba(94,234,212,.6)}
+  .steps tr.wrong select{border-color:var(--coral)}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.8;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.4;fill:none;stroke-dasharray:9 6}
+  .wedge{stroke-width:2.4;fill-opacity:.17;cursor:pointer}
+  .wedge.flat{cursor:default}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── Series Lab additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible,.choice:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:16px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  @media (max-width:560px){ svg.canvas .sm{font-size:21px;stroke-width:5} svg.canvas .mk{font-size:27px} svg.canvas .num{font-size:22px} svg.canvas .ax{font-size:16px} }
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .leg{stroke-width:3;fill:none;stroke-dasharray:8 5;stroke-linecap:round}
+  .tick{stroke:var(--graphite);stroke-width:2.2}
+  .ghostdot{fill:#9AA8C7;stroke:#fff;stroke-width:2}
+  .nt{position:relative;display:inline-block;padding-top:.42em;line-height:1.05;font-family:var(--mono);font-weight:700;color:#fff;white-space:nowrap}
+  .nt::before{content:"";position:absolute;left:.06em;right:.06em;top:.2em;border-top:2px solid currentColor}
+  .nt.ray::after,.nt.line::after{content:"";position:absolute;right:-.12em;top:calc(.2em - 3.5px);border-left:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .nt.line .la{position:absolute;left:-.12em;top:calc(.2em - 3.5px);border-right:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .uterms{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+  .uterms span{font-family:var(--mono);font-size:12px;font-weight:600;padding:5px 11px;border-radius:100px;
+    border:1px solid var(--edge);color:var(--dim);opacity:.55}
+  .uterms span.on{opacity:1;color:#0A0A1F;background:var(--accent);border-color:var(--accent)}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px}
+  .choice{font-family:var(--ui);font-size:15px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:14px;padding:13px 12px;cursor:pointer;text-align:left;line-height:1.5;transition:.15s}
+  .choice:hover{background:rgba(255,255,255,.12)}
+  .choice.right{border-color:var(--mint);background:rgba(94,234,212,.16)}
+  .choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.14)}
+  .choice small{display:block;font-weight:400;color:var(--dim);font-size:12.5px}
+  .stepl{list-style:none;margin:0;padding:6px 0}
+  .stepl li{padding:10px 20px;border-left:3px solid transparent;color:var(--dim);font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li.done{color:#CFCFEA}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li b{color:#fff}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  @media (max-width:560px){
+    .choices{grid-template-columns:1fr}
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+  }
+  /* ── Infinite Series Lab additions ── */
+  .sig{display:inline-flex;align-items:center;gap:3px;vertical-align:middle;margin:0 2px}
+  .sig .sg{font-size:1.55em;line-height:1;font-weight:400}
+  .sig .lm{display:inline-flex;flex-direction:column;font-size:.6em;line-height:1.15;text-align:left}
+  .fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.92em;line-height:1.2;margin:0 2px}
+  .fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 3px 1px}
+  .fr>span:last-child{padding:1px 3px 0}
+  .ser{font-family:var(--mono);font-size:19px;font-weight:600;color:#fff;padding:14px 16px;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;margin:4px 0 2px;overflow-x:auto;line-height:1.9}
+  .eq .sig .lm,.ser .sig .lm{font-weight:600}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14.5px;margin:6px 0 10px}
+  .kv span:nth-child(odd){color:var(--dim)}
+  .kv span:nth-child(even){font-family:var(--mono);font-weight:600;color:#fff;text-align:right}
+  .tag{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.06em;padding:3px 10px;border-radius:100px;text-transform:uppercase}
+  .tag.c{background:rgba(94,234,212,.16);color:var(--mint)} .tag.d{background:rgba(255,107,107,.16);color:var(--coral)}
+  .tag.i{background:rgba(255,217,61,.16);color:var(--yellow)}
+  .choices.three{grid-template-columns:1fr 1fr 1fr}
+  .choice.sel{border-color:var(--accent);background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 1px var(--accent)}
+  .subh{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:14px 20px 0}
+  table.ct{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}
+  table.ct th,table.ct td{padding:6px 10px;border-bottom:1px solid rgba(196,181,253,.12);text-align:right}
+  table.ct th{color:var(--dim);font-weight:600}
+  table.ct td:first-child,table.ct th:first-child{text-align:left}
+  .fc{font-family:var(--ui);font-weight:600}
+  @media (max-width:560px){ .choices.three{grid-template-columns:1fr} .ser{font-size:16.5px} svg.canvas .fc{font-size:21px} svg.canvas .big{font-size:30px} }
+  .big{font-family:var(--mono);font-weight:700;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Infinite Series Lab</h1>
+    <div class="eyebrow">Calculus · Unit 7 · Infinite Sequences &amp; Series</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Series figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every graph is live and every number is computed from the series on the board — drag a handle and the work follows. Topic numbers follow the AP Calculus BC Course and Exam Description, Unit 10 (Infinite Sequences and Series).
+    <div class="links"><a href="/trig-calculus/">← Trig &amp; Calculus courses</a><a href="/math/#trig-calculus">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;};
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+const GAMMA=0.5772156649015329;
+const FACT=[1]; for(let i=1;i<=170;i++)FACT[i]=FACT[i-1]*i;
+const fact=n=>FACT[n]!==undefined?FACT[n]:Infinity;
+const SUPD="⁰¹²³⁴⁵⁶⁷⁸⁹", SUBD="₀₁₂₃₄₅₆₇₈₉";
+const sup=s=>String(s).replace(/[0-9]/g,d=>SUPD[d]).replace(/[-−]/g,"⁻").replace(/\+/g,"⁺").replace(/n/g,"ⁿ");
+const sub=s=>String(s).replace(/[0-9]/g,d=>SUBD[d]).replace(/n/g,"ₙ").replace(/\+/g,"₊").replace(/[-−]/g,"₋").replace(/N/g,"ɴ");
+const sbN=n=>sub(String(n));
+function num(v,dp){ dp=(dp==null?2:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+function fmt(v,sd){
+  if(v===Infinity)return "∞"; if(v===-Infinity)return "−∞"; if(!isFinite(v))return "undefined";
+  if(Math.abs(v)<1e-15)return "0";
+  const a=Math.abs(v); sd=sd||4;
+  if(a>=1e6||a<1e-4){ const e=Math.floor(Math.log10(a)); let m=v/Math.pow(10,e); if(Math.abs(Math.abs(m)-10)<1e-9){m/=10;} return minus(num(m,2))+"×10"+sup(e); }
+  const dp=clamp(sd-1-Math.floor(Math.log10(a)),0,8); return num(v,dp);
+}
+function rat(v,maxDen){
+  maxDen=maxDen||10000; if(!isFinite(v))return null;
+  const sg=v<0?-1:1, x=Math.abs(v); if(Math.abs(x-Math.round(x))<1e-10)return [sg*Math.round(x),1];
+  let h0=1,h1=0,k0=0,k1=1,y=x;
+  for(let i=0;i<40;i++){ const a=Math.floor(y), h2=a*h0+h1, k2=a*k0+k1; if(k2>maxDen)break;
+    h1=h0;h0=h2;k1=k0;k0=k2;
+    if(Math.abs(h0/k0-x)<1e-10*Math.max(1,x))return [sg*h0,k0];
+    const f=y-a; if(f<1e-13)break; y=1/f; }
+  return null;
+}
+function frac(v,maxDen){ const r=rat(v,maxDen); if(!r)return null; return r[1]===1? minus(String(r[0])) : minus(r[0]+"/"+r[1]); }
+const fx=(v,md)=>frac(v,md)||fmt(v);
+const fxa=(v,md)=>{ const f=frac(v,md); return f? (f.indexOf("/")>=0? f+" ≈ "+fmt(v) : f) : "≈ "+fmt(v); };
+/* HTML math */
+const FR=(n,d)=>`<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+function frH(v,md){ const r=rat(v,md); if(!r)return fmt(v); if(r[1]===1)return minus(String(r[0])); return (r[0]<0?"−":"")+FR(Math.abs(r[0]),r[1]); }
+const SIG=(lo,hi)=>`<span class="sig"><span class="sg">Σ</span><span class="lm"><span>${hi||"∞"}</span><span>${lo||"n=1"}</span></span></span>`;
+const sp=s=>`<sup>${s}</sup>`;
+
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+let clipN=0;
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild); clipN=0;}
+let FS=1;
+function stext(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("style","fill:"+color);
+  t.textContent=s; g.appendChild(t); return t;
+}
+function sline(g,a,b,color,w,dash,op){ const n=E("line",{x1:a[0],y1:a[1],x2:b[0],y2:b[1],style:"stroke:"+(color||"var(--graphite)"),"stroke-width":w||2,"stroke-linecap":"round"}); if(dash)n.setAttribute("stroke-dasharray",dash); if(op!=null)n.setAttribute("opacity",op); g.appendChild(n); return n; }
+function sdot(g,p,color,r,hollow){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||5,style:hollow?"fill:#fff;stroke:"+(color||"var(--ink)"):"fill:"+(color||"var(--ink)"),stroke:hollow?undefined:"#fff","stroke-width":hollow?2.6:1.6,"pointer-events":"none"})); }
+function sgrab(g,p,id,color){
+  g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?24:15,class:"grab","data-drag":id}));
+  sdot(g,p,color||"var(--hand)",5.5);
+}
+const nice=st=>{ const e=Math.pow(10,Math.floor(Math.log10(st))), f=st/e; return (f<1.5?1:f<3?2:f<7?5:10)*e; };
+function tickLbl(v,st){ if(Math.abs(v)<st*1e-6)return "0"; if(Math.abs(v)>=1e5||Math.abs(st)<1e-4)return fmt(v,2); const dp=Math.max(0,-Math.floor(Math.log10(st)+1e-9)); return num(v,dp); }
+/* a plot panel: screen rect + world window */
+function mkPlot(g,x,y,w,h,x0,x1,y0,y1,o){
+  o=o||{};
+  if(!(y1>y0)||!isFinite(y1-y0)){ y0=isFinite(y0)?y0:0; y1=y0+1; }
+  const P={x,y,w,h,x0,x1,y0,y1};
+  P.X=v=>x+(v-x0)/(x1-x0)*w; P.Y=v=>y+h-(v-y0)/(y1-y0)*h;
+  P.ix=s=>x0+(s-x)/w*(x1-x0); P.iy=s=>y0+(y+h-s)/h*(y1-y0);
+  P.inside=(sx,sy)=>sx>=x-20&&sx<=x+w+20&&sy>=y-20&&sy<=y+h+30;
+  g.appendChild(E("rect",{x,y,width:w,height:h,fill:"#fff","fill-opacity":.72,stroke:"#C9D6EE","stroke-width":1.2}));
+  const gg=E("g",{});
+  const xs=o.xstep||nice((x1-x0)/(o.nx||(w>420?10:5))), ys=o.ystep||nice((y1-y0)/(o.ny||(h>260?6:4)));
+  for(let i=Math.ceil(x0/xs-1e-9);i*xs<=x1+1e-9;i++){ const v=i*xs, sx=P.X(v);
+    gg.appendChild(E("line",{x1:sx,y1:y,x2:sx,y2:y+h,style:"stroke:var(--grid)","stroke-width":1}));
+    if(!o.noXl){ const t=E("text",{x:sx,y:y+h+(FS>1?20:13),class:"ax","text-anchor":"middle"}); t.textContent=(o.xfmt?o.xfmt(v):tickLbl(v,xs)); gg.appendChild(t); } }
+  for(let i=Math.ceil(y0/ys-1e-9);i*ys<=y1+1e-9;i++){ const v=i*ys, sy=P.Y(v);
+    gg.appendChild(E("line",{x1:x,y1:sy,x2:x+w,y2:sy,style:"stroke:var(--grid)","stroke-width":1}));
+    if(!o.noYl){ const t=E("text",{x:x-5,y:sy+4,class:"ax","text-anchor":"end"}); t.textContent=tickLbl(v,ys); gg.appendChild(t); } }
+  if(y0<=0&&y1>=0) gg.appendChild(E("line",{x1:x,y1:P.Y(0),x2:x+w,y2:P.Y(0),stroke:"#8FA3C8","stroke-width":1.8}));
+  if(x0<=0&&x1>=0) gg.appendChild(E("line",{x1:P.X(0),y1:y,x2:P.X(0),y2:y+h,stroke:"#8FA3C8","stroke-width":1.8}));
+  g.appendChild(gg);
+  const id="cp"+(++clipN), d=E("defs",{}), cp=E("clipPath",{id});
+  cp.appendChild(E("rect",{x,y,width:w,height:h})); d.appendChild(cp); g.appendChild(d);
+  P.g=E("g",{"clip-path":"url(#"+id+")"}); g.appendChild(P.g);
+  P.top=E("g",{}); g.appendChild(P.top);
+  if(o.title){ const t=stext(P.top,[x+8,y+(FS>1?17:13)],o.title,"sm","var(--ink)","start"); t.setAttribute("style","fill:#22314F;font-family:var(--ui);font-weight:700"); }
+  if(o.xl){ const t=E("text",{x:x+w-5,y:(y0<=0&&y1>=0?P.Y(0):y+h)-6,class:"ax","text-anchor":"end"}); t.textContent=o.xl; P.top.appendChild(t); }
+  P.fn=(f,a,b,color,wd,dash,N)=>{
+    N=N||500; let d="",pen=false,prev=null; const lo=y-h*2, hi=y+h*3;
+    for(let i=0;i<=N;i++){ const xv=a+(b-a)*i/N; let yv; try{yv=f(xv);}catch(_){yv=NaN;}
+      if(!isFinite(yv)){pen=false;prev=null;continue;}
+      const sy=clamp(P.Y(yv),lo,hi);
+      if(prev!==null&&Math.abs(sy-prev)>h*2.4)pen=false;
+      d+=(pen?"L":"M")+P.X(xv).toFixed(2)+","+sy.toFixed(2); pen=true; prev=sy; }
+    const p=E("path",{d,fill:"none",style:"stroke:"+color,"stroke-width":wd||2.6,"stroke-linejoin":"round","stroke-linecap":"round"});
+    if(dash)p.setAttribute("stroke-dasharray",dash); P.g.appendChild(p); return p; };
+  P.poly=(pts,color,wd,dash,op)=>{ const s=pts.filter(q=>isFinite(q[1])).map(q=>P.X(q[0]).toFixed(2)+","+clamp(P.Y(q[1]),y-h*2,y+h*3).toFixed(2)).join(" ");
+    const p=E("polyline",{points:s,fill:"none",style:"stroke:"+color,"stroke-width":wd||1.6,"stroke-linejoin":"round"}); if(dash)p.setAttribute("stroke-dasharray",dash); if(op!=null)p.setAttribute("opacity",op); P.g.appendChild(p); return p; };
+  P.dot=(xv,yv,color,r,hollow)=>{ if(isFinite(yv))sdot(P.g,[P.X(xv),clamp(P.Y(yv),y-30,y+h+30)],color,r,hollow); };
+  P.hl=(v,color,dash,wd)=>{ if(isFinite(v))sline(P.g,[x,P.Y(v)],[x+w,P.Y(v)],color,wd||2,dash); };
+  P.vl=(v,color,dash,wd)=>sline(P.g,[P.X(v),y],[P.X(v),y+h],color,wd||2,dash);
+  P.rect=(xa,xb,ya,yb,fill,stroke,op)=>{ const sx=Math.min(P.X(xa),P.X(xb)), sy=Math.min(P.Y(ya),P.Y(yb));
+    const r=E("rect",{x:sx,y:sy,width:Math.abs(P.X(xb)-P.X(xa)),height:Math.abs(P.Y(yb)-P.Y(ya)),style:"fill:"+fill+(stroke?";stroke:"+stroke:""),"fill-opacity":op==null?.22:op,"stroke-width":1.4}); P.g.appendChild(r); return r; };
+  // text label near a screen point, kept inside the panel
+  P.label=(sx,sy,txt,color,pref)=>{
+    const w2=txt.length*7.8*FS+6, hh=14*FS; let ax=sx+10, an="start";
+    if(pref==="left"||ax+w2>x+w-4){ ax=sx-10; an="end"; if(ax-w2<x+4){ax=clamp(sx,x+w2/2+4,x+w-w2/2-4);an="middle";} }
+    let ay=sy-(pref==="below"?-16*FS:14*FS); ay=clamp(ay,y+hh+14*FS,y+h-hh/2-2);
+    return stext(P.top,[ax,ay],txt,"sm",color,an); };
+  P.edge=(v,txt,color,above)=>{ if(!isFinite(v)||v<y0||v>y1)return; const sy=P.Y(v)+(above===false?13*FS:-9*FS);
+    return stext(P.top,[x+w-6,clamp(sy,y+30*FS,y+h-8)],txt,"sm",color,"end"); };
+  return P;
+}
+function autoRange(vals,inc){
+  let lo=Infinity,hi=-Infinity;
+  vals.concat(inc||[]).forEach(v=>{ if(isFinite(v)){lo=Math.min(lo,v);hi=Math.max(hi,v);} });
+  if(!isFinite(lo)){lo=0;hi=1;} if(hi-lo<1e-9){hi+=0.5;lo-=0.5;}
+  const sp=hi-lo; return [lo-(Math.abs(lo)<1e-12?sp*0.04:sp*0.09), hi+sp*0.12];
+}
+/* terms + partial sums side by side.  list: [{a, ta?, color, sym, Ssym, limA, limS, limStxt}] */
+function pairPlots(g,list,n0,N,cur,o){
+  o=o||{};
+  const lA=[0], lS=[0];
+  list.forEach(s=>{ if(s.limA!=null&&isFinite(s.limA))lA.push(s.limA); if(s.limS!=null&&isFinite(s.limS))lS.push(s.limS); });
+  (o.extraA||[]).forEach(q=>lA.push(q.v)); (o.extraS||[]).forEach(q=>lS.push(q.v));
+  const D=list.map(s=>{ const t=[],S=[]; let acc=0; for(let n=n0;n<=N;n++){ const v=s.a(n); acc+=v; t.push(s.ta?s.ta(n):v); S.push(acc);} return {t,S}; });
+  const tv=[].concat(...D.map(d=>d.t)), Sv=[].concat(...D.map(d=>d.S));
+  const tr=o.yA||autoRange(tv,lA), sr=o.yS||autoRange(Sv,lS);
+  const xst=Math.max(1,nice((N-n0+1)/(FS>1?4:6)));
+  const top=o.top||14, ph=o.ph||400;
+  const L=mkPlot(g,48,top,284,ph,n0-0.6,N+0.6,tr[0],tr[1],{title:o.tA||"terms aₙ",xstep:xst,xl:"n",ny:FS>1?4:6});
+  const R=mkPlot(g,400,top,284,ph,n0-0.6,N+0.6,sr[0],sr[1],{title:o.tS||"partial sums Sₙ",xstep:xst,xl:"n",ny:FS>1?4:6});
+  const big=N-n0>60, rr=big?2.2:(N-n0>30?3:4.2);
+  if(o.preL)o.preL(L,D); if(o.preR)o.preR(R,D);
+  (o.extraA||[]).forEach(q=>{ L.hl(q.v,q.color,"7 5",1.8); if(q.txt)L.edge(q.v,q.txt,q.color,q.above); });
+  (o.extraS||[]).forEach(q=>{ R.hl(q.v,q.color,"7 5",1.8); if(q.txt)R.edge(q.v,q.txt,q.color,q.above); });
+  list.forEach((s,k)=>{
+    if(s.limA!=null&&isFinite(s.limA)){ L.hl(s.limA,s.color,"7 5",1.6); L.edge(s.limA,(s.limAtxt||((s.sym||"a")+"ₙ → "+fx(s.limA,1000))),s.color,k?false:true); }
+    if(s.limS!=null&&isFinite(s.limS)){ R.hl(s.limS,s.color,"7 5",1.8); R.edge(s.limS,s.limStxt||("S = "+fxa(s.limS,1000)),s.color,k?false:true); }
+    const d=D[k];
+    if(!big&&!o.noStems) d.t.forEach((v,i)=>{ const n=n0+i; if(isFinite(v))sline(L.g,[L.X(n),L.Y(0)],[L.X(n),clamp(L.Y(v),-500,1000)],s.color,1.4,null,.45); });
+    if(o.joinA)L.poly(d.t.map((v,i)=>[n0+i,v]),s.color,1.4,null,.55);
+    d.t.forEach((v,i)=>L.dot(n0+i,v,s.color,rr));
+    R.poly(d.S.map((v,i)=>[n0+i,v]),s.color,1.4,null,.55);
+    d.S.forEach((v,i)=>R.dot(n0+i,v,s.color,rr));
+  });
+  if(o.post)o.post(L,R,D);
+  if(cur!=null){
+    cur=clamp(cur,n0,N);
+    [L,R].forEach(P=>P.vl(cur,"var(--hand)","5 4",1.6));
+    list.forEach((s,k)=>{ const i=cur-n0, tv2=D[k].t[i], Sv2=D[k].S[i];
+      L.dot(cur,tv2,s.color,rr+2.6); R.dot(cur,Sv2,s.color,rr+2.6);
+      if(!o.noCurLbl){
+        if(isFinite(tv2))L.label(L.X(cur),clamp(L.Y(tv2),L.y,L.y+L.h),(s.lab?s.lab(cur):(s.sym||"a")+sbN(cur))+" = "+fmt(tv2,3),s.color,k?"below":null);
+        R.label(R.X(cur),clamp(R.Y(Sv2),R.y,R.y+R.h),(s.Ssym||"S")+sbN(cur)+" = "+fmt(Sv2,4),s.color,k?"below":null); } });
+    sgrab(g,[L.X(cur),L.y+L.h],"cur"); sgrab(g,[R.X(cur),R.y+R.h],"cur");
+  }
+  return {L,R,D};
+}
+function curFrom(pl,sp2,n0,N){ const P=(pl.R&&sp2[0]>(pl.L.x+pl.L.w+pl.R.x)/2)?pl.R:pl.L; return clamp(Math.round(P.ix(sp2[0])),n0,N); }
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null, cur=0;
+function svgPt(e){
+  const m=cv.getScreenCTM(); if(!m)return [0,0];
+  const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y];
+}
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag, M=MODS[cur];
+  if(id){ dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); return; }
+  if(M.place){ if(M.place(svgPt(e))!==false)update(); }
+});
+cv.addEventListener("pointermove",e=>{
+  if(!dragId)return; const M=MODS[cur]; if(!M.drag)return;
+  if(M.drag(dragId,svgPt(e))!==false)update();
+});
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+
+/* bar builders */
+function btn(label,fn,cls){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(opts,val,fn,aria){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(aria)s.setAttribute("aria-label",aria);
+  opts.forEach(([k,lab])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=lab;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s;
+}
+function sel(opts,val,fn,aria){ const s=document.createElement("select"); s.setAttribute("aria-label",aria||"Choose");
+  opts.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;s.appendChild(o);});
+  s.value=val; s.onchange=()=>fn(s.value); bar.appendChild(s); return s; }
+function chk(label,val,fn){
+  const l=document.createElement("label"); l.className="chk";
+  const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i;
+}
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function slider(label,min,max,val,fn,show,step){
+  const l=document.createElement("label"); l.className="rng"; l.textContent=label+" ";
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=step||1; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); const sh=v=>show?show(+v):String(v); o.textContent=sh(val);
+  i.oninput=()=>{o.textContent=sh(i.value); fn(+i.value);};
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l); return i;
+}
+function tryPanel(html){ return `<div class="panel"><h3>Try this</h3><div class="pad">${html}</div></div>`; }
+function panel(h,body){ return `<div class="panel"><h3>${h}</h3><div class="pad">${body}</div></div>`; }
+function kv(rows){ return `<div class="kv">${rows.map(r=>`<span>${r[0]}</span><span${r[2]?` class="${r[2]}"`:""}>${r[1]}</span>`).join("")}</div>`; }
+const TAG={c:'<span class="tag c">converges</span>',d:'<span class="tag d">diverges</span>',i:'<span class="tag i">inconclusive</span>'};
+
+/* ══════════════════════ TAB 1 · sequences & partial sums ══════════════════════ */
+const HC={};
+function harmCount(T){ if(HC[T])return HC[T]; return (HC[T]=harmCount0(T)); }
+function harmCount0(T){ // smallest N with H_N > T
+  if(T<=15){ let s=0,n=0; while(s<=T){ n++; s+=1/n; } return {N:n,exact:true}; }
+  // H_N ≈ ln N + γ + 1/(2N): solve
+  return {N:Math.ceil(Math.exp(T-GAMMA)),exact:false};
+}
+const R1=v=>{ // r slider value -> nice number
+  return Math.round(v*100)/100; };
+const M1={
+  tab:"Sequences &amp; sums", lesson:"AP 10.1–10.2 · Unit 10", accent:"var(--cyan)",
+  s:{ex:"harm",N:40,cur:8,a:1,r:0.5,T:10},
+  EX:{
+    harm:{name:"Harmonic series Σ 1/n",a:n=>1/n,seq:"1/n",limA:0,S:Infinity},
+    seq:{name:"aₙ = n/(n + 1)",a:n=>n/(n+1),seq:"n/(n + 1)",limA:1,S:Infinity},
+    tele:{name:"Telescoping Σ 1/(n(n + 1))",a:n=>1/(n*(n+1)),seq:"1/(n(n + 1))",limA:0,S:1},
+    geom:{name:"Geometric Σ a·rⁿ⁻¹",geom:true}
+  },
+  title(){ const e=M1.s.ex; return e==="harm"?"Harmonic series: terms → 0, sum → ∞":e==="seq"?"A convergent sequence, a divergent series":e==="tele"?"Telescoping: the partial sums collapse":"Geometric series: converges when |r| < 1"; },
+  ser(){ const s=M1.s, E1=M1.EX[s.ex];
+    if(E1.geom){ const a=s.a, r=s.r; return {a:n=>a*Math.pow(r,n-1),limA:Math.abs(r)<1?0:(r===1?a:null),S:Math.abs(r)<1?a/(1-r):NaN}; }
+    return E1; },
+  bar(){
+    const s=M1.s;
+    sel([["harm","Harmonic Σ 1/n"],["seq","Sequence n/(n+1)"],["tele","Telescoping 1/(n(n+1))"],["geom","Geometric a·rⁿ⁻¹"]],s.ex,v=>{s.ex=v; if(v==="harm")s.N=Math.max(s.N,40); render();},"Example series");
+    slider("N",5,s.ex==="geom"?60:120,Math.min(s.N,s.ex==="geom"?60:120),v=>{s.N=v; s.cur=Math.min(s.cur,v); update();});
+    if(s.ex==="geom"){
+      slider("a",-4,4,s.a,v=>{s.a=v; update();},v=>minus(v),0.5);
+      slider("r",-1.2,1.2,s.r,v=>{s.r=R1(v); update();},v=>minus(R1(v)),0.05);
+    }
+    if(s.ex==="harm") slider("pass",2,20,s.T,v=>{s.T=v; update();});
+  },
+  draw(){
+    const s=M1.s, S1=M1.ser(), N=s.ex==="geom"?Math.min(s.N,60):s.N; s.cur=clamp(s.cur,1,N);
+    const g=E("g",{}); cv.appendChild(g);
+    const o={tA:"terms aₙ (the sequence)",tS:"partial sums Sₙ (the series)"};
+    if(s.ex==="harm"){
+      const T=s.T, H=harmCount(T);
+      o.preR=(R)=>{ R.fn(x=>Math.log(x)+GAMMA,1,N+0.6,"var(--lavender)",2,"6 5"); };
+      o.post=(L,R)=>{ stext(R.top,[R.x+8,R.y+(FS>1?40:31)],"dashed: ln n + γ","sm","#6D28D9","start");
+        stext(R.top,[R.x+8,R.y+(FS>1?62:49)],"pass "+T+" needs N = "+(H.exact?"":"≈ ")+H.N.toLocaleString("en-US"),"sm","#C0185F","start"); };
+    }
+    const list=[{a:S1.a,color:"var(--corr)",limA:S1.limA,limS:isFinite(S1.S)?S1.S:null,limStxt:isFinite(S1.S)?"S = "+fxa(S1.S,400):null}];
+    M1.pl=pairPlots(g,list,1,N,s.cur,o);
+  },
+  drag(id,p){ M1.s.cur=curFrom(M1.pl,p,1,M1.s.ex==="geom"?Math.min(M1.s.N,60):M1.s.N); },
+  panel(){
+    const s=M1.s, S1=M1.ser(), n=s.cur;
+    let Sn=0; for(let k=1;k<=n;k++)Sn+=S1.a(k);
+    let h="";
+    if(s.ex==="geom"){
+      const a=s.a, r=s.r, conv=Math.abs(r)<1;
+      h+=panel("Geometric series",`<p>Each term is the previous one times the <span class="term">common ratio</span> r. Multiply Sₙ by r and subtract: almost everything cancels, which gives the formula for Sₙ.</p>
+        <div class="eq">a + ar + ar² + … = ${SIG("n=1")} a·r${sp("n−1")}
+Sₙ = a(1 − rⁿ)/(1 − r)   (r ≠ 1)
+${conv?"|r| < 1 ⇒ rⁿ → 0 ⇒ S = a/(1 − r)":"|r| ≥ 1 ⇒ rⁿ does not → 0 ⇒ diverges"}</div>
+        ${kv([["a (first term)",fx(a,100)],["r",fx(r,100)],["|r|",fmt(Math.abs(r),3)],["S"+sbN(n),fmt(Sn,6)],["verdict",conv?TAG.c:TAG.d]])}
+        ${conv?`<div class="eq">S = a/(1 − r) = ${fx(a,100)}/(1 − ${r<0?"("+fx(r,100)+")":fx(r,100)}) = ${frH(a/(1-r),400)}${frac(a/(1-r),400)&&frac(a/(1-r),400).indexOf("/")>=0?" ≈ "+fmt(a/(1-r)):""}<small>The partial sums close in on this value: S − S${sbN(n)} = ${fmt(a/(1-r)-Sn,3)}.</small></div>`:`<p>${Math.abs(r)===1?(r===1?"With r = 1 every term equals a, so Sₙ = n·a grows without bound.":"With r = −1 the partial sums bounce between "+fx(a,10)+" and 0 forever."):"The terms grow in size, so the partial sums cannot settle."}</p>`}`);
+    } else {
+      const E1=M1.EX[s.ex];
+      h+=panel("Sequence vs. series",`<p>A <span class="term">sequence</span> is a list a₁, a₂, a₃, … (left graph). A <span class="term">series</span> adds the list up: the <b>partial sums</b> Sₙ = a₁ + a₂ + … + aₙ form a new sequence (right graph).</p>
+        <p>The series <b>converges</b> when the partial sums approach a finite limit S. A sequence converging (even to 0) does <b>not</b> make the series converge.</p>
+        <div class="eq">aₙ = ${E1.seq}     lim aₙ = ${fx(E1.limA)}
+Sₙ = ${SIG("k=1","n")} a${sub("k")}     ${isFinite(E1.S)?"lim Sₙ = "+fx(E1.S):"lim Sₙ = ∞"}</div>
+        ${kv([["a"+sbN(n),fmt(S1.a(n),5)],["S"+sbN(n),fmt(Sn,6)],["sequence {aₙ}",TAG.c+" to "+fx(E1.limA)],["series Σ aₙ",isFinite(E1.S)?TAG.c+" to "+fx(E1.S):TAG.d]])}`);
+      if(s.ex==="harm"){
+        const H=harmCount(s.T), rows=[2,3,5,10,15,20].map(T=>{const q=harmCount(T); return `<tr><td>${T}</td><td>${(q.exact?"":"≈ ")+q.N.toLocaleString("en-US")}</td></tr>`;}).join("");
+        h+=panel("How many terms to pass "+s.T+"?",`<p>The harmonic partial sums grow like <b>ln n + γ</b> (γ ≈ 0.5772): unbounded, but painfully slowly. To pass <b>${s.T}</b> you need</p>
+          <div class="eq">N = ${H.N.toLocaleString("en-US")} terms${H.exact?"  (counted one by one)":"  (from ln N + γ ≈ "+s.T+")"}</div>
+          <table class="ct"><tr><th>pass</th><th>terms needed</th></tr>${rows}</table>
+          <p style="margin-top:10px">Grouping proves it diverges: ½ + (⅓ + ¼) + (⅕ + … + ⅛) + … — each group is at least ½, and there are infinitely many groups.</p>`);
+      }
+      if(s.ex==="seq") h+=panel("Why it diverges",`<p>The terms approach <b>1</b>, so after a while you keep adding numbers close to 1. Then Sₙ ≈ n, which grows forever. Any series whose terms do not approach 0 must diverge.</p>`);
+      if(s.ex==="tele") h+=panel("Why it collapses",`<p>Partial fractions split each term, and neighbors cancel:</p><div class="eq">1/(n(n + 1)) = 1/n − 1/(n + 1)
+Sₙ = (1 − ½) + (½ − ⅓) + … + (1/n − 1/(n + 1))
+   = 1 − 1/(n + 1) → 1
+S${sbN(n)} = 1 − 1/${n+1} = ${frH(n/(n+1))}</div>`);
+    }
+    h+=tryPanel(s.ex==="geom"?`Set r = 1/2, then −1/2. Both converge, but the partial sums approach S differently. Now push r to 1 or −1: what changes, and why does the formula a/(1 − r) stop working?`
+      : s.ex==="harm"? `Drag the orange handle to n = 100. The terms are tiny, but is S₁₀₀ even close to 10? Use the "pass" slider to see how many terms you would need for 15 or 20.`
+      : `Compare this series with the harmonic series: in both, the sequence {aₙ} converges. Which series converges? What is different about how fast the terms shrink?`);
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ numerics ══════════════════════ */
+function simpson(f,a,b){ const c=(a+b)/2; return (b-a)/6*(f(a)+4*f(c)+f(b)); }
+function asr(f,a,b,eps,whole,depth){ const c=(a+b)/2, l=simpson(f,a,c), r=simpson(f,c,b);
+  if(depth<=0||Math.abs(l+r-whole)<=15*eps)return l+r+(l+r-whole)/15;
+  return asr(f,a,c,eps/2,l,depth-1)+asr(f,c,b,eps/2,r,depth-1); }
+const integ=(f,a,b)=>asr(f,a,b,1e-10,simpson(f,a,b),40);
+// zeta(p) for p>1 by Euler–Maclaurin
+function zeta(p){ const M=50; let s=0; for(let n=1;n<M;n++)s+=Math.pow(n,-p);
+  return s+Math.pow(M,1-p)/(p-1)+0.5*Math.pow(M,-p)+p*Math.pow(M,-p-1)/12-p*(p+1)*(p+2)*Math.pow(M,-p-3)/720; }
+
+/* ══════════════════════ TAB 2 · convergence tests I ══════════════════════ */
+const NTH={
+  rat:{tex:`n/(2n + 1)`,a:n=>n/(2*n+1),L:0.5,Ltxt:"1/2",why:"Divide top and bottom by n: n/(2n + 1) = 1/(2 + 1/n) → 1/2."},
+  e:{tex:`(1 + 1/n)${sp("n")}`,a:n=>Math.pow(1+1/n,n),L:Math.E,Ltxt:"e ≈ 2.718",why:"This is the famous limit that defines e."},
+  alt:{tex:`(−1)${sp("n")}·n/(n + 3)`,a:n=>(n%2?-1:1)*n/(n+3),L:NaN,Ltxt:"does not exist",why:"The terms bounce between values near −1 and +1, so lim aₙ does not exist — and in particular it is not 0."},
+  cos:{tex:`cos(1/n)`,a:n=>Math.cos(1/n),L:1,Ltxt:"cos 0 = 1",why:"1/n → 0 and cosine is continuous, so cos(1/n) → cos 0 = 1."},
+  harm:{tex:`1/n`,a:n=>1/n,L:0,Ltxt:"0",why:"1/n → 0. The nth-term test says nothing here; the harmonic series still diverges (Tab 1)."},
+  sq:{tex:`1/n${sp("2")}`,a:n=>1/(n*n),L:0,Ltxt:"0",why:"1/n² → 0. The test is silent; this p-series converges, to π²/6."}
+};
+const INTF={
+  harm:{tex:"1/x",f:x=>1/x,F:x=>Math.log(x),Ftx:"ln b",imp:Infinity,impTxt:"lim (ln b) = ∞",conv:false},
+  sq:{tex:"1/x²",f:x=>1/(x*x),F:x=>1-1/x,Ftx:"1 − 1/b",imp:1,impTxt:"lim (1 − 1/b) = 1",conv:true,S:Math.PI*Math.PI/6,St:"π²/6"},
+  atan:{tex:"1/(x² + 1)",f:x=>1/(x*x+1),F:x=>Math.atan(x)-Math.PI/4,Ftx:"arctan b − π/4",imp:Math.PI/4,impTxt:"π/2 − π/4 = π/4",conv:true,S:(Math.PI/Math.tanh(Math.PI)-1)/2,St:"(π·coth π − 1)/2"},
+  root:{tex:"1/√x",f:x=>1/Math.sqrt(x),F:x=>2*Math.sqrt(x)-2,Ftx:"2√b − 2",imp:Infinity,impTxt:"lim (2√b − 2) = ∞",conv:false},
+  exp:{tex:"x·e^(−x²)",f:x=>x*Math.exp(-x*x),F:x=>(Math.exp(-1)-Math.exp(-x*x))/2,Ftx:"(e⁻¹ − e^(−b²))/2",imp:Math.exp(-1)/2,impTxt:"1/(2e) ≈ 0.184",conv:true}
+};
+const CMP={
+  c1:{kind:"dct",a:n=>1/(n*n+n+1),b:n=>1/(n*n),at:`1/(n² + n + 1)`,bt:`1/n²`,dir:"le",bconv:true,bS:Math.PI*Math.PI/6,
+     why:"n² + n + 1 > n², so 1/(n² + n + 1) < 1/n². The bigger series converges (p = 2 > 1), so the smaller one does too."},
+  c2:{kind:"dct",a:n=>Math.log(n+2)/(n+2),b:n=>1/(n+2),at:`ln(n + 2)/(n + 2)`,bt:`1/(n + 2)`,dir:"ge",bconv:false,
+     why:"ln(n + 2) > 1 for every n ≥ 1, so ln(n + 2)/(n + 2) > 1/(n + 2). The smaller series diverges (a shifted harmonic series), so the bigger one does too."},
+  c3:{kind:"dct",a:n=>Math.pow(Math.sin(n),2)/Math.pow(2,n),b:n=>Math.pow(0.5,n),at:`sin²n / 2ⁿ`,bt:`(1/2)ⁿ`,dir:"le",bconv:true,bS:1,
+     why:"0 ≤ sin²n ≤ 1, so sin²n/2ⁿ ≤ 1/2ⁿ. The geometric series Σ(1/2)ⁿ converges (to 1), so the smaller series converges."},
+  l1:{kind:"lct",a:n=>(n+1)/(n*n*n+2),b:n=>1/(n*n),at:`(n + 1)/(n³ + 2)`,bt:`1/n²`,L:1,Lt:"1",bconv:true,bS:Math.PI*Math.PI/6,
+     why:"For large n the highest powers win: (n + 1)/(n³ + 2) behaves like n/n³ = 1/n². The ratio aₙ/bₙ = (n³ + n²)/(n³ + 2) → 1."},
+  l2:{kind:"lct",a:n=>1/(2*n+3),b:n=>1/n,at:`1/(2n + 3)`,bt:`1/n`,L:0.5,Lt:"1/2",bconv:false,
+     why:"aₙ/bₙ = n/(2n + 3) → 1/2. The harmonic series diverges, so Σ 1/(2n + 3) diverges too, even though its terms are smaller."},
+  l3:{kind:"lct",a:n=>1/(Math.pow(2,n)-n),b:n=>Math.pow(0.5,n),at:`1/(2ⁿ − n)`,bt:`(1/2)ⁿ`,L:1,Lt:"1",bconv:true,bS:1,
+     why:"Here direct comparison fails (1/(2ⁿ − n) is bigger than 1/2ⁿ), but aₙ/bₙ = 2ⁿ/(2ⁿ − n) → 1. Limit comparison settles it: converges."}
+};
+const M2={
+  tab:"Tests I", lesson:"AP 10.3–10.6 · Unit 10", accent:"var(--yellow)",
+  s:{mode:"nth",nth:"rat",N:30,cur:10,fi:"harm",show:"both",IN:8,p:1,pN:60,cmp:"c1",cN:30},
+  title(){ const m=M2.s.mode; return m==="nth"?"nth-term test for divergence":m==="int"?"Integral test: rectangles vs. area":m==="p"?"p-series: the p = 1 boundary":"Comparison & limit comparison"; },
+  bar(){
+    const s=M2.s;
+    segBtns([["nth","nth-term"],["int","Integral"],["p","p-series"],["cmp","Comparison"]],s.mode,v=>{s.mode=v;render();},"Test");
+    if(s.mode==="nth"){ sel(Object.keys(NTH).map(k=>[k,"aₙ = "+NTH[k].tex.replace(/<[^>]+>/g,"")]),s.nth,v=>{s.nth=v;render();},"Series"); slider("N",10,80,s.N,v=>{s.N=v;update();}); }
+    if(s.mode==="int"){ sel(Object.keys(INTF).map(k=>[k,"f(x) = "+INTF[k].tex]),s.fi,v=>{s.fi=v;render();},"Function");
+      segBtns([["right","Under (right)"],["left","Over (left)"],["both","Both"]],s.show,v=>{s.show=v;render();},"Rectangles");
+      slider("N",3,14,s.IN,v=>{s.IN=v;update();}); }
+    if(s.mode==="p"){ slider("p",0.2,3,s.p,v=>{s.p=Math.round(v*20)/20;update();},v=>num(Math.round(v*20)/20,2),0.05); slider("N",10,200,s.pN,v=>{s.pN=v;update();}); }
+    if(s.mode==="cmp"){ sel([["c1","Direct: 1/(n²+n+1) vs 1/n²"],["c2","Direct: ln(n+2)/(n+2) vs 1/(n+2)"],["c3","Direct: sin²n/2ⁿ vs (1/2)ⁿ"],["l1","Limit: (n+1)/(n³+2) vs 1/n²"],["l2","Limit: 1/(2n+3) vs 1/n"],["l3","Limit: 1/(2ⁿ−n) vs (1/2)ⁿ"]],s.cmp,v=>{s.cmp=v;render();},"Pair");
+      slider("N",10,80,s.cN,v=>{s.cN=v;update();}); }
+  },
+  draw(){
+    const s=M2.s, g=E("g",{}); cv.appendChild(g);
+    if(s.mode==="nth"){ const T=NTH[s.nth]; s.cur=clamp(s.cur,1,s.N);
+      M2.pl=pairPlots(g,[{a:T.a,color:"var(--lin)",limA:isFinite(T.L)?T.L:null,limAtxt:"aₙ → "+T.Ltxt}],1,s.N,s.cur,
+        {extraA:isFinite(T.L)&&T.L!==0?[{v:0,color:"var(--alt)",txt:"0 (needed!)",above:false}]:[]}); }
+    if(s.mode==="p"){ const p=s.p, N=s.pN; s.cur=clamp(s.cur,1,N);
+      const lim=p>1?zeta(p):null;
+      M2.pl=pairPlots(g,[{a:n=>Math.pow(n,-p),color:p>1?"var(--alt)":p===1?"var(--vert)":"var(--same)",limA:0,limS:lim,limStxt:lim?"S = "+(p===2?"π²/6 ≈ ":"≈ ")+fmt(lim,5):null}],1,N,s.cur,
+        {tA:"terms 1/n^"+num(p,2),noStems:N>60}); }
+    if(s.mode==="cmp"){ const C=CMP[s.cmp], N=s.cN; s.cur=clamp(s.cur,1,N);
+      const A={a:C.a,color:"var(--corr)",sym:"a",Ssym:"Σa: S"}, B={a:C.b,color:"var(--altx)",sym:"b",Ssym:"Σb: S",limS:C.bconv&&C.bS?C.bS:null,limStxt:C.bconv&&C.bS?"Σbₙ = "+(C.bS===1?"1":"π²/6"):null};
+      if(C.kind==="lct"){ A.ta=n=>C.a(n)/C.b(n); A.limA=C.L; A.limAtxt="aₙ/bₙ → "+C.Lt; A.lab=n=>"a"+sbN(n)+"/b"+sbN(n); B.ta=()=>NaN; }
+      M2.pl=pairPlots(g,[A,B],1,N,s.cur,{tA:C.kind==="lct"?"ratio aₙ/bₙ":"terms aₙ (blue), bₙ (pink)",tS:"Sₙ for Σaₙ (blue), Σbₙ (pink)",noStems:true,joinA:true}); }
+    if(s.mode==="int"){ const F=INTF[s.fi], N=s.IN, xmax=N+1.4;
+      let ymax=F.f===INTF.exp.f?0.5:1.08; if(s.fi==="root")ymax=1.1;
+      const P=mkPlot(g,48,16,632,400,0,xmax,0,ymax,{xstep:1,ny:FS>1?4:6,xl:"x",title:"y = "+F.tex+"  and the terms aₙ = f(n)"});
+      M2.P=P;
+      if(s.show!=="left") for(let n=2;n<=N;n++) P.rect(n-1,n,0,F.f(n),"var(--alt)","var(--alt)",.24);
+      if(s.show!=="right") for(let n=1;n<=N-1;n++) P.rect(n,n+1,0,F.f(n),"var(--lin)","var(--lin)",s.show==="both"?.12:.22);
+      // area under f from 1 to N
+      let d="M"+P.X(1)+","+P.Y(0); for(let i=0;i<=120;i++){ const x=1+(N-1)*i/120; d+="L"+P.X(x).toFixed(2)+","+P.Y(F.f(x)).toFixed(2);} d+="L"+P.X(N)+","+P.Y(0)+"Z";
+      P.g.appendChild(E("path",{d,style:"fill:var(--vert)","fill-opacity":.10,stroke:"none"}));
+      P.fn(F.f,0.05,xmax,"var(--vert)",3);
+      for(let n=1;n<=N;n++)P.dot(n,F.f(n),"var(--ink)",4);
+      const lx=P.X(N), ly=P.Y(F.f(N));
+      sgrab(g,[lx,P.Y(0)],"IN");
+      stext(P.top,[P.X(xmax)-8,P.y+(FS>1?44:34)],"green: Σ from n = 2 lies under the curve","sm","#047857","end");
+      stext(P.top,[P.X(xmax)-8,P.y+(FS>1?66:52)],"orange: Σ to n − 1 lies over the curve","sm","#C2410C","end");
+      stext(P.top,[clamp(lx,P.x+30,P.x+P.w-30),P.Y(0)-(FS>1?24:16)],"b = "+N,"sm","var(--hand)");
+    }
+  },
+  drag(id,p){ const s=M2.s;
+    if(id==="IN"){ s.IN=clamp(Math.round(M2.P.ix(p[0])),3,14); return; }
+    const N=s.mode==="nth"?s.N:s.mode==="p"?s.pN:s.cN; s.cur=curFrom(M2.pl,p,1,N); },
+  panel(){
+    const s=M2.s; let h="";
+    if(s.mode==="nth"){ const T=NTH[s.nth], v=T.a(s.cur), zero=T.L===0;
+      h+=panel("nth-term test for divergence",`<p>If the terms do not shrink to 0, adding infinitely many of them cannot give a finite total.</p>
+        <div class="eq">If lim aₙ ≠ 0 (or it does not exist), then ${SIG()} aₙ diverges.
+If lim aₙ = 0, the test is inconclusive.</div>
+        <div class="ser">aₙ = ${T.tex}</div>
+        ${kv([["a"+sbN(s.cur),fmt(v,5)],["lim aₙ",T.Ltxt],["conclusion",zero?TAG.i:TAG.d]])}
+        <p>${T.why}</p>`);
+      h+=panel("A one-way street",`<p>The test can only ever prove <b>divergence</b>. "Terms → 0" is necessary for convergence but not enough: compare 1/n (diverges) with 1/n² (converges). Both pass the test.</p>`);
+      h+=tryPanel(`Switch between aₙ = 1/n and aₙ = 1/n². The left graphs look almost the same. Watch the right graphs with N = 80 — which partial sums level off?`);
+    }
+    if(s.mode==="int"){ const F=INTF[s.fi], N=s.IN; let Sl=0,Sr=0; for(let n=1;n<=N-1;n++)Sl+=F.f(n); for(let n=2;n<=N;n++)Sr+=F.f(n);
+      const I=integ(F.f,1,N);
+      h+=panel("Integral test",`<p>If f is <b>positive, continuous and decreasing</b> for x ≥ 1 and aₙ = f(n), then the series and the improper integral either both converge or both diverge.</p>
+        <p>The rectangles show why. Width-1 rectangles with height f(n) placed to the <b>right</b> sit under the curve; placed to the <b>left</b> they stick out above it.</p>
+        <div class="eq">a₂ + … + a${sbN(N)}  ≤  ∫₁${sp(N)} f(x) dx  ≤  a₁ + … + a${sbN(N-1)}
+${fmt(Sr,5)}  ≤  ${fmt(I,5)}  ≤  ${fmt(Sl,5)}</div>
+        ${kv([["∫₁ᵇ f(x) dx",F.Ftx],["at b = "+N,fmt(F.F(N),5)+" ✓"],["∫₁^∞ f(x) dx",F.impTxt],["Σ f(n)",F.conv?TAG.c:TAG.d]])}
+        <p>${F.conv?"The area is finite, and the green rectangles fit under it, so the partial sums are bounded and increasing: the series converges.":"The area grows without bound, and the orange rectangles hold at least that much, so the series diverges."}</p>
+        ${F.S?`<p>The test does not give the sum. Here Σ = ${F.St} ≈ ${fmt(F.S,5)}, which is not ∫₁^∞ = ${fmt(F.imp,5)}.</p>`:""}`);
+      h+=tryPanel(`Drag the orange b handle. For f(x) = 1/x, check that 1/2 + … + 1/b ≤ ln b ≤ 1 + 1/2 + … + 1/(b − 1). What do these inequalities say about the harmonic series?`);
+    }
+    if(s.mode==="p"){ const p=s.p; let Sn=0; for(let n=1;n<=s.cur;n++)Sn+=Math.pow(n,-p);
+      h+=panel("p-series",`<p>A <span class="term">p-series</span> has the form Σ 1/nᵖ. The integral test with f(x) = 1/xᵖ settles every case at once.</p>
+        <div class="eq">${SIG()} 1/n${sp("p")}  converges if p > 1,  diverges if p ≤ 1
+∫₁^∞ x${sp("−p")} dx = 1/(p − 1)  when p > 1</div>
+        ${kv([["p",num(p,2)],["S"+sbN(s.cur),fmt(Sn,5)],["verdict",p>1?TAG.c:TAG.d],["sum",p>1?"≈ "+fmt(zeta(p),5):"∞"]])}
+        <p>${p>1?(p<1.3?"Just past the boundary: it converges, but extremely slowly. The sum is huge, about "+fmt(zeta(p),3)+".":"Terms shrink fast enough. Bounds: 1/(p − 1) ≤ S ≤ 1 + 1/(p − 1) = "+fmt(1+1/(p-1),3)+"."):p===1?"p = 1 is the harmonic series — the boundary case, and it diverges.":"Terms shrink too slowly, so the partial sums grow without bound."}</p>`);
+      h+=tryPanel(`Set p = 1.05 and p = 0.95. The graphs look nearly identical for N = 200, yet one converges. Which? Why can't a graph alone decide convergence?`);
+    }
+    if(s.mode==="cmp"){ const C=CMP[s.cmp], n=s.cur; let Sa=0,Sb=0; for(let k=1;k<=n;k++){Sa+=C.a(k);Sb+=C.b(k);}
+      if(C.kind==="dct"){
+        h+=panel("Direct comparison test",`<p>Suppose 0 ≤ aₙ ≤ bₙ for all n. A series below a convergent series converges; a series above a divergent series diverges.</p>
+          <div class="eq">0 ≤ aₙ ≤ bₙ and Σ bₙ converges ⇒ Σ aₙ converges
+0 ≤ bₙ ≤ aₙ and Σ bₙ diverges ⇒ Σ aₙ diverges</div>
+          <div class="ser">aₙ = ${C.at}   vs   bₙ = ${C.bt}</div>
+          ${kv([["a"+sbN(n)+" "+(C.dir==="le"?"≤":"≥")+" b"+sbN(n),fmt(C.a(n),4)+" "+(C.dir==="le"?"≤":"≥")+" "+fmt(C.b(n),4)],["Σa: S"+sbN(n),fmt(Sa,5)],["Σb: S"+sbN(n),fmt(Sb,5)],["Σ aₙ",C.bconv?TAG.c:TAG.d]])}
+          <p>${C.why}</p>`);
+      } else {
+        h+=panel("Limit comparison test",`<p>If aₙ, bₙ > 0 and the ratio aₙ/bₙ tends to a <b>positive finite</b> number L, the two series behave alike: both converge or both diverge.</p>
+          <div class="eq">lim aₙ/bₙ = L,  0 < L < ∞  ⇒  same behavior</div>
+          <div class="ser">aₙ = ${C.at}   vs   bₙ = ${C.bt}</div>
+          ${kv([["a"+sbN(n)+"/b"+sbN(n),fmt(C.a(n)/C.b(n),5)],["L",C.Lt],["Σa: S"+sbN(n),fmt(Sa,5)],["Σb: S"+sbN(n),fmt(Sb,5)],["Σ aₙ",C.bconv?TAG.c:TAG.d]])}
+          <p>${C.why}</p>`);
+      }
+      h+=tryPanel(C.kind==="dct"?`Drag the handle: does the inequality hold at every n you check? Notice the blue partial sums stay ${C.dir==="le"?"below":"above"} the pink ones the whole way.`:`Watch the left graph: the ratio settles on L. With L = 1/2, Σaₙ is roughly half of Σbₙ "in the long run" — why does that force both to diverge together?`);
+    }
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ TAB 3 · convergence tests II ══════════════════════ */
+const ALT={
+  ah:{tex:`(−1)${sp("n+1")}/n`,b:n=>1/n,bt:"1/n",S:Math.LN2,St:"ln 2",abs:"cond"},
+  ao:{tex:`(−1)${sp("n+1")}/(2n − 1)`,b:n=>1/(2*n-1),bt:"1/(2n − 1)",S:Math.PI/4,St:"π/4",abs:"cond"},
+  af:{tex:`(−1)${sp("n+1")}/n!`,b:n=>1/fact(n),bt:"1/n!",S:1-Math.exp(-1),St:"1 − 1/e",abs:"abs"},
+  as:{tex:`(−1)${sp("n+1")}/n${sp("2")}`,b:n=>1/(n*n),bt:"1/n²",S:Math.PI*Math.PI/12,St:"π²/12",abs:"abs"},
+  ar:{tex:`(−1)${sp("n+1")}/√n`,b:n=>1/Math.sqrt(n),bt:"1/√n",S:0.6048986434216303,St:"(1 − √2)·ζ(½)",abs:"cond"}
+};
+const RAT={
+  geo:{tex:`3ⁿ/4ⁿ`,a:n=>Math.pow(0.75,n),L:0.75,Lt:"3/4",work:"(3ⁿ⁺¹/4ⁿ⁺¹)·(4ⁿ/3ⁿ) = 3/4"},
+  fac:{tex:`2ⁿ/n!`,a:n=>Math.pow(2,n)/fact(n),L:0,Lt:"0",work:"(2ⁿ⁺¹/(n + 1)!)·(n!/2ⁿ) = 2/(n + 1) → 0"},
+  poly:{tex:`n·(1/2)ⁿ`,a:n=>n*Math.pow(0.5,n),L:0.5,Lt:"1/2",work:"((n + 1)/n)·(1/2) → 1/2"},
+  nn:{tex:`n!/nⁿ`,a:n=>fact(n)/Math.pow(n,n),L:1/Math.E,Lt:"1/e ≈ 0.368",work:"(n + 1)!·nⁿ/((n + 1)ⁿ⁺¹·n!) = (n/(n + 1))ⁿ → 1/e"},
+  big:{tex:`n³/3ⁿ`,a:n=>n*n*n/Math.pow(3,n),L:1/3,Lt:"1/3",work:"((n + 1)/n)³·(1/3) → 1/3"},
+  div:{tex:`3ⁿ/n²`,a:n=>Math.pow(3,n)/(n*n),L:3,Lt:"3",work:"3·(n/(n + 1))² → 3"},
+  fdiv:{tex:`n!/10ⁿ`,a:n=>fact(n)/Math.pow(10,n),L:Infinity,Lt:"∞",work:"(n + 1)/10 → ∞"},
+  p1:{tex:`1/n²`,a:n=>1/(n*n),L:1,Lt:"1",work:"(n/(n + 1))² → 1"},
+  p2:{tex:`1/n`,a:n=>1/n,L:1,Lt:"1",work:"n/(n + 1) → 1"}
+};
+const M3={
+  tab:"Tests II", lesson:"AP 10.7–10.10 · Unit 10", accent:"var(--mint)",
+  s:{mode:"alt",alt:"ah",N:20,cur:6,rat:"fac",rN:20,rk:2,rM:80},
+  title(){ const m=M3.s.mode; return m==="alt"?"Alternating series test & error bound":m==="ratio"?"Ratio test: watch |aₙ₊₁/aₙ| → L":"Absolute vs. conditional convergence"; },
+  bar(){
+    const s=M3.s;
+    segBtns([["alt","Alternating"],["ratio","Ratio test"],["abs","Abs. vs cond."]],s.mode,v=>{s.mode=v;render();},"Test");
+    if(s.mode==="alt"){ sel(Object.keys(ALT).map(k=>[k,"Σ "+ALT[k].tex.replace(/<sup>/g,"^").replace(/<\/sup>/g,"")]),s.alt,v=>{s.alt=v;render();},"Series"); slider("N",6,40,s.N,v=>{s.N=v;update();}); }
+    if(s.mode==="ratio"){ sel(Object.keys(RAT).map(k=>[k,"Σ "+RAT[k].tex]),s.rat,v=>{s.rat=v;render();},"Series"); slider("N",6,30,s.rN,v=>{s.rN=v;update();}); }
+    if(s.mode==="abs"){ slider("+ per −",1,5,s.rk,v=>{s.rk=v;update();}); slider("blocks",20,200,s.rM,v=>{s.rM=v;update();},null,10); }
+  },
+  draw(){
+    const s=M3.s, g=E("g",{}); cv.appendChild(g);
+    if(s.mode==="alt"){ const A=ALT[s.alt], N=s.N; s.cur=clamp(s.cur,1,N-1);
+      const a=n=>(n%2?1:-1)*A.b(n);
+      M3.pl=pairPlots(g,[{a,color:"var(--vert)",limA:0,limS:A.S,limStxt:"S = "+A.St+" ≈ "+fmt(A.S,5)}],1,N,s.cur,{tA:"terms aₙ = (−1)ⁿ⁺¹bₙ",noCurLbl:false,
+        preR:(R)=>{ let Sn=0; for(let k=1;k<=s.cur;k++)Sn+=a(k); const e=A.b(s.cur+1);
+          R.rect(s.cur-0.6,N+0.6,Sn-e,Sn+e,"var(--yellow)","#D9A400",.28);
+          R.label(R.X(N),R.Y(Sn+e),"band: S"+sbN(s.cur)+" ± b"+sbN(s.cur+1),"#9A6B00","left"); }}); }
+    if(s.mode==="ratio"){ const T=RAT[s.rat], N=s.rN; s.cur=clamp(s.cur,1,N-1);
+      const r=n=>Math.abs(T.a(n+1)/T.a(n));
+      const ext=[{v:1,color:"var(--same)",txt:"L = 1 boundary",above:true}];
+      const Lc=isFinite(T.L)?(T.L<1?"var(--alt)":T.L>1?"var(--same)":"#B45309"):"var(--same)";
+      const yr=[0,Math.max(1.3,Math.min(isFinite(T.L)?T.L*1.35+0.2:4,Math.max(...Array.from({length:N-1},(_,i)=>r(i+1)).filter(isFinite))*1.08))];
+      M3.pl=pairPlots(g,[{a:T.a,ta:r,color:Lc,limA:isFinite(T.L)&&T.L!==1?T.L:null,limAtxt:"L = "+T.Lt,lab:n=>"|a"+sbN(n+1)+"/a"+sbN(n)+"|"}],1,N-1,s.cur,
+        {tA:"ratio |aₙ₊₁/aₙ|",tS:"partial sums Sₙ",yA:yr,extraA:ext,joinA:true,noStems:true}); }
+    if(s.mode==="abs"){ // rearrangement: k positive odd terms then 1 negative even term
+      const k=s.rk, M=s.rM, pts=[], std=[]; let S=0,po=1,ne=2,i=0;
+      for(let b=0;b<M;b++){ for(let j=0;j<k;j++){S+=1/po;po+=2;i++;pts.push([i,S]);} S-=1/ne;ne+=2;i++;pts.push([i,S]); }
+      let S2=0; for(let n=1;n<=i;n++){S2+=(n%2?1:-1)/n; std.push([n,S2]);}
+      const target=Math.LN2+0.5*Math.log(k);
+      const P=mkPlot(g,52,16,628,400,0,i+1,0.3,Math.max(1.3,target+0.35),{xl:"terms used",title:"Same terms, different order"+(k===1?"":" ("+k+" positives, then 1 negative)")});
+      P.hl(Math.LN2,"var(--vert)","7 5",1.8); P.edge(Math.LN2,"ln 2 ≈ 0.693",  "#6D28D9",false);
+      if(k>1){ P.hl(target,"var(--lin)","7 5",1.8); P.edge(target,"ln 2 + ½ln "+k+" ≈ "+fmt(target,4),"#C2410C",true); }
+      P.poly(std,"var(--vert)",1.6,null,.8);
+      P.poly(pts,k===1?"var(--vert)":"var(--lin)",2.2);
+      M3.last={S,i,target,Sstd:S2};
+    }
+  },
+  drag(id,p){ const s=M3.s; if(s.mode==="abs")return false; s.cur=curFrom(M3.pl,p,1,(s.mode==="alt"?s.N:s.rN)-1); },
+  panel(){
+    const s=M3.s; let h="";
+    if(s.mode==="alt"){ const A=ALT[s.alt], n=s.cur; let Sn=0; for(let k=1;k<=n;k++)Sn+=(k%2?1:-1)*A.b(k);
+      const err=Math.abs(A.S-Sn), bd=A.b(n+1);
+      h+=panel("Alternating series test",`<p>An <span class="term">alternating series</span> flips sign every term: Σ(−1)ⁿ⁺¹bₙ with bₙ > 0. If the sizes bₙ <b>decrease</b> and <b>approach 0</b>, the series converges.</p>
+        <p>Each step overshoots S, then undershoots by less — the zig-zag on the right squeezes in on S.</p>
+        <div class="ser">${SIG()} ${A.tex}   (bₙ = ${A.bt})</div>
+        ${kv([["bₙ decreasing?","yes ✓"],["lim bₙ","0 ✓"],["S"+sbN(n),fmt(Sn,6)],["S (exact)",A.St+" ≈ "+fmt(A.S,6)],["verdict",TAG.c]])}`);
+      h+=panel("Error bound",`<p>Stopping after n terms, the error is <b>at most the first term you left out</b>. The sign of the error matches that next term.</p>
+        <div class="eq">|S − Sₙ| ≤ bₙ₊₁
+|S − S${sbN(n)}| = ${fmt(err,4)}  ≤  b${sbN(n+1)} = ${fmt(bd,4)}  ${err<=bd+1e-15?"✓":"✗"}</div>
+        <p>The yellow band on the graph is S${sbN(n)} ± b${sbN(n+1)}. The true sum S always lies inside it.</p>`);
+      h+=tryPanel(`How many terms of Σ(−1)ⁿ⁺¹/n do you need to guarantee an error under 0.01? (You need bₙ₊₁ = 1/(n + 1) ≤ 0.01.) Drag the handle to n = 99 and check the band. Then try 1/n! — how few terms does it need?`);
+    }
+    if(s.mode==="ratio"){ const T=RAT[s.rat], n=s.cur, rv=Math.abs(T.a(n+1)/T.a(n));
+      const verdict=!isFinite(T.L)||T.L>1?TAG.d:T.L<1?TAG.c:TAG.i;
+      h+=panel("Ratio test",`<p>Compare each term with the one before it. If, far out, every term is about L times the previous one, the series acts like a geometric series with ratio L.</p>
+        <div class="eq">L = lim |aₙ₊₁/aₙ|
+L < 1 ⇒ converges absolutely
+L > 1 (or ∞) ⇒ diverges
+L = 1 ⇒ inconclusive</div>
+        <div class="ser">${SIG()} ${T.tex}</div>
+        <div class="eq">|aₙ₊₁/aₙ| = ${T.work}<small>Ratio at n = ${n}: |a${sbN(n+1)}/a${sbN(n)}| = ${fmt(rv,5)}</small></div>
+        ${kv([["L",T.Lt],["verdict",verdict]])}
+        ${T.L===1?`<p>L = 1 here, so the ratio test says nothing. The p-series test finishes the job: Σ${T.tex} ${s.rat==="p1"?"converges (p = 2)":"diverges (p = 1)"}.</p>`:""}`);
+      h+=panel("When to reach for it",`<p>The ratio test shines on <b>factorials</b> and <b>exponentials</b> like n!, 2ⁿ, nⁿ, because their ratios simplify. On rational functions of n it always gives L = 1 — use a p-series or comparison instead.</p>`);
+      h+=tryPanel(`Pick Σ n!/nⁿ. The ratio climbs slowly toward 1/e ≈ 0.368. Then compare Σ 1/n and Σ 1/n²: both ratios approach 1, yet one converges. What does that tell you about L = 1?`);
+    }
+    if(s.mode==="abs"){ const k=s.rk, L=M3.last;
+      h+=panel("Absolute vs. conditional",`<p>A series is <span class="term">absolutely convergent</span> if Σ|aₙ| converges. It is <span class="term">conditionally convergent</span> if Σaₙ converges but Σ|aₙ| diverges.</p>
+        <div class="eq">Σ (−1)ⁿ⁺¹/n² : Σ 1/n² converges ⇒ absolute
+Σ (−1)ⁿ⁺¹/n  : Σ 1/n diverges ⇒ conditional
+Absolute convergence ⇒ convergence</div>
+        <p>Absolutely convergent series behave like finite sums: any reordering gives the same total. Conditionally convergent ones do <b>not</b>.</p>`);
+      h+=panel("Rearrangement teaser",`<p>Take the alternating harmonic series 1 − ½ + ⅓ − ¼ + … = ln 2. Now use the <b>same</b> terms in a new order: ${k} positive (odd) term${k>1?"s":""}, then one negative (even) term, and repeat.</p>
+        <div class="eq">${k===1?"1 − ½ + ⅓ − ¼ + …  → ln 2":k===2?"1 + ⅓ − ½ + ⅕ + ⅐ − ¼ + …":"("+k+" odd reciprocals) − ½ + ("+k+" more) − ¼ + …"}
+new sum = ln 2 + ½ ln ${k} = ${fmt(L.target,5)}
+after ${L.i} terms: ${fmt(L.S,5)}</div>
+        <p>Riemann's rearrangement theorem: a conditionally convergent series can be reordered to sum to <b>any</b> number you like, or even to diverge. The positive terms alone add to ∞, and so do the negatives.</p>`);
+      h+=tryPanel(`Set "+ per −" to 4. The orange path should head for ln 2 + ½ ln 4 = ln 4 ≈ 1.386, twice the original sum. Why can't this trick work on Σ(−1)ⁿ⁺¹/n²?`);
+    }
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ TAB 4 · choosing a test ══════════════════════ */
+const TESTS=[["nth","nth-term test"],["geom","Geometric series"],["p","p-series"],["alt","Alternating series test"],["ratio","Ratio test"],["cmp","Comparison / limit comparison"],["int","Integral test"]];
+const TNAME={}; TESTS.forEach(t=>TNAME[t[0]]=t[1]);
+const FLOW=[
+  {q:"Do the terms fail to → 0?",y:"Diverges (nth-term)",k:"nth"},
+  {q:"Geometric: Σ a·rⁿ?",y:"|r| < 1 conv., else div.",k:"geom"},
+  {q:"p-series: Σ 1/nᵖ?",y:"p > 1 conv., else div.",k:"p"},
+  {q:"Alternating (−1)ⁿbₙ?",y:"bₙ ↓ 0 ⇒ converges",k:"alt"},
+  {q:"Factorials or kⁿ?",y:"Ratio test: L vs 1",k:"ratio"},
+  {q:"Like a p- or geo series?",y:"Compare / LCT",k:"cmp"},
+  {q:"f(x) easy to integrate?",y:"Integral test",k:"int"}
+];
+const FLOW_M=[
+  {q:"aₙ ↛ 0 ?",y:"diverges",k:"nth"},{q:"geometric?",y:"|r| < 1 ?",k:"geom"},{q:"p-series?",y:"p > 1 ?",k:"p"},
+  {q:"alternating?",y:"AST",k:"alt"},{q:"n! or kⁿ ?",y:"ratio test",k:"ratio"},{q:"like 1/nᵖ ?",y:"compare/LCT",k:"cmp"},{q:"integrable?",y:"integral",k:"int"}
+];
+function supF(t){ return `<sup>${t}</sup>`; }
+function genSeries(){
+  const kind=pick(["nth","geom","p","alt","ratio","cmp","int","altdiv"]);
+  let o;
+  if(kind==="nth"){ const a=rnd(1,5),b=rnd(1,6),c=rnd(1,5),d=rnd(1,6);
+    o=pick([
+      {tex:`${a===1?"":a}n/(${c===1?"":c}n + ${d})`,ok:["nth"],conv:false,why:`lim ${a===1?"":a}n/(${c===1?"":c}n + ${d}) = ${frac(a/c)} ≠ 0, so the series diverges by the nth-term test.`},
+      {tex:`(${a===1?"":a}n${supF(2)} + ${b})/(${c===1?"":c}n${supF(2)} + n)`,ok:["nth"],conv:false,why:`The leading terms give lim aₙ = ${frac(a/c)} ≠ 0, so the series diverges by the nth-term test.`},
+      {tex:`(1 + 1/n)${supF("n")}`,ok:["nth"],conv:false,why:`(1 + 1/n)ⁿ → e ≠ 0, so the series diverges by the nth-term test.`},
+      {tex:`n·sin(1/n)`,ok:["nth"],conv:false,why:`n·sin(1/n) = sin(1/n)/(1/n) → 1 ≠ 0, so the series diverges by the nth-term test.`}]); }
+  if(kind==="geom"){ let p=rnd(1,6),q=rnd(2,7); if(p===q)q++; const g=gcd(p,q); p/=g;q/=g; const k=rnd(1,5), neg=Math.random()<0.3;
+    const r=(neg?-1:1)*p/q, conv=p<q;
+    o={tex:`${k===1?"":k}·(${neg?"−":""}${p}/${q})${supF("n")}`,ok:conv?["geom"]:["geom","nth"],conv,
+       why:`This is geometric with r = ${minus(frac(r))}. ${conv?"|r| < 1, so it converges (to a/(1 − r) once you identify the first term).":"|r| ≥ 1, so it diverges — the terms do not even approach 0."}`}; }
+  if(kind==="p"){ const P=pick([[3,2],[1,2],[2,1],[4,3],[2,3],[5,4],[1,1],[3,1],[3,4]]); const pv=P[0]/P[1];
+    const t=P[1]===1?(P[0]===1?"1/n":`1/n${supF(P[0])}`):P[1]===2?(P[0]===1?"1/√n":`1/n${supF(P[0]+"/2")}`):`1/n${supF(P[0]+"/"+P[1])}`;
+    const pt=pick([0,1])&&P[1]===2&&P[0]===3?`1/(n√n)`:t;
+    o={tex:pt,ok:["p","int"],conv:pv>1,why:`This is a p-series with p = ${frac(pv)}. ${pv>1?"p > 1, so it converges.":"p ≤ 1, so it diverges."}`}; }
+  if(kind==="alt"){ const k=rnd(1,4);
+    o=pick([
+      {tex:`(−1)${supF("n")}/(n + ${k})`,ok:["alt"],conv:true,why:`bₙ = 1/(n + ${k}) decreases to 0, so it converges by the alternating series test (conditionally: Σ 1/(n + ${k}) diverges).`},
+      {tex:`(−1)${supF("n+1")}/√n`,ok:["alt"],conv:true,why:"bₙ = 1/√n decreases to 0, so it converges by the alternating series test (conditionally, since Σ 1/√n is a divergent p-series)."},
+      {tex:`(−1)${supF("n")}/ln(n + 1)`,ok:["alt"],conv:true,why:"bₙ = 1/ln(n + 1) decreases to 0 (slowly!), so the alternating series test gives convergence."},
+      {tex:`(−1)${supF("n")}·n/(n${supF(2)} + ${k})`,ok:["alt"],conv:true,why:`For n ≥ ${Math.ceil(Math.sqrt(k))} the sizes n/(n² + ${k}) decrease, and they approach 0, so the alternating series test gives convergence.`}]); }
+  if(kind==="altdiv"){ const k=rnd(1,4);
+    o={tex:`(−1)${supF("n")}·n/(n + ${k})`,ok:["nth"],conv:false,why:`It alternates, but the sizes n/(n + ${k}) → 1, not 0. The terms do not approach 0, so it diverges by the nth-term test. (The AST cannot be used: its condition bₙ → 0 fails.)`}; }
+  if(kind==="ratio"){ const k=rnd(2,5), m=rnd(2,4);
+    o=pick([
+      {tex:`${k}${supF("n")}/n!`,ok:["ratio"],conv:true,why:`|aₙ₊₁/aₙ| = ${k}/(n + 1) → 0 < 1, so it converges by the ratio test.`},
+      {tex:`n!/${k}${supF("n")}`,ok:["ratio","nth"],conv:false,why:`|aₙ₊₁/aₙ| = (n + 1)/${k} → ∞, so it diverges by the ratio test (the terms also grow, so the nth-term test works).`},
+      {tex:`n${supF(m)}/${k}${supF("n")}`,ok:["ratio"],conv:true,why:`|aₙ₊₁/aₙ| = ((n + 1)/n)${supF(m)}·(1/${k}) → 1/${k} < 1, so it converges by the ratio test.`},
+      {tex:`n!/n${supF("n")}`,ok:["ratio"],conv:true,why:"|aₙ₊₁/aₙ| = (n/(n + 1))ⁿ → 1/e < 1, so it converges by the ratio test."},
+      {tex:`${k}${supF("n")}/n${supF(m)}`,ok:["ratio","nth"],conv:false,why:`|aₙ₊₁/aₙ| = ${k}·(n/(n + 1))${supF(m)} → ${k} > 1, so it diverges by the ratio test.`}]); }
+  if(kind==="cmp"){ const k=rnd(1,6);
+    o=pick([
+      {tex:`1/(n${supF(2)} + ${k})`,ok:["cmp","int"],conv:true,why:`1/(n² + ${k}) < 1/n², and Σ 1/n² converges (p = 2), so it converges by direct comparison.`},
+      {tex:`n/(n${supF(3)} + ${k})`,ok:["cmp"],conv:true,why:`It behaves like n/n³ = 1/n². Limit comparison with 1/n² gives L = 1, and Σ 1/n² converges.`},
+      {tex:`1/(${k+1}n − 1)`,ok:["cmp","int"],conv:false,why:`Limit comparison with 1/n: L = 1/${k+1}, a positive finite number, and Σ 1/n diverges, so this diverges too.`},
+      {tex:`√n/(n + ${k})`,ok:["cmp"],conv:false,why:`It behaves like √n/n = 1/√n. Limit comparison with 1/√n gives L = 1, and Σ 1/√n diverges (p = 1/2).`},
+      {tex:`1/(${k+1}${supF("n")} + n)`,ok:["cmp"],conv:true,why:`1/(${k+1}ⁿ + n) < (1/${k+1})ⁿ, a convergent geometric series, so it converges by direct comparison.`},
+      {tex:`cos${supF(2)}n / n${supF(2)}`,ok:["cmp"],conv:true,why:"0 ≤ cos²n/n² ≤ 1/n², and Σ 1/n² converges, so it converges by direct comparison."}]); }
+  if(kind==="int"){
+    o=pick([
+      {tex:`1/(n ln n)`,start:2,ok:["int"],conv:false,why:"f(x) = 1/(x ln x) is positive and decreasing. ∫₂^∞ dx/(x ln x) = lim ln(ln b) − ln(ln 2) = ∞, so it diverges by the integral test."},
+      {tex:`1/(n (ln n)${supF(2)})`,start:2,ok:["int"],conv:true,why:"With u = ln x, ∫₂^∞ dx/(x(ln x)²) = 1/ln 2, which is finite, so it converges by the integral test."},
+      {tex:`n·e${supF("−n²")}`,ok:["int","ratio"],conv:true,why:"∫₁^∞ x e^(−x²) dx = 1/(2e), which is finite, so it converges by the integral test. (The ratio test also works: L = 0.)"},
+      {tex:`ln n / n`,start:2,ok:["int","cmp"],conv:false,why:"∫ ln x / x dx = (ln x)²/2 → ∞, so it diverges by the integral test. (Comparison also works: ln n/n > 1/n for n ≥ 3.)"}]); }
+  o.start=o.start||1; o.kind=kind; o.best=o.ok[0]; return o;
+}
+const M4={
+  tab:"Choosing a test", lesson:"AP 10.3–10.10 · Unit 10", accent:"var(--lavender)",
+  s:{pr:null,test:null,conc:null,done:false,score:0,tries:0},
+  title:()=>"Which test, and what does it say?",
+  newProb(){ const s=M4.s; s.pr=genSeries(); s.test=null; s.conc=null; s.done=false; },
+  bar(){ btn("New series",()=>{M4.newProb();render();},"primary"); M4.sc=spacer(""); M4.upSc(); },
+  upSc(){ if(M4.sc)M4.sc.textContent="Correct "+M4.s.score+" / "+M4.s.tries; },
+  draw(){
+    const s=M4.s; if(!s.pr)M4.newProb();
+    const g=E("g",{}); cv.appendChild(g);
+    const mob=FS>1, F=mob?FLOW_M:FLOW, rows=F.length, top=mob?40:30, rh=(VH-top-14)/rows;
+    const qx=mob?14:30, qw=mob?300:320, yx=mob?400:420, yw=mob?286:250, bh=rh*0.66;
+    stext(g,[qx,top-14],"Start here ↓  (answer the questions in order)","sm","#22314F","start");
+    const hi=s.done? s.pr.best : null, hiIdx=hi? F.findIndex(f=>f.k===hi) : -1;
+    F.forEach((f,i)=>{ const y=top+i*rh, on=i===hiIdx, past=hiIdx>=0&&i<hiIdx;
+      const col=on?"#7C3AED":past?"#9AA8C7":"#22314F";
+      if(i<rows-1) sline(g,[qx+qw/2,y+bh],[qx+qw/2,y+rh],past||on?"#9AA8C7":"#B8C4DC",2.2);
+      if(i<rows-1) stext(g,[qx+qw/2+(mob?22:16),y+bh+(rh-bh)/2],"no","ax","#7C8AAB","start");
+      g.appendChild(E("rect",{x:qx,y,width:qw,height:bh,rx:10,style:"fill:"+(on?"rgba(124,58,237,.12)":"#fff")+";stroke:"+col,"stroke-width":on?3:1.6}));
+      stext(g,[qx+qw/2,y+bh/2],f.q,"fc",col);
+      sline(g,[qx+qw,y+bh/2],[yx-8,y+bh/2],on?"#7C3AED":"#B8C4DC",on?3:2);
+      g.appendChild(E("polygon",{points:`${yx-8},${y+bh/2-5} ${yx},${y+bh/2} ${yx-8},${y+bh/2+5}`,style:"fill:"+(on?"#7C3AED":"#B8C4DC")}));
+      stext(g,[(qx+qw+yx)/2,y+bh/2-(mob?14:10)],"yes","ax","#7C8AAB");
+      g.appendChild(E("rect",{x:yx,y,width:yw,height:bh,rx:bh/2,style:"fill:"+(on?"#7C3AED":"rgba(124,58,237,.07)")+";stroke:"+(on?"#7C3AED":"#C9B8F5"),"stroke-width":1.6}));
+      stext(g,[yx+yw/2,y+bh/2],f.y,"fc",on?"#fff":"#5B21B6");
+    });
+  },
+  panel(full){
+    const s=M4.s, pr=s.pr; if(!full&&document.getElementById("cs4"))return;
+    let h=panel("The series",`<div class="ser">${SIG("n="+pr.start)} ${pr.tex}</div><p>Pick the test you would use first, then what it tells you. Use the flowchart: answer its questions from the top down.</p>`);
+    h+=`<div class="panel"><h3>1 · Which test?</h3><div class="choices" id="cs4">${TESTS.map(t=>`<button type="button" class="choice${s.test===t[0]?" sel":""}" data-t="${t[0]}" aria-pressed="${s.test===t[0]}">${t[1]}</button>`).join("")}</div>
+      <h3 style="border-top:1px solid var(--edge)">2 · Conclusion</h3><div class="choices" id="cc4">
+      <button type="button" class="choice${s.conc==="c"?" sel":""}" data-c="c" aria-pressed="${s.conc==="c"}">Converges</button><button type="button" class="choice${s.conc==="d"?" sel":""}" data-c="d" aria-pressed="${s.conc==="d"}">Diverges</button></div>
+      <div class="fldwrap" style="margin:4px 0 16px"><button class="go" id="chk4" type="button">Check</button></div><div id="fb4"></div></div>`;
+    h+=panel("Strategy",`<p>Always try the <b>nth-term test</b> first: if the terms don't approach 0, you're done. Then look for a recognizable form (geometric, p-series), an alternating sign, factorials or exponentials (ratio), or an algebraic look-alike (comparison).</p><p>Several tests can work on the same series. Any valid test earns credit; the feedback names the most direct one.</p>`);
+    side.innerHTML=h;
+    side.querySelectorAll("#cs4 .choice").forEach(b=>b.onclick=()=>{ if(s.done)return; s.test=b.dataset.t; side.querySelectorAll("#cs4 .choice").forEach(c=>{c.classList.toggle("sel",c===b);c.setAttribute("aria-pressed",String(c===b));}); });
+    side.querySelectorAll("#cc4 .choice").forEach(b=>b.onclick=()=>{ if(s.done)return; s.conc=b.dataset.c; side.querySelectorAll("#cc4 .choice").forEach(c=>{c.classList.toggle("sel",c===b);c.setAttribute("aria-pressed",String(c===b));}); });
+    document.getElementById("chk4").onclick=()=>{
+      const fb=document.getElementById("fb4");
+      if(s.done)return;
+      if(!s.test||!s.conc){ fb.innerHTML=`<div class="verdict bad"><b>Pick both</b> a test and a conclusion first.</div>`; return; }
+      const tOK=pr.ok.indexOf(s.test)>=0, cOK=(s.conc==="c")===pr.conv;
+      s.tries++; if(tOK&&cOK)s.score++; s.done=true; M4.upSc();
+      side.querySelectorAll("#cs4 .choice").forEach(c=>{ const k=c.dataset.t; if(pr.ok.indexOf(k)>=0)c.classList.add("right"); else if(k===s.test)c.classList.add("wrong"); });
+      side.querySelectorAll("#cc4 .choice").forEach(c=>{ const k=c.dataset.c; if((k==="c")===pr.conv)c.classList.add("right"); else if(k===s.conc)c.classList.add("wrong"); });
+      let msg;
+      if(tOK&&cOK) msg=`<div class="verdict good"><b>Correct!</b> ${pr.why}</div>`;
+      else { let w=[]; if(!tOK)w.push(`The ${TNAME[s.test]} ${s.test==="nth"?"only proves divergence when aₙ ↛ 0, and that's not the situation here":s.test==="alt"?"needs alternating signs":s.test==="geom"?"needs a constant ratio between terms":s.test==="p"?"needs exactly the form 1/nᵖ":s.test==="ratio"?"gives L = 1 (inconclusive) on algebraic terms like this":"is not the tool that settles this one cleanly"}. Use: <b>${pr.ok.map(k=>TNAME[k]).join("</b> or <b>")}</b>.`);
+        if(!cOK)w.push(`The series <b>${pr.conv?"converges":"diverges"}</b>.`);
+        msg=`<div class="verdict bad"><b>Not quite.</b> ${w.join(" ")}<br>${pr.why}</div>`; }
+      fb.innerHTML=msg+`<div class="fldwrap" style="margin-bottom:16px"><button class="ghost" id="nx4" type="button" style="width:100%">Next series →</button></div>`;
+      document.getElementById("nx4").onclick=()=>{M4.newProb();render();};
+      clear(); M4.draw();
+    };
+  }
+};
+
+/* ══════════════════════ TAB 5 · power series ══════════════════════ */
+// family: Σ (x − a)ⁿ / (bⁿ · nᵖ), n from n0 ; plus exp (Σ (x−a)ⁿ/n!) and fact (Σ n!(x−a)ⁿ)
+function psInfo(s){
+  if(s.fam==="exp")return {n0:0,R:Infinity,c:n=>1/fact(n),ct:`(x − a)${sp("n")}/n!`};
+  if(s.fam==="fact")return {n0:0,R:0,c:n=>fact(n),ct:`n!·(x − a)${sp("n")}`};
+  const b=s.b, p=s.p, n0=p===0?0:1;
+  return {n0,R:b,c:n=>1/(Math.pow(b,n)*(p?Math.pow(n,p):1)),ct:`(x − a)${sp("n")}/(${fx(b)}${sp("n")}${p?"·n"+(p>1?sp(p):""):""})`};
+}
+const aTxt=a=>a===0?"x":a>0?`(x − ${fx(a)})`:`(x + ${fx(-a)})`;
+function psSum(s,x){ // exact limit if convergent, else NaN
+  const I=psInfo(s), u=x-s.a;
+  if(s.fam==="exp")return Math.exp(u);
+  if(s.fam==="fact")return Math.abs(u)<1e-12?1:NaN;
+  const w=u/s.b;
+  if(Math.abs(w)>1+1e-12)return NaN;
+  if(s.p===0)return Math.abs(w)<1-1e-12?1/(1-w):NaN;
+  if(s.p===1){ if(w>=1-1e-12)return NaN; return -Math.log(1-w); }
+  // p=2: dilogarithm Li2(w), |w|<=1
+  if(Math.abs(w)<=0.5){ let t=w,S=0; for(let n=1;n<400;n++){ S+=t/(n*n); t*=w; if(Math.abs(t)<1e-17)break; } return S; }
+  if(Math.abs(w-1)<1e-12)return Math.PI*Math.PI/6;
+  if(Math.abs(w+1)<1e-12)return -Math.PI*Math.PI/12;
+  if(w>0.5){ // Li2(w)=π²/6 − ln w ln(1−w) − Li2(1−w)
+    const v=1-w; let t=v,S=0; for(let n=1;n<400;n++){ S+=t/(n*n); t*=v; if(Math.abs(t)<1e-17)break; }
+    return Math.PI*Math.PI/6-Math.log(w)*Math.log(1-w)-S; }
+  // w<-0.5: Li2(w) = −Li2(w/(w−1)) − ½ln²(1−w)
+  const v=w/(w-1); let t=v,S=0; for(let n=1;n<400;n++){ S+=t/(n*n); t*=v; if(Math.abs(t)<1e-17)break; }
+  return -S-0.5*Math.pow(Math.log(1-w),2);
+}
+const M5={
+  tab:"Power series", lesson:"AP 10.12–10.13 · Unit 10", accent:"var(--magenta)",
+  s:{fam:"gen",a:1,b:2,p:1,x:2,N:30,cur:12},
+  title:()=>"Interval of convergence: drag x",
+  bar(){
+    const s=M5.s;
+    sel([["gen","Σ (x−a)ⁿ / (bⁿ·nᵖ)"],["exp","Σ (x−a)ⁿ / n!"],["fact","Σ n!·(x−a)ⁿ"]],s.fam,v=>{s.fam=v;render();},"Power series");
+    slider("a",-3,3,s.a,v=>{s.a=v; s.x=clamp(s.x,-6,6); update();},v=>minus(v),0.5);
+    if(s.fam==="gen"){
+      sel([["0.5","b = 1/2"],["1","b = 1"],["2","b = 2"],["3","b = 3"]],String(s.b),v=>{s.b=+v;update();},"b");
+      segBtns([[0,"p = 0"],[1,"p = 1"],[2,"p = 2"]],s.p,v=>{s.p=v;render();},"p");
+    }
+    slider("N",5,60,s.N,v=>{s.N=v;update();});
+    btn("x → left end",()=>{ const R=psInfo(s).R; if(isFinite(R)&&R>0){s.x=s.a-R;update();} });
+    btn("x → right end",()=>{ const R=psInfo(s).R; if(isFinite(R)&&R>0){s.x=s.a+R;update();} });
+  },
+  status(){ const s=M5.s, I=psInfo(s), d=Math.abs(s.x-s.a), R=I.R;
+    if(R===Infinity)return {k:"in",t:"inside (R = ∞)"};
+    if(R===0)return d<1e-9?{k:"in",t:"the center"}:{k:"out",t:"outside (R = 0)"};
+    if(d<R-1e-9)return {k:"in",t:"inside |x − a| < R"};
+    if(d>R+1e-9)return {k:"out",t:"outside |x − a| > R"};
+    const right=s.x>s.a; const conv=right? s.p>1 : s.p>0;
+    return {k:conv?"endc":"endd",t:(right?"right":"left")+" endpoint",conv,right};
+  },
+  draw(){
+    const s=M5.s, I=psInfo(s), g=E("g",{}); cv.appendChild(g);
+    const mob=FS>1;
+    // number line
+    const NL=mkPlot(g,30,mob?28:22,640,mob?84:70,-6,6,0,1,{xstep:1,noYl:true,title:"",xl:""});
+    M5.NL=NL;
+    const R=I.R, a=s.a, ly=NL.y+NL.h*0.55;
+    sline(NL.g,[NL.x,ly],[NL.x+NL.w,ly],"var(--graphite)",2);
+    if(R===Infinity) sline(NL.g,[NL.x,ly],[NL.x+NL.w,ly],"var(--alt)",9,null,.55);
+    else if(R>0){ sline(NL.g,[NL.X(a-R),ly],[NL.X(a+R),ly],"var(--alt)",9,null,.55);
+      const lc=s.p>0, rc=s.p>1;
+      sdot(NL.top,[NL.X(a-R),ly],"var(--alt)",6.5,!lc); sdot(NL.top,[NL.X(a+R),ly],"var(--alt)",6.5,!rc);
+      stext(NL.top,[NL.X(a-R),ly-(mob?24:17)],minus(fx(a-R)),"sm","#047857"); stext(NL.top,[NL.X(a+R),ly-(mob?24:17)],minus(fx(a+R)),"sm","#047857"); }
+    sline(NL.g,[NL.X(a),ly-9],[NL.X(a),ly+9],"var(--ink)",2.4);
+    stext(NL.top,[NL.X(a),ly+(mob?24:18)],"a","sm","var(--ink)");
+    const st=M5.status(), xc=st.k==="in"||st.k==="endc"?"var(--alt)":"var(--same)";
+    sgrab(g,[NL.X(s.x),ly],"x",xc);
+    stext(NL.top,[clamp(NL.X(s.x),NL.x+40,NL.x+NL.w-40),NL.y+(mob?12:9)],"x = "+fmt(s.x,3),"sm",xc==="var(--alt)"?"#047857":"#B91C1C");
+    // partial sums S_N(x)
+    const N=s.N, n0=I.n0, u=s.x-a, terms=[], Ss=[]; let acc=0;
+    for(let n=n0;n<=N;n++){ const t=I.c(n)*Math.pow(u,n); acc+=(n===0?I.c(0):t); terms.push(n===0?I.c(0):t); Ss.push([n,acc]); }
+    const lim=psSum(s,s.x);
+    let vals=Ss.map(q=>q[1]); let lo=Math.min(...vals,isFinite(lim)?lim:0,0), hi=Math.max(...vals,isFinite(lim)?lim:0,0);
+    const cap=25; let capped=false; if(hi>cap){hi=cap;capped=true;} if(lo<-cap){lo=-cap;capped=true;}
+    const r2=autoRange([lo,hi],[]);
+    const top=NL.y+NL.h+(mob?44:34);
+    const P=mkPlot(g,52,top,628,VH-top-(mob?32:24),n0-0.6,N+0.6,r2[0],r2[1],{xl:"N",title:"partial sums S_N(x) = Σ from n = "+n0+" to N",ny:mob?3:5});
+    M5.P=P;
+    if(isFinite(lim)){ P.hl(lim,"var(--alt)","7 5",1.8); P.edge(lim,"sum = "+fmt(lim,5),"#047857",lim<(r2[0]+r2[1])/2?true:false); }
+    P.poly(Ss,xc,1.5,null,.6); Ss.forEach(q=>P.dot(q[0],q[1],xc,N>40?2.6:3.6));
+    if(capped) stext(P.top,[P.x+P.w-8,P.y+(mob?40:30)],"values beyond ±"+cap+" run off the chart","sm","#B91C1C","end");
+  },
+  drag(id,p){ const s=M5.s; let x=Math.round(M5.NL.ix(p[0])*20)/20; x=clamp(x,-6,6);
+    const R=psInfo(s).R; if(isFinite(R)&&R>0){ [s.a-R,s.a+R].forEach(e=>{ if(Math.abs(x-e)<0.12)x=e; }); }
+    s.x=x; },
+  place(p){ if(!M5.NL)return false; if(p[1]<M5.NL.y-10||p[1]>M5.NL.y+M5.NL.h+20)return false; M5.drag("x",p); },
+  panel(){
+    const s=M5.s, I=psInfo(s), st=M5.status(), R=I.R, a=s.a, u=s.x-a;
+    let h=panel("Power series",`<p>A <span class="term">power series</span> centered at a is Σ cₙ(x − a)ⁿ — an "infinite polynomial". For each x it is an ordinary series that may converge or diverge.</p>
+      <div class="ser">${SIG("n="+I.n0)} ${I.ct.replace(/\(x − a\)/g,aTxt(a))}</div>
+      <p>It always converges at x = a. Beyond that, the set where it converges is an <b>interval</b> centered at a, with <span class="term">radius of convergence</span> R.</p>`);
+    let work;
+    if(s.fam==="exp") work=`|aₙ₊₁/aₙ| = |x − a|/(n + 1) → 0 < 1 for every x
+⇒ converges for all x,  R = ∞`;
+    else if(s.fam==="fact") work=`|aₙ₊₁/aₙ| = (n + 1)|x − a| → ∞ unless x = a
+⇒ converges only at x = a,  R = 0`;
+    else work=`|aₙ₊₁/aₙ| = (|x − a|/${fx(s.b)})${s.p?"·(n/(n + 1))"+(s.p>1?sp(s.p):""):""}
+L = |x − a|/${fx(s.b)} < 1  ⇔  |x − a| < ${fx(s.b)}
+R = ${fx(s.b)}`;
+    h+=panel("Ratio test for the radius",`<div class="eq">${work}</div>
+      ${kv([["x",fmt(s.x,3)],["|x − a|",fmt(Math.abs(u),3)],["L = |x − a|/R",R===Infinity?"0":R===0?(Math.abs(u)<1e-9?"0":"∞"):fmt(Math.abs(u)/R,4)],["x is",st.t],["series at x",st.k==="in"||st.k==="endc"?TAG.c:st.k==="out"?TAG.d:TAG.d],["S"+sbN(s.N)+"("+fmt(s.x,2)+")",(()=>{let acc=0;for(let n=I.n0;n<=s.N;n++)acc+=(n===0?I.c(0):I.c(n)*Math.pow(u,n));return fmt(acc,6);})()]])}`);
+    if(s.fam==="gen"){ const pp=s.p, L=minus(fx(a-R)), Rt=minus(fx(a+R));
+      const lt=pp===0?"Σ (−1)ⁿ: terms ↛ 0 ⇒ diverges":pp===1?"Σ (−1)ⁿ/n: alternating series test ⇒ converges":"Σ (−1)ⁿ/n²: converges absolutely (p = 2)";
+      const rt=pp===0?"Σ 1: terms ↛ 0 ⇒ diverges":pp===1?"Σ 1/n: harmonic ⇒ diverges":"Σ 1/n²: p-series, p = 2 ⇒ converges";
+      const iv=(pp>0?"[":"(")+L+", "+Rt+(pp>1?"]":")");
+      h+=panel("Endpoint checks",`<p>The ratio test gives L = 1 at the endpoints, so it says nothing there. Plug each endpoint in and test the resulting number series separately.</p>
+        <div class="eq">x = ${L}:  ${lt}
+x = ${Rt}:  ${rt}
+Interval of convergence:  ${iv}</div>${st.k==="endc"||st.k==="endd"?`<p>You are sitting on the <b>${st.right?"right":"left"}</b> endpoint now — look at how the partial sums behave.</p>`:""}`);
+    } else h+=panel("Interval of convergence",`<div class="eq">${s.fam==="exp"?"(−∞, ∞)  — converges everywhere":"{"+minus(fx(a))+"}  — only the center"}</div>`);
+    h+=tryPanel(`With p = 1, drag x just inside the right endpoint, then just outside. Inside, the partial sums level off (slowly); outside, they run away. Now land exactly on each endpoint with the buttons. Which endpoint is included, and which test proves it?`);
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ TAB 6 · Taylor & Maclaurin ══════════════════════ */
+// complex helpers for arctan coefficients
+const cpow=(re,im,k)=>{ const r=Math.pow(Math.hypot(re,im),k), t=Math.atan2(im,re)*k; return [r*Math.cos(t),r*Math.sin(t)]; };
+const TF={
+  exp:{nm:"eˣ",f:Math.exp,x:[-5,5],y:[-2,10],aR:[-3,3],
+    d:(n,a)=>Math.exp(a), dTxt:a=>"f⁽ⁿ⁾(x) = eˣ, so f⁽ⁿ⁾(a) = e"+(a===0?"⁰ = 1":"^"+fx(a)),
+    R:()=>Infinity, M:(n,a,x)=>Math.exp(Math.max(a,x)), Mtxt:"max |f⁽ⁿ⁺¹⁾| = e^max(a, x)",
+    mac:"1 + x + x²/2! + x³/3! + … = Σ xⁿ/n!"},
+  sin:{nm:"sin x",f:Math.sin,x:[-7,7],y:[-3,3],aR:[-4,4],
+    d:(n,a)=>Math.sin(a+n*Math.PI/2), dTxt:()=>"derivatives cycle: sin, cos, −sin, −cos",
+    R:()=>Infinity, M:()=>1, Mtxt:"|f⁽ⁿ⁺¹⁾(t)| ≤ 1 for every t",
+    mac:"x − x³/3! + x⁵/5! − … = Σ (−1)ⁿx²ⁿ⁺¹/(2n + 1)!"},
+  cos:{nm:"cos x",f:Math.cos,x:[-7,7],y:[-3,3],aR:[-4,4],
+    d:(n,a)=>Math.cos(a+n*Math.PI/2), dTxt:()=>"derivatives cycle: cos, −sin, −cos, sin",
+    R:()=>Infinity, M:()=>1, Mtxt:"|f⁽ⁿ⁺¹⁾(t)| ≤ 1 for every t",
+    mac:"1 − x²/2! + x⁴/4! − … = Σ (−1)ⁿx²ⁿ/(2n)!"},
+  ln:{nm:"ln(1 + x)",f:x=>x>-1?Math.log(1+x):NaN,x:[-1.5,4],y:[-3,2.5],aR:[-0.5,2],
+    d:(n,a)=>n===0?Math.log(1+a):(n%2?1:-1)*fact(n-1)/Math.pow(1+a,n), dTxt:()=>"f⁽ⁿ⁾(x) = (−1)ⁿ⁺¹(n − 1)!/(1 + x)ⁿ",
+    R:a=>1+a, M:(n,a,x)=>fact(n)/Math.pow(1+Math.min(a,x),n+1), Mtxt:"|f⁽ⁿ⁺¹⁾(t)| = n!/(1 + t)ⁿ⁺¹, largest at the smaller t",
+    mac:"x − x²/2 + x³/3 − … = Σ (−1)ⁿ⁺¹xⁿ/n,  −1 < x ≤ 1"},
+  geo:{nm:"1/(1 − x)",f:x=>1/(1-x),x:[-3,3],y:[-4,8],aR:[-2,0.5],
+    d:(n,a)=>fact(n)/Math.pow(1-a,n+1), dTxt:()=>"f⁽ⁿ⁾(x) = n!/(1 − x)ⁿ⁺¹",
+    R:a=>Math.abs(1-a), M:(n,a,x)=>fact(n+1)/Math.pow(1-Math.max(a,x),n+2), Mtxt:"|f⁽ⁿ⁺¹⁾(t)| = (n + 1)!/(1 − t)ⁿ⁺², largest at the bigger t",
+    mac:"1 + x + x² + x³ + … = Σ xⁿ,  |x| < 1"},
+  atan:{nm:"arctan x",f:Math.atan,x:[-4,4],y:[-2.5,2.5],aR:[-2,2],
+    d:(n,a)=>{ if(n===0)return Math.atan(a); const k=n-1, z=cpow(a,-1,-(k+1)); return fact(k)*(k%2?-1:1)*z[1]; },
+    dTxt:()=>"f′(x) = 1/(1 + x²); higher derivatives get messy fast",
+    R:a=>Math.sqrt(1+a*a), M:(n,a,x)=>{ const t=(a<=0&&x>=0)||(x<=0&&a>=0)?0:Math.min(Math.abs(a),Math.abs(x)); return fact(n)/Math.pow(1+t*t,(n+1)/2); },
+    Mtxt:"|f⁽ⁿ⁺¹⁾(t)| ≤ n!/(1 + t²)⁽ⁿ⁺¹⁾ᐟ², largest at the t nearest 0",
+    mac:"x − x³/3 + x⁵/5 − … = Σ (−1)ⁿx²ⁿ⁺¹/(2n + 1),  |x| ≤ 1"}
+};
+const BUILD={
+  sub1:{nm:"e^(−x²)",from:"eˣ",how:"Substitute −x² for x",f:x=>Math.exp(-x*x),x:[-3.5,3.5],y:[-1.5,2],
+    c:n=>n%2?0:((n/2)%2?-1:1)/fact(n/2),
+    steps:"eˣ = 1 + x + x²/2! + x³/3! + …\nreplace x by −x²:\ne^(−x²) = 1 − x² + x⁴/2! − x⁶/3! + …\n       = Σ (−1)ⁿx²ⁿ/n!     R = ∞"},
+  sub2:{nm:"1/(1 + x²)",from:"1/(1 − x)",how:"Substitute −x² for x",f:x=>1/(1+x*x),x:[-2.5,2.5],y:[-1.5,2],
+    c:n=>n%2?0:((n/2)%2?-1:1),
+    steps:"1/(1 − u) = 1 + u + u² + …,  |u| < 1\nput u = −x²:\n1/(1 + x²) = 1 − x² + x⁴ − x⁶ + …\n           = Σ (−1)ⁿx²ⁿ     |x| < 1"},
+  sub3:{nm:"x·sin x",from:"sin x",how:"Multiply by x",f:x=>x*Math.sin(x),x:[-7,7],y:[-6,8],
+    c:n=>n%2||n===0?0:((n/2-1)%2?-1:1)/fact(n-1),
+    steps:"sin x = x − x³/3! + x⁵/5! − …\nmultiply every term by x:\nx·sin x = x² − x⁴/3! + x⁶/5! − …     R = ∞"},
+  der:{nm:"1/(1 − x)²",from:"1/(1 − x)",how:"Differentiate term by term",f:x=>1/((1-x)*(1-x)),x:[-2.5,2.5],y:[-2,10],
+    c:n=>n+1,
+    steps:"1/(1 − x) = 1 + x + x² + x³ + …\nd/dx both sides:\n1/(1 − x)² = 1 + 2x + 3x² + 4x³ + …\n           = Σ (n + 1)xⁿ     |x| < 1  (R stays 1)"},
+  int1:{nm:"ln(1 + x)",from:"1/(1 + x)",how:"Integrate term by term",f:x=>x>-1?Math.log(1+x):NaN,x:[-1.5,2.5],y:[-3,2],
+    c:n=>n===0?0:(n%2?1:-1)/n,
+    steps:"1/(1 + t) = 1 − t + t² − t³ + …\n∫₀ˣ both sides:\nln(1 + x) = x − x²/2 + x³/3 − …\n          = Σ (−1)ⁿ⁺¹xⁿ/n     −1 < x ≤ 1"},
+  int2:{nm:"arctan x",from:"1/(1 + x²)",how:"Integrate term by term",f:Math.atan,x:[-2.5,2.5],y:[-2.5,2.5],
+    c:n=>n%2?(((n-1)/2)%2?-1:1)/n:0,
+    steps:"1/(1 + t²) = 1 − t² + t⁴ − …\n∫₀ˣ both sides:\narctan x = x − x³/3 + x⁵/5 − …\n         = Σ (−1)ⁿx²ⁿ⁺¹/(2n + 1)     |x| ≤ 1\nAt x = 1:  π/4 = 1 − 1/3 + 1/5 − …"}
+};
+function polyTxt(cs,a,maxT){ // cs: coefficients by power
+  const parts=[]; const base=a===0?"x":(a>0?"(x − "+fx(a)+")":"(x + "+fx(-a)+")");
+  for(let n=0;n<cs.length&&parts.length<(maxT||6);n++){ const c=cs[n]; if(Math.abs(c)<1e-13)continue;
+    const f=frac(c,5040); let cstr=f||fmt(c,4); const neg=c<0; if(neg)cstr=cstr.replace(/^−/,"");
+    const pw=n===0?"":n===1?base:base+sup(n);
+    let t= n===0? cstr : (cstr==="1"? pw : (cstr.indexOf("/")>=0&&f? (cstr.split("/")[0]==="1"? pw+"/"+cstr.split("/")[1] : "("+cstr+")"+pw) : cstr+pw));
+    parts.push({neg,t}); }
+  if(!parts.length)return "0";
+  return parts.map((p,i)=>i===0?(p.neg?"−":"")+p.t:(p.neg?" − ":" + ")+p.t).join("")+(cs.length>0?" + …":"");
+}
+const M6={
+  tab:"Taylor series", lesson:"AP 10.11, 10.14–10.15 · Unit 10", accent:"var(--coral)",
+  s:{mode:"taylor",fn:"sin",n:3,a:0,x:1.5,band:true,bk:"sub1",bn:6},
+  title(){ return M6.s.mode==="taylor"?"Taylor polynomial of "+TF[M6.s.fn].nm+" about a":"New series from old: "+BUILD[M6.s.bk].nm; },
+  coefs(){ const s=M6.s, F=TF[s.fn]; const c=[]; for(let k=0;k<=s.n;k++)c.push(F.d(k,s.a)/fact(k)); return c; },
+  P(x){ const c=M6.coefs(), u=x-M6.s.a; let v=0; for(let k=c.length-1;k>=0;k--)v=v*u+c[k]; return v; },
+  bound(x){ const s=M6.s, F=TF[s.fn]; return F.M(s.n,s.a,x)*Math.pow(Math.abs(x-s.a),s.n+1)/fact(s.n+1); },
+  bar(){
+    const s=M6.s;
+    segBtns([["taylor","Taylor polynomial"],["build","Build new series"]],s.mode,v=>{s.mode=v;render();},"Mode");
+    if(s.mode==="taylor"){
+      sel(Object.keys(TF).map(k=>[k,"f(x) = "+TF[k].nm]),s.fn,v=>{s.fn=v; const F=TF[v]; s.a=clamp(s.a,F.aR[0],F.aR[1]); if(v==="ln"||v==="geo")s.a=0; s.x=clamp(s.x,F.x[0],F.x[1]); if(v==="geo"&&s.x>=1)s.x=0.5; if(v==="ln"&&s.x<=-1)s.x=0.5; render();},"Function");
+      slider("degree n",0,20,s.n,v=>{s.n=v;update();});
+      btn("a = 0 (Maclaurin)",()=>{s.a=0;update();});
+      chk("Lagrange band",s.band,v=>{s.band=v;update();});
+    } else {
+      sel(Object.keys(BUILD).map(k=>[k,BUILD[k].nm+" ← "+BUILD[k].from]),s.bk,v=>{s.bk=v;render();},"Build");
+      slider("degree n",0,20,s.bn,v=>{s.bn=v;update();});
+    }
+  },
+  draw(){
+    const s=M6.s, g=E("g",{}); cv.appendChild(g);
+    if(s.mode==="build"){ const B=BUILD[s.bk];
+      const P=mkPlot(g,40,14,646,420,B.x[0],B.x[1],B.y[0],B.y[1],{xl:"x",title:"y = "+B.nm+" (purple) and its degree-"+s.bn+" polynomial (orange)"});
+      const pv=x=>{ let v=0; for(let k=s.bn;k>=0;k--)v=v*x+B.c(k); return v; };
+      P.fn(B.f,B.x[0],B.x[1],"var(--vert)",3.2); P.fn(pv,B.x[0],B.x[1],"var(--lin)",2.6,"9 5",700);
+      return; }
+    const F=TF[s.fn], mob=FS>1;
+    const P=mkPlot(g,40,14,646,420,F.x[0],F.x[1],F.y[0],F.y[1],{xl:"x",title:"y = "+F.nm+"  vs  P"+sbN(s.n)+"(x)"});
+    M6.Pl=P;
+    const Rr=F.R(s.a);
+    if(isFinite(Rr)){ P.rect(s.a-Rr,s.a+Rr,F.y[0],F.y[1],"var(--alt)",null,.07); }
+    if(s.band){ // Lagrange band P ± bound
+      let up="",dn=""; const N=300, xs=[];
+      for(let i=0;i<=N;i++){ const x=F.x[0]+(F.x[1]-F.x[0])*i/N; if((s.fn==="ln"&&x<=-1+1e-6)||(s.fn==="geo"&&x>=1-1e-6))continue; xs.push(x); }
+      const pts=xs.map(x=>{const p=M6.P(x), b=M6.bound(x); return [x,p+b,p-b];}).filter(q=>isFinite(q[1])&&isFinite(q[2]));
+      const cy=v=>clamp(P.Y(v),P.y-50,P.y+P.h+50);
+      if(pts.length>1){ up=pts.map((q,i)=>(i?"L":"M")+P.X(q[0]).toFixed(1)+","+cy(q[1]).toFixed(1)).join(""); dn=pts.slice().reverse().map(q=>"L"+P.X(q[0]).toFixed(1)+","+cy(q[2]).toFixed(1)).join("");
+        P.g.appendChild(E("path",{d:up+dn+"Z",style:"fill:var(--yellow);stroke:#D9A400","fill-opacity":.28,"stroke-width":1})); }
+    }
+    P.fn(F.f,F.x[0],F.x[1],"var(--vert)",3.4,null,700);
+    P.fn(x=>M6.P(x),F.x[0],F.x[1],"var(--lin)",2.8,null,700);
+    // x probe
+    const fxv=F.f(s.x), pxv=M6.P(s.x);
+    P.vl(s.x,"var(--corr)","5 4",1.6);
+    P.dot(s.x,fxv,"var(--vert)",5.5); P.dot(s.x,pxv,"var(--lin)",5.5);
+    if(isFinite(fxv)&&isFinite(pxv)) sline(P.g,[P.X(s.x),clamp(P.Y(fxv),P.y,P.y+P.h)],[P.X(s.x),clamp(P.Y(pxv),P.y,P.y+P.h)],"var(--same)",3.2);
+    // center
+    P.dot(s.a,F.f(s.a),"var(--ink)",6);
+    const ay=P.Y(0)>P.y+P.h-10?P.y+P.h-10:P.Y(0);
+    sgrab(g,[P.X(s.a),ay],"a","var(--ink)"); stext(P.top,[P.X(s.a),ay+(mob?30:22)],"a = "+fmt(s.a,3),"sm","var(--ink)");
+    sgrab(g,[P.X(s.x),P.y+P.h-(mob?16:10)],"x","var(--corr)"); stext(P.top,[clamp(P.X(s.x),P.x+44,P.x+P.w-44),P.y+P.h-(mob?44:30)],"x = "+fmt(s.x,3),"sm","#0369A1");
+    stext(P.top,[P.x+P.w-8,P.y+(mob?42:32)],"purple f · orange P"+sbN(s.n)+(s.band?" · yellow: Lagrange band":""),"sm","#22314F","end");
+  },
+  drag(id,p){ const s=M6.s; if(s.mode!=="taylor")return false; const F=TF[s.fn], P=M6.Pl; let v=Math.round(P.ix(p[0])*20)/20;
+    if(id==="a"){ s.a=clamp(v,F.aR[0],F.aR[1]); }
+    if(id==="x"){ v=clamp(v,F.x[0],F.x[1]); if(s.fn==="ln")v=Math.max(v,-0.95); if(s.fn==="geo")v=Math.min(v,0.95); s.x=v; } },
+  panel(){
+    const s=M6.s; let h="";
+    if(s.mode==="build"){ const B=BUILD[s.bk], cs=[]; for(let k=0;k<=s.bn;k++)cs.push(B.c(k));
+      h+=panel("Start from a series you know",`<p>You rarely need to compute derivatives. Start from a known Maclaurin series and <b>${B.how.toLowerCase()}</b>.</p>
+        <div class="eq">${B.steps}</div>
+        <p>Inside the interval of convergence, a power series can be differentiated or integrated term by term, and the radius stays the same (endpoints can change).</p>`);
+      h+=panel("Degree-"+s.bn+" polynomial",`<div class="eq">${polyTxt(cs,0,7)}</div>`);
+      h+=tryPanel(s.bk==="int2"?`Raise the degree. The polynomial hugs arctan x on [−1, 1] but peels away beyond |x| = 1 — even though arctan x itself is perfectly smooth. Why does the series stop at |x| = 1? (Look at 1/(1 + x²).)`:`Raise the degree slowly and watch where the orange curve first separates from the purple one. Does that point move outward as n grows?`);
+      side.innerHTML=h; return; }
+    const F=TF[s.fn], c=M6.coefs(), Rr=F.R(s.a);
+    const rows=c.slice(0,Math.min(c.length,7)).map((ck,k)=>`<tr><td>${k}</td><td>${fmt(F.d(k,s.a),5)}</td><td>${k}! = ${fact(k)}</td><td>${fx(ck,5040).length<10?fx(ck,5040):fmt(ck,4)}</td></tr>`).join("");
+    h+=panel("Taylor polynomial",`<p>Match the function's value and first n derivatives at the center a. The coefficient of (x − a)ᵏ must be the k-th derivative divided by k!.</p>
+      <div class="eq">Pₙ(x) = ${SIG("k=0","n")} f${sp("(k)")}(a)/k! · (x − a)${sp("k")}<small>${F.dTxt(s.a)}. With a = 0 it is called a Maclaurin polynomial.</small></div>
+      <table class="ct"><tr><th>k</th><th>f⁽ᵏ⁾(a)</th><th>k!</th><th>cₖ</th></tr>${rows}</table>
+      <div class="eq">P${sbN(s.n)}(x) = ${polyTxt(c,s.a,5)}</div>
+      <p>${s.a===0?"Maclaurin series: "+F.mac:"Radius of convergence about a = "+fmt(s.a,3)+": R = "+(isFinite(Rr)?fmt(Rr,4):"∞")}${isFinite(Rr)?" (green shading shows |x − a| < R)":""}.</p>`);
+    const fxv=F.f(s.x), pxv=M6.P(s.x), err=Math.abs(fxv-pxv), bd=M6.bound(s.x);
+    h+=panel("Lagrange error bound",`<p>The error of Pₙ at x is controlled by the next derivative. If |f⁽ⁿ⁺¹⁾(t)| ≤ M for all t between a and x:</p>
+      <div class="eq">|f(x) − Pₙ(x)| ≤ M·|x − a|${sp("n+1")}/(n + 1)!<small>${F.Mtxt}.</small></div>
+      ${kv([["f("+fmt(s.x,3)+")",fmt(fxv,6)],["P"+sbN(s.n)+"("+fmt(s.x,3)+")",fmt(pxv,6)],["actual error",fmt(err,3)],["M",fmt(F.M(s.n,s.a,s.x),4)],["Lagrange bound",fmt(bd,3)+(err<=bd*(1+1e-9)+1e-15?" ✓":"")]])}
+      <p>The yellow band is Pₙ(x) ± bound. The red segment at x is the true error; it always fits inside the band.</p>`);
+    h+=tryPanel(`For sin x, drag x to 2 and raise n until the Lagrange bound is below 0.001. Then move the center a toward x (drag the black handle): fewer terms are needed. Why?`);
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ TAB 7 · challenge ══════════════════════ */
+function parseExpr(str){
+  const s=String(str).replace(/−/g,"-").replace(/×|·/g,"*").replace(/÷/g,"/").replace(/\s+/g,"").toLowerCase().replace(/sqrt/g,"√").replace(/π|pi/g,"p");
+  if(!s)return NaN;
+  let i=0;
+  const peek=()=>s[i];
+  function expr(){ let v=term(); while(peek()==="+"||peek()==="-"){ const o=s[i++]; const r=term(); v=o==="+"?v+r:v-r; } return v; }
+  function term(){ let v=unary(); for(;;){ const c=peek();
+      if(c==="*"||c==="/"){ i++; const r=unary(); v=c==="*"?v*r:v/r; }
+      else if(c==="√"||c==="("||c==="p"||c==="e"){ v*=unary(); }
+      else break; } return v; }
+  function unary(){ if(peek()==="-"){i++;return -unary();} if(peek()==="+"){i++;return unary();} return power(); }
+  function power(){ const b=atom(); if(peek()==="^"){i++;return Math.pow(b,unary());} return b; }
+  function atom(){ const c=peek();
+    if(c==="("){ i++; const v=expr(); if(peek()!==")")throw 0; i++; return v; }
+    if(c==="√"){ i++; return Math.sqrt(power()); }
+    if(c==="p"){ i++; return Math.PI; }
+    if(c==="e"){ i++; return Math.E; }
+    const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)); if(!m)throw 0; i+=m[0].length; return parseFloat(m[0]); }
+  try{ const v=expr(); if(i!==s.length)return NaN; return v; }catch(_){ return NaN; }
+}
+function parseInterval(str){
+  const t=String(str).replace(/−/g,"-").replace(/\s+/g,"").replace(/infinity|inf/gi,"∞");
+  const m=/^([\[\(])([^,]+),([^,]+)([\]\)])$/.exec(t); if(!m)return null;
+  const lv=m[2].replace(/^\+/,""), rv=m[3].replace(/^\+/,"");
+  const L=lv==="-∞"?-Infinity:parseExpr(lv), R=rv==="∞"?Infinity:parseExpr(rv);
+  if(isNaN(L)||isNaN(R))return null;
+  return {L,R,lc:m[1]==="[",rc:m[4]==="]"};
+}
+const ivTxt=(L,R,lc,rc)=>(lc?"[":"(")+(L===-Infinity?"−∞":minus(fx(L)))+", "+(R===Infinity?"∞":minus(fx(R)))+(rc?"]":")");
+const KINDS=[["mix","Mix"],["geo","Geometric sum"],["cd","Converge / diverge"],["p","p-series"],["ratio","Ratio-test limit"],["roc","Radius & interval"],["tay","Taylor coefficient / value"],["ast","Alternating error bound"]];
+function genChal(kind){
+  if(kind==="mix")kind=pick(KINDS.slice(1))[0];
+  const P={kind};
+  if(kind==="geo"){
+    let p=rnd(1,5),q=rnd(p+1,9); const g=gcd(p,q); p/=g;q/=g; const neg=Math.random()<0.35, r=(neg?-1:1)*p/q;
+    const a=rnd(1,6)*(Math.random()<0.2?-1:1), start=pick([0,1,2]);
+    // Σ_{n=start}^∞ a·r^n  → first term a·r^start
+    const first=a*Math.pow(r,start), S=first/(1-r);
+    const rt=neg?`(−${p}/${q})`:`(${p}/${q})`;
+    P.q=`Find the exact sum: ${SIG("n="+start)} ${a===1?"":a===-1?"−":minus(a)+"·"}${rt}${sp("n")}`;
+    P.fields=[{lab:"Sum S",ph:"e.g. 27/4"}]; P.ans=[S];
+    P.sol=`Geometric with r = ${minus(fx(r))} (|r| < 1, so it converges).
+First term (n = ${start}): a = ${minus(a)}·${rt}${start?sp(start):"⁰"} = ${minus(fx(first))}
+S = first term/(1 − r) = ${minus(fx(first))}/(1 − ${neg?"("+minus(fx(r))+")":fx(r)}) = ${minus(fx(S))}`;
+    P.hint=`Use S = (first term)/(1 − r). The first term is the n = ${start} term, not always a.`;
+  }
+  if(kind==="cd"){
+    const pr=genSeries(), opts=[], used={};
+    const right=(pr.conv?"Converges":"Diverges")+" by the "+TNAME[pr.best];
+    opts.push({t:right,ok:true}); used[right]=1;
+    const pool=shuffle(TESTS.map(t=>t[0]));
+    const wrong=[];
+    // flipped conclusion with same test
+    wrong.push((pr.conv?"Diverges":"Converges")+" by the "+TNAME[pr.best]);
+    pool.forEach(k=>{ if(pr.ok.indexOf(k)>=0)return; wrong.push(pick(["Converges","Diverges"])+" by the "+TNAME[k]); });
+    wrong.forEach(w=>{ if(!used[w]&&opts.length<4){opts.push({t:w,ok:false});used[w]=1;} });
+    P.q=`Determine whether the series converges or diverges, and choose the reason.`;
+    P.ser=`${SIG("n="+pr.start)} ${pr.tex}`;
+    P.mc=shuffle(opts); P.sol=pr.why; P.hint="Start with the nth-term test, then look for a familiar form.";
+  }
+  if(kind==="p"){
+    const k=rnd(3,6), q=rnd(2,5), r=rnd(1,q*2+1);
+    const T=pick([
+      {tex:`1/(n√n)`,p:1.5,w:"n·n^(1/2) = n^(3/2)"},
+      {tex:`1/√n`,p:0.5,w:"√n = n^(1/2)"},
+      {tex:`1/∛(n${sp(2)})`,p:2/3,w:"∛(n²) = n^(2/3)"},
+      {tex:`√n/n${sp(2)}`,p:1.5,w:"n^(1/2)/n² = 1/n^(2 − 1/2) = 1/n^(3/2)"},
+      {tex:`n/(n${sp(2)}·√n)`,p:1.5,w:"n/n^(5/2) = 1/n^(3/2)"},
+      {tex:`1/(n·∛n)`,p:4/3,w:"n·n^(1/3) = n^(4/3)"},
+      {tex:`∛n/n`,p:2/3,w:"n^(1/3)/n = 1/n^(2/3)"},
+      {tex:`n${sp(2)}/n${sp(k)}`,p:k-2,w:`n²/n${sup(k)} = 1/n${sup(k-2)}`},
+      {tex:`1/n${sp(r+"/"+q)}`,p:r/q,w:`already 1/nᵖ with p = ${r}/${q}`},
+      {tex:`1/n${sp("π")}`,p:Math.PI,w:"p = π ≈ 3.14"},
+      {tex:`1/n${sp("1/π")}`,p:1/Math.PI,w:"p = 1/π ≈ 0.318"}]);
+    P.q=`Write the series as a p-series Σ 1/nᵖ and find p. Then decide: does it converge?`;
+    P.ser=`${SIG()} ${T.tex}`;
+    P.fields=[{lab:"p",ph:"e.g. 3/2 or pi"},{lab:"Converges? (yes/no)",ph:"yes or no",yn:true}]; P.ans=[T.p,T.p>1?1:0];
+    P.sol=`${T.w}, so p = ${T.p===Math.PI?"π":T.p===1/Math.PI?"1/π":fx(T.p)}.
+p-series test: ${T.p>1?"p > 1 ⇒ converges":"p ≤ 1 ⇒ diverges"}.`;
+    P.hint="Rewrite roots as fractional powers (√n = n^(1/2), ∛n = n^(1/3)), add exponents that multiply, and subtract the numerator's exponent. Then compare p with 1.";
+  }
+  if(kind==="ratio"){
+    const k=rnd(2,6), m=rnd(1,4), b=rnd(2,5);
+    const T=pick([
+      {tex:`n${sp(m)}/${k}${sp("n")}`,L:1/k,w:`((n + 1)/n)${sp(m)}·(1/${k}) → 1/${k}`},
+      {tex:`${k}${sp("n")}/n${sp(m)}`,L:k,w:`${k}·(n/(n + 1))${sp(m)} → ${k}`},
+      {tex:`(n!)${sp(2)}/(2n)!`,L:0.25,w:`(n + 1)²/((2n + 2)(2n + 1)) → 1/4`},
+      {tex:`(2n)!/(n!)${sp(2)}·(1/${b+3})${sp("n")}`,L:4/(b+3),w:`(2n + 2)(2n + 1)/((n + 1)²·${b+3}) → 4/${b+3}`},
+      {tex:`n·(${m}/${m+k})${sp("n")}`,L:m/(m+k),w:`((n + 1)/n)·(${m}/${m+k}) → ${frac(m/(m+k))}`},
+      {tex:`${k}${sp("n")}/(n·${b}${sp("n")})`,L:k/b,w:`(${k}/${b})·(n/(n + 1)) → ${frac(k/b)}`}]);
+    P.q=`For ${SIG()} ${T.tex}, find L = lim |aₙ₊₁/aₙ|.`;
+    P.fields=[{lab:"L",ph:"e.g. 1/3"}]; P.ans=[T.L];
+    P.sol=`|aₙ₊₁/aₙ| = ${T.w}
+L = ${fx(T.L)} ⇒ ${Math.abs(T.L-1)<1e-12?"inconclusive":T.L<1?"converges (absolutely)":"diverges"} by the ratio test.`;
+    P.hint="Write aₙ₊₁/aₙ, flip the bottom fraction and multiply. Cancel common powers and factorials: (n + 1)!/n! = n + 1, (2n + 2)!/(2n)! = (2n + 2)(2n + 1).";
+  }
+  if(kind==="roc"){
+    const a=rnd(-3,3), b=pick([1,2,3,4,5]), p=pick([0,1,2]), c=pick([1,1,2]);
+    const R=b/c; // Σ c^n (x−a)^n/(b^n n^p)
+    const L=a-R, Rr=a+R;
+    const coef=(c===1?"":c+sp("n")+"·")+aTxt(a)+sp("n");
+    const den=(b===1?"":b+sp("n"))+(p?(b===1?"":"·")+"n"+(p>1?sp(p):""):"");
+    P.q=`Find the radius and the interval of convergence of ${SIG(p?"n=1":"n=0")} ${den?coef+"/("+den+")":coef}.`;
+    P.fields=[{lab:"Radius R",ph:"e.g. 2"},{lab:"Interval",ph:"e.g. [-1, 3)",iv:true}];
+    P.ans=[R,{L,R:Rr,lc:p>0,rc:p>1}];
+    P.sol=`Ratio test: |aₙ₊₁/aₙ| → ${c===1?"":c+"·"}|x − ${a<0?"("+minus(a)+")":a}|/${b} < 1 ⇔ |x − ${a<0?"("+minus(a)+")":a}| < ${fx(R)}, so R = ${fx(R)}.
+Left end x = ${minus(fx(L))}: Σ ${p===0?"(−1)ⁿ diverges (terms ↛ 0)":p===1?"(−1)ⁿ/n converges (alternating series test)":"(−1)ⁿ/n² converges absolutely"}
+Right end x = ${minus(fx(Rr))}: Σ ${p===0?"1 diverges":p===1?"1/n diverges (harmonic)":"1/n² converges (p = 2)"}
+Interval: ${ivTxt(L,Rr,p>0,p>1)}`;
+    P.hint="Use the ratio test to get |x − a| < R, then plug each endpoint back in: you get an ordinary series to test. Type the interval with brackets, e.g. [-1, 3) or (2, 6).";
+  }
+  if(kind==="tay"){
+    const c=pick([1,2,3,-1,-2]), F=pick(["exp","sin","cos","ln","geo"]);
+    const ct=c===1?"x":c===-1?"−x":minus(c)+"x";
+    const name={exp:`e${sp(ct)}`,sin:`sin(${ct})`,cos:`cos(${ct})`,ln:`ln(1 + ${ct})`,geo:`1/(1 − ${ct})`}[F];
+    const coefF=k=>{ // coefficient of x^k
+      if(F==="exp")return Math.pow(c,k)/fact(k);
+      if(F==="sin")return k%2? (((k-1)/2)%2?-1:1)*Math.pow(c,k)/fact(k):0;
+      if(F==="cos")return k%2?0:((k/2)%2?-1:1)*Math.pow(c,k)/fact(k);
+      if(F==="ln")return k===0?0:(k%2?1:-1)*Math.pow(c,k)/k;
+      return Math.pow(c,k); };
+    if(Math.random()<0.55){
+      let k=F==="sin"?pick([3,5]):F==="cos"?pick([2,4]):rnd(2,4);
+      P.q=`Find the coefficient of x${sp(k)} in the Maclaurin series for ${name}.`;
+      P.fields=[{lab:"Coefficient of x"+sup(k),ph:"e.g. −4/3"}]; P.ans=[coefF(k)];
+      P.sol=`Start from the known series and substitute u = ${ct}:
+${({exp:"eᵘ = Σ uⁿ/n!",sin:"sin u = u − u³/3! + u⁵/5! − …",cos:"cos u = 1 − u²/2! + u⁴/4! − …",ln:"ln(1 + u) = u − u²/2 + u³/3 − …",geo:"1/(1 − u) = 1 + u + u² + …"})[F]}
+x${sup(k)} coefficient = ${minus(fx(coefF(k),100000))}
+(Same as f⁽${sup(k)}⁾(0)/${k}!.)`;
+      P.hint=`Don't differentiate ${k} times — substitute ${ct} into the series for the basic function. Remember (${minus(c)})${sup(k)} carries the sign.`;
+    } else {
+      const n=rnd(2,3), x0=pick([0.5,0.2,0.1,-0.5,1]), cs=[]; for(let k=0;k<=n;k++)cs.push(coefF(k));
+      let v=0; for(let k=n;k>=0;k--)v=v*x0+cs[k];
+      P.q=`Let P${sbN(n)}(x) be the degree-${n} Maclaurin polynomial for ${name}. Find P${sbN(n)}(${minus(fx(x0))}).`;
+      P.fields=[{lab:"P"+sbN(n)+"("+minus(fx(x0))+")",ph:"fraction or decimal"}]; P.ans=[v]; P.tol=Math.max(5e-4,Math.abs(v)*5e-4);
+      P.sol=`P${sbN(n)}(x) = ${polyTxt(cs,0,6).replace(/ \+ …$/,"")}
+P${sbN(n)}(${minus(fx(x0))}) = ${minus(fx(v,100000))}${frac(v,100000)&&frac(v,100000).indexOf("/")>=0?" ≈ "+fmt(v,6):""}`;
+      P.hint=`Write the terms of the series for ${name} up to x${sup(n)}, then substitute x = ${minus(fx(x0))}. Give 3+ decimals or an exact fraction.`;
+    }
+  }
+  if(kind==="ast"){
+    const T=pick([
+      {tex:`(−1)${sp("n+1")}/n`,b:n=>1/n,bt:"1/n"},
+      {tex:`(−1)${sp("n+1")}/n${sp(2)}`,b:n=>1/(n*n),bt:"1/n²"},
+      {tex:`(−1)${sp("n+1")}/n!`,b:n=>1/fact(n),bt:"1/n!"},
+      {tex:`(−1)${sp("n+1")}/(2n + 1)`,b:n=>1/(2*n+1),bt:"1/(2n + 1)"},
+      {tex:`(−1)${sp("n+1")}/${3}${sp("n")}`,b:n=>Math.pow(3,-n),bt:"1/3ⁿ"}]);
+    if(Math.random()<0.55){
+      const N=rnd(3,8);
+      P.q=`S${sbN(N)} is used to estimate S = ${SIG()} ${T.tex}. Use the alternating series error bound to give the best bound on |S − S${sbN(N)}|.`;
+      P.fields=[{lab:"Error bound",ph:"e.g. 1/49"}]; P.ans=[T.b(N+1)]; P.tol=Math.max(1e-9,T.b(N+1)*1e-3);
+      P.sol=`bₙ = ${T.bt} is decreasing and → 0, so
+|S − S${sbN(N)}| ≤ b${sbN(N+1)} = ${minus(fx(T.b(N+1),1e7))}`;
+      P.hint="The bound is the size of the FIRST term you left out: bₙ₊₁, not bₙ.";
+    } else {
+      const eps=pick([0.1,0.05,0.01,0.001]); let N=1; while(T.b(N+1)>=eps)N++;
+      P.q=`What is the smallest N for which the alternating series error bound guarantees |S − S${sub("N")}| < ${eps} for S = ${SIG()} ${T.tex}?`;
+      P.fields=[{lab:"N",ph:"whole number"}]; P.ans=[N]; P.tol=1e-9;
+      P.sol=`Need b${sub("N+1")} < ${eps}.
+b${sbN(N)} = ${fmt(T.b(N),4)} (not small enough), b${sbN(N+1)} = ${fmt(T.b(N+1),4)} < ${eps} ✓
+So N = ${N}.`;
+      P.hint=`Solve b${sub("N+1")} < ${eps} for N. Check N = ${Math.max(1,N-2)}, ${N-1}, … one by one if needed.`;
+    }
+  }
+  return P;
+}
+const M7={
+  tab:"Challenge", lesson:"AP 10.2–10.15 · Unit 10", accent:"var(--yellow)",
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  title:()=>"Practice: "+(KINDS.find(k=>k[0]===(M7.s.pr?M7.s.pr.kind:"geo"))||KINDS[1])[1].toLowerCase(),
+  newProb(){ const s=M7.s; let k=s.kind; if(k==="mix")k=pick(KINDS.slice(1))[0]; s.pr=genChal(k); s.state="open"; s.reveal=false; s.tries=0; s.pickd=null; },
+  bar(){
+    btn("New problem",()=>{M7.newProb();render();},"primary");
+    sel(KINDS,M7.s.kind,v=>{M7.s.kind=v;M7.newProb();render();},"Problem type");
+    M7.streakEl=spacer(""); M7.upStreak();
+  },
+  upStreak(){ if(M7.streakEl)M7.streakEl.textContent="Streak "+M7.s.streak+" · Best "+M7.s.best+" · Solved "+M7.s.solved; },
+  draw(){
+    const s=M7.s, pr=s.pr, g=E("g",{}); cv.appendChild(g); const mob=FS>1;
+    // visual: partial sums of the series in play, or the problem picture
+    if(pr.kind==="geo"||pr.kind==="ast"||pr.kind==="ratio"||pr.kind==="p"||pr.kind==="cd"||pr.kind==="roc"||pr.kind==="tay"){
+      const t=stext(g,[VW/2,VH/2-30],({geo:"Σ a·rⁿ = first term ÷ (1 − r)",ast:"|S − Sₙ| ≤ bₙ₊₁",ratio:"L = lim |aₙ₊₁ / aₙ|",p:"Σ 1/nᵖ converges ⇔ p > 1",cd:"nth-term → form → test",roc:"|x − a| < R, then test endpoints",tay:"cₙ = f⁽ⁿ⁾(a) / n!"})[pr.kind],"big","#22314F");
+      t.setAttribute("style","fill:#22314F;font-size:"+(mob?30:26)+"px");
+      const sub2=stext(g,[VW/2,VH/2+20],s.state==="right"?"Solved ✓  —  press New problem":"Key idea for this problem","sm",s.state==="right"?"#047857":"#7C8AAB");
+      sub2.setAttribute("style","fill:"+(s.state==="right"?"#047857":"#7C8AAB")+";font-size:"+(mob?22:16)+"px");
+      // decorative stair of partial sums
+      for(let i=0;i<12;i++){ const h2=(1-Math.pow(0.7,i+1))*110; g.appendChild(E("rect",{x:VW/2-180+i*30,y:VH-40-h2,width:24,height:h2,rx:4,style:"fill:var(--accent)","fill-opacity":.22+i*0.04})); }
+    }
+  },
+  panel(full){
+    const s=M7.s, pr=s.pr; if(!full&&document.getElementById("chk7"))return;
+    let h=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob7">${pr.q}</p>${pr.ser?`<div class="ser">${pr.ser}</div>`:""}</div>`;
+    if(pr.mc){ h+=`<div class="choices" id="mc7" style="grid-template-columns:1fr">${pr.mc.map((o,i)=>`<button type="button" class="choice" data-i="${i}" aria-pressed="false">${o.t}</button>`).join("")}</div>`; }
+    else h+=`<div class="ansrow">${pr.fields.map((f,i)=>`<div><label class="fld" for="ans7_${i}">${f.lab}</label><input type="text" id="ans7_${i}" autocomplete="off" spellcheck="false" placeholder="${f.ph}"></div>`).join("")}</div>`;
+    h+=`<div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="chk7" class="go" type="button" style="flex:1 1 140px">Check answer</button>
+        <button id="sol7" class="ghost" type="button">Show solution</button></div><div id="fb7"></div><div style="height:4px"></div></div>`;
+    h+=panel("How answers are checked",`<p>Type an integer, a decimal, or an exact fraction like <b>−4/3</b>. Expressions such as <b>1/(1-1/3)</b>, <b>2^5/5!</b> or <b>pi/4</b> also work. Decimals within 0.001 are accepted.</p>
+      <p>Intervals use brackets: <b>[-1, 3)</b>, <b>(2, 6]</b>. Yes/no questions accept <b>yes</b>/<b>no</b>.</p>
+      <p>First-try right answers grow your streak. A wrong answer resets it, gives a hint, and lets you try again.</p>`);
+    side.innerHTML=h;
+    const fb=document.getElementById("fb7");
+    const showSol=(top)=>{ fb.innerHTML=(top||"")+`<div class="fldwrap"><div class="eq">${pr.sol}</div></div>`; };
+    if(pr.mc) side.querySelectorAll("#mc7 .choice").forEach(b=>b.onclick=()=>{ if(s.state==="right")return; s.pickd=+b.dataset.i; side.querySelectorAll("#mc7 .choice").forEach(c=>{c.classList.toggle("sel",c===b);c.setAttribute("aria-pressed",String(c===b));}); });
+    const ins=pr.mc?[]:pr.fields.map((_,i)=>document.getElementById("ans7_"+i));
+    const check=()=>{
+      if(s.state==="right")return;
+      let ok, bad=[];
+      if(pr.mc){ if(s.pickd==null){ fb.innerHTML=`<div class="verdict bad"><b>Choose an answer first.</b></div>`; return; } ok=pr.mc[s.pickd].ok; }
+      else {
+        const res=pr.fields.map((f,i)=>{ const v=ins[i].value.trim();
+          if(f.yn){ const y=/^(y|yes|c|converges?|true)$/i.test(v), n=/^(n|no|d|diverges?|false)$/i.test(v); if(!y&&!n)return null; return (y?1:0)===pr.ans[i]; }
+          if(f.iv){ const I=parseInterval(v); if(!I)return null; const A=pr.ans[i]; return Math.abs(I.L-A.L)<1e-6&&Math.abs(I.R-A.R)<1e-6&&I.lc===A.lc&&I.rc===A.rc; }
+          const x=parseExpr(v); if(!isFinite(x))return null; const tol=pr.tol!=null?pr.tol:1e-3; return Math.abs(x-pr.ans[i])<=tol; });
+        if(res.some(r=>r===null)){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Use numbers or fractions like 7/3${pr.fields.some(f=>f.iv)?", and intervals like [-1, 3)":""}${pr.fields.some(f=>f.yn)?", and yes/no":""}.</div>`; return; }
+        ok=res.every(r=>r); bad=pr.fields.filter((_,i)=>!res[i]).map(f=>f.lab);
+      }
+      if(ok){
+        s.state="right"; if(s.tries===0&&!s.reveal){ s.streak++; s.best=Math.max(s.best,s.streak); } s.solved++; M7.upStreak();
+        if(pr.mc) side.querySelectorAll("#mc7 .choice").forEach(c=>{ if(pr.mc[+c.dataset.i].ok)c.classList.add("right"); });
+        ins.forEach(x=>x.disabled=true);
+        clear(); M7.draw();
+        showSol(`<div class="verdict good"><b>Correct!</b> ${s.tries||s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+s.streak+"."} Here is the full work. Press <b>New problem</b> for another.</div>`);
+      } else {
+        s.tries++; s.streak=0; M7.upStreak();
+        if(pr.mc) side.querySelectorAll("#mc7 .choice").forEach(c=>{ if(+c.dataset.i===s.pickd)c.classList.add("wrong"); });
+        fb.innerHTML=`<div class="verdict bad"><b>Not quite${bad.length&&pr.fields.length>1?" — check "+bad.join(" and "):""}.</b> ${pr.hint}</div>`;
+      }
+    };
+    document.getElementById("chk7").onclick=check;
+    ins.forEach(x=>x.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); }));
+    document.getElementById("sol7").onclick=()=>{ s.reveal=true; if(s.state!=="right"){s.streak=0;M7.upStreak();}
+      showSol(`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6,M7];
+function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)render(); });
+function update(){ setFS(); const M=MODS[cur]; clear(); M.draw(); M.panel(false); }
+function render(){
+  setFS(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M7&&!M7.s.pr)M7.newProb();
+  if(M===M4&&!M4.s.pr)M4.newProb();
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab.replace("&amp;","and")+" — "+M.title());
+  bar.innerHTML=""; M.bar();
+  clear(); M.draw(); M.panel(true);
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>

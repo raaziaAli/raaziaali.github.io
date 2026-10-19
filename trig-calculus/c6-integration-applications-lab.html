@@ -1,0 +1,1870 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Applying Integrals Lab — Calculus Unit 6</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M10 50C22 10 42 10 54 40' stroke='%2300E5FF' stroke-width='6' fill='none' stroke-linecap='round'/%3E%3Cpath d='M18 50V30M28 50V22M38 50V22M48 50V32' stroke='%23FF3D8A' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .rel[data-pair]{cursor:pointer}
+  .rel[data-pair]:hover{background:rgba(255,255,255,.05)}
+  .rel.active{background:rgba(255,255,255,.09);box-shadow:inset 3px 0 0 var(--accent)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top}
+  table.facts .ab{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  table.facts .st{color:#DDDDF2}
+  table.facts .st i{display:block;color:var(--dim);font-style:normal;font-size:13px;margin-top:4px}
+  .cathead{padding-top:18px!important;padding-bottom:6px!important;font-family:var(--display);font-weight:600;
+    font-size:13px;letter-spacing:.02em;color:var(--yellow);border-bottom:none!important}
+  .chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-right:9px}
+  .chip.assume{background:rgba(255,217,61,.18);color:var(--yellow)}
+  .chip.proved{background:rgba(94,234,212,.16);color:var(--mint)}
+  ol.chain{margin:0;padding:6px 20px 18px 38px;font-size:15px;color:#CFCFEA}
+  ol.chain li{padding:8px 0} ol.chain li::marker{color:var(--accent);font-weight:700}
+  ol.chain li b{color:#fff}
+
+  .steps{width:100%;border-collapse:collapse;font-size:15px}
+  .steps td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:middle}
+  .steps .stmt{font-family:var(--mono);font-size:14px;font-weight:600;color:#fff;white-space:nowrap}
+  .steps .why{width:56%}
+  .steps tr.right .stmt{color:var(--mint)}
+  .steps tr.right select{border-color:rgba(94,234,212,.6)}
+  .steps tr.wrong select{border-color:var(--coral)}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.8;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.4;fill:none;stroke-dasharray:9 6}
+  .wedge{stroke-width:2.4;fill-opacity:.17;cursor:pointer}
+  .wedge.flat{cursor:default}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── shared additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible,.choice:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:16px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  @media (max-width:560px){ svg.canvas .sm{font-size:21px;stroke-width:5} svg.canvas .mk{font-size:27px} svg.canvas .num{font-size:22px} svg.canvas .ax{font-size:16px} }
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .leg{stroke-width:3;fill:none;stroke-dasharray:8 5;stroke-linecap:round}
+  .tick{stroke:var(--graphite);stroke-width:2.2}
+  .ghostdot{fill:#9AA8C7;stroke:#fff;stroke-width:2}
+  .nt{position:relative;display:inline-block;padding-top:.42em;line-height:1.05;font-family:var(--mono);font-weight:700;color:#fff;white-space:nowrap}
+  .nt::before{content:"";position:absolute;left:.06em;right:.06em;top:.2em;border-top:2px solid currentColor}
+  .nt.ray::after,.nt.line::after{content:"";position:absolute;right:-.12em;top:calc(.2em - 3.5px);border-left:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .nt.line .la{position:absolute;left:-.12em;top:calc(.2em - 3.5px);border-right:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .uterms{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+  .uterms span{font-family:var(--mono);font-size:12px;font-weight:600;padding:5px 11px;border-radius:100px;
+    border:1px solid var(--edge);color:var(--dim);opacity:.55}
+  .uterms span.on{opacity:1;color:#0A0A1F;background:var(--accent);border-color:var(--accent)}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px}
+  .choice{font-family:var(--ui);font-size:15px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:14px;padding:13px 12px;cursor:pointer;text-align:left;line-height:1.5;transition:.15s}
+  .choice:hover{background:rgba(255,255,255,.12)}
+  .choice.right{border-color:var(--mint);background:rgba(94,234,212,.16)}
+  .choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.14)}
+  .choice small{display:block;font-weight:400;color:var(--dim);font-size:12.5px}
+  .stepl{list-style:none;margin:0;padding:6px 0}
+  .stepl li{padding:10px 20px;border-left:3px solid transparent;color:var(--dim);font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li.done{color:#CFCFEA}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li b{color:#fff}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  @media (max-width:560px){
+    .choices{grid-template-columns:1fr}
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+  }
+  /* ── Applying Integrals Lab additions ── */
+  .hint{font-family:var(--ui);font-size:12.5px;fill:#5B6B8F}
+  .big{font-family:var(--mono);font-weight:700;font-size:15px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .tiny{font-family:var(--mono);font-weight:600;font-size:11px;paint-order:stroke;stroke:#fff;stroke-width:3.5;stroke-linejoin:round}
+  @media (max-width:560px){ svg.canvas .big{font-size:22px} svg.canvas .hint{font-size:17px} svg.canvas .tiny{font-size:16px} }
+  svg.canvas.r3{cursor:grab} svg.canvas.rot{cursor:grabbing}
+  svg.canvas:focus-visible{outline:3px solid var(--yellow);outline-offset:-3px}
+  .fxrow{display:flex;gap:8px;align-items:center;margin:0 20px 10px}
+  .fxrow span{font-family:var(--mono);font-size:13.5px;color:var(--accent);white-space:nowrap;min-width:58px}
+  .fxrow input{padding:9px 11px;font-family:var(--mono);font-size:14px}
+  .err{color:var(--coral);font-size:13.5px;margin:0 20px 12px}
+  .tblwrap{overflow-x:auto;padding:2px 6px 10px}
+  table.data{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}
+  table.data th{color:var(--accent);font-weight:600;text-align:right;padding:8px 12px;border-bottom:1px solid var(--edge);font-size:12px;letter-spacing:.04em;white-space:nowrap}
+  table.data td{text-align:right;padding:6px 12px;border-bottom:1px solid rgba(196,181,253,.10);color:#E7E9FA;white-space:nowrap}
+  table.data th:first-child,table.data td:first-child{text-align:left}
+  table.data tr.hl td{background:rgba(255,255,255,.09);color:#fff;font-weight:700}
+  .int{display:inline-flex;align-items:center;vertical-align:middle}
+  .int .lims{display:inline-flex;flex-direction:column;font-size:.66em;line-height:1.15;margin:0 4px 0 1px;text-align:left}
+  .eq sup{font-size:.72em;line-height:0}
+  .mini{font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bigv{font-family:var(--mono);font-size:19px;font-weight:700;color:#fff}
+  .stepl li .eqi{display:block;font-family:var(--mono);font-size:13.5px;color:#fff;margin-top:5px;white-space:pre-wrap;line-height:1.7}
+  .bar .lbl{font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar .grp{display:flex;gap:10px;flex-wrap:wrap;align-items:center;width:100%}
+  .bar select{font-size:14px;padding:9px 12px;border-radius:100px}
+  .seg{flex-wrap:wrap}
+  .rng .v{min-width:44px;text-align:right;color:var(--accent)}
+  @media (max-width:560px){ .bar select{max-width:100%} .bar .seg button{padding:8px 12px;font-size:13.5px} .fxrow{margin:0 16px 10px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Applying Integrals Lab</h1>
+    <div class="eyebrow">Calculus · Unit 6 · Applications of Integration</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" tabindex="0" aria-label="Applications of integration figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every figure is live: drag a bound, a slice or the solid itself and every integral is recomputed (adaptive Simpson's rule, exact forms shown when the value is a recognisable fraction, π-multiple or radical). Topic numbers follow the AP Calculus AB/BC Course and Exam Description, Units 7 and 8.
+    <div class="links"><a href="/trig-calculus/">← Trig &amp; Calculus courses</a><a href="/math/#trig-calculus">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg", VW=700, VH=460;
+const $=id=>document.getElementById(id);
+const cv=$("cv"), bar=$("bar"), side=$("side"), tabsEl=$("tabs"), bTitle=$("bTitle"), bLesson=$("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+const PI=Math.PI, D2R=PI/180, EE=Math.E;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+let FS=1;
+function num(v,dp){
+  if(!isFinite(v)) return v===Infinity?"∞":v===-Infinity?"−∞":"undefined";
+  dp=(dp==null?2:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Math.abs(s)<1e-12)s=0;
+  let t=String(s); if(/e/.test(t)) t=s.toFixed(dp); return minus(t);
+}
+// rational approximation n/d with d ≤ D
+function rat(x,D,tol){
+  if(!isFinite(x))return null; tol=tol||1e-9*Math.max(1,Math.abs(x));
+  for(let d=1;d<=D;d++){ const n=Math.round(x*d); if(Math.abs(n/d-x)<=tol){ const g=gcd(n,d); return [n/g,d/g]; } }
+  return null;
+}
+function ratStr(n,d,sym,join){
+  const neg=n<0; n=Math.abs(n); join=join||"";
+  const top=sym? (n===1? sym : n+join+sym) : String(n);
+  return (neg?"−":"")+(d===1? top : top+"/"+d);
+}
+const SURDS=[2,3,5,6,7,10];
+// exact closed form for a computed value, or null
+function exactOf(v){
+  if(!isFinite(v)) return null;
+  if(Math.abs(v)<1e-10) return "0";
+  let r=rat(v,120); if(r) return ratStr(r[0],r[1]);
+  r=rat(v/PI,60); if(r) return ratStr(r[0],r[1],"π");
+  r=rat(v/(PI*PI),24); if(r) return ratStr(r[0],r[1],"π²");
+  r=rat(v*PI,24); if(r) return (r[0]<0?"−":"")+Math.abs(r[0])+"/"+(r[1]===1?"π":"("+r[1]+"π)");
+  for(const s of SURDS){ r=rat(v/Math.sqrt(s),24); if(r) return ratStr(r[0],r[1],"√"+s); }
+  for(const s of SURDS){ r=rat(v/(PI*Math.sqrt(s)),12); if(r) return ratStr(r[0],r[1],"π√"+s); }
+  r=rat(v/Math.LN2,12); if(r) return ratStr(r[0],r[1],"ln 2"," ");
+  for(let q=-3;q<=3;q++){ if(!q)continue; const p=v-q*EE; if(Math.abs(p-Math.round(p))<1e-9*Math.max(1,Math.abs(v))){ const P=Math.round(p);
+    return (q===1?"e":q===-1?"−e":minus(q)+"e")+(P>0?" + "+P:P<0?" − "+(-P):""); } }
+  return null;
+}
+// "exact ≈ decimal" or "≈ decimal"
+function exv(v,dp){
+  dp=dp==null?4:dp; if(!isFinite(v)) return "undefined";
+  const e=exactOf(v);
+  if(e!=null){ if(/^−?\d+$/.test(e)) return e; return e+" ≈ "+num(v,dp); }
+  return "≈ "+num(v,dp);
+}
+const eqx=(v,dp)=>{ const t=exv(v,dp); return t.charAt(0)==="≈"? t : "= "+t; };
+// tidy display of a bound / coordinate
+function nb(v){
+  if(!isFinite(v)) return num(v);
+  if(Math.abs(v)<1e-12) return "0";
+  let r=rat(v,12,1e-9); if(r) return ratStr(r[0],r[1]);
+  r=rat(v/PI,12,1e-9); if(r) return ratStr(r[0],r[1],"π");
+  for(const s of [2,3,5]){ r=rat(v/Math.sqrt(s),6,1e-9); if(r) return ratStr(r[0],r[1],"√"+s); }
+  if(Math.abs(v-EE)<1e-9) return "e";
+  return num(v,3);
+}
+// snap a numerically found root onto a recognisable exact value
+function cleanNum(v){
+  let r=rat(v,12,1e-8); if(r) return r[0]/r[1];
+  r=rat(v/PI,12,1e-8); if(r) return r[0]*PI/r[1];
+  for(const s of [2,3,5]){ r=rat(v/Math.sqrt(s),6,1e-8); if(r) return r[0]*Math.sqrt(s)/r[1]; }
+  return v;
+}
+
+/* ══════════════════════ expression parser, compiler, printer, differentiator ══════════════════════ */
+const FN={sin:Math.sin,cos:Math.cos,tan:Math.tan,sec:x=>1/Math.cos(x),csc:x=>1/Math.sin(x),cot:x=>1/Math.tan(x),
+  asin:Math.asin,acos:Math.acos,atan:Math.atan,sinh:Math.sinh,cosh:Math.cosh,tanh:Math.tanh,
+  sqrt:Math.sqrt,cbrt:Math.cbrt,ln:Math.log,log:Math.log10,exp:Math.exp,abs:Math.abs};
+const ALIAS={arcsin:"asin",arccos:"acos",arctan:"atan"};
+const NAMES=["arcsin","arccos","arctan","asin","acos","atan","sinh","cosh","tanh","sqrt","cbrt","sin","cos","tan","sec","csc","cot","exp","abs","ln","log","pi"];
+function tokenize(str,vars){
+  let s=String(str).replace(/−/g,"-").replace(/[×·]/g,"*").replace(/÷/g,"/").replace(/²/g,"^2").replace(/³/g,"^3")
+    .replace(/π/g,"pi").replace(/\*\*/g,"^").replace(/[\[{]/g,"(").replace(/[\]}]/g,")").toLowerCase();
+  const T=[]; let i=0;
+  while(i<s.length){ const c=s[i];
+    if(/\s/.test(c)){i++;continue;}
+    if(/[0-9.]/.test(c)){ const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)); if(!m) throw new Error("Bad number"); T.push({t:"n",v:parseFloat(m[0])}); i+=m[0].length; continue; }
+    if(c==="√"){T.push({t:"f",v:"sqrt"});i++;continue;}
+    if(/[a-z]/.test(c)){
+      let hit=null; for(const nm of NAMES){ if(s.startsWith(nm,i)){hit=nm;break;} }
+      if(hit){ i+=hit.length; if(hit==="pi") T.push({t:"c",v:PI,nm:"π"}); else T.push({t:"f",v:ALIAS[hit]||hit}); continue; }
+      if(c==="e"){ T.push({t:"c",v:EE,nm:"e"}); i++; continue; }
+      if(vars.indexOf(c)>=0){ T.push({t:"v",v:c}); i++; continue; }
+      throw new Error("Unknown symbol “"+c+"” — use "+vars.join(", ")+(vars.length?" as the variable":""));
+    }
+    if("+-*/^()".indexOf(c)>=0){ T.push({t:c}); i++; continue; }
+    throw new Error("Unexpected “"+c+"”");
+  }
+  return T;
+}
+function parse(str,vars){
+  vars=vars||["x"];
+  const T=tokenize(str,vars); let i=0;
+  if(!T.length) throw new Error("Empty expression");
+  const peek=()=>T[i]?T[i].t:null;
+  const startsAtom=t=>t==="n"||t==="c"||t==="v"||t==="f"||t==="(";
+  function expr(){ let v=term(); while(peek()==="+"||peek()==="-"){ const o=T[i++].t; v=[o,v,term()]; } return v; }
+  function term(){ let v=unary(); for(;;){ const t=peek();
+      if(t==="*"||t==="/"){ i++; v=[t,v,unary()]; }
+      else if(startsAtom(t)){ v=["*",v,power()]; }
+      else break; } return v; }
+  function unary(){ if(peek()==="-"){i++;return ["neg",unary()];} if(peek()==="+"){i++;return unary();} return power(); }
+  function power(){ const b=atom(); if(peek()==="^"){ i++; return ["^",b,unary()]; } return b; }
+  function fnArg(){ // sin x, sin 2x, sin(x+1)
+    if(peek()==="(") return atom();
+    let v=power(); while(peek()==="n"||peek()==="v"||peek()==="c") v=["*",v,power()];
+    return v;
+  }
+  function atom(){ const tk=T[i]; if(!tk) throw new Error("Expression ends too soon");
+    if(tk.t==="n"){i++;return ["n",tk.v];}
+    if(tk.t==="c"){i++;return ["c",tk.v,tk.nm];}
+    if(tk.t==="v"){i++;return ["v",tk.v];}
+    if(tk.t==="("){ i++; const v=expr(); if(peek()!==")") throw new Error("Missing )"); i++; return v; }
+    if(tk.t==="f"){ i++; let ex=null;
+      if(peek()==="^"){ i++; ex=atom(); }
+      const a=fnArg(); const node=["f",tk.v,a]; return ex? ["^",node,ex] : node; }
+    throw new Error("Unexpected “"+tk.t+"”");
+  }
+  const out=expr(); if(i!==T.length) throw new Error("Couldn't read past “"+(T[i].t==="n"?T[i].v:T[i].v||T[i].t)+"”");
+  return simp(out);
+}
+function pw(a,b){
+  if(a<0&&!Number.isInteger(b)){ const r=rat(b,9,1e-12); if(r&&r[1]%2===1){ const v=Math.pow(-a,b); return r[0]%2===0? v : -v; } return NaN; }
+  return Math.pow(a,b);
+}
+function compile(n,vars){
+  vars=vars||["x"];
+  const c=n=>{ switch(n[0]){
+    case "n": case "c": { const v=n[1]; return ()=>v; }
+    case "v": return vars.indexOf(n[1])===0? (a)=>a : (a,b)=>b;
+    case "+": { const A=c(n[1]),B=c(n[2]); return (a,b)=>A(a,b)+B(a,b); }
+    case "-": { const A=c(n[1]),B=c(n[2]); return (a,b)=>A(a,b)-B(a,b); }
+    case "*": { const A=c(n[1]),B=c(n[2]); return (a,b)=>A(a,b)*B(a,b); }
+    case "/": { const A=c(n[1]),B=c(n[2]); return (a,b)=>A(a,b)/B(a,b); }
+    case "^": { const A=c(n[1]),B=c(n[2]); return (a,b)=>pw(A(a,b),B(a,b)); }
+    case "neg": { const A=c(n[1]); return (a,b)=>-A(a,b); }
+    case "f": { const g=FN[n[1]], A=c(n[2]); return (a,b)=>g(A(a,b)); }
+  } throw new Error("bad node"); };
+  return c(n);
+}
+const NN=v=>["n",v];
+const isN=(n,v)=>n[0]==="n"&&(v==null||n[1]===v);
+function hasVar(n){ if(n[0]==="v")return true; if(n[0]==="n"||n[0]==="c")return false; return n.slice(1).some(k=>Array.isArray(k)&&hasVar(k)); }
+// simplifying constructor
+function S(op,a,b){
+  const an=a[0]==="n", bn=b&&b[0]==="n";
+  switch(op){
+    case "+": if(an&&a[1]===0)return b; if(bn&&b[1]===0)return a; if(an&&bn)return NN(a[1]+b[1]);
+      if(b[0]==="neg")return S("-",a,b[1]); if(bn&&b[1]<0)return S("-",a,NN(-b[1])); break;
+    case "-": if(bn&&b[1]===0)return a; if(an&&a[1]===0)return S("neg",b); if(an&&bn)return NN(a[1]-b[1]);
+      if(b[0]==="neg")return S("+",a,b[1]); if(bn&&b[1]<0)return S("+",a,NN(-b[1])); break;
+    case "*":
+      if((an&&a[1]===0)||(bn&&b[1]===0))return NN(0);
+      if(an&&a[1]===1)return b; if(bn&&b[1]===1)return a;
+      if(an&&bn)return NN(a[1]*b[1]);
+      if(bn)return S("*",b,a);
+      if(an&&a[1]===-1)return S("neg",b);
+      if(a[0]==="neg")return S("neg",S("*",a[1],b));
+      if(b[0]==="neg")return S("neg",S("*",a,b[1]));
+      if(an&&b[0]==="*"&&b[1][0]==="n")return S("*",NN(a[1]*b[1][1]),b[2]);
+      if(an&&b[0]==="/"&&b[1][0]==="n")return S("/",NN(a[1]*b[1][1]),b[2]);
+      if(b[0]==="/"&&isN(b[1],1))return S("/",a,b[2]);
+      if(a[0]==="/"&&isN(a[1],1))return S("/",b,a[2]);
+      break;
+    case "/":
+      if(an&&a[1]===0)return NN(0); if(bn&&b[1]===1)return a;
+      if(an&&bn){ const r=rat(a[1]/b[1],1000,1e-12); if(r&&Number.isInteger(a[1])&&Number.isInteger(b[1])) return NN(a[1]/b[1]); return NN(a[1]/b[1]); }
+      if(bn&&a[0]==="*"&&a[1][0]==="n")return S("*",NN(a[1][1]/b[1]),a[2]);
+      if(a[0]==="neg")return S("neg",S("/",a[1],b));
+      break;
+    case "^": if(bn&&b[1]===0)return NN(1); if(bn&&b[1]===1)return a; if(an&&bn)return NN(Math.pow(a[1],b[1]));
+      if(!hasVar(b)&&b[0]!=="n"&&!b.some(k=>Array.isArray(k)&&k[0]==="c")&&b[0]!=="c"){ const v=compile(b)(0); if(isFinite(v)) return S("^",a,NN(v)); }
+      break;
+    case "neg": if(an)return NN(-a[1]); if(a[0]==="neg")return a[1];
+      if(a[0]==="*"&&a[1][0]==="n")return S("*",NN(-a[1][1]),a[2]);
+      if(a[0]==="/"&&a[1][0]==="n")return S("/",NN(-a[1][1]),a[2]);
+      return ["neg",a];
+  }
+  return [op,a,b];
+}
+function simp(n){
+  switch(n[0]){
+    case "n": case "c": case "v": return n;
+    case "neg": return S("neg",simp(n[1]));
+    case "f": return ["f",n[1],simp(n[2])];
+    default: return S(n[0],simp(n[1]),simp(n[2]));
+  }
+}
+const ONE=NN(1), TWO=NN(2);
+const F_=(nm,a)=>["f",nm,a];
+function deriv(n,v){
+  v=v||"x";
+  switch(n[0]){
+    case "n": case "c": return NN(0);
+    case "v": return NN(n[1]===v?1:0);
+    case "+": case "-": return S(n[0],deriv(n[1],v),deriv(n[2],v));
+    case "neg": return S("neg",deriv(n[1],v));
+    case "*": { const a=n[1],b=n[2];
+      if(!hasVar(a))return S("*",a,deriv(b,v)); if(!hasVar(b))return S("*",b,deriv(a,v));
+      return S("+",S("*",deriv(a,v),b),S("*",a,deriv(b,v))); }
+    case "/": { const a=n[1],b=n[2];
+      if(!hasVar(b))return S("/",deriv(a,v),b);
+      if(!hasVar(a))return S("neg",S("/",S("*",a,deriv(b,v)),S("^",b,TWO)));
+      return S("/",S("-",S("*",deriv(a,v),b),S("*",a,deriv(b,v))),S("^",b,TWO)); }
+    case "^": { const a=n[1],b=n[2];
+      if(!hasVar(b)){ const c=b[0]==="n"? b[1] : null;
+        const nb_= c!=null? NN(c-1) : S("-",b,ONE);
+        return S("*",S("*",b,S("^",a,nb_)),deriv(a,v)); }
+      if(!hasVar(a)){ const lnA= (a[0]==="c"&&a[2]==="e")? ONE : F_("ln",a);
+        return S("*",S("*",n,lnA),deriv(b,v)); }
+      return S("*",n,S("+",S("*",deriv(b,v),F_("ln",a)),S("/",S("*",b,deriv(a,v)),a))); }
+    case "f": { const u=n[2], du=deriv(u,v); let g;
+      switch(n[1]){
+        case "sin": g=F_("cos",u); break;
+        case "cos": g=S("neg",F_("sin",u)); break;
+        case "tan": g=S("^",F_("sec",u),TWO); break;
+        case "sec": g=S("*",F_("sec",u),F_("tan",u)); break;
+        case "csc": g=S("neg",S("*",F_("csc",u),F_("cot",u))); break;
+        case "cot": g=S("neg",S("^",F_("csc",u),TWO)); break;
+        case "asin": g=S("/",ONE,F_("sqrt",S("-",ONE,S("^",u,TWO)))); break;
+        case "acos": g=S("neg",S("/",ONE,F_("sqrt",S("-",ONE,S("^",u,TWO))))); break;
+        case "atan": g=S("/",ONE,S("+",ONE,S("^",u,TWO))); break;
+        case "sinh": g=F_("cosh",u); break;
+        case "cosh": g=F_("sinh",u); break;
+        case "tanh": g=S("/",ONE,S("^",F_("cosh",u),TWO)); break;
+        case "sqrt": g=S("/",ONE,S("*",TWO,F_("sqrt",u))); break;
+        case "cbrt": g=S("/",ONE,S("*",NN(3),S("^",F_("cbrt",u),TWO))); break;
+        case "ln": g=S("/",ONE,u); break;
+        case "log": g=S("/",ONE,S("*",u,F_("ln",NN(10)))); break;
+        case "exp": g=F_("exp",u); break;
+        case "abs": g=S("/",u,F_("abs",u)); break;
+        default: throw new Error("can't differentiate "+n[1]);
+      }
+      if(du[0]==="n") return S("*",du,g);
+      return S("*",g,du); }
+  }
+  throw new Error("bad node");
+}
+// pretty printer: plain unicode (html=false) or HTML with <sup>
+const SUP={"0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};
+function numTxt(v){
+  if(Number.isInteger(v)) return minus(String(v));
+  const r=rat(v,24,1e-10); if(r) return minus(r[0]+"/"+r[1]);
+  return num(v,4);
+}
+function pp(n,html){
+  const P=n=>prec(n);
+  function prec(n){ switch(n[0]){ case "+": case "-": return 1; case "*": case "/": return 2; case "neg": return 2.5; case "^": return 4;
+      case "n": return (n[1]<0||!Number.isInteger(n[1]))? (Number.isInteger(n[1])?2.5:2) : 5; default: return 5; } }
+  function wrap(n,minP){ const s=go(n); return P(n)<minP? "("+s+")" : s; }
+  function go(n){
+    switch(n[0]){
+      case "n": return numTxt(n[1]);
+      case "c": return n[2]||"π";
+      case "v": return n[1];
+      case "+": return go(n[1])+" + "+wrap(n[2],1.1);
+      case "-": return go(n[1])+" − "+wrap(n[2],1.1);
+      case "neg": return "−"+wrap(n[1],2);
+      case "*": { const a=n[1], b=n[2];
+        if(a[0]==="n"&&Number.isInteger(a[1])&&(b[0]==="v"||b[0]==="c"||b[0]==="f"||(b[0]==="^"&&(b[1][0]==="v"||b[1][0]==="c"))))
+          return numTxt(a[1])+(b[0]==="f"&&!/^(sqrt|cbrt|abs)$/.test(b[1])?" ":"")+go(b);
+        if(a[0]==="n"&&!Number.isInteger(a[1])) return "("+numTxt(a[1])+")"+wrap(b,2.1);
+        return wrap(a,2)+"·"+wrap(b,2.1); }
+      case "/": return wrap(n[1],2)+"/"+wrap(n[2],4);
+      case "^": { const a=n[1], b=n[2];
+        if(b[0]==="n"&&b[1]===0.5&&!html) return "√"+wrap(a,5);
+        if(b[0]==="n"&&b[1]===0.5) return "√"+wrap(a,5);
+        const base= (a[0]==="f"&&b[0]==="n"&&Number.isInteger(b[1])&&b[1]>1&&!/^(sqrt|cbrt|abs)$/.test(a[1]))? null : wrap(a,5);
+        if(base===null){ // sin²(x)
+          const e=html? "<sup>"+b[1]+"</sup>" : String(b[1]).split("").map(d=>SUP[d]).join("");
+          return nmF(a[1])+e+"("+go(a[2])+")"; }
+        if(b[0]==="n"&&Number.isInteger(b[1])&&b[1]>=0&&b[1]<10) return base+(html?"<sup>"+b[1]+"</sup>":SUP[b[1]]);
+        if(html) return base+"<sup>"+go(b)+"</sup>";
+        return base+"^"+wrap(b,5); }
+      case "f": { const nm=n[1], a=n[2];
+        if(nm==="sqrt") return (a[0]==="v"||(a[0]==="n"&&a[1]>=0))? "√"+go(a) : "√("+go(a)+")";
+        if(nm==="cbrt") return "∛("+go(a)+")";
+        if(nm==="abs") return "|"+go(a)+"|";
+        if(nm==="exp") return html? "e<sup>"+go(a)+"</sup>" : "e^"+wrap(a,5);
+        if(nm==="ln"||/^(sin|cos|tan|sec|csc|cot)$/.test(nm)){ if(a[0]==="v") return nm+" "+go(a); }
+        return nmF(nm)+"("+go(a)+")"; }
+    }
+    return "?";
+  }
+  const nmF=s=>({asin:"arcsin",acos:"arccos",atan:"arctan"}[s]||s);
+  return go(n);
+}
+function tryParse(s,vars){ try{ const a=parse(s,vars); return {ast:a,f:compile(a,vars)}; }catch(e){ return {err:e.message}; } }
+
+/* ══════════════════════ numerics ══════════════════════ */
+let budget=0;
+function asr(f,a,b,fa,fm,fb,whole,eps,depth){
+  const m=(a+b)/2, lm=(a+m)/2, rm=(m+b)/2, flm=f(lm), frm=f(rm);
+  const left=(m-a)/6*(fa+4*flm+fm), right=(b-m)/6*(fm+4*frm+fb), d=left+right-whole;
+  budget-=2;
+  if(depth<=0||budget<=0||!isFinite(d)||Math.abs(d)<=15*eps) return left+right+d/15;
+  return asr(f,a,m,fa,flm,fm,left,eps/2,depth-1)+asr(f,m,b,fm,frm,fb,right,eps/2,depth-1);
+}
+// adaptive Simpson; endpoint singularities are nudged inward
+function integrate(f,a,b,eps){
+  if(!(isFinite(a)&&isFinite(b))) return NaN; if(a===b) return 0;
+  let sg=1; if(a>b){ const t=a;a=b;b=t;sg=-1; }
+  eps=eps||1e-11; budget=120000;
+  const h0=(b-a)*1e-10;
+  const F=x=>{ let v=f(x); if(!isFinite(v)){ if(x-a<h0*2) v=f(a+h0); else if(b-x<h0*2) v=f(b-h0); } return v; };
+  const N=8, h=(b-a)/N; let s=0;
+  for(let i=0;i<N;i++){ const x0=a+i*h, x1=(i===N-1)?b:a+(i+1)*h, xm=(x0+x1)/2, f0=F(x0), f1=F(x1), fm=F(xm);
+    s+=asr(F,x0,x1,f0,fm,f1,(x1-x0)/6*(f0+4*fm+f1),eps/N,48); }
+  return sg*s;
+}
+// real roots of h on [a,b] (sign changes + tangential touches)
+function roots(h,a,b,N){
+  N=N||700; const xs=[], hs=[];
+  for(let i=0;i<=N;i++){ const x=a+(b-a)*i/N; xs.push(x); hs.push(h(x)); }
+  const R=[];
+  for(let i=0;i<=N;i++){ if(isFinite(hs[i])&&Math.abs(hs[i])<1e-12) R.push(xs[i]); }
+  for(let i=0;i<N;i++){ const h0=hs[i], h1=hs[i+1];
+    if(!isFinite(h0)||!isFinite(h1)||Math.abs(h0)<1e-12||Math.abs(h1)<1e-12) continue;
+    if(h0*h1<0){ let lo=xs[i],hi=xs[i+1],fl=h0;
+      for(let k=0;k<70;k++){ const m=(lo+hi)/2, fm=h(m); if(!isFinite(fm))break; if((fm<0)===(fl<0)){lo=m;fl=fm;} else hi=m; }
+      const r=(lo+hi)/2, hr=h(r); if(isFinite(hr)&&Math.abs(hr)<1e-6*Math.max(1,Math.abs(h0),Math.abs(h1))) R.push(r); } }
+  for(let i=1;i<N;i++){ const A=Math.abs(hs[i-1]), B=Math.abs(hs[i]), C=Math.abs(hs[i+1]);
+    if(!(isFinite(A)&&isFinite(B)&&isFinite(C)))continue;
+    if(B<=A&&B<=C&&hs[i-1]*hs[i+1]>0&&B<0.02){ // golden-section on |h|
+      let lo=xs[i-1],hi=xs[i+1]; const g=(Math.sqrt(5)-1)/2;
+      for(let k=0;k<80;k++){ const m1=hi-g*(hi-lo), m2=lo+g*(hi-lo); if(Math.abs(h(m1))<Math.abs(h(m2)))hi=m2; else lo=m1; }
+      const r=(lo+hi)/2; if(Math.abs(h(r))<1e-9) R.push(r); } }
+  R.sort((p,q)=>p-q); const out=[];
+  R.forEach(r=>{ r=cleanNum(r); if(!out.length||Math.abs(r-out[out.length-1])>1e-6*Math.max(1,Math.abs(r))) out.push(r); });
+  return out;
+}
+const dnum=(f,x)=>{ const h=1e-5*Math.max(1,Math.abs(x)); return (f(x+h)-f(x-h))/(2*h); };
+function rk4(f,x,y,h){ const k1=f(x,y), k2=f(x+h/2,y+h*k1/2), k3=f(x+h/2,y+h*k2/2), k4=f(x+h,y+h*k3); return y+h*(k1+2*k2+2*k3+k4)/6; }
+
+/* ══════════════════════ drawing ══════════════════════ */
+function E(tag,attrs,parent){ const n=document.createElementNS(NS,tag); for(const k in attrs) n.setAttribute(k,attrs[k]); if(parent)parent.appendChild(n); return n; }
+function clear(){ while(cv.firstChild)cv.removeChild(cv.firstChild); LBX=[]; }
+function Win(x0,x1,y0,y1){ const sx=VW/(x1-x0), sy=VH/(y1-y0);
+  return {x0,x1,y0,y1,sx,sy,X:x=>(x-x0)*sx, Y:y=>VH-(y-y0)*sy, iX:p=>x0+p/sx, iY:p=>y0+(VH-p)/sy}; }
+function winOf(w){ if(w.length===3){ const yr=(w[1]-w[0])*VH/VW; return Win(w[0],w[1],w[2]-yr/2,w[2]+yr/2); } return Win(w[0],w[1],w[2],w[3]); }
+function zoomWin(W,k){ const cx=(W.x0+W.x1)/2, cy=(W.y0+W.y1)/2; return Win(cx-(cx-W.x0)*k,cx+(W.x1-cx)*k,cy-(cy-W.y0)*k,cy+(W.y1-cy)*k); }
+function niceStep(range,target){ const raw=range/target, p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p; }
+function piLabel(k,den){ const g=gcd(k,den), n=k/g, d=den/g; if(n===0)return "0"; return (n===1?"":n===-1?"−":minus(n))+"π"+(d===1?"":"/"+d); }
+function grid(W,opt){
+  opt=opt||{};
+  const g=E("g",{},cv);
+  const xr=W.x1-W.x0, yr=W.y1-W.y0;
+  let stx, den=0;
+  if(opt.pi){ den= xr/PI>5? 2 : xr/PI>2.2? 4 : 6; if(FS>1) den=Math.max(1,den/2); stx=PI/den; } else stx=niceStep(xr,FS>1?7:12);
+  const sty=niceStep(yr,FS>1?6:9);
+  const ax0=clamp(W.Y(0),0,VH), ay0=clamp(W.X(0),0,VW);
+  for(let k=Math.ceil(W.x0/stx);k<=Math.floor(W.x1/stx);k++){ const sx=W.X(k*stx);
+    E("line",{x1:sx,y1:0,x2:sx,y2:VH,stroke:"#DCE6F7","stroke-width":1},g); }
+  for(let k=Math.ceil(W.y0/sty);k<=Math.floor(W.y1/sty);k++){ const sy=W.Y(k*sty);
+    E("line",{x1:0,y1:sy,x2:VW,y2:sy,stroke:"#DCE6F7","stroke-width":1},g); }
+  if(W.y0<=0&&W.y1>=0) E("line",{x1:0,y1:ax0,x2:VW,y2:ax0,stroke:"#8FA3C8","stroke-width":1.8},g);
+  if(W.x0<=0&&W.x1>=0) E("line",{x1:ay0,y1:0,x2:ay0,y2:VH,stroke:"#8FA3C8","stroke-width":1.8},g);
+  const lyx=clamp(ax0+14*FS,12*FS,VH-6), lxy=clamp(ay0-6,30*FS,VW-4);
+  for(let k=Math.ceil(W.x0/stx);k<=Math.floor(W.x1/stx);k++){ if(k===0)continue; const sx=W.X(k*stx); if(sx<14||sx>VW-14)continue;
+    const t=E("text",{x:sx,y:lyx,class:"ax","text-anchor":"middle"},g); t.textContent=opt.pi? piLabel(k,den) : num(k*stx,4); }
+  for(let k=Math.ceil(W.y0/sty);k<=Math.floor(W.y1/sty);k++){ if(k===0)continue; const sy=W.Y(k*sty); if(sy<12||sy>VH-10)continue;
+    const t=E("text",{x:lxy,y:sy+4,class:"ax","text-anchor":"end"},g); t.textContent=num(k*sty,4); }
+  if(W.x0<=0&&W.x1>=0&&W.y0<=0&&W.y1>=0){ const t=E("text",{x:ay0-6,y:ax0+14*FS,class:"ax","text-anchor":"end"},g); t.textContent="0"; }
+  const xl=E("text",{x:VW-8,y:clamp(ax0-7,14,VH-8),class:"ax","text-anchor":"end"},g); xl.textContent=opt.xn||"x";
+  const yl=E("text",{x:clamp(ay0+8,8,VW-30),y:14*FS,class:"ax"},g); yl.textContent=opt.yn||"y";
+  return E("g",{},cv);
+}
+// path of a parametric curve (x(t), y(t)) in window W, broken at gaps/asymptotes
+function pathP(W,fx,fy,t0,t1,N){
+  N=N||300; let d="", pen=false, py=0, px=0;
+  for(let i=0;i<=N;i++){ const t=t0+(t1-t0)*i/N, x=fx(t), y=fy(t);
+    if(!isFinite(x)||!isFinite(y)){ pen=false; continue; }
+    let sx=W.X(x), sy=W.Y(y);
+    if(Math.abs(sy)>8000||Math.abs(sx)>8000){ pen=false; continue; }
+    if(pen&&(Math.abs(sy-py)>VH*1.2||Math.abs(sx-px)>VW*1.2)) pen=false;
+    d+=(pen?"L":"M")+sx.toFixed(1)+" "+sy.toFixed(1); pen=true; px=sx; py=sy; }
+  return d;
+}
+const pathF=(W,f,a,b,N)=>pathP(W,t=>t,f,a==null?W.x0:a,b==null?W.x1:b,N);
+function curve(g,d,col,w,dash,op){ const a={d:d,fill:"none",stroke:col,"stroke-width":w||3,"stroke-linecap":"round","stroke-linejoin":"round"}; if(dash)a["stroke-dasharray"]=dash; if(op!=null)a.opacity=op; return E("path",a,g); }
+function polyFill(g,pts,fill,stroke,sw){ if(pts.length<3)return null; return E("path",{d:"M"+pts.map(p=>p[0].toFixed(1)+" "+p[1].toFixed(1)).join("L")+"Z",fill:fill,stroke:stroke||"none","stroke-width":sw||0,"stroke-linejoin":"round"},g); }
+function seg(g,x1,y1,x2,y2,col,w,dash){ const a={x1,y1,x2,y2,stroke:col||"#22314F","stroke-width":w||2,"stroke-linecap":"round"}; if(dash)a["stroke-dasharray"]=dash; return E("line",a,g); }
+function dot(g,x,y,col,r){ return E("circle",{cx:x,cy:y,r:(r||5)*(FS>1?1.25:1),fill:col||"#14213D",stroke:"#fff","stroke-width":2,"pointer-events":"none"},g); }
+function grab(g,x,y,id,col){ E("circle",{cx:x,cy:y,r:FS>1?24:15,class:"grab","data-drag":id},g); dot(g,x,y,col||"var(--hand)",5.5); }
+// labels that dodge each other
+let LBX=[];
+function label(g,x,y,s,o){
+  o=o||{}; const cls=o.cls||"sm";
+  const cw=(cls==="big"?9.3:cls==="tiny"?6.9:8.2)*(FS>1?1.5:1), h=(cls==="big"?18:cls==="tiny"?13:15)*(FS>1?1.45:1);
+  const w=s.length*cw+4, anc=o.anchor||"middle";
+  const left0=anc==="start"? x : anc==="end"? x-w : x-w/2;
+  const offs=o.fixed?[0]:[0,-1,1,-2,2,-3,3,-4,4];
+  let best=null;
+  for(const k of offs){ let L=clamp(left0,3,VW-3-w), cy=clamp(y+k*(h+2),h/2+2,VH-h/2-2);
+    const box=[L,cy-h/2,L+w,cy+h/2];
+    if(!LBX.some(b=>!(box[2]<b[0]||box[0]>b[2]||box[3]<b[1]||box[1]>b[3]))){ best=[L,cy,box]; break; }
+    if(!best) best=[L,cy,box,true]; }
+  LBX.push(best[2]);
+  const tx=anc==="start"? best[0] : anc==="end"? best[0]+w : best[0]+w/2;
+  const t=E("text",{x:tx.toFixed(1),y:best[1].toFixed(1),class:cls,"text-anchor":anc,"dominant-baseline":"central"},g);
+  if(o.col) t.setAttribute("fill",o.col);
+  t.textContent=s; return t;
+}
+const reserve=(x0,y0,x1,y1)=>LBX.push([x0,y0,x1,y1]);
+function svgPt(e){ const m=cv.getScreenCTM(); if(!m)return [0,0]; const p=new DOMPoint(e.clientX,e.clientY).matrixTransform(m.inverse()); return [p.x,p.y]; }
+function hintTxt(g,s){ if(FS>1) return; const w=s.length*6.4+16; E("rect",{x:4,y:VH-26,width:w,height:21,rx:8,fill:"#fff","fill-opacity":.9},g);
+  const t=E("text",{x:12,y:VH-11,class:"hint"},g); t.textContent=s; reserve(4,VH-26,4+w,VH-5); }
+
+/* ══════════════════════ tiny 3D renderer (orthographic, painter's algorithm) ══════════════════════ */
+const v3={sub:(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]], add:(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]], mul:(a,k)=>[a[0]*k,a[1]*k,a[2]*k],
+  dot:(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2], nrm:a=>{const l=Math.hypot(a[0],a[1],a[2])||1;return [a[0]/l,a[1]/l,a[2]/l];}};
+function newell(P){ const n=[0,0,0], m=P.length; for(let i=0;i<m;i++){ const a=P[i], b=P[(i+1)%m];
+  n[0]+=(a[1]-b[1])*(a[2]+b[2]); n[1]+=(a[2]-b[2])*(a[0]+b[0]); n[2]+=(a[0]-b[0])*(a[1]+b[1]); } return n; }
+const rgbC={};
+function hex2rgb(h){ if(rgbC[h])return rgbC[h]; const s=h.replace("#",""); return rgbC[h]=[0,2,4].map(i=>parseInt(s.substr(i,2),16)); }
+function shade(h,t){ const c=hex2rgb(h); return "rgb("+c.map(v=>Math.round(t>0? v+(255-v)*t : v*(1+t))).join(",")+")"; }
+function Scene(){ return {polys:[],lines:[],labels:[],pts:[]}; }
+// poly: {P:[pts], col:"#hex", op, bop, ref:[outward ref] | null (two-sided), sw, sc}
+function render3(sc,view,fit,g){
+  const yaw=view.yaw*D2R, pit=view.pitch*D2R, cy=Math.cos(yaw), sy=Math.sin(yaw), cp=Math.cos(pit), sp=Math.sin(pit);
+  const rot=v=>{ const x1=v[0]*cy+v[2]*sy, z1=-v[0]*sy+v[2]*cy; return [x1, v[1]*cp-z1*sp, v[1]*sp+z1*cp]; };
+  const T=fit.c, s=fit.s, cx=fit.cx, cyy=fit.cy;
+  const tr=p=>rot(v3.sub(p,T)), pr=c=>[cx+s*c[0], cyy-s*c[1]];
+  const L=v3.nrm([-0.35,0.75,0.6]);
+  const items=[], f1=x=>x.toFixed(1);
+  sc.polys.forEach(q=>{
+    const C=q.P.map(tr); let n=v3.nrm(newell(C));
+    if(q.ref){ const rr=rot(q.ref); if(v3.dot(n,rr)<0) n=v3.mul(n,-1); }
+    let front=n[2]>=0; if(!q.ref){ if(!front){ n=v3.mul(n,-1); front=true; } }
+    if(!front&&q.bop===0) return;
+    const I=Math.max(0,v3.dot(n,L));
+    const fill=front? shade(q.col,-0.3+0.62*I) : shade(q.col,.3);
+    const op=front? (q.op==null?.6:q.op) : (q.bop==null?.08:q.bop);
+    const z=C.reduce((a,c)=>a+c[2],0)/C.length+(q.dz||0);
+    const d="M"+C.map(c=>{const p=pr(c);return f1(p[0])+" "+f1(p[1]);}).join("L")+"Z";
+    items.push({z:z,L:q.L||0,s:'<path d="'+d+'" fill="'+fill+'" fill-opacity="'+op+'"'+(q.sc&&front?' stroke="'+q.sc+'" stroke-width="'+(q.sw||.8)+'" stroke-linejoin="round"':' stroke="none"')+'/>'});
+  });
+  sc.lines.forEach(l=>{ const C=l.pts.map(tr); const z=l.top? 1e6 : C.reduce((a,c)=>a+c[2],0)/C.length+(l.dz||0);
+    const d="M"+C.map(c=>{const p=pr(c);return f1(p[0])+" "+f1(p[1]);}).join("L")+(l.close?"Z":"");
+    items.push({z:z,L:l.L||0,s:'<path d="'+d+'" fill="'+(l.fill||"none")+'"'+(l.fill?' fill-opacity="'+(l.fo||.3)+'"':"")+' stroke="'+(l.col||"#14213D")+'" stroke-width="'+(l.w||2)+'"'+(l.dash?' stroke-dasharray="'+l.dash+'"':"")+(l.op!=null?' opacity="'+l.op+'"':"")+' stroke-linecap="round" stroke-linejoin="round"/>'}); });
+  items.sort((a,b)=>a.L-b.L||a.z-b.z);
+  let out=items.map(i=>i.s).join("");
+  g.innerHTML=out;
+  sc.pts.forEach(p=>{ const q=pr(tr(p.p)); dot(g,q[0],q[1],p.col,p.r||4.5); });
+  sc.labels.forEach(l=>{ const q=pr(tr(l.p)); label(g,q[0]+(l.dx||0),q[1]+(l.dy||0),l.t,{cls:l.cls||"sm",col:l.col,anchor:l.anchor}); });
+  return {P:p=>pr(tr(p))};
+}
+// fit a bounding box into the board
+function fit3(bb,view,pad){
+  const c=[(bb[0][0]+bb[1][0])/2,(bb[0][1]+bb[1][1])/2,(bb[0][2]+bb[1][2])/2];
+  const yaw=view.yaw*D2R, pit=view.pitch*D2R, cy=Math.cos(yaw), sy=Math.sin(yaw), cp=Math.cos(pit), sp=Math.sin(pit);
+  let mx=1e-9,my=1e-9;
+  for(let i=0;i<8;i++){ const p=[bb[i&1][0],bb[(i>>1)&1][1],bb[(i>>2)&1][2]], v=v3.sub(p,c);
+    const x1=v[0]*cy+v[2]*sy, z1=-v[0]*sy+v[2]*cy, y1=v[1]*cp-z1*sp; mx=Math.max(mx,Math.abs(x1)); my=Math.max(my,Math.abs(y1)); }
+  const s=Math.min((VW/2-(pad||40))/mx,(VH/2-(pad||40))/my);
+  return {c:c,s:s,cx:VW/2,cy:VH/2-6};
+}
+function bbOf(pts,bb){ bb=bb||[[1e9,1e9,1e9],[-1e9,-1e9,-1e9]]; pts.forEach(p=>{ for(let k=0;k<3;k++){ if(p[k]<bb[0][k])bb[0][k]=p[k]; if(p[k]>bb[1][k])bb[1][k]=p[k]; } }); return bb; }
+// axis frame: horizontal axis y=k → points (s, k+ρcosθ, ρsinθ); vertical x=k → (k+ρcosθ, s, ρsinθ)
+function rp(ax,k,s,rho,th){ return ax==="h"? [s,k+rho*Math.cos(th),rho*Math.sin(th)] : [k+rho*Math.cos(th),s,rho*Math.sin(th)]; }
+function radial(ax,th){ return ax==="h"? [0,Math.cos(th),Math.sin(th)] : [Math.cos(th),0,Math.sin(th)]; }
+const axDir=ax=>ax==="h"?[1,0,0]:[0,1,0];
+// a tube (washer slab or cylindrical shell): s∈[s0,s1] along the axis, ρ∈[r0,r1]
+function tube(sc,ax,k,s0,s1,r0,r1,col,o){
+  o=o||{}; const M=o.M||24, op=o.op, bop=o.bop, sc_=o.sc, sw=o.sw, L=o.L||0;
+  if(r1<r0){ const t=r0;r0=r1;r1=t; } if(s1<s0){ const t=s0;s0=s1;s1=t; }
+  const hole=r0>1e-6, ad=axDir(ax);
+  for(let j=0;j<M;j++){ const t0=2*PI*j/M, t1=2*PI*(j+1)/M, tm=(t0+t1)/2;
+    sc.polys.push({P:[rp(ax,k,s0,r1,t0),rp(ax,k,s1,r1,t0),rp(ax,k,s1,r1,t1),rp(ax,k,s0,r1,t1)],ref:radial(ax,tm),col,op,bop,sc:sc_,sw,L});
+    if(hole) sc.polys.push({P:[rp(ax,k,s0,r0,t0),rp(ax,k,s1,r0,t0),rp(ax,k,s1,r0,t1),rp(ax,k,s0,r0,t1)],ref:v3.mul(radial(ax,tm),-1),col,op,bop,L});
+    [[s0,-1],[s1,1]].forEach(([s,sg])=>{
+      const P= hole? [rp(ax,k,s,r0,t0),rp(ax,k,s,r1,t0),rp(ax,k,s,r1,t1),rp(ax,k,s,r0,t1)] : [rp(ax,k,s,0,0),rp(ax,k,s,r1,t0),rp(ax,k,s,r1,t1)];
+      sc.polys.push({P,ref:v3.mul(ad,sg),col,op,bop,sc:sc_,sw,L}); });
+  }
+}
+// smooth solid of revolution: outer radius R(s), inner r(s) for s∈[a,b]
+function revSolid(sc,ax,k,a,b,R,r,col,o){
+  o=o||{}; const NS_=o.N||36, M=o.M||28, op=o.op==null?.5:o.op, bop=o.bop==null?.07:o.bop, ad=axDir(ax);
+  const ss=[]; for(let i=0;i<=NS_;i++) ss.push(a+(b-a)*i/NS_);
+  const Rv=ss.map(s=>Math.max(0,R(s))), rv=ss.map(s=>Math.max(0,r(s)));
+  for(let i=0;i<NS_;i++) for(let j=0;j<M;j++){ const t0=2*PI*j/M, t1=2*PI*(j+1)/M, tm=(t0+t1)/2;
+    const dR=Rv[i+1]-Rv[i], ds=ss[i+1]-ss[i];
+    const refO=v3.add(radial(ax,tm),v3.mul(ad,-dR/(ds||1)));
+    sc.polys.push({P:[rp(ax,k,ss[i],Rv[i],t0),rp(ax,k,ss[i+1],Rv[i+1],t0),rp(ax,k,ss[i+1],Rv[i+1],t1),rp(ax,k,ss[i],Rv[i],t1)],ref:refO,col,op,bop});
+    if(rv[i]>1e-6||rv[i+1]>1e-6){ const dr=rv[i+1]-rv[i];
+      const refI=v3.mul(v3.add(radial(ax,tm),v3.mul(ad,-dr/(ds||1))),-1);
+      sc.polys.push({P:[rp(ax,k,ss[i],rv[i],t0),rp(ax,k,ss[i+1],rv[i+1],t0),rp(ax,k,ss[i+1],rv[i+1],t1),rp(ax,k,ss[i],rv[i],t1)],ref:refI,col:o.icol||col,op,bop}); } }
+  [[0,-1],[NS_,1]].forEach(([i,sg])=>{ if(Rv[i]-rv[i]<1e-6) return;
+    for(let j=0;j<M;j++){ const t0=2*PI*j/M, t1=2*PI*(j+1)/M;
+      sc.polys.push({P:[rp(ax,k,ss[i],rv[i],t0),rp(ax,k,ss[i],Rv[i],t0),rp(ax,k,ss[i],Rv[i],t1),rp(ax,k,ss[i],rv[i],t1)],ref:v3.mul(ad,sg),col,op,bop}); } });
+  // a few rim lines
+  [0,NS_].forEach(i=>{ const pts=[]; for(let j=0;j<=M;j++) pts.push(rp(ax,k,ss[i],Rv[i],2*PI*j/M)); sc.lines.push({pts,col:shade(col,-.45),w:1.4,op:.7}); });
+}
+
+/* ══════════════════════ shared UI builders ══════════════════════ */
+function btn(label,fn,cls,parent){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; (parent||bar).appendChild(b); return b; }
+function segBtns(opts,val,fn,aria,parent){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(aria)s.setAttribute("aria-label",aria);
+  opts.forEach(([k,lab])=>{ const b=document.createElement("button"); b.type="button"; b.innerHTML=lab;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  (parent||bar).appendChild(s); return s;
+}
+function chk(label,val,fn,parent){
+  const l=document.createElement("label"); l.className="chk";
+  const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label)); (parent||bar).appendChild(l); return i;
+}
+function spacer(t,parent){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; (parent||bar).appendChild(s); return s; }
+function slider(label,min,max,step,val,show,fn,parent){
+  const l=document.createElement("label"); l.className="rng"; l.appendChild(document.createTextNode(label+" "));
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=step; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("span"); o.className="v"; o.textContent=show(val);
+  i.oninput=()=>{ const r=fn(+i.value); o.textContent=show(r==null?+i.value:r); };
+  l.appendChild(i); l.appendChild(o); (parent||bar).appendChild(l); return i;
+}
+function selectBox(opts,val,fn,aria,parent){ const s=document.createElement("select"); s.setAttribute("aria-label",aria);
+  opts.forEach(([k,l])=>{ const o=document.createElement("option"); o.value=k; o.textContent=l; s.appendChild(o); });
+  s.value=String(val); s.onchange=()=>fn(s.value); (parent||bar).appendChild(s); return s; }
+function grp(){ const d=document.createElement("div"); d.className="grp"; bar.appendChild(d); return d; }
+const tryPanel=h=>`<div class="panel"><h3>Try this</h3><div class="pad">${h}</div></div>`;
+const panelH=(t,h,id)=>`<div class="panel"${id?` id="${id}"`:""}><h3>${t}</h3>${h}</div>`;
+const intH=(lo,hi,body,dv)=>`<span class="int">∫<span class="lims"><span>${hi}</span><span>${lo}</span></span></span>${body} ${dv}`;
+const H=a=>pp(a,true);
+function zoomBtns(M,parent){ btn("−",()=>{ M.s.W=zoomWin(M.s.W,1.25); update(); },"",parent).setAttribute("aria-label","Zoom out");
+  btn("+",()=>{ M.s.W=zoomWin(M.s.W,0.8); update(); },"",parent).setAttribute("aria-label","Zoom in"); }
+
+/* ══════════════════════ curves & regions ══════════════════════ */
+// a curve: v = f(u). inv: inverse branches written in the other variable
+function curveOf(src,nat,inv){
+  const other=nat==="x"?"y":"x";
+  const p=tryParse(src,[nat]); if(p.err) return {err:p.err,src};
+  const c={src, ast:p.ast, f:p.f, inv:[]};
+  (inv||[]).forEach(s=>{ const q=tryParse(s,[other]); if(!q.err) c.inv.push({ast:q.ast,f:q.f}); });
+  return c;
+}
+const isConst=c=>!hasVar(c.ast);
+function extremaV(f,a,b){
+  const N=320, xs=[], ys=[]; for(let i=0;i<=N;i++){ const x=a+(b-a)*i/N; xs.push(x); ys.push(f(x)); }
+  const out=[]; const g=(Math.sqrt(5)-1)/2;
+  for(let i=1;i<N;i++){ const d1=ys[i]-ys[i-1], d2=ys[i+1]-ys[i];
+    if(isFinite(d1)&&isFinite(d2)&&d1*d2<0){ const mx=d1>0; let lo=xs[i-1],hi=xs[i+1];
+      for(let k=0;k<70;k++){ const m1=hi-g*(hi-lo), m2=lo+g*(hi-lo); const c=mx? f(m1)>f(m2) : f(m1)<f(m2); if(c)hi=m2; else lo=m1; }
+      out.push(f((lo+hi)/2)); } }
+  return out;
+}
+function uniq(arr,tol){ arr=arr.filter(isFinite).sort((p,q)=>p-q); const o=[]; arr.forEach(v=>{ if(!o.length||Math.abs(v-o[o.length-1])>(tol||1e-8)) o.push(v); }); return o; }
+const regCache=new Map();
+// R = {nat:'x'|'y', F, G, a, b}
+function regKey(R){ return [R.nat,R.F.src,R.G.src,R.a,R.b].join("|"); }
+function natPieces(R){
+  const h=u=>R.F.f(u)-R.G.f(u);
+  const rs=roots(h,R.a,R.b,500).filter(r=>r>R.a+1e-9&&r<R.b-1e-9);
+  const br=[R.a].concat(rs,[R.b]), P=[];
+  for(let i=0;i<br.length-1;i++){ const p=br[i], q=br[i+1], m=(p+q)/2;
+    const top=R.F.f(m)>=R.G.f(m)? R.F : R.G, bot=top===R.F? R.G : R.F;
+    const val=integrate(u=>top.f(u)-bot.f(u),p,q);
+    P.push({p,q,top,bot,val}); }
+  return P;
+}
+function crossSet(R,v){
+  const a=R.a,b=R.b; let pts=[a,b];
+  [R.F,R.G].forEach(C=>{ if(isConst(C)) return; pts=pts.concat(roots(u=>C.f(u)-v,a,b,140)); });
+  pts=uniq(pts,1e-10); const iv=[];
+  for(let i=0;i<pts.length-1;i++){ const p=pts[i], q=pts[i+1]; if(q-p<1e-10)continue; const m=(p+q)/2, fm=R.F.f(m), gm=R.G.f(m);
+    if(Math.min(fm,gm)-1e-12<=v&&v<=Math.max(fm,gm)+1e-12){ if(iv.length&&Math.abs(iv[iv.length-1][1]-p)<1e-10) iv[iv.length-1][1]=q; else iv.push([p,q]); } }
+  return iv;
+}
+const lenSet=iv=>iv.reduce((s,I)=>s+I[1]-I[0],0);
+function crossInfo(R){
+  const key=regKey(R); if(regCache.has(key)) return regCache.get(key);
+  let br=[R.F.f(R.a),R.F.f(R.b),R.G.f(R.a),R.G.f(R.b)];
+  [R.F,R.G].forEach(C=>{ if(!isConst(C)) br=br.concat(extremaV(C.f,R.a,R.b)); });
+  roots(u=>R.F.f(u)-R.G.f(u),R.a,R.b,500).forEach(r=>br.push(R.F.f(r)));
+  br=uniq(br.map(cleanNum),1e-9);
+  const lo=br[0], hi=br[br.length-1], pieces=[];
+  for(let i=0;i<br.length-1;i++){ const c=br[i], d=br[i+1]; if(d-c<1e-9)continue; const vm=c+(d-c)*0.5;
+    const iv=crossSet(R,vm);
+    const desc=e=>{ if(Math.abs(e-R.a)<1e-7) return {line:R.a}; if(Math.abs(e-R.b)<1e-7) return {line:R.b};
+      const C=Math.abs(R.F.f(e)-vm)<1e-6? R.F : R.G; const d_={curve:C};
+      for(const br_ of C.inv){ const w=br_.f(vm); if(isFinite(w)&&Math.abs(w-e)<1e-6){ d_.ex=br_; break; } }
+      return d_; };
+    const ivd=iv.map(I=>({L:desc(I[0]),R:desc(I[1])}));
+    const exact=ivd.every(I=>[I.L,I.R].every(D=>D.line!=null||D.ex));
+    pieces.push({c,d,ivd,exact}); }
+  const info={lo,hi,pieces}; regCache.set(key,info); if(regCache.size>60) regCache.delete(regCache.keys().next().value);
+  return info;
+}
+const bAst=D=>D.line!=null? NN(D.line) : D.ex.ast;
+const bF=D=>D.line!=null? (()=>D.line) : D.ex.f;
+// Gauss–Legendre fallback for numeric cross integrals
+const GLX=[-0.9739065285171717,-0.8650633666889845,-0.6794095682990244,-0.4333953941292472,-0.1488743389816312,0.1488743389816312,0.4333953941292472,0.6794095682990244,0.8650633666889845,0.9739065285171717];
+const GLW=[0.0666713443086881,0.1494513491505806,0.2190863625159820,0.2692667193099963,0.2955242247147529,0.2955242247147529,0.2692667193099963,0.2190863625159820,0.1494513491505806,0.0666713443086881];
+function glInt(f,a,b,m){ m=m||6; let s=0; const h=(b-a)/m; for(let k=0;k<m;k++){ const c=a+h*(k+.5); for(let i=0;i<10;i++) s+=GLW[i]*f(c+h/2*GLX[i])*h/2; } return s; }
+// integrate g(v, intervals) over a cross piece
+function crossIntegrate(R,P,g,gEx){
+  if(P.exact&&gEx) return integrate(gEx,P.c,P.d);
+  return glInt(v=>g(v,crossSet(R,v)),P.c,P.d,8);
+}
+function crossArea(R){ const I=crossInfo(R); let tot=0;
+  I.pieces.forEach(P=>{ P.val=crossIntegrate(R,P,(v,iv)=>lenSet(iv),P.exact?(v=>P.ivd.reduce((s,J)=>s+bF(J.R)(v)-bF(J.L)(v),0)):null); tot+=P.val; });
+  return tot; }
+function curveName(R,C){ return (R.nat==="x"?"y":"x")+" = "+pp(C.ast); }
+function bDescTxt(R,D,html){
+  const ov=R.nat==="x"?"y":"x";
+  if(D.line!=null) return nb(D.line);
+  if(D.ex) return html? H(D.ex.ast) : pp(D.ex.ast);
+  return R.nat+" on "+curveName(R,D.curve)+" (solved numerically)";
+}
+function autoBounds(F,G,lo,hi){ const rs=roots(u=>F.f(u)-G.f(u),lo,hi,700); return rs.length>=2? [rs[0],rs[rs.length-1]] : null; }
+
+// region drawing in a 2D window. map (u,v)→(x,y) by nat
+function toXY(R,u,v){ return R.nat==="x"? [u,v] : [v,u]; }
+function regionPolys(R,W,P){ const N=80, pts=[];
+  for(let i=0;i<=N;i++){ const u=P.p+(P.q-P.p)*i/N; const q=toXY(R,u,P.top.f(u)); pts.push([W.X(q[0]),W.Y(q[1])]); }
+  for(let i=N;i>=0;i--){ const u=P.p+(P.q-P.p)*i/N; const q=toXY(R,u,P.bot.f(u)); pts.push([W.X(q[0]),W.Y(q[1])]); }
+  return pts; }
+function curvePath(R,W,C,lo,hi,N){ return R.nat==="x"? pathF(W,C.f,lo,hi,N) : pathP(W,C.f,t=>t,lo,hi,N); }
+const PC=["rgba(0,180,216,.26)","rgba(255,61,138,.22)","rgba(124,58,237,.20)","rgba(5,150,105,.22)"];
+const PCs=["#0284C7","#DB2777","#7C3AED","#059669"];
+
+/* ══════════════════════ TAB 1 · area between curves ══════════════════════ */
+const P1=[
+  {nm:"y = x + 2 and y = x²", nat:"x", f:"x+2", g:"x^2", fi:["y-2"], gi:["sqrt(y)","-sqrt(y)"], W:[-3.5,4,2]},
+  {nm:"y = sin x and y = cos x on [0, 2π]", nat:"x", f:"sin(x)", g:"cos(x)", fi:["asin(y)","pi-asin(y)","2pi+asin(y)"], gi:["acos(y)","2pi-acos(y)"], W:[-0.6,7,0], ab:[0,2*PI], pi:true},
+  {nm:"y = x³ and y = x (they swap)", nat:"x", f:"x^3", g:"x", fi:["cbrt(y)"], gi:["y"], W:[-2.2,2.2,0]},
+  {nm:"x = y² and x = y + 2 (use dy)", nat:"y", f:"y^2", g:"y+2", fi:["sqrt(x)","-sqrt(x)"], gi:["x-2"], W:[-2,5.5,0.5]},
+  {nm:"y = 4 − x² and y = x² − 4", nat:"x", f:"4-x^2", g:"x^2-4", fi:["sqrt(4-y)","-sqrt(4-y)"], gi:["sqrt(y+4)","-sqrt(y+4)"], W:[-4.5,4.5,0]},
+  {nm:"y = eˣ and y = x + 2 (numeric roots)", nat:"x", f:"e^x", g:"x+2", fi:["ln(y)"], gi:["y-2"], W:[-3,2.6,1.8]},
+  {nm:"y = √x and y = x/2", nat:"x", f:"sqrt(x)", g:"x/2", fi:["y^2"], gi:["2y"], W:[-0.8,5,1.2]}
+];
+const M1={
+  tab:"Area between curves", lesson:"AP 8.4–8.6 · Unit 8", accent:"var(--cyan)",
+  s:{pre:0,nat:"x",fs:"",gs:"",fi:[],gi:[],a:0,b:1,auto:true,mode:"dx",sp:0.42,W:null,snap:true,pi:false,err:""},
+  title:()=>"Area between two curves",
+  init(i){ const s=M1.s, p=P1[i]; s.pre=i; s.nat=p.nat; s.fs=p.f; s.gs=p.g; s.fi=p.fi.slice(); s.gi=p.gi.slice(); s.W=winOf(p.W); s.pi=!!p.pi; s.err="";
+    s.mode=p.nat==="x"?"dx":"dy"; s.auto=!p.ab; if(p.ab){ s.a=p.ab[0]; s.b=p.ab[1]; } M1.build(); },
+  build(){ const s=M1.s; s.F=curveOf(s.fs,s.nat,s.fi); s.G=curveOf(s.gs,s.nat,s.gi); s.err=s.F.err||s.G.err||"";
+    if(s.err) return;
+    if(s.auto){ const W=s.W, lo=s.nat==="x"?W.x0:W.y0, hi=s.nat==="x"?W.x1:W.y1; const ab=autoBounds(s.F,s.G,lo,hi);
+      if(ab){ s.a=ab[0]; s.b=ab[1]; } else { s.auto=false; s.a=lo+(hi-lo)*.3; s.b=lo+(hi-lo)*.7; s.a=Math.round(s.a); s.b=Math.round(s.b); if(s.b<=s.a)s.b=s.a+1; } }
+  },
+  R(){ const s=M1.s; return {nat:s.nat,F:s.F,G:s.G,a:s.a,b:s.b}; },
+  bar(){
+    const s=M1.s;
+    selectBox(P1.map((p,i)=>[i,p.nm]).concat([["c","Your own functions (type in the panel)"]]),s.custom?"c":s.pre,v=>{ if(v==="c"){ s.custom=true; render(); return; } s.custom=false; M1.init(+v); render(); },"Preset curves");
+    segBtns([["dx","Vertical strips (dx)"],["dy","Horizontal strips (dy)"]],s.mode,k=>{ s.mode=k; render(); },"Strip direction");
+    const g2=grp();
+    btn("Use intersections as bounds",()=>{ s.auto=true; M1.build(); update(); },"",g2);
+    chk("Snap",s.snap,v=>{ s.snap=v; },g2);
+    zoomBtns(M1,g2);
+  },
+  draw(){
+    const s=M1.s, W=s.W, g0=grid(W,{pi:s.pi});
+    if(s.err){ label(g0,VW/2,VH/2,"Fix the function in the panel: "+s.err,{cls:"sm",col:"#B91C1C"}); return; }
+    const R=M1.R(), nat=s.nat, ov=nat==="x"?"y":"x";
+    const lo=nat==="x"?W.x0:W.y0, hi=nat==="x"?W.x1:W.y1;
+    const pieces=natPieces(R);
+    const gR=E("g",{},g0);
+    pieces.forEach((P,i)=>polyFill(gR,regionPolys(R,W,P),PC[i%4]));
+    curve(g0,curvePath(R,W,s.F,lo,hi,500),"#0369A1",3);
+    curve(g0,curvePath(R,W,s.G,lo,hi,500),"#C0185F",3);
+    // bound lines
+    [s.a,s.b].forEach(u=>{ if(nat==="x") seg(g0,W.X(u),0,W.X(u),VH,"#64748B",1.4,"5 5"); else seg(g0,0,W.Y(u),VW,W.Y(u),"#64748B",1.4,"5 5"); });
+    // intersections
+    const ints=roots(u=>s.F.f(u)-s.G.f(u),lo,hi,700);
+    ints.forEach(u=>{ const q=toXY(R,u,s.F.f(u)); const X=W.X(q[0]), Y=W.Y(q[1]); if(X<-5||X>VW+5||Y<-5||Y>VH+5)return;
+      dot(g0,X,Y,"#7C3AED",6); label(g0,X+8,Y-16,"("+nb(q[0])+", "+nb(q[1])+")",{cls:"tiny",col:"#5B21B6",anchor:"start"}); });
+    // curve name labels
+    const lab=(C,col,t)=>{ let u=lo+(hi-lo)*t; for(let k=0;k<12;k++){ const q=toXY(R,u,C.f(u)); if(isFinite(q[1])&&W.Y(q[1])>20&&W.Y(q[1])<VH-20&&W.X(q[0])>10&&W.X(q[0])<VW-10)break; u=lo+(hi-lo)*(t+(k%2?1:-1)*(k+1)*0.03); }
+      const q=toXY(R,u,C.f(u)); if(!isFinite(q[1]))return; label(g0,W.X(q[0])+6,W.Y(q[1])-14,curveName(R,C),{cls:"sm",col,anchor:"start"}); };
+    lab(s.F,"#0369A1",0.86); lab(s.G,"#C0185F",0.1);
+    // piece labels
+    pieces.forEach((P,i)=>{ const m=(P.p+P.q)/2, q=toXY(R,m,(P.top.f(m)+P.bot.f(m))/2);
+      if(pieces.length>1) label(g0,W.X(q[0]),W.Y(q[1])+(s.mode===(nat==="x"?"dx":"dy")?28:0),"A"+(i+1),{cls:"big",col:PCs[i%4]}); });
+    // representative rectangle
+    const strip=M1.strip(R);
+    if(strip){ const {pos,segs,d}=strip;
+      segs.forEach(sg=>{ let x0,x1,y0,y1;
+        if((s.mode==="dx")===(nat==="x")){ // strip across natural var: between curves
+          const p0=toXY(R,pos-d/2,sg[0]), p1=toXY(R,pos+d/2,sg[1]); x0=p0[0];y0=p0[1];x1=p1[0];y1=p1[1];
+        } else { const p0=toXY(R,sg[0],pos-d/2), p1=toXY(R,sg[1],pos+d/2); x0=p0[0];y0=p0[1];x1=p1[0];y1=p1[1]; }
+        const X0=W.X(Math.min(x0,x1)), X1=W.X(Math.max(x0,x1)), Y0=W.Y(Math.max(y0,y1)), Y1=W.Y(Math.min(y0,y1));
+        E("rect",{x:X0,y:Y0,width:Math.max(1,X1-X0),height:Math.max(1,Y1-Y0),fill:"rgba(255,217,61,.75)",stroke:"#B45309","stroke-width":2},g0); });
+      const sg=segs[0], mid=(sg[0]+sg[1])/2;
+      let hp; if((s.mode==="dx")===(nat==="x")) hp=toXY(R,pos,mid); else hp=toXY(R,mid,pos);
+      const HX=W.X(hp[0]), HY=W.Y(hp[1]);
+      const sv=s.mode==="dx"?"x":"y";
+      label(g0,HX+(s.mode==="dx"?0:0),s.mode==="dx"? W.Y(Math.max(...segs.map(q=>q[1])))+(-16) : HY-26,(s.mode==="dx"?"Δx":"Δy")+" at "+sv+" = "+num(pos,2),{cls:"tiny",col:"#92400E"});
+      grab(g0,HX,HY,"strip");
+    }
+    // bound handles on the natural axis
+    const axV=clamp(0,(nat==="x"?W.y0:W.x0),(nat==="x"?W.y1:W.x1));
+    [["a",s.a],["b",s.b]].forEach(([id,u])=>{ const q=toXY(R,u,axV); const X=clamp(W.X(q[0]),8,VW-8), Y=clamp(W.Y(q[1]),8,VH-8);
+      grab(g0,X,Y,id,"#475569"); label(g0,X+(nat==="x"?0:22),Y+(nat==="x"?24:0),(id==="a"?"a = ":"b = ")+nb(u),{cls:"tiny",col:"#334155"}); });
+    hintTxt(g0,"Drag the orange strip, or the a / b handles to change the bounds");
+  },
+  strip(R){ const s=M1.s, nat=s.nat, sameDir=(s.mode==="dx")===(nat==="x");
+    if(sameDir){ const pos=R.a+(R.b-R.a)*s.sp, f=R.F.f(pos), g=R.G.f(pos); if(!isFinite(f)||!isFinite(g))return null;
+      return {pos,segs:[[Math.min(f,g),Math.max(f,g)]],d:(R.b-R.a)/40}; }
+    const I=crossInfo(R); const pos=I.lo+(I.hi-I.lo)*s.sp; const iv=crossSet(R,pos); if(!iv.length)return null;
+    return {pos,segs:iv,d:(I.hi-I.lo)/40}; },
+  drag(id,p){ const s=M1.s, W=s.W, R=M1.R(), nat=s.nat;
+    if(id==="a"||id==="b"){ let u=nat==="x"? W.iX(p[0]) : W.iY(p[1]);
+      if(s.snap){ const lo=nat==="x"?W.x0:W.y0, hi=nat==="x"?W.x1:W.y1; const ints=roots(q=>s.F.f(q)-s.G.f(q),lo,hi,500);
+        const tol=18/(nat==="x"?W.sx:W.sy); let best=null; ints.forEach(r=>{ if(Math.abs(r-u)<tol&&(best==null||Math.abs(r-u)<Math.abs(best-u)))best=r; });
+        if(best!=null) u=best; else { const st=s.pi? PI/12 : 0.25; u=Math.round(u/st)*st; } }
+      if(id==="a") s.a=Math.min(u,s.b-0.05); else s.b=Math.max(u,s.a+0.05); s.auto=false; return; }
+    if(id==="strip"){ const sameDir=(s.mode==="dx")===(nat==="x");
+      if(sameDir){ const u=nat==="x"? W.iX(p[0]) : W.iY(p[1]); s.sp=clamp((u-R.a)/(R.b-R.a),0.005,0.995); }
+      else { const I=crossInfo(R); const v=nat==="x"? W.iY(p[1]) : W.iX(p[0]); s.sp=clamp((v-I.lo)/(I.hi-I.lo),0.005,0.995); } }
+  },
+  panel(full){
+    const s=M1.s, nat=s.nat, ov=nat==="x"?"y":"x";
+    if(full){
+      side.innerHTML=panelH("Curves",`<div class="pad" style="padding-bottom:6px"><p class="mini">Type any functions of ${nat} (e.g. <b>x^2 - 1</b>, <b>2sin(x)</b>, <b>e^(-x)</b>, <b>sqrt(x)</b>). Orientation:</p></div>
+        <div class="fldwrap" style="margin-bottom:10px"><div class="seg" id="ori1"><button type="button" aria-pressed="${nat==="x"}" data-o="x">y = f(x)</button><button type="button" aria-pressed="${nat==="y"}" data-o="y">x = f(y)</button></div></div>
+        <div class="fxrow"><span>${ov} = </span><input type="text" id="f1" value="${s.fs}" aria-label="First curve" spellcheck="false" autocomplete="off"></div>
+        <div class="fxrow"><span>${ov} = </span><input type="text" id="g1" value="${s.gs}" aria-label="Second curve" spellcheck="false" autocomplete="off"></div>
+        <div id="err1"></div>`)+
+        `<div id="live1"></div>`+
+        panelH("The idea",`<div class="pad"><p>Slice the region into thin rectangles. With <b>vertical strips</b> each one is (top − bottom) tall and <b>dx</b> wide; with <b>horizontal strips</b> each one is (right − left) long and <b>dy</b> thick. Add infinitely many and you get an integral.</p>
+          <p>Where the curves <b>cross</b>, top and bottom swap, so the region splits and each piece gets its own integral. Area is never negative — that is the same as integrating |f − g|.</p>
+          <p>Pick the strip direction that needs the <b>fewest integrals</b>. If a strip would touch a different curve partway across, you must split.</p>
+          <div class="eq">A = ${intH("a","b","[top − bottom]","dx")}\nA = ${intH("c","d","[right − left]","dy")}</div></div>`)+
+        tryPanel(`Choose <b>x = y² and x = y + 2</b>. With horizontal strips it is one integral; switch to <b>vertical strips</b> — why do you suddenly need two? Check that both ways give 9/2.`);
+      const fi=$("f1"), gi=$("g1");
+      const onIn=()=>{ s.fs=fi.value; s.gs=gi.value; s.fi=[]; s.gi=[]; s.custom=true; s.auto=true; M1.build(); update(); };
+      let tmr=null; [fi,gi].forEach(x=>x.addEventListener("input",()=>{ clearTimeout(tmr); tmr=setTimeout(onIn,350); }));
+      [...$("ori1").children].forEach(b=>b.onclick=()=>{ if(s.nat===b.dataset.o)return; s.nat=b.dataset.o; s.fi=[]; s.gi=[]; s.custom=true; s.auto=true; s.mode=s.nat==="x"?"dx":"dy";
+        const W=s.W; s.W=Win(W.y0*VW/VH,W.y1*VW/VH,W.x0*VH/VW,W.x1*VH/VW); s.pi=false; M1.build(); render(); });
+    }
+    $("err1").innerHTML=s.err? `<p class="err">${s.err}</p>` : "";
+    const live=$("live1"); if(s.err){ live.innerHTML=""; return; }
+    const R=M1.R(), pieces=natPieces(R), natTot=pieces.reduce((t,P)=>t+P.val,0);
+    const sameDir=(s.mode==="dx")===(nat==="x"), sv=s.mode==="dx"?"x":"y";
+    let h="", tot;
+    const ep=(R.b-R.a)*1e-6, ints=roots(u=>s.F.f(u)-s.G.f(u),R.a-ep,R.b+ep,500);
+    h+=`<div class="pad"><p class="mini">Intersections in [a, b]: ${ints.length? ints.map(u=>{const q=toXY(R,u,s.F.f(u));return "("+nb(q[0])+", "+nb(q[1])+")";}).join(", ") : "none"} · solved numerically (bisection on f − g = 0).</p>`;
+    if(sameDir){
+      tot=natTot;
+      h+=`<p>Strips are ⊥ to the ${nat}-axis, so integrate in <b>${nat}</b> from ${nb(R.a)} to ${nb(R.b)}${pieces.length>1?` — the curves swap ${pieces.length-1} time${pieces.length>2?"s":""}, so split into ${pieces.length} integrals`:""}.</p></div>`;
+      h+=`<div class="fldwrap"><div class="eq">`+pieces.map((P,i)=>`${pieces.length>1?"A"+(i+1)+" = ":"A = "}${intH(nb(P.p),nb(P.q),"[("+H(P.top.ast)+") − ("+H(P.bot.ast)+")]","d"+nat)}\n     ${eqx(P.val)}`).join("\n")+
+        (pieces.length>1? `\nA = ${pieces.map((_,i)=>"A"+(i+1)).join(" + ")} ${eqx(tot)}` : "")+`<small>${nat==="x"?"top − bottom":"right − left"}: ${pieces.map((P,i)=>(pieces.length>1?"A"+(i+1)+": ":"")+curveName(R,P.top)+" minus "+curveName(R,P.bot)).join("; ")}</small></div></div>`;
+    } else {
+      const I=crossInfo(R); tot=crossArea(R);
+      const npc=I.pieces.length;
+      h+=`<p>Strips are ⊥ to the ${ov}-axis, so integrate in <b>${ov}</b> from ${nb(I.lo)} to ${nb(I.hi)}. Each strip runs from the ${nat==="x"?"left":"lower"} boundary to the ${nat==="x"?"right":"upper"} one, so every curve must be solved for ${nat}${npc>1?` — and the boundary changes at ${ov} = ${I.pieces.slice(1).map(P=>nb(P.c)).join(", ")}, so it takes <b>${npc} integrals</b>`:""}.</p></div>`;
+      h+=`<div class="fldwrap"><div class="eq">`+I.pieces.map((P,i)=>{
+        const body=P.ivd.map(J=>"["+bDescTxt(R,J.R,true)+" − ("+bDescTxt(R,J.L,true)+")]").join(" + ");
+        return `${npc>1?"A"+(i+1)+" = ":"A = "}${intH(nb(P.c),nb(P.d),body,"d"+ov)}\n     ${P.exact?eqx(P.val):"≈ "+num(P.val,4)}`; }).join("\n")+
+        (npc>1? `\nA ${eqx(tot)}`:"")+`<small>Check with ${sameDir?"":"the other strip direction"}: ${eqx(natTot)}${Math.abs(natTot-tot)<1e-4?" ✓ same area":""}</small></div></div>`;
+    }
+    const st=M1.strip(R);
+    if(st){ const L=st.segs.reduce((q,sg)=>q+sg[1]-sg[0],0);
+      h+=`<div class="pad" style="padding-top:0"><p><b>Representative rectangle</b> at ${sv} = ${num(st.pos,3)}: ${sameDir?(nat==="x"?"height":"length"):(nat==="x"?"length":"height")} = ${num(L,3)}, area ≈ ${num(L,3)}·Δ${sv}.</p></div>`; }
+    live.innerHTML=panelH("Set up the integral",h+`<div class="pad" style="padding-top:0"><span class="bigv">Area ${eqx(tot)}</span></div>`);
+  }
+};
+
+/* ══════════════════════ solids: shared region presets (region given as y-curves on [a, b]) ══════════════════════ */
+const VP=[
+  {nm:"y = √x, y = 0, 0 ≤ x ≤ 4", f:"sqrt(x)", g:"0", fi:["y^2"], gi:[], ab:[0,4]},
+  {nm:"y = x and y = x²", f:"x", g:"x^2", fi:["y"], gi:["sqrt(y)"], ab:[0,1]},
+  {nm:"y = 2x and y = x²", f:"2x", g:"x^2", fi:["y/2"], gi:["sqrt(y)"], ab:[0,2]},
+  {nm:"y = 4 − x², y = 0", f:"4-x^2", g:"0", fi:["sqrt(4-y)","-sqrt(4-y)"], gi:[], ab:[-2,2]},
+  {nm:"y = 1 + x², y = 1, 0 ≤ x ≤ 1", f:"1+x^2", g:"1", fi:["sqrt(y-1)"], gi:[], ab:[0,1]},
+  {nm:"y = sin x, y = 0, 0 ≤ x ≤ π", f:"sin(x)", g:"0", fi:["asin(y)","pi-asin(y)"], gi:[], ab:[0,PI]},
+  {nm:"y = eˣ, y = 1, 0 ≤ x ≤ 1", f:"e^x", g:"1", fi:["ln(y)"], gi:[], ab:[0,1]},
+  {nm:"y = 1/x, y = 0, 1 ≤ x ≤ 3", f:"1/x", g:"0", fi:["1/y"], gi:[], ab:[1,3]}
+];
+function buildVR(s){ const p=VP[s.pre]; return {nat:"x",F:curveOf(p.f,"x",p.fi),G:curveOf(p.g,"x",p.gi),a:p.ab[0],b:p.ab[1]}; }
+// numeric volume engines (generic; also used as cross-checks)
+function washerTerm(lo,hi,k){ const A=(lo-k)*(lo-k), B=(hi-k)*(hi-k); return (lo>=k-1e-12||hi<=k+1e-12)? Math.abs(B-A) : Math.max(A,B); }
+function volWasherH(R,k){ return PI*integrate(x=>{ const f=R.F.f(x), g=R.G.f(x); return washerTerm(Math.min(f,g),Math.max(f,g),k); },R.a,R.b,1e-10); }
+function volWasherV(R,k){ const I=crossInfo(R); let t=0; I.pieces.forEach(P=>{ t+=PI*crossIntegrate(R,P,(v,iv)=>iv.reduce((s,J)=>s+washerTerm(J[0],J[1],k),0),
+    P.exact?(v=>P.ivd.reduce((s,J)=>s+washerTerm(bF(J.L)(v),bF(J.R)(v),k),0)):null); }); return t; }
+function volShellV(R,k){ return 2*PI*integrate(x=>Math.abs(x-k)*Math.abs(R.F.f(x)-R.G.f(x)),R.a,R.b,1e-10); }
+function volShellH(R,k){ const I=crossInfo(R); let t=0; I.pieces.forEach(P=>{ t+=2*PI*crossIntegrate(R,P,(v,iv)=>Math.abs(v-k)*lenSet(iv),
+    P.exact?(v=>Math.abs(v-k)*P.ivd.reduce((s,J)=>s+bF(J.R)(v)-bF(J.L)(v),0)):null); }); return t; }
+function straddles(R,ax,k){
+  if(ax==="v") return R.a<k-1e-9&&R.b>k+1e-9;
+  let lo=Infinity,hi=-Infinity; for(let i=0;i<=200;i++){ const x=R.a+(R.b-R.a)*i/200, f=R.F.f(x), g=R.G.f(x); lo=Math.min(lo,f,g); hi=Math.max(hi,f,g); }
+  return lo<k-1e-6&&hi>k+1e-6;
+}
+// expression helpers for radii
+const offAst=(a,k)=>simp(S("-",a,NN(k)));       // a − k
+const koffAst=(a,k)=>simp(S("-",NN(k),a));      // k − a
+const isZeroAst=a=>a[0]==="n"&&Math.abs(a[1])<1e-12;
+function sq(a,html){ const s=html?H(a):pp(a); return (a[0]==="v"||a[0]==="n"&&a[1]>=0||a[0]==="f")? s+(html?"<sup>2</sup>":"²") : "("+s+")"+(html?"<sup>2</sup>":"²"); }
+function axisName(ax,k){ if(ax==="h") return Math.abs(k)<1e-12? "the x-axis" : "y = "+nb(k); return Math.abs(k)<1e-12? "the y-axis" : "x = "+nb(k); }
+function regionWorld(R){ const out=[]; natPieces(R).forEach(P=>{ const N=40, pts=[];
+    for(let i=0;i<=N;i++){ const u=P.p+(P.q-P.p)*i/N; pts.push([u,P.top.f(u),0]); }
+    for(let i=N;i>=0;i--){ const u=P.p+(P.q-P.p)*i/N; pts.push([u,P.bot.f(u),0]); } out.push(pts); }); return out; }
+function viewDrag(M){ return M.view; }
+function axisLine(sc,ax,k,bb){ const pad=0.6;
+  if(ax==="h") sc.lines.push({pts:[[bb[0][0]-pad,k,0],[bb[1][0]+pad,k,0]],col:"#DC2626",w:2.2,dash:"9 6",top:true});
+  else sc.lines.push({pts:[[k,bb[0][1]-pad,0],[k,bb[1][1]+pad,0]],col:"#DC2626",w:2.2,dash:"9 6",top:true}); }
+function coordAxes(sc,bb){ const x0=Math.min(bb[0][0],0)-0.3, x1=Math.max(bb[1][0],0)+0.4, y0=Math.min(bb[0][1],0)-0.3, y1=Math.max(bb[1][1],0)+0.4;
+  sc.lines.push({pts:[[x0,0,0],[x1,0,0]],col:"#8FA3C8",w:1.5,L:-1}); sc.lines.push({pts:[[0,y0,0],[0,y1,0]],col:"#8FA3C8",w:1.5,L:-1});
+  sc.labels.push({p:[x1,0,0],t:"x",cls:"ax",col:"#64748B",dx:8}); sc.labels.push({p:[0,y1,0],t:"y",cls:"ax",col:"#64748B",dy:-8}); }
+function kRange(){ return {min:-3,max:5,step:0.5}; }
+
+/* ══════════════════════ TAB 2 · disks & washers ══════════════════════ */
+const M2={
+  tab:"Disks & washers", lesson:"AP 8.9–8.12 · Unit 8", accent:"var(--magenta)", rot3:true,
+  view:{yaw:-28,pitch:18}, view0:{yaw:-28,pitch:18},
+  s:{pre:0,ax:"h",k:0,n:14,sp:0.5,smooth:false},
+  title:()=>"Volumes by disks and washers",
+  R(){ return buildVR(M2.s); },
+  bar(){ const s=M2.s;
+    selectBox(VP.map((p,i)=>[i,p.nm]),s.pre,v=>{ s.pre=+v; render(); },"Region");
+    selectBox([["hx","About the x-axis"],["vy","About the y-axis"],["hk","About y = k"],["vk","About x = k"]],s.axSel||"hx",v=>{ s.axSel=v; s.ax=v[0]; if(v[1]!=="k") s.k=0; else s.k=v[0]==="h"? -1 : -1; render(); },"Axis of rotation");
+    if(s.axSel&&s.axSel[1]==="k") slider("k",-3,5,0.5,s.k,v=>nb(v),v=>{ s.k=v; update(); });
+    const g=grp();
+    slider("Slices",4,40,1,s.n,v=>v,v=>{ s.n=v; redraw(); },g);
+    slider("Slice at",0,1,0.01,s.sp,v=>Math.round(v*100)+"%",v=>{ s.sp=v; update(); },g);
+    chk("Smooth solid",s.smooth,v=>{ s.smooth=v; redraw(); },g);
+    btn("↺ View",()=>{ M2.view.yaw=M2.view0.yaw; M2.view.pitch=M2.view0.pitch; redraw(); },"",g);
+  },
+  draw(){ const s=M2.s, R=M2.R(), ax=s.ax, k=s.k, sc=Scene();
+    const bad=straddles(R,ax,k);
+    const pieces=natPieces(R);
+    let rep=null;
+    if(ax==="h"){
+      const n=s.n, d=(R.b-R.a)/n, iRep=Math.min(n-1,Math.floor(s.sp*n));
+      if(s.smooth) revSolid(sc,"h",k,R.a,R.b,x=>{ const f=R.F.f(x)-k, g=R.G.f(x)-k; return Math.max(Math.abs(f),Math.abs(g)); },
+        x=>{ const f=R.F.f(x)-k, g=R.G.f(x)-k; return f*g<0?0:Math.min(Math.abs(f),Math.abs(g)); },"#38BDF8",{op:.42,bop:.06});
+      for(let i=0;i<n;i++){ const x0=R.a+i*d, x1=x0+d, xm=(x0+x1)/2, f=R.F.f(xm), g=R.G.f(xm), lo=Math.min(f,g), hi=Math.max(f,g);
+        const r1=Math.max(Math.abs(lo-k),Math.abs(hi-k)), r0=(lo-k)*(hi-k)<0?0:Math.min(Math.abs(lo-k),Math.abs(hi-k));
+        if(i===iRep){ rep={x0,x1,xm,r0,r1}; tube(sc,"h",k,x0,x1,r0,r1,"#FBBF24",{op:.95,bop:.5,sc:"#92400E",sw:.6,M:32,L:1}); }
+        else if(!s.smooth) tube(sc,"h",k,x0,x1,r0,r1,"#38BDF8",{op:.3,bop:.05,M:24}); }
+    } else {
+      const I=crossInfo(R), n=s.n, d=(I.hi-I.lo)/n, iRep=Math.min(n-1,Math.floor(s.sp*n));
+      if(s.smooth) revSolid(sc,"v",k,I.lo,I.hi,y=>{ const iv=crossSet(R,y); return iv.length? Math.max(...iv.map(J=>Math.max(Math.abs(J[0]-k),Math.abs(J[1]-k)))) : 0; },
+        y=>{ const iv=crossSet(R,y); if(!iv.length)return 0; if(iv.some(J=>(J[0]-k)*(J[1]-k)<0))return 0; return Math.min(...iv.map(J=>Math.min(Math.abs(J[0]-k),Math.abs(J[1]-k)))); },"#38BDF8",{op:.42,bop:.06,N:30});
+      for(let i=0;i<n;i++){ const y0=I.lo+i*d, y1=y0+d, ym=(y0+y1)/2, iv=crossSet(R,ym);
+        iv.forEach(J=>{ const r1=Math.max(Math.abs(J[0]-k),Math.abs(J[1]-k)), r0=(J[0]-k)*(J[1]-k)<0?0:Math.min(Math.abs(J[0]-k),Math.abs(J[1]-k));
+          if(i===iRep){ rep=rep||{x0:y0,x1:y1,xm:ym,r0,r1}; tube(sc,"v",k,y0,y1,r0,r1,"#FBBF24",{op:.95,bop:.5,sc:"#92400E",sw:.6,M:32,L:1}); }
+          else if(!s.smooth) tube(sc,"v",k,y0,y1,r0,r1,"#38BDF8",{op:.3,bop:.05,M:24}); }); }
+    }
+    const regs=regionWorld(R);
+    regs.forEach(P=>sc.lines.push({pts:P,close:true,col:"#BE185D",w:2.4,fill:"#F472B6",fo:.35,dz:.01}));
+    let pts=[]; regs.forEach(P=>pts=pts.concat(P));
+    // bounding box of the solid
+    let rmax=0; if(ax==="h") pts.forEach(p=>rmax=Math.max(rmax,Math.abs(p[1]-k))); else pts.forEach(p=>rmax=Math.max(rmax,Math.abs(p[0]-k)));
+    const bb=ax==="h"? bbOf([[R.a,k-rmax,-rmax],[R.b,k+rmax,rmax],[0,0,0]]) : bbOf([[k-rmax,Math.min(...pts.map(p=>p[1])),-rmax],[k+rmax,Math.max(...pts.map(p=>p[1])),rmax],[0,0,0]]);
+    coordAxes(sc,bb); axisLine(sc,ax,k,bb);
+    if(rep){ // radius markers on the representative slice (in the z = 0 plane, upper side)
+      const mk=(r,col,t)=>{ const A=ax==="h"?[rep.xm,k,0]:[k,rep.xm,0], B=ax==="h"?[rep.xm,k+r*Math.sign((R.F.f(rep.xm)+R.G.f(rep.xm))/2-k||1),0]:[k+r*Math.sign((R.a+R.b)/2-k||1),rep.xm,0];
+        sc.lines.push({pts:[A,B],col,w:3.2,top:true}); sc.labels.push({p:B,t:t,col,cls:"big",dx:ax==="h"?18:0,dy:ax==="h"?0:-16}); };
+      mk(rep.r1,"#B45309","R = "+num(rep.r1,2)); if(rep.r0>1e-6) mk(rep.r0,"#0369A1","r = "+num(rep.r0,2));
+    }
+    cv.classList.add("r3"); const g=E("g",{},cv); const fit=fit3(bb,M2.view,46); render3(sc,M2.view,fit,g);
+    if(bad) label(g,VW/2,24,"The axis cuts through the region — pick a line on its edge or outside it",{cls:"sm",col:"#B91C1C",fixed:true});
+    hintTxt(g,"Drag the board to turn the solid · arrow keys work too");
+  },
+  panel(){ const s=M2.s, R=M2.R(), ax=s.ax, k=s.k;
+    const V=ax==="h"? volWasherH(R,k) : volWasherV(R,k), Vs=ax==="h"? volShellH(R,k) : volShellV(R,k);
+    const bad=straddles(R,ax,k);
+    let eq="", what="";
+    if(ax==="h"){ const pieces=natPieces(R);
+      const lines=pieces.map((P,i)=>{ const above=(P.top.f((P.p+P.q)/2)+P.bot.f((P.p+P.q)/2))/2>=k;
+        const Ro=above? offAst(P.top.ast,k) : koffAst(P.bot.ast,k), ri=above? offAst(P.bot.ast,k) : koffAst(P.top.ast,k);
+        const disk=isZeroAst(ri)||(!hasVar(ri)&&Math.abs(compile(ri)(0))<1e-12);
+        const val=PI*integrate(x=>{ const a=compile(Ro)(x), b=compile(ri)(x); return a*a-b*b; },P.p,P.q);
+        return {txt:`${pieces.length>1?"V"+(i+1)+" = ":"V = "}π${intH(nb(P.p),nb(P.q),disk?"["+sq(Ro,true)+"]":"["+sq(Ro,true)+" − "+sq(ri,true)+"]","dx")}`,val,Ro,ri,disk}; });
+      what=lines.every(l=>l.disk)? "disks" : "washers";
+      eq=lines.map(l=>l.txt+"\n     "+eqx(l.val)).join("\n")+(lines.length>1?"\nV "+eqx(V):"");
+      eq+=`<small>R(x) = ${lines.map(l=>H(l.Ro)).join(" ; ")}${what==="washers"?" · r(x) = "+lines.map(l=>H(l.ri)).join(" ; "):""} — measured from ${axisName(ax,k)}</small>`;
+    } else { const I=crossInfo(R), right=(R.a+R.b)/2>=k;
+      const lines=I.pieces.map((P,i)=>{ let body="", disk=true, rts=[], rits=[];
+        P.ivd.forEach(J=>{ if(P.exact){ const Lb=bAst(J.L), Rb=bAst(J.R);
+            const Ro=right? offAst(Rb,k) : koffAst(Lb,k), ri=right? offAst(Lb,k) : koffAst(Rb,k);
+            const dk=isZeroAst(ri); disk=disk&&dk; rts.push(H(Ro)); rits.push(H(ri));
+            body+=(body?" + ":"")+(dk?"["+sq(Ro,true)+"]":"["+sq(Ro,true)+" − "+sq(ri,true)+"]"); }
+          else { disk=false; body+=(body?" + ":"")+"[R(y)² − r(y)²]"; } });
+        const val=PI*crossIntegrate(R,P,(v,iv)=>iv.reduce((q,J)=>q+washerTerm(J[0],J[1],k),0),P.exact?(v=>P.ivd.reduce((q,J)=>q+washerTerm(bF(J.L)(v),bF(J.R)(v),k),0)):null);
+        return {txt:`${I.pieces.length>1?"V"+(i+1)+" = ":"V = "}π${intH(nb(P.c),nb(P.d),body,"dy")}`,val,disk,rts,rits,exact:P.exact}; });
+      what=lines.every(l=>l.disk)? "disks" : "washers";
+      eq=lines.map(l=>l.txt+"\n     "+(l.exact?eqx(l.val):"≈ "+num(l.val,4))).join("\n")+(lines.length>1?"\nV "+eqx(V):"");
+      eq+=`<small>Slices are horizontal, so each radius is a horizontal distance written in y${I.pieces.length>1?"; the right/left boundary changes at y = "+I.pieces.slice(1).map(P=>nb(P.c)).join(", ")+", so the integral splits":""}.</small>`;
+    }
+    const rep=M2.repInfo(R);
+    side.innerHTML=panelH("Set up the integral",`<div class="pad"><p>Rotate the region about <b>${axisName(ax,k)}</b>. Slices ⊥ to the axis are <b>${what}</b>, so integrate in <b>${ax==="h"?"x":"y"}</b>.</p></div>
+      <div class="fldwrap"><div class="eq">${eq}</div></div>
+      <div class="pad" style="padding-top:0">${rep}<p class="mini">Check with shells: ${eqx(Vs)}${Math.abs(Vs-V)<1e-5*Math.max(1,V)?" ✓ same volume":""}</p>
+      <span class="bigv">V ${eqx(V)}</span>${bad?`<p class="err" style="margin:10px 0 0">The axis passes through the region, so the slices are not true washers. Move k to the region's edge or outside it.</p>`:""}</div>`)+
+      panelH("The idea",`<div class="pad"><p>Cut the solid ⊥ to the axis. Each slice is a <b>disk</b> (area πR²) or, if there is a gap at the axis, a <b>washer</b> (area πR² − πr²). Thickness is dx for a horizontal axis, dy for a vertical axis.</p>
+        <p><b>R</b> is the distance from the axis to the <b>far</b> edge, <b>r</b> to the <b>near</b> edge. Rotating about y = k? Then R = (curve) − k or k − (curve), whichever is positive.</p>
+        <div class="eq">V = π${intH("a","b","[R(x)<sup>2</sup> − r(x)<sup>2</sup>]","dx")}<small>Square each radius first, then subtract — (R − r)² is a classic mistake.</small></div></div>`)+
+      tryPanel(`Take <b>y = x and y = x²</b>. Rotate about the x-axis, then about y = −1, then y = 2. Which radius becomes R when you move the axis above the region? Every answer is a multiple of π.`);
+  },
+  repInfo(R){ const s=M2.s, ax=s.ax, k=s.k; let pos, r0, r1;
+    if(ax==="h"){ const n=s.n, d=(R.b-R.a)/n, i=Math.min(n-1,Math.floor(s.sp*n)); pos=R.a+(i+.5)*d; const f=R.F.f(pos), g=R.G.f(pos);
+      r1=Math.max(Math.abs(f-k),Math.abs(g-k)); r0=(f-k)*(g-k)<0?0:Math.min(Math.abs(f-k),Math.abs(g-k));
+      return `<p><b>Yellow slice</b> at x = ${num(pos,3)}: R = ${num(r1,3)}${r0>1e-9?", r = "+num(r0,3):""}, volume ≈ π(${num(r1,3)}²${r0>1e-9?" − "+num(r0,3)+"²":""})Δx.</p>`; }
+    const I=crossInfo(R), n=s.n, d=(I.hi-I.lo)/n, i=Math.min(n-1,Math.floor(s.sp*n)); pos=I.lo+(i+.5)*d; const iv=crossSet(R,pos); if(!iv.length)return "";
+    const J=iv[0]; r1=Math.max(Math.abs(J[0]-k),Math.abs(J[1]-k)); r0=(J[0]-k)*(J[1]-k)<0?0:Math.min(Math.abs(J[0]-k),Math.abs(J[1]-k));
+    return `<p><b>Yellow slice</b> at y = ${num(pos,3)}: R = ${num(r1,3)}${r0>1e-9?", r = "+num(r0,3):""}, volume ≈ π(${num(r1,3)}²${r0>1e-9?" − "+num(r0,3)+"²":""})Δy.</p>`;
+  }
+};
+
+/* ══════════════════════ TAB 3 · shells & cross-sections ══════════════════════ */
+function shellRep(sc,ax,k,s0,s1,r0,r1,u,col){
+  const M=40, rm=(r0+r1)/2; u=Math.min(u,0.985); const q=1-u, Rp=rm/q;
+  const e0=ax==="h"?[0,0,1]:[0,0,1], e1=ax==="h"?[0,-1,0]:[-1,0,0], ad=axDir(ax);
+  const base=ax==="h"?[0,k,0]:[k,0,0];
+  const cen=v3.add(base,v3.mul(e0,rm-Rp));
+  const P=(s,rho,th)=>{ const phi=th*q, rr=Rp+rho-rm; return v3.add(v3.add(cen,v3.mul(ad,s)),v3.add(v3.mul(e0,rr*Math.cos(phi)),v3.mul(e1,rr*Math.sin(phi)))); };
+  const N=(th)=>{ const phi=th*q; return v3.add(v3.mul(e0,Math.cos(phi)),v3.mul(e1,Math.sin(phi))); };
+  const T0=-PI, out=[];
+  for(let j=0;j<M;j++){ const t0=T0+2*PI*j/M, t1=T0+2*PI*(j+1)/M, tm=(t0+t1)/2;
+    sc.polys.push({P:[P(s0,r1,t0),P(s1,r1,t0),P(s1,r1,t1),P(s0,r1,t1)],ref:N(tm),col,op:.95,bop:.55,sc:"#92400E",sw:.5,L:1});
+    sc.polys.push({P:[P(s0,r0,t0),P(s1,r0,t0),P(s1,r0,t1),P(s0,r0,t1)],ref:v3.mul(N(tm),-1),col,op:.95,bop:.55,L:1});
+    [[s0,-1],[s1,1]].forEach(([s,sg])=>sc.polys.push({P:[P(s,r0,t0),P(s,r1,t0),P(s,r1,t1),P(s,r0,t1)],ref:v3.mul(ad,sg),col,op:.95,bop:.55,L:1})); }
+  if(u>0.05){ // cut edges
+    [T0,-T0].forEach(t=>sc.polys.push({P:[P(s0,r0,t),P(s1,r0,t),P(s1,r1,t),P(s0,r1,t)],ref:null,col:"#F59E0B",op:.95,L:1})); }
+  return {P, out:[P(s0,r1,T0),P(s1,r1,-T0),P(s0,r1,0)]};
+}
+const XS=[["sq","Squares"],["semi","Semicircles"],["tri","Equilateral triangles"],["rt","Isosceles right △ (leg on base)"]];
+const XSK={sq:{k:1,t:"s²",kt:""},semi:{k:PI/8,t:"(π/8)s²",kt:"π/8"},tri:{k:Math.sqrt(3)/4,t:"(√3/4)s²",kt:"√3/4"},rt:{k:0.5,t:"(1/2)s²",kt:"1/2"}};
+// cross-section prism on a segment (in the base plane z=0) of given thickness, rising in +z
+function xsPrism(sc,kind,dir,pos,lo,hi,d,col,o){
+  o=o||{}; const s=hi-lo; if(s<1e-9)return;
+  const P=(t,h,w)=> dir==="x"? [w,lo+t,h] : [lo+t,w,h];
+  let prof=[];
+  if(kind==="sq") prof=[[0,0],[s,0],[s,s],[0,s]];
+  else if(kind==="tri") prof=[[0,0],[s,0],[s/2,s*Math.sqrt(3)/2]];
+  else if(kind==="rt") prof=[[0,0],[s,0],[0,s]];
+  else { prof.push([0,0]); const m=18; for(let j=0;j<=m;j++){ const th=PI*j/m; prof.push([s/2+s/2*Math.cos(PI-th),s/2*Math.sin(th)]); } prof.push([s,0]); }
+  const w0=pos-d/2, w1=pos+d/2, nrmD=dir==="x"?[1,0,0]:[0,1,0];
+  const c=prof.reduce((a,p)=>[a[0]+p[0]/prof.length,a[1]+p[1]/prof.length],[0,0]);
+  sc.polys.push({P:prof.map(p=>P(p[0],p[1],w0)),ref:v3.mul(nrmD,-1),col,op:o.op,bop:o.bop,sc:o.sc,sw:o.sw,L:o.L});
+  sc.polys.push({P:prof.map(p=>P(p[0],p[1],w1)),ref:nrmD,col,op:o.op,bop:o.bop,sc:o.sc,sw:o.sw,L:o.L});
+  for(let j=0;j<prof.length;j++){ const a=prof[j], b=prof[(j+1)%prof.length]; if(Math.hypot(a[0]-b[0],a[1]-b[1])<1e-9)continue;
+    const mx=(a[0]+b[0])/2-c[0], my=(a[1]+b[1])/2-c[1];
+    sc.polys.push({P:[P(a[0],a[1],w0),P(b[0],b[1],w0),P(b[0],b[1],w1),P(a[0],a[1],w1)],ref:dir==="x"?[0,mx,my]:[mx,0,my],col,op:o.op,bop:o.bop,L:o.L}); }
+}
+const XP=[
+  {nm:"y = √x, y = 0, 0 ≤ x ≤ 4", f:"sqrt(x)", g:"0", fi:["y^2"], gi:[], ab:[0,4]},
+  {nm:"y = 4 − x², y = 0", f:"4-x^2", g:"0", fi:["sqrt(4-y)","-sqrt(4-y)"], gi:[], ab:[-2,2]},
+  {nm:"y = 1 − x²/4 and y = x²/4 − 1 (lens)", f:"1-x^2/4", g:"x^2/4-1", fi:["2sqrt(1-y)","-2sqrt(1-y)"], gi:["2sqrt(y+1)","-2sqrt(y+1)"], ab:[-2,2]},
+  {nm:"y = x and y = x²", f:"x", g:"x^2", fi:["y"], gi:["sqrt(y)"], ab:[0,1]},
+  {nm:"Triangle: y = 2 − x, y = 0, x ≥ 0", f:"2-x", g:"0", fi:["2-y"], gi:[], ab:[0,2]},
+  {nm:"y = eˣ, y = 1, 0 ≤ x ≤ 1", f:"e^x", g:"1", fi:["ln(y)"], gi:[], ab:[0,1]}
+];
+const M3={
+  tab:"Shells & cross-sections", lesson:"AP 8.7–8.8 · shells (college)", accent:"var(--yellow)", rot3:true,
+  view:{yaw:-30,pitch:22}, view0:{yaw:-30,pitch:22},
+  s:{mode:"shell",pre:2,ax:"v",k:0,axSel:"vy",n:10,sp:0.55,un:0,xpre:0,xs:"sq",xdir:"x"},
+  title:()=>M3.s.mode==="shell"?"Shell method — cylindrical shells":"Solids with known cross-sections",
+  R(){ const s=M3.s; if(s.mode==="shell") return buildVR(s); const p=XP[s.xpre]; return {nat:"x",F:curveOf(p.f,"x",p.fi),G:curveOf(p.g,"x",p.gi),a:p.ab[0],b:p.ab[1]}; },
+  bar(){ const s=M3.s;
+    segBtns([["shell","Shell method"],["xs","Known cross-sections"]],s.mode,k=>{ s.mode=k; M3.view.yaw=k==="xs"?-38:-30; M3.view.pitch=k==="xs"?28:22; render(); },"Method");
+    if(s.mode==="shell"){
+      selectBox(VP.map((p,i)=>[i,p.nm]),s.pre,v=>{ s.pre=+v; render(); },"Region");
+      selectBox([["vy","About the y-axis"],["vk","About x = k"],["hx","About the x-axis"],["hk","About y = k"]],s.axSel,v=>{ s.axSel=v; s.ax=v[0]; s.k=v[1]==="k"? (v[0]==="v"?-1:-1) : 0; render(); },"Axis of rotation");
+      if(s.axSel[1]==="k") slider("k",-3,5,0.5,s.k,v=>nb(v),v=>{ s.k=v; update(); });
+      const g=grp();
+      slider("Shells",3,30,1,s.n,v=>v,v=>{ s.n=v; redraw(); },g);
+      slider("Shell at",0,1,0.01,s.sp,v=>Math.round(v*100)+"%",v=>{ s.sp=v; update(); },g);
+      slider("Unroll",0,1,0.01,s.un,v=>Math.round(v*100)+"%",v=>{ s.un=v; update(); },g);
+      btn("↺ View",()=>{ M3.view.yaw=M3.view0.yaw; M3.view.pitch=M3.view0.pitch; redraw(); },"",g);
+    } else {
+      selectBox(XP.map((p,i)=>[i,p.nm]),s.xpre,v=>{ s.xpre=+v; render(); },"Base region");
+      selectBox(XS,s.xs,v=>{ s.xs=v; update(); },"Cross-section shape");
+      const g=grp();
+      segBtns([["x","⊥ to x-axis"],["y","⊥ to y-axis"]],s.xdir,k=>{ s.xdir=k; render(); },"Slice direction",g);
+      slider("Slices",4,40,1,s.n,v=>v,v=>{ s.n=v; redraw(); },g);
+      slider("Slice at",0,1,0.01,s.sp,v=>Math.round(v*100)+"%",v=>{ s.sp=v; update(); },g);
+      btn("↺ View",()=>{ M3.view.yaw=-38; M3.view.pitch=28; redraw(); },"",g);
+    }
+  },
+  draw(){ const s=M3.s, R=M3.R(), sc=Scene(); cv.classList.add("r3");
+    const regs=regionWorld(R); let pts=[]; regs.forEach(P=>pts=pts.concat(P));
+    regs.forEach(P=>sc.lines.push({pts:P,close:true,col:"#BE185D",w:2.4,fill:"#F472B6",fo:.3,dz:.01}));
+    let bb, labels3=[];
+    if(s.mode==="shell"){ const ax=s.ax, k=s.k;
+      let rmax=0; pts.forEach(p=>rmax=Math.max(rmax,Math.abs((ax==="v"?p[0]:p[1])-k)));
+      bb= ax==="v"? bbOf([[k-rmax,Math.min(...pts.map(p=>p[1])),-rmax],[k+rmax,Math.max(...pts.map(p=>p[1])),rmax],[0,0,0]])
+                  : bbOf([[Math.min(...pts.map(p=>p[0])),k-rmax,-rmax],[Math.max(...pts.map(p=>p[0])),k+rmax,rmax],[0,0,0]]);
+      const n=s.n, iRep=Math.min(n-1,Math.floor(s.sp*n));
+      let rep=null;
+      if(ax==="v"){ const d=(R.b-R.a)/n;
+        for(let i=0;i<n;i++){ const x0=R.a+i*d, x1=x0+d, xm=(x0+x1)/2, f=R.F.f(xm), g=R.G.f(xm), lo=Math.min(f,g), hi=Math.max(f,g);
+          const r0=Math.min(Math.abs(x0-k),Math.abs(x1-k)), r1=Math.max(Math.abs(x0-k),Math.abs(x1-k));
+          if(i===iRep) rep={s0:lo,s1:hi,r0,r1,pos:xm,h:hi-lo,r:Math.abs(xm-k),d};
+          else tube(sc,"v",k,lo,hi,r0,r1,"#A78BFA",{op:.22,bop:.04,M:24}); } }
+      else { const I=crossInfo(R), d=(I.hi-I.lo)/n;
+        for(let i=0;i<n;i++){ const y0=I.lo+i*d, y1=y0+d, ym=(y0+y1)/2, iv=crossSet(R,ym);
+          const r0=Math.min(Math.abs(y0-k),Math.abs(y1-k)), r1=Math.max(Math.abs(y0-k),Math.abs(y1-k));
+          iv.forEach((J,j)=>{ if(i===iRep&&j===0) rep={s0:J[0],s1:J[1],r0,r1,pos:ym,h:lenSet(iv),r:Math.abs(ym-k),d};
+            else tube(sc,"h",k,J[0],J[1],r0,r1,"#A78BFA",{op:.22,bop:.04,M:24}); }); } }
+      if(rep){ const out=shellRep(sc,ax,k,rep.s0,rep.s1,rep.r0,rep.r1,s.un,"#FBBF24"); M3.rep=rep;
+        const P=out.P, rm=(rep.r0+rep.r1)/2;
+        if(s.un>0.6){ const sm=(rep.s0+rep.s1)/2;
+          labels3.push({p:P(sm,rep.r1,PI),t:"h = "+num(rep.h,2),col:"#92400E",cls:"big",dx:-12,anchor:"end"});
+          labels3.push({p:P(rep.s1,rep.r1,0),t:"2πr ≈ "+num(2*PI*rep.r,2),col:"#92400E",cls:"big",dy:ax==="v"?-16:16});
+          labels3.push({p:P(rep.s0,rep.r1,PI*0.6),t:"thickness "+(ax==="v"?"Δx":"Δy"),col:"#92400E",cls:"tiny",dy:ax==="v"?16:-16});
+          for(let t=0;t<=1;t+=0.05) bb=bbOf([P(rep.s0,rep.r1,-PI+2*PI*t),P(rep.s1,rep.r1,-PI+2*PI*t)],bb); }
+        else { const A=ax==="v"?[k,rep.s1,0]:[rep.s1,k,0], B=ax==="v"?[k+rep.r*Math.sign(rep.pos-k||1),rep.s1,0]:[rep.s1,k+rep.r*Math.sign(rep.pos-k||1),0];
+          sc.lines.push({pts:[A,B],col:"#B45309",w:3,top:true}); labels3.push({p:B,t:"r = "+num(rep.r,2),col:"#B45309",cls:"big",dy:-16}); }
+      }
+      coordAxes(sc,bb); axisLine(sc,ax,k,bb);
+    } else { const kind=s.xs, n=s.n, iRep=Math.min(n-1,Math.floor(s.sp*n));
+      let zmax=0;
+      if(s.xdir==="x"){ const d=(R.b-R.a)/n;
+        for(let i=0;i<n;i++){ const xm=R.a+(i+.5)*d, f=R.F.f(xm), g=R.G.f(xm), lo=Math.min(f,g), hi=Math.max(f,g); zmax=Math.max(zmax,hi-lo);
+          const rep=i===iRep; xsPrism(sc,kind,"x",xm,lo,hi,d*0.96,rep?"#FBBF24":"#34D399",rep?{op:.95,bop:.6,sc:"#92400E",sw:.6,L:1}:{op:.42,bop:.06});
+          if(rep){ M3.rep={pos:xm,s:hi-lo}; labels3.push({p:[xm,(lo+hi)/2,0],t:"s = "+num(hi-lo,2),col:"#92400E",cls:"big",dy:18}); } } }
+      else { const I=crossInfo(R), d=(I.hi-I.lo)/n;
+        for(let i=0;i<n;i++){ const ym=I.lo+(i+.5)*d, iv=crossSet(R,ym), rep=i===iRep;
+          iv.forEach(J=>{ zmax=Math.max(zmax,J[1]-J[0]); xsPrism(sc,kind,"y",ym,J[0],J[1],d*0.96,rep?"#FBBF24":"#34D399",rep?{op:.95,bop:.6,sc:"#92400E",sw:.6,L:1}:{op:.42,bop:.06}); });
+          if(rep&&iv.length){ M3.rep={pos:ym,s:lenSet(iv)}; labels3.push({p:[(iv[0][0]+iv[0][1])/2,ym,0],t:"s = "+num(iv[0][1]-iv[0][0],2),col:"#92400E",cls:"big",dy:18}); } } }
+      bb=bbOf(pts.concat([[0,0,0],[0,0,zmax]]));
+      coordAxes(sc,bb);
+    }
+    labels3.forEach(l=>sc.labels.push(l));
+    const g=E("g",{},cv); render3(sc,M3.view,fit3(bb,M3.view,44),g);
+    if(s.mode==="shell"&&straddles(R,s.ax,s.k)) label(g,VW/2,24,"The axis cuts through the region — pick a line on its edge or outside it",{cls:"sm",col:"#B91C1C",fixed:true});
+    hintTxt(g,"Drag the board to turn the solid · arrow keys work too");
+  },
+  panel(){ const s=M3.s, R=M3.R();
+    if(s.mode==="shell"){ const ax=s.ax, k=s.k, V=ax==="v"? volShellV(R,k) : volShellH(R,k), Vw=ax==="v"? volWasherV(R,k) : volWasherH(R,k);
+      let eq="";
+      if(ax==="v"){ const pieces=natPieces(R), right=(R.a+R.b)/2>=k;
+        const rad=right? offAst(["v","x"],k) : koffAst(["v","x"],k);
+        eq=pieces.map((P,i)=>{ const h=simp(S("-",P.top.ast,P.bot.ast)); const val=2*PI*integrate(x=>Math.abs(x-k)*(P.top.f(x)-P.bot.f(x)),P.p,P.q);
+          return `${pieces.length>1?"V"+(i+1)+" = ":"V = "}2π${intH(nb(P.p),nb(P.q),"("+H(rad)+")·["+H(P.top.ast)+" − ("+H(P.bot.ast)+")]","dx")}\n     ${eqx(val)}`; }).join("\n")+(pieces.length>1?"\nV "+eqx(V):"");
+        eq+=`<small>radius r = ${H(rad)} (distance from ${axisName(ax,k)}), height h = top − bottom</small>`;
+      } else { const I=crossInfo(R), above=(I.lo+I.hi)/2>=k; const rad=above? offAst(["v","y"],k) : koffAst(["v","y"],k);
+        eq=I.pieces.map((P,i)=>{ const body=P.ivd.map(J=>"["+bDescTxt(R,J.R,true)+" − ("+bDescTxt(R,J.L,true)+")]").join(" + ");
+          const val=2*PI*crossIntegrate(R,P,(v,iv)=>Math.abs(v-k)*lenSet(iv),P.exact?(v=>Math.abs(v-k)*P.ivd.reduce((q,J)=>q+bF(J.R)(v)-bF(J.L)(v),0)):null);
+          return `${I.pieces.length>1?"V"+(i+1)+" = ":"V = "}2π${intH(nb(P.c),nb(P.d),"("+H(rad)+")·"+body,"dy")}\n     ${P.exact?eqx(val):"≈ "+num(val,4)}`; }).join("\n")+(I.pieces.length>1?"\nV "+eqx(V):"");
+        eq+=`<small>Horizontal axis → horizontal shells of thickness dy: radius ${H(rad)}, height = right − left (curves solved for x)</small>`;
+      }
+      const r=M3.rep;
+      side.innerHTML=panelH("Set up the integral",`<div class="pad"><p>Rotate about <b>${axisName(ax,k)}</b>. Shells are cylinders <b>parallel</b> to the axis, so slice parallel to it and integrate in <b>${ax==="v"?"x":"y"}</b>.</p></div>
+        <div class="fldwrap"><div class="eq">${eq}</div></div>
+        <div class="pad" style="padding-top:0">${r?`<p><b>Yellow shell</b> at ${ax==="v"?"x":"y"} = ${num(r.pos,3)}: r = ${num(r.r,3)}, h = ${num(r.h,3)}. Unrolled it is a slab ≈ 2π(${num(r.r,2)})·(${num(r.h,2)})·Δ${ax==="v"?"x":"y"} = ${num(2*PI*r.r*r.h,3)}·Δ${ax==="v"?"x":"y"}.</p>`:""}
+        <p class="mini">Check with washers: ${eqx(Vw)}${Math.abs(Vw-V)<1e-5*Math.max(1,V)?" ✓ same volume":""}</p><span class="bigv">V ${eqx(V)}</span></div>`)+
+        panelH("The idea",`<div class="pad"><p>Instead of slicing across the axis, wrap the region in thin <b>cylindrical shells</b> around it. Cut a shell and unroll it (drag <b>Unroll</b>): it becomes an almost flat slab.</p>
+          <p>The slab's length is the circumference <b>2πr</b>, its height is <b>h</b>, and its thickness is <b>dx</b>. Add up all the slabs.</p>
+          <p>Shells shine when washers would need you to solve for x, or to split the integral.</p>
+          <div class="eq">V = 2π${intH("a","b","r(x)·h(x)","dx")}<small>shells about a vertical axis use dx; about a horizontal axis use dy</small></div></div>`)+
+        tryPanel(`Choose <b>y = 2x and y = x²</b> about the <b>y-axis</b>. Shells: 2π∫₀² x(2x − x²) dx. Washers would need x = y/2 and x = √y. Do both give 8π/3? Now slide Unroll to 100% and compare the slab to 2πrh·Δx.`);
+    } else { const kind=s.xs, K=XSK[kind];
+      const shapeName=XS.find(q=>q[0]===kind)[1].toLowerCase();
+      let eq="", V=0;
+      if(s.xdir==="x"){ const pieces=natPieces(R);
+        pieces.forEach((P,i)=>{ const val=K.k*integrate(x=>Math.pow(P.top.f(x)-P.bot.f(x),2),P.p,P.q); V+=val;
+          eq+=(i?"\n":"")+`${pieces.length>1?"V"+(i+1)+" = ":"V = "}${K.kt}${intH(nb(P.p),nb(P.q),"["+H(P.top.ast)+" − ("+H(P.bot.ast)+")]<sup>2</sup>","dx")}\n     ${eqx(val)}`; });
+        if(pieces.length>1) eq+="\nV "+eqx(V);
+      } else { const I=crossInfo(R);
+        I.pieces.forEach((P,i)=>{ const val=K.k*crossIntegrate(R,P,(v,iv)=>iv.reduce((q,J)=>q+(J[1]-J[0])*(J[1]-J[0]),0),P.exact?(v=>P.ivd.reduce((q,J)=>{const w=bF(J.R)(v)-bF(J.L)(v);return q+w*w;},0)):null); V+=val;
+          const body=P.ivd.map(J=>"["+bDescTxt(R,J.R,true)+" − ("+bDescTxt(R,J.L,true)+")]<sup>2</sup>").join(" + ");
+          eq+=(i?"\n":"")+`${I.pieces.length>1?"V"+(i+1)+" = ":"V = "}${K.kt}${intH(nb(P.c),nb(P.d),body,"dy")}\n     ${P.exact?eqx(val):"≈ "+num(val,4)}`; });
+        if(I.pieces.length>1) eq+="\nV "+eqx(V);
+      }
+      const r=M3.rep;
+      side.innerHTML=panelH("Set up the integral",`<div class="pad"><p>Cross-sections ⊥ to the <b>${s.xdir}-axis</b> are <b>${shapeName}</b> whose side s lies across the base. Area of one: <b>A = ${K.t}</b>.</p></div>
+        <div class="fldwrap"><div class="eq">${eq}<small>s = ${s.xdir==="x"?"top − bottom":"right − left"} of the base region</small></div></div>
+        <div class="pad" style="padding-top:0">${r?`<p><b>Yellow slice</b> at ${s.xdir} = ${num(r.pos,3)}: s = ${num(r.s,3)}, A = ${num(K.k*r.s*r.s,3)}, volume ≈ ${num(K.k*r.s*r.s,3)}·Δ${s.xdir}.</p>`:""}<span class="bigv">V ${eqx(V)}</span></div>`)+
+        panelH("The idea",`<div class="pad"><p>The base sits flat on the xy-plane. Stand a shape on every thin strip of the base, all the same kind of shape, sized by the strip's length s. The solid is the stack.</p>
+          <p>Volume = (area of a slice) × (thickness), added up: V = ∫ A(x) dx. Only the <b>area formula</b> changes from shape to shape.</p>
+          <div class="eq">square: s²   semicircle (diameter s): (π/8)s²\nequilateral △: (√3/4)s²   isosceles right △ (leg s): (1/2)s²</div></div>`)+
+        tryPanel(`Keep the base <b>y = 4 − x², y = 0</b> and switch the shape. The volume for squares is 512/15. Predict the semicircle volume (multiply by π/8) before you click.`);
+    }
+  }
+};
+
+/* ══════════════════════ TAB 4 · arc length ══════════════════════ */
+const AP=[
+  {nm:"y = x² on [0, 2]", f:"x^2", ab:[0,2], W:[-0.6,2.8,-0.4,4.6]},
+  {nm:"y = (2/3)x^(3/2) on [0, 3]", f:"(2/3)x^(3/2)", ab:[0,3], W:[-0.5,3.6,-0.4,3.9]},
+  {nm:"y = sin x on [0, π]", f:"sin(x)", ab:[0,PI], W:[-0.4,3.6,-0.6,1.6], pi:true},
+  {nm:"y = x³/6 + 1/(2x) on [1, 2]", f:"x^3/6+1/(2x)", ab:[1,2], W:[0.4,2.4,0.4,1.9]},
+  {nm:"y = ln(cos x) on [0, π/4]", f:"ln(cos(x))", ab:[0,PI/4], W:[-0.2,1.0,-0.45,0.1]},
+  {nm:"y = √(4 − x²) on [−2, 2] (half circle)", f:"sqrt(4-x^2)", ab:[-2,2], W:[-2.6,2.6,-0.5,2.6]},
+  {nm:"y = eˣ on [0, 1]", f:"e^x", ab:[0,1], W:[-0.3,1.3,0.6,2.9]}
+];
+const M4={
+  tab:"Arc length", lesson:"AP 8.13 · BC only", accent:"var(--mint)",
+  s:{pre:0,n:4,src:"x^2",a:0,b:2,W:null,pi:false,err:""},
+  title:()=>"Arc length of a curve",
+  init(i){ const s=M4.s, p=AP[i]; s.pre=i; s.src=p.f; s.a=p.ab[0]; s.b=p.ab[1]; s.W=winOf(p.W); s.pi=!!p.pi; M4.build(); },
+  build(){ const s=M4.s, p=tryParse(s.src); s.err=p.err||""; if(p.err) return; s.ast=p.ast; s.f=p.f;
+    try{ s.d=simp(deriv(p.ast)); s.df=compile(s.d); }catch(e){ s.d=null; s.df=x=>dnum(p.f,x); } },
+  poly(n){ const s=M4.s; let L=0, P=[]; for(let i=0;i<=n;i++){ const x=s.a+(s.b-s.a)*i/n; P.push([x,s.f(x)]); if(i) L+=Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]); } return {L,P}; },
+  exact(){ const s=M4.s; return integrate(x=>Math.sqrt(1+Math.pow(s.df(x),2)),s.a,s.b,1e-11); },
+  bar(){ const s=M4.s;
+    selectBox(AP.map((p,i)=>[i,p.nm]).concat([["c","Your own function (type in the panel)"]]),s.custom?"c":s.pre,v=>{ if(v==="c"){ s.custom=true; render(); return; } s.custom=false; M4.init(+v); render(); },"Curve");
+    slider("Segments n",1,64,1,s.n,v=>v,v=>{ s.n=v; update(); });
+    const g=grp(); btn("n × 2",()=>{ s.n=Math.min(256,s.n*2); render(); },"",g); btn("Reset n",()=>{ s.n=1; render(); },"",g); zoomBtns(M4,g);
+  },
+  draw(){ const s=M4.s, W=s.W, g=grid(W,{pi:s.pi});
+    if(s.err){ label(g,VW/2,VH/2,"Fix the function: "+s.err,{col:"#B91C1C"}); return; }
+    curve(g,pathF(W,s.f,W.x0,W.x1,500),"#94A3B8",2,"6 5");
+    curve(g,pathF(W,s.f,s.a,s.b,500),"#0F766E",4.5);
+    const {P,L}=M4.poly(s.n), pal=["#DB2777","#7C3AED"];
+    P.forEach((p,i)=>{ if(i){ seg(g,W.X(P[i-1][0]),W.Y(P[i-1][1]),W.X(p[0]),W.Y(p[1]),pal[i%2],2.6); } });
+    if(s.n<=40) P.forEach(p=>dot(g,W.X(p[0]),W.Y(p[1]),"#DB2777",3.8));
+    if(s.n<=4){ const i=Math.max(1,Math.floor(s.n/2)), A=P[i-1], B=P[i];
+      seg(g,W.X(A[0]),W.Y(A[1]),W.X(B[0]),W.Y(A[1]),"#EA580C",2,"5 4"); seg(g,W.X(B[0]),W.Y(A[1]),W.X(B[0]),W.Y(B[1]),"#EA580C",2,"5 4");
+      label(g,(W.X(A[0])+W.X(B[0]))/2,W.Y(A[1])+(B[1]>A[1]?14:-14),"Δx",{cls:"tiny",col:"#C2410C"});
+      label(g,W.X(B[0])+16,(W.Y(A[1])+W.Y(B[1]))/2,"Δy",{cls:"tiny",col:"#C2410C"}); }
+    [["a",s.a],["b",s.b]].forEach(([id,x])=>{ const X=W.X(x), Y=W.Y(s.f(x)); seg(g,X,clamp(W.Y(0),0,VH),X,Y,"#64748B",1.2,"4 4");
+      if(isFinite(Y)) grab(g,X,clamp(Y,8,VH-8),id,"#0F766E"); label(g,X,clamp(Y,8,VH-8)+26,id+" = "+nb(x),{cls:"tiny",col:"#334155"}); });
+    const box=label(g,VW-12,22,"n = "+s.n+": polyline L ≈ "+num(L,5),{cls:"sm",col:"#9D174D",anchor:"end",fixed:true});
+    label(g,VW-12,44,"∫√(1 + f′(x)²) dx = "+num(M4.exact(),5),{cls:"sm",col:"#0F766E",anchor:"end",fixed:true});
+    hintTxt(g,"Drag a or b along the curve · raise n to watch the polyline hug the curve");
+  },
+  drag(id,p){ const s=M4.s; let x=s.W.iX(p[0]); x=Math.round(x/(s.pi?PI/24:0.05))*(s.pi?PI/24:0.05);
+    if(id==="a") s.a=Math.min(x,s.b-0.05); else s.b=Math.max(x,s.a+0.05); },
+  panel(full){ const s=M4.s;
+    if(full){ side.innerHTML=panelH("Curve",`<div class="fxrow" style="margin-top:14px"><span>y = </span><input type="text" id="f4" value="${s.src}" aria-label="Function" spellcheck="false" autocomplete="off"></div><div id="err4"></div>`)+`<div id="live4"></div>`+
+        panelH("The idea",`<div class="pad"><p>Approximate the curve by n straight segments. Each one has length √(Δx² + Δy²) — the Pythagorean theorem.</p>
+          <p>Factor out Δx: √(1 + (Δy/Δx)²)·Δx. As n → ∞, Δy/Δx becomes f′(x) and the sum becomes an integral. The polyline is always a little <b>shorter</b> than the curve, so the sums increase toward the limit.</p>
+          <div class="eq">L = ${intH("a","b","√(1 + [f′(x)]<sup>2</sup>)","dx")}<small>f must be differentiable with f′ continuous on [a, b]. Most of these integrals need a calculator.</small></div></div>`)+
+        tryPanel(`Pick <b>y = x³/6 + 1/(2x)</b>. Here 1 + (f′)² is a perfect square, so the integral is exact: 17/12. How many segments until the polyline is within 0.001?`);
+      const fi=$("f4"); let t=null; fi.addEventListener("input",()=>{ clearTimeout(t); t=setTimeout(()=>{ s.src=fi.value; s.custom=true; M4.build(); update(); },350); }); }
+    $("err4").innerHTML=s.err?`<p class="err">${s.err}</p>`:""; if(s.err){ $("live4").innerHTML=""; return; }
+    const ex=M4.exact(); const ns=[1,2,4,8,16,32,64,128,256]; if(ns.indexOf(s.n)<0){ ns.push(s.n); ns.sort((p,q)=>p-q); }
+    const rows=ns.map(n=>{ const L=M4.poly(n).L; return `<tr${n===s.n?' class="hl"':""}><td>${n}</td><td>${num(L,6)}</td><td>${num(ex-L,6)}</td></tr>`; }).join("");
+    const dTxt=s.d? H(s.d) : "(numeric)";
+    const ex1=exactOf(ex);
+    $("live4").innerHTML=panelH("Set up the integral",`<div class="fldwrap"><div class="eq">f′(x) = ${dTxt}\nL = ${intH(nb(s.a),nb(s.b),"√(1 + ["+dTxt+"]<sup>2</sup>)","dx")}\nL ${eqx(ex,6)}<small>${ex1?"This one simplifies to an exact value.":"Evaluated with adaptive Simpson's rule."}</small></div></div>`)+
+      panelH("Polyline length vs n",`<div class="tblwrap"><table class="data"><tr><th>n</th><th>polyline L</th><th>integral − L</th></tr>${rows}</table></div>`);
+  }
+};
+
+/* ══════════════════════ TAB 5 · average value ══════════════════════ */
+const AVP=[
+  {nm:"f(x) = x² on [0, 3]", f:"x^2", ab:[0,3], W:[-0.8,3.8,-1,10]},
+  {nm:"f(x) = sin x on [0, π]", f:"sin(x)", ab:[0,PI], W:[-0.5,3.8,-0.4,1.4], pi:true},
+  {nm:"f(x) = 4 − x² on [−1, 2]", f:"4-x^2", ab:[-1,2], W:[-2.6,2.8,-1.2,5]},
+  {nm:"f(x) = x³ − 3x + 3 on [−2, 2]", f:"x^3-3x+3", ab:[-2,2], W:[-2.7,2.7,-0.8,6.2]},
+  {nm:"f(x) = √x on [0, 4]", f:"sqrt(x)", ab:[0,4], W:[-0.6,4.8,-0.4,2.6]},
+  {nm:"f(x) = eˣ on [0, 2]", f:"e^x", ab:[0,2], W:[-0.5,2.6,-0.6,8]},
+  {nm:"Temperature T(t) = 60 + 15 sin(πt/12), 0 ≤ t ≤ 24", f:"60+15sin(pi x/12)", ab:[0,24], W:[-2,26,-14,86]}
+];
+const M5={
+  tab:"Average value", lesson:"AP 8.1 · Unit 8", accent:"var(--lavender)",
+  s:{pre:0,src:"x^2",a:0,b:3,W:null,pi:false,err:"",n:0},
+  title:()=>"Average value of a function",
+  init(i){ const s=M5.s, p=AVP[i]; s.pre=i; s.src=p.f; s.a=p.ab[0]; s.b=p.ab[1]; s.W=winOf(p.W); s.pi=!!p.pi; M5.build(); },
+  build(){ const s=M5.s, p=tryParse(s.src); s.err=p.err||""; if(!p.err){ s.ast=p.ast; s.f=p.f; } },
+  calc(){ const s=M5.s, I=integrate(s.f,s.a,s.b), avg=I/(s.b-s.a); const cs=roots(x=>s.f(x)-avg,s.a,s.b,600); return {I,avg,cs}; },
+  bar(){ const s=M5.s;
+    selectBox(AVP.map((p,i)=>[i,p.nm]).concat([["c","Your own function (type in the panel)"]]),s.custom?"c":s.pre,v=>{ if(v==="c"){ s.custom=true; render(); return; } s.custom=false; M5.init(+v); render(); },"Function");
+    slider("Sample rectangles",0,40,1,s.n,v=>v?v:"off",v=>{ s.n=v; update(); });
+    const g=grp(); zoomBtns(M5,g);
+  },
+  draw(){ const s=M5.s, W=s.W, g=grid(W,{pi:s.pi});
+    if(s.err){ label(g,VW/2,VH/2,"Fix the function: "+s.err,{col:"#B91C1C"}); return; }
+    const {avg,cs}=M5.calc(), y0=W.Y(0), Xa=W.X(s.a), Xb=W.X(s.b);
+    // area under f
+    const pts=[[Xa,y0]]; for(let i=0;i<=200;i++){ const x=s.a+(s.b-s.a)*i/200; pts.push([W.X(x),W.Y(s.f(x))]); } pts.push([Xb,y0]);
+    polyFill(g,pts,"rgba(124,58,237,.22)");
+    if(s.n>0){ const d=(s.b-s.a)/s.n; for(let i=0;i<s.n;i++){ const xm=s.a+(i+.5)*d, fy=s.f(xm); const Y=W.Y(fy);
+      E("rect",{x:W.X(s.a+i*d),y:Math.min(Y,y0),width:Math.max(0.5,W.X(s.a+(i+1)*d)-W.X(s.a+i*d)),height:Math.abs(Y-y0),fill:"rgba(2,132,199,.10)",stroke:"#0284C7","stroke-width":1},g); } }
+    // equal-area rectangle
+    const Ya=W.Y(avg);
+    E("rect",{x:Xa,y:Math.min(Ya,y0),width:Xb-Xa,height:Math.abs(Ya-y0),fill:"rgba(255,217,61,.25)",stroke:"#B45309","stroke-width":2.4,"stroke-dasharray":"8 5"},g);
+    curve(g,pathF(W,s.f,W.x0,W.x1,500),"#6D28D9",3.4);
+    seg(g,0,Ya,VW,Ya,"#B45309",1.3,"3 5");
+    label(g,Xb+8,Ya-14,"f_avg = "+num(avg,4),{cls:"sm",col:"#92400E",anchor:"start"});
+    cs.forEach((c,i)=>{ const X=W.X(c); seg(g,X,y0,X,Ya,"#DB2777",2,"4 3"); dot(g,X,Ya,"#DB2777",6); label(g,X,clamp(y0,0,VH-14)+16*(FS>1?1.4:1)*(i%2?2:1)+2,"c = "+num(c,3),{cls:"tiny",col:"#9D174D"}); });
+    [["a",s.a],["b",s.b]].forEach(([id,x])=>{ const X=W.X(x); grab(g,X,clamp(y0,8,VH-8),id,"#6D28D9"); label(g,X,clamp(y0,8,VH-8)-24,id+" = "+nb(x),{cls:"tiny",col:"#334155"}); });
+    hintTxt(g,"Drag a or b on the x-axis · yellow rectangle has the same area as the purple region");
+  },
+  drag(id,p){ const s=M5.s; const st=s.pi?PI/12:(s.W.x1-s.W.x0)>12?0.5:0.1; let x=Math.round(s.W.iX(p[0])/st)*st;
+    if(id==="a") s.a=Math.min(x,s.b-st); else s.b=Math.max(x,s.a+st); },
+  panel(full){ const s=M5.s;
+    if(full){ side.innerHTML=panelH("Function",`<div class="fxrow" style="margin-top:14px"><span>f(x) = </span><input type="text" id="f5" value="${s.src}" aria-label="Function" spellcheck="false" autocomplete="off"></div><div id="err5"></div>`)+`<div id="live5"></div>`+
+        panelH("The idea",`<div class="pad"><p>The average of n values is their sum ÷ n. For a function, sample it at n evenly spaced points: (1/n)Σf(xᵢ) = (1/(b − a))Σf(xᵢ)Δx. As n → ∞ that sum becomes an integral.</p>
+          <p>Picture it as levelling sand: the yellow rectangle of height f_avg over [a, b] has exactly the <b>same area</b> as the region under f.</p>
+          <p>The <b>Mean Value Theorem for Integrals</b>: if f is continuous on [a, b], some c in [a, b] has f(c) = f_avg.</p>
+          <div class="eq">f_avg = (1/(b − a))${intH("a","b","f(x)","dx")}</div></div>`)+
+        tryPanel(`Use the <b>temperature</b> preset. What is the average temperature over a full day? Now drag b to 12 (a half day). Why does the average go up? At what times c does the actual temperature equal the average?`);
+      const fi=$("f5"); let t=null; fi.addEventListener("input",()=>{ clearTimeout(t); t=setTimeout(()=>{ s.src=fi.value; s.custom=true; M5.build(); update(); },350); }); }
+    $("err5").innerHTML=s.err?`<p class="err">${s.err}</p>`:""; if(s.err){ $("live5").innerHTML=""; return; }
+    const {I,avg,cs}=M5.calc(), w=s.b-s.a;
+    let samp=""; if(s.n>0){ const d=w/s.n; let t=0; for(let i=0;i<s.n;i++) t+=s.f(s.a+(i+.5)*d); samp=`<p class="mini">Average of ${s.n} midpoint samples: ${num(t/s.n,5)} (→ ${num(avg,5)} as n grows)</p>`; }
+    $("live5").innerHTML=panelH("Compute f_avg",`<div class="fldwrap"><div class="eq">${intH(nb(s.a),nb(s.b),H(s.ast),"dx")} ${eqx(I)}\nf_avg = (1/${w<0?"(":""}${nb(w)}${w<0?")":""})·${num(I,4)} ${eqx(avg)}\nf(c) = f_avg  ⟹  c ${cs.length?"= "+cs.map(c=>num(c,4)).join(", "):"— none found"}</div></div>
+      <div class="pad" style="padding-top:0">${samp}<p>Rectangle check: ${num(avg,4)} × ${num(w,4)} = ${num(avg*w,4)} = area under f ✓</p></div>`);
+  }
+};
+
+/* ══════════════════════ TAB 6 · differential equations ══════════════════════ */
+const DEP=[
+  {k:"ky", nm:"dy/dx = ky", src:"k*y", W:[-4,4,-3,3]},
+  {k:"xy1", nm:"dy/dx = x + y", src:"x+y", W:[-4,4,-3,3]},
+  {k:"xy", nm:"dy/dx = xy", src:"x*y", W:[-3,3,-3,3]},
+  {k:"log", nm:"dy/dx = ky(1 − y/L) (logistic)", src:"k*y*(1-y/L)", W:[-1,10,-1,6]},
+  {k:"xoy", nm:"dy/dx = −x/y", src:"-x/y", W:[-4,4,-3,3]},
+  {k:"c", nm:"Your own f(x, y)", src:"y-x^2", W:[-4,4,-3,3]}
+];
+const SEP=[
+  {nm:"dy/dx = ky", x0:0, y0:2, sol:(x0,y0,k)=>(x=>y0*Math.exp(k*(x-x0))),
+   steps:(x0,y0,k)=>[["Separate","dy / y = k dx"],["Integrate both sides","ln|y| = kx + C"],["Exponentiate","|y| = e<sup>kx + C</sup>  ⟹  y = A e<sup>kx</sup> (A = ±e<sup>C</sup>)"],
+     ["Use y("+nb(x0)+") = "+nb(y0),"A·e<sup>"+num(k*x0,3)+"</sup> = "+nb(y0)+"  ⟹  A = "+num(y0/Math.exp(k*x0),4)],["Particular solution","y = "+num(y0/Math.exp(k*x0),4)+" e<sup>"+num(k,2)+"x</sup>"]]},
+  {nm:"dy/dx = xy", x0:0, y0:1, sol:(x0,y0)=>(x=>y0*Math.exp((x*x-x0*x0)/2)),
+   steps:(x0,y0)=>[["Separate","dy / y = x dx"],["Integrate","ln|y| = x²/2 + C"],["Solve for y","y = A e<sup>x²/2</sup>"],["Use y("+nb(x0)+") = "+nb(y0),"A = "+nb(y0)+"/e<sup>"+num(x0*x0/2,3)+"</sup> = "+num(y0/Math.exp(x0*x0/2),4)],["Particular solution","y = "+num(y0/Math.exp(x0*x0/2),4)+" e<sup>x²/2</sup>"]]},
+  {nm:"dy/dx = −x/y (circles)", x0:0, y0:2, sol:(x0,y0)=>{ const C=x0*x0+y0*y0, sg=Math.sign(y0)||1; return x=>{ const t=C-x*x; return t>=0? sg*Math.sqrt(t) : NaN; }; },
+   steps:(x0,y0)=>[["Separate","y dy = −x dx"],["Integrate","y²/2 = −x²/2 + C"],["Rearrange","x² + y² = 2C = K"],["Use y("+nb(x0)+") = "+nb(y0),"K = "+nb(x0)+"² + "+nb(y0)+"² = "+nb(x0*x0+y0*y0)],["Particular solution","y = "+(y0<0?"−":"")+"√("+nb(x0*x0+y0*y0)+" − x²), valid for |x| < "+num(Math.sqrt(x0*x0+y0*y0),3)+" (y ≠ 0)"]]},
+  {nm:"dy/dx = 2x / y²", x0:0, y0:1, sol:(x0,y0)=>(x=>Math.cbrt(3*(x*x-x0*x0)+y0*y0*y0)),
+   steps:(x0,y0)=>[["Separate","y² dy = 2x dx"],["Integrate","y³/3 = x² + C"],["Solve for y","y = ∛(3x² + 3C)"],["Use y("+nb(x0)+") = "+nb(y0),"3C = "+nb(y0)+"³ − 3·"+nb(x0)+"² = "+nb(y0*y0*y0-3*x0*x0)],["Particular solution","y = ∛(3x² "+(y0*y0*y0-3*x0*x0<0?"− "+nb(-(y0*y0*y0-3*x0*x0)):"+ "+nb(y0*y0*y0-3*x0*x0))+")"]]},
+  {nm:"dy/dx = y·cos x", x0:0, y0:1, sol:(x0,y0)=>(x=>y0*Math.exp(Math.sin(x)-Math.sin(x0))),
+   steps:(x0,y0)=>[["Separate","dy / y = cos x dx"],["Integrate","ln|y| = sin x + C"],["Solve for y","y = A e<sup>sin x</sup>"],["Use y("+nb(x0)+") = "+nb(y0),"A = "+num(y0/Math.exp(Math.sin(x0)),4)],["Particular solution","y = "+num(y0/Math.exp(Math.sin(x0)),4)+" e<sup>sin x</sup>"]]}
+];
+const CTX=[
+  {k:"bact", nm:"Bacteria growth", unit:"hours", q:"cells", y0:500, rate:0.35, T:12, kind:"exp"},
+  {k:"rad", nm:"Radioactive decay (C-14)", unit:"years", q:"g", y0:100, half:5730, T:20000, kind:"half"},
+  {k:"cash", nm:"Continuously compounded savings", unit:"years", q:"$", y0:1000, rate:0.05, T:30, kind:"exp"},
+  {k:"cool", nm:"Newton's law of cooling (coffee)", unit:"min", q:"°F", y0:190, Ta:70, rate:0.08, T:60, kind:"cool"}
+];
+const M6={
+  tab:"Differential equations", lesson:"AP 7.1–7.9 · Unit 7", accent:"var(--coral)",
+  s:{mode:"field",de:0,k:0.5,L:4,src:"y-x^2",sols:[],sep:0,sx0:0,sy0:2,sk:0.5,ctx:0,c0:null,cr:null,cT:null,cTa:null,cx:null,h:0.5,eu:0,W:null,err:"",nf:0},
+  title:()=>({field:"Slope fields & solution curves",sep:"Separation of variables",grow:"Exponential models & Newton's cooling",euler:"Euler's method"}[M6.s.mode]),
+  fn(){ const s=M6.s, p=DEP[s.de]; const src=p.k==="c"? s.src : p.src;
+    const txt=src.replace(/\bk\b/g,"("+s.k+")").replace(/\bL\b/g,"("+s.L+")");
+    const q=tryParse(txt,["x","y"]); s.err=q.err||""; return q.err? null : q.f; },
+  bar(){ const s=M6.s;
+    segBtns([["field","Slope field"],["sep","Separable"],["grow","Growth & cooling"],["euler","Euler (BC)"]],s.mode,k=>{ s.mode=k; render(); },"Lesson part");
+    const g=grp();
+    if(s.mode==="field"){
+      selectBox(DEP.map((p,i)=>[i,p.nm]),s.de,v=>{ s.de=+v; s.sols=[]; s.W=winOf(DEP[s.de].W); render(); },"Differential equation",g);
+      const p=DEP[s.de];
+      if(p.k==="ky"||p.k==="log") slider("k",-1.5,1.5,0.1,s.k,v=>num(v,1),v=>{ s.k=v; redraw(); M6.panel(); },g);
+      if(p.k==="log") slider("L",1,6,0.5,s.L,v=>num(v,1),v=>{ s.L=v; redraw(); M6.panel(); },g);
+      btn("Clear curves",()=>{ s.sols=[]; update(); },"",g);
+    } else if(s.mode==="sep"){
+      selectBox(SEP.map((p,i)=>[i,p.nm]),s.sep,v=>{ s.sep=+v; s.sx0=SEP[s.sep].x0; s.sy0=SEP[s.sep].y0; render(); },"Equation",g);
+      if(s.sep===0) slider("k",-1,1,0.1,s.sk,v=>num(v,1),v=>{ s.sk=v; update(); },g);
+    } else if(s.mode==="grow"){
+      selectBox(CTX.map((c,i)=>[i,c.nm]),s.ctx,v=>{ s.ctx=+v; s.c0=null; render(); },"Context",g);
+      M6.ctxInit(); const c=CTX[s.ctx], g2=grp();
+      slider(c.kind==="cool"?"T₀":"y₀",c.kind==="cool"?100:Math.round(c.y0/5),c.kind==="cool"?212:c.y0*3,c.kind==="cool"?1:Math.max(1,c.y0/20),s.c0,v=>num(v,0),v=>{ s.c0=v; update(); },g2);
+      if(c.kind==="half") slider("half-life",500,12000,10,s.cr,v=>num(v,0),v=>{ s.cr=v; update(); },g2);
+      else slider("k",0.01,c.kind==="cool"?0.3:0.8,0.01,s.cr,v=>num(v,2),v=>{ s.cr=v; update(); },g2);
+      if(c.kind==="cool") slider("T_room",30,95,1,s.cTa,v=>num(v,0),v=>{ s.cTa=v; update(); },g2);
+    } else {
+      selectBox([[0,"dy/dx = y, y(0) = 1"],[1,"dy/dx = x + y, y(0) = 1"],[2,"dy/dx = 2x, y(0) = 0"],[3,"dy/dx = xy, y(0) = 1"]],s.eu,v=>{ s.eu=+v; render(); },"Euler problem",g);
+      segBtns([[1,"h = 1"],[0.5,"h = 0.5"],[0.25,"h = 0.25"],[0.1,"h = 0.1"]],s.h,k=>{ s.h=k; update(); },"Step size",g);
+    }
+  },
+  ctxInit(){ const s=M6.s, c=CTX[s.ctx]; if(s.c0==null){ s.c0=c.y0; s.cr=c.kind==="half"? c.half : c.rate; s.cTa=c.Ta||70; s.cx=0.4; } },
+  field(g,W,f,density){ const nx=FS>1?14:22, ny=Math.round(nx*VH/VW), Lp=Math.min(VW/nx,VH/ny)*0.36;
+    for(let i=0;i<nx;i++) for(let j=0;j<ny;j++){ const X=(i+.5)*VW/nx, Y=(j+.5)*VH/ny, x=W.iX(X), y=W.iY(Y), m=f(x,y);
+      if(!isFinite(m)) continue; const sx=1/W.sx, sy=m/W.sy, len=Math.hypot(1,m*W.sy/W.sx)||1; const dx=Lp/len, dy=Lp*(m*W.sy/W.sx)/len;
+      seg(g,X-dx,Y+dy,X+dx,Y-dy,"#475569",1.6); } },
+  solve(f,x0,y0,W,dir){ const pts=[[x0,y0]]; let x=x0, y=y0; const h=dir*(W.x1-W.x0)/600;
+    for(let i=0;i<1200;i++){ const yn=rk4(f,x,y,h); if(!isFinite(yn)) break; x+=h; y=yn; pts.push([x,y]); if(x<W.x0-0.2||x>W.x1+0.2||y<W.y0-(W.y1-W.y0)||y>W.y1+(W.y1-W.y0)) break;
+      if(i>2){ const m=f(x,y); if(!isFinite(m)) break; } }
+    return pts; },
+  draw(){ const s=M6.s; if(!s.W) s.W=winOf(DEP[s.de].W);
+    if(s.mode==="field"){ const W=s.W, g=grid(W), f=M6.fn();
+      if(!f){ label(g,VW/2,VH/2,"Fix f(x, y): "+s.err,{col:"#B91C1C"}); return; }
+      M6.field(g,W,f);
+      if(DEP[s.de].k==="log"){ [0,s.L].forEach(v=>seg(g,0,W.Y(v),VW,W.Y(v),"#059669",1.4,"6 5")); label(g,VW-10,W.Y(s.L)-12,"y = L (carrying capacity)",{cls:"tiny",col:"#047857",anchor:"end"}); }
+      const cols=["#DB2777","#0284C7","#7C3AED","#EA580C","#059669","#B91C1C"];
+      s.sols.forEach((p,i)=>{ const A=M6.solve(f,p[0],p[1],W,1), B=M6.solve(f,p[0],p[1],W,-1); const P=B.reverse().concat(A.slice(1));
+        const d="M"+P.map(q=>W.X(q[0]).toFixed(1)+" "+W.Y(q[1]).toFixed(1)).join("L"); curve(g,d,cols[i%cols.length],3.2);
+        grab(g,W.X(p[0]),W.Y(p[1]),"sol"+i,cols[i%cols.length]); });
+      hintTxt(g,s.sols.length?"Click to add another solution curve (RK4) · drag a point to move its initial condition":"Click anywhere to draw the solution curve through that point (RK4)");
+    } else if(s.mode==="sep"){ const p=SEP[s.sep], W=winOf([-4,4,-3,3.5]), g=grid(W), k=s.sk;
+      const f=[(x,y)=>k*y,(x,y)=>x*y,(x,y)=>-x/y,(x,y)=>2*x/(y*y),(x,y)=>y*Math.cos(x)][s.sep];
+      M6.field(g,W,f);
+      const sol=p.sol(s.sx0,s.sy0,k); curve(g,pathF(W,sol,W.x0,W.x1,600),"#DB2777",3.6);
+      grab(g,W.X(s.sx0),W.Y(s.sy0),"ic","#DB2777"); label(g,W.X(s.sx0)+12,W.Y(s.sy0)-18,"("+nb(s.sx0)+", "+nb(s.sy0)+")",{cls:"sm",col:"#9D174D",anchor:"start"});
+      hintTxt(g,"Drag the initial condition — the particular solution follows the slope field");
+    } else if(s.mode==="grow"){ M6.ctxInit(); const c=CTX[s.ctx]; const T=c.T;
+      const y=M6.model(); let ymax=0; for(let i=0;i<=100;i++) ymax=Math.max(ymax,y(T*i/100)); if(c.kind==="cool") ymax=Math.max(ymax,s.cTa,212);
+      const W=Win(-T*0.06,T*1.04,-ymax*0.06,ymax*1.12), g=grid(W,{xn:"t ("+c.unit+")",yn:c.q});
+      if(c.kind==="cool") { seg(g,0,W.Y(s.cTa),VW,W.Y(s.cTa),"#059669",1.6,"6 5"); label(g,VW-10,W.Y(s.cTa)-12,"room "+num(s.cTa,0)+"°F",{cls:"tiny",col:"#047857",anchor:"end"}); }
+      curve(g,pathF(W,y,0,T,400),"#EA580C",3.6);
+      const t=s.cx*T, yt=y(t); seg(g,W.X(t),W.Y(0),W.X(t),W.Y(yt),"#64748B",1.3,"4 4");
+      // tangent: slope = dy/dt
+      const m=dnum(y,t), dt=T*0.12; seg(g,W.X(t-dt),W.Y(yt-m*dt),W.X(t+dt),W.Y(yt+m*dt),"#7C3AED",2.2);
+      grab(g,W.X(t),W.Y(yt),"gt","#EA580C"); label(g,W.X(t)+14,W.Y(yt)-20,"t = "+num(t,1)+": "+num(yt,1)+" "+c.q,{cls:"sm",col:"#9A3412",anchor:"start"});
+      label(g,W.X(t)+14,W.Y(yt)+18,"rate "+num(m,3)+" "+c.q+"/"+c.unit.replace(/s$/,""),{cls:"tiny",col:"#6D28D9",anchor:"start"});
+      hintTxt(g,"Drag the point along the curve; the purple tangent shows the rate of change");
+    } else { const E_=M6.eul(), W=winOf(E_.W), g=grid(W);
+      M6.field(g,W,E_.f);
+      curve(g,pathF(W,E_.y,W.x0,W.x1,500),"#059669",3.2);
+      const steps=M6.euler(E_,s.h), others=[1,0.5,0.25,0.1].filter(h=>h!==s.h);
+      others.forEach(h=>{ const P=M6.euler(E_,h); curve(g,"M"+P.map(q=>W.X(q[0]).toFixed(1)+" "+W.Y(q[1]).toFixed(1)).join("L"),"#94A3B8",1.4,"4 4"); });
+      curve(g,"M"+steps.map(q=>W.X(q[0]).toFixed(1)+" "+W.Y(q[1]).toFixed(1)).join("L"),"#DB2777",3);
+      steps.forEach(q=>dot(g,W.X(q[0]),W.Y(q[1]),"#DB2777",steps.length>12?3:4.5));
+      const L=steps[steps.length-1];
+      label(g,W.X(L[0])-10,W.Y(L[1])+18,"Euler ≈ "+num(L[1],4),{cls:"sm",col:"#9D174D",anchor:"end"});
+      label(g,W.X(E_.X)-10,W.Y(E_.y(E_.X))-18,"exact "+num(E_.y(E_.X),4),{cls:"sm",col:"#047857",anchor:"end"});
+      hintTxt(g,"Pink: Euler with the chosen h · grey: the other step sizes · green: exact solution");
+    }
+  },
+  model(){ const s=M6.s, c=CTX[s.ctx];
+    if(c.kind==="cool") return t=>s.cTa+(s.c0-s.cTa)*Math.exp(-s.cr*t);
+    const k=c.kind==="half"? -Math.LN2/s.cr : s.cr; return t=>s.c0*Math.exp(k*t); },
+  eul(){ const s=M6.s; return [
+    {f:(x,y)=>y, y:x=>Math.exp(x), x0:0, y0:1, X:2, W:[-0.4,2.6,-0.6,8], txt:"dy/dx = y", ex:"y = eˣ"},
+    {f:(x,y)=>x+y, y:x=>2*Math.exp(x)-x-1, x0:0, y0:1, X:2, W:[-0.4,2.6,-1,12], txt:"dy/dx = x + y", ex:"y = 2eˣ − x − 1"},
+    {f:(x)=>2*x, y:x=>x*x, x0:0, y0:0, X:3, W:[-0.4,3.4,-0.8,9.6], txt:"dy/dx = 2x", ex:"y = x²"},
+    {f:(x,y)=>x*y, y:x=>Math.exp(x*x/2), x0:0, y0:1, X:2, W:[-0.4,2.6,-0.8,8], txt:"dy/dx = xy", ex:"y = e^(x²/2)"}][s.eu]; },
+  euler(E_,h){ const P=[[E_.x0,E_.y0]]; let x=E_.x0, y=E_.y0; const n=Math.round((E_.X-E_.x0)/h); for(let i=0;i<n;i++){ y=y+h*E_.f(x,y); x=E_.x0+(i+1)*h; P.push([x,y]); } return P; },
+  place(p){ const s=M6.s; if(s.mode!=="field")return false; const W=s.W; s.sols.push([W.iX(p[0]),W.iY(p[1])]); if(s.sols.length>8) s.sols.shift(); return true; },
+  drag(id,p){ const s=M6.s;
+    if(id.startsWith("sol")){ const W=s.W; s.sols[+id.slice(3)]=[W.iX(p[0]),W.iY(p[1])]; return; }
+    if(id==="ic"){ const W=winOf([-4,4,-3,3.5]); s.sx0=Math.round(W.iX(p[0])*4)/4; s.sy0=Math.round(W.iY(p[1])*4)/4;
+      if(s.sep===2&&Math.abs(s.sy0)<0.25) s.sy0=s.sy0<0?-0.25:0.25; if(s.sep===3&&Math.abs(s.sy0)<0.25) s.sy0=0.25*(s.sy0<0?-1:1); return; }
+    if(id==="gt"){ const c=CTX[s.ctx], T=c.T; const W=Win(-T*0.06,T*1.04,0,1); s.cx=clamp(W.iX(p[0])/T,0,1); }
+  },
+  panel(full){ const s=M6.s; let h="";
+    if(s.mode==="field"){ const p=DEP[s.de];
+      h+=panelH("Equation",(p.k==="c"?`<div class="fxrow" style="margin-top:14px"><span>dy/dx = </span><input type="text" id="f6" value="${s.src}" aria-label="f(x, y)" spellcheck="false" autocomplete="off"></div><div id="err6">${s.err?`<p class="err">${s.err}</p>`:""}</div>`:"")+
+        `<div class="pad"><p>${p.k==="ky"?`dy/dx = ${num(s.k,1)}y: the slope depends only on y, so every row of segments is parallel. Solutions are y = Ce<sup>${num(s.k,1)}x</sup> — ${s.k>0?"exponential growth":s.k<0?"exponential decay":"constant"}.`:
+          p.k==="xy1"?"dy/dx = x + y: slopes are 0 along the line y = −x. The line y = −x − 1 is itself a solution (slope −1 everywhere on it).":
+          p.k==="xy"?"dy/dx = xy: zero slope along both axes. Solutions y = Ce<sup>x²/2</sup> are bell-shaped upside-down… and y = 0 is an equilibrium.":
+          p.k==="log"?`Logistic: equilibria at y = 0 and y = L = ${num(s.L,1)}. Solutions starting between them rise fastest at y = L/2 = ${num(s.L/2,2)} (the inflection point).`:
+          p.k==="xoy"?"dy/dx = −x/y: the slope at each point is perpendicular to the radius, so solutions are circles x² + y² = r² (each half is a function).":
+          "Type any f(x, y) using x, y, +, −, *, /, ^ and functions."}</p></div>`);
+      if(s.sols.length){ const f=M6.fn(); h+=panelH("Your solution curves",s.sols.map((q,i)=>`<div class="rel"><span class="dot" style="background:${["#DB2777","#0284C7","#7C3AED","#EA580C","#059669","#B91C1C"][i%6]}"></span><span class="nm">through (${num(q[0],2)}, ${num(q[1],2)})</span><span class="val">slope ${f?num(f(q[0],q[1]),3):"—"}</span></div>`).join("")); }
+      h+=panelH("The idea",`<div class="pad"><p>A <b>differential equation</b> tells you the slope dy/dx at every point. A <b>slope field</b> draws a short segment with that slope at a grid of points.</p>
+        <p>A <b>solution curve</b> is tangent to the field everywhere it goes. Click a point (an initial condition) and the page follows the field with the RK4 method — a careful step-by-step solver.</p>
+        <div class="eq">dy/dx = f(x, y),  y(x₀) = y₀</div></div>`)+
+        tryPanel(`On the <b>logistic</b> field, start curves at y = 0.5, y = 2 and y = 5. What happens to each as x grows? Where is each curve steepest?`);
+    } else if(s.mode==="sep"){ const p=SEP[s.sep], st=p.steps(s.sx0,s.sy0,s.sk);
+      h+=panelH("Solve step by step",`<ol class="stepl">${st.map((q,i)=>`<li class="on"><span class="sn">${i+1}</span><b>${q[0]}</b><span class="eqi">${q[1]}</span></li>`).join("")}</ol>`)+
+        panelH("The idea",`<div class="pad"><p>An equation is <b>separable</b> if dy/dx = g(x)·h(y). Move every y (with dy) to one side and every x (with dx) to the other, then integrate both sides.</p>
+          <p>Only one constant C is needed. Use the initial condition to find it — that gives the <b>particular solution</b>. On the AP exam, also state the domain where the solution is valid.</p>
+          <div class="eq">dy/dx = g(x)h(y)  ⟹  ∫ dy/h(y) = ∫ g(x) dx</div></div>`)+
+        tryPanel(`For <b>dy/dx = −x/y</b>, drag the initial point below the x-axis. Why does the solution become the <b>lower</b> half of the circle? What happens at the x-axis?`);
+    } else if(s.mode==="grow"){ M6.ctxInit(); const c=CTX[s.ctx], T=c.T, y=M6.model(), t=s.cx*T;
+      let eq="", story="";
+      if(c.kind==="cool"){ eq=`dT/dt = −k(T − T_room),  k = ${num(s.cr,2)}\nT(t) = ${num(s.cTa,0)} + (${num(s.c0,0)} − ${num(s.cTa,0)})e<sup>−${num(s.cr,2)}t</sup>\nT(${num(t,1)}) = ${num(y(t),2)} °F`;
+        const t140=s.c0>140&&s.cTa<140? Math.log((s.c0-s.cTa)/(140-s.cTa))/s.cr : null;
+        story=`<p>Coffee poured at ${num(s.c0,0)}°F into a ${num(s.cTa,0)}°F room cools fastest at first, when it is hottest relative to the room. The rate of cooling is proportional to the <b>difference</b> T − T_room.</p>${t140!=null?`<p>It is drinkable (140°F) after t = ln(${num(s.c0-s.cTa,0)}/${num(140-s.cTa,0)})/${num(s.cr,2)} ≈ <b>${num(t140,1)} min</b>.</p>`:""}`; }
+      else if(c.kind==="half"){ const k=Math.LN2/s.cr;
+        eq=`dy/dt = −ky,  k = ln 2 / ${num(s.cr,0)} ≈ ${num(k,6)}\ny(t) = ${num(s.c0,0)}e<sup>−${num(k,6)}t</sup> = ${num(s.c0,0)}(1/2)<sup>t/${num(s.cr,0)}</sup>\ny(${num(t,0)}) = ${num(y(t),2)} g`;
+        story=`<p>Every ${num(s.cr,0)} years half of what is left decays. The rate of decay is proportional to the amount present, so it slows down as the sample shrinks.</p>`; }
+      else { eq=`dy/dt = ky,  k = ${num(s.cr,2)}\ny(t) = ${num(s.c0,0)}e<sup>${num(s.cr,2)}t</sup>\ny(${num(t,1)}) = ${num(y(t),2)} ${c.q}\ndoubling time = ln 2 / k ≈ ${num(Math.LN2/s.cr,2)} ${c.unit}`;
+        story=c.k==="cash"? `<p>Money growing at ${num(s.cr*100,0)}% compounded continuously grows at a rate proportional to the balance: the more you have, the faster it grows.</p>` : `<p>Each cell divides, so more cells make more cells: the growth rate is proportional to the population.</p>`; }
+      h+=panelH(c.nm,`<div class="fldwrap"><div class="eq">${eq}</div></div><div class="pad" style="padding-top:0">${story}</div>`)+
+        panelH("The idea",`<div class="pad"><p>"The rate of change of y is proportional to y" means dy/dt = ky. Separating gives the only solution: <b>y = y₀e<sup>kt</sup></b>. k > 0 is growth, k < 0 is decay.</p>
+          <p>Newton's law of cooling says the rate is proportional to the <b>difference</b> from room temperature. Substituting u = T − T_room turns it back into du/dt = −ku.</p>
+          <div class="eq">dy/dt = ky ⟹ y = y₀e<sup>kt</sup>\ndT/dt = −k(T − Tₐ) ⟹ T = Tₐ + (T₀ − Tₐ)e<sup>−kt</sup></div></div>`)+
+        tryPanel(`In the cooling model, double k. Does the coffee reach 140°F in exactly half the time? Use the formula for t to explain why.`);
+    } else { const E_=M6.eul(), P=M6.euler(E_,s.h), ex=E_.y(E_.X);
+      const rows=P.slice(0,Math.min(P.length,11)).map((q,i)=>{ const m=E_.f(q[0],q[1]); return `<tr><td>${i}</td><td>${num(q[0],2)}</td><td>${num(q[1],4)}</td><td>${i<P.length-1?num(m,4):"—"}</td><td>${i<P.length-1?num(q[1]+s.h*m,4):"—"}</td></tr>`; }).join("")+(P.length>11?`<tr><td colspan="5">… ${P.length-11} more steps</td></tr>`:"");
+      const cmp=[1,0.5,0.25,0.1].map(h=>{ const Q=M6.euler(E_,h), v=Q[Q.length-1][1]; return `<tr${h===s.h?' class="hl"':""}><td>${h}</td><td>${Q.length-1}</td><td>${num(v,5)}</td><td>${num(ex-v,5)}</td></tr>`; }).join("");
+      h+=panelH("Euler's method: "+E_.txt+", y("+E_.x0+") = "+E_.y0,`<div class="fldwrap"><div class="eq">yₙ₊₁ = yₙ + h·f(xₙ, yₙ)<small>exact solution: ${E_.ex}, so y(${E_.X}) = ${num(ex,5)}</small></div></div>
+        <div class="tblwrap"><table class="data"><tr><th>n</th><th>xₙ</th><th>yₙ</th><th>slope f</th><th>yₙ + h·f</th></tr>${rows}</table></div>`)+
+        panelH("Step size comparison",`<div class="tblwrap"><table class="data"><tr><th>h</th><th>steps</th><th>Euler y(${E_.X})</th><th>error</th></tr>${cmp}</table></div><div class="pad" style="padding-top:0"><p class="mini">Halving h roughly halves the error — Euler's method is first-order. For a concave-up solution, the tangent lines lie below the curve, so Euler <b>underestimates</b>.</p></div>`)+
+        panelH("The idea",`<div class="pad"><p>Start at the initial point. Walk a small step h along the <b>tangent line</b> (slope from the differential equation), then recompute the slope and repeat. It is a chain of linear approximations.</p></div>`);
+    }
+    side.innerHTML=h;
+    const fi=$("f6"); if(fi){ let t=null; fi.addEventListener("input",()=>{ clearTimeout(t); t=setTimeout(()=>{ s.src=fi.value; M6.fn(); redraw(); const e=$("err6"); if(e) e.innerHTML=s.err?`<p class="err">${s.err}</p>`:""; },350); }); }
+  }
+};
+
+/* ══════════════════════ TAB 7 · challenge ══════════════════════ */
+function polyStr(c){ // c[i] = coefficient of x^i
+  let out=""; for(let i=c.length-1;i>=0;i--){ const a=c[i]; if(Math.abs(a)<1e-12)continue;
+    const r=rat(a,12), abs=Math.abs(a), as=r? (Math.abs(r[0])+(r[1]>1?"/"+r[1]:"")) : num(abs,3);
+    const coef=(abs===1&&i>0)? "" : (r&&r[1]>1&&i>0? "("+as+")" : as);
+    const term=coef+(i>1?"x"+(i<10?SUP[i]:"^"+i):i===1?"x":"");
+    out+= out? (a<0?" − ":" + ")+term : (a<0?"−":"")+term; }
+  return out||"0"; }
+const padd=(p,q)=>{ const n=Math.max(p.length,q.length), r=[]; for(let i=0;i<n;i++) r.push((p[i]||0)+(q[i]||0)); return r; };
+const pmul=(p,q)=>{ const r=new Array(p.length+q.length-1).fill(0); p.forEach((a,i)=>q.forEach((b,j)=>r[i+j]+=a*b)); return r; };
+const pev=(p,x)=>p.reduce((s,a,i)=>s+a*Math.pow(x,i),0);
+const pint=(p,a,b)=>p.reduce((s,c,i)=>s+c*(Math.pow(b,i+1)-Math.pow(a,i+1))/(i+1),0);
+const CKINDS=[["mix","Mix"],["area","Area between curves"],["washer","Disk / washer volume"],["shell","Shell volume"],["arc","Arc length (BC)"],["avg","Average value"],["de","Separable DE (IVP)"]];
+function genC(kind){
+  if(kind==="mix") kind=pick(["area","washer","shell","arc","avg","de"]);
+  const pr={kind};
+  if(kind==="area"){ let p,q; do{ p=rnd(-3,2); q=p+rnd(1,4); }while(q>4);
+    const a=pick([1,1,2,-1]), L=[rnd(-3,3),pick([-2,-1,0,1,2])];
+    const Q=padd(L,[a*p*q,-a*(p+q),a]);
+    pr.f=polyStr(L); pr.g=polyStr(Q); pr.F=L; pr.G=Q; pr.p=p; pr.q=q; pr.a=a;
+    pr.ans=Math.abs(a)*Math.pow(q-p,3)/6; pr.num=true;
+    pr.q_=`Find the area of the region enclosed by <b>y = ${pr.f}</b> and <b>y = ${pr.g}</b>.`;
+  }
+  if(kind==="washer"){ const t=rnd(0,3);
+    if(t===0){ const c=rnd(1,3), m=pick([0.5,1,2]), b=m===0.5?rnd(1,4):rnd(1,2); const fs=m===0.5?(c===1?"√x":c+"√x"):m===1?(c===1?"x":c+"x"):(c===1?"x²":c+"x²");
+      pr.R={nat:"x",F:curveOf(m===0.5?c+"sqrt(x)":m===1?c+"x":c+"x^2","x",[]),G:curveOf("0","x",[]),a:0,b:b}; pr.ax="h"; pr.k=0;
+      pr.q_=`The region under <b>y = ${fs}</b> from x = 0 to x = ${b} (above the x-axis) is rotated about the <b>x-axis</b>. Find the volume.`;
+      pr.setup=`V = π∫₀^${b} (${fs})² dx`; }
+    else if(t===1){ const k=pick([0,-1,-2,2]); pr.R={nat:"x",F:curveOf("x","x",["y"]),G:curveOf("x^2","x",["sqrt(y)"]),a:0,b:1}; pr.ax="h"; pr.k=k;
+      pr.q_=`The region between <b>y = x</b> and <b>y = x²</b> is rotated about <b>${axisName("h",k)}</b>. Find the volume.`;
+      pr.setup=k>=1? `R = ${k} − x², r = ${k} − x (the axis is above): V = π∫₀¹ [(${k} − x²)² − (${k} − x)²] dx` : `R = x ${k?"+ "+(-k):""}, r = x² ${k?"+ "+(-k):""}: V = π∫₀¹ [R² − r²] dx`; }
+    else if(t===2){ const c=rnd(2,3); pr.R={nat:"x",F:curveOf(c*c+"-x^2","x",[]),G:curveOf("0","x",[]),a:-c,b:c}; pr.ax="h"; pr.k=0;
+      pr.q_=`The region between <b>y = ${c*c} − x²</b> and the x-axis is rotated about the <b>x-axis</b>. Find the volume.`;
+      pr.setup=`V = π∫ from −${c} to ${c} of (${c*c} − x²)² dx`; }
+    else { const b=rnd(1,3); pr.R={nat:"x",F:curveOf("sqrt(x)","x",["y^2"]),G:curveOf("0","x",[]),a:0,b:b*b}; pr.ax="v"; pr.k=0;
+      pr.q_=`The region bounded by <b>y = √x</b>, <b>y = 0</b> and <b>x = ${b*b}</b> is rotated about the <b>y-axis</b>. Use washers (dy) to find the volume.`;
+      pr.setup=`Solve for x: x = y². R = ${b*b}, r = y²: V = π∫₀^${b} [${b*b}² − (y²)²] dy`; }
+    pr.ans=pr.ax==="h"? volWasherH(pr.R,pr.k) : volWasherV(pr.R,pr.k); pr.vol=true;
+  }
+  if(kind==="shell"){ const t=rnd(0,2);
+    if(t===0){ const p=rnd(1,4); pr.R={nat:"x",F:curveOf(p+"x-x^2","x",[]),G:curveOf("0","x",[]),a:0,b:p}; pr.ax="v"; pr.k=0;
+      pr.q_=`The region between <b>y = ${p===1?"":p}x − x²</b> and the x-axis is rotated about the <b>y-axis</b>. Use shells to find the volume.`;
+      pr.setup=`V = 2π∫₀^${p} x(${p===1?"":p}x − x²) dx`; }
+    else if(t===1){ const k=pick([-1,-2,3]); pr.R={nat:"x",F:curveOf("2x","x",[]),G:curveOf("x^2","x",[]),a:0,b:2}; pr.ax="v"; pr.k=k;
+      pr.q_=`The region between <b>y = 2x</b> and <b>y = x²</b> is rotated about <b>x = ${minus(k)}</b>. Use shells to find the volume.`;
+      pr.setup=k<0? `radius = x + ${-k}, height = 2x − x²: V = 2π∫₀² (x + ${-k})(2x − x²) dx` : `radius = ${k} − x, height = 2x − x²: V = 2π∫₀² (${k} − x)(2x − x²) dx`; }
+    else { const b=rnd(1,3); pr.R={nat:"x",F:curveOf("x^2","x",[]),G:curveOf("0","x",[]),a:0,b:b}; pr.ax="v"; pr.k=0;
+      pr.q_=`The region under <b>y = x²</b> from x = 0 to x = ${b} is rotated about the <b>y-axis</b>. Use shells to find the volume.`;
+      pr.setup=`V = 2π∫₀^${b} x·x² dx`; }
+    pr.ans=volShellV(pr.R,pr.k); pr.vol=true;
+  }
+  if(kind==="arc"){ const t=rnd(0,2);
+    if(t===0){ const b=rnd(1,3); pr.fs="x²"; pr.a=0; pr.b=b; pr.ff=x=>Math.sqrt(1+4*x*x); pr.setup=`L = ∫₀^${b} √(1 + (2x)²) dx`; }
+    else if(t===1){ const b=pick([1,3,5,8]); pr.fs="(2/3)x^(3/2)"; pr.a=0; pr.b=b; pr.ff=x=>Math.sqrt(1+x); pr.setup=`f′(x) = √x, so L = ∫₀^${b} √(1 + x) dx`; }
+    else { const b=pick([1,2]); pr.fs="sin x"; pr.a=0; pr.b=b===1?PI/2:PI; pr.ff=x=>Math.sqrt(1+Math.cos(x)**2); pr.setup=`L = ∫ √(1 + cos²x) dx from 0 to ${b===1?"π/2":"π"}`; }
+    pr.ans=integrate(pr.ff,pr.a,pr.b); pr.tol=0.006; pr.num=true;
+    pr.q_=`Find the arc length of <b>y = ${pr.fs}</b> from x = ${nb(pr.a)} to x = ${nb(pr.b)}. Round to three decimal places (a calculator is allowed).`;
+  }
+  if(kind==="avg"){ const t=rnd(0,1);
+    if(t===0){ const c=[rnd(-4,4),rnd(-3,3),pick([-1,1,2,3])]; let a=rnd(-2,1), b=a+rnd(1,4); pr.P=c; pr.a=a; pr.b=b;
+      pr.ans=pint(c,a,b)/(b-a); pr.fs=polyStr(c); pr.num=true;
+      pr.q_=`Find the average value of <b>f(x) = ${pr.fs}</b> on the interval [${minus(a)}, ${b}].`; pr.setup=`f_avg = (1/${b-a})∫ f(x) dx from ${minus(a)} to ${b} ${eqx(pint(c,a,b))}/${b-a}`; }
+    else { const A=rnd(1,4), n=pick([1,2]); pr.fs=(A===1?"":A)+"sin x"; pr.A=A; pr.a=0; pr.b=n===1?PI:PI/2; pr.ans=A*(1-Math.cos(pr.b))/pr.b; pr.num=true;
+      pr.q_=`Find the average value of <b>f(x) = ${pr.fs}</b> on [0, ${n===1?"π":"π/2"}].`; pr.setup=`f_avg = (1/${n===1?"π":"(π/2)"})∫ ${A===1?"":A}sin x dx = ${A}·(1 − cos(${n===1?"π":"π/2"}))/${n===1?"π":"(π/2)"}`; }
+  }
+  if(kind==="de"){ const t=rnd(0,3), ev=Math.random()<0.5;
+    if(t===0){ const k=pick([-2,-1,1,2,0.5,-0.5]), y0=rnd(1,5); pr.sol=x=>y0*Math.exp(k*x); pr.deq=`dy/dx = ${k===1?"":k===-1?"−":minus(k)}y`; pr.ic=`y(0) = ${y0}`; pr.solTxt=`y = ${y0===1?"":y0}e^(${k===1?"":k===-1?"−":minus(k)}x)`; pr.dom=[-1.5,1.5];
+      pr.setup=`dy/y = ${minus(k)} dx ⟹ ln|y| = ${minus(k)}x + C ⟹ y = Ae^(${minus(k)}x); y(0) = ${y0} gives A = ${y0}`; }
+    else if(t===1){ const y0=rnd(1,4); pr.sol=x=>y0*Math.exp(x*x/2); pr.deq="dy/dx = xy"; pr.ic=`y(0) = ${y0}`; pr.solTxt=`y = ${y0===1?"":y0}e^(x²/2)`; pr.dom=[-1.5,1.5];
+      pr.setup=`dy/y = x dx ⟹ ln|y| = x²/2 + C ⟹ y = Ae^(x²/2); A = ${y0}`; }
+    else if(t===2){ const y0=rnd(1,3), c=pick([2,4,6]); pr.sol=x=>Math.sqrt(c*x*x/2*1+y0*y0); pr.deq=`dy/dx = ${c/2===1?"":c/2}x/y`; pr.ic=`y(0) = ${y0}`;
+      pr.solTxt=`y = √(${c/2===1?"":c/2}x² + ${y0*y0})`; pr.dom=[-2,2]; pr.sol=x=>Math.sqrt((c/2)*x*x+y0*y0);
+      pr.setup=`y dy = ${c/2===1?"":c/2}x dx ⟹ y²/2 = ${c/4===1?"":nb(c/4)}x² + C ⟹ y² = ${c/2===1?"":c/2}x² + ${y0*y0} (y(0) = ${y0} > 0, take the + root)`; }
+    else { const y0=rnd(1,3); pr.sol=x=>Math.cbrt(3*x*x+y0*y0*y0); pr.deq="dy/dx = 2x/y²"; pr.ic=`y(0) = ${y0}`; pr.solTxt=`y = ∛(3x² + ${y0**3})`; pr.dom=[-2,2];
+      pr.setup=`y² dy = 2x dx ⟹ y³/3 = x² + C ⟹ y³ = 3x² + ${y0**3}`; }
+    if(ev){ const X=pick([1,2,0.5,-1]); pr.X=X; pr.ans=pr.sol(X); pr.num=true; pr.tol=Math.max(0.006,Math.abs(pr.ans)*0.002);
+      pr.q_=`Solve the initial value problem <b>${pr.deq}</b>, <b>${pr.ic}</b>, and find <b>y(${minus(X)})</b>. Exact forms like 3e^2 are fine, or round to three decimals.`; }
+    else { pr.expr=true; pr.q_=`Find the particular solution of <b>${pr.deq}</b> with <b>${pr.ic}</b>. Type y as a function of x (e.g. 3e^(2x), sqrt(x^2+4)).`; }
+  }
+  return pr;
+}
+function parseAns(s){ const q=tryParse(String(s).replace(/^\s*[a-zA-Z_]+\s*=\s*/,""),[]); if(q.err) return NaN; return q.f(); }
+function checkC(pr,val){
+  if(pr.expr){ const str=String(val).replace(/^\s*y\s*=\s*/i,""); const q=tryParse(str,["x"]); if(q.err) return {err:q.err};
+    let ok=true, n=0; for(let i=0;i<7;i++){ const x=pr.dom[0]+(pr.dom[1]-pr.dom[0])*(i+.5)/7, a=q.f(x), b=pr.sol(x);
+      if(!isFinite(b))continue; n++; if(!isFinite(a)||Math.abs(a-b)>1e-4*Math.max(1,Math.abs(b))) ok=false; }
+    return {ok:ok&&n>0}; }
+  const v=parseAns(val); if(!isFinite(v)) return {err:"I can't read that number."};
+  const tol=pr.tol||Math.max(0.01,Math.abs(pr.ans)*0.002); return {ok:Math.abs(v-pr.ans)<=tol, v};
+}
+function hintC(pr,v){
+  const k=pr.kind;
+  if(k==="area") return `Set the curves equal to find where they meet (x = ${pr.p} and x = ${pr.q}). Then integrate (top − bottom). Which is on top? Test a point between the intersections.${v!=null&&Math.abs(v+pr.ans)<1e-6?" Your answer is the negative: you subtracted in the wrong order.":""}`;
+  if(k==="washer") return `Draw a slice ⊥ to the axis. R = distance from the axis to the far curve, r = to the near curve. Square each before subtracting: π∫(R² − r²), not π∫(R − r)².${v!=null&&Math.abs(v-pr.ans/PI)<0.01*Math.max(1,pr.ans/PI)?" It looks like you forgot the factor π.":""}`;
+  if(k==="shell") return `Shells are parallel to the axis: V = 2π∫(radius)(height). The radius is the distance from x to the axis (x − k or k − x), and the height is top − bottom.${v!=null&&Math.abs(v-pr.ans/(2*PI))<0.01*Math.max(1,pr.ans)?" Did you forget the 2π?":""}`;
+  if(k==="arc") return `Find f′(x) first, then integrate √(1 + f′(x)²) — the square root covers the 1 too. Use a calculator's numeric integral.`;
+  if(k==="avg") return `Average value = (1/(b − a))·∫ f(x) dx. Integrate first, then divide by the length of the interval.${v!=null&&Math.abs(v-pr.ans*(pr.b-pr.a))<1e-6?" You found the integral — now divide by b − a.":""}`;
+  if(k==="de") return `Separate (all y's with dy, all x's with dx), integrate both sides, add ONE constant C, then plug in the initial condition before solving for y.`;
+}
+function solC(pr){ const ans=pr.expr? pr.solTxt : exv(pr.ans,4);
+  if(pr.kind==="area") return `Intersections: x = ${pr.p} and x = ${pr.q}\nA = ∫ from ${pr.p} to ${pr.q} of |(${pr.f}) − (${pr.g})| dx\n  ${eqx(pr.ans)}`;
+  if(pr.kind==="arc") return pr.setup+"\n  ≈ "+num(pr.ans,4);
+  if(pr.kind==="de") return pr.setup+"\n"+pr.solTxt+(pr.X!=null?`\ny(${minus(pr.X)}) ${eqx(pr.ans,4)}`:"");
+  return (pr.setup||"")+"\n  "+(pr.expr?"= "+ans:eqx(pr.ans,4)); }
+const M7={
+  tab:"Challenge", lesson:"AP 7.6–7.7 · 8.1–8.13", accent:"var(--coral)", view:{yaw:-28,pitch:20}, rot3:false,
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  title:()=>"Practice: "+({area:"area between curves",washer:"disks & washers",shell:"shell method",arc:"arc length",avg:"average value",de:"separable differential equation"}[M7.s.pr?M7.s.pr.kind:"area"]),
+  newProb(){ M7.s.pr=genC(M7.s.kind); M7.s.state="open"; M7.s.reveal=false; M7.s.tries=0; },
+  streakEl:null,
+  bar(){ btn("New problem",()=>{ M7.newProb(); render(); },"primary");
+    selectBox(CKINDS,M7.s.kind,v=>{ M7.s.kind=v; M7.newProb(); render(); },"Problem type");
+    M7.streakEl=spacer(""); M7.up(); },
+  up(){ if(M7.streakEl) M7.streakEl.textContent="Streak "+M7.s.streak+" · Best "+M7.s.best+" · Solved "+M7.s.solved; },
+  draw(){ if(!M7.s.pr) M7.newProb(); const pr=M7.s.pr, show=M7.s.state==="right"||M7.s.reveal; cv.classList.remove("r3");
+    let W, g;
+    if(pr.kind==="area"){ const lo=pr.p-1.2, hi=pr.q+1.2; let ys=[]; for(let i=0;i<=60;i++){ const x=lo+(hi-lo)*i/60; ys.push(pev(pr.F,x),pev(pr.G,x)); }
+      const y0=Math.min(...ys), y1=Math.max(...ys), pad=(y1-y0)*0.12+0.5; W=Win(lo,hi,y0-pad,y1+pad); g=grid(W);
+      const pts=[]; for(let i=0;i<=80;i++){ const x=pr.p+(pr.q-pr.p)*i/80; pts.push([W.X(x),W.Y(pev(pr.F,x))]); } for(let i=80;i>=0;i--){ const x=pr.p+(pr.q-pr.p)*i/80; pts.push([W.X(x),W.Y(pev(pr.G,x))]); }
+      polyFill(g,pts,"rgba(0,180,216,.25)");
+      curve(g,pathF(W,x=>pev(pr.F,x)),"#0369A1",3); curve(g,pathF(W,x=>pev(pr.G,x)),"#C0185F",3);
+      label(g,W.X(hi-0.3),W.Y(pev(pr.F,hi-0.3))-16,"y = "+pr.f,{col:"#0369A1",anchor:"end"}); label(g,W.X(lo+0.3),W.Y(pev(pr.G,lo+0.3))-16,"y = "+pr.g,{col:"#C0185F",anchor:"start"});
+      if(show) [pr.p,pr.q].forEach(x=>{ dot(g,W.X(x),W.Y(pev(pr.F,x)),"#7C3AED",6); label(g,W.X(x),W.Y(pev(pr.F,x))+20,"x = "+x,{cls:"tiny",col:"#5B21B6"}); });
+    } else if(pr.kind==="washer"||pr.kind==="shell"){ const R=pr.R; let ys=[0]; for(let i=0;i<=60;i++){ const x=R.a+(R.b-R.a)*i/60; ys.push(R.F.f(x),R.G.f(x)); }
+      const xs=[R.a,R.b,0,pr.ax==="v"?pr.k:0], yy=ys.concat([pr.ax==="h"?pr.k:0]);
+      const x0=Math.min(...xs), x1=Math.max(...xs), y0=Math.min(...yy), y1=Math.max(...yy);
+      const cx=(x0+x1)/2, cy=(y0+y1)/2, span=Math.max((x1-x0)*1.35+1,(y1-y0)*1.35*VW/VH+1);
+      W=Win(cx-span/2,cx+span/2,cy-span*VH/VW/2,cy+span*VH/VW/2); g=grid(W);
+      natPieces(R).forEach(P=>polyFill(g,regionPolys(R,W,P),"rgba(244,114,182,.35)","#BE185D",2));
+      if(pr.ax==="h") seg(g,0,W.Y(pr.k),VW,W.Y(pr.k),"#DC2626",2.4,"9 6"); else seg(g,W.X(pr.k),0,W.X(pr.k),VH,"#DC2626",2.4,"9 6");
+      label(g,pr.ax==="h"?VW-12:W.X(pr.k)+8,pr.ax==="h"?W.Y(pr.k)-14:24,"axis: "+axisName(pr.ax,pr.k),{col:"#B91C1C",anchor:pr.ax==="h"?"end":"start"});
+      if(show){ const sp=0.45; if(pr.kind==="washer"&&pr.ax==="h"){ const x=R.a+(R.b-R.a)*sp, d=(R.b-R.a)/30; E("rect",{x:W.X(x-d/2),y:W.Y(Math.max(R.F.f(x),R.G.f(x))),width:Math.max(2,d*W.sx),height:Math.abs(R.F.f(x)-R.G.f(x))*W.sy,fill:"#FBBF24",stroke:"#92400E"},g); } }
+    } else if(pr.kind==="arc"){ W=Win(pr.a-(pr.b-pr.a)*0.3-0.3,pr.b+(pr.b-pr.a)*0.3+0.3,0,1); const f=pr.fs==="x²"?x=>x*x:pr.fs==="sin x"?Math.sin:x=>2/3*Math.pow(Math.max(0,x),1.5);
+      const yt=f(pr.b), yr=Math.max(yt,1)*1.4; W=Win(W.x0,W.x1,-yr*0.15,yr); W=Win(W.x0,W.x1,W.y0,W.y1); g=grid(W,{pi:pr.fs==="sin x"});
+      curve(g,pathF(W,f,W.x0,W.x1),"#94A3B8",2,"6 5"); curve(g,pathF(W,f,pr.a,pr.b),"#0F766E",4.5);
+      if(show){ const n=6; let d=""; for(let i=0;i<=n;i++){ const x=pr.a+(pr.b-pr.a)*i/n; d+=(i?"L":"M")+W.X(x)+" "+W.Y(f(x)); } curve(g,d,"#DB2777",2); }
+    } else if(pr.kind==="avg"){ const ff=pr.P? (x=>pev(pr.P,x)) : (x=>pr.A*Math.sin(x));
+      let ys=[0]; for(let i=0;i<=60;i++) ys.push(ff(pr.a+(pr.b-pr.a)*i/60)); const y0=Math.min(...ys), y1=Math.max(...ys), pad=(y1-y0)*0.15+0.5;
+      W=Win(pr.a-(pr.b-pr.a)*0.25,pr.b+(pr.b-pr.a)*0.25,y0-pad,y1+pad); g=grid(W,{pi:!pr.P});
+      const pts=[[W.X(pr.a),W.Y(0)]]; for(let i=0;i<=80;i++){ const x=pr.a+(pr.b-pr.a)*i/80; pts.push([W.X(x),W.Y(ff(x))]); } pts.push([W.X(pr.b),W.Y(0)]); polyFill(g,pts,"rgba(124,58,237,.2)");
+      curve(g,pathF(W,ff),"#6D28D9",3.2);
+      if(show){ const Y=W.Y(pr.ans); E("rect",{x:W.X(pr.a),y:Math.min(Y,W.Y(0)),width:W.X(pr.b)-W.X(pr.a),height:Math.abs(Y-W.Y(0)),fill:"rgba(255,217,61,.3)",stroke:"#B45309","stroke-width":2,"stroke-dasharray":"7 5"},g); }
+    } else { W=winOf([-3,3,-1,5]); let ys=[]; for(let i=0;i<=40;i++){ const v=pr.sol(pr.dom[0]+(pr.dom[1]-pr.dom[0])*i/40); if(isFinite(v)) ys.push(v); }
+      const y0=Math.min(0,...ys), y1=Math.max(...ys); W=Win(-3,3,y0-(y1-y0)*0.15-0.5,y1+(y1-y0)*0.15+0.5); g=grid(W);
+      const f=(()=>{ const m=pr.deq.replace("dy/dx = ","").replace(/−/g,"-").replace("x²","x^2").replace("y²","y^2"); const q=tryParse(m,["x","y"]); return q.err?null:q.f; })();
+      if(f) M6.field(g,W,f);
+      dot(g,W.X(0),W.Y(pr.sol(0)),"#DB2777",6); label(g,W.X(0)+12,W.Y(pr.sol(0))-16,"(0, "+num(pr.sol(0),2)+")",{col:"#9D174D",anchor:"start"});
+      if(show) curve(g,pathF(W,pr.sol,W.x0,W.x1,400),"#DB2777",3.2);
+    }
+  },
+  panel(full){ const pr=M7.s.pr; if(!full&&$("chk7")) return;
+    const ph=pr.expr? "e.g. 3e^(2x)" : pr.vol? "e.g. 8π/3 or 8.378" : "e.g. 9/2 or 4.5";
+    side.innerHTML=panelH("Problem",`<div class="pad"><p class="prob">${pr.q_}</p></div>
+      <div class="ansrow"><div><label class="fld" for="ans7">${pr.expr?"y =":"Your answer"}</label><input type="text" id="ans7" autocomplete="off" spellcheck="false" placeholder="${ph}"></div></div>
+      <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap"><button id="chk7" class="go" type="button" style="flex:1 1 140px">Check answer</button><button id="sol7" class="ghost" type="button">Show solution</button></div>
+      <div id="fb7"></div><div style="height:4px"></div>`)+
+      panelH("How answers are checked",`<div class="pad"><p>${pr.expr?"Your function is evaluated at several x-values and compared with the true solution, so any equivalent form is accepted: <b>2e^(x^2/2)</b>, <b>2exp(x^2/2)</b>, <b>sqrt(2x^2+9)</b>…":"Type an exact value — <b>9/2</b>, <b>8π/3</b>, <b>8pi/3</b>, <b>2√2</b>, <b>3e^2</b>, <b>ln 4</b> — or a decimal. Exact forms are converted to decimals and compared within a small tolerance."}</p>
+      <p>A first-try correct answer grows your streak; a wrong answer gives a targeted hint and lets you try again.</p></div></div>`);
+    const inp=$("ans7"), fb=$("fb7");
+    const showSol=pre=>{ fb.innerHTML=pre+`<div class="fldwrap"><div class="eq">${solC(pr)}</div></div>`; };
+    const check=()=>{ if(M7.s.state==="right") return; const r=checkC(pr,inp.value);
+      if(r.err){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> ${r.err}</div>`; return; }
+      if(r.ok){ M7.s.state="right"; if(!M7.s.tries&&!M7.s.reveal){ M7.s.streak++; M7.s.best=Math.max(M7.s.best,M7.s.streak); } M7.s.solved++; M7.up(); inp.disabled=true;
+        clear(); M7.draw(); showSol(`<div class="verdict good"><b>Correct!</b> ${M7.s.tries||M7.s.reveal?"The streak only counts first tries, but well done.":"Streak "+M7.s.streak+"."} Compare your work, then press <b>New problem</b>.</div>`); }
+      else { M7.s.tries++; M7.s.streak=0; M7.up(); fb.innerHTML=`<div class="verdict bad"><b>Not quite.</b> ${hintC(pr,r.v)}</div>`; } };
+    $("chk7").onclick=check; inp.addEventListener("keydown",e=>{ if(e.key==="Enter") check(); });
+    $("sol7").onclick=()=>{ M7.s.reveal=true; if(M7.s.state!=="right"){ M7.s.streak=0; M7.up(); } clear(); M7.draw();
+      showSol(`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>Worked solution.</b> Study it, then try a new one.</div>`); };
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6,M7];
+let cur=0;
+function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS) update(); });
+function redraw(){ clear(); MODS[cur].draw(); }
+function update(){ setFS(); const y=window.scrollY; clear(); MODS[cur].draw(); MODS[cur].panel(false); if(window.scrollY!==y) window.scrollTo(0,y); }
+function render(){ setFS(); dragId=null; rot=null; const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M7&&!M7.s.pr) M7.newProb();
+  cv.classList.toggle("r3",!!M.rot3);
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title()+(M.rot3?"; drag or use arrow keys to rotate the solid":""));
+  bar.innerHTML=""; M.bar(); clear(); M.draw(); M.panel(true);
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ cur=clamp(i,0,MODS.length-1); if(push){ try{ history.replaceState(null,"","#tab-"+(cur+1)); }catch(_){ location.hash="tab-"+(cur+1); } } render(); }
+let dragId=null, rot=null;
+cv.addEventListener("pointerdown",e=>{ const M=MODS[cur], id=e.target.dataset&&e.target.dataset.drag;
+  if(id&&M.drag){ dragId=id; try{ cv.setPointerCapture(e.pointerId); }catch(_){} e.preventDefault(); return; }
+  if(M.rot3){ rot={x:e.clientX,y:e.clientY,yaw:M.view.yaw,pitch:M.view.pitch}; try{ cv.setPointerCapture(e.pointerId); }catch(_){} cv.classList.add("rot"); e.preventDefault(); return; }
+  if(M.place&&M.place(svgPt(e))!==false){ update(); const n=M.s.sols? M.s.sols.length-1 : -1; if(n>=0){ dragId="sol"+n; try{ cv.setPointerCapture(e.pointerId); }catch(_){} } }
+});
+cv.addEventListener("pointermove",e=>{ const M=MODS[cur];
+  if(dragId&&M.drag){ M.drag(dragId,svgPt(e)); update(); return; }
+  if(rot){ const r=cv.getBoundingClientRect(), k=360/Math.max(300,r.width);
+    M.view.yaw=rot.yaw+(e.clientX-rot.x)*k*0.8; M.view.pitch=clamp(rot.pitch+(e.clientY-rot.y)*k*0.6,-80,85); redraw(); }
+});
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{ dragId=null; rot=null; cv.classList.remove("rot"); }));
+cv.addEventListener("keydown",e=>{ const M=MODS[cur]; if(!M.rot3) return; let used=true;
+  if(e.key==="ArrowLeft") M.view.yaw-=6; else if(e.key==="ArrowRight") M.view.yaw+=6;
+  else if(e.key==="ArrowUp") M.view.pitch=clamp(M.view.pitch-5,-80,85); else if(e.key==="ArrowDown") M.view.pitch=clamp(M.view.pitch+5,-80,85); else used=false;
+  if(used){ e.preventDefault(); redraw(); } });
+MODS.forEach((M,i)=>{ const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab; b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b); });
+setFS(); M1.init(0); M4.init(0); M5.init(0);
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur) go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>

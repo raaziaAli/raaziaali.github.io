@@ -254,7 +254,7 @@ const nd2=(k,a,b)=>({k:k,a:a,b:b});
 const fn1=(n,a)=>({k:"fn",n:n,a:a});
 function tokenize(src){
   let s=String(src).replace(/[−–—]/g,"-").replace(/[×·∙⋅]/g,"*").replace(/÷/g,"/").replace(/π/g," pi ")
-    .replace(/\*\*/g,"^").replace(/²/g,"^2").replace(/³/g,"^3").replace(/√/g," sqrt ").replace(/∫/g," ")
+    .replace(/\*\*/g,"^").replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁽⁾ˣᵘ]+/g,m=>"^("+[...m].map(c=>"0123456789+-()xu"["⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁽⁾ˣᵘ".indexOf(c)]).join("")+")").replace(/√/g," sqrt ").replace(/∫/g," ")
     .replace(/[\[{]/g,"(").replace(/[\]}]/g,")").replace(/\bd\s*x\s*$/,"");
   const T=[]; let i=0;
   while(i<s.length){
@@ -483,6 +483,7 @@ function P(n,m,hl,sup){
       case "sub":return r(n.a)+" − "+wrapIf(n.b,isSum(n.b)||isNegish(n.b));
       case "neg":return "−"+wrapIf(n.a,isSum(n.a)||isNegish(n.a));
       case "mul":{ const L=[]; (function fl(x){ if(x.k==="mul"){fl(x.a);fl(x.b);} else L.push(x); })(n);
+        if(L.length===2&&isNum(L[0])&&(L[1].k==="var")){ const f=frac(L[0].v,64); if(f&&Math.abs(f[0])===1&&f[1]>1){ const vs=r(L[1]); return (f[0]<0?"−":"")+(H&&!sup?fracH(vs,f[1]):vs+"/"+f[1]); } }
         let out="", prev=null;
         L.forEach((f,i)=>{ let s;
           if(f.k==="num"){ if(i===0){ s=(f.v===-1&&L.length>1)?"−":numStr(f.v,H,sup); if(!H&&L.length>1&&s.indexOf("/")>=0)s=s[0]==="−"?"−("+s.slice(1)+")":"("+s+")"; } else s=(f.v<0?par(numStr(f.v,H,sup)):numStr(f.v,H,sup)); }
@@ -807,7 +808,7 @@ const ULIB=[
   {I:"sec(x)^2 tan(x)",a:0,b:0.9,name:"sec² x tan x"},
   {I:"x e^(x^2)",a:0,b:1,def:true,name:"x e^(x²)"},
   {I:"1/(x ln(x))",a:2,b:4,def:true,name:"1/(x ln x)"},
-  {I:"x/sqrt(1-x^4)",a:0,b:0.7,name:"x/√(1 − x⁴)"},
+  {I:"x/sqrt(1-x^4)",a:0,b:0.7,cands:["x^2"],name:"x/√(1 − x⁴)"},
   {I:"cos(x)/sqrt(sin(x))",a:0.3,b:1.5,name:"cos x/√(sin x)"},
   {I:"(2x+3)^7",a:-2,b:-1,def:true,name:"(2x + 3)⁷"},
   {I:"x^2 sin(x^3)",a:0,b:1.4,def:true,name:"x² sin(x³)"},
@@ -848,8 +849,8 @@ const M1={
   load(item){ const S=M1.s; S.item=item; S.I=simp(parse(item.I)); S.ci=-1; S.step=0; S.a=item.a; S.b=item.b;
     S.cands=candidates(S.I,item.cands).map(c=>({g:c,r:usub(S.I,c)}));
     S.f=fnOf(S.I);
-    const sp=S.b-S.a; let x0=S.a-0.55*sp, x1=S.b+0.55*sp; if(item.x0!=null)x0=item.x0; if(item.x1!=null)x1=item.x1;
-    S.xw={x0:x0,x1:x1}; Object.assign(S.xw,robustY([S.f],x0,x1)); },
+    const sp=S.b-S.a; let x0=S.a-0.3*sp, x1=S.b+0.3*sp; if(item.x0!=null)x0=item.x0; if(item.x1!=null)x1=item.x1;
+    S.xw={x0:x0,x1:x1}; Object.assign(S.xw,robustY([S.f],S.a-0.1*sp,S.b+0.1*sp,true,0.25)); },
   init(){ M1.load(ULIB[0]); },
   sel(){ const S=M1.s; return S.ci>=0?S.cands[S.ci]:null; },
   choose(i){ const S=M1.s; S.ci=i; const c=S.cands[i]; S.step=c.r.ok?1:0;
@@ -874,7 +875,7 @@ const M1={
   draw(){
     const S=M1.s, g=E("g",{}); cv.appendChild(g);
     const c=M1.sel(), ok=c&&c.r.ok, mob=FS>1;
-    const L={x:mob?50:46,y:46,w:mob?280:290,h:mob?350:360}, R={x:mob?392:392,y:46,w:mob?280:290,h:mob?350:360};
+    const L={x:mob?40:46,y:46,w:mob?290:290,h:mob?290:330}, R={x:mob?380:392,y:46,w:mob?290:290,h:mob?290:330};
     const VL=view(g,L,S.xw); M1.V=VL;
     const tl=axes(g,VL,{xl:"x"});
     shade(tl,VL,S.f,S.a,S.b,"#0284C7",0.26);
@@ -884,7 +885,7 @@ const M1={
     [["a",S.a],["b",S.b]].forEach(([id,v])=>{ const px=VL.X(v); line(g,px,L.y,px,L.y+L.h,"#0369A1",1.4,"5 4"); grab(g,px,clamp(VL.Y(0),L.y,L.y+L.h),id,"#0369A1"); });
     stext(g,VL.X(S.a),L.y+L.h+(mob?22:16),"a = "+fmt(S.a,2),"sm","#0369A1");
     stext(g,VL.X(S.b),L.y+L.h+(mob?44:32),"b = "+fmt(S.b,2),"sm","#0369A1");
-    if(!mob) stext(g,L.x+L.w/2,L.y+L.h+52,"area = "+fmt(A1,4),"lg","#0369A1");
+    stext(g,L.x+L.w/2,L.y+L.h+(mob?72:54),"area = "+fmt(A1,4),"lg","#0369A1");
     if(ok){
       const VR=view(g,R,S.uw), tr=axes(g,VR,{xl:"u"});
       const ua=S.g(S.a), ub=S.g(S.b);
@@ -894,7 +895,7 @@ const M1={
       [[ua,"g(a)"],[ub,"g(b)"]].forEach(([v,nm],i)=>{ const px=VR.X(v); line(g,px,R.y,px,R.y+R.h,"#BE185D",1.4,"5 4"); dot(g,px,clamp(VR.Y(0),R.y,R.y+R.h),"#BE185D",6);
         stext(g,px,R.y+R.h+(mob?22:16)*(i+1),nm+" = "+fmt(v,3),"sm","#BE185D"); });
       const A2=integ(S.Qf,Math.min(ua,ub),Math.max(ua,ub))*(ua<=ub?1:-1);
-      if(!mob) stext(g,R.x+R.w/2,R.y+R.h+52,"area = "+fmt(A2,4),"lg","#BE185D");
+      stext(g,R.x+R.w/2,R.y+R.h+(mob?72:54),"area = "+fmt(A2,4),"lg","#BE185D");
       // link arrows
       const ym=L.y+L.h*0.5;
       line(g,L.x+L.w+8,ym,R.x-12,ym,"#7C3AED",2.2); g.appendChild(E("polygon",{points:`${R.x-6},${ym} ${R.x-16},${ym-6} ${R.x-16},${ym+6}`,style:"fill:#7C3AED"}));
@@ -967,6 +968,7 @@ const M1={
         <p class="small">The new bounds are g(a) = ${fmt(ua,3)} and g(b) = ${fmt(ub,3)}. Drag a and b on the left graph. Shading below the axis counts as negative.</p>`;
     } else h+=`<p class="small">Choose a working u to see the matching area on the u-axis. Drag a and b on the left graph.</p>`;
     setLive("u-live",h);
+    const ul=$("u-steps"); if(ul&&c&&c.r.ok) ul.innerHTML=M1.steps(c.r);
   }
 };
 
@@ -1055,14 +1057,14 @@ const M2={
     LIATE.forEach((L,i)=>{ const y=top+26+i*rh;
       g.appendChild(E("rect",{x:x0,y:y,width:w,height:rh-10,rx:12,fill:i%2?"#F1F5FD":"#E8EEFB",stroke:"#C9D6EE"}));
       stext(g,x0+24,y+(rh-10)/2,L[0],"mk","#7C3AED");
-      if(!mob){ stext(g,x0+52,y+(rh-10)/2-8,L[1],"sm","#22314F","start"); stext(g,x0+52,y+(rh-10)/2+11,L[2],"ax",null,"start"); }
+      if(!mob){ stext(g,x0+52,y+(rh-10)/2-8,L[1],"sm","#22314F","start"); stext(g,x0+52,y+(rh-10)/2+11,L[2],"ax",null,"start"); } else stext(g,x0+56,y+(rh-10)/2,L[1],"sm","#22314F","start");
     });
     const chip=(n,rank,side,slot)=>{ const y=rank<5? top+26+rank*rh+(rh-10)/2 : top+26+5*rh+18;
-      const cx=rank<5?(mob?x0+130+slot*240:x0+250+slot*80):(mob?x0+300:x0+250);
+      const cx=rank<5?(mob?x0+420+slot*120:x0+250+slot*80):(mob?x0+300:x0+250);
       const txt=(rank<5?P(n,"t"):"1 (dv = dx)"), wd=Math.max(56,txt.length*8.6*FS+26);
       const isU=S.uSide===side, isDv=S.uSide>=0&&!isU;
       const r=E("rect",{x:cx-wd/2,y:y-17*FS,width:wd,height:34*FS,rx:17*FS,fill:isU?"#00B8D9":isDv?"#FF3D8A":"#fff",stroke:isU?"#0891B2":isDv?"#DB2777":"#7C3AED","stroke-width":2,style:"cursor:pointer","data-pick":String(side)});
-      g.appendChild(r); stext(g,cx,y+1,txt,"sm",isU||isDv?"#fff":"#22314F");
+      g.appendChild(r); const ct=stext(g,cx,y+1,txt,"sm"); ct.setAttribute("style","stroke:none;fill:"+(isU||isDv?"#fff":"#22314F"));
       if(isU||isDv){ const tg=stext(g,cx+wd/2+8,y+1,isU?"= u":"→ dv","sm",isU?"#0891B2":"#DB2777","start"); tg.setAttribute("style","fill:"+(isU?"#0891B2":"#DB2777")+";stroke:none"); } };
     const same=ra===rb; chip(fa,ra,0,0); chip(fb,rb,1,same?1:0);
     if(!mob){ const bx=470; g.appendChild(E("rect",{x:bx,y:60,width:206,height:300,rx:14,fill:"#fff",stroke:"#C9D6EE"}));
@@ -1261,7 +1263,7 @@ const TSX={
 };
 const subA=(s,a)=>s.replace(/A2/g,"("+a*a+")").replace(/A/g,"("+a+")");
 const M3={
-  tab:"Trig integrals & trig sub", lesson:"BC · college · AP 6.10 ext.", accent:"var(--yellow)",
+  tab:"Trig integrals & trig sub", lesson:"Beyond AP 6.9 · college Calc II", accent:"var(--yellow)",
   s:{mode:"pow",m:3,n:2,ty:"sin",a:2,ex:0,x:1.2},
   title:()=>M3.s.mode==="pow"?"Powers of sine and cosine":"Trigonometric substitution",
   bar(){ const S=M3.s;
@@ -1318,9 +1320,9 @@ const M3={
   panel(){ const S=M3.s; let h="";
     if(S.mode==="pow"){ const m=S.m,n=S.n,R=sinCosAnti(m,n), I=H(`sin(x)^${m}*cos(x)^${n}`);
       let w="";
-      if(R.how==="cos"){ const k=R.k; w=`<li class="done"><span class="sn">1</span>cos x has an <b>odd</b> power (${n}). Save one cos x for du; turn the rest into sines: cos${n>1?"<sup>"+(n-1)+"</sup>":"⁰"} x = (1 − sin²x)<sup>${k}</sup>.</li>
+      if(R.how==="cos"){ const k=R.k; w=`<li class="done"><span class="sn">1</span>cos x has an <b>odd</b> power (${n}). Save one cos x for du${k>0?"; turn the rest into sines: cos<sup>"+(n-1)+"</sup> x = (1 − sin²x)<sup>"+k+"</sup>":" — nothing else needs converting"}.</li>
         <li class="done"><span class="sn">2</span>u = sin x, du = cos x dx: &nbsp;${IG()}${H(`u^${m}*(1-u^2)^${k}`)}${DU}${k>0?" = "+IG()+P(polyNodeU(R.poly.map(t=>[t[0]-1,t[1]*t[0]])),"h")+DU:""}</li>`; }
-      else if(R.how==="sin"){ const k=R.k; w=`<li class="done"><span class="sn">1</span>sin x has an <b>odd</b> power (${m}). Save one sin x for du; turn the rest into cosines: sin${m>1?"<sup>"+(m-1)+"</sup>":"⁰"} x = (1 − cos²x)<sup>${k}</sup>.</li>
+      else if(R.how==="sin"){ const k=R.k; w=`<li class="done"><span class="sn">1</span>sin x has an <b>odd</b> power (${m}). Save one sin x for du${k>0?"; turn the rest into cosines: sin<sup>"+(m-1)+"</sup> x = (1 − cos²x)<sup>"+k+"</sup>":" — nothing else needs converting"}.</li>
         <li class="done"><span class="sn">2</span>u = cos x, du = −sin x dx: &nbsp;${IG()}${H(`-(1-u^2)^${k}*u^${n}`)}${DU}${k>0?" = "+IG()+P(polyNodeU(R.poly.map(t=>[t[0]-1,t[1]*t[0]])),"h")+DU:""}</li>`; }
       else { w=`<li class="done"><span class="sn">1</span>Both powers are <b>even</b>${m+n===0?" (it's just ∫1 dx)":""}. Use the half-angle identities<br>sin²x = (1 − cos 2x)/2, &nbsp; cos²x = (1 + cos 2x)/2.</li>
         <li class="done"><span class="sn">2</span>Repeat until no squares are left. The integrand becomes:<br>${P(simp(parse([`(${R.c0})`].concat(R.cos.map(c=>`(${c[1]})*cos(${c[0]}x)`)).join("+"))),"h")}</li>`; }
@@ -1488,8 +1490,8 @@ const M4={
   },
   formNow(known){ const pr=M4.s.pr, steps=pfSteps(pr), vals={};
     steps.slice(0,known).forEach(s=>{ if(s.kind==="cover"||s.kind==="plug")vals[s.t.nm]=s.val; if(s.kind==="compare"){vals.B=s.B;vals.C=s.C;} });
-    return pr.terms.map(t=>{ if(t.den.kind==="quad"){ if(vals.B!=null){ const n=pStr([vals.C,vals.B]); return "("+n+")/"+denStr(t.den); } return "(Bx + C)/"+denStr(t.den); }
-      return (vals[t.nm]!=null?nice(vals[t.nm]):t.nm)+"/"+denStr(t.den); }).join(" + ").replace(/\+ −/g,"− "); },
+    return pr.terms.map(t=>{ if(t.den.kind==="quad"){ if(vals.B!=null){ const neg=vals.B<0||(vals.B===0&&vals.C<0); const n=pStr(neg?[-vals.C,-vals.B]:[vals.C,vals.B]); return (neg?"−":"")+"("+n+")/"+denStr(t.den); } return "(Bx + C)/"+denStr(t.den); }
+      return (vals[t.nm]!=null?nice(vals[t.nm]):t.nm)+"/"+denStr(t.den); }).join(" + ").replace(/\+ −/g,"− ").replace(/^−\(/,"−("); },
   panel(){ const S=M4.s, pr=S.pr, steps=pfSteps(pr), cls=i=>i<S.step?"done":i===S.step?"on":"hid";
     const F=pfAnti(pr), ok=antiOK(fnOf(F),pr.f,Math.max.apply(null,pr.factors.filter(f=>f.kind==="lin").map(f=>f.r))+0.3,Math.max.apply(null,pr.factors.filter(f=>f.kind==="lin").map(f=>f.r))+3);
     const nPoly=H(pStr(pr.N).replace(/−/g,"-").replace(/([0-9])x/g,"$1*x")), dStr=pr.factors.map(denStr).join("");
@@ -1497,12 +1499,12 @@ const M4={
     steps.forEach((s,i)=>{ let h="";
       if(s.kind==="cover") h=`<b>Cover-up for ${s.t.nm}.</b> Multiply both sides by ${denStr(s.t.den)} and set x = ${s.r}: every other term vanishes. On the left, “cover” ${denStr(s.t.den)} and plug x = ${s.r} into what's left:<br>${s.t.nm} = ${nice(s.top)} / ${nice(s.restv)} = <b>${nice(s.val)}</b>`;
       if(s.kind==="plug") h=`<b>Find A by plugging in another x.</b> Cover-up only gives the <i>highest</i> power at a repeated root. Use x = ${s.x0} (not a root): <br>f(${s.x0}) = ${nice(s.fx)} = A/(${nice(s.x0-s.t.den.r)}) + ${nice(s.tB.num[0])}/(${nice(Math.pow(s.x0-s.tB.den.r,2))}) + ${nice(s.tC.num[0])}/(${nice(s.x0-s.tC.den.r)})<br>⇒ A·(${nice(s.coef)}) = ${nice(s.fx-s.known)} ⇒ <b>A = ${nice(s.val)}</b>`;
-      if(s.kind==="compare") h=`<b>Compare coefficients</b> for B and C. Clear denominators:<br>${pStr(pr.N)} = A${"(x² + "+s.k+")"} + (Bx + C)${linF(s.r)}<br>x² terms: ${nice(s.n2)} = A + B ⇒ <b>B = ${nice(s.B)}</b><br>constants: ${nice(s.n0)} = ${nice(s.k)}A − ${s.r<0?"("+nice(s.r)+")":nice(s.r)}C ⇒ <b>C = ${nice(s.C)}</b>`;
+      if(s.kind==="compare") h=`<b>Compare coefficients</b> for B and C. Clear denominators:<br>${pStr(pr.N)} = A${"(x² + "+s.k+")"} + (Bx + C)${linF(s.r)}<br>x² terms: ${nice(s.n2)} = A + B ⇒ <b>B = ${nice(s.B)}</b><br>constants: ${nice(s.n0)} = ${nice(s.k)}A ${s.r>0?"− "+(s.r===1?"":nice(s.r)):"+ "+(s.r===-1?"":nice(-s.r))}C ⇒ <b>C = ${nice(s.C)}</b>`;
       if(s.kind==="check"){ const parts=pr.terms.map(t=>"("+pStr(t.num)+")"+t.rest.map(denStr).join("")); const prods=pr.terms.map(t=>pStr(t.prod));
         h=`<b>Check by recombining</b> over the common denominator ${dStr}:<br>${parts.join(" + ")}<br>= ${prods.map(p=>"("+p+")").join(" + ")}<br>= <b>${pStr(pr.N)}</b> ${CK} matches the numerator. (On the graph, the purple dots — the sum of the pieces — lie on f.)`; }
       if(s.kind==="integrate"){ const its=pr.terms.map(t=>{ const d=t.den; if(d.kind==="lin"&&d.pow===1)return `∫ ${nice(t.num[0])}/${denStr(d)} dx = ${nice(t.num[0])} ln|${denStr(d).replace(/^\(|\)$/g,"")}|`;
           if(d.kind==="lin")return `∫ ${nice(t.num[0])}/${denStr(d)} dx = ${nice(-t.num[0])}/${denStr({kind:"lin",r:d.r,pow:1})}`;
-          const B=t.num[1]||0,C=t.num[0]||0,s=Math.sqrt(d.k); return `∫ (${pStr(t.num)})/(x² + ${d.k}) dx = ${B?nice(B/2)+" ln(x² + "+d.k+")":""}${B&&C?" + ":""}${C?nice(C/s)+" arctan(x"+(s!==1?"/"+s:"")+")":""}`; });
+          const B=t.num[1]||0,C=t.num[0]||0,s=Math.sqrt(d.k); const at=C?Math.abs(C/s)+" arctan(x"+(s!==1?"/"+s:"")+")":""; return `∫ (${pStr(t.num)})/(x² + ${d.k}) dx = ${B?nice(B/2)+" ln(x² + "+d.k+")":""}${C?(B?(C<0?" − ":" + "):(C<0?"−":""))+at:""}`.replace(/= 1 ln/,"= ln").replace(/ 1 arctan/," arctan"); });
         h=`<b>Integrate term by term.</b><div class="eq">${its.join("\n")}</div>${IG()}f(x)${DX} = ${P(F,"h")} + <i>C</i><br><span class="small">${ok?CK+" derivative checked numerically.":""}</span>`; }
       L.push(`<span class="sn">${i+1}</span>${h}`); });
     let h=`<div class="panel"><h3>The rational function</h3><div class="pad"><div class="mx big">f(<i>x</i>) = ${fracH(P(simp(parse(pStr(pr.N).replace(/−/g,"-"))),"h"),dStr)}</div></div>
