@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Systems Lab — Algebra 1 Unit 4</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M8 52L56 16' stroke='%2300E5FF' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M8 18L56 46' stroke='%23FF3D8A' stroke-width='6' stroke-linecap='round'/%3E%3Ccircle cx='33' cy='33' r='7' fill='%23FFD93D'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .rel[data-pair]{cursor:pointer}
+  .rel[data-pair]:hover{background:rgba(255,255,255,.05)}
+  .rel.active{background:rgba(255,255,255,.09);box-shadow:inset 3px 0 0 var(--accent)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top}
+  table.facts .ab{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  table.facts .st{color:#DDDDF2}
+  table.facts .st i{display:block;color:var(--dim);font-style:normal;font-size:13px;margin-top:4px}
+  .cathead{padding-top:18px!important;padding-bottom:6px!important;font-family:var(--display);font-weight:600;
+    font-size:13px;letter-spacing:.02em;color:var(--yellow);border-bottom:none!important}
+  .chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-right:9px}
+  .chip.assume{background:rgba(255,217,61,.18);color:var(--yellow)}
+  .chip.proved{background:rgba(94,234,212,.16);color:var(--mint)}
+  ol.chain{margin:0;padding:6px 20px 18px 38px;font-size:15px;color:#CFCFEA}
+  ol.chain li{padding:8px 0} ol.chain li::marker{color:var(--accent);font-weight:700}
+  ol.chain li b{color:#fff}
+
+  .steps{width:100%;border-collapse:collapse;font-size:15px}
+  .steps td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:middle}
+  .steps .stmt{font-family:var(--mono);font-size:14px;font-weight:600;color:#fff;white-space:nowrap}
+  .steps .why{width:56%}
+  .steps tr.right .stmt{color:var(--mint)}
+  .steps tr.right select{border-color:rgba(94,234,212,.6)}
+  .steps tr.wrong select{border-color:var(--coral)}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.8;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.4;fill:none;stroke-dasharray:9 6}
+  .wedge{stroke-width:2.4;fill-opacity:.17;cursor:pointer}
+  .wedge.flat{cursor:default}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── Coordinate Line Lab additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible,.choice:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:16px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  @media (max-width:560px){ svg.canvas .sm{font-size:21px;stroke-width:5} svg.canvas .mk{font-size:27px} svg.canvas .num{font-size:22px} svg.canvas .ax{font-size:16px} }
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .leg{stroke-width:3;fill:none;stroke-dasharray:8 5;stroke-linecap:round}
+  .tick{stroke:var(--graphite);stroke-width:2.2}
+  .ghostdot{fill:#9AA8C7;stroke:#fff;stroke-width:2}
+  .nt{position:relative;display:inline-block;padding-top:.42em;line-height:1.05;font-family:var(--mono);font-weight:700;color:#fff;white-space:nowrap}
+  .nt::before{content:"";position:absolute;left:.06em;right:.06em;top:.2em;border-top:2px solid currentColor}
+  .nt.ray::after,.nt.line::after{content:"";position:absolute;right:-.12em;top:calc(.2em - 3.5px);border-left:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .nt.line .la{position:absolute;left:-.12em;top:calc(.2em - 3.5px);border-right:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .uterms{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+  .uterms span{font-family:var(--mono);font-size:12px;font-weight:600;padding:5px 11px;border-radius:100px;
+    border:1px solid var(--edge);color:var(--dim);opacity:.55}
+  .uterms span.on{opacity:1;color:#0A0A1F;background:var(--accent);border-color:var(--accent)}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px}
+  .choice{font-family:var(--ui);font-size:15px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:14px;padding:13px 12px;cursor:pointer;text-align:left;line-height:1.5;transition:.15s}
+  .choice:hover{background:rgba(255,255,255,.12)}
+  .choice.right{border-color:var(--mint);background:rgba(94,234,212,.16)}
+  .choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.14)}
+  .choice small{display:block;font-weight:400;color:var(--dim);font-size:12.5px}
+  .stepl{list-style:none;margin:0;padding:6px 0}
+  .stepl li{padding:10px 20px;border-left:3px solid transparent;color:var(--dim);font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li.done{color:#CFCFEA}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li b{color:#fff}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  @media (max-width:560px){
+    .choices{grid-template-columns:1fr}
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+  }
+  /* ── Systems Lab additions ── */
+  .work{padding:14px 20px 16px;background:#15153A;border-bottom:1px solid var(--edge);overflow-x:auto;min-height:92px}
+  .work[hidden]{display:none}
+  .wkhead{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+  .wkl{font-family:var(--mono);font-size:clamp(15px,2.1vw,19px);font-weight:600;line-height:1.75;color:#8F93BD;white-space:nowrap}
+  .wkl.cur{color:#fff}
+  .wkl.new{animation:rise .5s ease both}
+  .wkl .why{font-family:var(--ui);font-size:13px;font-weight:500;color:var(--dim);margin-left:14px;white-space:normal}
+  @keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  mark.hv{background:rgba(255,217,61,.22);color:var(--yellow);border-radius:5px;padding:0 4px;animation:glow 1s ease-in-out infinite alternate}
+  @keyframes glow{from{box-shadow:0 0 0 0 rgba(255,217,61,0)}to{box-shadow:0 0 0 3px rgba(255,217,61,.45)}}
+  .subx{color:var(--yellow);background:rgba(255,217,61,.14);border-radius:6px;padding:0 4px;display:inline-block}
+  .wkl.new .subx{animation:pop .7s cubic-bezier(.2,1.5,.4,1) both .15s}
+  @keyframes pop{from{transform:translateY(-16px) scale(.5);opacity:0}to{transform:none;opacity:1}}
+  table.stack{border-collapse:collapse;font-family:var(--mono);font-size:clamp(15px,2.2vw,20px);font-weight:600;color:#fff}
+  table.stack td{padding:3px 9px;text-align:right;white-space:nowrap;transition:opacity .7s,color .7s}
+  table.stack td.tg{font-size:12.5px;color:var(--dim);text-align:left;padding-left:0}
+  table.stack tr.sum td{border-top:2px solid var(--accent);color:var(--mint);padding-top:7px}
+  table.stack tr.sum td.tg{color:var(--accent)}
+  table.stack td.cancel{opacity:.25;text-decoration:line-through;text-decoration-color:var(--coral);text-decoration-thickness:2px}
+  .rng button{padding:3px 12px!important;font-size:16px!important;line-height:1.3}
+  .rng .lab{color:var(--dim);font-size:13px}
+  .bar button[disabled]{opacity:.38;cursor:not-allowed;transform:none}
+  .inrow{display:flex;gap:8px;padding:0 20px}
+  .inrow input{flex:1 1 auto;min-width:0}
+  .inrow .ghost{padding:10px 15px;white-space:nowrap}
+  .forms{padding:7px 20px 0;font-family:var(--mono);font-size:13px;color:var(--dim);line-height:1.6}
+  .forms b{color:#fff}
+  .sw{display:inline-block;width:11px;height:11px;border-radius:11px;margin-right:8px;vertical-align:0}
+  .hint{font-size:13px;color:var(--dim);margin:0}
+  .msg{margin:8px 20px 0;font-size:13.5px;color:#FFDCDA}
+  .meth{border-bottom:1px solid rgba(196,181,253,.12);padding:14px 20px}
+  .meth:last-child{border-bottom:none}
+  .meth h4{margin:0 0 4px;font-family:var(--display);font-weight:600;font-size:13.5px;color:#fff;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .meth .eq{margin:8px 0 6px;font-size:13.5px}
+  .meth p{margin:0;font-size:14px;color:#CFCFEA}
+  .chip.best{background:rgba(94,234,212,.18);color:var(--mint)}
+  .chip.ok2{background:rgba(255,217,61,.16);color:var(--yellow)}
+  .chip.slow{background:rgba(255,107,107,.15);color:var(--coral)}
+  .wsteps .ws{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.12)}
+  .wsteps .ws:last-child{border-bottom:none}
+  .wsteps .ws h4{margin:0 0 4px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .wsteps .ws.off{color:var(--dim);font-size:14px}
+  .wsteps .eq{margin:6px 0 4px}
+  .choices3{grid-template-columns:1fr 1fr 1fr}
+  @media (max-width:560px){ .choices3{grid-template-columns:1fr} .work{padding:12px 14px} .inrow{padding:0 16px} }
+  .seg{flex-wrap:wrap}
+  .c1{color:#38BDF8} .c2{color:#F472B6} .c3{color:#34D399} .cp{color:#C4B5FD}
+  .wkl .why{display:block;font-family:var(--ui);font-size:13.5px;font-weight:500;color:var(--yellow);white-space:normal;line-height:1.45;margin:0 0 6px}
+  .story{font-size:15.5px;line-height:1.6;color:#E7E9FA;white-space:normal}
+  .story b{color:#fff}
+  .sysbig{font-family:var(--mono);font-size:clamp(17px,2.4vw,22px);font-weight:700;color:#fff;line-height:1.7;white-space:nowrap}
+  .sysbig .tg{font-size:13px;color:var(--dim);margin-right:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Systems Lab</h1>
+    <div class="eyebrow">Algebra 1 · Unit 4 · Systems of Linear Equations</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Graph of a system of linear equations"></svg>
+      <div class="work" id="work" aria-live="polite" hidden></div>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every graph is live and every number is computed exactly from the equations on the board — change a line and the solution follows. Vocabulary follows Common Core / Eureka Math (EngageNY) Algebra I, Module 1 &amp; 4.
+    <div class="links"><a href="/algebra/">← Algebra courses</a><a href="/math/#algebra">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg", VW=700, VH=460;
+const $=id=>document.getElementById(id);
+const cv=$("cv"), bar=$("bar"), side=$("side"), tabsEl=$("tabs"), bTitle=$("bTitle"), bLesson=$("bLesson"), work=$("work");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const rndNZ=(a,b)=>{let v=0;while(v===0)v=rnd(a,b);return v;};
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const lcm=(a,b)=>Math.abs(a*b)/gcd(a,b);
+const minus=s=>String(s).replace(/-/g,"−");
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;};
+const r2=v=>{let s=Math.round(v*100)/100; if(Object.is(s,-0))s=0; return minus(String(s));};
+let FS=1, cur=0, snap=true;
+
+/* ── exact fractions ── */
+function F(n,d){ if(d===undefined)d=1; if(!d)throw new Error("Division by zero"); if(d<0){n=-n;d=-d;}
+  const g=gcd(n,d); n=n/g; d=d/g; return {n:(n===0?0:n), d:(n===0?1:d)}; }
+const fi=n=>F(n,1), F0=F(0,1);
+const fadd=(a,b)=>F(a.n*b.d+b.n*a.d,a.d*b.d), fsub=(a,b)=>F(a.n*b.d-b.n*a.d,a.d*b.d);
+const fmul=(a,b)=>F(a.n*b.n,a.d*b.d), fdiv=(a,b)=>F(a.n*b.d,a.d*b.n);
+const fneg=a=>F(-a.n,a.d), fabs=a=>F(Math.abs(a.n),a.d);
+const fz=a=>a.n===0, feq=(a,b)=>a.n===b.n&&a.d===b.d, fv=a=>a.n/a.d, fisInt=a=>a.d===1;
+const fone=a=>a.n===a.d, fneg1=a=>a.n===-a.d;
+function fs(a){ return minus(a.d===1? String(a.n) : a.n+"/"+a.d); }
+function fsx(a){ return a.d===1? fs(a) : fs(a)+" ≈ "+r2(fv(a)); }
+function fromNum(v){ for(let d=1;d<=100;d++){ const n=Math.round(v*d); if(Math.abs(n/d-v)<1e-9)return F(n,d); } return F(Math.round(v*1000),1000); }
+function decF(str){ const neg=str[0]==="-"; const s=str.replace(/^[+-]/,""); const p=s.split("."); const fr=p[1]||"";
+  const n=parseInt((p[0]||"0")+fr,10); return F((neg?-1:1)*n, Math.pow(10,fr.length)); }
+// a number typed by a student: integer, decimal or fraction (returns F or null)
+function parseNumStr(raw){
+  let s=String(raw).trim().replace(/[−–—]/g,"-").replace(/\s+/g,"");
+  while(/^\(.*\)$/.test(s))s=s.slice(1,-1);
+  if(/^[+-]?(\d+\.?\d*|\.\d+)$/.test(s))return decF(s.replace(/^\+/,"").replace(/\.$/,""));
+  const m=/^([+-]?)(\d+\.?\d*|\.\d+)\/([+-]?)(\d+\.?\d*|\.\d+)$/.exec(s);
+  if(m){ const a=decF(m[2]), b=decF(m[4]); if(fz(b))return null; let q=fdiv(a,b); if((m[1]==="-")!==(m[3]==="-"))q=fneg(q); return q; }
+  return null;
+}
+
+/* ── linear equation parser: any form in x and y → a·x + b·y = c ── */
+const lin=(x,y,c)=>({x,y,c});
+const lconst=v=>fz(v.x)&&fz(v.y);
+const ladd=(p,q)=>lin(fadd(p.x,q.x),fadd(p.y,q.y),fadd(p.c,q.c));
+const lsub=(p,q)=>lin(fsub(p.x,q.x),fsub(p.y,q.y),fsub(p.c,q.c));
+const lneg=p=>lin(fneg(p.x),fneg(p.y),fneg(p.c));
+const lscale=(p,k)=>lin(fmul(p.x,k),fmul(p.y,k),fmul(p.c,k));
+function lmul(p,q){ if(lconst(p))return lscale(q,p.c); if(lconst(q))return lscale(p,q.c);
+  throw new Error("That isn't linear: x and y can't be multiplied together."); }
+function ldiv(p,q){ if(!lconst(q))throw new Error("Dividing by an expression with x or y isn't linear."); if(fz(q.c))throw new Error("You can't divide by 0."); return lscale(p,fdiv(fi(1),q.c)); }
+function parseExpr(s){
+  let i=0; const peek=()=>s[i];
+  function number(){ const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)); i+=m[0].length; return lin(F0,F0,decF(m[0].replace(/\.$/,""))); }
+  function primary(){ const ch=peek();
+    if(ch===undefined)throw new Error("The equation ends too soon.");
+    if(/[\d.]/.test(ch))return number();
+    if(ch==="x"){i++;return lin(fi(1),F0,F0);}
+    if(ch==="y"){i++;return lin(F0,fi(1),F0);}
+    if(ch==="("){ i++; const v=sum(); if(peek()!==")")throw new Error("A closing parenthesis is missing."); i++; return v; }
+    throw new Error("I don't understand “"+ch+"”. Use x, y, numbers, + − * / and parentheses.");
+  }
+  function factor(){ const ch=peek(); if(ch==="-"){i++;return lneg(factor());} if(ch==="+"){i++;return factor();} return primary(); }
+  function term(){ let v=factor();
+    for(;;){ const ch=peek();
+      if(ch==="*"){i++; v=lmul(v,factor());}
+      else if(ch==="/"){i++; v=ldiv(v,factor());}
+      else if(ch!==undefined&&/[\d.xy(]/.test(ch)){ v=lmul(v,primary()); }
+      else break; }
+    return v; }
+  function sum(){ let v=term(); for(;;){ const ch=peek(); if(ch==="+"){i++;v=ladd(v,term());} else if(ch==="-"){i++;v=lsub(v,term());} else break; } return v; }
+  if(!s.length)throw new Error("One side of the equation is empty.");
+  const v=sum(); if(i<s.length)throw new Error("I don't understand “"+s.slice(i)+"”."); return v;
+}
+function parseLinear(src){
+  const s=String(src).replace(/[−–—]/g,"-").replace(/[×·]/g,"*").replace(/÷/g,"/").replace(/\s+/g,"").toLowerCase();
+  if(!s)throw new Error("Type an equation, e.g. y = 2x − 3 or 3x + 2y = 6.");
+  const parts=s.split("=");
+  if(parts.length>2)throw new Error("Use only one “=” sign.");
+  const L=parts.length===1? lin(F0,fi(1),F0) : parseExpr(parts[0]);
+  const R=parseExpr(parts.length===1? parts[0] : parts[1]);
+  const a=fsub(L.x,R.x), b=fsub(L.y,R.y), c=fsub(R.c,L.c);
+  if(fz(a)&&fz(b))throw new Error(fz(c)?"That equation is true for every point — it isn't a line.":"That equation is never true — it isn't a line.");
+  return {a,b,c,form:"std"};
+}
+
+/* ── equations: {a,b,c,form} means a·x + b·y = c ── */
+const mk=(a,b,c,form)=>({a:fi(a),b:fi(b),c:fi(c),form:form||"std"});
+const cf=(E,v)=>v==="x"?E.a:E.b;
+function normL(L){
+  const m=lcm(lcm(L.a.d,L.b.d),L.c.d);
+  let a=L.a.n*(m/L.a.d), b=L.b.n*(m/L.b.d), c=L.c.n*(m/L.c.d);
+  const g=gcd(gcd(a,b),c)||1; a/=g;b/=g;c/=g;
+  if(a<0||(a===0&&b<0)){a=-a;b=-b;c=-c;}
+  return {a:fi(a),b:fi(b),c:fi(c),form:"std"};
+}
+function scaleE(E,k){ return {a:fmul(E.a,k),b:fmul(E.b,k),c:fmul(E.c,k),form:"std"}; }
+function addE(E,G){ return {a:fadd(E.a,G.a),b:fadd(E.b,G.b),c:fadd(E.c,G.c),form:"std"}; }
+function absCoef(c){ const a=fabs(c); return a.d===1? String(a.n) : "("+a.n+"/"+a.d+")"; }
+function termP(c,v){ if(fz(c))return null; return [c.n<0,(fone(fabs(c))?"":absCoef(c))+v]; }
+function constP(c){ if(fz(c))return null; return [c.n<0,fs(fabs(c))]; }
+function valP(c,val){ if(fz(c))return null; return [c.n<0,(fone(fabs(c))?"":absCoef(c))+"("+fs(val)+")"]; }
+function join(ps){ ps=ps.filter(Boolean); if(!ps.length)return "0";
+  return ps.map((p,i)=>i===0?(p[0]?"−":"")+p[1]:(p[0]?" − ":" + ")+p[1]).join(""); }
+const slopeF=L=>fz(L.b)?null:fdiv(fneg(L.a),L.b);
+const yintF=L=>fz(L.b)?null:fdiv(L.c,L.b);
+function siStr(L){ if(fz(L.b))return "x = "+fs(fdiv(L.c,L.a)); return "y = "+join([termP(slopeF(L),"x"),constP(yintF(L))]); }
+function sxStr(L){ return "x = "+join([termP(fdiv(fneg(L.b),L.a),"y"),constP(fdiv(L.c,L.a))]); }
+function stdRaw(E){ return join([termP(E.a,"x"),termP(E.b,"y")])+" = "+fs(E.c); }
+function stdStr(L){ return stdRaw(normL(L)); }
+function eqDisp(E){ if(E.form==="si"&&!fz(E.b))return siStr(E); if(E.form==="sx"&&!fz(E.a))return sxStr(E); return stdRaw(E); }
+function solve2(L1,L2){
+  const D=fsub(fmul(L1.a,L2.b),fmul(L2.a,L1.b));
+  if(!fz(D))return {type:"one",x:fdiv(fsub(fmul(L1.c,L2.b),fmul(L2.c,L1.b)),D),y:fdiv(fsub(fmul(L1.a,L2.c),fmul(L2.a,L1.c)),D)};
+  const s1=fsub(fmul(L1.a,L2.c),fmul(L2.a,L1.c)), s2=fsub(fmul(L1.b,L2.c),fmul(L2.b,L1.c));
+  return {type:(fz(s1)&&fz(s2))?"inf":"none"};
+}
+const lhs=(E,x,y)=>fadd(fmul(E.a,x),fmul(E.b,y));
+const onLine=(E,x,y)=>feq(lhs(E,x,y),E.c);
+const ptS=(x,y)=>"("+fs(x)+", "+fs(y)+")";
+// substitution check written in the equation's own form
+function chkHTML(E,x,y){
+  const ok=onLine(E,x,y), mark=ok?' <span class="ok">✓ true</span>':' <span class="no">✗ false</span>';
+  if(E.form==="si"&&!fz(E.b)){ const m=slopeF(E), b=yintF(E), r=fadd(fmul(m,x),b);
+    const two=!fz(m)&&!fz(b);
+    return `${fs(y)} ≟ ${join([valP(m,x),constP(b)])}${two?" = "+join([constP(fmul(m,x)),constP(b)]):""} = ${fs(r)}`+mark; }
+  if(E.form==="sx"&&!fz(E.a)){ const m=fdiv(fneg(E.b),E.a), b=fdiv(E.c,E.a), r=fadd(fmul(m,y),b);
+    const two=!fz(m)&&!fz(b);
+    return `${fs(x)} ≟ ${join([valP(m,y),constP(b)])}${two?" = "+join([constP(fmul(m,y)),constP(b)]):""} = ${fs(r)}`+mark; }
+  const two=!fz(E.a)&&!fz(E.b);
+  return `${join([valP(E.a,x),valP(E.b,y)])}${two?" = "+join([constP(fmul(E.a,x)),constP(fmul(E.b,y))]):""} = ${fs(lhs(E,x,y))} ${ok?"=":"≠"} ${fs(E.c)}`+mark;
+}
+
+/* ══════════════════════ drawing ══════════════════════ */
+const C1="#0284C7", C2="#DB2777", C3="#059669", CP="#7C3AED", D1="#0369A1", D2="#BE185D", D3="#047857", DP="#6D28D9", CO="#EA580C";
+const VSTD={ox:350,oy:230,sx:30,sy:30};
+let V=VSTD, PR={x0:0,y0:0,x1:VW,y1:VH}, placed=[];
+const W2S=p=>[V.ox+p[0]*V.sx, V.oy-p[1]*V.sy];
+const S2W=s=>[(s[0]-V.ox)/V.sx,(V.oy-s[1])/V.sy];
+const unit=v=>{const l=Math.hypot(v[0],v[1])||1;return [v[0]/l,v[1]/l];};
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+let segs=[];
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild); placed=[]; segs=[];}
+function segHitsBox(p,q,b){ const R={x0:b.x0-3,x1:b.x1+3,y0:b.y0-3,y1:b.y1+3}; return !!clipLine(p,q,R) && (()=>{ // clipLine is infinite; restrict to segment
+  const dx=q[0]-p[0], dy=q[1]-p[1]; let t0=0,t1=1; const P=[-dx,dx,-dy,dy], Q=[p[0]-R.x0,R.x1-p[0],p[1]-R.y0,R.y1-p[1]];
+  for(let i=0;i<4;i++){ if(Math.abs(P[i])<1e-12){ if(Q[i]<0)return false; continue; } const t=Q[i]/P[i]; if(P[i]<0)t0=Math.max(t0,t); else t1=Math.min(t1,t); }
+  return t0<=t1; })(); }
+function sseg(g,p,q,color,w,dash){
+  const a={x1:p[0],y1:p[1],x2:q[0],y2:q[1],style:"stroke:"+(color||"var(--graphite)"),"stroke-width":w||2.8,"stroke-linecap":"round",fill:"none"};
+  if(dash)a["stroke-dasharray"]=dash; const n=E("line",a); g.appendChild(n); return n; }
+function sdot(g,p,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||5,style:"fill:"+(color||"var(--ink)"),stroke:"#fff","stroke-width":2,"pointer-events":"none"})); }
+function stext(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("style","fill:"+color); t.textContent=s; g.appendChild(t); return t; }
+function caption(g,text,color){ const t=stext(g,[350,VH-18*FS],text,"sm",color); const est=text.length*8.1*FS;
+  if(est>VW-30){ t.setAttribute("textLength",VW-30); t.setAttribute("lengthAdjust","spacingAndGlyphs"); } return t; }
+function sgrab(g,p,id,color){
+  const r=FS>1?24:15;
+  g.appendChild(E("circle",{cx:p[0],cy:p[1],r,class:"grab","data-drag":id}));
+  sdot(g,p,color); obstacle(p,r); }
+function obstacle(p,r){ placed.push({x0:p[0]-r,x1:p[0]+r,y0:p[1]-r,y1:p[1]+r}); }
+function boxOK(b){ return b.x0>=PR.x0+3&&b.x1<=PR.x1-3&&b.y0>=PR.y0+3&&b.y1<=PR.y1-3&&
+  !placed.some(o=>!(b.x1<o.x0||b.x0>o.x1||b.y1<o.y0||b.y0>o.y1)) && !segs.some(sg=>segHitsBox(sg[0],sg[1],b)); }
+function labelAt(g,cands,text,color,cls){
+  const w=text.length*8.1*FS+8, h=17*FS;
+  for(const c of cands){ const b={x0:c[0]-w/2,x1:c[0]+w/2,y0:c[1]-h/2,y1:c[1]+h/2}; if(boxOK(b)){placed.push(b); return stext(g,c,text,cls,color);} }
+  const c=[clamp(cands[0][0],PR.x0+w/2+4,PR.x1-w/2-4),clamp(cands[0][1],PR.y0+h/2+4,PR.y1-h/2-4)];
+  placed.push({x0:c[0]-w/2,x1:c[0]+w/2,y0:c[1]-h/2,y1:c[1]+h/2}); return stext(g,c,text,cls,color);
+}
+function lineLabel(g,seg,text,color,ts){
+  if(!seg)return; let p=seg[0], q=seg[1];
+  if(p[0]>q[0]+0.5||(Math.abs(p[0]-q[0])<=0.5&&p[1]<q[1])){const t=p;p=q;q=t;}
+  const d=unit([q[0]-p[0],q[1]-p[1]]); let n=[-d[1],d[0]]; if(n[1]>0)n=[-n[0],-n[1]];
+  const w=text.length*8.1*FS+8, h=17*FS, off=9+Math.abs(n[0])*w/2+Math.abs(n[1])*h/2;
+  const c=[]; (ts||[.86,.14,.7,.3,.5,.94,.06,.62,.38]).forEach(t=>{ const m=[p[0]+(q[0]-p[0])*t,p[1]+(q[1]-p[1])*t];
+    c.push([m[0]+n[0]*off,m[1]+n[1]*off]); c.push([m[0]-n[0]*off,m[1]-n[1]*off]); });
+  return labelAt(g,c,text,color);
+}
+function ptLabel(g,p,text,color){
+  const w=text.length*8.1*FS+8, h=17*FS, dx=w/2+12, dy=h/2+12;
+  return labelAt(g,[[p[0]+dx,p[1]-dy],[p[0]-dx,p[1]-dy],[p[0]+dx,p[1]+dy],[p[0]-dx,p[1]+dy],[p[0],p[1]-dy-6],[p[0],p[1]+dy+6],[p[0]+dx+8,p[1]],[p[0]-dx-8,p[1]]],text,color,"sm pl");
+}
+function clipLine(p,q,R){
+  const dx=q[0]-p[0], dy=q[1]-p[1]; let t0=-Infinity, t1=Infinity;
+  const P=[-dx,dx,-dy,dy], Q=[p[0]-R.x0,R.x1-p[0],p[1]-R.y0,R.y1-p[1]];
+  for(let i=0;i<4;i++){ if(Math.abs(P[i])<1e-12){ if(Q[i]<0)return null; continue; }
+    const t=Q[i]/P[i]; if(P[i]<0)t0=Math.max(t0,t); else t1=Math.min(t1,t); }
+  if(t0>=t1)return null; return [[p[0]+t0*dx,p[1]+t0*dy],[p[0]+t1*dx,p[1]+t1*dy]];
+}
+function lineSeg(L){
+  const a=fv(L.a), b=fv(L.b), c=fv(L.c), w0=S2W([PR.x0,PR.y1]), w1=S2W([PR.x1,PR.y0]); let P,Q;
+  if(Math.abs(b)>1e-12){ const x0=w0[0]-10, x1=w1[0]+10; P=[x0,(c-a*x0)/b]; Q=[x1,(c-a*x1)/b]; }
+  else { const x=c/a; P=[x,w0[1]-10]; Q=[x,w1[1]+10]; }
+  return clipLine(W2S(P),W2S(Q),PR);
+}
+function drawL(g,L,color,w,dash,op){ const s=lineSeg(L); if(!s)return null; segs.push(s); const n=sseg(g,s[0],s[1],color,w||3.2,dash); if(op!=null)n.setAttribute("opacity",op); return s; }
+function inBoard(p,m){ m=m||0; return p[0]>=PR.x0+m&&p[0]<=PR.x1-m&&p[1]>=PR.y0+m&&p[1]<=PR.y1-m; }
+function niceStep(max,n){ const c=[1,2,5,10,20,25,50,100,200,250,500,1000,2000,2500,5000,10000]; for(const s of c)if(max/s<=n)return s; return 20000; }
+const niceCeil=(v,n)=>{ const s=niceStep(v,n||8); return Math.ceil(v/s)*s; };
+// grid: std (both axes, 1 unit squares) or q1 (first-quadrant word-problem window)
+function gridBg(o){
+  o=o||{}; const q1=!!o.q1;
+  PR=q1?{x0:V.ox,y0:6,x1:VW-8,y1:V.oy}:{x0:0,y0:0,x1:VW,y1:VH};
+  const d=E("defs",{}); d.innerHTML='<clipPath id="fr"><rect x="'+PR.x0+'" y="'+PR.y0+'" width="'+(PR.x1-PR.x0)+'" height="'+(PR.y1-PR.y0)+'"/></clipPath>';
+  cv.appendChild(d); cv.appendChild(E("rect",{width:VW,height:VH,fill:"rgba(255,255,255,0)"}));
+  const gg=E("g",{}), xs=o.xs||1, ys=o.ys||1, xl=o.xl||2, yl=o.yl||2;
+  const wa=S2W([PR.x0,PR.y1]), wb=S2W([PR.x1,PR.y0]);
+  for(let k=Math.ceil(wa[0]/xs-1e-9);k*xs<=wb[0]+1e-9;k++){ const sx=V.ox+k*xs*V.sx; gg.appendChild(E("line",{x1:sx,y1:PR.y0,x2:sx,y2:PR.y1,style:"stroke:var(--grid)","stroke-width":1})); }
+  for(let k=Math.ceil(wa[1]/ys-1e-9);k*ys<=wb[1]+1e-9;k++){ const sy=V.oy-k*ys*V.sy; gg.appendChild(E("line",{x1:PR.x0,y1:sy,x2:PR.x1,y2:sy,style:"stroke:var(--grid)","stroke-width":1})); }
+  gg.appendChild(E("line",{x1:PR.x0,y1:V.oy,x2:PR.x1,y2:V.oy,stroke:"#8FA3C8","stroke-width":1.8}));
+  gg.appendChild(E("line",{x1:V.ox,y1:PR.y0,x2:V.ox,y2:PR.y1,stroke:"#8FA3C8","stroke-width":1.8}));
+  const lab=(p,s,anc)=>{const t=E("text",{x:p[0],y:p[1],class:"ax","text-anchor":anc}); t.textContent=s; gg.appendChild(t);};
+  for(let k=Math.ceil(wa[0]/xl);k*xl<=wb[0]+1e-9;k++){ const v=k*xl; if(!q1&&(v===0||Math.abs(V.ox+v*V.sx-PR.x1)<14||V.ox+v*V.sx<14))continue;
+    lab([V.ox+v*V.sx,V.oy+(q1?18:15)*(FS>1?1.2:1)],minus(v),"middle"); }
+  for(let k=Math.ceil(wa[1]/yl);k*yl<=wb[1]+1e-9;k++){ const v=k*yl; if(v===0)continue; const sy=V.oy-v*V.sy; if(sy<12)continue; lab([V.ox-7,sy+4],minus(v),"end"); }
+  if(!q1){ lab([V.ox-6,V.oy+15],"0","end"); lab([VW-10,V.oy-7],"x","end"); lab([V.ox+8,13],"y","start"); }
+  else { const t1=E("text",{x:PR.x1-4,y:V.oy-8,class:"ax axt","text-anchor":"end"}); t1.textContent=o.xt||"x"; gg.appendChild(t1);
+    const t2=E("text",{x:V.ox+8,y:20,class:"ax axt","text-anchor":"start"}); t2.textContent=o.yt||"y"; gg.appendChild(t2);
+    placed.push({x0:PR.x1-(o.xt||"x").length*8*FS-8,x1:PR.x1,y0:V.oy-24*FS,y1:V.oy});
+    placed.push({x0:V.ox,x1:V.ox+(o.yt||"y").length*8*FS+12,y0:0,y1:28*FS}); }
+  cv.appendChild(gg);
+  const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
+}
+// plot a system: lines + labels + intersection
+function plotSystem(g,Es,opt){
+  opt=opt||{}; const S=solve2(Es[0],Es[1]);
+  const cols=opt.cols||[C1,C2], dk=opt.dk||[D1,D2];
+  const s1=drawL(g,Es[0],cols[0],opt.w1||3.2,null,opt.op1);
+  const s2=S.type==="inf"? drawL(g,Es[1],cols[1],3.2,"11 9") : drawL(g,Es[1],cols[1],opt.w2||3.2,opt.dash2,opt.op2);
+  let P=null;
+  if(S.type==="one"&&opt.pt!==false){ P=W2S([fv(S.x),fv(S.y)]); if(inBoard(P)){ sdot(g,P,CP,7); obstacle(P,10); } }
+  if(opt.extra)opt.extra(g);
+  if(P&&inBoard(P)&&opt.ptLabel!==false)ptLabel(g,P,"("+fs(S.x)+", "+fs(S.y)+")",DP);
+  const n=opt.names||["(1) ","(2) "];
+  if(opt.labels!==false){ lineLabel(g,s1,n[0]+(opt.txt?opt.txt[0]:eqDisp(Es[0])),dk[0],opt.ts); lineLabel(g,s2,n[1]+(opt.txt?opt.txt[1]:eqDisp(Es[1])),dk[1],S.type==="inf"?[.3,.7,.14,.86,.5]:opt.ts); }
+  if(S.type==="one"&&P&&!inBoard(P)&&opt.pt!==false) caption(g,"The lines meet off the board at ("+r2(fv(S.x))+", "+r2(fv(S.y))+")",DP);
+  return S;
+}
+
+/* ══════════════════════ drag plumbing & bar builders ══════════════════════ */
+let dragId=null;
+function svgPt(e){ const m=cv.getScreenCTM(); if(!m)return [0,0]; const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y]; }
+cv.addEventListener("pointerdown",e=>{ const id=e.target.dataset&&e.target.dataset.drag; if(id){ dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); } });
+cv.addEventListener("pointermove",e=>{ if(!dragId)return; const M=MODS[cur]; if(!M.drag)return; if(M.drag(dragId,svgPt(e))!==false)update(); });
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{ if(dragId&&MODS[cur].dragEnd)MODS[cur].dragEnd(); dragId=null; }));
+function btn(label,fn,cls,parent){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; (parent||bar).appendChild(b); return b; }
+function segBtns(opts,val,fn,aria){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(aria)s.setAttribute("aria-label",aria);
+  opts.forEach(([k,lab])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=lab;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s; }
+function chk(label,val,fn){ const l=document.createElement("label"); l.className="chk"; const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i; }
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function stepper(label,val,fn,ok){
+  const l=document.createElement("span"); l.className="rng"; l.setAttribute("role","group"); l.setAttribute("aria-label",label);
+  const t=document.createElement("span"); t.className="lab"; t.textContent=label;
+  const o=document.createElement("output"); o.textContent=minus(val);
+  const mkb=(s,d)=>{ const b=document.createElement("button"); b.type="button"; b.textContent=s; b.setAttribute("aria-label",(d<0?"decrease ":"increase ")+label);
+    b.onclick=()=>{ let v=val+d; while(ok&&!ok(v)&&Math.abs(v)<50)v+=d; if(ok&&!ok(v))return; fn(v); }; return b; };
+  l.appendChild(t); l.appendChild(mkb("−",-1)); l.appendChild(o); l.appendChild(mkb("+",1)); bar.appendChild(l); return l; }
+function tryPanel(html){ return `<div class="panel"><h3>Try this</h3><div class="pad">${html}</div></div>`; }
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+/* ══════════════════════ shared solving engines ══════════════════════ */
+// sides of an equation as ordered term lists: [kind, coef] with kind "x" | "y" | "c"
+function sides(Eq){
+  if(Eq.form==="si"&&!fz(Eq.b)) return {L:[["y",fi(1)]], R:[["x",slopeF(Eq)],["c",yintF(Eq)]]};
+  if(Eq.form==="sx"&&!fz(Eq.a)) return {L:[["x",fi(1)]], R:[["y",fdiv(fneg(Eq.b),Eq.a)],["c",fdiv(Eq.c,Eq.a)]]};
+  return {L:[["x",Eq.a],["y",Eq.b]], R:[["c",Eq.c]]};
+}
+const pPart=(k,c)=>k==="c"?constP(c):termP(c,k);
+function sideStr(arr){ return join(arr.map(([k,c])=>pPart(k,c))); }
+// substitution: returns {steps:[{html,why,stage}], S, iso:{i,v,w}, val}
+function subSteps(Es){
+  const S=solve2(Es[0],Es[1]);
+  let best=null;
+  [0,1].forEach(i=>["y","x"].forEach(v=>{ const c=cf(Es[i],v); if(fz(c))return;
+    const iso=(Es[i].form==="si"&&v==="y")||(Es[i].form==="sx"&&v==="x");
+    const score=(iso?0:fabs(c).n===1&&fabs(c).d===1?1:5)+(i*0.1)+(v==="x"?0.05:0);
+    if(!best||score<best.score)best={i,v,score,iso}; }));
+  const i=best.i, v=best.v, w=v==="x"?"y":"x", j=1-i, Ei=Es[i], Ej=Es[j];
+  const cv_=cf(Ei,v), cw=cf(Ei,w);
+  const p=fdiv(fneg(cw),cv_), q=fdiv(Ei.c,cv_);
+  const expr=join([termP(p,w),constP(q)]);
+  const steps=[];
+  steps.push({stage:0,html:`<span class="c1">(1)</span> ${eqDisp(Es[0])}<br><span class="c2">(2)</span> ${eqDisp(Es[1])}`,why:"The system: we want the (x, y) that makes both equations true at once."});
+  if(best.iso) steps.push({stage:1,html:`From (${i+1}):  <mark class="hv">${v} = ${expr}</mark>`,why:`Equation (${i+1}) already has ${v} by itself. Whatever ${v} is, it equals ${expr}.`});
+  else {
+    let t=`From (${i+1}):  ${eqDisp(Ei)}`;
+    const moved=join([termP(fneg(cw),w),constP(Ei.c)]);
+    if(!fz(cw)) t+=`<br>${termP(cv_,v)[0]?"−":""}${fone(fabs(cv_))?"":absCoef(cv_)}${v} = ${moved}`;
+    if(!fone(cv_)) t+=`<br><mark class="hv">${v} = ${expr}</mark>`; else t=t.replace(new RegExp(`${v} = ${moved.replace(/[()+]/g,"\\$&")}$`),`<mark class="hv">${v} = ${expr}</mark>`);
+    steps.push({stage:1,html:t,why:fone(fabs(cv_))?`Isolate ${v} in equation (${i+1}) — its coefficient is ${fs(cv_)}, so this is quick.`:`No variable has coefficient 1, so isolating ${v} brings in fractions. (Elimination may be easier here.)`});
+  }
+  // substitute into equation j
+  const sd=sides(Ej);
+  const subSide=arr=>{ const ps=arr.map(([k,c],idx)=>{ if(k!==v)return pPart(k,c);
+      if(fz(c))return null; const a=fabs(c), one=fone(a), lone=arr.length===1||(idx===0&&one&&c.n>0);
+      const body=`<span class="subx">${expr}</span>`;
+      return [c.n<0,(one?"":absCoef(c))+(one&&lone&&c.n>0?body:"("+body+")")]; });
+    return join(ps); };
+  steps.push({stage:2,html:`Into (${j+1}):  ${subSide(sd.L)} = ${subSide(sd.R)}`,why:`Replace ${v} in the other equation (${j+1}) with ${expr}. Now there is only one variable, ${w}.`});
+  const expand=arr=>{ const out=[]; arr.forEach(([k,c])=>{ if(k===v){ out.push([w,fmul(c,p)]); out.push(["c",fmul(c,q)]); } else out.push([k,c]); }); return out; };
+  const eL=expand(sd.L), eR=expand(sd.R);
+  const needDist=sd.L.concat(sd.R).some(([k,c])=>k===v&&!fone(c));
+  if(needDist) steps.push({stage:3,html:`${sideStr(eL)} = ${sideStr(eR)}`,why:"Distribute (use the distributive property)."});
+  const sum=arr=>{ let a=F0,b=F0; arr.forEach(([k,c])=>{ if(k==="c")b=fadd(b,c); else a=fadd(a,c); }); return [a,b]; };
+  const [Lw,Lc]=sum(eL), [Rw,Rc]=sum(eR);
+  const combL=sideStr([[w,Lw],["c",Lc]]), combR=sideStr([[w,Rw],["c",Rc]]);
+  if(combL+"="+combR!==sideStr(eL)+"="+sideStr(eR)) steps.push({stage:3,html:`${combL} = ${combR}`,why:"Combine like terms on each side."});
+  const k=fsub(Lw,Rw), d=fsub(Rc,Lc);
+  if(fz(k)){
+    const t=fz(d);
+    steps.push({stage:4,html:`0 = ${fs(d)}  ${t?'<span class="ok">always true</span>':'<span class="no">false</span>'}`,why:t?`The variable disappeared and what's left is always true. Every point on the line works: <b>infinitely many solutions</b>.`:`The variable disappeared and what's left is false — no value of ${w} can work: <b>no solution</b>.`});
+    return {steps,S,iso:{i,v,w},expr};
+  }
+  if(!(fz(Rw)&&fz(Lc))) steps.push({stage:4,html:`${termP(k,w)[0]?"−":""}${fone(fabs(k))?"":absCoef(k)}${w} = ${fs(d)}`,why:(!fz(Rw)?`Collect the ${w}-terms on one side`:"")+(!fz(Rw)&&!fz(Lc)?" and the constants on the other.":!fz(Lc)?"Subtract "+fs(Lc)+" from both sides (inverse operations).":".")});
+  const wv=fdiv(d,k);
+  if(!fone(k)) steps.push({stage:4,html:`<mark class="hv">${w} = ${fs(wv)}</mark>`,why:`Divide both sides by ${fs(k)}.`});
+  else steps[steps.length-1].html=`<mark class="hv">${w} = ${fs(wv)}</mark>`;
+  const vv=fadd(fmul(p,wv),q);
+  steps.push({stage:5,html:`${v} = ${join([valP(p,wv),constP(q)])} = <mark class="hv">${fs(vv)}</mark>`,why:`Back-substitute ${w} = ${fs(wv)} into ${v} = ${expr}.`});
+  const X=v==="x"?vv:wv, Y=v==="y"?vv:wv;
+  steps.push({stage:6,html:`Solution: <b>(${fs(X)}, ${fs(Y)})</b><br><span class="c1">(1)</span> ${chkHTML(Es[0],X,Y)}<br><span class="c2">(2)</span> ${chkHTML(Es[1],X,Y)}`,why:"Check the ordered pair in BOTH original equations."});
+  return {steps,S,iso:{i,v,w},expr,X,Y,wv};
+}
+// elimination: choose multipliers (smallest), produce text lines
+function elimPlan(A,B){
+  let best=null;
+  ["x","y"].forEach(v=>{ const a=cf(A,v), b=cf(B,v); if(fz(a)||fz(b))return;
+    // integers assumed after normL
+    const m=lcm(a.n,b.n), k1=m/Math.abs(a.n), k2=-Math.sign(a.n*b.n)*m/Math.abs(b.n);
+    const cost=Math.abs(k1)+Math.abs(k2)+(v==="y"?0.1:0);
+    if(!best||cost<best.cost)best={v,k1,k2,cost}; });
+  if(!best){ const v=fz(A.a)?"x":"y"; best={v,k1:1,k2:0,cost:0}; }
+  return best;
+}
+function elimSteps(A0,B0){
+  const A=normL(A0), B=normL(B0), P=elimPlan(A,B), k1=fi(P.k1), k2=fi(P.k2), v=P.v, w=v==="x"?"y":"x";
+  const A2=scaleE(A,k1), B2=scaleE(B,k2), Sm=addE(A2,B2);
+  const out=[];
+  out.push(`(1) ${stdRaw(A)}\n(2) ${stdRaw(B)}`);
+  const mul=(k,n,E2)=>fone(k)?`(${n}) ${stdRaw(E2)}`:`(${n})×${fs(k)}:  ${stdRaw(E2)}`;
+  out.push(mul(k1,1,A2)+"\n"+mul(k2,2,B2));
+  const cw=cf(Sm,w);
+  out.push(`Add:  ${fz(cw)?"0":join([termP(cw,w)])} = ${fs(Sm.c)}   (the ${v}-terms cancel)`);
+  if(fz(cw)){ out.push(fz(Sm.c)?"0 = 0 is always true → infinitely many solutions":"0 = "+fs(Sm.c)+" is false → no solution"); return {lines:out,plan:P}; }
+  const wv=fdiv(Sm.c,cw); out.push(`${w} = ${fs(Sm.c)}/${fs(cw)} = ${fs(wv)}`);
+  // back-substitute into whichever original has nonzero coefficient on v
+  const T=!fz(cf(A,v))?A:B, tn=T===A?1:2, cvv=cf(T,v), cww=cf(T,w);
+  const rest=fsub(T.c,fmul(cww,wv)), vv=fdiv(rest,cvv);
+  const sub=(v==="x")? join([termP(cvv,"x"),valP(cww,wv)]) : join([valP(cww,wv),termP(cvv,"y")]);
+  out.push(`Into (${tn}): ${sub} = ${fs(T.c)}  →  ${termP(cvv,v)[0]?"−":""}${fone(fabs(cvv))?"":absCoef(cvv)}${v} = ${fs(rest)}  →  ${v} = ${fs(vv)}`);
+  const X=v==="x"?vv:wv, Y=v==="y"?vv:wv; out.push(`Solution: (${fs(X)}, ${fs(Y)})`);
+  return {lines:out,plan:P,X,Y};
+}
+// random system with given integer/fraction solution
+function randSys(o){
+  o=o||{};
+  for(let t=0;t<400;t++){
+    let X,Y;
+    if(o.frac){ const d=pick([2,3,4,5]); X=F(rndNZ(-9,9),d); Y=F(rnd(-6,6),pick([1,2,3])); if(fisInt(X)&&fisInt(Y))continue; }
+    else { X=fi(rnd(o.r||-6,o.R||6)); Y=fi(rnd(o.r||-5,o.R||5)); }
+    const A=[rndNZ(-5,5),rndNZ(-5,5)], B=[rndNZ(-5,5),rndNZ(-5,5)];
+    if(o.one){ A[pick([0,1])]=pick([1,-1]); }
+    if(o.noOne){ if([A[0],A[1],B[0],B[1]].some(z=>Math.abs(z)===1))continue; }
+    if(A[0]*B[1]-A[1]*B[0]===0)continue;
+    if(gcd(A[0],A[1])>1||gcd(B[0],B[1])>1)continue;
+    const c1=fadd(fmul(fi(A[0]),X),fmul(fi(A[1]),Y)), c2=fadd(fmul(fi(B[0]),X),fmul(fi(B[1]),Y));
+    if(!fisInt(c1)||!fisInt(c2)||Math.abs(c1.n)>40||Math.abs(c2.n)>40)continue;
+    let E1=mk(A[0],A[1],c1.n), E2=mk(B[0],B[1],c2.n);
+    if(o.siFirst&&Math.abs(A[1])===1)E1.form="si";
+    return [normKeepForm(E1),normKeepForm(E2)];
+  }
+  return [mk(1,1,5),mk(1,-1,1)];
+}
+function normKeepForm(E){ const f=E.form, N=normL(E); N.form=f; return N; }
+function randSpecial(kind){
+  const a=rndNZ(-4,4), b=rndNZ(-4,4); const g=gcd(a,b), A=a/g, B=b/g, c=rnd(-8,8), k=pick([2,3,-2,-1]);
+  const E1=mk(A,B,c);
+  if(kind==="inf") return [E1,{a:fi(A*k),b:fi(B*k),c:fi(c*k),form:"std"}];
+  let c2=c*k+rndNZ(-6,6); return [E1,{a:fi(A*k),b:fi(B*k),c:fi(c2),form:"std"}];
+}
+
+/* ══════════════════════ TAB 1 · solving by graphing ══════════════════════ */
+function lineThrough(P,Q){
+  const x1=fromNum(P[0]),y1=fromNum(P[1]),x2=fromNum(Q[0]),y2=fromNum(Q[1]);
+  const a=fsub(y2,y1), b=fsub(x1,x2), c=fadd(fmul(a,x1),fmul(b,y1));
+  const L=normL({a,b,c}); L.form=fz(L.b)?"std":"si"; return L;
+}
+function handlesFor(L){
+  if(fz(L.b)){ const x=fv(L.c)/fv(L.a); return [[x,-3],[x,3]]; }
+  const at=x=>fv(yintF(L))+fv(slopeF(L))*x, ok=y=>Math.abs(y)<=6.6;
+  const cands=[]; for(let x=-10;x<=10;x++){ const y=at(x); if(ok(y)&&Math.abs(y-Math.round(y))<1e-9)cands.push([x,Math.round(y)]); }
+  const near=t=>cands.length?cands.reduce((b,p)=>Math.abs(p[0]-t)<Math.abs(b[0]-t)?p:b):null;
+  let P=near(-3), Q=near(3);
+  if(P&&Q&&P[0]!==Q[0])return [P,Q];
+  // no lattice points: use points where the line crosses y = ±4 or x = ±3
+  const m=fv(slopeF(L)), b=fv(yintF(L));
+  const pts=[-3,3].map(x=>[x,at(x)]).filter(p=>ok(p[1]));
+  if(pts.length===2)return pts.map(p=>[Math.round(p[0]*10)/10,Math.round(p[1]*10)/10]);
+  const ys=[-4,4].map(y=>[Math.round((y-b)/m*10)/10,y]); return ys;
+}
+const M1={
+  tab:"Solving by graphing", lesson:"A-REI.C.6 · A-REI.D.11", accent:"var(--cyan)",
+  title:()=>"Solve a system by graphing",
+  s:{H:[[[-4,-3],[2,3]],[[-3,5],[3,-1]]],L:null,built:false,err:["",""]},
+  init(){ M1.s.L=M1.s.H.map(h=>lineThrough(h[0],h[1])); },
+  setL(i,L){ M1.s.L[i]=L; M1.s.H[i]=handlesFor(L); },
+  preset(k){
+    const P={one:["y = x + 1","y = −x + 2"],par:["y = 1/2x + 3","x − 2y = 2"],same:["2x − y = 1","y = 2x − 1"],frac:["y = 2x − 1","x + 3y = 9"]}[k];
+    if(k==="rand"){ const Es=pick([()=>randSys({siFirst:true}),()=>randSys({frac:true}),()=>randSpecial(pick(["none","inf"]))])();
+      Es.forEach((E2,i)=>M1.setL(i,E2)); }
+    else P.forEach((t,i)=>M1.setL(i,parseLinearForm(t)));
+    M1.s.err=["",""]; M1.s.built=false; update();
+  },
+  bar(){
+    chk("Snap to grid",snap,v=>{snap=v;});
+    const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); s.setAttribute("aria-label","Example systems");
+    [["one","One solution"],["frac","Fraction point"],["par","Parallel"],["same","Same line"],["rand","Random"]].forEach(([k,l])=>btn(l,()=>M1.preset(k),"",s));
+    bar.appendChild(s);
+    spacer("Drag the orange handles");
+  },
+  drag(id,p){
+    const i=+id[1], h=id[2]==="a"?0:1, w=S2W(p); let x=clamp(w[0],-11,11), y=clamp(w[1],-7,7);
+    if(snap){x=Math.round(x);y=Math.round(y);} else {x=Math.round(x*10)/10;y=Math.round(y*10)/10;}
+    const o=M1.s.H[i][1-h]; if(x===o[0]&&y===o[1])return false;
+    M1.s.H[i][h]=[x,y]; M1.s.L[i]=lineThrough(M1.s.H[i][0],M1.s.H[i][1]);
+  },
+  draw(){
+    V=VSTD; const g=gridBg(), Ls=M1.s.L;
+    // obstacles: handles first so labels avoid them
+    M1.s.H.forEach(h=>h.forEach(p=>obstacle(W2S(p),15)));
+    const S=plotSystem(g,Ls,{extra:gg=>{ M1.s.H.forEach((h,i)=>h.forEach((p,j)=>sgrab(gg,W2S(p),"L"+i+(j?"b":"a"),i?C2:C1))); }});
+    if(S.type!=="one")caption(g,S.type==="none"?"Parallel lines — they never meet":"Same line — every point is shared",S.type==="none"?"#B91C1C":D3);
+    M1.S=S;
+  },
+  panel(full){
+    if(!full&&M1.s.built){ M1.live(); return; }
+    M1.s.built=true;
+    side.innerHTML=`<div class="panel"><h3>Your two lines</h3>
+      ${[0,1].map(i=>`<label class="fld" for="t1in${i}"><span class="sw" style="background:${i?C2:C1}"></span>Line (${i+1}) — any form</label>
+        <div class="inrow"><input type="text" id="t1in${i}" autocomplete="off" spellcheck="false" aria-label="Equation of line ${i+1}"><button class="ghost" type="button" id="t1go${i}">Graph</button></div>
+        <div class="msg" id="t1err${i}"></div><div class="forms" id="t1f${i}"></div>`).join("")}
+      <p class="hint" style="padding:12px 20px 16px">Examples: <b>y = −2x + 5</b>, <b>3x + 2y = 12</b>, <b>y − 1 = 2(x + 3)</b>, <b>x = 4</b>.</p></div>
+      <div class="panel"><h3>What the graph says</h3><div id="t1live"></div></div>
+      <div class="panel"><h3>The idea</h3><div class="pad">
+        <p>Each equation's graph is the set of <b>all</b> its solutions. A <span class="term">solution of the system</span> must make both equations true, so it lies on <b>both</b> lines: it is the point where they intersect.</p>
+        <p>Two lines can meet <b>once</b> (different slopes), <b>never</b> (same slope, different y-intercepts: parallel) or <b>everywhere</b> (same slope and same intercept: one line).</p>
+        <p>A graph is great for seeing the answer, but you can only read it exactly when the point sits on grid lines — always <b>check by substituting</b>.</p></div></div>`+
+      tryPanel(`Drag line (2)'s handles until the lines are parallel. What do you notice about the slopes? Then press <b>Fraction point</b>: can you read (12/7, 17/7) off the grid without algebra?`);
+    [0,1].forEach(i=>{ const inp=$("t1in"+i), go=()=>{
+        try{ const L=parseLinearForm(inp.value); M1.setL(i,L); M1.s.err[i]=""; }catch(e){ M1.s.err[i]=e.message; }
+        update(); };
+      $("t1go"+i).onclick=go; inp.addEventListener("keydown",e=>{ if(e.key==="Enter")go(); }); });
+    M1.live(true);
+  },
+  live(first){
+    const Ls=M1.s.L, S=M1.S||solve2(Ls[0],Ls[1]);
+    [0,1].forEach(i=>{ const inp=$("t1in"+i); if(inp&&(first||document.activeElement!==inp||!M1.s.err[i]))if(document.activeElement!==inp||first)inp.value=eqDisp(Ls[i]);
+      const L=Ls[i], m=slopeF(L);
+      $("t1err"+i).textContent=M1.s.err[i]?"⚠ "+M1.s.err[i]:"";
+      $("t1f"+i).innerHTML=fz(L.b)?`vertical line · slope undefined · <b>${stdStr(L)}</b>`:`slope <b>${fs(m)}</b> · y-int <b>${fs(yintF(L))}</b> · ${siStr(L)} · ${stdStr(L)}`; });
+    const m1=slopeF(Ls[0]), m2=slopeF(Ls[1]), sl=m=>m===null?"undefined":fs(m);
+    let h="";
+    if(S.type==="one"){
+      const x=S.x,y=S.y, exact=fisInt(x)&&fisInt(y);
+      h=`<div class="verdict good"><b>One solution: (${fs(x)}, ${fs(y)})</b>${exact?"":" ≈ ("+r2(fv(x))+", "+r2(fv(y))+")"}<br>The slopes are different (${sl(m1)} and ${sl(m2)}), so the lines cross at exactly one point.${exact?"":" This point is <b>not</b> on a grid corner, so a graph alone only gives an estimate."}</div>
+        <div class="fldwrap"><div class="eq">Check (${fs(x)}, ${fs(y)}):
+<span class="c1">(1)</span> ${chkHTML(Ls[0],x,y)}
+<span class="c2">(2)</span> ${chkHTML(Ls[1],x,y)}<small>A solution of the system makes both equations true.</small></div></div>`;
+      h+=`<div class="pad" style="padding-top:0"><p class="hint">A-REI.D.11 view: x = ${fs(x)} is where f(x) = g(x) — the two "y =" expressions give the same output.</p></div>`;
+    } else if(S.type==="none"){
+      h=`<div class="verdict bad"><b>No solution.</b> Both lines have slope ${sl(m1)} but ${m1===null?"different x-intercepts":"different y-intercepts ("+fs(yintF(Ls[0]))+" and "+fs(yintF(Ls[1]))+")"}. They are parallel and never meet, so no point is on both. The system is <b>inconsistent</b>.</div>`;
+    } else {
+      h=`<div class="verdict good"><b>Infinitely many solutions.</b> The two equations describe the <b>same line</b> (slope ${sl(m1)}${m1===null?"":", y-intercept "+fs(yintF(Ls[0]))}). Every point on it, like ${fz(Ls[0].b)?ptS(fdiv(Ls[0].c,Ls[0].a),F0):ptS(F0,fdiv(Ls[0].c,Ls[0].b))}, solves both. One equation is a multiple of the other: ${stdStr(Ls[0])}.</div>`;
+    }
+    $("t1live").innerHTML=h;
+  }
+};
+function parseLinearForm(t){ const L=parseLinear(t), s=String(t).replace(/\s+/g,"").toLowerCase(); const N=normL(L);
+  N.form=(/^y=/.test(s)&&!fz(N.b))?"si":(/^x=/.test(s)&&/y/.test(s.slice(2))&&!fz(N.a))?"sx":"std"; return N; }
+
+/* ══════════════════════ TAB 2 · substitution ══════════════════════ */
+const SYS2=[
+  ["y = 2x + 1","3x + 2y = 16"],["x = 3y − 4","2x + 5y = 14"],["y = −x + 7","y = 2x − 5"],["x + y = 6","3x − 2y = 8"],
+  ["2x + y = 5","4x − 3y = 25"],["y = 3x − 2","6x − 2y = 4"],["y = −2x + 3","4x + 2y = 9"],["x − 2y = 1","3x + 4y = 18"]];
+const M2={
+  tab:"Substitution", lesson:"A-REI.C.6", accent:"var(--yellow)",
+  title:()=>"Solve by substitution, one step at a time",
+  s:{sel:0,Es:null,k:0,play:null,built:false},
+  init(){ M2.load(0); },
+  load(i){ M2.s.sel=i; M2.s.Es=SYS2[i].map(parseLinearForm); M2.s.k=0; M2.stop(); },
+  stop(){ if(M2.s.play){clearInterval(M2.s.play);M2.s.play=null;} },
+  plan(){ return subSteps(M2.s.Es); },
+  bar(){
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Choose a system");
+    SYS2.forEach((p,i)=>{const o=document.createElement("option");o.value=i;o.textContent=p.join("  ,  ");sel.appendChild(o);});
+    const o=document.createElement("option"); o.value="r"; o.textContent="Random system"; sel.appendChild(o);
+    sel.value=M2.s.sel==="r"?"r":String(M2.s.sel);
+    sel.onchange=()=>{ if(sel.value==="r")M2.rand(); else M2.load(+sel.value); M2.s.built=false; update(); M2.bar_(); };
+    bar.appendChild(sel);
+    btn("Random",()=>{M2.rand(); M2.s.built=false; render();});
+    M2.nb=btn("Next step",()=>{M2.next();},"primary");
+    M2.pb=btn(M2.s.play?"Pause":"Play",()=>{ if(M2.s.play){M2.stop();} else { if(M2.s.k>=M2.plan().steps.length-1)M2.s.k=0; M2.s.play=setInterval(()=>{ if(cur!==1){M2.stop();return;} M2.next(); },1700); } M2.bar_(); update(); });
+    btn("Start over",()=>{M2.stop();M2.s.k=0;update();M2.bar_();});
+    M2.bar_();
+  },
+  bar_(){ const n=M2.plan().steps.length; if(M2.nb)M2.nb.disabled=M2.s.k>=n-1; if(M2.pb)M2.pb.textContent=M2.s.play?"Pause":"Play"; },
+  rand(){ M2.s.sel="r"; M2.s.Es=pick([()=>randSys({one:true,siFirst:Math.random()<.5}),()=>randSys({one:true}),()=>randSpecial(pick(["none","inf"]))])(); M2.s.k=0; M2.stop(); },
+  next(){ const n=M2.plan().steps.length; if(M2.s.k<n-1){M2.s.k++; M2.fresh=true; update();} if(M2.s.k>=n-1)M2.stop(); M2.bar_(); },
+  draw(){
+    V=VSTD; const g=gridBg(), Es=M2.s.Es, P=M2.plan(), st=P.steps[M2.s.k].stage, last=P.steps[P.steps.length-1].stage;
+    const done=st>=5||(last===4&&st===4);
+    plotSystem(g,Es,{pt:done,extra:gg=>{
+      if(P.wv&&st>=4){ const wv=fv(P.wv), w=P.iso.w; const L=w==="x"?{a:fi(1),b:F0,c:P.wv}:{a:F0,b:fi(1),c:P.wv};
+        const s=drawL(gg,L,CO,2.4,"8 6"); lineLabel(gg,s,w+" = "+fs(P.wv),"#C2410C",[.08,.92,.2,.8]); void wv; } }});
+    M2.drawWork(P);
+  },
+  drawWork(P){
+    work.hidden=false;
+    const k=M2.s.k, fresh=M2.fresh; M2.fresh=false;
+    work.innerHTML=`<div class="wkhead">Step ${k+1} of ${P.steps.length}</div>`+P.steps.slice(0,k+1).map((s,i)=>`<div class="wkl${i===k?" cur":""}${i===k&&fresh?" new":""}">${i===k?`<span class="why">${s.why}</span>`:""}${s.html}</div>`).join("");
+  },
+  panel(full){
+    const P=M2.plan(), last=P.steps[P.steps.length-1];
+    if(!full&&M2.s.built){ M2.live(P); return; }
+    M2.s.built=true;
+    side.innerHTML=`<div class="panel"><h3>Where we are</h3><div id="t2live"></div></div>
+      <div class="panel"><h3>The substitution method</h3><div class="pad">
+      <p><b>1.</b> Solve one equation for one variable (pick a variable whose coefficient is 1 or −1 if you can).</p>
+      <p><b>2.</b> <span class="term">Substitute</span> that expression into the <b>other</b> equation. Use parentheses! Now it has one variable.</p>
+      <p><b>3.</b> Solve, then <b>back-substitute</b> to find the other variable. <b>4.</b> Check in both original equations.</p>
+      <div class="eq">If y = 2x + 1, then in 3x + 2y = 16
+  3x + 2(2x + 1) = 16<small>"y" and "2x + 1" are equal, so one can replace the other.</small></div></div></div>`+
+      tryPanel(`Before pressing <b>Next step</b>, predict which variable the lab will isolate and why. On the graph, watch the orange line appear when one coordinate is known: the solution must be on it.`);
+    M2.live(P); void last;
+  },
+  live(P){
+    const k=M2.s.k, st=P.steps[k].stage, el=$("t2live"); if(!el)return;
+    const S=P.S; let h="";
+    if(st<5&&!(S.type!=="one"&&st===4)) h=`<div class="pad"><p>${["We have two equations and two unknowns. Graphically: two lines.","One equation now gives "+P.iso.v+" in terms of "+P.iso.w+".","After substituting, the equation has only "+P.iso.w+" — that is the whole point.","Simplify to get a one-variable linear equation.","We know "+P.iso.w+". The solution is somewhere on the orange line "+P.iso.w+" = "+(P.wv?fs(P.wv):"…")+"."][st]}</p><p class="hint">Press <b>Next step</b> or <b>Play</b>.</p></div>`;
+    else if(S.type==="one") h=`<div class="verdict good"><b>Solution (${fs(P.X)}, ${fs(P.Y)}).</b> It is exactly where the two lines cross on the graph — and it checks in both equations.</div>`;
+    else h=`<div class="verdict ${S.type==="inf"?"good":"bad"}"><b>${S.type==="inf"?"Infinitely many solutions":"No solution"}.</b> ${S.type==="inf"?"The equations graph as the same line, so the variable cancelled to a true statement.":"The lines are parallel (same slope), so the variable cancelled to a false statement."}</div>`;
+    el.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ TAB 3 · elimination ══════════════════════ */
+const SYS3=[[[2,3,12],[4,-3,6]],[[3,2,7],[5,-4,8]],[[2,5,1],[3,-2,11]],[[1,1,5],[1,-1,1]],[[4,3,1],[6,5,3]],[[2,-3,4],[-4,6,1]]];
+const M3={
+  tab:"Elimination", lesson:"A-REI.C.5 · A-REI.C.6", accent:"var(--mint)",
+  title:()=>"Solve by elimination: scale, then add",
+  s:{sel:0,E:null,O:null,k1:1,k2:1,op:"add",hist:[],built:false},
+  init(){ M3.load(0); },
+  load(i){ M3.s.sel=i; const r=SYS3[i]; M3.s.O=r.map(t=>mk(t[0],t[1],t[2])); M3.s.E=M3.s.O.slice(); M3.s.k1=1; M3.s.k2=1; M3.s.op="add"; M3.s.hist=[]; },
+  res(){ const s=M3.s, k2=s.op==="add"?s.k2:-s.k2; return addE(scaleE(s.E[0],fi(s.k1)),scaleE(s.E[1],fi(k2))); },
+  bar(){
+    const s=M3.s;
+    stepper("× (1)",s.k1,v=>{s.k1=v;render();},v=>v!==0&&Math.abs(v)<=9);
+    stepper("× (2)",s.k2,v=>{s.k2=v;render();},v=>v!==0&&Math.abs(v)<=9);
+    segBtns([["add","Add"],["sub","Subtract"]],s.op,k=>{s.op=k;render();},"Combine the equations by");
+    btn("Auto multipliers",()=>{ const P=elimPlan(normL(s.E[0]),normL(s.E[1])); s.op="add"; s.k1=P.k1||1; s.k2=P.k2||1; if(s.k2===0)s.k2=1; render(); });
+    const r=M3.res(), canRep=!(fz(r.a)&&fz(r.b));
+    const rb=btn("Replace (2) with result",()=>{ s.hist.push(s.E.slice()); s.E=[s.E[0],normL(r)]; s.k1=1; s.k2=1; s.op="add"; render(); },"primary"); rb.disabled=!canRep;
+    const ub=btn("Undo",()=>{ if(s.hist.length){ s.E=s.hist.pop(); render(); } }); ub.disabled=!s.hist.length;
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Choose a system");
+    SYS3.forEach((t,i)=>{const o=document.createElement("option");o.value=i;o.textContent=stdRaw(mk(...t[0]))+" , "+stdRaw(mk(...t[1]));sel.appendChild(o);});
+    const o=document.createElement("option"); o.value="r"; o.textContent="Random system"; sel.appendChild(o);
+    sel.value=s.sel==="r"?"r":String(s.sel);
+    sel.onchange=()=>{ if(sel.value==="r")M3.rand(); else M3.load(+sel.value); s.built=false; render(); };
+    bar.appendChild(sel);
+  },
+  rand(){ const s=M3.s; s.sel="r"; const Es=Math.random()<.85?randSys({noOne:Math.random()<.6}):randSpecial(pick(["none","inf"])); s.O=Es.map(normL); s.E=s.O.slice(); s.k1=1;s.k2=1;s.op="add";s.hist=[]; },
+  draw(){
+    V=VSTD; const g=gridBg(), s=M3.s, r=M3.res(), Es=s.E, S=solve2(Es[0],Es[1]);
+    const rLine=!(fz(r.a)&&fz(r.b));
+    plotSystem(g,Es,{extra:gg=>{ if(rLine){ const sg=drawL(gg,r,C3,3.4,"12 7"); M3.rseg=sg; } }});
+    if(rLine&&M3.rseg) lineLabel(g,M3.rseg,"new: "+stdStr(r),D3,[.62,.38,.78,.22,.5]);
+    // table in work area
+    work.hidden=false;
+    const k2=s.op==="add"?s.k2:-s.k2, A=scaleE(Es[0],fi(s.k1)), B=scaleE(Es[1],fi(s.k2));
+    const cx=fz(r.a), cy=fz(r.b);
+    const cell=(c,v,first)=>{ if(fz(c))return "0"+v; const p=termP(c,v); return (p[0]?(first?"−":"− "):(first?"":"+ "))+p[1]; };
+    const row=(tag,E2,cls,isSum)=>`<tr class="${cls||""}"><td class="tg">${tag}</td><td class="${cx&&!isSum?"cancel":""}">${cell(E2.a,"x",true)}</td><td class="${cy&&!isSum?"cancel":""}">${cell(E2.b,"y",false)}</td><td>=</td><td>${fs(E2.c)}</td></tr>`;
+    const opS=s.op==="add"?"+":"−";
+    work.innerHTML=`<div class="wkhead">${s.k1===1?"(1)":s.k1+"·(1)"} ${opS} ${s.k2===1?"(2)":s.k2+"·(2)"}</div><table class="stack" aria-label="Stacked equations">
+      ${row(s.k1===1?"(1)":"(1) × "+minus(s.k1),A)}${row((s.op==="add"?"+ ":"− ")+(s.k2===1?"(2)":"(2) × "+minus(s.k2)),B)}
+      <tr class="sum"><td class="tg">result</td><td class="${cx?"cancel":""}">${cell(r.a,"x",true)}</td><td class="${cy?"cancel":""}">${cell(r.b,"y",false)}</td><td>=</td><td>${fs(r.c)}</td></tr></table>`;
+    M3.S=S; void k2;
+  },
+  panel(full){
+    const s=M3.s, r=M3.res(), S=M3.S||solve2(s.E[0],s.E[1]);
+    const cx=fz(r.a), cy=fz(r.b);
+    let st="";
+    if(cx&&cy) st= fz(r.c)? `<div class="verdict good"><b>0 = 0 — always true.</b> Both variables cancelled and a true statement is left: the equations are multiples of each other (same line). <b>Infinitely many solutions.</b></div>`
+                  : `<div class="verdict bad"><b>0 = ${fs(r.c)} — never true.</b> Both variables cancelled and a false statement is left: the lines are parallel. <b>No solution.</b></div>`;
+    else if(cx||cy){ const v=cx?"y":"x", c=cx?r.b:r.a, val=fdiv(r.c,c);
+      st=`<div class="verdict good"><b>The ${cx?"x":"y"}-terms cancelled!</b> ${stdRaw(r)} gives <b>${v} = ${fs(val)}</b>. That is a ${v==="y"?"horizontal":"vertical"} line through the same intersection point.</div>`;
+      if(S.type==="one") st+=`<div class="fldwrap"><div class="eq">${elimSteps(s.E[0],s.E[1]).lines.slice(-2).join("\n")}\nCheck: ${chkHTML(s.E[0],S.x,S.y)}</div></div>`;
+    } else st=`<div class="pad"><p>No term cancels yet. Choose multipliers so the ${"x"} or ${"y"} coefficients become <b>opposites</b> (then Add) or <b>equal</b> (then Subtract). Try <b>Auto multipliers</b>.</p></div>`;
+    const ptxt=S.type==="one"?`(${fs(S.x)}, ${fs(S.y)})`:"";
+    side.innerHTML=`<div class="panel"><h3>Result</h3>${st}</div>
+      <div class="panel"><h3>Why the solution doesn't change</h3><div class="pad">
+      <p>If (x, y) makes both equations true, then it also makes <b>k·(1) + m·(2)</b> true: equal things added to equal things are equal. So the green <b>new line always passes through the same intersection point</b>${ptxt?" "+ptxt:""} — drag the multipliers and watch it pivot there.</p>
+      <p>Going back works too, so replacing (2) by (2) + k·(1) gives an <span class="term">equivalent system</span>: exactly the same solutions (A-REI.C.5).</p>
+      <p>Multiplying a single equation by a nonzero number doesn't change its line at all — 2x + 3y = 12 and 4x + 6y = 24 have the same graph.</p>
+      <div class="eq">(1)  a₁x + b₁y = c₁
+(2)  a₂x + b₂y = c₂
+k(1) + m(2):  (ka₁ + ma₂)x + (kb₁ + mb₂)y = kc₁ + mc₂<small>Choose k and m so one coefficient becomes 0.</small></div></div></div>
+      <div class="panel"><h3>Current system</h3><div class="pad"><div class="eq" style="margin:0"><span class="c1">(1)</span> ${stdRaw(s.E[0])}
+<span class="c2">(2)</span> ${stdRaw(s.E[1])}${s.hist.length?`<small>Started from: ${stdRaw(s.O[0])} and ${stdRaw(s.O[1])} — same solution set.</small>`:""}</div></div></div>`+
+      tryPanel(`Set ×(1) to 1 and ×(2) to −1, then keep changing ×(1). The green line spins around one point — why that point? Then make the y-terms cancel and press <b>Replace (2) with result</b>.`);
+    void full;
+  }
+};
+
+/* ══════════════════════ TAB 4 · which method? & special cases ══════════════════════ */
+const SYS4=[
+  {t:["y = 2x − 3","y = −x + 6"],n:"Both in y = mx + b"},
+  {t:["x = 2y + 1","3x − 4y = 7"],n:"One variable isolated"},
+  {t:["3x + 4y = 10","5x − 4y = 6"],n:"Opposite coefficients"},
+  {t:["4x + 3y = 5","6x − 5y = 17"],n:"Standard form, no 1s"},
+  {t:["y = 1/3x + 2","y = −2x + 5"],n:"Fraction solution"}];
+const SPC={none:["x + y = 2","x + y = 7"],inf:["2x + y = 3","4x + 2y = 6"]};
+function rateMethods(Es){
+  const S=solve2(Es[0],Es[1]);
+  const bothSI=Es.every(E2=>E2.form==="si"), intSol=S.type==="one"&&fisInt(S.x)&&fisInt(S.y)&&Math.abs(fv(S.x))<=10&&Math.abs(fv(S.y))<=7;
+  const iso=Es.some(E2=>E2.form==="si"||E2.form==="sx"), unitC=Es.some(E2=>[E2.a,E2.b].some(c=>fabs(c).n===1&&c.d===1));
+  const N=Es.map(normL), match=["a","b"].some(k=>!fz(N[0][k])&&!fz(N[1][k])&&(N[0][k].n%N[1][k].n===0||N[1][k].n%N[0][k].n===0));
+  const g= S.type!=="one"?["best","Shows at a glance"]: bothSI&&intSol?["best","Efficient"]: intSol?["ok2","Works"]:["slow","Estimate only"];
+  const sb= iso?["best","Efficient"]: unitC?["ok2","Works"]:["slow","Fractions appear"];
+  const el= !iso&&match?["best","Efficient"]: !iso?["ok2","Works"]:["ok2","Rearrange first"];
+  return {S,g,sb,el,intSol,bothSI,iso,unitC,match};
+}
+const M4={
+  tab:"Which method?", lesson:"A-REI.C.5 · A-REI.C.6", accent:"var(--lavender)",
+  title:()=>M4.s.mode==="cmp"?"Same system, three methods":"Special cases: 0 = 5 and 0 = 0",
+  s:{mode:"cmp",sel:0,Es:null,sp:"none"},
+  init(){ M4.load(0); },
+  load(i){ M4.s.sel=i; M4.s.Es=SYS4[i].t.map(parseLinearForm); },
+  bar(){
+    segBtns([["cmp","Compare methods"],["spc","Special cases"]],M4.s.mode,k=>{M4.s.mode=k; if(k==="spc")M4.special(M4.s.sp); else M4.load(typeof M4.s.sel==="number"?M4.s.sel:0); render();},"View");
+    if(M4.s.mode==="cmp"){
+      const sel=document.createElement("select"); sel.setAttribute("aria-label","Choose a system");
+      SYS4.forEach((o,i)=>{const op=document.createElement("option");op.value=i;op.textContent=o.n+":  "+o.t.join(" , ");sel.appendChild(op);});
+      const op=document.createElement("option"); op.value="r"; op.textContent="Random system"; sel.appendChild(op);
+      sel.value=M4.s.sel==="r"?"r":String(M4.s.sel);
+      sel.onchange=()=>{ if(sel.value==="r")M4.rand(); else M4.load(+sel.value); render(); };
+      bar.appendChild(sel);
+      btn("Random",()=>{M4.rand();render();},"primary");
+    } else {
+      segBtns([["none","Parallel → 0 = 5"],["inf","Same line → 0 = 0"]],M4.s.sp,k=>{M4.special(k);render();},"Special case");
+      btn("Random special case",()=>{ const k=pick(["none","inf"]); M4.s.sp=k; M4.s.Es=randSpecial(k); render(); });
+    }
+  },
+  rand(){ M4.s.sel="r"; const r=Math.random(); M4.s.Es= r<.34? randSys({siFirst:true}).map((E2,i)=>{ if(!fz(E2.b)&&fabs(E2.b).n===1){E2.form="si";} void i; return E2; }) : r<.67? randSys({one:true,siFirst:true}) : randSys({noOne:true}); },
+  special(k){ M4.s.sp=k; M4.s.Es=SPC[k].map(parseLinearForm); },
+  draw(){
+    V=VSTD; const g=gridBg(), Es=M4.s.Es;
+    const S=plotSystem(g,Es,{});
+    if(M4.s.mode==="spc"&&S.type==="none"&&!fz(Es[0].b)){
+      // show the constant vertical gap between parallel lines
+      const m=fv(slopeF(Es[0])), b1=fv(yintF(Es[0])), b2=fv(yintF(Es[1]));
+      [-6,0,6].forEach(x=>{ const p=W2S([x,b1+m*x]), q=W2S([x,b2+m*x]); if(inBoard(p,4)&&inBoard(q,4)){ sseg(g,p,q,CO,2.4,"5 4"); sdot(g,p,CO,4); sdot(g,q,CO,4); } });
+      caption(g,(FS>1?"Gap is always ":"Same slope, so the vertical gap is always ")+fs(fabs(fsub(yintF(Es[1]),yintF(Es[0]))))+" — they never meet","#C2410C");
+    }
+    if(M4.s.mode==="spc"&&S.type==="inf") caption(g,FS>1?"Pink dashes lie on the blue line":"The dashed pink line lies exactly on top of the blue one",D3);
+    // work area
+    work.hidden=false;
+    if(M4.s.mode==="spc"){
+      const L=elimSteps(Es[0],Es[1]).lines;
+      work.innerHTML=`<div class="wkhead">Elimination</div>`+L.map((l,i)=>`<div class="wkl${i===L.length-1?" cur":""}">${esc(l).replace(/\n/g,"<br>")}</div>`).join("");
+    } else {
+      work.innerHTML=`<div class="wkhead">The system</div><div class="sysbig"><span class="c1">(1)</span> ${eqDisp(Es[0])}<br><span class="c2">(2)</span> ${eqDisp(Es[1])}</div>`;
+    }
+    M4.S=S;
+  },
+  panel(){
+    const Es=M4.s.Es, R=rateMethods(Es), S=R.S;
+    if(M4.s.mode==="spc"){
+      const none=S.type==="none";
+      const sub=subSteps(Es).steps.slice(1).map(s=>s.html.replace(/<\/?mark[^>]*>/g,"")).join("<br>");
+      side.innerHTML=`<div class="panel"><h3>${none?"0 = "+"nonzero: no solution":"0 = 0: infinitely many"}</h3>
+        <div class="verdict ${none?"bad":"good"}"><b>${none?"A false statement.":"A true statement."}</b> ${none?"Both variables cancelled and we were left with something that is never true. No (x, y) can satisfy both equations — the lines are <b>parallel</b>.":"Both variables cancelled and we were left with something that is always true. Every point on the line works — the equations name the <b>same line</b>."}</div>
+        <div class="pad"><p><b>By substitution</b> the same thing happens:</p><div class="eq" style="margin-top:6px">${sub}</div>
+        <p>The graph tells the same story: ${none?"equal slopes, different y-intercepts.":"equal slopes and equal y-intercepts."}</p></div></div>
+        <div class="panel"><h3>How to recognize them</h3><div class="pad">
+        <p>Put both equations in <b>y = mx + b</b> form. Different slopes → one solution. Same slope, different b → <b>no solution</b> (inconsistent). Same slope, same b → <b>infinitely many</b> (dependent).</p>
+        <p>Don't write "x = 0" when you get 0 = 0! The variable vanished — the statement is about the whole system.</p>
+        <div class="eq">${stdStr(Es[0])}  →  ${siStr(Es[0])}
+${stdStr(Es[1])}  →  ${siStr(Es[1])}</div></div></div>`+
+        tryPanel(`On the <b>Solving by graphing</b> tab, type x + y = 2 and x + y = 7. Then change the second to 2x + 2y = 4. What happens to the lines, and what would elimination give?`);
+      return;
+    }
+    const chip=r=>`<span class="chip ${r[0]}">${r[1]}</span>`;
+    const gtxt= S.type==="one"? `${siStr(Es[0])}  (slope ${fz(Es[0].b)?"undefined":fs(slopeF(Es[0]))}, y-int ${fz(Es[0].b)?"—":fs(yintF(Es[0]))})\n${siStr(Es[1])}  (slope ${fz(Es[1].b)?"undefined":fs(slopeF(Es[1]))}, y-int ${fz(Es[1].b)?"—":fs(yintF(Es[1]))})\nThey cross at ${R.intSol?"("+fs(S.x)+", "+fs(S.y)+")":"about ("+r2(fv(S.x))+", "+r2(fv(S.y))+")"}` : "";
+    const sub=subSteps(Es).steps.slice(1,-1).map(s=>s.html.replace(/<\/?mark[^>]*>/g,"")).join("<br>");
+    const el=elimSteps(Es[0],Es[1]).lines.slice(1,-1).join("\n");
+    const tip={g:R.bothSI&&R.intSol?"Both equations are already in y = mx + b and the answer is on a grid corner, so the graph gives it exactly.":R.intSol?"You'd have to rewrite one equation first, but the point is on a grid corner.":"The intersection isn't on grid lines, so a graph can only estimate it — use algebra for the exact answer.",
+      s:R.iso?"One variable is already alone — substitute it straight in.":R.unitC?"A variable has coefficient 1 or −1, so isolating it is quick.":"Every coefficient is bigger than 1, so isolating a variable creates fractions.",
+      e:R.iso?"Works, but first move the variables to one side (standard form).":R.match?"One pair of coefficients already matches (or one is a multiple of the other), so one multiplier — or none — makes a variable cancel.":"Both equations are in standard form; multiply both to make a pair of coefficients opposites."};
+    side.innerHTML=`<div class="panel"><h3>Answer: ${S.type==="one"?"("+fs(S.x)+", "+fs(S.y)+")":S.type==="none"?"no solution":"infinitely many"}</h3>
+      <div class="meth"><h4>Graphing ${chip(R.g)}</h4><div class="eq">${gtxt}</div><p>${tip.g}</p></div>
+      <div class="meth"><h4>Substitution ${chip(R.sb)}</h4><div class="eq">${sub}</div><p>${tip.s}</p></div>
+      <div class="meth"><h4>Elimination ${chip(R.el)}</h4><div class="eq">${esc(el)}</div><p>${tip.e}</p></div></div>
+      <div class="panel"><h3>Choosing a method</h3><div class="pad">
+      <p><b>Graphing</b> — best to <i>see</i> the answer, or when both equations are y = mx + b and the answer is a grid point.</p>
+      <p><b>Substitution</b> — best when a variable is already alone (y = …, x = …) or has coefficient 1 or −1.</p>
+      <p><b>Elimination</b> — best when both are in standard form Ax + By = C, especially with equal or opposite coefficients. All three always give the same answer.</p></div></div>`+
+      tryPanel(`Pick <b>Fraction solution</b>. Which method would you never use alone for that system? Then press <b>Random</b> five times and predict the best method before reading the chips.`);
+  }
+};
+
+/* ══════════════════════ TAB 5 · word problems ══════════════════════ */
+const WP={
+  tickets:{name:"Tickets (adult / child)",gen(){
+    for(;;){ const a=rnd(8,15), c=rnd(3,a-2), x=rnd(20,120), y=rnd(20,120), venue=pick(["school play","museum","fall festival","planetarium show"]);
+      const T=x+y, R=a*x+c*y; if(a===c)continue;
+      return {E:[mk(1,1,T),mk(a,c,R)],X:x,Y:y,vx:"adult tickets sold",vy:"child tickets sold",
+        q:`Tickets for the ${venue} cost <b>$${a}</b> for adults and <b>$${c}</b> for children. <b>${T}</b> tickets were sold for a total of <b>$${R}</b>. How many adult and how many child tickets were sold?`,
+        why:[`Total number of tickets: x + y = ${T}`,`Total money: ${a}x + ${c}y = ${R}  (price × number, added up)`],
+        interp:`<b>${x} adult</b> and <b>${y} child</b> tickets were sold. Check: ${x} + ${y} = ${T} tickets and $${a}·${x} + $${c}·${y} = $${a*x} + $${c*y} = $${R}.`,
+        xt:"x  adult",yt:"y  child",fx:["x (adult)","y (child)"]}; } }},
+  mixture:{name:"Mixtures",gen(){
+    for(;;){ const p=pick([10,15,20,25,30]), q=pick([40,45,50,60,70,80]), x=rnd(2,12)*5, y=rnd(2,12)*5, V=x+y, rp=(p*x+q*y)/V;
+      if(!Number.isInteger(rp)||rp===p||rp===q)continue;
+      return {E:[mk(1,1,V),mk(p,q,rp*V)],X:x,Y:y,vx:"liters of the "+p+"% solution",vy:"liters of the "+q+"% solution",
+        q:`A chemist mixes a <b>${p}%</b> acid solution with a <b>${q}%</b> acid solution to make <b>${V} liters</b> of a <b>${rp}%</b> acid solution. How many liters of each should she use?`,
+        why:[`Total volume: x + y = ${V}`,`Acid: 0.${String(p).padStart(2,"0")}x + 0.${String(q).padStart(2,"0")}y = 0.${String(rp).padStart(2,"0")}(${V}); × 100 → ${p}x + ${q}y = ${rp*V}`],
+        interp:`Use <b>${x} L</b> of the ${p}% solution and <b>${y} L</b> of the ${q}% solution. Check: ${x} + ${y} = ${V} L and ${p}%·${x} + ${q}%·${y} = ${r2(p*x/100)} + ${r2(q*y/100)} = ${r2(rp*V/100)} L of acid = ${rp}% of ${V} L.`,
+        xt:"x  L of "+p+"%",yt:"y  L of "+q+"%",fx:["x (L of "+p+"%)","y (L of "+q+"%)"]}; } }},
+  plans:{name:"Phone plans (break-even)",gen(){
+    for(;;){ const r1=rnd(2,6), r2_=r1+rnd(2,6), x=rnd(3,12), F2=rnd(5,25), F1=F2+(r2_-r1)*x, UN=pick([["GB of data","GB of data","GB"],["hours of streaming","hour of streaming","hours"],["text bundles","text bundle","bundles"]]), unitN=UN[0];
+      if(F1>90)continue;
+      const u=UN[2];
+      return {E:[{a:fi(-r1),b:fi(1),c:fi(F1),form:"si"},{a:fi(-r2_),b:fi(1),c:fi(F2),form:"si"}],X:x,Y:F1+r1*x,plans:true,unit:unitN,
+        vx:unitN+" per month",vy:"monthly cost in dollars",
+        q:`<b>Plan A</b> costs <b>$${F1}</b> a month plus <b>$${r1}</b> per ${UN[1]}. <b>Plan B</b> costs <b>$${F2}</b> a month plus <b>$${r2_}</b> per ${UN[1]}. For what usage do the plans cost the same, and what is that cost?`,
+        why:[`Plan A: y = ${r1}x + ${F1}  (rate × usage + fixed fee)`,`Plan B: y = ${r2_}x + ${F2}`],
+        interp:`The plans cost the same, <b>$${F1+r1*x}</b>, at <b>${x} ${u}</b>. Below ${x} ${u}, Plan B is cheaper (lower fee); above ${x} ${u}, Plan A is cheaper (lower rate). Drag the orange handle to see it.`,
+        xt:"x  "+u,yt:"y  cost ($)",fx:["x (usage)","y (cost $)"],F:[F1,F2],R:[r1,r2_],u}; } }},
+  coins:{name:"Coins",gen(){
+    const kinds=pick([[5,25,"nickels","quarters"],[10,25,"dimes","quarters"],[5,10,"nickels","dimes"]]);
+    const x=rnd(4,30), y=rnd(4,30), n=x+y, v=kinds[0]*x+kinds[1]*y;
+    return {E:[mk(1,1,n),mk(kinds[0],kinds[1],v)],X:x,Y:y,vx:"number of "+kinds[2],vy:"number of "+kinds[3],
+      q:`A jar holds <b>${n}</b> coins, all ${kinds[2]} and ${kinds[3]}. Their total value is <b>$${(v/100).toFixed(2)}</b>. How many of each coin are there?`,
+      why:[`Number of coins: x + y = ${n}`,`Value in cents: ${kinds[0]}x + ${kinds[1]}y = ${v}  (work in cents to avoid decimals)`],
+      interp:`There are <b>${x} ${kinds[2]}</b> and <b>${y} ${kinds[3]}</b>. Check: ${x} + ${y} = ${n} coins; ${kinds[0]}·${x} + ${kinds[1]}·${y} = ${kinds[0]*x} + ${kinds[1]*y} = ${v}¢ = $${(v/100).toFixed(2)}.`,
+      xt:"x  "+kinds[2],yt:"y  "+kinds[3],fx:["x ("+kinds[2]+")","y ("+kinds[3]+")"]}; }},
+  perim:{name:"Rectangle perimeter",gen(){
+    const w=rnd(3,20), k=rnd(2,15), mult=Math.random()<.5, L=mult? 2*w+k : w+k, P=2*L+2*w;
+    return {E:[mk(2,2,P),{a:fi(1),b:fi(mult?-2:-1),c:fi(k),form:"sx"}],X:L,Y:w,vx:"length (m)",vy:"width (m)",
+      q:`A rectangular garden has a perimeter of <b>${P} m</b>. Its length is <b>${mult?k+" m more than twice":k+" m more than"}</b> its width. Find the length and width.`,
+      why:[`Perimeter: 2x + 2y = ${P}`,`Length vs width: x = ${mult?"2y":"y"} + ${k}`],
+      interp:`The garden is <b>${L} m long</b> and <b>${w} m wide</b>. Check: 2(${L}) + 2(${w}) = ${2*L} + ${2*w} = ${P} m, and ${L} = ${mult?"2("+w+")":w} + ${k}.`,
+      xt:"x  length (m)",yt:"y  width (m)",fx:["x (length m)","y (width m)"]}; }}
+};
+const WPK=Object.keys(WP);
+const M5={
+  tab:"Word problems", lesson:"A-CED.A.3 · A-REI.C.6", accent:"var(--magenta)",
+  title:()=>WP[M5.s.k].name,
+  s:{k:"tickets",P:null,step:0,gx:null,guess:null,built:false},
+  init(){ M5.gen(); },
+  gen(){ const P=WP[M5.s.k].gen(); M5.s.P=P; M5.s.step=0;
+    M5.s.gx=P.plans? Math.max(1,P.X-Math.max(2,Math.round(P.X/2))) : null; M5.s.guess=null; M5.s.built=false; },
+  win(){ const P=M5.s.P; let xM, yM;
+    if(P.plans){ xM=niceCeil(P.X*2,8); yM=niceCeil(Math.max(P.F[0]+P.R[0]*xM,P.F[1]+P.R[1]*xM)*0.75,7); }
+    else { const xi=fv(fdiv(P.E[0].c,P.E[0].a)), yi=fz(P.E[0].b)?0:fv(fdiv(P.E[0].c,P.E[0].b));
+      xM=niceCeil(Math.max(P.X*1.6,Math.min(xi,P.X*2.4)),8); yM=niceCeil(Math.max(P.Y*1.6,Math.min(yi,P.Y*2.4)),7); }
+    const ox=62, oy=VH-36; V={ox,oy,sx:(VW-ox-14)/xM,sy:(oy-10)/yM}; return {xM,yM}; },
+  bar(){
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    WPK.forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=WP[k].name;sel.appendChild(o);});
+    sel.value=M5.s.k; sel.onchange=()=>{M5.s.k=sel.value;M5.gen();render();}; bar.appendChild(sel);
+    btn("New numbers",()=>{M5.gen();render();});
+    M5.nb=btn(["Define variables","Write the system","Solve","Interpret"][Math.min(M5.s.step,3)],()=>{ if(M5.s.step<4){M5.s.step++; M5.s.built=false; render();} },"primary");
+    if(M5.s.step>=4)M5.nb.disabled=true;
+    btn("Hide steps",()=>{M5.s.step=0; M5.s.built=false; render();});
+    spacer(M5.s.P.plans?"Drag the orange handle":"Drag the guess point");
+  },
+  drag(id,p){ const P=M5.s.P, w=S2W(p), W=M5.w;
+    if(id==="gx"){ M5.s.gx=clamp(Math.round(w[0]),0,W.xM); }
+    else { const sx=niceStep(W.xM,40), sy=niceStep(W.yM,40); M5.s.guess=[clamp(Math.round(w[0]/sx)*sx,0,W.xM),clamp(Math.round(w[1]/sy)*sy,0,W.yM)]; }
+    void P; },
+  draw(){
+    const P=M5.s.P, W=M5.w=M5.win(), st=M5.s.step;
+    const g=gridBg({q1:true,xs:niceStep(W.xM,10),ys:niceStep(W.yM,8),xl:niceStep(W.xM,10),yl:niceStep(W.yM,8),xt:P.xt,yt:P.yt});
+    const show=st>=2;
+    if(P.plans){
+      const gx=M5.s.gx, cA=P.F[0]+P.R[0]*gx, cB=P.F[1]+P.R[1]*gx;
+      const hp=W2S([gx,0]); obstacle(hp,16);
+      const ps=[W2S([gx,cA]),W2S([gx,cB])];
+      plotSystem(g,P.E,{names:["Plan A: ","Plan B: "],pt:show,ts:[.9,.82,.74,.12,.2],extra:gg=>{
+        sseg(gg,hp,W2S([gx,Math.max(cA,cB)]),CO,2,"5 4");
+        sdot(gg,ps[0],C1,6); sdot(gg,ps[1],C2,6); ps.forEach(p=>obstacle(p,8));
+        sgrab(gg,hp,"gx",CO); }});
+      const lo=Math.min(cA,cB);
+      labelAt(g,[[ps[0][0]+(cA>=cB?-1:1)*60,ps[0][1]],[ps[0][0]+60,ps[0][1]-14],[ps[0][0]-60,ps[0][1]-14]],"A: $"+cA,D1);
+      labelAt(g,[[ps[1][0]+(cB>cA?-1:1)*60,ps[1][1]],[ps[1][0]+60,ps[1][1]+14],[ps[1][0]-60,ps[1][1]+14]],"B: $"+cB,D2);
+      void lo;
+    } else {
+      const gu=M5.s.guess;
+      plotSystem(g,P.E,{names:["(1) ","(2) "],pt:show,labels:st>=2,extra:gg=>{ if(gu){ const s=W2S(gu); obstacle(s,16); sgrab(gg,s,"gs",CO); } }});
+      if(!gu){ const s=W2S([W.xM*0.12,W.yM*0.85]); M5.s.guess=[Math.round(W.xM*0.12),Math.round(W.yM*0.85)]; void s; update(); return; }
+    }
+    work.hidden=false;
+    work.innerHTML=`<div class="story">${P.q}</div>`;
+  },
+  panel(full){
+    const P=M5.s.P, st=M5.s.step;
+    if(!full&&M5.s.built){ M5.live(); return; }
+    M5.s.built=true;
+    const sub=subSteps(P.E);
+    const solveH=P.E[0].form==="std"&&P.E[1].form==="std"? `<b>Elimination</b>:<div class="eq">${esc(elimSteps(P.E[0],P.E[1]).lines.slice(1).join("\n"))}</div>`
+      : `<b>Substitution</b>:<div class="eq">${sub.steps.slice(1,-1).map(s=>s.html.replace(/<\/?mark[^>]*>/g,"")).join("<br>")}</div>`;
+    const blocks=[
+      ["1 · Define variables",`<p>Let <b>x</b> = ${P.vx}.<br>Let <b>y</b> = ${P.vy}.</p>`],
+      ["2 · Write the system",`<div class="eq"><span class="c1">(1)</span> ${eqDisp(P.E[0])}\n<span class="c2">(2)</span> ${eqDisp(P.E[1])}<small>${P.why.join("<br>")}</small></div>`],
+      ["3 · Solve",solveH+`<p>Solution: <b>(${P.X}, ${P.Y})</b> — the intersection on the graph.</p>`],
+      ["4 · Interpret",`<p>${P.interp}</p>`]];
+    side.innerHTML=`<div class="panel"><h3>${P.plans?"Which plan is cheaper?":"Test a guess"}</h3><div id="t5live"></div></div>
+      <div class="panel"><h3>Solution steps</h3><div class="wsteps">${blocks.map((b,i)=>i<st?`<div class="ws"><h4>${b[0]}</h4>${b[1]}</div>`:`<div class="ws off"><h4>${b[0]}</h4>Press <b>${["Define variables","Write the system","Solve","Interpret"][i]}</b> to reveal.</div>`).join("")}</div></div>
+      <div class="panel"><h3>Modeling with a system</h3><div class="pad">
+      <p>Two unknowns need <b>two</b> facts. Each sentence that gives a total or a comparison usually becomes one equation.</p>
+      <p>Always say what x and y mean, with units — and at the end answer the question in words, not just "(x, y)".</p>
+      <p>Solutions must make sense: you can't sell 12.5 tickets or use −3 liters.</p></div></div>`+
+      tryPanel(P.plans?`Before revealing the steps, drag the orange handle to find where Plan A and Plan B cost the same. Then explain to a friend which plan they should pick and why it depends on usage.`:`Drag the orange guess point onto line (1), then slide it along that line until it is also on line (2). That point is the answer — confirm it with algebra.`);
+    M5.live();
+  },
+  live(){
+    const P=M5.s.P, el=$("t5live"); if(!el)return;
+    if(P.plans){ const x=M5.s.gx, a=P.F[0]+P.R[0]*x, b=P.F[1]+P.R[1]*x, u=P.u;
+      el.innerHTML=`<div class="pad"><div class="eq" style="margin-top:0">x = ${x} ${u}
+Plan A: ${P.R[0]}(${x}) + ${P.F[0]} = $${a}
+Plan B: ${P.R[1]}(${x}) + ${P.F[1]} = $${b}</div></div>
+        <div class="verdict ${a===b?"good":"bad"}" style="${a===b?"":"background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"}">${a===b?`<b>Break-even!</b> Both plans cost $${a} at ${x} ${u}.`:`<b>Plan ${a<b?"A":"B"} is cheaper</b> by $${Math.abs(a-b)} at ${x} ${u}.`}</div>`; return; }
+    const g=M5.s.guess||[0,0], E0=P.E[0], E1=P.E[1], x=fromNum(g[0]), y=fromNum(g[1]);
+    const t0=onLine(E0,x,y), t1=onLine(E1,x,y);
+    el.innerHTML=`<div class="pad"><div class="eq" style="margin-top:0">Guess (${g[0]}, ${g[1]})
+<span class="c1">(1)</span> ${chkHTML(E0,x,y)}
+<span class="c2">(2)</span> ${chkHTML(E1,x,y)}</div>
+      <p class="hint">${t0&&t1?"Both true — this is the solution!":t0||t1?"On one line only. Slide along that line toward the other.":"On neither line yet."}</p></div>`;
+  }
+};
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+const KINDS=[["mix","Mixed practice"],["solve","Solve a system (integers)"],["frac","Solve a system (fractions)"],["class","Number of solutions"],["elim","Elimination with given multipliers"],["word","Word problem"]];
+function disguise(E2){ // random but equivalent display form
+  const r=Math.random(); const f=r<.4&&!fz(E2.b)?"si":"std"; const N=normL(E2); N.form=f; return N; }
+function genProblem(kind){
+  if(kind==="mix")kind=pick(["solve","solve","frac","class","elim","word"]);
+  const pr={kind};
+  if(kind==="solve"||kind==="frac"){
+    pr.E=(kind==="frac"?randSys({frac:true}):randSys({siFirst:Math.random()<.4,one:Math.random()<.5}));
+    const S=solve2(pr.E[0],pr.E[1]); pr.ans=[S.x,S.y]; pr.fields=["x","y"]; pr.pair=true;
+    pr.q=`Solve the system. Give exact values${kind==="frac"?" (fractions are welcome)":""}.`;
+  }
+  if(kind==="class"){
+    const t=pick(["one","none","inf"]);
+    if(t==="one"){ let Es; do{ Es=randSys({}); }while(false); const m1=Es[0], N=normL(m1); // make slopes look close: same a, different b
+      pr.E=[disguise(N),disguise(Es[1])]; }
+    else pr.E=randSpecial(t).map(disguise);
+    pr.cls=solve2(pr.E[0],pr.E[1]).type; pr.q="How many solutions does this system have?"; pr.choice=true;
+  }
+  if(kind==="elim"){
+    let Es; do{ Es=randSys({noOne:true}).map(normL); }while(!Es||elimPlan(Es[0],Es[1]).k1===1&&Math.abs(elimPlan(Es[0],Es[1]).k2)===1);
+    const P=elimPlan(Es[0],Es[1]); pr.E=Es; pr.P=P; const S=solve2(Es[0],Es[1]);
+    const w=P.v==="x"?"y":"x"; pr.w=w;
+    pr.ans= w==="x"?[S.x,S.y]:[S.y,S.x]; pr.fields=[w,P.v];
+    pr.q=`Multiply (1) by <b>${minus(P.k1)}</b> and (2) by <b>${minus(P.k2)}</b>, then add. The ${P.v}-terms cancel. Find <b>${w}</b> first, then back-substitute for <b>${P.v}</b>.`;
+  }
+  if(kind==="word"){
+    const k=pick(WPK), P=WP[k].gen(); pr.W=P; pr.E=P.E; pr.ans=[fi(P.X),fi(P.Y)]; pr.fields=P.fx; pr.wk=k;
+    pr.q=P.q+`<br><span class="hint">Let x = ${P.vx}, y = ${P.vy}.</span>`;
+  }
+  return pr;
+}
+function solText(pr){
+  if(pr.kind==="class"){ const E0=pr.E[0],E1=pr.E[1];
+    const t=`${eqDisp(E0)}  →  ${siStr(E0)}\n${eqDisp(E1)}  →  ${siStr(E1)}\n`;
+    return t+({one:"Different slopes → the lines cross once → exactly one solution.",none:"Same slope, different y-intercepts → parallel → no solution (elimination gives 0 = nonzero).",inf:"Same slope and same y-intercept → same line → infinitely many solutions (elimination gives 0 = 0)."}[pr.cls]); }
+  if(pr.kind==="word"){ const s=subSteps(pr.E); const sol=pr.E[0].form==="std"&&pr.E[1].form==="std"? esc(elimSteps(pr.E[0],pr.E[1]).lines.join("\n")) : s.steps.map(x=>x.html.replace(/<\/?mark[^>]*>/g,"")).join("<br>");
+    return `Let x = ${pr.W.vx}, y = ${pr.W.vy}.\n${pr.W.why.join("\n")}\n\n${sol}\n\n`+pr.W.interp.replace(/<\/?b>/g,""); }
+  return esc(elimSteps(pr.E[0],pr.E[1]).lines.join("\n"))+(pr.kind==="elim"?"":"\n\n(Substitution or graphing gives the same point.)");
+}
+function hintText(pr){
+  if(pr.kind==="elim")return `After multiplying, line the equations up and add column by column: the ${pr.P.v}-coefficients should be opposites. Divide to get ${pr.w}, then put it back into (1) or (2).`;
+  if(pr.kind==="word")return `Write one equation for each fact in the story (a total, and a value or comparison), then solve. Check your answer makes BOTH facts true.`;
+  return `Pick a method: substitute if a variable is alone (or has coefficient ±1); otherwise multiply to make a pair of coefficients opposites and add. Then check your (x, y) in BOTH equations.`;
+}
+const M6={
+  tab:"Challenge", lesson:"A-REI.C.5–6 · A-CED.A.3", accent:"var(--coral)",
+  title:()=>"Practice: "+({solve:"solve the system",frac:"solve the system",class:"how many solutions?",elim:"elimination with given multipliers",word:"word problem"}[M6.s.pr?M6.s.pr.kind:"solve"]),
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false,pick:null},
+  streakEl:null,
+  newProb(){ M6.s.pr=genProblem(M6.s.kind); M6.s.state="open"; M6.s.reveal=false; M6.s.tries=0; M6.s.pick=null; },
+  bar(){
+    btn("New problem",()=>{M6.newProb();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    KINDS.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=M6.s.kind; sel.onchange=()=>{M6.s.kind=sel.value;M6.newProb();render();}; bar.appendChild(sel);
+    M6.streakEl=spacer(""); M6.upStreak();
+  },
+  upStreak(){ if(M6.streakEl)M6.streakEl.textContent="Streak "+M6.s.streak+" · Best "+M6.s.best+" · Solved "+M6.s.solved; },
+  draw(){
+    if(!M6.s.pr)M6.newProb();
+    const pr=M6.s.pr, show=M6.s.state==="right"||M6.s.reveal;
+    if(pr.kind==="word"){ M5w(pr,show); }
+    else { V=VSTD; const g=gridBg(); if(show) plotSystem(g,pr.E,{}); else { const t=E("text",{x:350,y:230,class:"sm","text-anchor":"middle"}); t.textContent="The graph appears once you've answered."; t.setAttribute("style","fill:#7C8AAB"); g.appendChild(t); } }
+    work.hidden=false;
+    work.innerHTML=`<div class="wkhead">The system</div><div class="sysbig" id="sys6"${pr.kind==="word"?"":` data-sys="${pr.E.map(E2=>[E2.a,E2.b,E2.c].map(fs).join(",").replace(/−/g,"-")).join(";")}"`}><span class="c1">(1)</span> ${eqDisp(pr.E[0])}<br><span class="c2">(2)</span> ${eqDisp(pr.E[1])}</div>`;
+    if(pr.kind==="word"&&!show) work.innerHTML=`<div class="wkhead">Write your own system</div><div class="story">Define the variables, write two equations from the story, and solve.</div>`;
+  },
+  panel(full){
+    const pr=M6.s.pr;
+    if(!full&&(document.getElementById("chk")||document.getElementById("cch")))return;
+    const verd=(good,txt)=>`<div class="verdict ${good?"good":"bad"}">${txt}</div>`;
+    let h=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob">${pr.q}</p></div>`;
+    if(pr.choice){
+      h+=`<div class="choices choices3" id="cch"></div><div id="fb6"></div><div style="height:4px"></div></div>`;
+    } else {
+      h+=`<div class="ansrow">${pr.fields.map((f,i)=>`<div><label class="fld" for="ans${i}">${f} =</label><input type="text" id="ans${i}" autocomplete="off" spellcheck="false" placeholder="${i===0&&pr.pair?"e.g. 3 or (3, −2)":"e.g. −4 or 7/3"}"></div>`).join("")}</div>
+        <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+          <button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button>
+          <button id="sol" class="ghost" type="button">Show solution</button>
+        </div><div id="fb6"></div><div style="height:4px"></div></div>`;
+    }
+    h+=`<div class="panel"><h3>How answers are checked</h3><div class="pad">
+      <p>Type integers, fractions like <b>−7/3</b>, or decimals (rounded to the nearest hundredth is fine). ${pr.pair?"You can also type the whole ordered pair <b>(x, y)</b> into the x box.":""}</p>
+      <p>A first-try correct answer grows your streak. A wrong answer resets it and gives a hint — then try again.</p></div></div>`;
+    side.innerHTML=h;
+    const fb=$("fb6");
+    const showSol=pre=>{ fb.innerHTML=(pre||"")+`<div class="fldwrap"><div class="eq">${solText(pr)}</div></div>`; };
+    const win=()=>{ M6.s.state="right"; if(M6.s.tries===0&&!M6.s.reveal){M6.s.streak++; M6.s.best=Math.max(M6.s.best,M6.s.streak);} M6.s.solved++; M6.upStreak(); clear(); M6.draw();
+      showSol(verd(true,`<b>Correct!</b> ${M6.s.tries||M6.s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+M6.s.streak+"."} Compare with the worked solution. Press <b>New problem</b> for another.`)); };
+    const lose=msg=>{ M6.s.tries++; M6.s.streak=0; M6.upStreak(); fb.innerHTML=verd(false,msg); };
+    if(pr.choice){
+      const box=$("cch");
+      [["one","Exactly one"],["none","No solution"],["inf","Infinitely many"]].forEach(([k,l])=>{ const b=document.createElement("button"); b.type="button"; b.className="choice"; b.textContent=l; b.dataset.k=k;
+        b.onclick=()=>{ if(M6.s.state==="right")return; if(k===pr.cls){ b.classList.add("right"); win(); [...box.children].forEach(c=>{ if(c.dataset.k===pr.cls)c.classList.add("right"); }); }
+          else { b.classList.add("wrong"); lose(`<b>Not quite.</b> Rewrite both equations as y = mx + b and compare the slopes first, then the y-intercepts.`); } };
+        box.appendChild(b); });
+      return;
+    }
+    const ins=pr.fields.map((_,i)=>$("ans"+i));
+    const check=()=>{
+      if(M6.s.state==="right")return;
+      let raw=ins.map(x=>x.value);
+      if(pr.pair&&/,/.test(raw[0])){ const p=raw[0].replace(/[()]/g,"").split(","); if(p.length===2){ raw=[p[0],p[1]]; ins[0].value=p[0].trim(); ins[1].value=p[1].trim(); } }
+      const vals=raw.map(parseNumStr);
+      if(vals.some(v=>!v)){ fb.innerHTML=verd(false,`<b>I can't read that.</b> Use numbers like −4, fractions like 7/3, decimals like 2.33, or a pair (x, y).`); return; }
+      const good=vals.map((v,i)=>feq(v,pr.ans[i])||(!fisInt(v)&&Math.abs(fv(v)-fv(pr.ans[i]))<=0.0051&&String(raw[i]).indexOf(".")>=0));
+      if(good.every(Boolean)){ win(); ins.forEach(x=>x.disabled=true); }
+      else {
+        const which=pr.fields.filter((_,i)=>!good[i]).map(f=>f.split(" ")[0]).join(" and ");
+        let extra="";
+        if(pr.kind!=="word"){ const X=pr.kind==="elim"&&pr.w==="y"?vals[1]:vals[0], Y=pr.kind==="elim"&&pr.w==="y"?vals[0]:vals[1];
+          const o=pr.E.map(E2=>onLine(E2,X,Y)); extra=` Your point ${ptS(X,Y)} ${o[0]&&o[1]?"…":o[0]?"satisfies (1) but <b>not (2)</b>.":o[1]?"satisfies (2) but <b>not (1)</b>.":"satisfies <b>neither</b> equation."}`; }
+        lose(`<b>Not quite — check ${which}.</b>${extra} ${hintText(pr)}`);
+      }
+    };
+    $("chk").onclick=check;
+    ins.forEach(x=>x.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); }));
+    $("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){M6.s.streak=0;M6.upStreak();} clear(); M6.draw();
+      showSol(`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+  }
+};
+function M5w(pr,show){
+  const P=pr.W; const xM=niceCeil(P.X*1.8,8), yM=niceCeil((P.plans?P.Y:P.Y)*1.8,7);
+  const ox=62, oy=VH-36; V={ox,oy,sx:(VW-ox-14)/xM,sy:(oy-10)/yM};
+  const g=gridBg({q1:true,xs:niceStep(xM,10),ys:niceStep(yM,8),xl:niceStep(xM,10),yl:niceStep(yM,8),xt:P.xt,yt:P.yt});
+  if(show) plotSystem(g,pr.E,{names:P.plans?["Plan A: ","Plan B: "]:["(1) ","(2) "],ts:P.plans?[.9,.82,.74,.12,.2]:null});
+  else { const t=E("text",{x:(PR.x0+PR.x1)/2,y:(PR.y0+PR.y1)/2,class:"sm","text-anchor":"middle"}); t.textContent="The graph of your system appears once you've answered."; t.setAttribute("style","fill:#7C8AAB"); g.appendChild(t); }
+}
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
+function update(){ setFS(); const M=MODS[cur]; clear(); M.draw(); M.panel(false); }
+function render(){
+  setFS(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M6&&!M6.s.pr)M6.newProb();
+  if(M.s&&"built" in M.s)M.s.built=false;
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  work.hidden=true; work.innerHTML="";
+  bar.innerHTML=""; M.bar();
+  clear(); M.draw(); M.panel(true);
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ if(M2.s.play)M2.stop(); cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+M1.init(); M2.init(); M3.init(); M4.init(); M5.init();
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>
