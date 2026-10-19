@@ -439,7 +439,7 @@ const M1={
   tab:"Distributions", lesson:"S-ID.A.1 · S-ID.A.3", accent:"var(--cyan)",
   s:{pre:"scores",data:null,bw:10,mode:"add",fences:true},
   title:()=>"Three views of one data set: "+PRE1[M1.s.pre].name.toLowerCase(),
-  vh:()=>FS>1?496:488,
+  vh:()=>FS>1?510:500,
   init(){ M1.load("scores"); },
   load(k){ const P=PRE1[k]; M1.s.pre=k; M1.s.data=P.data.slice(); M1.s.bw=P.bw; },
   range(){ const P=PRE1[M1.s.pre], d=M1.s.data, bw=M1.s.bw; let lo=P.lo, hi=P.hi;
@@ -493,7 +493,7 @@ const M1={
     heading(g,14,382,"BOX PLOT");
     if(Q){ drawBox(g,Q,X,422,30,C.purple,{fences:M1.s.fences,lo,hi,labels:true}); }
     axisX(g,X,458,lo,hi,step,{});
-    T(g,R1,FS>1?488:482,P.u==="points"?"test score (points)":P.v+" ("+P.u+")",{cls:"ax",a:"end"});
+    T(g,R1,FS>1?502:494,P.u==="points"?"test score (points)":P.v+" ("+P.u+")",{cls:"ax",a:"end"});
   },
   panel(){
     const P=PRE1[M1.s.pre];
@@ -581,8 +581,8 @@ const M2={
       if(!M2.s.moved){ const v=a[M2.s.hl]; TC(g,X2(v),top[v]-20,"drag me",{cls:"tiny",fill:C.hand}); }
       axisX(g,X2,base+14,0,100,FS>1?20:10);
       // deviation rows
-      const ds=Q.s.map(v=>v-Q.mean), n=ds.length, y0=232, rh=Math.min(15,108/n), xm=X2(Q.mean);
-      heading(g,14,214,"DEVIATIONS FROM THE MEAN  x − x̄");
+      const ds=Q.s.map(v=>v-Q.mean), n=ds.length, y0=246, rh=Math.min(15,100/n), xm=X2(Q.mean);
+      heading(g,14,226,"DEVIATIONS FROM THE MEAN  x − x̄");
       Ln(g,xm,y0-8,xm,y0+n*rh,C.pink,1.6,"4 3");
       Q.s.forEach((v,i)=>{ const y=y0+i*rh+rh/2, c=ds[i]<0?C.blue:C.orange;
         Ln(g,xm,y,X2(v),y,c,Math.max(2,Math.min(5,rh*.38)));
@@ -704,7 +704,7 @@ const M3={
   tab:"Two-way tables", lesson:"S-ID.B.5", accent:"var(--yellow)",
   s:{pre:"bf",T:null,mode:"row",sel:[1,1],geo:null},
   title:()=>"Two-way table: "+PRE3[M3.s.pre].name.toLowerCase(),
-  vh:()=>470,
+  vh:()=>{ const T=M3.s.T, rh=FS>1?36:32, nb=M3.s.mode==="col"?T.cols.length:T.rows.length; return Math.round(32+rh*(T.rows.length+2)+28+22+16+nb*52+14); },
   init(){ M3.load("bf"); },
   load(k){ const P=PRE3[k]; M3.s.pre=k; M3.s.T=JSON.parse(JSON.stringify(P)); M3.s.sel=[1,1]; },
   bar(){
@@ -725,7 +725,7 @@ const M3={
     heading(g,14,y0,"SEGMENTED BAR CHART · "+(byCol?"each column = 100%":"each row = 100%"));
     let lx=30; const ly=y0+22;
     segs.forEach((s,k)=>{ Rc(g,lx,ly-6,12,12,{fill:CAT[k],rx:2}); const t=T(g,lx+18,ly,s,{cls:"tiny",a:"start",fill:C.ink}); lx+=18+s.length*(6.8*FS)+22; });
-    const bx=FS>1?200:160, bw=640-bx+30, avail=VH-ly-24, bh=Math.min(40,(avail-12*(bars.length-1))/bars.length);
+    const bx=FS>1?200:160, bw=640-bx+30, bh=40;
     bars.forEach((b,i)=>{ const y=ly+16+i*(bh+12), tot=byCol?tt.ct[i]:tt.rt[i];
       T(g,bx-10,y+bh/2,b,{cls:"tb",a:"end"}); let x=bx;
       segs.forEach((s,k)=>{ const c=byCol?TB.n[k][i]:TB.n[i][k], w=tot?c/tot*bw:0;
@@ -852,7 +852,7 @@ SSR = Σ(y − ŷ)²<small>The least-squares regression line is the one line wit
     let h=relRow(C.orange,"My line",eqStr(U.m,U.b,S.dm,S.db),"SSR "+num(su,dp));
     if(LS){
       h+=relRow(C.green,"Least-squares line",M4.s.ls?eqStr(LS.m,LS.b,S.dm,S.db):"hidden — press Reveal",M4.s.ls?"SSR "+num(sl,dp):"?");
-      if(M4.s.ls){ const pctOver=sl>1e-9?(su-sl)/sl*100:0; h+=relRow(C.purple,"Compare",pctOver<0.5?"Your line is essentially the least-squares line!":"Your SSR is larger by",pctOver<0.5?"✓":num(pctOver,1)+"%");
+      if(M4.s.ls){ const diff=su-sl, same=diff<=Math.max(0.005*sl,1e-6*(1+sl)); h+=relRow(C.purple,"Compare",same?"Your line is essentially the least-squares line!":"Your SSR is larger by",same?"✓":sl>1e-9?num(diff/sl*100,1)+"%":num(diff,dp));
         h+=relRow(C.blue,"Correlation r","n = "+P.length,num(LS.r,3)); }
     } else h+=`<div class="pad">Add at least two points with different x-values to compute a regression line.</div>`;
     $("s4").innerHTML=h;
@@ -917,7 +917,7 @@ const M5={
     if(M5.s.mode==="cause"){ chips(Object.keys(CAUSE).map(k=>[k,CAUSE[k].name]),M5.s.cz,k=>{M5.s.cz=k;M5.s.CZ=genCause(k);M5.s.reveal=false;M5.s.color=false;render();},"var(--lavender)");
       chk("Color by lurking variable",M5.s.color,v=>{M5.s.color=v;if(v)M5.s.reveal=true;render();}); }
   },
-  F(){ if(M5.s.mode==="res"){ const P=PRE5[M5.s.set]; return Object.assign({L:80,R:675,T:14,B:240,noXlab:true,yl:18},P,{xt:null}); }
+  F(){ if(M5.s.mode==="res"){ const P=PRE5[M5.s.set]; return Object.assign({L:80,R:675,T:30,B:240,noXlab:true,yl:18},P,{xt:null}); }
     if(M5.s.mode==="r") return {L:80,R:675,T:14,B:392,xr:[0,10],yr:[0,10],xs:1,ys:1,xt:"x",yt:"y",yl:18};
     const D=CAUSE[M5.s.cz]; return {L:80,R:675,T:14,B:392,xr:D.xr,yr:D.yr,xs:D.xs,ys:D.ys,xt:D.xt,yt:D.yt,yl:18}; },
   inv(p){ const F=M5.F(); return [F.xr[0]+(p[0]-F.L)/(F.R-F.L)*(F.xr[1]-F.xr[0]), F.yr[0]+(F.B-p[1])/(F.B-F.T)*(F.yr[1]-F.yr[0])]; },
@@ -930,7 +930,7 @@ const M5={
       const fm=frame(g,F), P=M5.s.P, LS=linreg(P);
       if(LS) Ln(fm.pg,fm.X(F.xr[0]),fm.Y(LS.m*F.xr[0]+LS.b),fm.X(F.xr[1]),fm.Y(LS.m*F.xr[1]+LS.b),C.green,3);
       P.forEach(([x,y],i)=>{ Ci(g,fm.X(x),fm.Y(y),5.5,C.blue); g.appendChild(E("circle",{cx:fm.X(x),cy:fm.Y(y),r:FS>1?18:11,class:"hit","data-drag":"p"+i})); });
-      if(LS){ T(g,F.L+10,F.T+16,"LS line "+eqStr(LS.m,LS.b,2,1)+" · r = "+num(LS.r,3),{a:"start",fill:C.green}); }
+      if(LS){ T(g,F.L,15,"LS line "+eqStr(LS.m,LS.b,2,1)+" · r = "+num(LS.r,3),{a:"start",fill:C.green}); }
       // residual plot
       const res=LS?P.map(([x,y])=>y-(LS.m*x+LS.b)):P.map(()=>0), mr=Math.max(1e-9,...res.map(Math.abs));
       const ys=niceStep(mr*2.4,4), ym=Math.ceil(mr*1.15/ys)*ys;

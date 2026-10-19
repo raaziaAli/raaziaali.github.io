@@ -293,7 +293,7 @@ function axes(o){
   const pxX=Math.abs(X(sx)-X(0)), pxY=Math.abs(Y(0)-Y(sy));
   const ex=pxX<36*FS?(pxX<18*FS?5:2):1, ey=pxY<22*FS?(pxY<11*FS?5:2):1;
   const ly=clamp(hasY0?Y(0)+15*FS:VH-6,12*FS,VH-6);
-  for(let i=i0;i<=i1;i++){ if(i===0||i%ex)continue; const t=E("text",{x:X(i*sx),y:ly,class:"ax","text-anchor":"middle"}); t.textContent=tickFmt(i*sx,sx,o.xpre); gg.appendChild(t); }
+  for(let i=i0;i<=i1;i++){ if(i===0||i%ex)continue; if(X(i*sx)>VW-12*FS||X(i*sx)<10)continue; const t=E("text",{x:X(i*sx),y:ly,class:"ax","text-anchor":"middle"}); t.textContent=tickFmt(i*sx,sx,o.xpre); gg.appendChild(t); }
   let lx=hasX0?X(0)-6:4, anc=hasX0?"end":"start";
   if(hasX0&&X(0)<40*FS){ lx=X(0)+6; anc="start"; }
   for(let j=j0;j<=j1;j++){ if(j===0||j%ey)continue; const yy=Y(j*sy); if(yy<8||yy>VH-4)continue; const t=E("text",{x:lx,y:yy+4,class:"ax","text-anchor":anc}); t.textContent=tickFmt(j*sy,sy,o.ypre); gg.appendChild(t); }
@@ -317,7 +317,7 @@ function wline(g,x1,y1,x2,y2,color,w,dash){
   if(dash)a["stroke-dasharray"]=dash; const n=E("line",a); g.appendChild(n); return n;
 }
 function sdot(g,p,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:(r||5)*(FS>1?1.25:1),style:"fill:"+(color||"var(--ink)"),stroke:"#fff","stroke-width":2,"pointer-events":"none"})); }
-function sgrab(g,p,id,color){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?26:16,class:"grab","data-drag":id})); sdot(g,p,color,6); }
+function sgrab(g,p,id,color){ const R=(FS>1?26:16); BOXES.push([p[0]-R,p[1]-R,p[0]+R,p[1]+R]); g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?26:16,class:"grab","data-drag":id})); sdot(g,p,color,6); }
 function rich(t,s){
   String(s).split(/(\^\{[^}]*\}|_\{[^}]*\})/).forEach(p=>{ if(!p)return; let sh=null, txt=p;
     if(p.slice(0,2)==="^{"){sh="super";txt=p.slice(2,-1);} else if(p.slice(0,2)==="_{"){sh="sub";txt=p.slice(2,-1);}
@@ -340,12 +340,12 @@ function lab(g,p,text,color,dir){
   return stext(g,[cx,cy],text,"sm",color);
 }
 function smartLabel(g,anchor,dir,text,color){
-  const w=tw(text), h=17*FS, d=unit(dir), off=13*FS;
+  const w=tw(text), h=17*FS, d=unit(dir), off=20*FS;
   return lab(g,[anchor[0]+d[0]*(off+w/2*Math.abs(d[0])), anchor[1]+d[1]*(off+h/2*Math.abs(d[1]))],text,color,d[1]>0?1:-1);
 }
 function legend(g,items,corner){
   const lh=21*FS, w=Math.max.apply(null,items.map(it=>plain(it.text).length))*8.2*FS+48*FS, h=items.length*lh+12;
-  const x=corner[1]==="r"? VW-w-10 : (corner[2]?+corner.slice(2):60), y=corner[0]==="b"? VH-h-30*FS : 10;
+  const x=corner[1]==="r"? VW-w-10 : ((W.x0<0&&W.x1>0)? Math.max(60,X(0)+14) : 60), y=corner[0]==="b"? VH-h-30*FS : 30*FS;
   g.appendChild(E("rect",{x,y,width:w,height:h,rx:10,fill:"rgba(255,255,255,.9)",stroke:"#CBD5E1","stroke-width":1}));
   items.forEach((it,i)=>{ const yy=y+6+lh*(i+.5);
     const a={x1:x+10,y1:yy,x2:x+34*FS,y2:yy,style:"stroke:"+it.color,"stroke-width":it.w||3.5,"stroke-linecap":"round"}; if(it.dash)a["stroke-dasharray"]=it.dash;
