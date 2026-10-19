@@ -299,7 +299,7 @@ function exprMX(m,c){ // mx + c
   let t=coefX(m); if(Math.abs(c)>1e-12)t+=(c<0?" − ":" + ")+fx(Math.abs(c)); return t; }
 const slopeInt=(m,b)=>"y = "+exprMX(m,b);
 const vsub=(v,name)=> Math.abs(v)<1e-12? name : (v<0? `${name} + ${fx(-v)}` : `${name} − ${fx(v)}`);
-function mCoef(m){ if(near(m,1))return ""; if(near(m,-1))return "−"; return fx(m); }
+function mCoef(m){ if(near(m,1))return ""; if(near(m,-1))return "−"; const f=fx(m); return f.indexOf("/")>=0? "("+f+")" : f; }
 function pointSlope(m,x1,y1){
   const L=vsub(y1,"y");
   if(Math.abs(m)<1e-12)return L+" = 0";
@@ -508,7 +508,7 @@ function banner(text){
   const t=E("text",{x:27,y:12+h/2+1,class:"bn","dominant-baseline":"middle"}); t.textContent=text; cv.appendChild(t);
 }
 function badge(ok,txtOk,txtNo){
-  const t=ok?(txtOk||"✓ Function"):(txtNo||"✗ Not a function"), fs=FS>1?22:15, w=t.length*fs*0.78+26, h=fs+18, x=VW-w-12, y=VH-h-12;
+  const t=ok?(txtOk||"✓ Function"):(txtNo||"✗ Not a function"), fs=FS>1?22:15, w=t.length*fs*0.78+26, h=fs+18, x=(VIEW===STD?VW:VIEW.R)-w-12, y=(VIEW===STD?VH:VIEW.Bt)-h-12;
   cv.appendChild(E("rect",{x,y,width:w,height:h,rx:h/2,fill:ok?"#D1FAE5":"#FFE4E6",stroke:ok?"#059669":"#E11D48","stroke-width":2}));
   const tx=E("text",{x:x+w/2,y:y+h/2+1,class:"bdg","text-anchor":"middle","dominant-baseline":"middle",style:"fill:"+(ok?"#065F46":"#9F1239")}); tx.textContent=t; cv.appendChild(tx);
 }
@@ -880,7 +880,7 @@ const M3={
     if(s.mode==="walk"){
       const w=s.walk, [n,d]=SLOPES[w.mi], b=w.b, B0=[0,b], B1=[d,b+n], B2=[2*d,b+2*n], Bm=[-d,b-n];
       if(w.step>=4){ wlineMB(g,n/d,b,"var(--vert)",3.4); }
-      if(w.step>=1){ sdot(g,W2S(B0),"var(--magenta)",7); smartLabel(g,W2S(B0),[-1,n>0?-.6:.6],"(0, "+fx(b)+")","#BE185D"); }
+      if(w.step>=1){ sdot(g,W2S(B0),"var(--magenta)",7); smartLabel(g,W2S(B0),[1,n>0?1:-1],"(0, "+fx(b)+")","#BE185D"); }
       if(w.step>=2){ slopeTri(g,B0,n,d,true); sdot(g,W2S(B1),"var(--ink)",6); }
       if(w.step>=3){ slopeTri(g,B1,n,d,false); sdot(g,W2S(B2),"var(--ink)",6); slopeTri(g,Bm,n,d,false); sdot(g,W2S(Bm),"var(--ink)",6); }
       banner(slopeInt(n/d,b));

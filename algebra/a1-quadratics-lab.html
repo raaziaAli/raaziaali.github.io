@@ -427,7 +427,7 @@ function gridBg(o){
     const sy=W2S([0,y])[1]; if(sy<WIN.T+8||sy>WIN.B-6)continue;
     const t=E("text",{x:tx,y:sy+4,class:"ax","text-anchor":(leftSide&&!o.leftOut)?"start":"end"}); t.textContent=num(y,2); gg.appendChild(t); }
   if(hasX&&hasY&&!o.leftOut){ const t=E("text",{x:axX-6,y:axY+15*FS,class:"ax","text-anchor":"end"}); t.textContent="0"; gg.appendChild(t); }
-  const xn=E("text",{x:WIN.R-8,y:axY-8,class:"axn","text-anchor":"end"}); xn.textContent=o.xn||"x"; gg.appendChild(xn);
+  const xn=E("text",{x:WIN.R-8,y:o.below?axY+34*FS:axY-8,class:"axn","text-anchor":"end"}); xn.textContent=o.xn||"x"; gg.appendChild(xn);
   const yn=E("text",{x:(o.leftOut?WIN.L+8:axX+8),y:WIN.T+16,class:"axn"}); yn.textContent=o.yn||"y"; gg.appendChild(yn);
   cv.appendChild(gg);
   const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
