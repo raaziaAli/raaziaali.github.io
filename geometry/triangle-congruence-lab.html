@@ -70,7 +70,7 @@
   .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
   .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
     color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
-  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none;user-select:none;-webkit-user-select:none}
 
   .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
   .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
@@ -193,7 +193,7 @@
   .sm{font-family:var(--mono);font-weight:700;font-size:13px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
   .cap{font-family:var(--mono);font-size:12.5px;font-weight:700;fill:#64748B;letter-spacing:.05em}
   .mk,.num,.sm,.cap{pointer-events:none}
-  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2;pointer-events:none}
   .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
   .grab:hover{fill:rgba(255,107,53,.35)}
   .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
@@ -301,9 +301,10 @@ function bg(){
   cv.appendChild(E("rect",{width:VW,height:VH,fill:"url(#g)"}));
   const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
 }
-function seg(g,p,q,cls,extra){const l=E("line",{x1:p[0],y1:p[1],x2:q[0],y2:q[1],class:cls||"line"});if(extra)for(const k in extra)l.setAttribute(k,extra[k]);g.appendChild(l);return l;}
-function poly(g,pts,cls,extra){const n=E("polygon",{points:pts.map(p=>p[0].toFixed(2)+","+p[1].toFixed(2)).join(" "),class:cls||"tri"});if(extra)for(const k in extra)n.setAttribute(k,extra[k]);g.appendChild(n);return n;}
-function circ(g,c,r,cls,extra){const n=E("circle",{cx:c[0],cy:c[1],r:r,class:cls||"guide"});if(extra)for(const k in extra)n.setAttribute(k,extra[k]);g.appendChild(n);return n;}
+function sty(n,extra){if(extra)for(const k in extra)n.style.setProperty(k,String(extra[k]));}
+function seg(g,p,q,cls,extra){const l=E("line",{x1:p[0],y1:p[1],x2:q[0],y2:q[1],class:cls||"line"});sty(l,extra);g.appendChild(l);return l;}
+function poly(g,pts,cls,extra){const n=E("polygon",{points:pts.map(p=>p[0].toFixed(2)+","+p[1].toFixed(2)).join(" "),class:cls||"tri"});sty(n,extra);g.appendChild(n);return n;}
+function circ(g,c,r,cls,extra){const n=E("circle",{cx:c[0],cy:c[1],r:r,class:cls||"guide"});sty(n,extra);g.appendChild(n);return n;}
 function fullLine(g,p,d,cls,extra){const u=unit(d);return seg(g,add(p,mul(u,-2400)),add(p,mul(u,2400)),cls,extra);}
 function txt(g,p,s,cls,color,anchor){
   const t=E("text",{x:p[0],y:p[1],class:cls||"mk","text-anchor":anchor||"middle","dominant-baseline":"middle"});
@@ -511,11 +512,16 @@ const T1={
     if(k==="AAS")sol={E:[0,0],F:[R.a,0],D:mul(dir(R.B),R.c)};
     else if(k==="HL")sol={F:[0,0],D:[0,R.b],E:[R.a,0]};
     else sol={D:R.P.A,E:R.P.B,F:R.P.C};
-    const wc=cen3(sol.D,sol.E,sol.F);
+    const wp=[sol.D,sol.E,sol.F];
+    if(k==="HL")wp.push([-R.a,0]);
+    if(k==="SSA"){const h=R.P.C[1],r2=R.a*R.a-h*h;if(r2>0){const x=R.P.C[0]-Math.sqrt(r2);if(x>0)wp.push([x,0]);}}
+    if(k==="AAA")wp.push([R.c*1.2,0],mul(R.P.C,1.2));
+    const wxs=wp.map(q=>q[0]),wys=wp.map(q=>q[1]);
+    const wc=[(Math.min.apply(null,wxs)+Math.max.apply(null,wxs))/2,(Math.min.apply(null,wys)+Math.max.apply(null,wys))/2];
     const xs=[R.P.A[0],R.P.B[0],R.P.C[0]], ys=[R.P.A[1],R.P.B[1],R.P.C[1]];
     const x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs),y0=Math.min.apply(null,ys),y1=Math.max.apply(null,ys);
-    const rad=Math.max(dist(wc,sol.D),dist(wc,sol.E),dist(wc,sol.F));
-    const S=Math.min(26,250/(x1-x0),290/(y1-y0),170/rad);
+    const rad=Math.max.apply(null,wp.map(q=>dist(wc,q)));
+    const S=Math.min(26,250/(x1-x0),290/(y1-y0),160/rad);
     const rc=[(x0+x1)/2,(y0+y1)/2];
     const ref=p=>[156+S*(p[0]-rc[0]),262-S*(p[1]-rc[1])];
     const cs=Math.cos(T1.s.rot*D2R), sn=Math.sin(T1.s.rot*D2R), fl=T1.s.flip;
@@ -626,7 +632,7 @@ const T1={
     } else if(k==="SSA"){
       fullLine(gw,L(o.D),sub(L([1,0]),L([0,0])),"guide");
       circ(gw,L(o.F),R.a*G.S,"guide");
-      o.cands.forEach((c,i)=>{circ(gw,L(c),7,"guide",{stroke:"var(--vert)","stroke-width":2.4,"stroke-dasharray":"none",fill:"#fff"});
+      o.cands.forEach((c,i)=>{if(o.tri&&dist(c,o.tri.E)<1e-3)return;circ(gw,L(c),7,"guide",{stroke:"var(--vert)","stroke-width":2.4,"stroke-dasharray":"none",fill:"#fff"});
         txt(gw,add(L(c),[0,24]),o.cands.length>1?"E"+(i?"₂":"₁"):"E","sm","var(--vert)");});
       if(o.tri&&o.cands.length>1){const other=o.cands.find(c=>dist(c,o.tri.E)>1e-3);
         if(other)poly(gw,[L(o.D),L(other),L(o.F)],"alt2");}
@@ -1036,8 +1042,6 @@ m∠A + m∠B + m∠ACB = 180°  triangle sum
       <div class="panel"><h3>Try this</h3><div class="pad"><p>Set a = 4 and b = 6. Drag c from 1 to 10 and find the exact values where the triangle starts and stops closing. Do they match |a − b| and a + b?</p></div></div>`;
     } else {
       const {A,B,C}=T3.s.mid, M=mid(A,B), N=mid(A,C), mn=dist(M,N)/U, bc=dist(B,C)/U;
-      const sl=(p,q)=>{const dx=q[0]-p[0], dy=-(q[1]-p[1]); return Math.abs(dx)<1e-9?"undefined (vertical)":fmt(dy/dx*100)/100+"";};
-      const angMN=deg([N[0]-M[0],-(N[1]-M[1])]), angBC=deg([C[0]-B[0],-(C[1]-B[1])]);
       h+=`<div class="panel"><h3>Live measures</h3><div class="pad">
         <div class="eq">MN = ${fmt(mn)}    BC = ${fmt(bc)}
 MN ÷ BC = ${(mn/bc).toFixed(3)}
@@ -1294,7 +1298,7 @@ const T5={
       let cls="", okS=true, okR=rv===st.r;
       if(st.opts)okS=sv===st.opts[0];
       if(s.checked&&(rv||sv))cls=(okS&&okR)?"right":"wrong";
-      const stmt= st.opts? `<select data-s="${i}" class="${s.checked&&!okS?"bad":""}" aria-label="Statement ${i+1}"><option value="">— choose the statement —</option>${s.ord[i].map(o=>`<option${sv===o?" selected":""}>${o}</option>`).join("")}</select>`
+      const stmt= st.opts? `<select data-s="${i}" class="${s.checked&&!okS?"bad":""}" aria-label="Statement ${i+1}"><option value="">— statement —</option>${s.ord[i].map(o=>`<option${sv===o?" selected":""}>${o}</option>`).join("")}</select>`
                          : esc(st.s);
       rows+=`<tr class="${cls}"><td class="no">${i+1}</td><td class="stmt">${stmt}</td><td class="why">${reasonSel(i,rv).replace("<select ",`<select class="${s.checked&&rv!==st.r?"bad":""}" `)}</td></tr>`;
       if(s.checked&&cls==="wrong"&&st.hint)rows+=`<tr class="hintrow"><td colspan="3">Hint: ${st.hint}</td></tr>`;

@@ -1,0 +1,1344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Right Triangle Trig Lab — Geometry Unit 2</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M12 50 L52 50 L52 16Z' fill='none' stroke='%2300E5FF' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M44 50 L44 42 L52 42' fill='none' stroke='%23FF3D8A' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:minmax(0,1fr)}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none;user-select:none;-webkit-user-select:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+  .panel > .eq{margin:16px 20px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap;text-align:right}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:11px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict.info{background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .verdict b{color:#fff}
+
+  /* ── drawing ── */
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:15px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── Right Triangle Trig Lab extensions ── */
+  .vl{font-family:var(--display);font-weight:600;font-size:17px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .sm{font-family:var(--mono);font-weight:600;font-size:12.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .hd{font-family:var(--display);font-weight:600;font-size:15px;fill:#22314F}
+  .cap{font-family:var(--ui);font-weight:700;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .big{font-family:var(--mono);font-weight:700;font-size:19px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:20px;flex-wrap:wrap;margin-top:8px}
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  .bar button:focus-visible,.seg button:focus-visible,.go:focus-visible,.ghost:focus-visible,.opt:focus-visible,footer.foot a:focus-visible,.rng input:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13.5px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px;max-width:100%}
+  .rng input{accent-color:var(--accent);width:170px;max-width:42vw}
+  .rng span{min-width:64px;white-space:nowrap}
+  table.meas{width:100%;border-collapse:collapse;font-size:14px}
+  table.meas th{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);
+    text-align:left;padding:12px 12px 6px;font-weight:600}
+  table.meas td{padding:8px 12px;border-top:1px solid rgba(196,181,253,.11);font-family:var(--mono);font-size:13.5px;color:#fff;white-space:nowrap}
+  table.meas th:first-child,table.meas td:first-child{padding-left:20px}
+  table.meas td:first-child{font-family:var(--ui);color:#CFCFEA}
+  table.meas tr.hl td{background:rgba(255,255,255,.05)}
+  .key{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  ol.chain{margin:0;padding:6px 20px 18px 40px;font-size:15px;color:#CFCFEA}
+  ol.chain li{padding:7px 0} ol.chain li::marker{color:var(--accent);font-weight:700}
+  ol.chain li b{color:#fff}
+  ol.chain code,.pad code{font-family:var(--mono);font-size:13.5px;color:#fff;background:rgba(0,0,0,.3);padding:1px 6px;border-radius:6px}
+  .g5{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 12px;padding:0 20px 4px}
+  .g5 label.fld{margin:12px 0 6px}
+  .g5 input.given{border-color:rgba(2,132,199,.9);box-shadow:0 0 0 1px rgba(56,189,248,.5) inset}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap}
+  .q{font-size:16px;color:#fff;line-height:1.55}
+  .inrow{display:flex;gap:12px;padding:0 20px}
+  .inrow > div{flex:1;min-width:0}
+  .inrow label.fld{margin-left:0;margin-right:0}
+  .pill{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:700;padding:2px 9px;border-radius:100px;margin-right:4px}
+  .pad ul{margin:0 0 10px;padding-left:20px} .pad li{margin:3px 0}
+  @media (max-width:520px){
+    .wrap{padding:16px 12px 50px}
+    .bar{padding:12px 14px}
+    .board-head{padding:13px 14px}
+    .board-head .lsn{margin-left:0}
+    .pad{padding:14px 16px}
+    .rel{padding:12px 16px}
+    table.meas th,table.meas td{padding-left:8px;padding-right:8px}
+    table.meas th:first-child,table.meas td:first-child{padding-left:14px}
+    table.meas td{font-size:12.5px}
+    .bar .spacer{margin-left:0;width:100%}
+    nav.tabs button{padding:9px 14px;font-size:14px}
+    .g5{padding:0 16px 4px;gap:2px 8px}
+    .eq{font-size:13.5px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Right Triangle Trig Lab</h1>
+    <div class="eyebrow">Geometry · Unit 2 · Triangles, Congruence &amp; Similarity</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Right triangle figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every figure is live and every measure is computed from the drawing — drag a point and the ratios follow. Angles are in degrees. Vocabulary follows Common Core G-SRT.C and Eureka Math / EngageNY Geometry Module 2.
+    <div class="links"><a href="/geometry/">← Geometry course</a><a href="/math/#geometry">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460;
+const $=id=>document.getElementById(id);
+const cv=$("cv"), bar=$("bar"), side=$("side"), tabsEl=$("tabs"), bTitle=$("bTitle"), bLesson=$("bLesson");
+
+const D2R=Math.PI/180;
+const norm=d=>((d%360)+360)%360;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const r1=v=>Math.round(v*10)/10;
+const fmt=v=>{const s=r1(v); return (Math.abs(s-Math.round(s))<0.05? String(Math.round(s)) : s.toFixed(1));};
+const fm=v=>fmt(v).replace("-","−");
+const f2=v=>(Math.round(v*100)/100).toFixed(2);
+const f3=v=>(Math.round(v*1000)/1000).toFixed(3);
+const f4=v=>(Math.round(v*10000)/10000).toFixed(4);
+const g2=v=>{const s=f2(v); return s.replace(/\.?0+$/,"");};   // 2 dp, trailing zeros dropped
+const dg=v=>fmt(v)+"°";
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const add=(p,q)=>[p[0]+q[0],p[1]+q[1]], sub=(p,q)=>[p[0]-q[0],p[1]-q[1]], mul=(p,k)=>[p[0]*k,p[1]*k];
+const dist=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1]);
+const unit=v=>{const l=Math.hypot(v[0],v[1])||1;return [v[0]/l,v[1]/l];};
+const mid=(p,q)=>[(p[0]+q[0])/2,(p[1]+q[1])/2];
+const dot2=(p,q)=>p[0]*q[0]+p[1]*q[1];
+const cen=P=>{let x=0,y=0;P.forEach(p=>{x+=p[0];y+=p[1];});return [x/P.length,y/P.length];};
+const PT=(c,r,deg)=>[c[0]+r*Math.cos(deg*D2R), c[1]-r*Math.sin(deg*D2R)];
+const angS=(c,p)=>norm(Math.atan2(c[1]-p[1],p[0]-c[0])/D2R);
+const sinD=d=>Math.sin(d*D2R), cosD=d=>Math.cos(d*D2R), tanD=d=>Math.tan(d*D2R);
+const asinD=x=>Math.asin(clamp(x,-1,1))/D2R, acosD=x=>Math.acos(clamp(x,-1,1))/D2R, atanD=x=>Math.atan(x)/D2R;
+const snapTo=(v,s)=>Math.round(v/s)*s;
+const COL={opp:"#DB2777",adj:"#0284C7",hyp:"#7C3AED",ang:"#EA580C",ang2:"#059669",ink:"#22314F",giv:"#0284C7",fnd:"#DB2777",sea:"#93C5FD",gnd:"#A3B18A"};
+function rad(k,n){ // exact k√n for integer k
+  if(Math.abs(k)<1e-12) return "0";
+  return (Math.abs(k-1)<1e-12?"":fm(k))+"√"+n;
+}
+
+/* safe little expression parser: 5√3, 5sqrt3, 5*sqrt(3), (5√3)/2, 10/√2, 12/13, 3.5 */
+function evalExpr(str){
+  let s=String(str||"").toLowerCase().replace(/\s+/g,"").replace(/[°]/g,"").replace(/[×·⋅]/g,"*")
+    .replace(/÷/g,"/").replace(/[−–]/g,"-").replace(/square ?root|sqrt|root|rt/g,"√").replace(/,/g,"");
+  s=s.replace(/(meters|meter|feet|foot|units|unit|degrees|degree|deg|ft|m)$/,"");
+  if(!s) return NaN;
+  let i=0;
+  const peek=()=>s[i];
+  function num(){const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)); if(!m) throw 0; i+=m[0].length; return parseFloat(m[0]);}
+  function atom(){
+    const c=peek();
+    if(c==="("){i++; const v=expr(); if(s[i]!==")") throw 0; i++; return v;}
+    if(c==="√"){i++; const v=atom(); if(v<0) throw 0; return Math.sqrt(v);}
+    return num();
+  }
+  function power(){let v=atom(); if(peek()==="^"){i++; v=Math.pow(v,unary());} return v;}
+  function unary(){if(peek()==="-"){i++;return -unary();} if(peek()==="+"){i++;return unary();} return power();}
+  function term(){
+    let v=unary();
+    for(;;){const c=peek();
+      if(c==="*"){i++;v*=unary();}
+      else if(c==="/"){i++;v/=unary();}
+      else if(c==="("||c==="√"||(c!==undefined&&/[\d.]/.test(c))){v*=power();}
+      else break;}
+    return v;
+  }
+  function expr(){let v=term(); for(;;){const c=peek(); if(c==="+"){i++;v+=term();} else if(c==="-"){i++;v-=term();} else break;} return v;}
+  try{const v=expr(); if(i!==s.length) return NaN; return isFinite(v)?v:NaN;}catch(e){return NaN;}
+}
+
+/* ══════════════════════ svg primitives ══════════════════════ */
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+function plain(noGrid){
+  const d=E("defs");
+  d.innerHTML='<clipPath id="fr"><rect width="'+VW+'" height="'+VH+'"/></clipPath>'+
+    '<pattern id="pg" width="25" height="25" patternUnits="userSpaceOnUse"><path d="M25 0H0V25" fill="none" stroke="#DCE6F7" stroke-width="1"/></pattern>';
+  cv.appendChild(d);
+  if(!noGrid) cv.appendChild(E("rect",{width:VW,height:VH,fill:"url(#pg)"}));
+  const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
+}
+function txt(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"mk","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("fill",color);
+  t.textContent=s; g.appendChild(t); return t;
+}
+function seg(g,p,q,o){
+  o=o||{};
+  const l=E("line",{x1:p[0],y1:p[1],x2:q[0],y2:q[1],stroke:o.stroke||COL.ink,"stroke-width":o.w||2,"stroke-linecap":"round"});
+  if(o.dash)l.setAttribute("stroke-dasharray",o.dash);
+  if(o.op!=null)l.setAttribute("opacity",o.op);
+  g.appendChild(l); return l;
+}
+function poly(g,pts,o){
+  const el=E("polygon",{points:pts.map(p=>p[0].toFixed(2)+","+p[1].toFixed(2)).join(" "),
+    fill:o.fill||"none","fill-opacity":o.fo==null?0.16:o.fo,stroke:o.stroke||"none","stroke-width":o.w||2.4,"stroke-linejoin":"round"});
+  if(o.dash)el.setAttribute("stroke-dasharray",o.dash);
+  if(o.op!=null)el.setAttribute("opacity",o.op);
+  g.appendChild(el); return el;
+}
+function pathD(g,d,o){const p=E("path",{d:d,fill:o.fill||"none",stroke:o.stroke||"none","stroke-width":o.w||2,"stroke-linejoin":"round","stroke-linecap":"round"});
+  if(o.fo!=null)p.setAttribute("fill-opacity",o.fo); if(o.op!=null)p.setAttribute("opacity",o.op); if(o.dash)p.setAttribute("stroke-dasharray",o.dash); g.appendChild(p); return p;}
+function cdot(g,p,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||5,fill:color||COL.ink,stroke:"#fff","stroke-width":2})); }
+function grab(g,p,id,label){ const c=E("circle",{cx:p[0],cy:p[1],r:17,class:"grab","data-drag":id}); if(label){const t=E("title",{});t.textContent=label;c.appendChild(t);} g.appendChild(c); }
+function rmark(g,R,P,Q,s){
+  s=s||12; const u=unit(sub(P,R)), w=unit(sub(Q,R));
+  const p1=add(R,mul(u,s)), p3=add(R,mul(w,s)), p2=add(p1,mul(w,s));
+  g.appendChild(E("polyline",{points:[p1,p2,p3].map(p=>p[0].toFixed(2)+","+p[1].toFixed(2)).join(" "),class:"rt"}));
+}
+// interior angle wedge at V between rays VP and VQ
+function arc(g,V,P,Q,r,color,o){
+  o=o||{};
+  let a1=angS(V,P), a2=angS(V,Q), sw=norm(a2-a1);
+  if(sw>180){const t=a1;a1=a2;a2=t;sw=360-sw;}
+  const s=PT(V,r,a1), e=PT(V,r,a1+sw);
+  pathD(g,"M"+V[0]+" "+V[1]+"L"+s[0].toFixed(2)+" "+s[1].toFixed(2)+"A"+r+" "+r+" 0 0 0 "+e[0].toFixed(2)+" "+e[1].toFixed(2)+"Z",
+    {fill:color,fo:o.fo==null?0.18:o.fo,stroke:color,w:o.w||2.2,op:o.op});
+  if(o.label!=null&&o.label!==""){
+    const bis=a1+sw/2, cx=Math.cos(bis*D2R);
+    const anchor=cx>0.5?"start":cx<-0.5?"end":"middle";
+    const lr=r+(o.lo!=null?o.lo:(anchor==="middle"?17:9))+(sw<26?12:0);
+    txt(g,PT(V,lr,bis),o.label,o.cls||"num",color,anchor);
+  }
+  return {a1,sw};
+}
+// label a side, pushed away from centroid C; lines stacked
+function sideLabel(g,P,Q,lines,color,C,off,cls){
+  if(!Array.isArray(lines)) lines=[lines];
+  const m=mid(P,Q), d=unit(sub(Q,P)); let n=[-d[1],d[0]];
+  if(dot2(n,sub(m,C))<0) n=mul(n,-1);
+  const p=add(m,mul(n,off==null?14:off));
+  const anchor=n[0]>0.35?"start":n[0]<-0.35?"end":"middle";
+  const lh=17, h=(lines.length-1)*lh;
+  const y0=n[1]>0.35? p[1]+4 : n[1]<-0.35? p[1]-4-h : p[1]-h/2;
+  lines.forEach((s,i)=>{ if(s==null)return; const c=Array.isArray(cls)?cls[i]:(cls||"num"); txt(g,[p[0],y0+i*lh],s,c,color,anchor); });
+}
+function vlab(g,V,C,name,color,off){ const d=unit(sub(V,C)); txt(g,add(V,mul(d,off||20)),name,"vl",color||COL.ink); }
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null;
+function svgPt(e){
+  const pt=cv.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY;
+  const m=cv.getScreenCTM(); if(!m) return [0,0];
+  const q=pt.matrixTransform(m.inverse()); return [q.x,q.y];
+}
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag; if(!id)return;
+  dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){}
+  stopAnim(); e.preventDefault();
+});
+cv.addEventListener("pointermove",e=>{
+  if(!dragId)return; const M=MODS[cur]; if(!M.drag)return;
+  M.drag(dragId,svgPt(e)); redraw();
+});
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+
+/* ══════════════════════ animation ══════════════════════ */
+let animId=null;
+function stopAnim(){ if(animId){cancelAnimationFrame(animId);animId=null;} if(typeof T5!=="undefined"&&T5.anim){T5.anim=false; const b=$("anim5"); if(b)b.textContent="▶ Animate";} }
+
+/* ══════════════════════ bar helpers ══════════════════════ */
+function btn(label,fn,cls){const b=document.createElement("button");b.type="button";b.textContent=label;if(cls)b.className=cls;b.onclick=fn;bar.appendChild(b);return b;}
+function segBtns(opts,curv,fn,label){
+  const s=document.createElement("div");s.className="seg";s.setAttribute("role","group");if(label)s.setAttribute("aria-label",label);
+  opts.forEach(([k,l])=>{const b=document.createElement("button");b.type="button";b.textContent=l;b.dataset.k=k;
+    b.setAttribute("aria-pressed",String(k===curv));b.onclick=()=>fn(k);s.appendChild(b);});
+  bar.appendChild(s);return s;
+}
+function chk(label,obj,key,fn){
+  const l=document.createElement("label");l.className="chk";
+  const i=document.createElement("input");i.type="checkbox";i.checked=!!obj[key];
+  i.onchange=()=>{obj[key]=i.checked;(fn||redraw)();};
+  l.appendChild(i);l.appendChild(document.createTextNode(label));bar.appendChild(l);return i;
+}
+function spacer(text,id){const s=document.createElement("span");s.className="spacer";if(id)s.id=id;s.textContent=text;bar.appendChild(s);return s;}
+function range(min,max,step,val,show,fn,aria,id){
+  const l=document.createElement("label");l.className="rng";
+  const o=document.createElement("span");o.textContent=show(val);
+  const r=document.createElement("input");r.type="range";r.min=min;r.max=max;r.step=step;r.value=val;r.setAttribute("aria-label",aria);if(id)r.id=id;
+  r.oninput=()=>{const v=fn(+r.value);o.textContent=show(v);};
+  l.appendChild(o);l.appendChild(r);bar.appendChild(l);return r;
+}
+function relRow(color,nm,em,val){
+  return '<div class="rel"><span class="dot" style="background:'+color+'"></span><span class="nm">'+nm+(em?'<em>'+em+'</em>':'')+'</span><span class="val">'+val+'</span></div>';
+}
+const key=c=>'<span class="key" style="background:'+c+'"></span>';
+const pill=(c,t)=>'<span class="pill" style="background:'+c+'33;color:'+c+';border:1px solid '+c+'88">'+t+'</span>';
+
+/* ══════════════════════ TAB 1 · ratios from similarity ══════════════════════ */
+const T1D=()=>({th:35,ref:"A",h:[3.2,5.4,7.9]});
+let T1=T1D();
+const U1=48, A1=[64,384], TC=["#059669","#EA580C","#0891B2"], SUBS=["₁","₂","₃"];
+function t1max(th){return Math.min(520/cosD(th),330/sinD(th))/U1;}
+function t1fit(){const m=t1max(T1.th), mx=Math.max.apply(null,T1.h); if(mx>m) T1.h=T1.h.map(h=>h*m/mx); T1.h=T1.h.map(h=>clamp(h,1,m));}
+function t1tri(k){
+  const h=T1.h[k], th=T1.th, B=[A1[0]+h*cosD(th)*U1, A1[1]-h*sinD(th)*U1];
+  const vert=h*sinD(th), base=h*cosD(th), refA=T1.ref==="A";
+  return {k,h,B,C:[B[0],A1[1]],vert,base,opp:refA?vert:base,adj:refA?base:vert,hyp:h};
+}
+const M1={
+  tab:"Ratios from similarity", lesson:"G-SRT.C.6", accent:"var(--cyan)",
+  title:()=>"Same angle, same ratios", aria:"Three nested similar right triangles sharing an acute angle",
+  bar(){
+    range(10,80,1,T1.th,v=>"θ = "+v+"°",v=>{T1.th=v;t1fit();redraw();return v;},"Angle theta at A");
+    segBtns([["A","Reference ∠A"],["B","Reference ∠B"]],T1.ref,k=>{T1.ref=k;render();},"Reference angle");
+    btn("Reset",()=>{T1=T1D();render();});
+    spacer("Drag the orange handles to resize");
+  },
+  draw(){
+    const g=plain(), th=T1.th, refA=T1.ref==="A";
+    const tris=[0,1,2].map(t1tri);
+    const order=tris.slice().sort((a,b)=>b.h-a.h), big=order[0];
+    order.forEach(t=>poly(g,[A1,t.B,t.C],{fill:TC[t.k],fo:.08,stroke:TC[t.k],w:1.2,op:.9}));
+    seg(g,A1,big.C,{stroke:refA?COL.adj:COL.opp,w:4.5});
+    seg(g,A1,big.B,{stroke:COL.hyp,w:4.5});
+    tris.forEach(t=>seg(g,t.C,t.B,{stroke:refA?COL.opp:COL.adj,w:4.5}));
+    tris.forEach(t=>rmark(g,t.C,A1,t.B,10));
+    if(refA) arc(g,A1,big.C,big.B,46,COL.ang,{label:dg(th),w:2.6});
+    else tris.forEach(t=>arc(g,t.B,A1,t.C,24,COL.ang,{label:t===big?dg(90-th):null,w:2.4,fo:.25}));
+    // labels
+    txt(g,[A1[0]-18,A1[1]+6],"A","vl");
+    tris.forEach(t=>{
+      txt(g,[t.C[0],A1[1]+19],"C"+SUBS[t.k],"vl",TC[t.k]);
+      txt(g,PT(t.B,19,th+90),"B"+SUBS[t.k],"vl",TC[t.k]);
+      const my=(t.B[1]+t.C[1])/2;
+      txt(g,[t.C[0]+8,my],f2(t.vert),"num",refA?COL.opp:COL.adj,"start");
+      if(t===big) txt(g,[t.C[0]+8,my+18],refA?"opposite":"adjacent","sm",refA?COL.opp:COL.adj,"start");
+    });
+    sideLabel(g,A1,big.B,["hypotenuse"],COL.hyp,cen([A1,big.B,big.C]),12,"sm");
+    txt(g,[(A1[0]+big.C[0])/2,A1[1]+42],refA?"adjacent":"opposite","sm",refA?COL.adj:COL.opp);
+    tris.forEach(t=>grab(g,t.B,"b"+t.k,"Resize triangle "+(t.k+1)));
+  },
+  drag(id,p){
+    const k=+id.slice(1), d=[cosD(T1.th),-sinD(T1.th)];
+    T1.h[k]=clamp(dot2(sub(p,A1),d)/U1,1,t1max(T1.th));
+  },
+  panel(){
+    side.innerHTML=`<div class="panel"><h3>Side lengths (units)</h3><table class="meas" id="t1len"></table></div>
+    <div class="panel"><h3>Ratios — compare the rows</h3><table class="meas" id="t1rat"></table><div class="eq" id="t1eq"></div></div>
+    <div class="panel"><h3>The idea</h3><div class="pad">
+      <p>Every triangle here shares <b>∠A</b> and has a <b>right angle</b>, so all three are <span class="term">similar by AA</span>. Similar triangles have proportional sides — so the ratio of two sides <b>within</b> one triangle is the same in all of them.</p>
+      <p>That ratio depends only on the angle, not on the size. Because it never changes for a given angle, mathematicians gave each one a name:</p>
+      <div class="eq">sin θ = opposite / hypotenuse
+cos θ = adjacent / hypotenuse
+tan θ = opposite / adjacent<small>SOH · CAH · TOA. "Opposite" and "adjacent" are always measured from the angle you chose as the reference; the hypotenuse is always across from the right angle.</small></div>
+      <p>Switch the reference to ∠B: the two legs trade names. The leg that was <b>opposite</b> ∠A is <b>adjacent</b> to ∠B.</p>
+    </div></div>
+    <div class="panel"><h3>Try this</h3><div class="pad">
+      <p>1. Set θ = 30°. Drag the triangles to any size. What is opp/hyp every time? (You have just found sin 30° = 0.5.)</p>
+      <p>2. Find the angle where opp/adj = 1. Why must the two legs be equal there?</p>
+      <p>3. As θ grows from 10° to 80°, which ratio grows, which shrinks, and which can get bigger than 1?</p>
+    </div></div>`;
+  },
+  live(){
+    const tris=[0,1,2].map(t1tri), refA=T1.ref==="A", m=refA?T1.th:90-T1.th, nm=refA?"A":"B";
+    let L='<tr><th>Triangle</th><th style="color:'+COL.opp+'">opp</th><th style="color:'+COL.adj+'">adj</th><th style="color:'+COL.hyp+'">hyp</th></tr>';
+    let R='<tr><th>Triangle</th><th>opp/hyp</th><th>adj/hyp</th><th>opp/adj</th></tr>';
+    tris.forEach(t=>{
+      const n=key(TC[t.k])+"△AB"+SUBS[t.k]+"C"+SUBS[t.k];
+      L+='<tr><td>'+n+'</td><td>'+f2(t.opp)+'</td><td>'+f2(t.adj)+'</td><td>'+f2(t.hyp)+'</td></tr>';
+      R+='<tr><td>'+n+'</td><td>'+f3(t.opp/t.hyp)+'</td><td>'+f3(t.adj/t.hyp)+'</td><td>'+f3(t.opp/t.adj)+'</td></tr>';
+    });
+    $("t1len").innerHTML=L; $("t1rat").innerHTML=R;
+    $("t1eq").innerHTML="Reference ∠"+nm+" = "+dg(m)+"\nsin "+fmt(m)+"° = "+f3(sinD(m))+"\ncos "+fmt(m)+"° = "+f3(cosD(m))+"\ntan "+fmt(m)+"° = "+f3(tanD(m))+
+      "<small>Calculator values (degree mode). They match every row — the ratios are computed from the unrounded side lengths.</small>";
+  }
+};
+
+/* ══════════════════════ TAB 2 · complementary angles ══════════════════════ */
+const T2D=()=>({a:4,b:6,snap:true});
+let T2=T2D();
+const U2=38, L2=[290,398], R2=[400,398];
+function t2geo(){
+  const a=T2.a,b=T2.b;
+  const C=L2.slice(), A=[L2[0]-b*U2,L2[1]], B=[L2[0],L2[1]-a*U2];
+  const B2=R2.slice(), C2=[R2[0]+a*U2,R2[1]], A2=[C2[0],R2[1]-b*U2];
+  const c=Math.hypot(a,b), mA=atanD(a/b);
+  return {A,B,C,A2,B2,C2,a,b,c,mA,mB:90-mA};
+}
+const M2={
+  tab:"Complementary angles", lesson:"G-SRT.C.7", accent:"var(--magenta)",
+  title:()=>"sin θ = cos(90° − θ)", aria:"One right triangle shown twice: viewed from angle A and from angle B",
+  bar(){
+    btn("Reset",()=>{T2=T2D();render();});
+    btn("Make it 45°",()=>{T2.a=5;T2.b=5;redraw();});
+    btn("30° / 60°",()=>{T2.b=6;T2.a=Math.round(6/Math.sqrt(3)*100)/100;redraw();});
+    chk("Snap to 0.5",T2,"snap",()=>{});
+    spacer("Drag A or B (or A′, C′ on the copy)");
+  },
+  draw(){
+    const g=plain(), G=t2geo();
+    const lines=(sideA,sideB)=>[sideA,sideB];
+    // left copy, viewed from A
+    txt(g,[165,30],"Viewed from ∠A","hd");
+    txt(g,[165,58],"sin A = a/c = "+f3(G.a/G.c),"num",COL.opp);
+    txt(g,[165,80],"cos A = b/c = "+f3(G.b/G.c),"num",COL.adj);
+    txt(g,[545,30],"Viewed from ∠B","hd");
+    txt(g,[545,58],"cos B = a/c = "+f3(G.a/G.c),"num",COL.opp);
+    txt(g,[545,80],"sin B = b/c = "+f3(G.b/G.c),"num",COL.adj);
+    seg(g,[345,20],[345,440],{stroke:"#CBD5E1",w:1.5,dash:"4 6"});
+    const T=[G.A,G.B,G.C], Cl=cen(T);
+    poly(g,T,{fill:"#FDE68A",fo:.25});
+    seg(g,G.A,G.C,{stroke:COL.adj,w:4.5}); seg(g,G.C,G.B,{stroke:COL.opp,w:4.5}); seg(g,G.A,G.B,{stroke:COL.hyp,w:4.5});
+    rmark(g,G.C,G.A,G.B,12);
+    arc(g,G.A,G.C,G.B,42,COL.ang,{label:dg(G.mA),w:3,fo:.28});
+    arc(g,G.B,G.A,G.C,26,COL.ang2,{label:dg(G.mB),fo:.12,op:.75});
+    sideLabel(g,G.C,G.B,["opp ∠A","a = "+fm(G.a)],COL.opp,Cl,10,["sm","num"]);
+    sideLabel(g,G.A,G.C,["adjacent to ∠A","b = "+fm(G.b)],COL.adj,Cl,24,["sm","num"]);
+    sideLabel(g,G.A,G.B,["hypotenuse","c = "+fm(G.c)],COL.hyp,Cl,10,["sm","num"]);
+    vlab(g,G.A,Cl,"A"); vlab(g,G.B,Cl,"B"); vlab(g,G.C,Cl,"C",null,18);
+    // right copy, viewed from B
+    const T2p=[G.A2,G.B2,G.C2], Cr=cen(T2p);
+    poly(g,T2p,{fill:"#BBF7D0",fo:.25});
+    seg(g,G.B2,G.C2,{stroke:COL.opp,w:4.5}); seg(g,G.C2,G.A2,{stroke:COL.adj,w:4.5}); seg(g,G.B2,G.A2,{stroke:COL.hyp,w:4.5});
+    rmark(g,G.C2,G.B2,G.A2,12);
+    arc(g,G.B2,G.C2,G.A2,42,COL.ang2,{label:dg(G.mB),w:3,fo:.28});
+    arc(g,G.A2,G.B2,G.C2,26,COL.ang,{label:dg(G.mA),fo:.12,op:.75});
+    sideLabel(g,G.C2,G.A2,["opp ∠B","b = "+fm(G.b)],COL.adj,Cr,10,["sm","num"]);
+    sideLabel(g,G.B2,G.C2,["adjacent to ∠B","a = "+fm(G.a)],COL.opp,Cr,24,["sm","num"]);
+    sideLabel(g,G.B2,G.A2,["hypotenuse","c = "+fm(G.c)],COL.hyp,Cr,10,["sm","num"]);
+    vlab(g,G.A2,Cr,"A′"); vlab(g,G.B2,Cr,"B′"); vlab(g,G.C2,Cr,"C′",null,18);
+    grab(g,G.A,"A","Drag A"); grab(g,G.B,"B","Drag B"); grab(g,G.A2,"A2","Drag A′"); grab(g,G.C2,"C2","Drag C′");
+    void lines;
+  },
+  drag(id,p){
+    const sn=v=>T2.snap?snapTo(v,0.5):Math.round(v*100)/100;
+    if(id==="A") T2.b=clamp(sn((L2[0]-p[0])/U2),1.5,6);
+    else if(id==="B") T2.a=clamp(sn((L2[1]-p[1])/U2),1.5,6);
+    else if(id==="C2") T2.a=clamp(sn((p[0]-R2[0])/U2),1.5,6);
+    else if(id==="A2") T2.b=clamp(sn((R2[1]-p[1])/U2),1.5,6);
+  },
+  panel(){
+    side.innerHTML=`<div class="panel"><h3>Live values</h3><div id="t2rel"></div></div>
+    <div class="panel"><h3>The idea: co-functions</h3><div class="pad">
+      <p>The two acute angles of a right triangle always add to <b>90°</b> — they are <span class="term">complementary</span>. If one is θ, the other is 90° − θ.</p>
+      <p>Look at the pink leg <b>a</b>. Seen from ∠A it is the <b>opposite</b> side; seen from ∠B the very same segment is the <b>adjacent</b> side. The hypotenuse does not change. So the same fraction a/c is both sin A and cos B.</p>
+      <div class="eq">sin θ = cos(90° − θ)
+cos θ = sin(90° − θ)<small>The "co" in cosine means complement: the cosine of an angle is the sine of its complement.</small></div>
+      <p>The tangents are <b>reciprocals</b>: tan A = a/b while tan B = b/a.</p>
+    </div></div>
+    <div class="panel"><h3>Try this</h3><div class="pad">
+      <p>1. Make ∠A about 20°. Without a calculator, what is cos 70°? Check it in the table.</p>
+      <p>2. Click <b>Make it 45°</b>. Why is sin 45° = cos 45° exactly?</p>
+      <p>3. If sin(x + 10)° = cos(2x + 20)°, the two angles must be complementary. Solve for x.</p>
+    </div></div>`;
+  },
+  live(){
+    const G=t2geo();
+    $("t2rel").innerHTML=
+      relRow(COL.ang,"m∠A + m∠B","acute angles of a right triangle",dg(G.mA)+" + "+dg(G.mB)+" = 90°")+
+      relRow(COL.opp,"sin A = cos B","both are a / c = "+fm(G.a)+" / "+fm(G.c),f4(G.a/G.c))+
+      relRow(COL.adj,"cos A = sin B","both are b / c = "+fm(G.b)+" / "+fm(G.c),f4(G.b/G.c))+
+      relRow(COL.hyp,"tan A · tan B","(a/b)(b/a) — reciprocals",f3(G.a/G.b)+" × "+f3(G.b/G.a)+" = 1")+
+      relRow("#94A3B8","Calculator check","sin("+fmt(G.mA)+"°) and cos("+fmt(G.mB)+"°)",f4(sinD(G.mA))+" · "+f4(cosD(G.mB)));
+  }
+};
+
+/* ══════════════════════ TAB 3 · Pythagorean theorem & special right triangles ══════════════════════ */
+const T3D=()=>({mode:"pyth",a:3,b:4,s45:4,s30:3,snap:true});
+let T3=T3D();
+const U3=20;
+function t3pyth(){
+  const a=T3.a,b=T3.b,u=U3;
+  const C=[350-b*u/2,230+a*u/2], B=[C[0],C[1]-a*u], A=[C[0]+b*u,C[1]];
+  const n=[a*u,-b*u];
+  return {a,b,c:Math.hypot(a,b),C,B,A,
+    sqA:[C,B,[B[0]-a*u,B[1]],[C[0]-a*u,C[1]]],
+    sqB:[C,A,[A[0],A[1]+b*u],[C[0],C[1]+b*u]],
+    sqC:[B,A,add(A,n),add(B,n)]};
+}
+function gridIn(g,P0,P1,P3,len1,len3,color){
+  // unit grid lines in a square with corner P0, edges to P1 (length len1) and P3 (len3), world units
+  const d1=unit(sub(P1,P0)), d3=unit(sub(P3,P0));
+  for(let i=1;i<len1-1e-6;i++){const s=add(P0,mul(d1,i*U3)); seg(g,s,add(s,mul(d3,len3*U3)),{stroke:color,w:1,op:.45});}
+  for(let j=1;j<len3-1e-6;j++){const s=add(P0,mul(d3,j*U3)); seg(g,s,add(s,mul(d1,len1*U3)),{stroke:color,w:1,op:.45});}
+}
+function t3_45(){const s=T3.s45,u=40; const A=[350-s*u/2,230+s*u/2], B=[A[0]+s*u,A[1]], C=[B[0],A[1]-s*u], D=[A[0],C[1]]; return {s,A,B,C,D,d:s*Math.SQRT2};}
+function t3_30(){const s=T3.s30,u=34; const M=[350,402], B=[350-s*u,402], C=[350+s*u,402], A=[350,402-s*Math.sqrt(3)*u]; return {s,A,B,C,M,h:s*Math.sqrt(3)};}
+const M3={
+  tab:"Pythagorean & special", lesson:"G-SRT.C.8 · G-SRT.B.4", accent:"var(--yellow)",
+  title:()=>({pyth:"Squares on the sides",s45:"45°–45°–90°: half a square",s30:"30°–60°–90°: half an equilateral triangle"})[T3.mode],
+  aria:"Right triangle with squares on its sides, or a special right triangle",
+  bar(){
+    segBtns([["pyth","a² + b² = c²"],["s45","45-45-90"],["s30","30-60-90"]],T3.mode,k=>{T3.mode=k;render();},"Mode");
+    if(T3.mode==="pyth"){
+      btn("3-4-5",()=>{T3.a=3;T3.b=4;redraw();});
+      btn("Isosceles 5-5",()=>{T3.a=5;T3.b=5;redraw();});
+      chk("Snap to 0.5",T3,"snap",()=>{});
+      spacer("Drag A and B");
+    } else spacer(T3.mode==="s45"?"Drag C to resize the square":"Drag C to resize");
+  },
+  draw(){
+    const g=plain();
+    if(T3.mode==="pyth"){
+      const P=t3pyth();
+      poly(g,P.sqA,{fill:COL.opp,fo:.14,stroke:COL.opp,w:2});
+      poly(g,P.sqB,{fill:COL.adj,fo:.14,stroke:COL.adj,w:2});
+      poly(g,P.sqC,{fill:COL.hyp,fo:.14,stroke:COL.hyp,w:2});
+      gridIn(g,P.C,P.B,P.sqA[3],P.a,P.a,COL.opp);
+      gridIn(g,P.C,P.A,P.sqB[3],P.b,P.b,COL.adj);
+      gridIn(g,P.B,P.A,P.sqC[3],P.c,P.c,COL.hyp);
+      const T=[P.A,P.B,P.C], Ct=cen(T);
+      poly(g,T,{fill:"#FDE68A",fo:.9,stroke:COL.ink,w:2.6});
+      rmark(g,P.C,P.A,P.B,11);
+      txt(g,cen(P.sqA),"a² = "+g2(P.a*P.a),"num",COL.opp);
+      txt(g,cen(P.sqB),"b² = "+g2(P.b*P.b),"num",COL.adj);
+      txt(g,cen(P.sqC),"c² = "+g2(P.c*P.c),"num",COL.hyp);
+      sideLabel(g,P.C,P.B,"a = "+fm(P.a),COL.opp,Ct,-8,"sm");
+      sideLabel(g,P.C,P.A,"b = "+fm(P.b),COL.adj,Ct,-12,"sm");
+      vlab(g,P.A,Ct,"A",null,22); vlab(g,P.B,Ct,"B",null,22); txt(g,[P.C[0]+12,P.C[1]+14],"C","vl");
+      grab(g,P.A,"A","Drag A"); grab(g,P.B,"B","Drag B");
+      const ext=sideLabel; void ext;
+      txt(g,[18,24],"c = √(a² + b²) = "+f2(P.c),"num",COL.hyp,"start");
+    } else if(T3.mode==="s45"){
+      const S=t3_45(), Tc=cen([S.A,S.B,S.C]);
+      poly(g,[S.A,S.C,S.D],{fill:"#E2E8F0",fo:.5,stroke:COL.ink,w:2,dash:"6 5"});
+      poly(g,[S.A,S.B,S.C],{fill:"#FDE68A",fo:.8,stroke:COL.ink,w:2.6});
+      seg(g,S.A,S.C,{stroke:COL.hyp,w:4});
+      seg(g,S.A,S.B,{stroke:COL.adj,w:4}); seg(g,S.B,S.C,{stroke:COL.opp,w:4});
+      rmark(g,S.B,S.A,S.C,13); rmark(g,S.D,S.A,S.C,11);
+      arc(g,S.A,S.B,S.C,40,COL.ang,{label:"45°"}); arc(g,S.C,S.A,S.B,40,COL.ang,{label:"45°"});
+      arc(g,S.A,S.C,S.D,30,"#94A3B8",{fo:.08}); arc(g,S.C,S.D,S.A,30,"#94A3B8",{fo:.08});
+      sideLabel(g,S.A,S.B,["s = "+S.s],COL.adj,Tc,16);
+      sideLabel(g,S.B,S.C,["s = "+S.s],COL.opp,Tc,12);
+      sideLabel(g,S.A,S.C,["s√2 = "+rad(S.s,2),"≈ "+f2(S.d)],COL.hyp,Tc,12);
+      const cS=cen([S.A,S.B,S.C,S.D]);
+      vlab(g,S.A,cS,"A"); vlab(g,S.B,cS,"B"); vlab(g,S.C,cS,"C"); vlab(g,S.D,cS,"D");
+      txt(g,[18,24],"Square ABCD, side s; diagonal AC splits it in two","sm",COL.ink,"start");
+      grab(g,S.C,"C","Resize the square");
+    } else {
+      const S=t3_30(), Tc=cen([S.A,S.M,S.C]), Ce=cen([S.A,S.B,S.C]);
+      poly(g,[S.A,S.B,S.M],{fill:"#E2E8F0",fo:.5,stroke:COL.ink,w:2,dash:"6 5"});
+      poly(g,[S.A,S.M,S.C],{fill:"#FDE68A",fo:.8,stroke:COL.ink,w:2.6});
+      seg(g,S.M,S.C,{stroke:COL.adj,w:4}); seg(g,S.A,S.M,{stroke:COL.opp,w:4}); seg(g,S.A,S.C,{stroke:COL.hyp,w:4});
+      rmark(g,S.M,S.C,S.A,12);
+      arc(g,S.C,S.A,S.M,38,COL.ang,{label:"60°"}); arc(g,S.A,S.M,S.C,46,COL.ang2,{label:"30°",lo:6});
+      arc(g,S.B,S.M,S.A,30,"#94A3B8",{label:"60°",fo:.08}); arc(g,S.A,S.B,S.M,34,"#94A3B8",{fo:.08});
+      sideLabel(g,S.M,S.C,["s = "+S.s],COL.adj,Tc,16);
+      sideLabel(g,S.B,S.M,["s = "+S.s],"#64748B",cen([S.A,S.B,S.M]),16);
+      sideLabel(g,S.A,S.C,["2s = "+(2*S.s)],COL.hyp,Ce,12);
+      sideLabel(g,S.A,S.B,["2s = "+(2*S.s)],"#64748B",Ce,12);
+      txt(g,[S.M[0]+10,(S.A[1]+S.M[1])/2+30],"s√3 = "+rad(S.s,3),"num",COL.opp,"start");
+      txt(g,[S.M[0]+10,(S.A[1]+S.M[1])/2+50],"≈ "+f2(S.h),"num",COL.opp,"start");
+      vlab(g,S.A,Ce,"A"); vlab(g,S.B,Ce,"B"); vlab(g,S.C,Ce,"C"); txt(g,[S.M[0],S.M[1]+20],"M","vl");
+      txt(g,[18,24],"Equilateral △ABC, side 2s; altitude AM","sm",COL.ink,"start");
+      grab(g,S.C,"C","Resize the triangle");
+    }
+  },
+  drag(id,p){
+    if(T3.mode==="pyth"){
+      const sn=v=>T3.snap?snapTo(v,0.5):Math.round(v*10)/10;
+      if(id==="A") T3.b=clamp(sn(2*(p[0]-350)/U3),1,7);
+      if(id==="B") T3.a=clamp(sn(2*(230-p[1])/U3),1,7);
+    } else if(T3.mode==="s45"){
+      T3.s45=clamp(Math.round(((p[0]-350)+(230-p[1]))/40),1,8);
+    } else {
+      T3.s30=clamp(Math.round((p[0]-350)/34),1,6);
+    }
+  },
+  panel(){
+    let h;
+    if(T3.mode==="pyth") h=`<div class="panel"><h3>The theorem, live</h3><div class="eq" id="t3eq"></div><div id="t3rel"></div></div>
+    <div class="panel"><h3>The idea</h3><div class="pad">
+      <p>In a right triangle with legs <b>a</b>, <b>b</b> and hypotenuse <b>c</b>, the area of the square on the hypotenuse equals the <b>sum</b> of the areas of the squares on the legs.</p>
+      <div class="eq">a² + b² = c²<small>Only for right triangles. The hypotenuse is always the longest side.</small></div>
+      <p>Why it is true (G-SRT.B.4): the altitude from C to the hypotenuse cuts the triangle into two smaller triangles that are each <b>similar</b> to the whole one. Their proportions give a² = c·(part of c) and b² = c·(other part), and the parts add up to c.</p>
+      <p>The <span class="term">converse</span> also holds: if a² + b² = c², the angle opposite c is a right angle.</p>
+    </div></div>
+    <div class="panel"><h3>Try this</h3><div class="pad">
+      <p>1. Click <b>3-4-5</b>. Count the little unit squares: 9 + 16 = 25.</p>
+      <p>2. Find two other legs (snap on) that make c a whole number. Hint: try doubling 3-4-5 in your head.</p>
+      <p>3. Make a = b. What do you notice about c compared with a? That pattern is the 45-45-90 triangle.</p>
+    </div></div>`;
+    else if(T3.mode==="s45") h=`<div class="panel"><h3>Exact ratio</h3><div class="eq" id="t3eq"></div><div id="t3rel"></div></div>
+    <div class="panel"><h3>Derivation from a square</h3><ol class="chain">
+      <li>A diagonal cuts a square into two right triangles with <b>legs s and s</b>.</li>
+      <li>The diagonal bisects the 90° corners, so the acute angles are <b>45° and 45°</b> (isosceles right triangle).</li>
+      <li>Pythagorean theorem: <code>s² + s² = d²</code>, so <code>d² = 2s²</code>.</li>
+      <li>Take the square root: <code>d = s√2</code>.</li></ol>
+      <div class="pad"><div class="eq">leg : leg : hypotenuse = 1 : 1 : √2<small>Hypotenuse = leg × √2 · Leg = hypotenuse ÷ √2 = (hypotenuse/2)·√2</small></div></div></div>
+    <div class="panel"><h3>Try this</h3><div class="pad">
+      <p>1. Use the figure: sin 45° = s/(s√2). Simplify it to 1/√2 = √2/2 ≈ 0.707 — the same for every square.</p>
+      <p>2. A 45-45-90 triangle has hypotenuse 10. What is each leg in simplest radical form?</p>
+    </div></div>`;
+    else h=`<div class="panel"><h3>Exact ratio</h3><div class="eq" id="t3eq"></div><div id="t3rel"></div></div>
+    <div class="panel"><h3>Derivation from an equilateral triangle</h3><ol class="chain">
+      <li>Start with equilateral △ABC, all sides <b>2s</b>, all angles <b>60°</b>.</li>
+      <li>The altitude AM is also a median and an angle bisector: <b>BM = MC = s</b> and ∠MAC = <b>30°</b>.</li>
+      <li>So △AMC has angles 30°, 60°, 90°, short leg <b>s</b>, hypotenuse <b>2s</b>.</li>
+      <li>Pythagorean theorem: <code>s² + h² = (2s)²</code>, so <code>h² = 3s²</code> and <code>h = s√3</code>.</li></ol>
+      <div class="pad"><div class="eq">short : long : hypotenuse = 1 : √3 : 2<small>The short leg is opposite 30°, the long leg is opposite 60°. Hypotenuse = 2 × short; long = short × √3.</small></div></div></div>
+    <div class="panel"><h3>Try this</h3><div class="pad">
+      <p>1. Read sin 30°, cos 30° and tan 60° straight off the triangle as exact fractions.</p>
+      <p>2. The long leg is 9. Find the short leg exactly. (Divide by √3, then rationalize: 9/√3 = 3√3.)</p>
+    </div></div>`;
+    side.innerHTML=h;
+  },
+  live(){
+    if(T3.mode==="pyth"){
+      const P=t3pyth(), a2=P.a*P.a, b2=P.b*P.b, c2=a2+b2;
+      const exact=Math.abs(Math.sqrt(c2)-Math.round(Math.sqrt(c2)))<1e-9;
+      $("t3eq").innerHTML="a² + b² = c²\n"+fm(P.a)+"² + "+fm(P.b)+"² = "+g2(a2)+" + "+g2(b2)+" = "+g2(c2)+"\nc = √"+g2(c2)+(exact?" = "+Math.round(Math.sqrt(c2)):" ≈ "+f2(P.c))+
+        "<small>"+(exact?"A whole-number hypotenuse: this is a Pythagorean triple (scaled if needed).":"c is irrational here, so we round it.")+"</small>";
+      $("t3rel").innerHTML=relRow(COL.opp,"Square on leg a","area a²",g2(a2))+relRow(COL.adj,"Square on leg b","area b²",g2(b2))+
+        relRow(COL.hyp,"Square on hypotenuse c","area c² — equals the sum",g2(c2));
+    } else if(T3.mode==="s45"){
+      const S=t3_45();
+      $("t3eq").innerHTML="s = "+S.s+"\nlegs:       "+S.s+" and "+S.s+"\nhypotenuse: "+S.s+"√2 ≈ "+f2(S.d)+"<small>sin 45° = cos 45° = 1/√2 = √2/2 ≈ "+f4(Math.SQRT1_2)+" · tan 45° = 1</small>";
+      $("t3rel").innerHTML=relRow(COL.adj,"Leg","s",String(S.s))+relRow(COL.hyp,"Hypotenuse ÷ leg","always √2",f4(S.d/S.s));
+    } else {
+      const S=t3_30();
+      $("t3eq").innerHTML="s = "+S.s+"\nshort leg (opp 30°): "+S.s+"\nlong leg  (opp 60°): "+rad(S.s,3)+" ≈ "+f2(S.h)+"\nhypotenuse:          "+(2*S.s)+
+        "<small>sin 30° = 1/2 · cos 30° = √3/2 ≈ "+f4(Math.sqrt(3)/2)+" · tan 30° = 1/√3 = √3/3 · tan 60° = √3</small>";
+      $("t3rel").innerHTML=relRow(COL.opp,"Long leg ÷ short leg","always √3",f4(S.h/S.s))+relRow(COL.hyp,"Hypotenuse ÷ short leg","always 2","2");
+    }
+  }
+};
+
+/* ══════════════════════ TAB 4 · solving right triangles ══════════════════════ */
+const T4D=()=>({v:{a:"",b:"",c:"10",A:"35",B:""},inv:{f:"sin",r:"0.6"}});
+let T4=T4D();
+const T4F=[["a","side a (BC)"],["b","side b (AC)"],["c","hypotenuse c"],["A","angle A (°)"],["B","angle B (°)"]];
+function solve4(){
+  const G={}; let n=0;
+  for(const k of ["a","b","c","A","B"]){const s=T4.v[k].trim(); if(s==="")continue; const v=evalExpr(s); if(isNaN(v))return {err:"“"+s+"” in "+k+" is not a number."}; G[k]=v; n++;}
+  if(n<2) return {err:n===0?"Enter any two known parts — at least one of them a side.":"One more known part is needed: a right triangle is fixed by two parts besides the right angle."};
+  if(n>2) return {err:"You entered "+n+" parts. Two are enough to fix a right triangle — clear the extras so they can't contradict each other."};
+  for(const k of ["a","b","c"]) if(k in G&&G[k]<=0) return {err:"Side lengths must be positive."};
+  for(const k of ["A","B"]) if(k in G&&(G[k]<=0||G[k]>=90)) return {err:"An acute angle of a right triangle must be between 0° and 90°."};
+  if("A" in G&&"B" in G) return {err:"Two angles fix the shape but not the size (every similar copy fits). Enter at least one side."};
+  const S=[]; let a,b,c,A,B;
+  const given=Object.keys(G);
+  if("c" in G&&("a" in G&&G.c<=G.a||"b" in G&&G.c<=G.b)) return {err:"The hypotenuse must be longer than either leg."};
+  if("a" in G&&"b" in G){
+    a=G.a;b=G.b;c=Math.hypot(a,b);A=atanD(a/b);B=90-A;
+    S.push("<b>Find c</b> with the Pythagorean theorem: <code>c = √(a² + b²) = √("+g2(a)+"² + "+g2(b)+"²) ≈ "+f2(c)+"</code>");
+    S.push("<b>Find ∠A.</b> From A, a is opposite and b is adjacent — that is <b>TOA</b>: <code>tan A = a/b = "+g2(a)+"/"+g2(b)+"</code>");
+    S.push("Undo tangent with the inverse: <code>A = tan⁻¹("+g2(a)+"/"+g2(b)+") ≈ "+dg(A)+"</code>");
+    S.push("<b>Find ∠B</b>: the acute angles are complementary, <code>B = 90° − "+dg(A)+" = "+dg(B)+"</code>");
+  } else if("c" in G&&("a" in G||"b" in G)){
+    c=G.c;
+    if("a" in G){a=G.a;b=Math.sqrt(c*c-a*a);A=asinD(a/c);B=90-A;
+      S.push("<b>Find b</b>: <code>b = √(c² − a²) = √("+g2(c)+"² − "+g2(a)+"²) ≈ "+f2(b)+"</code>");
+      S.push("<b>Find ∠A.</b> From A, a is opposite and c is the hypotenuse — <b>SOH</b>: <code>sin A = a/c = "+g2(a)+"/"+g2(c)+"</code>");
+      S.push("Inverse sine: <code>A = sin⁻¹("+g2(a)+"/"+g2(c)+") ≈ "+dg(A)+"</code>");
+    } else {b=G.b;a=Math.sqrt(c*c-b*b);A=acosD(b/c);B=90-A;
+      S.push("<b>Find a</b>: <code>a = √(c² − b²) = √("+g2(c)+"² − "+g2(b)+"²) ≈ "+f2(a)+"</code>");
+      S.push("<b>Find ∠A.</b> From A, b is adjacent and c is the hypotenuse — <b>CAH</b>: <code>cos A = b/c = "+g2(b)+"/"+g2(c)+"</code>");
+      S.push("Inverse cosine: <code>A = cos⁻¹("+g2(b)+"/"+g2(c)+") ≈ "+dg(A)+"</code>");
+    }
+    S.push("<b>Find ∠B</b>: <code>B = 90° − "+dg(A)+" = "+dg(B)+"</code>");
+  } else {
+    // one side and one angle; work from the given angle
+    const X="A" in G?"A":"B", Y=X==="A"?"B":"A", m=G[X];
+    const oppK=X==="A"?"a":"b", adjK=X==="A"?"b":"a";
+    const sk=given.find(k=>k==="a"||k==="b"||k==="c"), sv=G[sk];
+    const role=sk==="c"?"hyp":sk===oppK?"opp":"adj";
+    const R={}; R[Y]=90-m; R[X]=m;
+    S.push("<b>Find ∠"+Y+"</b>: <code>"+Y+" = 90° − "+dg(m)+" = "+dg(90-m)+"</code> (acute angles of a right triangle are complementary)");
+    S.push("From ∠"+X+": <b>"+oppK+"</b> is opposite, <b>"+adjK+"</b> is adjacent, <b>c</b> is the hypotenuse. You know the <b>"+({hyp:"hypotenuse",opp:"opposite",adj:"adjacent"})[role]+"</b> ("+sk+" = "+g2(sv)+").");
+    let opp,adj,hyp;
+    if(role==="hyp"){hyp=sv;opp=sv*sinD(m);adj=sv*cosD(m);
+      S.push("<b>SOH</b>: <code>sin "+dg(m)+" = "+oppK+"/"+g2(sv)+"</code> → <code>"+oppK+" = "+g2(sv)+" · sin "+dg(m)+" ≈ "+f2(opp)+"</code>");
+      S.push("<b>CAH</b>: <code>cos "+dg(m)+" = "+adjK+"/"+g2(sv)+"</code> → <code>"+adjK+" = "+g2(sv)+" · cos "+dg(m)+" ≈ "+f2(adj)+"</code>");
+    } else if(role==="opp"){opp=sv;hyp=sv/sinD(m);adj=sv/tanD(m);
+      S.push("<b>SOH</b>: <code>sin "+dg(m)+" = "+g2(sv)+"/c</code> → <code>c = "+g2(sv)+" ÷ sin "+dg(m)+" ≈ "+f2(hyp)+"</code> (the unknown is in the denominator, so divide)");
+      S.push("<b>TOA</b>: <code>tan "+dg(m)+" = "+g2(sv)+"/"+adjK+"</code> → <code>"+adjK+" = "+g2(sv)+" ÷ tan "+dg(m)+" ≈ "+f2(adj)+"</code>");
+    } else {adj=sv;opp=sv*tanD(m);hyp=sv/cosD(m);
+      S.push("<b>TOA</b>: <code>tan "+dg(m)+" = "+oppK+"/"+g2(sv)+"</code> → <code>"+oppK+" = "+g2(sv)+" · tan "+dg(m)+" ≈ "+f2(opp)+"</code>");
+      S.push("<b>CAH</b>: <code>cos "+dg(m)+" = "+g2(sv)+"/c</code> → <code>c = "+g2(sv)+" ÷ cos "+dg(m)+" ≈ "+f2(hyp)+"</code>");
+    }
+    c=hyp; if(X==="A"){a=opp;b=adj;A=m;B=90-m;} else {b=opp;a=adj;B=m;A=90-m;}
+  }
+  S.push("<b>Check</b>: <code>a² + b² = "+f2(a*a+b*b)+"</code> and <code>c² = "+f2(c*c)+"</code> ✓");
+  return {a,b,c,A,B,given,steps:S};
+}
+const M4={
+  tab:"Solving right triangles", lesson:"G-SRT.C.8", accent:"var(--mint)",
+  title:()=>"Solve a right triangle from two parts", aria:"Right triangle ABC drawn to scale from the entered measurements",
+  bar(){
+    const ex=(v)=>()=>{T4.v=Object.assign({a:"",b:"",c:"",A:"",B:""},v);render();};
+    btn("Angle + hypotenuse",ex({A:"35",c:"10"}));
+    btn("Angle + leg",ex({B:"62",a:"8"}));
+    btn("Two legs",ex({a:"5",b:"12"}));
+    btn("Leg + hypotenuse",ex({b:"7",c:"9"}));
+    btn("Clear",ex({}));
+  },
+  draw(){
+    const g=plain(), R=solve4();
+    let a,b,c,A,B,giv=[];
+    if(R.err){a=3;b=4;}
+    else {a=R.a;b=R.b;giv=R.given;}
+    const k=Math.min(500/b,300/a), w=b*k, h=a*k;
+    const PA=[350-w/2,228+h/2+10], PC=[350+w/2,PA[1]], PB=[PC[0],PA[1]-h], Ct=cen([PA,PB,PC]);
+    const col=key=>R.err?"#94A3B8":(giv.indexOf(key)>=0?COL.giv:COL.fnd);
+    poly(g,[PA,PB,PC],{fill:R.err?"#E2E8F0":"#FDE68A",fo:R.err?.5:.35});
+    seg(g,PB,PC,{stroke:col("a"),w:4}); seg(g,PA,PC,{stroke:col("b"),w:4}); seg(g,PA,PB,{stroke:col("c"),w:4});
+    rmark(g,PC,PA,PB,13);
+    if(R.err){
+      arc(g,PA,PC,PB,38,"#94A3B8",{label:"A"}); arc(g,PB,PA,PC,28,"#94A3B8",{label:"B"});
+      sideLabel(g,PB,PC,"a","#64748B",Ct,12,"vl"); sideLabel(g,PA,PC,"b","#64748B",Ct,14,"vl"); sideLabel(g,PA,PB,"c","#64748B",Ct,12,"vl");
+      txt(g,[350,30],"Enter two known parts in the panel","cap","#64748B");
+    } else {
+      A=R.A;B=R.B;c=R.c;
+      arc(g,PA,PC,PB,40,col("A"),{label:"A = "+dg(A)});
+      arc(g,PB,PA,PC,30,col("B"),{label:"B = "+dg(B)});
+      sideLabel(g,PB,PC,"a = "+f2(a),col("a"),Ct,12);
+      sideLabel(g,PA,PC,"b = "+f2(b),col("b"),Ct,16);
+      sideLabel(g,PA,PB,"c = "+f2(c),col("c"),Ct,12);
+      txt(g,[18,22],"■ given","cap",COL.giv,"start"); txt(g,[96,22],"■ found","cap",COL.fnd,"start");
+      txt(g,[682,22],"drawn to scale","cap","#64748B","end");
+    }
+    vlab(g,PA,Ct,"A",null,22); vlab(g,PB,Ct,"B",null,22); vlab(g,PC,Ct,"C",null,20);
+  },
+  panel(){
+    side.innerHTML=`<div class="panel"><h3>Known parts (∠C = 90°)</h3>
+      <div class="g5">${T4F.map(([k,l])=>`<div><label class="fld" for="in4${k}">${l}</label><input type="text" inputmode="decimal" id="in4${k}" autocomplete="off" value="${T4.v[k]}"></div>`).join("")}</div>
+      <div class="pad" style="padding-top:8px"><p style="font-size:13.5px;color:var(--dim)">Fill any two boxes (at least one side). The triangle redraws to scale as you type. Exact entries like 5√3 work too.</p></div>
+      <div id="st4"></div></div>
+    <div class="panel"><h3>Which ratio? Ask two questions</h3><div class="pad">
+      <p><b>1.</b> Stand at the angle you know (or want). Name the two sides involved: <b>opposite</b>, <b>adjacent</b> or <b>hypotenuse</b>.</p>
+      <p><b>2.</b> Pick the ratio that uses exactly those two: SOH (opp, hyp) · CAH (adj, hyp) · TOA (opp, adj).</p>
+      <p>If the unknown is on top, <b>multiply</b>; if it is on the bottom, <b>divide</b>. If the unknown is the angle, use the <b>inverse</b>.</p>
+    </div></div>
+    <div class="panel"><h3>What sin⁻¹ means (calculator)</h3><div class="pad">
+      <p><b>sin 30° = 0.5</b> takes an angle and gives a ratio. <b>sin⁻¹(0.5) = 30°</b> runs it backwards: "which acute angle has a sine of 0.5?" It is <b>not</b> 1 ÷ sin.</p>
+      <p>On a calculator press <code>2nd</code> then <code>SIN</code> (or <code>SHIFT SIN</code>). Make sure it is in <b>DEGREE</b> mode, or 0.5 comes back as 0.5236 (radians).</p>
+    </div>
+      <div class="inrow"><div><label class="fld" for="invf">function</label><select id="invf"><option value="sin">sin⁻¹</option><option value="cos">cos⁻¹</option><option value="tan">tan⁻¹</option></select></div>
+      <div><label class="fld" for="invr">ratio</label><input type="text" inputmode="decimal" id="invr" value="${T4.inv.r}" autocomplete="off"></div></div>
+      <div class="eq" id="inv4" style="margin:14px 20px 18px"></div></div>`;
+    T4F.forEach(([k])=>{const el=$("in4"+k); el.addEventListener("input",()=>{T4.v[k]=el.value; redraw();});});
+    $("invf").value=T4.inv.f;
+    $("invf").onchange=()=>{T4.inv.f=$("invf").value;M4.live();};
+    $("invr").addEventListener("input",()=>{T4.inv.r=$("invr").value;M4.live();});
+  },
+  live(){
+    const R=solve4();
+    T4F.forEach(([k])=>{const el=$("in4"+k); if(el) el.classList.toggle("given",T4.v[k].trim()!=="");});
+    $("st4").innerHTML=R.err? '<div class="verdict info">'+R.err+'</div>'
+      : '<ol class="chain">'+R.steps.map(s=>"<li>"+s+"</li>").join("")+'</ol>';
+    const f=T4.inv.f, r=evalExpr(T4.inv.r);
+    let s;
+    if(isNaN(r)) s="Enter a ratio such as 0.6 or 3/5.";
+    else if(f!=="tan"&&(r<0||r>1)) s=f+"⁻¹("+g2(r)+") is undefined for a right triangle: a "+(f==="sin"?"sine":"cosine")+" is leg ÷ hypotenuse, which is always between 0 and 1.";
+    else if(r<=0) s="Use a positive ratio for an acute angle.";
+    else {const ang=f==="sin"?asinD(r):f==="cos"?acosD(r):atanD(r);
+      s=f+"⁻¹("+g2(r)+") ≈ "+dg(ang)+"\ncheck: "+f+"("+fmt(ang)+"°) ≈ "+f3((f==="sin"?sinD:f==="cos"?cosD:tanD)(r1(ang)))+
+        "<small>In radian mode you would see "+f4(ang*D2R)+" — that is why degree mode matters.</small>";}
+    $("inv4").innerHTML=s;
+  }
+};
+
+/* ══════════════════════ scenes (shared by tab 5 and the challenge) ══════════════════════ */
+const GY=410;
+function person(g,foot,hpx,color){
+  const hd=Math.max(2.2,hpx*0.12);
+  const top=[foot[0],foot[1]-hpx];
+  seg(g,[foot[0]-hpx*0.12,foot[1]],[foot[0],foot[1]-hpx*0.45],{stroke:color,w:Math.max(1.6,hpx*0.07)});
+  seg(g,[foot[0]+hpx*0.12,foot[1]],[foot[0],foot[1]-hpx*0.45],{stroke:color,w:Math.max(1.6,hpx*0.07)});
+  seg(g,[foot[0],foot[1]-hpx*0.45],[foot[0],top[1]+hd*2],{stroke:color,w:Math.max(1.6,hpx*0.07)});
+  g.appendChild(E("circle",{cx:top[0],cy:top[1]+hd,r:hd,fill:color}));
+}
+function waves(g,phase,x0,x1){
+  g.appendChild(E("rect",{x:x0,y:GY,width:x1-x0,height:VH-GY,fill:"#BFDBFE",opacity:.75}));
+  let d="M"+x0+" "+GY;
+  for(let x=x0;x<=x1;x+=6) d+="L"+x+" "+(GY+2.2*Math.sin((x/26)+phase)).toFixed(2);
+  pathD(g,d,{stroke:"#3B82F6",w:1.8});
+  for(let row=1;row<3;row++){let d2="M"+x0+" "+(GY+row*16);
+    for(let x=x0;x<=x1;x+=8) d2+="L"+x+" "+(GY+row*16+1.8*Math.sin((x/30)-phase*1.3+row)).toFixed(2);
+    pathD(g,d2,{stroke:"#60A5FA",w:1.2,op:.6});}
+}
+function ground(g,x0,x1){
+  g.appendChild(E("rect",{x:x0,y:GY,width:x1-x0,height:VH-GY,fill:"#D9E4C8"}));
+  seg(g,[x0,GY],[x1,GY],{stroke:"#6B7F4E",w:2.2});
+}
+// each scene draws scenery and returns {lo, corner, hi, names}
+const SCENES={
+  light(g,P,k,X0,phase){
+    waves(g,phase||0,0,VW);
+    const H=P.H*k, top=[X0,GY-H];
+    pathD(g,"M"+(X0-46)+" "+(GY+4)+"Q"+(X0-30)+" "+(GY-16)+" "+X0+" "+(GY-14)+"Q"+(X0+30)+" "+(GY-16)+" "+(X0+42)+" "+(GY+4)+"Z",{fill:"#78716C",stroke:"#57534E",w:1.5});
+    const wb=17, wt=11, yb=GY-10;
+    const tower=[[X0-wb,yb],[X0+wb,yb],[X0+wt,top[1]],[X0-wt,top[1]]];
+    poly(g,tower,{fill:"#FFFFFF",fo:1,stroke:"#475569",w:1.6});
+    const bands=4; for(let i=0;i<bands;i++){const y1=yb-(yb-top[1])*(2*i+1)/(2*bands), y2=yb-(yb-top[1])*(2*i+2)/(2*bands);
+      const w1=wb+(wt-wb)*(yb-y1)/(yb-top[1]), w2=wb+(wt-wb)*(yb-y2)/(yb-top[1]);
+      poly(g,[[X0-w1,y1],[X0+w1,y1],[X0+w2,y2],[X0-w2,y2]],{fill:"#DC2626",fo:.85});}
+    g.appendChild(E("rect",{x:X0-16,y:top[1]-3,width:32,height:5,fill:"#334155"}));
+    g.appendChild(E("rect",{x:X0-8,y:top[1]-17,width:16,height:14,fill:"#FDE047",stroke:"#334155","stroke-width":1.5}));
+    pathD(g,"M"+(X0-10)+" "+(top[1]-17)+"Q"+X0+" "+(top[1]-30)+" "+(X0+10)+" "+(top[1]-17)+"Z",{fill:"#334155"});
+    const bx=X0+P.d*k, by=GY;
+    pathD(g,"M"+(bx-22)+" "+(by-8)+"L"+(bx+22)+" "+(by-8)+"L"+(bx+14)+" "+(by+4)+"L"+(bx-14)+" "+(by+4)+"Z",{fill:"#92400E",stroke:"#78350F",w:1.5});
+    seg(g,[bx,by-8],[bx,by-42],{stroke:"#78350F",w:2});
+    pathD(g,"M"+(bx+2)+" "+(by-40)+"L"+(bx+20)+" "+(by-12)+"L"+(bx+2)+" "+(by-12)+"Z",{fill:"#F8FAFC",stroke:"#94A3B8",w:1.2});
+    return {lo:[bx,by],corner:[X0,GY],hi:top,depSide:1,
+      v:{nm:"height",val:P.H}, h:{nm:"distance",val:P.d}, s:{nm:"line of sight"}};
+  },
+  bldg(g,P,k,Xb){
+    ground(g,0,VW);
+    const H=P.H*k, bw=86;
+    g.appendChild(E("rect",{x:Xb,y:GY-H,width:bw,height:H,fill:"#CBD5E1",stroke:"#475569","stroke-width":1.8}));
+    for(let y=GY-H+10;y<GY-14;y+=20) for(let x=Xb+10;x<Xb+bw-12;x+=19)
+      g.appendChild(E("rect",{x:x,y:y,width:11,height:12,fill:"#E0F2FE",stroke:"#94A3B8","stroke-width":.8}));
+    const px=Xb-P.d*k, eye=[px,GY-P.e*k];
+    if(P.e>0) person(g,[px,GY],P.e*k/0.93,"#334155");
+    else cdot(g,[px,GY],"#334155",4);
+    return {lo:eye,corner:[Xb,eye[1]],hi:[Xb,GY-H],depSide:-1,
+      v:{nm:P.e>0?"height above eye":"height",val:P.H-P.e}, h:{nm:"distance",val:P.d}, s:{nm:"line of sight"}};
+  },
+  kite(g,P,k,X0){
+    ground(g,0,VW);
+    const hand=[X0,GY-P.e*k];
+    if(P.e>0) person(g,[X0-2,GY],1.7*k,"#334155"); else { seg(g,[X0,GY],[X0,GY-8],{stroke:"#78350F",w:3}); }
+    const K=[X0+P.x*k, GY-P.y*k];
+    // kite body pointing along the string direction-ish
+    const kt=[[K[0],K[1]-16],[K[0]+10,K[1]-2],[K[0],K[1]+16],[K[0]-10,K[1]-2]];
+    poly(g,kt,{fill:"#F59E0B",fo:.95,stroke:"#B45309",w:1.6});
+    seg(g,kt[0],kt[2],{stroke:"#B45309",w:1}); seg(g,kt[1],kt[3],{stroke:"#B45309",w:1});
+    let d="M"+K[0]+" "+(K[1]+16); for(let i=1;i<=6;i++) d+="Q"+(K[0]+(i%2?8:-8))+" "+(K[1]+16+i*6-3)+" "+K[0]+" "+(K[1]+16+i*6);
+    pathD(g,d,{stroke:"#DC2626",w:1.4});
+    return {lo:hand,corner:[K[0],hand[1]],hi:K,depSide:-1,
+      v:{nm:"height above hand",val:P.y-P.e}, h:{nm:"horizontal",val:P.x}, s:{nm:"string"}};
+  },
+  ramp(g,P,k,Xr){
+    ground(g,0,VW);
+    const top=[Xr,GY-P.rise*k], foot=[Xr-P.run*k,GY];
+    g.appendChild(E("rect",{x:Xr,y:top[1],width:VW-Xr,height:GY-top[1],fill:"#E2E8F0",stroke:"#64748B","stroke-width":1.6}));
+    poly(g,[foot,[Xr,GY],top],{fill:"#A8A29E",fo:.9,stroke:"#57534E",w:1.8});
+    const rl=sub(top,foot), n=unit([rl[1],-rl[0]]);
+    const r0=add(foot,mul(n,-26)), r1_=add(top,mul(n,-26));
+    seg(g,add(foot,mul(n,-0)),r0,{stroke:"#475569",w:1.4,op:.0});
+    seg(g,[r0[0],r0[1]],[r1_[0],r1_[1]],{stroke:"#475569",w:2,op:.8});
+    for(let t=0;t<=1.0001;t+=0.25){const a=add(foot,mul(rl,t)); seg(g,a,add(a,mul(n,-26)),{stroke:"#475569",w:1.4,op:.8});}
+    return {lo:foot,corner:[Xr,GY],hi:top,depSide:-1,
+      v:{nm:"rise",val:P.rise}, h:{nm:"run",val:P.run}, s:{nm:"ramp"}};
+  }
+};
+// overlay: triangle, line of sight, elevation & depression angles
+function elevOverlay(g,S,o){
+  const {lo,corner,hi}=S, Ct=cen([lo,corner,hi]);
+  poly(g,[lo,corner,hi],{fill:"#FDE68A",fo:.32});
+  seg(g,lo,corner,{stroke:COL.adj,w:3}); seg(g,corner,hi,{stroke:COL.opp,w:3,dash:o.vdash?"7 5":null});
+  seg(g,lo,hi,{stroke:COL.hyp,w:3.4});
+  rmark(g,corner,lo,hi,11);
+  if(o.elev!==false) arc(g,lo,corner,hi,o.re||46,COL.ang,{label:o.elevLabel,w:2.6,fo:.25});
+  if(o.dep){
+    const dir=Math.sign(lo[0]-hi[0])||1, len=clamp(Math.abs(lo[0]-hi[0])*0.75,90,230);
+    const hz=[hi[0]+dir*len,hi[1]];
+    seg(g,hi,hz,{stroke:COL.ink,w:2,dash:"7 6"});
+    arc(g,hi,hz,lo,o.rd||46,COL.ang2,{label:o.depLabel,w:2.6,fo:.25});
+    // parallel marks on the two horizontals
+    const chev=(p,d)=>pathD(g,"M"+(p[0]-d*6)+" "+(p[1]-5)+"L"+(p[0]+d*2)+" "+p[1]+"L"+(p[0]-d*6)+" "+(p[1]+5),{stroke:COL.ink,w:1.8});
+    chev([hi[0]+dir*len*0.8,hi[1]],dir); chev([lo[0]+(corner[0]-lo[0])*0.35,lo[1]],dir);
+    if(o.captions) txt(g,[hi[0]+dir*len*0.62,hi[1]-14],"angle of depression","cap",COL.ang2);
+  }
+  if(o.captions&&o.elev!==false){
+    const cx=clamp(lo[0],80,VW-80);
+    txt(g,[cx,Math.min(VH-12,lo[1]+(lo[1]<GY-4?GY-lo[1]+26:28))],"angle of elevation","cap",COL.ang);
+  }
+  sideLabel(g,corner,hi,o.vLab,COL.opp,Ct,o.voff||14);
+  sideLabel(g,lo,corner,o.hLab,COL.adj,Ct,o.hoff||14);
+  sideLabel(g,lo,hi,o.sLab,COL.hyp,Ct,12);
+}
+
+/* ══════════════════════ TAB 5 · angles of elevation & depression ══════════════════════ */
+const T5D=()=>({scene:"light",light:{H:45,d:110},bldg:{H:24,d:30,e:1.6},kite:{x:70,y:48,e:1},ramp:{run:9,rise:1.2},dep:true,anim:false,phase:0,t0:0});
+let T5=T5D();
+const K5={light:2,bldg:9,kite:4.5,ramp:34}, X5={light:92,bldg:540,kite:80,ramp:620};
+function t5vals(){
+  const s=T5.scene, P=T5[s];
+  if(s==="light") return {v:P.H,h:P.d};
+  if(s==="bldg") return {v:P.H-P.e,h:P.d};
+  if(s==="kite") return {v:P.y-P.e,h:P.x};
+  return {v:P.rise,h:P.run};
+}
+const unitOf=s=>"m";
+function animStep(now){
+  if(!T5.anim) return;
+  const t=(now-T5.t0)/1000, s=T5.scene, P=T5[s], w=Math.cos(t*0.55);
+  T5.phase=t*2.2;
+  if(s==="light") P.d=145+120*w;
+  else if(s==="bldg") P.d=28+22*w;
+  else if(s==="kite"){const L=Math.hypot(P.x,P.y-P.e), th=45+22*Math.sin(t*0.55); P.x=L*cosD(th); P.y=clamp(P.e+L*sinD(th),4,75); P.x=clamp(P.x,6,120);}
+  else P.run=8.5+7*w;
+  redraw(); animId=requestAnimationFrame(animStep);
+}
+const M5={
+  tab:"Elevation & depression", lesson:"G-SRT.C.8 · G-MG.A.1", accent:"var(--lavender)",
+  title:()=>({light:"Lighthouse and boat",bldg:"Looking up at a building",kite:"Flying a kite",ramp:"Wheelchair ramp"})[T5.scene],
+  aria:"Scene showing an angle of elevation and an angle of depression with the right triangle",
+  bar(){
+    segBtns([["light","Lighthouse"],["bldg","Building"],["kite","Kite"],["ramp","Ramp"]],T5.scene,k=>{stopAnim();T5.scene=k;render();},"Scene");
+    const b=btn(T5.anim?"❚❚ Pause":"▶ Animate",()=>{
+      if(T5.anim){stopAnim();return;}
+      T5.anim=true; b.textContent="❚❚ Pause"; T5.t0=performance.now(); animId=requestAnimationFrame(animStep);
+    },"primary"); b.id="anim5";
+    chk("Show depression",T5,"dep");
+    btn("Reset",()=>{stopAnim();const s=T5.scene;T5[s]=T5D()[s];render();});
+  },
+  draw(){
+    const g=plain(true), s=T5.scene, P=T5[s], k=K5[s];
+    const S=SCENES[s](g,P,k,X5[s],T5.phase);
+    const v=t5vals(), th=atanD(v.v/v.h), L=Math.hypot(v.v,v.h);
+    elevOverlay(g,S,{dep:T5.dep,captions:true,elevLabel:dg(th),depLabel:dg(th),
+      vLab:[S.v.nm,g2(v.v)+" m"],hLab:[S.h.nm+" "+g2(v.h)+" m"],sLab:[S.s.nm,g2(L)+" m"],
+      voff:s==="light"?26:s==="bldg"?-10:14,hoff:s==="light"?22:s==="bldg"?12:28,
+      re:s==="ramp"?70:46,rd:s==="ramp"?60:44});
+    if(s==="light"){grab(g,S.lo,"lo","Drag the boat"); grab(g,S.hi,"hi","Drag the top of the lighthouse");}
+    else if(s==="bldg"){grab(g,[S.lo[0],GY-8],"lo","Drag the observer"); grab(g,S.hi,"hi","Drag the top of the building");}
+    else if(s==="kite") grab(g,S.hi,"hi","Drag the kite");
+    else {grab(g,S.lo,"lo","Drag the foot of the ramp"); grab(g,S.hi,"hi","Drag the top of the ramp");}
+  },
+  drag(id,p){
+    const s=T5.scene, P=T5[s], k=K5[s], X=X5[s];
+    if(s==="light"){ if(id==="lo") P.d=clamp(Math.round((p[0]-X)/k),10,270); else P.H=clamp(Math.round((GY-p[1])/k),15,95); }
+    else if(s==="bldg"){ if(id==="lo") P.d=clamp(Math.round((X-p[0])/k*2)/2,4,52); else P.H=clamp(Math.round((GY-p[1])/k*2)/2,6,36); }
+    else if(s==="kite"){ P.x=clamp(Math.round((p[0]-X)/k),6,120); P.y=clamp(Math.round((GY-p[1])/k),4,75); }
+    else { if(id==="lo") P.run=clamp(Math.round((X-p[0])/k*10)/10,1,16); else P.rise=clamp(Math.round((GY-p[1])/k*20)/20,0.2,3.5); }
+  },
+  panel(){
+    side.innerHTML=`<div class="panel"><h3>The problem</h3><div class="pad"><p class="q" id="t5q"></p></div></div>
+    <div class="panel"><h3>Solution, live</h3><ol class="chain" id="t5s"></ol></div>
+    <div class="panel"><h3>The idea</h3><div class="pad">
+      <p>An <span class="term">angle of elevation</span> is measured <b>up</b> from a horizontal line to the line of sight. An <span class="term">angle of depression</span> is measured <b>down</b> from a horizontal line to the line of sight.</p>
+      <p>The two horizontal lines (dashed at the top, the ground or water at the bottom) are <b>parallel</b>, and the line of sight is a transversal. So the angle of depression and the angle of elevation are <b>alternate interior angles</b> — they are equal.</p>
+      <p>That lets you put the angle inside the right triangle, then use SOH-CAH-TOA as usual. A common mistake is measuring the angle of depression from the vertical — always start from the horizontal.</p>
+    </div></div>
+    <div class="panel"><h3>Try this</h3><div class="pad" id="t5try"></div></div>`;
+  },
+  live(){
+    const s=T5.scene, P=T5[s], v=t5vals(), th=atanD(v.v/v.h), L=Math.hypot(v.v,v.h), T=dg(th);
+    const alt="Angle of depression at the top = angle of elevation at the bottom = "+T+" (<b>alternate interior angles</b>; the horizontals are parallel).";
+    let q,st,tr;
+    if(s==="light"){
+      q="From the top of a "+g2(P.H)+" m lighthouse, the keeper sees a boat at an angle of depression of "+T+". How far is the boat from the base of the lighthouse?";
+      st=[alt,"At the boat, the height is <b>opposite</b> "+T+" and the distance d is <b>adjacent</b>, so use <b>tan</b>: <code>tan "+T+" = "+g2(P.H)+"/d</code>",
+        "The unknown is in the denominator: <code>d = "+g2(P.H)+" ÷ tan "+T+" ≈ "+f2(P.H/tanD(th))+" m</code>",
+        "Line of sight: <code>"+g2(P.H)+" ÷ sin "+T+" ≈ "+f2(L)+" m</code>"];
+      tr="<p>Press ▶ Animate and watch the boat sail in. Does the angle of depression get larger or smaller as the boat gets closer? Why?</p><p>Find the boat position where the angle is exactly 45°. What do you notice about d and the height?</p>";
+    } else if(s==="bldg"){
+      q="You stand "+g2(P.d)+" m from a building. Your eyes are "+P.e+" m above the ground and the angle of elevation to the top of the building is "+T+". How tall is the building?";
+      st=["The right triangle starts at <b>eye level</b>, so its vertical leg is the building height minus "+P.e+" m.",
+        "From your eye, the vertical leg x is <b>opposite</b> "+T+" and "+g2(P.d)+" m is <b>adjacent</b>: <code>tan "+T+" = x/"+g2(P.d)+"</code>",
+        "<code>x = "+g2(P.d)+" · tan "+T+" ≈ "+f2(P.d*tanD(th))+" m</code>",
+        "Add the eye height: <code>"+f2(P.d*tanD(th))+" + "+P.e+" ≈ "+f2(P.d*tanD(th)+P.e)+" m</code>",
+        "From the roof, the angle of depression to your eyes is also "+T+" (alternate interior angles)."];
+      tr="<p>Walk toward the building (drag the person). How does the angle change?</p><p>Turn off <b>Show depression</b>, predict the angle of depression from the roof, then turn it back on to check.</p>";
+    } else if(s==="kite"){
+      q="A kite string is "+g2(L)+" m long and is held "+P.e+" m above the ground. The string makes an angle of elevation of "+T+". How high is the kite?";
+      st=["The string is the <b>hypotenuse</b>; the height above the hand is <b>opposite</b> "+T+" → use <b>sin</b>: <code>sin "+T+" = h/"+g2(L)+"</code>",
+        "<code>h = "+g2(L)+" · sin "+T+" ≈ "+f2(L*sinD(th))+" m</code> above the hand",
+        "Add the hand height: kite is <code>≈ "+f2(L*sinD(th)+P.e)+" m</code> above the ground",
+        "Horizontal distance: <code>"+g2(L)+" · cos "+T+" ≈ "+f2(L*cosD(th))+" m</code>"];
+      tr="<p>Press ▶ Animate: the string length stays the same while the angle changes. Which angle makes the kite highest?</p><p>Keep the angle at 30°. What fraction of the string length is the height? (sin 30° = ½.)</p>";
+    } else {
+      const ok=th<=atanD(1/12)+1e-9;
+      q="A ramp rises "+g2(P.rise)+" m over a horizontal run of "+g2(P.run)+" m. What is its angle of elevation, and how long is the ramp surface?";
+      st=["Rise is <b>opposite</b> the angle, run is <b>adjacent</b>: <code>tan θ = "+g2(P.rise)+"/"+g2(P.run)+" ≈ "+f4(P.rise/P.run)+"</code>",
+        "Inverse tangent: <code>θ = tan⁻¹("+g2(P.rise)+"/"+g2(P.run)+") ≈ "+T+"</code>",
+        "Ramp length: <code>√("+g2(P.rise)+"² + "+g2(P.run)+"²) ≈ "+f2(L)+" m</code>",
+        "Accessibility guidelines allow a slope of at most 1 : 12 (θ ≤ 4.8°). This ramp "+(ok?'<b class="ok">meets</b>':'<b class="no">is too steep for</b>')+" that guideline."];
+      tr="<p>Set the rise to 0.75 m. What is the shortest run that meets the 1 : 12 guideline? Check your answer by dragging.</p><p>Why do long ramps often switch back and forth?</p>";
+    }
+    $("t5q").innerHTML=q; $("t5s").innerHTML=st.map(x=>"<li>"+x+"</li>").join(""); $("t5try").innerHTML=tr;
+  }
+};
+void unitOf;
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+const T6={kind:"any",p:null,checked:false,streak:0,best:0,right:0,total:0};
+const ROLE={opp:"opposite",adj:"adjacent",hyp:"hypotenuse"};
+const FN_OF=(r1_,r2_)=>{const s=[r1_,r2_].sort().join(); return s==="hyp,opp"?"sin":s==="adj,hyp"?"cos":"tan";};
+const FN_PARTS={sin:["opp","hyp"],cos:["adj","hyp"],tan:["opp","adj"]};
+const TRIG={sin:sinD,cos:cosD,tan:tanD};
+const VN=[["A","B","C"],["P","Q","R"],["D","E","F"],["X","Y","Z"],["J","K","L"]];
+// standard figure: P = reference vertex, R = right angle, Q = third
+function rtFig(g,adj,opp,o){
+  const k=Math.min((o.w||460)/adj,(o.h||280)/opp), w=adj*k, h=opp*k, by=236+h/2;
+  let P=[350-w/2,by], R=[350+w/2,by], Q=[350+w/2,by-h];
+  if(o.flip){P=[350+w/2,by];R=[350-w/2,by];Q=[350-w/2,by-h];}
+  const C=cen([P,R,Q]);
+  poly(g,[P,Q,R],{fill:"#FDE68A",fo:.35});
+  const sc=o.sides||{};
+  seg(g,P,R,{stroke:(sc.h&&sc.h.c)||COL.ink,w:3.4}); seg(g,R,Q,{stroke:(sc.v&&sc.v.c)||COL.ink,w:3.4}); seg(g,P,Q,{stroke:(sc.s&&sc.s.c)||COL.ink,w:3.4});
+  rmark(g,R,P,Q,13);
+  if(o.refLabel!=null) arc(g,P,R,Q,42,COL.ang,{label:o.refLabel,cls:o.refCls});
+  if(o.otherLabel!=null) arc(g,Q,P,R,30,COL.ang2,{label:o.otherLabel,cls:o.refCls});
+  if(sc.h&&sc.h.t) sideLabel(g,P,R,sc.h.t,sc.h.c,C,16,"big");
+  if(sc.v&&sc.v.t) sideLabel(g,R,Q,sc.v.t,sc.v.c,C,14,"big");
+  if(sc.s&&sc.s.t) sideLabel(g,P,Q,sc.s.t,sc.s.c,C,14,"big");
+  if(o.names){vlab(g,P,C,o.names[0],null,22); vlab(g,Q,C,o.names[2],null,22); vlab(g,R,C,o.names[1],null,20);}
+  return {P,R,Q};
+}
+function genSide(){
+  const th=rnd(20,70), roles=["opp","adj","hyp"], known=pick(roles), unk=pick(roles.filter(r=>r!==known)), kv=rnd(4,30);
+  const V={};
+  if(known==="hyp"){V.hyp=kv;V.opp=kv*sinD(th);V.adj=kv*cosD(th);}
+  else if(known==="opp"){V.opp=kv;V.hyp=kv/sinD(th);V.adj=kv/tanD(th);}
+  else {V.adj=kv;V.opp=kv*tanD(th);V.hyp=kv/cosD(th);}
+  const fn=FN_OF(known,unk), parts=FN_PARTS[fn], top=parts[0]===unk;
+  const ans=V[unk];
+  const eq=fn+" "+th+"° = "+(top?"x":kv)+" / "+(top?kv:"x");
+  const solve=top? "x = "+kv+" · "+fn+" "+th+"°" : "x = "+kv+" ÷ "+fn+" "+th+"°";
+  const ex="Relative to the "+th+"° angle, x is the <b>"+ROLE[unk]+"</b> and "+kv+" is the <b>"+ROLE[known]+"</b>. The ratio that uses those two is <b>"+fn+"</b>: <code>"+eq+"</code>. "+
+    (top?"The unknown is on top, so multiply: ":"The unknown is on the bottom, so divide: ")+"<code>"+solve+" ≈ "+f2(ans)+"</code>.";
+  // likely slips
+  const alts=[];
+  ["sin","cos","tan"].forEach(f=>{ alts.push({v:kv*TRIG[f](th),why:"multiplying by "+f+" "+th+"°"}); alts.push({v:kv/TRIG[f](th),why:"dividing by "+f+" "+th+"°"}); });
+  alts.push({v:top?kv*Math[fn](th):kv/Math[fn](th),why:"RADIAN mode on your calculator — switch it to DEGREE"});
+  const flip=Math.random()<.5, names=pick(VN);
+  const sides={h:{c:COL.ink},v:{c:COL.ink},s:{c:COL.ink}}, map={adj:"h",opp:"v",hyp:"s"};
+  sides[map[known]]={t:String(kv),c:COL.giv}; sides[map[unk]]={t:"x",c:COL.fnd};
+  return {kind:"side",ans,tol:0.1,fig:{adj:V.adj,opp:V.opp,flip,names,refLabel:th+"°",sides},alts,
+    q:"Find x. Round to the nearest tenth.",explain:ex,show:f2(ans).replace(/0$/,"")};
+}
+function genAngle(){
+  let pair=pick([["opp","hyp"],["adj","hyp"],["opp","adj"]]), V={};
+  if(pair[1]==="hyp"){const leg=rnd(3,20), hyp=rnd(leg+2,leg+18); V[pair[0]]=leg; V.hyp=hyp; const other=Math.sqrt(hyp*hyp-leg*leg); V[pair[0]==="opp"?"adj":"opp"]=other;}
+  else {V.opp=rnd(3,24);V.adj=rnd(3,24); if(Math.abs(V.opp-V.adj)<1)V.adj+=3; V.hyp=Math.hypot(V.opp,V.adj);}
+  const fn=FN_OF(pair[0],pair[1]), parts=FN_PARTS[fn], r=V[parts[0]]/V[parts[1]];
+  const ans=fn==="sin"?asinD(r):fn==="cos"?acosD(r):atanD(r);
+  const flip=Math.random()<.5, names=pick(VN);
+  const sides={h:{c:COL.ink},v:{c:COL.ink},s:{c:COL.ink}}, map={adj:"h",opp:"v",hyp:"s"};
+  pair.forEach(p=>sides[map[p]]={t:String(V[p]),c:COL.giv});
+  const ex="From the marked angle, "+V[parts[0]]+" is the <b>"+ROLE[parts[0]]+"</b> and "+V[parts[1]]+" is the <b>"+ROLE[parts[1]]+"</b>, so use <b>"+fn+"</b>: <code>"+fn+" θ = "+V[parts[0]]+"/"+V[parts[1]]+"</code>. "+
+    "Undo it with the inverse: <code>θ = "+fn+"⁻¹("+V[parts[0]]+"/"+V[parts[1]]+") ≈ "+dg(ans)+"</code>.";
+  const alts=[{v:90-ans,why:"finding the <b>other</b> acute angle — check which side is opposite the marked angle"},{v:Math.atan(r)/1,why:"RADIAN mode"},{v:(fn==="sin"?Math.asin(r):fn==="cos"?Math.acos(r):Math.atan(r)),why:"RADIAN mode — switch your calculator to DEGREE"}];
+  return {kind:"angle",ans,tol:0.15,fig:{adj:V.adj,opp:V.opp,flip,names,refLabel:"θ",sides},alts,units:"°",
+    q:"Find θ in degrees. Round to the nearest tenth.",explain:ex,show:fmt(ans)+"°"};
+}
+function genCofn(){
+  const v=pick(["basic","basic","ratio","alg"]);
+  if(v==="basic"){
+    const a=rnd(8,82), f=pick(["sin","cos"]), g_=f==="sin"?"cos":"sin";
+    return {kind:"cofn",ans:90-a,tol:0.01,fig:{adj:cosD(a)*10,opp:sinD(a)*10,flip:Math.random()<.5,refLabel:a+"°",otherLabel:"x°",sides:{}},
+      q:"If "+f+" "+a+"° = "+g_+" x°, and x is an acute angle, find x.",
+      explain:"The sine of an angle equals the cosine of its <b>complement</b>: "+f+" θ = "+g_+"(90° − θ). So x = 90 − "+a+" = <b>"+(90-a)+"</b>. In the triangle, the "+a+"° angle and x° are the two acute angles.",show:String(90-a)};
+  }
+  if(v==="ratio"){
+    const trip=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]]), o=trip[0],a_=trip[1],h=trip[2];
+    const f=pick(["sin","cos"]), g_=f==="sin"?"cos":"sin";
+    const val=f==="sin"?o/h:a_/h;
+    return {kind:"cofn",ans:val,tol:0.006,fig:{adj:a_,opp:o,flip:false,names:["A","C","B"],refLabel:"",otherLabel:"",sides:{}},
+      q:"In right triangle ABC with the right angle at C, "+f+" A = "+(f==="sin"?o:a_)+"/"+h+". What is "+g_+" B? (a fraction or a decimal)",
+      explain:"∠A and ∠B are complementary, so "+g_+" B = "+f+"(90° − B) = "+f+" A. The same leg is opposite one angle and adjacent to the other. Answer: <b>"+(f==="sin"?o:a_)+"/"+h+"</b> ≈ "+f3(val)+".",show:(f==="sin"?o:a_)+"/"+h};
+  }
+  for(;;){
+    const p=rnd(2,5), q=rnd(1,4), x=rnd(3,14), r=rnd(-10,15), s=90-(p+q)*x-r;
+    const A1_=p*x+r, A2_=q*x+s;
+    if(A1_<10||A2_<10||A1_>80||A2_>80||s===0||Math.abs(s)>40) continue;
+    const term=(c,k)=>"("+(c===1?"":c)+"x "+(k<0?"− "+(-k):"+ "+k)+")°";
+    const t1=term(p,r), t2=term(q,s);
+    return {kind:"cofn",ans:x,tol:0.01,fig:{adj:cosD(A1_)*10,opp:sinD(A1_)*10,flip:Math.random()<.5,refLabel:t1,otherLabel:t2,refCls:"num",sides:{}},
+      q:"sin "+t1+" = cos "+t2+", where both angles are acute. Find x.",
+      explain:"If sin α = cos β with both acute, α and β are <b>complementary</b>: α + β = 90. So ("+p+"x "+(r<0?"− "+(-r):"+ "+r)+") + ("+q+"x "+(s<0?"− "+(-s):"+ "+s)+") = 90 → "+(p+q)+"x "+((r+s)<0?"− "+(-(r+s)):"+ "+(r+s))+" = 90 → x = <b>"+x+"</b>. The angles are "+A1_+"° and "+A2_+"°.",show:String(x)};
+  }
+}
+function genSpecial(){
+  const t=pick(["45","45","30","30","30"]), n=rnd(2,12);
+  let given, want, ans, ex, show, fig;
+  if(t==="45"){
+    const v=pick(["leg2hyp","hyp2leg","hypInt"]);
+    if(v==="leg2hyp"){given=String(n);ans=n*Math.SQRT2;show=rad(n,2);
+      fig={adj:1,opp:1,sides:{h:{t:String(n),c:COL.giv},s:{t:"x",c:COL.fnd},v:{c:COL.ink}}};
+      ex="In a 45°-45°-90° triangle, leg : leg : hypotenuse = 1 : 1 : √2. Hypotenuse = leg · √2 = <b>"+show+"</b> ≈ "+f2(ans)+".";}
+    else if(v==="hyp2leg"){given=rad(n,2);ans=n;show=String(n);
+      fig={adj:1,opp:1,sides:{s:{t:rad(n,2),c:COL.giv},v:{t:"x",c:COL.fnd},h:{c:COL.ink}}};
+      ex="Hypotenuse = leg · √2, so leg = "+rad(n,2)+" ÷ √2 = <b>"+n+"</b>.";}
+    else {const m=2*n; given=String(m); ans=m/Math.SQRT2; show=rad(n,2);
+      fig={adj:1,opp:1,sides:{s:{t:String(m),c:COL.giv},h:{t:"x",c:COL.fnd},v:{c:COL.ink}}};
+      ex="Leg = hypotenuse ÷ √2 = "+m+"/√2. Rationalize: "+m+"/√2 · √2/√2 = "+m+"√2/2 = <b>"+show+"</b> ≈ "+f2(ans)+".";}
+    fig.refLabel="45°"; fig.otherLabel="45°";
+  } else {
+    const v=pick(["s2l","s2h","h2l","l2s","lInt"]);
+    const S=(sh,lo,hy)=>({h:{t:sh[0],c:sh[1]},v:{t:lo[0],c:lo[1]},s:{t:hy[0],c:hy[1]}});
+    const N=[null,COL.ink], X=["x",COL.fnd];
+    // drawn with 60° at the reference vertex P → horizontal leg is the short leg
+    if(v==="s2l"){ans=n*Math.sqrt(3);show=rad(n,3);fig={sides:S([String(n),COL.giv],X,N)};
+      ex="30°-60°-90°: short : long : hypotenuse = 1 : √3 : 2. The long leg (opposite 60°) = short · √3 = <b>"+show+"</b> ≈ "+f2(ans)+".";}
+    else if(v==="s2h"){ans=2*n;show=String(2*n);fig={sides:S([String(n),COL.giv],N,X)};
+      ex="The hypotenuse is twice the short leg (the side opposite 30°): 2 · "+n+" = <b>"+show+"</b>.";}
+    else if(v==="h2l"){ans=n*Math.sqrt(3);show=rad(n,3);fig={sides:S(N,X,[String(2*n),COL.giv])};
+      ex="Short leg = hypotenuse ÷ 2 = "+n+". Long leg = short · √3 = <b>"+show+"</b> ≈ "+f2(ans)+".";}
+    else if(v==="l2s"){ans=n;show=String(n);fig={sides:S(X,[rad(n,3),COL.giv],N)};
+      ex="Long leg = short · √3, so short = "+rad(n,3)+" ÷ √3 = <b>"+n+"</b>.";}
+    else {const m=3*n; ans=m/Math.sqrt(3); show=rad(n,3); fig={sides:S(X,[String(m),COL.giv],N)};
+      ex="Short leg = long ÷ √3 = "+m+"/√3. Rationalize: "+m+"√3/3 = <b>"+show+"</b> ≈ "+f2(ans)+".";}
+    fig.adj=1; fig.opp=Math.sqrt(3); fig.refLabel="60°"; fig.otherLabel="30°";
+  }
+  fig.flip=Math.random()<.5;
+  return {kind:"special",ans,tol:0.02,fig,q:"Find x. Give an exact answer (like 5√3, 5sqrt3 or 5*sqrt(3)) or a decimal to the nearest hundredth.",explain:ex,show,exact:true};
+}
+function genElev(){
+  const v=pick(["light","bldg","kite","ramp"]);
+  if(v==="light"){const H=rnd(20,80), th=rnd(10,40), d=H/tanD(th);
+    return {kind:"elev",ans:d,tol:0.1,scene:"light",P:{H:H,d:d},labels:{dep:th+"°",v:H+" m",h:"x",s:""},
+      q:"From the top of a "+H+" m lighthouse, the angle of depression to a boat is "+th+"°. How far is the boat from the base of the lighthouse? Round to the nearest tenth of a meter.",
+      explain:"The angle of depression equals the angle of elevation from the boat (alternate interior angles), so "+th+"° sits at the boat. There, "+H+" is <b>opposite</b> and x is <b>adjacent</b>: <code>tan "+th+"° = "+H+"/x</code> → <code>x = "+H+" ÷ tan "+th+"° ≈ "+f2(d)+" m</code>.",
+      alts:[{v:H*tanD(th),why:"multiplying by tan — x is in the denominator, so divide"},{v:H*tanD(90-th),why:"using the angle from the vertical. That also works if you use 90° − θ, but check your rounding"}],show:f2(d)+" m"};}
+  if(v==="bldg"){const d=rnd(20,120), th=rnd(18,62), H=d*tanD(th);
+    return {kind:"elev",ans:H,tol:0.1,scene:"bldg",P:{H:H,d:d,e:0},labels:{elev:th+"°",v:"x",h:d+" m",s:""},
+      q:"From a point on the ground "+d+" m from the base of a building, the angle of elevation to the top is "+th+"°. How tall is the building? Round to the nearest tenth.",
+      explain:"From the point on the ground, the height x is <b>opposite</b> "+th+"° and "+d+" m is <b>adjacent</b>: <code>tan "+th+"° = x/"+d+"</code> → <code>x = "+d+" · tan "+th+"° ≈ "+f2(H)+" m</code>.",
+      alts:[{v:d/tanD(th),why:"dividing — x is on top, so multiply"},{v:d*sinD(th),why:"using sine — "+d+" m is a leg, not the hypotenuse"}],show:f2(H)+" m"};}
+  if(v==="kite"){const L=rnd(30,120), th=rnd(25,68), h=L*sinD(th);
+    return {kind:"elev",ans:h,tol:0.1,scene:"kite",P:{x:L*cosD(th),y:h,e:0},labels:{elev:th+"°",v:"x",h:"",s:L+" m"},
+      q:"A kite string "+L+" m long is staked to the ground and makes an angle of elevation of "+th+"°. How high is the kite? Round to the nearest tenth.",
+      explain:"The string is the <b>hypotenuse</b> and the height x is <b>opposite</b> "+th+"°: <code>sin "+th+"° = x/"+L+"</code> → <code>x = "+L+" · sin "+th+"° ≈ "+f2(h)+" m</code>.",
+      alts:[{v:L*cosD(th),why:"using cosine — that gives the horizontal distance"},{v:L*tanD(th),why:"using tangent — the string is the hypotenuse, so use sine"}],show:f2(h)+" m"};}
+  const Lr=rnd(4,14), rise=rnd(4,14)/10, th=asinD(rise/Lr), run=Math.sqrt(Lr*Lr-rise*rise);
+  return {kind:"elev",ans:th,tol:0.15,scene:"ramp",P:{run:run,rise:rise},labels:{elev:"θ",v:rise+" m",h:"",s:Lr+" m"},units:"°",
+    q:"A ramp "+Lr+" m long rises "+rise+" m. What is its angle of elevation θ? Round to the nearest tenth of a degree.",
+    explain:"The ramp surface is the <b>hypotenuse</b> and the rise is <b>opposite</b> θ: <code>sin θ = "+rise+"/"+Lr+"</code> → <code>θ = sin⁻¹("+rise+"/"+Lr+") ≈ "+dg(th)+"</code>.",
+    alts:[{v:atanD(rise/Lr),why:"using tan⁻¹ — "+Lr+" m is the ramp (hypotenuse), not the run"},{v:Math.asin(rise/Lr),why:"RADIAN mode — switch to DEGREE"}],show:dg(th)};
+}
+function newProblem(){
+  const k=T6.kind==="any"?pick(["side","side","angle","angle","cofn","special","special","elev","elev"]):T6.kind;
+  T6.p=k==="side"?genSide():k==="angle"?genAngle():k==="cofn"?genCofn():k==="special"?genSpecial():genElev();
+  T6.checked=false;
+}
+function score6(){return "streak "+T6.streak+" · best "+T6.best+" · "+T6.right+"/"+T6.total+" correct";}
+const M6={
+  tab:"Challenge", lesson:"G-SRT.C.6 · C.7 · C.8", accent:"var(--coral)",
+  title:()=>"Challenge: right triangle trigonometry", aria:"Practice problem figure",
+  bar(){
+    btn("New problem",()=>{newProblem();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    [["any","Mixed problems"],["side","Find a missing side"],["angle","Find a missing angle"],["cofn","Cofunctions"],["special","Special right triangles"],["elev","Elevation & depression"]]
+      .forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=T6.kind; sel.onchange=()=>{T6.kind=sel.value;newProblem();render();}; bar.appendChild(sel);
+    spacer(score6(),"sp6");
+  },
+  draw(){
+    if(!T6.p)newProblem();
+    const p=T6.p;
+    if(p.kind==="elev"){
+      const g=plain(true), P=p.P, s=p.scene;
+      let hw,vh; if(s==="light"){hw=P.d;vh=P.H;} else if(s==="bldg"){hw=P.d;vh=P.H;} else if(s==="kite"){hw=P.x;vh=P.y;} else {hw=P.run;vh=P.rise;}
+      const k=Math.min((s==="bldg"?440:480)/hw,(s==="light"?270:300)/vh);
+      const X=s==="light"?350-hw*k/2:s==="bldg"?350+hw*k/2-40:s==="kite"?350-hw*k/2:350+hw*k/2;
+      const S=SCENES[s](g,P,k,X,0.6);
+      const L=p.labels;
+      elevOverlay(g,S,{dep:!!L.dep,elev:!!L.elev,elevLabel:L.elev,depLabel:L.dep,captions:false,vLab:L.v?[L.v]:[],hLab:L.h?[L.h]:[],sLab:L.s?[L.s]:[],
+        voff:s==="light"?26:14,hoff:s==="light"?22:16,re:s==="ramp"?64:46});
+      if(T6.checked) txt(g,[350,30],"answer: "+p.show,"big",COL.fnd);
+      return;
+    }
+    const g=plain(), f=p.fig;
+    const T=rtFig(g,f.adj,f.opp,f);
+    if(T6.checked) txt(g,[350,24],(p.kind==="angle"?"θ ≈ ":p.kind==="cofn"?"answer: ":"x = ")+p.show+(p.kind==="side"||p.kind==="special"&&p.exact&&!/^\d+$/.test(p.show)?"  ≈ "+f2(p.ans):""),"big",COL.fnd);
+    void T;
+  },
+  panel(){
+    const p=T6.p;
+    side.innerHTML=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="q">${p.q}</p></div>
+      <label class="fld" for="a6">Your answer${p.units?" (degrees)":""}</label><div class="fldwrap"><input type="text" id="a6" inputmode="${p.kind==="special"?"text":"decimal"}" autocomplete="off" placeholder="${p.kind==="special"?"e.g. 4√3 or 6.93":"e.g. 12.4"}"></div>
+      <div class="fldwrap" style="margin:16px 0"><button type="button" class="go" id="chk6">Check my answer</button></div>
+      <div id="fb6"></div></div>
+      <div class="panel"><h3>Tool kit</h3><div class="pad">
+        <div class="eq">SOH  sin θ = opp / hyp
+CAH  cos θ = adj / hyp
+TOA  tan θ = opp / adj
+sin θ = cos(90° − θ)
+45-45-90   1 : 1 : √2
+30-60-90   1 : √3 : 2<small>Angles in degrees. Decimal answers within 0.1 of the exact value count (0.02 for special triangles). Radicals: type 5√3, 5sqrt3 or 5*sqrt(3).</small></div>
+      </div></div>`;
+    $("chk6").onclick=check6;
+    $("a6").addEventListener("keydown",e=>{if(e.key==="Enter")check6();});
+  }
+};
+function check6(){
+  const p=T6.p, fb=$("fb6"), raw=$("a6").value, v=evalExpr(raw);
+  if(isNaN(v)){fb.innerHTML='<div class="verdict bad">Enter a number'+(p.kind==="special"?" or a radical such as 5√3":"")+'.</div>';return;}
+  const ok=Math.abs(v-p.ans)<=p.tol+1e-9;
+  if(!T6.checked){T6.checked=true;T6.total++;if(ok){T6.right++;T6.streak++;T6.best=Math.max(T6.best,T6.streak);}else T6.streak=0;$("sp6").textContent=score6();}
+  clear(); M6.draw();
+  let hint="";
+  if(!ok&&p.alts){const a=p.alts.find(x=>Math.abs(x.v-v)<=Math.max(0.11,p.tol)); if(a) hint="<p style='margin:8px 0 0'>It looks like you were "+a.why+".</p>";}
+  if(!ok&&p.kind==="special"&&/√|sqrt/.test(raw)===false&&Math.abs(v-p.ans)<0.6) hint="<p style='margin:8px 0 0'>Close — round to the hundredth, or give the exact radical.</p>";
+  const exactNote=ok&&p.kind==="special"&&!/√|sqrt|root/i.test(raw)&&!/^\d+$/.test(p.show)?" Exact form: <b>"+p.show+"</b>.":"";
+  fb.innerHTML=ok? '<div class="verdict good"><b>Correct.</b>'+exactNote+' '+p.explain+'<div class="btnrow" style="margin-top:12px"><button type="button" class="ghost" id="next6">Next problem →</button></div></div>'
+    : '<div class="verdict bad"><b>Not yet.</b> '+p.explain+hint+'</div>';
+  if($("next6")){ $("next6").onclick=()=>{newProblem();render();}; $("next6").focus(); }
+}
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+let cur=0;
+function redraw(){ clear(); MODS[cur].draw(); if(MODS[cur].live)MODS[cur].live(); }
+function render(){
+  if(!T5.anim||MODS[cur]!==M5) stopAnim();
+  dragId=null;
+  const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson; cv.setAttribute("aria-label",M.aria);
+  if(M===M6&&!T6.p)newProblem();
+  clear(); M.draw();
+  bar.innerHTML=""; M.bar();
+  M.panel(); if(M.live)M.live();
+  [...tabsEl.children].forEach((b,i)=>{b.setAttribute("aria-selected",String(i===cur));b.tabIndex=i===cur?0:-1;});
+}
+function go(i,updateHash){
+  stopAnim();
+  cur=clamp(i,0,MODS.length-1); render();
+  if(updateHash){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} }
+}
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab");
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.addEventListener("keydown",e=>{
+    if(e.key==="ArrowRight"||e.key==="ArrowLeft"){const j=(cur+(e.key==="ArrowRight"?1:MODS.length-1))%MODS.length;go(j,true);tabsEl.children[j].focus();}
+  });
+  tabsEl.appendChild(b);
+});
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+function fromHash(){const m=/^#tab-(\d+)$/.exec(location.hash);return m?(+m[1])-1:null;}
+window.addEventListener("hashchange",()=>{const h=fromHash();if(h!=null&&h!==cur)go(h,false);});
+const h0=fromHash(); go(h0==null?0:h0,false);
+if(new URLSearchParams(location.search).has("selftest")) window.__rtt={T6:T6,evalExpr:evalExpr,newProblem:newProblem,solve4:solve4,T4:T4};
+})();
+</script>
+</body>
+</html>
