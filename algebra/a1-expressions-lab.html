@@ -1231,10 +1231,11 @@ const M5={
       const tk=toks(it.A).T; drawToks(g,tk,140,ky+8,30); ky+=56;
     }
     if(it.kw.length){
-      stext(g,[30,ky],"KEY WORDS","lab","#DB2777","start"); ky+=8;
-      it.kw.slice(0,Math.floor((440-ky)/28)).forEach(([k,m],i)=>{ const yy=ky+22+i*28;
-        stext(g,[30,yy],"“"+k+"”","ex",k==="a number"||k==="width n"?"#7C3AED":"#DB2777","start",16);
-        stext(g,[48+k.length*9.6+16,yy],"→  "+m,"cap","#334155","start",15); });
+      stext(g,[30,ky],"KEY WORDS","lab","#DB2777","start",13*(FS>1?1.5:1)); ky+=8;
+      const kf=FS>1?1.6:1, kh=28*kf;
+      it.kw.slice(0,Math.floor((450-ky)/kh)).forEach(([k,m],i)=>{ const yy=ky+22*kf+i*kh;
+        stext(g,[30,yy],"“"+k+"”","ex",k==="a number"||k==="width n"?"#7C3AED":"#DB2777","start",16*kf);
+        stext(g,[48+(k.length+2)*9.6*kf,yy],"→ "+m,"cap","#334155","start",15*kf); });
     }
   },
   panel(){
