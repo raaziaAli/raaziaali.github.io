@@ -498,7 +498,7 @@ const M1={
     if(A>0.5){ spath(g,pathD(spiralPts(C1,R1,9,th)),"var(--lin)",5.5,null,{opacity:.85}); }
     // initial and terminal sides
     const ip=PT(C1,R1+50,0); sseg(g,C1,ip,"var(--graphite)",3.4); arrowHead(g,ip,[1,0],"var(--graphite)");
-    stext(g,[ip[0]-8,ip[1]+16],"initial side","xs","#334155","end");
+    stext(g,[ip[0]-4,ip[1]-12],"initial side","xs","#334155","end");
     const tip=PT(C1,R1+50,th); sseg(g,C1,tip,"var(--corr)",3.6); arrowHead(g,tip,unit(sub(tip,C1)),"var(--corr)");
     // rotation spiral with arrow
     if(A>0.5){
@@ -510,7 +510,7 @@ const M1={
       smartLabel(g,ap,sub(ap,C1),"s = "+f2(Math.abs(rad)),"#C2410C");
     }
     const tp=PT(C1,R1,th);
-    stext(g,PT(C1,R1+72,th),"terminal side","xs","#0369A1");
+    { const lp=PT(C1,R1+72,th); stext(g,[clamp(lp[0],56,VW-56),clamp(lp[1],12,VH-12)],"terminal side","xs","#0369A1"); }
     sgrab(g,tp,"T","var(--corr)");
     // axis direction hints
     stext(g,[VW-14,24],"+ counterclockwise","xs","#6D28D9","end");
@@ -791,8 +791,8 @@ const M3={
     stext(g,[A[0]+10,(A[1]+B[1])/2],"opp = "+f2(V.y),"sm","#A16207","start");
     const hn=unit([V.s,V.c]); // normal below-right of hypotenuse (screen)
     const hm=[(O3[0]+B[0])/2,(O3[1]+B[1])/2];
-    if(V.r>1.25) stext(g,add([(O3[0]+B[0])*0.5+ (B[0]-O3[0])*0.18,(O3[1]+B[1])*0.5+(B[1]-O3[1])*0.18],[-hn[1]*0-26*FS*hn[0]*-1, -26*FS*hn[1]]),"hyp = "+f2(V.r),"sm","#A16207");
-    else stext(g,add(B,[-10,-16*FS]),"hyp = "+f2(V.r),"sm","#A16207","end");
+    { const t=V.r>1.25?0.68:0.95, hp=[O3[0]+(B[0]-O3[0])*t,O3[1]+(B[1]-O3[1])*t];
+      stext(g,[hp[0]-V.s*14*FS,hp[1]-V.c*14*FS-4],"hyp = "+f2(V.r),"sm","#A16207","end"); }
     if(Math.abs(V.r-1)>0.18){
       stext(g,[b[0]-8,(a[1]+b[1])/2],"sin θ","sm","#BE185D","end");
       stext(g,[(O3[0]+a[0])/2+ (V.c<0.35?14:0),O3[1]-12*FS],"cos θ","sm","#0369A1");
