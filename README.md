@@ -7,6 +7,7 @@ Three classrooms for learning by doing, by Raazia Ali. Live site: https://raazia
 | `index.html` | Landing page: classroom tour (math, photography, earth science), daily challenge, path finder, contact form |
 | `math/` | **Mrs. Ali's Classroom** (mathematics): the original interactive math hub, 40+ tools and games |
 | `algebra/` | **Algebra 1 & Algebra 2**: course page (`algebra/index.html`) plus one standalone studio per unit (`a1-…`, `a2-…`) |
+| `trig-calculus/` | **Trigonometry & Calculus**: course page plus one standalone studio per unit (`t1–t6`, `c1–c7`) |
 | `geometry/` | **Geometry Course**: course page (`geometry/index.html`) plus one standalone studio per topic, four units |
 | `photography/` | **Photography Classroom**: virtual camera, lens lab, lesson roadmap, stops cheat sheet |
 | `earth-science/` | **Earth Science Classroom**: course as rock layers, seismic wedge lab, gamma-ray log lab, industry training |
@@ -26,6 +27,11 @@ Other tools live in their own repositories and appear under the same site
 - Same conventions as the geometry studios (`algebra/SPEC.md`), including `?embed=1` and `#tab-N`.
 - To add a studio: add it to `COURSES` in `algebra/index.html`, and to `alg1Units` / `alg2Units` in `TOOLS` in `math/index.html`.
 - The math hub's Algebra tab has Algebra 1 / Algebra 2 sub-tabs; link straight to one with `/math/#algebra-1` or `/math/#algebra-2`.
+
+## Trigonometry & Calculus courses
+- Same conventions (`trig-calculus/SPEC.md`), including `?embed=1` and `#tab-N`.
+- To add a studio: add it to `COURSES` in `trig-calculus/index.html`, and to `trigUnits` / `calcUnits` in `TOOLS` in `math/index.html`.
+- Link straight to a course sub-tab with `/math/#trigonometry` or `/math/#calculus`.
 
 ## Adding things
 - **A math tool:** add a line to the `TOOLS` list near the bottom of `math/index.html`. The five course tabs (Middle School Math, Gamified Classroom, Geometry, Algebra, Trigonometry & Calculus) are set in the `SUBJECTS` list just below it: each tab is a list of groups, and a group with no tools shows a "Coming soon" card. Link straight to a tab with `/math/#algebra`, `/math/#trig-calculus`, etc.

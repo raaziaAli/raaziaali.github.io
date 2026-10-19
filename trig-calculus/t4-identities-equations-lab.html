@@ -649,8 +649,10 @@ const M1={
   panel(full){
     const th=M1.s.th, c=Math.cos(th*D2R), s=Math.sin(th*D2R);
     const live=`sin²θ + cos²θ = ${num(s*s,4)} + ${num(c*c,4)} = ${num(s*s+c*c,4)}
-1 + tan²θ = ${Math.abs(c)>1e-9?"1 + "+num((s/c)**2,4)+" = "+num(1+(s/c)**2,4):"undefined"}   sec²θ = ${Math.abs(c)>1e-9?num(1/(c*c),4):"undefined"}
-1 + cot²θ = ${Math.abs(s)>1e-9?"1 + "+num((c/s)**2,4)+" = "+num(1+(c/s)**2,4):"undefined"}   csc²θ = ${Math.abs(s)>1e-9?num(1/(s*s),4):"undefined"}`;
+1 + tan²θ = ${Math.abs(c)>1e-9?"1 + "+num((s/c)**2,4)+" = "+num(1+(s/c)**2,4):"undefined"}
+sec²θ = ${Math.abs(c)>1e-9?num(1/(c*c),4):"undefined"}
+1 + cot²θ = ${Math.abs(s)>1e-9?"1 + "+num((c/s)**2,4)+" = "+num(1+(c/s)**2,4):"undefined"}
+csc²θ = ${Math.abs(s)>1e-9?num(1/(s*s),4):"undefined"}`;
     if(!full&&document.getElementById("live1")){ document.getElementById("live1").textContent=live; return; }
     side.innerHTML=`<div class="panel"><h3>Three identities from one triangle</h3><div class="pad">
       <p>The point P on the <span class="term">unit circle</span> is (cos θ, sin θ). Its legs are |cos θ| and |sin θ| and its hypotenuse is the radius, 1. The Pythagorean theorem gives the first identity.</p>

@@ -420,8 +420,8 @@ function drawRT(g,A,B,C,o){
   const tA=angOf(A,B), tB=90-tA;
   const arc=(V,a0,a1,q)=>{ const r=q.r||36; if(q.fill)wedge(g,V,r,a0,a1,q.fill); spath(g,pathD(arcPts(V,r,a0,a1,1)),q.c||GRY,2.6); };
   if(o.angA){ arc(A,0,tA,o.angA); if(o.angA.t){ const r=(o.angA.r||36)+10*FS; const p=PT(A,r,tA/2); stext(g,[p[0]+2,p[1]-(tA<25?6:0)],o.angA.t,"sm",o.angA.tc||o.angA.c,"start"); } }
-  if(o.angB){ arc(B,180+tA,270,o.angB); if(o.angB.t){ const half=tB/2, r=(o.angB.r||36)+16*FS+Math.min(70,10*FS/Math.max(.08,Math.sin(half*D2R)));
-      const p=PT(B,r,270-half), w=tw(o.angB.t,"sm"); stext(g,[clamp(p[0]-w/2+6,A[0]+w/2,VW-w/2-4),p[1]],o.angB.t,"sm",o.angB.tc||o.angB.c); } }
+  if(o.angB){ arc(B,180+tA,270,o.angB); if(o.angB.t){ const w=tw(o.angB.t,"sm"), right=B[0]+14+w<VW-4;
+      stext(g,right?[B[0]+14,B[1]+4]:[B[0]-14,B[1]-14*FS],o.angB.t,"sm",o.angB.tc||o.angB.c,right?"start":"end"); } }
   if(o.vl!==false){ [[A,"A"],[B,"B"],[C,"C"]].forEach(([P,t])=>smartLabel(g,P,sub(P,O),t,"var(--ink)","mk")); }
   for(const k in segs){ if(S[k]&&S[k].t) sideLab(g,segs[k][0],segs[k][1],O,S[k].t,S[k].tc||S[k].c); }
   return {A,B,C,O,tA};
@@ -429,7 +429,8 @@ function drawRT(g,A,B,C,o){
 
 /* ══════════════════════ shared triangle (tabs 1–2) ══════════════════════ */
 const T={a:3,b:4,k:1,ref:"A",snap:true,fam:false,fn:"sin",co:false};
-const AX=70, AY=405, U1=40;
+const AX=70, AY=410, U1=52;
+function fitT(){ const st=T.snap?0.5:0.1; T.a=clamp(T.a,1,Math.floor(370/(T.k*U1)/st)*st); T.b=clamp(T.b,1,Math.floor(600/(T.k*U1)/st)*st); }
 function triP(k){ k=k==null?T.k:k; const A=[AX,AY],C=[AX+T.b*k*U1,AY],B=[C[0],AY-T.a*k*U1]; return {A,B,C}; }
 function relT(){ const h=Math.hypot(T.a,T.b), r=T.ref==="A";
   return {opp:r?T.a:T.b, adj:r?T.b:T.a, hyp:h, seg:{opp:r?"BC":"AC",adj:r?"AC":"BC",hyp:"AB"}, th:Math.atan2(r?T.a:T.b,r?T.b:T.a)/D2R}; }
@@ -437,7 +438,7 @@ function sqT(){ if(!isHalf(T.a)||!isHalf(T.b))return null; const R=relT(), po=Ma
 const fexact=(f,Q)=>Q? radFrac(Q[FN[f][0]],Q[FN[f][1]]) : null;
 function hypStr(k){ const Q=sqT(), d=num(k*Math.hypot(T.a,T.b),2); if(!Q||!isHalf(k*2))return d; const kk=Math.round(4*k); const s=lenStr(kk*kk*Q.hyp,8); return s.indexOf("√")>=0? s+" ≈ "+d : s; }
 function dragT(id,p){ const st=T.snap?0.5:0.1, r=v=>Math.round(v/st)*st;
-  if(id==="B")T.a=clamp(r((AY-p[1])/(T.k*U1)),1,4); else if(id==="C")T.b=clamp(r((p[0]-AX)/(T.k*U1)),1,6.5); else return false; }
+  if(id==="B")T.a=clamp(r((AY-p[1])/(T.k*U1)),1,6); else if(id==="C")T.b=clamp(r((p[0]-AX)/(T.k*U1)),1,10); else return false; fitT(); }
 function ratioBox(g,P,lines,col){ const left=P.B[0]>330||P.B[1]>150+(FS>1?60:0); infoBox(g,left?12:VW-12,12,lines,col||THT,!left); }
 function refBtns(){ segBtns([["A","θ at A"],["B","θ at B"]],T.ref,k=>{T.ref=k;render();},"Reference angle"); }
 
@@ -447,18 +448,18 @@ const M1={
   title:()=>"Name the sides from θ · θ = "+dg(relT().th),
   bar(){
     refBtns();
-    islider("Scale k",2,8,Math.round(T.k*4),i=>"×"+num(i/4,2),i=>{T.k=i/4;update();});
+    islider("Scale k",2,8,Math.round(T.k*4),i=>"×"+num(i/4,2),i=>{T.k=i/4;fitT();update();});
     chk("Snap ½ unit",T.snap,v=>{T.snap=v;if(v){T.a=Math.round(T.a*2)/2;T.b=Math.round(T.b*2)/2;}update();});
     chk("Similar family",T.fam,v=>{T.fam=v;update();});
-    btn("3-4-5",()=>{T.a=3;T.b=4;update();});
-    btn("2.5-6-6.5",()=>{T.a=2.5;T.b=6;update();});
-    btn("45-45-90",()=>{T.a=3;T.b=3;update();});
+    btn("3-4-5",()=>{T.a=3;T.b=4;fitT();update();});
+    btn("2.5-6-6.5",()=>{T.a=2.5;T.b=6;fitT();update();});
+    btn("45-45-90",()=>{T.a=3;T.b=3;fitT();update();});
   },
   drag:dragT,
   draw(){
     gridU(AX,AY,U1); const g=gg();
     const R=relT(), P=triP(), k=T.k;
-    if(T.fam){ [0.5,1,1.5,2].forEach(f=>{ if(near(f,k))return; const Q=triP(f);
+    if(T.fam){ [0.5,1,1.5,2].filter(f=>T.b*f*U1<=620&&T.a*f*U1<=390).forEach(f=>{ if(near(f,k))return; const Q=triP(f);
       g.appendChild(E("polygon",{points:[Q.A,Q.B,Q.C].map(p=>p.join(",")).join(" "),fill:"none",stroke:"#94A3B8","stroke-width":1.6,"stroke-dasharray":"6 5"}));
       stext(g,[Q.B[0]+8,Q.B[1]+10],"×"+num(f,2),"xs","#64748B","start"); }); }
     const sides={}; ROLES.forEach(r=>{ sides[R.seg[r]]={c:COL[r],tc:TXT[r],w:4.4,t:(FS>1?SH[r]:NAME[r])+" = "+num(k*R[r],2)}; });
@@ -790,10 +791,10 @@ const SC={
       sseg(g,A0,Fx,A?UNK:COL.adj,4.4); sseg(g,Fx,Ex,COL.opp,4.4); sseg(g,A0,Ex,A?UNK:COL.hyp,4);
       rightMark(g,Fx,[-1,0],[0,-1],10);
       arcLab(g,A0,96,0,RP.th,THC,"rgba(234,88,12,.15)");
-      stext(g,PT(A0,108,RP.th+6+(FS>1?4:0)),"θ = "+(A?num(RP.th,1)+"°":dg(RP.th)),"sm",A?THT:UNK,"start");
-      sideLab(g,A0,Ex,[Fx[0],G5+80],"ramp L = "+num(L,2)+" ft",A?UNK:TXT.hyp,"sm");
+      { const lx=A0[0]+102; stext(g,[lx,G5-(lx-A0[0])*Math.tan(RP.th*D2R)-16*FS],"θ = "+(A?num(RP.th,1)+"°":dg(RP.th)),"sm",A?THT:UNK,"start"); }
+      { const q=add(A0,mul(sub(Ex,A0),.5)); stext(g,[q[0]+20,q[1]-24*FS],"ramp L = "+num(L,2)+" ft","sm",A?UNK:TXT.hyp,"middle"); }
       dimH(g,rpX,Fx[0],G5+22,"run = "+num(RP.run,A?2:1)+" ft",A?UNK:TXT.adj);
-      stext(g,[Fx[0]-8,(Ex[1]+G5)/2],"rise "+num(RP.rise,2)+" ft","xs",TXT.opp,"end");
+      { const far=Fx[0]+170>VW; stext(g,far?[Fx[0]-8,Ex[1]-30*FS]:[Fx[0]+62,Ex[1]-14],"rise "+num(RP.rise,2)+" ft","sm",TXT.opp,far?"end":"start"); }
       infoBox(g,12,12,["slope = 1 : "+num(RP.run/RP.rise,1), ok?"meets ADA (1:12 or flatter)":"too steep for ADA"],ok?COT:UNK);
       sgrab(g,Ex,"end","var(--ink)");
     },
@@ -820,7 +821,7 @@ const SC={
       rightMark(g,[ldW-2,G5],[-1,0],[0,-1],12);
       arcLab(g,F,46,0,LD.th,THC,"rgba(234,88,12,.15)");
       const lp=PT(F,56,LD.th/2); stext(g,[lp[0]+6,lp[1]],"θ = "+(A?LD.th+"°":dg(LD.th)),"sm",A?THT:UNK,"start");
-      sideLab(g,F,Tp,[ldW,G5],"L = "+LD.L+" ft",TXT.hyp);
+      { const m=mul(add(F,Tp),.5); stext(g,[m[0]-16,m[1]-30],"L = "+LD.L+" ft","sm",TXT.hyp,"end"); }
       dimH(g,F[0],ldW,G5+22,"foot "+num(LD.f,A?2:1)+" ft",A?UNK:TXT.adj);
       stext(g,[ldW-12,(Tp[1]+G5)/2],"h = "+num(h,2)+" ft","sm",UNK,"end");
       infoBox(g,12,12,["4-to-1 rule: θ ≈ 75°", ok?"safe angle":LD.th<70?"foot too far out":"too steep"],ok?COT:UNK);
@@ -855,7 +856,8 @@ const SC={
         arcLab(g,BP,72,v,v+dl,COC,"rgba(5,150,105,.14)"); stext(g,PT(BP,90,v+dl/2),"α = "+num(al,1)+"°","xs",COT); }
       if(Math.abs(BR.N)>0.05)sideLab(g,BP,K,O,num(Math.abs(BR.N),2)+" km "+(BR.N>0?"N":"S"),A?UNK:TXT.adj);
       if(Math.abs(BR.E)>0.05)sideLab(g,K,S,O,num(Math.abs(BR.E),2)+" km "+(BR.E>0?"E":"W"),A?UNK:TXT.opp);
-      sideLab(g,BP,S,Math.abs(BR.E)>0.05&&Math.abs(BR.N)>0.05?O:add(BP,[BR.N*9,BR.E*9]),"d = "+num(BR.d,2)+" km",A?TXT.hyp:UNK);
+      { const q=add(BP,mul(sub(S,BP),.78)), dd=unit(sub(S,BP)); let n=[-dd[1],dd[0]]; const ref=Math.abs(BR.E)>0.05&&Math.abs(BR.N)>0.05?O:add(BP,[BR.N*9,BR.E*9]);
+        if(n[0]*(q[0]-ref[0])+n[1]*(q[1]-ref[1])<0)n=mul(n,-1); smartLabel(g,q,n,"d = "+num(BR.d,2)+" km",A?TXT.hyp:UNK,"sm"); }
       g.appendChild(E("rect",{x:BP[0]-6,y:BP[1]-6,width:12,height:12,fill:"#0F172A"})); stext(g,[BP[0]-10,BP[1]+16],"port","xs","#334155","end");
       g.appendChild(E("path",{d:`M${S[0]-11} ${S[1]+2}L${S[0]+11} ${S[1]+2}L${S[0]+7} ${S[1]+8}L${S[0]-7} ${S[1]+8}Z`,fill:"#7C2D12"}));
       sgrab(g,S,"ship","var(--ink)");
@@ -1048,7 +1050,7 @@ const M6={
       if(res.some(r=>r==="unread")){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Use a number like 12.3, a fraction like 5/13, or a root like 2√13/13 or 2sqrt(13)/13.</div>`; return; }
       if(res.every(r=>r==="ok")){
         M6.s.state="right"; if(M6.s.tries===0&&!M6.s.reveal){ M6.s.streak++; M6.s.best=Math.max(M6.s.best,M6.s.streak); } M6.s.solved++; M6.upStreak();
-        redraw();
+        redraw(); bTitle.textContent=M6.title();
         showSol(`<div class="verdict good"><b>Correct!</b> ${M6.s.tries||M6.s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+M6.s.streak+"."} Compare your work, then press <b>New problem</b>.</div>`);
         ins.forEach(x=>x.disabled=true);
       } else {
@@ -1059,7 +1061,7 @@ const M6={
     };
     document.getElementById("chk").onclick=check;
     ins.forEach(x=>x.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); }));
-    document.getElementById("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){M6.s.streak=0;M6.upStreak();} redraw(); showSol(`<div class="verdict info"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+    document.getElementById("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){M6.s.streak=0;M6.upStreak();} redraw(); bTitle.textContent=M6.title(); showSol(`<div class="verdict info"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
   }
 };
 
@@ -1071,9 +1073,9 @@ function update(){ setFS(); const M=MODS[cur]; bTitle.textContent=M.title(); cv.
 function render(){
   setFS(); const M=MODS[cur];
   document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M6&&!M6.s.pr)M6.newProb();
   bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
   cv.setAttribute("aria-label",M.tab+" — "+M.title());
-  if(M===M6&&!M6.s.pr)M6.newProb();
   bar.innerHTML=""; M.bar();
   clear(); M.draw(); M.panel(true);
   [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
