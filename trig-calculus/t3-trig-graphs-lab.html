@@ -502,7 +502,7 @@ const M1={
   draw(){ if(M1.s.src==="circle")M1.drawCircle(); else M1.drawData(); },
   drawCircle(){
     const s=M1.s, {R,CX,CY,GX}=C1, n=s.n, sc=471.24/(TAU*n), th=s.th;
-    const V=view(-8/sc,TAU*n+16/sc,-1.32,1.32,[GX-8,CY-1.32*R,GX+471.24+16,CY+1.32*R]);
+    const V=view(-8/sc,TAU*n+16/sc,-1.32,1.7,[GX-8,CY-1.7*R,GX+471.24+16,CY+1.32*R]);
     const g=grid(V,{xt:"θ"});
     const top=E("g",{}); cv.appendChild(top);
     // unit circle
@@ -525,7 +525,7 @@ const M1={
     const fns=[]; if(showS)fns.push(["sin","var(--unk)",Math.sin]); if(showC)fns.push(["cos","var(--corr)",Math.cos]);
     fns.forEach(([nm,col,f])=>{ plot(g,V,f,{color:col,w:2,op:.35,from:0,to:TAU*n}); plot(g,V,f,{color:col,w:3.6,from:0,to:th}); });
     // period bracket
-    const yb=V.sy(1.2); darrow(g,[V.sx(0),yb],[V.sx(TAU),yb],"var(--vert)",1.8);
+    const yb=V.sy(1.52); reserve(V.sx(0),yb-24*FS,V.sx(TAU),yb+6); darrow(g,[V.sx(0),yb],[V.sx(TAU),yb],"var(--vert)",1.8);
     seg(g,[V.sx(0),yb-6],[V.sx(0),yb+6],"var(--vert)",1.8); seg(g,[V.sx(TAU),yb-6],[V.sx(TAU),yb+6],"var(--vert)",1.8);
     reserve(0,0,VW,0);
     // features
@@ -547,7 +547,7 @@ const M1={
     const gf=s.fn==="cos"?Math.cos:Math.sin; grab(top,V.p(th,gf(th)),"G",s.fn==="cos"?"var(--corr)":"var(--unk)");
     // θ readout
     txt(top,CX,CY+R+38*FS,"θ = "+xS(th)+(degMode?"":(isPiNice(th)&&th>0?"":"")),"sm","#007C91");
-    txt(top,CX,24,"P = (cos θ, sin θ)","sm","var(--ink)");
+    txt(top,10,22*FS,"P = (cos θ, sin θ)","sm","var(--ink)","start");
     const lx=V.sx(TAU*n)-4; if(showS)txt(top,lx,V.sy(-1.18),"y = sin θ","sm","var(--unk)","end");
     if(showC)txt(top,lx-(showS?110*FS:0),V.sy(-1.18),"y = cos θ","sm","var(--corr)","end");
   },
@@ -631,7 +631,7 @@ const M2={
   tab:"Amplitude & period", lesson:"F-TF.B.5 · F-BF.B.3", accent:"var(--magenta)",
   title:()=>eqStr(M2.s.fn,M2.s.A,M2.s.B,0,0),
   s:{A:2,B:2,fn:"sin",box:true,parent:true},
-  V:()=>view(-1.25,4*PI+0.55,-4.75,4.75),
+  V:()=>view(-1.25,4*PI+0.55,-5.7,5.7),
   bar(){
     const s=M2.s;
     slider("A",-4,4,0.5,()=>s.A,v=>{s.A=v;},()=>fx(s.A),true);
@@ -663,9 +663,9 @@ const M2={
     if(s.box) plot(g,V,y,{color:"var(--altx)",w:4.6,from:0,to:P});
     // cycle ticks across [0, 2π]
     const n=Math.floor(s.B+1e-9); for(let k=1;k<=n&&k*P<=V.x1;k++) dot(g,V.p(k*P,s.fn==="sin"?0:s.A),"var(--altx)",4);
-    txt(top,14,22,"B = "+fx(s.B)+" → "+fx(s.B)+" cycle"+(near(s.B,1)?"":"s")+" every "+(degMode?"360°":"2π"),"sm","#BE185D","start");
-    if(s.parent) txt(top,14,22+22*FS,"dashed: y = "+s.fn+" x","sm","#64748B","start");
-    reserve(0,0,360*FS,32+22*FS);
+    txt(top,VW-12,22*FS,"B = "+fx(s.B)+" → "+fx(s.B)+" cycle"+(near(s.B,1)?"":"s")+" every "+(degMode?"360°":"2π"),"sm","#BE185D","end");
+    if(s.parent) txt(top,VW-12,44*FS,"dashed: y = "+s.fn+" x","sm","#64748B","end");
+    reserve(VW-360*FS,0,VW,56*FS);
     grab(top,V.p(M2.hp()[0],M2.hp()[1]),"H","var(--hand)");
   },
   live(){ const s=M2.s, P=TAU/s.B, a=Math.abs(s.A);
@@ -709,7 +709,7 @@ const M3={
   },
   newT(){ const s=M3.s; const B=pick([0.5,1,1,2,2,3]), P=TAU/B;
     const A=pick([1,1.5,2,2.5,3]), D=pick([-2,-1.5,-1,-0.5,0,0.5,1,1.5,2]);
-    const C=rnd(-3,3)*P/8; s.tg={fn:pick(["sin","cos"]),A,B,C,D};
+    const C=rnd(-4,4)*PI/12; void P; s.tg={fn:pick(["sin","cos"]),A,B,C,D};
     // the "cos" version of the same wave is shifted by a quarter period — keep the target a sine internally
     s.tg.fn="sin"; s.M=[PI/2,1]; s.m=[3*PI/2,-1]; s.done=false; },
   keys(){ const s=M3.s, P=TAU/s.B, ys=s.fn==="sin"?[0,1,0,-1,0]:[1,0,-1,0,1]; return ys.map((v,k)=>[s.C+k*P/4,s.D+s.A*v]); },
@@ -1214,9 +1214,9 @@ function update(){ setFS(); const M=MODS[cur]; clear(); M.draw(); if(M.live){ co
 function render(){
   setFS(); const M=MODS[cur];
   document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M7&&!M7.s.pr)M7.newProb();
   bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
   cv.setAttribute("aria-label",M.tab+" — "+M.title());
-  if(M===M7&&!M7.s.pr)M7.newProb();
   bar.innerHTML=""; sliders=[]; M.bar();
   clear(); M.draw(); M.panel(true);
   if(M.live){ const l=document.getElementById("live"); if(l)l.innerHTML=M.live(); }

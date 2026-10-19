@@ -356,6 +356,7 @@ function cS(x,y){
   if(x===0)return (y<0?"−":"")+im;
   return X+(y<0?" − ":" + ")+im;
 }
+const cN=(x,y)=>{ const X=num(x,2), Y=num(Math.abs(y),2); if(Y==="0")return X; return (X==="0"?(y<0?"−":""):X+(y<0?" − ":" + "))+Y+"i"; };
 const cisS=(r,t)=>xs(r)+" cis "+degS(t);
 const trigS=(r,t)=>xs(r)+"(cos "+degS(t)+" + i sin "+degS(t)+")";
 
@@ -628,10 +629,10 @@ const M2={
       sdot(g,B,TC[i],6); stext(g,[B[0],BY+22*FS],"B"+subN(i+1),"mk",TC[i]); });
     if(s.swing!=null){ const tp=PT(C,s.a*S2,s.swing); sseg(g,C,tp,"#DB2777",3.4); sdot(g,tp,"#DB2777",6); }
     sseg(g,C,H,"var(--alt)",2.2,"7 5"); if(len(sub(C,H))>16)rightMark(g,H,[0,-1],[H[0]>=A[0]+1?-1:1,0]);
-    smartLabel(g,mid(C,H),[H[0]<A[0]+40?1:-1,0],"h ≈ "+num(I.h,2),"#047857",null,10);
+    stext(g,[H[0]+8*FS,H[1]-(C[1]<H[1]-60?0.3:0.5)*(H[1]-C[1])],"h ≈ "+num(I.h,2),"sm","#047857","start");
     sseg(g,A,C,"var(--graphite)",3.4);
     smartLabel(g,mid(A,C),nAway(A,C,[A[0]+200,BY]),"b = "+num(s.b,1),"var(--ink)");
-    const bis=wedge(g,A,[A[0]+60,BY],C,26,COL.A); stext(g,PT(A,(s.A<30?62:50)*FS,bis),"A = "+s.A+"°","sm",COL.A);
+    const bis=wedge(g,A,[A[0]+60,BY],C,26,COL.A); stext(g,PT(A,(s.A<30?78:s.A<60?64:52)*FS,bis),"A = "+s.A+"°","sm",COL.A);
     const tip=M2.tip(I);
     if(s.swing==null){
       if(!I.n){ sseg(g,C,tip,"#DB2777",3.4,"2 0"); sdot(g,tip,"#DB2777",5);
@@ -712,8 +713,8 @@ const M3={
     poly(g,[A,B,C],"fill:rgba(234,179,8,.10);stroke:var(--graphite)",2.8);
     if(d.step>=2){ if(Aw[0]<0)sseg(g,C,D,"#94A3B8",2,"6 5"); if(Aw[0]>d.a)sseg(g,B,D,"#94A3B8",2,"6 5");
       sseg(g,A,D,"var(--alt)",2.6,"8 5"); if(Math.abs(Aw[1])>0.4&&Math.abs(Aw[0]-d.a)>0.3)rightMark(g,D,[0,-1],[Aw[0]<d.a?1:-1,0]);
-      smartLabel(g,mid(A,D),[Aw[0]<d.a?-1:1,0],"b sin C","#047857",null,8);
-      if(Math.abs(Aw[0]-d.a)>0.6)stext(g,[(D[0]+B[0])/2,O3[1]+30*FS],"|a − b cos C|","sm","#047857"); }
+      smartLabel(g,mid(A,D),[Aw[0]<d.a?1:-1,0],"b sin C","#047857",null,8);
+      if(Math.abs(Aw[0]-d.a)>0.6)stext(g,[(D[0]+B[0])/2,O3[1]+52*FS],"|a − b cos C|","sm","#047857"); }
     const bis=wedge(g,C,B,A,24,COL.C); stext(g,PT(C,(Cang<40?58:46)*FS,bis),"C = "+num(Cang,1)+"°","sm",COL.C);
     smartLabel(g,mid(C,B),[0,1],"a = "+xs(d.a),COL.A,null,22);
     smartLabel(g,mid(C,A),nAway(C,A,cen),"b = "+xd(b),COL.B);
@@ -730,7 +731,7 @@ const M3={
     const A=F.W(Aw), B=F.W(Bw), C=F.W(Cw);
     if(t.survey){ const m=mid(A,B), dir=sub(B,A), L=len(dir), ang=Math.atan2(dir[1],dir[0])*R2D;
       g.appendChild(E("ellipse",{cx:m[0],cy:m[1],rx:Math.max(10,L*0.36),ry:Math.max(8,Math.min(46,L*0.2)),transform:`rotate(${ang.toFixed(1)} ${m[0].toFixed(1)} ${m[1].toFixed(1)})`,style:"fill:#93C5FD;stroke:#3B82F6","fill-opacity":.55,"stroke-width":1.5}));
-      stext(g,m,"lake","sm","#1D4ED8");
+      stext(g,add(m,mul(unit(dir),-L*0.2)),"lake","sm","#1D4ED8");
       smartLabel(g,C,[0,1],"surveyor","#047857",null,30); }
     drawTri(g,A,B,C,{C:{t:t.C+"°"},a:{t:"a = "+num(t.a,1)},b:{t:"b = "+num(t.b,1)},
       c:{t:"c ≈ "+num(D.c,2),c:CALC},A:{t:num(D.A,1)+"°",c:CALC},B:{t:num(D.B,1)+"°",c:CALC}},t.survey?"rgba(16,185,129,.06)":null);
@@ -1014,13 +1015,13 @@ const M5={
       h+=panelH("The idea",padH(`<p>${M?"Multiplying by w <b>stretches</b> z by |w| and <b>rotates</b> it by arg w. Press <b>Animate</b> to watch z travel along a spiral to zw.":"Dividing by w undoes multiplying: <b>shrink</b> by |w| and rotate <b>backwards</b> by arg w."}</p><p>The reason is the angle-sum identities: cos(θ₁ + θ₂) = cos θ₁ cos θ₂ − sin θ₁ sin θ₂ and sin(θ₁ + θ₂) = sin θ₁ cos θ₂ + cos θ₁ sin θ₂ are exactly the real and imaginary parts of the product.</p>`));
       h+=tryPanel(M?`Put w on the unit circle at 90° (that is, w = i). What does multiplying by i do to any z? Now try w = −1.`:`Make w = z. What is z/w, and where does it sit? Then put w at 1 cis 90° and describe the motion.`);
     } else if(md==="pow"){ const n=s.n, ts=atan2D(z[1],z[0]);
-      let rows=""; for(let k=1;k<=n;k++){ const p=cis(Math.pow(rz,k),ts*k); rows+=`<tr><td>z${supN(k)}</td><td>${xs(Math.pow(rz,k),3)}</td><td>${degS(norm(tz*k))}</td><td>${cS(Math.round(p[0]*1000)/1000,Math.round(p[1]*1000)/1000)}</td></tr>`; }
+      let rows=""; for(let k=1;k<=n;k++){ const p=cis(Math.pow(rz,k),ts*k); rows+=`<tr><td>z${supN(k)}</td><td>${xs(Math.pow(rz,k),3)}</td><td>${degS(norm(tz*k))}</td><td>${cN(p[0],p[1])}</td></tr>`; }
       const zn=cis(Math.pow(rz,n),tz*n);
-      h+=panelH("De Moivre's theorem",padH(`<div class="eq">z = ${cisS(rz,tz)}\nzⁿ = rⁿ cis(nθ)\nz${supN(n)} = ${xs(rz)}${supN(n)} cis(${n}·${degS(tz)})\n    = ${xs(Math.pow(rz,n),3)} cis ${degS(norm(n*tz))}\n    = ${cS(zn[0],zn[1])}</div>`)+`<div class="tblwrap"><table class="pw"><tr><th>POWER</th><th>|zᵏ|</th><th>ARG</th><th>a + bi</th></tr>${rows}</table></div>`);
+      h+=panelH("De Moivre's theorem",padH(`<div class="eq">z = ${cisS(rz,tz)}\nzⁿ = rⁿ cis(nθ)\nz${supN(n)} = ${/[\/√]/.test(xs(rz))?"("+xs(rz)+")":xs(rz)}${supN(n)} cis(${n}·${degS(tz)})\n    = ${xs(Math.pow(rz,n),3)} cis ${degS(norm(n*tz))}\n    = ${cS(zn[0],zn[1])}</div>`)+`<div class="tblwrap"><table class="pw"><tr><th>POWER</th><th>|zᵏ|</th><th>ARG</th><th>a + bi</th></tr>${rows}</table></div>`);
       h+=panelH("The idea",padH(`<p>Each multiplication by z multiplies the modulus by r and adds θ to the angle, so the powers walk around a <b>spiral</b>. If r > 1 it spirals out, if r < 1 it spirals in, and if r = 1 the powers stay on the unit circle.</p><p>That is <span class="term">De Moivre's theorem</span>: (r cis θ)ⁿ = rⁿ cis(nθ). No need to multiply out (a + bi)ⁿ.</p>`));
       h+=tryPanel(`Drag z onto the unit circle at 30°. Which power first lands back on 1? Then try 45° and 72°. How does the angle predict the answer?`);
     } else { const w=z, n=s.rn, rho=Math.pow(rz,1/n);
-      let rows=""; for(let k=0;k<n;k++){ const t=(tz+360*k)/n, p=cis(rho,t); rows+=`<tr><td>ω${subN(k)}</td><td>${degS(t,2)}</td><td>${cS(Math.round(p[0]*1000)/1000,Math.round(p[1]*1000)/1000)}</td></tr>`; }
+      let rows=""; for(let k=0;k<n;k++){ const t=(tz+360*k)/n, p=cis(rho,t); rows+=`<tr><td>ω${subN(k)}</td><td>${degS(t,2)}</td><td>${cN(p[0],p[1])}</td></tr>`; }
       h+=panelH(`The ${n} ${n===2?"square":n===3?"cube":n+"th"} roots of w`,padH(`<div class="eq">w = ${cisS(rz,tz)}   (${cS(w[0],w[1])})\nωₖ = ⁿ√r · cis((θ + 360°k)/n),  k = 0 … ${n-1}\n   = ${xd(rho,3)} cis((${degS(tz)} + 360°k)/${n})\nspacing = 360°/${n} = ${degS(360/n,2)}</div>`)+`<div class="tblwrap"><table class="pw"><tr><th>ROOT</th><th>ARG</th><th>a + bi</th></tr>${rows}</table></div>`);
       h+=panelH("The idea",padH(`<p>Every nonzero complex number has exactly <b>n</b> different nth roots. They all have modulus ⁿ√r, so they lie on one circle, and their angles are spaced 360°/n apart: the vertices of a <b>regular n-gon</b>.</p><p>Why? Raising any ωₖ to the nth power multiplies its angle by n, and adding 360°k/n then becomes adding 360°k, which lands back on θ.</p>`));
       h+=tryPanel(`Drag w to 1 (on the positive real axis). The roots are the <b>roots of unity</b>. For n = 4, which familiar numbers are they? (1, i, −1, −i.) Now find the cube roots of −8.`);
@@ -1273,7 +1274,7 @@ const M6={
 const MODS=[M1,M2,M3,M4,M5,M6];
 function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
 window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
-function update(light){ setFS(); const M=MODS[cur]; clear(); M.draw(); if(!light)M.panel(false); if(M.sync)M.sync(); bTitle.textContent=M.title(); }
+function update(light){ setFS(); const M=MODS[cur]; clear(); M.draw(); M.panel(false); if(M.sync)M.sync(); bTitle.textContent=M.title(); }
 function render(){
   stopAnim(); setFS(); const M=MODS[cur];
   document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
