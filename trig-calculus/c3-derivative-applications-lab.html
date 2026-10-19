@@ -232,6 +232,9 @@
 
   /* ── Applying Derivatives Lab additions ── */
   .rng output{min-width:34px}
+  .seg{flex-wrap:wrap}
+  @media (max-width:960px){.stage{grid-template-columns:minmax(0,1fr)}}
+  @media (max-width:560px){ .bar .rng{flex-wrap:wrap} .rng.wide input{width:120px} .board-head .lsn{margin-left:0} }
   .rng.wide output{min-width:96px}
   .sc-wrap{overflow-x:auto;padding:2px 20px 14px}
   table.sc{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:100%}
@@ -317,6 +320,7 @@ function niceS(v){
 }
 const ex=(v,dp)=>niceS(v)||fixd(v,dp==null?3:dp);
 function exa(v,dp){ const s=niceS(v); if(s===null)return "≈ "+fixd(v,dp==null?3:dp); return /[\/√π]/.test(s)? s+" ≈ "+fixd(v,dp==null?3:dp) : s; }
+const fq=s=>String(s).replace(/=\s+≈/g,"≈");
 const par=s=>(/^[−-]/.test(s)?"("+s+")":s);
 function niceStep(range,target){ const raw=range/(target||8), p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3?2:m<7?5:10)*p; }
 function tickLab(v,step){ const dec=Math.max(0,-Math.floor(Math.log10(step)+1e-9)); return fixd(v,dec); }
@@ -354,9 +358,10 @@ function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in at
 function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
 function sseg(g,p,q,col,w,dash,op){ const a={x1:p[0],y1:p[1],x2:q[0],y2:q[1],style:"stroke:"+(col||"var(--graphite)"),"stroke-width":w||2.6,"stroke-linecap":"round",fill:"none"};
   if(dash)a["stroke-dasharray"]=dash; if(op!=null)a.opacity=op; const n=E("line",a); g.appendChild(n); return n; }
-function sdot(g,p,col,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||5,style:"fill:"+(col||"var(--ink)"),stroke:"#fff","stroke-width":2,"pointer-events":"none"})); }
-function ring(g,p,col,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||6,fill:"#fff",style:"stroke:"+(col||"var(--ink)"),"stroke-width":2.6,"pointer-events":"none"})); }
-function sgrab(g,p,id,col){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?24:16,class:"grab","data-drag":id})); sdot(g,p,col||"var(--hand)",6); }
+function fin(p){ return isFinite(p[0])&&isFinite(p[1]); }
+function sdot(g,p,col,r){ if(!fin(p))return; g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||5,style:"fill:"+(col||"var(--ink)"),stroke:"#fff","stroke-width":2,"pointer-events":"none"})); }
+function ring(g,p,col,r){ if(!fin(p))return; g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||6,fill:"#fff",style:"stroke:"+(col||"var(--ink)"),"stroke-width":2.6,"pointer-events":"none"})); }
+function sgrab(g,p,id,col){ if(!fin(p))return; g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?24:16,class:"grab","data-drag":id})); sdot(g,p,col||"var(--hand)",6); }
 function stext(g,p,s,cls,col,anchor){ const t=E("text",{x:p[0],y:p[1],class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"});
   if(col)t.setAttribute("style","fill:"+col); t.textContent=s; g.appendChild(t); return t; }
 function arrowHead(g,tip,dir,col,sz){ sz=sz||12; const n=[-dir[1],dir[0]], b=[tip[0]-dir[0]*sz,tip[1]-dir[1]*sz];
@@ -661,7 +666,7 @@ const M1={
       panel("Equation → differentiate → solve",`<div class="fldwrap"><div class="eq" id="rrEq"></div></div>`)+
       panel("Live rates",`<div id="rrRates"></div>`)+tryPanel(S.tryit); },
   live(){ const C=M1.cur(), e=live("rrEq"), r=live("rrRates"); if(!e)return;
-    e.textContent=C.S.eq(C.p,C.st,C.t);
+    e.textContent=fq(C.S.eq(C.p,C.st,C.t));
     r.innerHTML=C.S.rates(C.p,C.st).map(q=>`<div class="rel"><span class="dot" style="background:${q[4]}"></span><span class="nm">${q[0]}<em>${q[1]}</em></span><span class="val ${q[2]>=0?"ok":"no"}">${fixd(q[2],3)} ${q[3]}</span></div>`).join(""); }
 };
 
@@ -786,7 +791,7 @@ const M2={
     M2.xs=slider(O.xn,d[0],d[1],(d[1]-d[0])/1000,M2.s.X[M2.s.pb],v=>{M2.setX(v);update();},v=>fixd(v,2));
     btn("Jump to optimum",()=>{M2.setX(O.xs(p));update();M2.sync();},"primary");
   },
-  full(){ clear(); M2.draw(); side.innerHTML=M2.side(); M2.live(); M2.sync(); },
+  full(){ clear(); M2.draw(); side.innerHTML=fq(M2.side()); M2.live(); M2.sync(); },
   sync(){ if(M2.xs){ const {O,p}=M2.C(), d=O.dom(p); M2.xs.i.min=d[0]; M2.xs.i.max=d[1]; M2.xs.i.step=(d[1]-d[0])/1000; M2.xs.set(M2.s.X[M2.s.pb]); } },
   drag(id,sp){ const {O,p}=M2.C(); if(id==="gx")M2.setX(M2.G.iX(sp[0])); else if(id==="px"&&O.picX)M2.setX(O.picX(p,sp)); M2.sync(); },
   draw(){
@@ -801,7 +806,7 @@ const M2={
     const fs=O.f(p,xs); sseg(c,G.P(xs-(d[1]-d[0])*0.25,fs),G.P(xs+(d[1]-d[0])*0.25,fs),"var(--alt)",2.4,"8 5");
     sseg(c,G.P(xs,G.win.y0),G.P(xs,fs),"var(--alt)",1.6,"4 4");
     ring(cv,G.P(xs,fs),"var(--alt)",7);
-    smartLabel(cv,G.P(xs,fs),O.kind==="max"?[0,-1]:[0,1],O.fn+"′ = 0 at "+O.xn+" ≈ "+f2(xs),"#047857");
+    smartLabel(cv,G.P(xs,fs),O.kind==="max"?[0,-1]:[0.15,-1],O.fn+"′ = 0 at "+O.xn+" ≈ "+f2(xs),"#047857");
     const fx=O.f(p,x), m=O.fp(p,x), P=G.P(x,fx), dir=unit([G.X(1)-G.X(0),G.Y(m)-G.Y(0)]), col=Math.abs(m)<1e-3*(1+Math.abs(fs))?"#047857":m>0?"#0284C7":"#DC2626";
     sseg(c,sub(P,mul(dir,55)),add(P,mul(dir,55)),col,2.6);
     sseg(c,[P[0],G.box.y+G.box.h],P,"var(--hand)",1.4,"3 4");
@@ -969,6 +974,7 @@ const M4={
     if(z.length){ M4.s.b=z[0]; M4.s.msg=""; } else M4.s.msg=`No b &gt; a in view has f(b) = f(a) = ${f3(fa)} for this function, so Rolle's case cannot be set up from this a. Try another a.`;
     update(); },
   drag(id,sp){ const P=M4.P(); let x=M4.snapX(clamp(M4.G.iX(sp[0]),P.dlo!=null?P.dlo:P.win[0],P.win[1]));
+    if(P.bad&&P.bad.t==="c"&&Math.abs(x-P.bad.x)<0.2)x=P.bad.x+(x<P.bad.x?-0.2:0.2);
     if(id==="a")M4.s.a=Math.min(x,M4.s.b-0.1); if(id==="b")M4.s.b=Math.max(x,M4.s.a+0.1); M4.s.msg=""; },
   info(){ const P=M4.P(), a=M4.s.a, b=M4.s.b, fa=P.f(a), fb=P.f(b), m=(fb-fa)/(b-a);
     let cont=true, diff=true, why="";
@@ -1007,7 +1013,7 @@ const M4={
     else if(!I.cs.length)h+=`<div class="verdict bad"><b>No c exists.</b> A hypothesis fails (${I.why}), so the MVT makes no promise, and here its conclusion really is false.</div>`;
     else h+=`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>A c exists anyway.</b> The hypotheses fail (${I.why}), so the MVT does not <i>guarantee</i> c; it just happens to exist on this interval.</div>`;
     if(M4.s.msg)h+=`<div class="note">${M4.s.msg}</div>`;
-    el.innerHTML=h; }
+    el.innerHTML=fq(h); }
 };
 
 /* ══════════════════════ TAB 5 · L'Hôpital's Rule ══════════════════════ */
@@ -1061,7 +1067,7 @@ const M5={
       btn("Show all",()=>{M5.s.step=LIMS[M5.s.li].steps.length-1;M5.side2();});
     }
   },
-  side2(){ side.innerHTML=M5.side(); M5.live(); clear(); M5.draw(); },
+  side2(){ side.innerHTML=fq(M5.side()); M5.live(); clear(); M5.draw(); },
   win(){ const D=LD[M5.s.di], hw=2.6/M5.zoom(), hh=hw*432/642; return {x0:D.a-hw,x1:D.a+hw,y0:-hh,y1:hh,hw}; },
   drag(id,sp){ if(id==="pr"){ const W=M5.win(), x=M5.G.iX(sp[0]); let pf=(x-LD[M5.s.di].a)/W.hw; pf=clamp(pf,-0.95,0.95); if(Math.abs(pf)<0.04)pf=pf<0?-0.04:0.04; M5.s.pf=pf; } },
   draw(){
@@ -1149,7 +1155,7 @@ const M6={
     const fx=P.f(s.x), lx=L(s.x);
     sseg(c,G.P(s.x,fx),G.P(s.x,lx),"#DC2626",3.4);
     sdot(cv,G.P(s.x,lx),"#0284C7",5.5);
-    smartLabel(cv,G.P(s.x,(fx+lx)/2),[s.x>=s.a?1:-1,0],"error "+fixd(Math.abs(fx-lx),4),"#B91C1C");
+    smartLabel(cv,add(G.P(s.x,(fx+lx)/2),[s.x>=s.a?14:-14,22]),[s.x>=s.a?1:-1,0.6],"error "+fixd(Math.abs(fx-lx),4),"#B91C1C");
     sgrab(cv,G.P(s.a,fa),"a","#0284C7"); smartLabel(cv,G.P(s.a,fa),[-1,-1],"a","#0369A1","mk");
     sgrab(cv,G.P(s.x,fx),"x"); smartLabel(cv,G.P(s.x,fx),[0,-1],"x","#C2410C","mk");
     // error vs distance
@@ -1173,7 +1179,7 @@ L(${ex(s.x,3)}) = ${ex(fa,4)} + ${par(ex(m,4))}(${ex(s.x-s.a,3)}) = ${fixd(lx,5)
       <div class="rel"><span class="dot" style="background:#0284C7"></span><span class="nm">Estimate L(x)<em>tangent-line value</em></span><span class="val">${fixd(lx,5)}</span></div>
       <div class="rel"><span class="dot" style="background:#14213D"></span><span class="nm">Actual f(x)<em>calculator value</em></span><span class="val">${fixd(fx,5)}</span></div>
       <div class="rel"><span class="dot" style="background:#DC2626"></span><span class="nm">Error f(x) − L(x)<em>${Math.abs(fx)>1e-9?"relative error "+fixd(Math.abs(e/fx)*100,3)+"%":""}</em></span><span class="val no">${fixd(e,5)}</span></div>
-      <div class="pad"><p>f″(a) = ${fixd(fpp,4)}: f is ${Math.abs(fpp)<1e-9?"neither concave up nor down at a, so the error is unusually small":fpp<0?"<b>concave down</b> at a, so the tangent lies above the curve and L(x) is an <b>over-estimate</b>":"<b>concave up</b> at a, so the tangent lies below the curve and L(x) is an <b>under-estimate</b>"}.</p></div>`; }
+      <div class="pad"><p>f″(a) = ${fixd(fpp,4)}: f is ${Math.abs(fpp)<1e-9?"neither concave up nor down at a, so the error is unusually small":fpp<0?"<b>concave down</b> at a, so the tangent lies above the curve and L(x) is an <b>over-estimate</b>":"<b>concave up</b> at a, so the tangent lies below the curve and L(x) is an <b>under-estimate</b>"}.</p></div>`; el.innerHTML=fq(el.innerHTML); }
 };
 
 /* ══════════════════════ TAB 7 · challenge ══════════════════════ */
@@ -1357,7 +1363,7 @@ const M7={
       <p>Type a number, a fraction like <b>−3/4</b>, or an exact form like <b>8π</b>, <b>sqrt(3)/3</b>, <b>e^2</b>. Decimals rounded to two places are accepted (three for linear approximations).</p>
       <p>For lists, separate x-values with commas in any order, or type <b>none</b>. A first-try correct answer grows the streak.</p></div></div>`; },
   after(){ const pr=M7.s.pr, inp=document.getElementById("ans0"), fb=document.getElementById("fb7");
-    const showSol=g=>{ fb.innerHTML=(g||"")+`<div class="fldwrap"><div class="eq">${pr.sol}</div></div>`; };
+    const showSol=g=>{ fb.innerHTML=(g||"")+`<div class="fldwrap"><div class="eq">${fq(pr.sol)}</div></div>`; };
     const close=(v,a)=>Math.abs(v-a)<=Math.max(pr.tol[0],pr.tol[1]*Math.abs(a));
     const check=()=>{
       if(M7.s.state==="right")return; let ok;
@@ -1386,7 +1392,7 @@ function render(){
   bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
   cv.setAttribute("aria-label",M.tab+" — "+M.title());
   bar.innerHTML=""; M.bar();
-  clear(); M.draw(); side.innerHTML=M.side(); if(M.live)M.live(); if(M.after)M.after();
+  clear(); M.draw(); side.innerHTML=fq(M.side()); if(M.live)M.live(); if(M.after)M.after();
   [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
 }
 function go(i,push){ if(cur===0&&i!==0)M1.stop(); cur=clamp(i,0,MODS.length-1);

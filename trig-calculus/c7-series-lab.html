@@ -253,6 +253,8 @@
   table.ct th{color:var(--dim);font-weight:600}
   table.ct td:first-child,table.ct th:first-child{text-align:left}
   .fc{font-family:var(--ui);font-weight:600}
+  .seg{flex-wrap:wrap}
+  @media (max-width:560px){ .bar button,.seg button{padding:9px 13px;font-size:14px} }
   @media (max-width:560px){ .choices.three{grid-template-columns:1fr} .ser{font-size:16.5px} svg.canvas .fc{font-size:21px} svg.canvas .big{font-size:30px} }
   .big{font-family:var(--mono);font-weight:700;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
 </style>
@@ -403,7 +405,7 @@ function autoRange(vals,inc){
   let lo=Infinity,hi=-Infinity;
   vals.concat(inc||[]).forEach(v=>{ if(isFinite(v)){lo=Math.min(lo,v);hi=Math.max(hi,v);} });
   if(!isFinite(lo)){lo=0;hi=1;} if(hi-lo<1e-9){hi+=0.5;lo-=0.5;}
-  const sp=hi-lo; return [lo-(Math.abs(lo)<1e-12?sp*0.04:sp*0.09), hi+sp*0.12];
+  const sp=hi-lo; return [lo-(Math.abs(lo)<1e-12?sp*0.04:sp*0.09), hi+sp*0.22];
 }
 /* terms + partial sums side by side.  list: [{a, ta?, color, sym, Ssym, limA, limS, limStxt}] */
 function pairPlots(g,list,n0,N,cur,o){
@@ -423,7 +425,7 @@ function pairPlots(g,list,n0,N,cur,o){
   (o.extraA||[]).forEach(q=>{ L.hl(q.v,q.color,"7 5",1.8); if(q.txt)L.edge(q.v,q.txt,q.color,q.above); });
   (o.extraS||[]).forEach(q=>{ R.hl(q.v,q.color,"7 5",1.8); if(q.txt)R.edge(q.v,q.txt,q.color,q.above); });
   list.forEach((s,k)=>{
-    if(s.limA!=null&&isFinite(s.limA)){ L.hl(s.limA,s.color,"7 5",1.6); L.edge(s.limA,(s.limAtxt||((s.sym||"a")+"ₙ → "+fx(s.limA,1000))),s.color,k?false:true); }
+    if(s.limA!=null&&isFinite(s.limA)){ L.hl(s.limA,s.color,"7 5",1.6); if(s.limAtxt!=="")L.edge(s.limA,(s.limAtxt||((s.sym||"a")+"ₙ → "+fx(s.limA,1000))),s.color,k?false:true); }
     if(s.limS!=null&&isFinite(s.limS)){ R.hl(s.limS,s.color,"7 5",1.8); R.edge(s.limS,s.limStxt||("S = "+fxa(s.limS,1000)),s.color,k?false:true); }
     const d=D[k];
     if(!big&&!o.noStems) d.t.forEach((v,i)=>{ const n=n0+i; if(isFinite(v))sline(L.g,[L.X(n),L.Y(0)],[L.X(n),clamp(L.Y(v),-500,1000)],s.color,1.4,null,.45); });
@@ -754,10 +756,10 @@ const M3={
     const s=M3.s, g=E("g",{}); cv.appendChild(g);
     if(s.mode==="alt"){ const A=ALT[s.alt], N=s.N; s.cur=clamp(s.cur,1,N-1);
       const a=n=>(n%2?1:-1)*A.b(n);
-      M3.pl=pairPlots(g,[{a,color:"var(--vert)",limA:0,limS:A.S,limStxt:"S = "+A.St+" ≈ "+fmt(A.S,5)}],1,N,s.cur,{tA:"terms aₙ = (−1)ⁿ⁺¹bₙ",noCurLbl:false,
+      M3.pl=pairPlots(g,[{a,color:"var(--vert)",limA:0,limAtxt:"",limS:A.S,limStxt:"S = "+A.St+" ≈ "+fmt(A.S,5)}],1,N,s.cur,{tA:"terms aₙ = (−1)ⁿ⁺¹bₙ",noCurLbl:false,
         preR:(R)=>{ let Sn=0; for(let k=1;k<=s.cur;k++)Sn+=a(k); const e=A.b(s.cur+1);
           R.rect(s.cur-0.6,N+0.6,Sn-e,Sn+e,"var(--yellow)","#D9A400",.28);
-          R.label(R.X(N),R.Y(Sn+e),"band: S"+sbN(s.cur)+" ± b"+sbN(s.cur+1),"#9A6B00","left"); }}); }
+          stext(R.top,[R.x+R.w-8,R.y+R.h-(FS>1?26:20)],"yellow band: S"+sbN(s.cur)+" ± b"+sbN(s.cur+1),"sm","#9A6B00","end"); }}); }
     if(s.mode==="ratio"){ const T=RAT[s.rat], N=s.rN; s.cur=clamp(s.cur,1,N-1);
       const r=n=>Math.abs(T.a(n+1)/T.a(n));
       const ext=[{v:1,color:"var(--same)",txt:"L = 1 boundary",above:true}];
@@ -1116,7 +1118,7 @@ const BUILD={
     steps:"1/(1 + t²) = 1 − t² + t⁴ − …\n∫₀ˣ both sides:\narctan x = x − x³/3 + x⁵/5 − …\n         = Σ (−1)ⁿx²ⁿ⁺¹/(2n + 1)     |x| ≤ 1\nAt x = 1:  π/4 = 1 − 1/3 + 1/5 − …"}
 };
 function polyTxt(cs,a,maxT){ // cs: coefficients by power
-  const parts=[]; const base=a===0?"x":(a>0?"(x − "+fx(a)+")":"(x + "+fx(-a)+")");
+  const parts=[]; const af=v=>frac(v,4)||fmt(v,3); const base=a===0?"x":(a>0?"(x − "+af(a)+")":"(x + "+af(-a)+")");
   for(let n=0;n<cs.length&&parts.length<(maxT||6);n++){ const c=cs[n]; if(Math.abs(c)<1e-13)continue;
     const f=frac(c,5040); let cstr=f||fmt(c,4); const neg=c<0; if(neg)cstr=cstr.replace(/^−/,"");
     const pw=n===0?"":n===1?base:base+sup(n);
@@ -1177,7 +1179,7 @@ const M6={
     const ay=P.Y(0)>P.y+P.h-10?P.y+P.h-10:P.Y(0);
     sgrab(g,[P.X(s.a),ay],"a","var(--ink)"); stext(P.top,[P.X(s.a),ay+(mob?30:22)],"a = "+fmt(s.a,3),"sm","var(--ink)");
     sgrab(g,[P.X(s.x),P.y+P.h-(mob?16:10)],"x","var(--corr)"); stext(P.top,[clamp(P.X(s.x),P.x+44,P.x+P.w-44),P.y+P.h-(mob?44:30)],"x = "+fmt(s.x,3),"sm","#0369A1");
-    stext(P.top,[P.x+P.w-8,P.y+(mob?42:32)],"purple f · orange P"+sbN(s.n)+(s.band?" · yellow: Lagrange band":""),"sm","#22314F","end");
+    stext(P.top,mob?[P.x+8,P.y+40]:[P.x+P.w-8,P.y+32],"purple f · orange P"+sbN(s.n)+(s.band?(mob?" · yellow band":" · yellow: Lagrange band"):""),"sm","#22314F",mob?"start":"end");
   },
   drag(id,p){ const s=M6.s; if(s.mode!=="taylor")return false; const F=TF[s.fn], P=M6.Pl; let v=Math.round(P.ix(p[0])*20)/20;
     if(id==="a"){ s.a=clamp(v,F.aR[0],F.aR[1]); }

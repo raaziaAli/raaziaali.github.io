@@ -256,6 +256,7 @@
   .cmp td{padding:9px 20px;border-bottom:1px solid rgba(196,181,253,.11);font-family:var(--mono);color:#fff}
   .cmp td:first-child{font-family:var(--ui);color:#CFCFEA}
   .cmp td:last-child{text-align:right;white-space:nowrap}
+  .bar select{max-width:100%;min-width:0;text-overflow:ellipsis}
   .yn{display:flex;gap:10px;padding:14px 20px}
   .yn .choice{flex:1;text-align:center}
   @media (max-width:560px){ .six{grid-template-columns:repeat(2,1fr)} .two{grid-template-columns:1fr} svg.canvas .gtitle{font-size:19px} }
@@ -461,10 +462,10 @@ function sameFn(f,g){
 // pretty-print a parseable expression
 function pretty(s){
   let t=String(s);
-  t=t.replace(/(sin|cos|tan|sec|csc|cot)\((\d*\*?x)\)\^(\d)/g,(m,f,a,n)=>f+sup(n)+" "+a.replace("*",""));
+  t=t.replace(/(sin|cos|tan|sec|csc|cot)\((\d*\*?x)\)\^(\d)/g,(m,f,a,n)=>f+sup(n)+a.replace("*",""));
   t=t.replace(/(sin|cos|tan|sec|csc|cot)\((\d*\*?x)\)/g,(m,f,a)=>f+" "+a.replace("*",""));
   t=t.replace(/sqrt\((\d+)\)/g,"√$1").replace(/\^(\d)/g,(m,n)=>sup(n)).replace(/pi/g,"π");
-  t=t.replace(/(\d)\*(?=[a-zπ(√])/g,"$1").replace(/\*/g,"·").replace(/\+/g," + ").replace(/(\S)-/g,"$1 − ").replace(/-/g,"−");
+  t=t.replace(/(\d)\*(?=[a-zπ(√])/g,"$1").replace(/\*(?=[a-z])/g," ").replace(/(\d)(?=(sin|cos|tan|sec|csc|cot))/g,"$1 ").replace(/\*/g,"·").replace(/\+/g," + ").replace(/(\S)-/g,"$1 − ").replace(/-/g,"−");
   return t;
 }
 
@@ -550,6 +551,8 @@ function tryPanel(html){ return `<div class="panel"><h3>Try this</h3><div class=
 let degMode=true;
 const angStr=d=>degMode? num(d,1)+"°" : (piFrac(d*D2R,12)||num(d*D2R,3));
 const angSnap=(a,step)=>step? Math.round(a/step)*step : Math.round(a);
+// legend row: items [label,color,dash]; measured so labels never collide
+function legend(items,x,y){ let lx=x; items.forEach(it=>{ sseg(cv,[lx,y],[lx+24,y],it[1],4,it[2]); const t=stext(cv,[lx+30,y+1],it[0],"sm",it[1],"start"); let w=it[0].length*8.2; try{ w=t.getComputedTextLength()||w; }catch(_){} lx+=w+54; }); }
 const angFrom=(cx,cy,p)=>norm(Math.atan2(-(p[1]-cy),p[0]-cx)/D2R);
 
 /* exact-looking value from a number whose square is rational: ±√(p/q) simplified */
@@ -562,7 +565,7 @@ function sqExact(w){
   const s=radFrac(1,(n/g)*(d/g),d/g);
   return (w<0?"−":"")+s;
 }
-const exA=w=>{ const s=sqExact(w); return (s.indexOf("√")>=0||s.indexOf("/")>=0)? s+" ≈ "+num(w,3) : s; };
+const exA=w=>{ const fq=isFinite(w)?frac(w,5000):null; const s=fq||sqExact(w); return (s.indexOf("√")>=0||s.indexOf("/")>=0)? s+" ≈ "+num(w,3) : s; };
 
 /* ══════════════════════ TAB 1 · Pythagorean identities ══════════════════════ */
 const QN=["I","II","III","IV"];
@@ -790,11 +793,7 @@ const M2={
     bgRect();
     const [f,g,ls,rs]=M2.fns();
     const G=graph({x0:-TAU,x1:TAU,y0:-4,y1:4,L:30,T:44,W:640,H:390,piStep:PI/2,labEvery:2,yStep:1}); M2.G=G;
-    stext(cv,[30,22],"",null);
-    const lg=E("g",{}); cv.appendChild(lg);
-    sseg(lg,[34,22],[62,22],"var(--vert)",4); stext(lg,[68,23],"y = "+(ls||"?"),"sm","var(--vert)","start");
-    const off=Math.min(360,90+((ls||"").length)*8.6);
-    sseg(lg,[off,22],[off+28,22],"var(--lin)",4,"8 6"); stext(lg,[off+34,23],"y = "+(rs||"?"),"sm","var(--lin)","start");
+    legend([["y = "+(ls||"?"),"var(--vert)"],["y = "+(rs||"?"),"var(--lin)","8 6"]],34,22);
     if(!f||!g){ stext(cv,[350,240],"Type both sides in the panel to graph them","sm","#B91C1C"); return; }
     const same=sameFn(f,g);
     if(!same){ // shade the gap
@@ -839,10 +838,13 @@ const M2={
     }
     h+=`<div class="panel"><h3>How to verify an identity</h3><div class="pad">
       <p>An <span class="term">identity</span> is an equation that is true for <b>every</b> input where both sides are defined. To verify one, start from the messier side and rewrite it, one justified step at a time, until it looks exactly like the other side.</p>
-      <div class="eq">Toolbox
-reciprocal:  sec = 1/cos,  csc = 1/sin,  cot = 1/tan
-quotient:    tan = sin/cos,  cot = cos/sin
-Pythagorean: sin² + cos² = 1,  1 + tan² = sec²,  1 + cot² = csc²</div>
+      <div class="eq">Reciprocal:
+  sec = 1/cos   csc = 1/sin   cot = 1/tan
+Quotient:
+  tan = sin/cos   cot = cos/sin
+Pythagorean:
+  sin² + cos² = 1
+  1 + tan² = sec²    1 + cot² = csc²</div>
       <p>Good first moves: rewrite everything in sin and cos, combine fractions, or factor. A graph is a quick check, but a graph alone is not a proof.</p></div></div>`;
     h+=tryPanel(`<p>Prove identity 5 using only the move menu. Then switch to <b>Non-identity</b> and type your own guess, such as <b>cos(2x)</b> and <b>2cos(x)</b>. Where do the two graphs agree, and why isn't that enough?</p>`);
     side.innerHTML=h;
@@ -931,7 +933,9 @@ const M3={
     ["Distance PQ","PQ² = (cos A − cos B)² + (sin A − sin B)²\n = cos²A + sin²A + cos²B + sin²B − 2cos A cos B − 2 sin A sin B\n = 2 − 2(cos A cos B + sin A sin B)"],
     ["Distance RS","RS² = (cos(A − B) − 1)² + sin²(A − B)\n = cos²(A − B) + sin²(A − B) − 2cos(A − B) + 1\n = 2 − 2cos(A − B)"],
     ["Set equal","PQ² = RS², so 2 − 2(cos A cos B + sin A sin B) = 2 − 2cos(A − B).\nTherefore cos(A − B) = cos A cos B + sin A sin B."],
-    ["The rest follow","Replace B with −B (cos(−B) = cos B, sin(−B) = −sin B):\n  cos(A + B) = cos A cos B − sin A sin B\nUse sin θ = cos(90° − θ):\n  sin(A ± B) = sin A cos B ± cos A sin B\nDivide sin by cos:\n  tan(A ± B) = (tan A ± tan B)/(1 ∓ tan A tan B)"]
+    ["The rest follow","Replace B with −B
+(cos(−B) = cos B, sin(−B) = −sin B):\n  cos(A + B) = cos A cos B − sin A sin B\nUse sin θ = cos(90° − θ):\n  sin(A ± B) = sin A cos B ± cos A sin B\nDivide sin by cos:\n  tan(A ± B) = (tan A ± tan B)
+              / (1 ∓ tan A tan B)"]
   ],
   drag(id,p){ const a=Math.round(angFrom(id==="B"||id==="A"?180:520,240,p)); if(id==="A")M3.s.A=a; else M3.s.B=a; },
   draw(){
@@ -1015,7 +1019,7 @@ const M4={
     bgRect();
     const G=graph({x0:0,x1:TAU,y0:-2.4,y1:2.4,L:40,T:60,W:620,H:370,piStep:PI/4,labEvery:2,yStep:1}); M4.G=G;
     const C=M4.curves();
-    let lx=44; C.forEach(c=>{ const w=c[2].length*7.8+38; if(lx+w>690){} sseg(cv,[lx,26],[lx+22,26],c[1],4,c[4]); stext(cv,[lx+27,27],c[2],"sm",c[1],"start"); lx+=w; });
+    legend(C.map(c=>[c[2],c[1],c[4]]),44,26);
     C.forEach(c=>G.plot(c[0],c[1],c[3],c[4],c[5]));
     const x=M4.s.x;
     sseg(G.cg,[G.X(x),60],[G.X(x),430],"rgba(34,49,79,.45)",1.5,"4 4");
@@ -1033,8 +1037,8 @@ const M4={
     const exp={
       sin:`<p>Put B = A in the sum formula: sin(A + A) = sin A cos A + cos A sin A. That gives the <span class="term">double-angle formula</span>.</p><div class="eq">sin 2θ = 2 sin θ cos θ</div><p>Doubling the angle does <b>not</b> double the output. The graph of sin 2θ squeezes the wave horizontally and keeps its height at 1. The graph of 2 sin θ stretches it vertically to height 2. They cross only where 2 sin θ cos θ = 2 sin θ, which means sin θ = 0 or cos θ = 1.</p>`,
       cos:`<p>From cos(A + A) = cos A cos A − sin A sin A:</p><div class="eq">cos 2θ = cos²θ − sin²θ
-       = 2cos²θ − 1      (replace sin²θ with 1 − cos²θ)
-       = 1 − 2sin²θ      (replace cos²θ with 1 − sin²θ)</div><p>All three are the same function, so all three graphs lie exactly on the pale cos 2θ curve. Choose the form that matches what you know. If you only know cos θ, use 2cos²θ − 1.</p>`,
+       = 2cos²θ − 1
+       = 1 − 2sin²θ<small>Line 2 replaces sin²θ with 1 − cos²θ. Line 3 replaces cos²θ with 1 − sin²θ.</small></div><p>All three are the same function, so all three graphs lie exactly on the pale cos 2θ curve. Choose the form that matches what you know. If you only know cos θ, use 2cos²θ − 1.</p>`,
       half:`<p>Solve cos 2u = 1 − 2sin²u for sin u, then put u = θ/2. This gives the <span class="term">half-angle formulas</span>.</p><div class="eq">sin(θ/2) = ±√((1 − cos θ)/2)
 cos(θ/2) = ±√((1 + cos θ)/2)
 tan(θ/2) = (1 − cos θ)/sin θ<small>The ± is not "both". Choose the sign from the quadrant of θ/2.</small></div><p>A square root is never negative, so the dashed root curves match sin(θ/2) and cos(θ/2) only where those are positive. Drag θ past π and watch cos(θ/2) turn negative.</p>`}[m];
@@ -1149,9 +1153,7 @@ const M5={
     if(Q.custom)ymax=2.5;
     const G=graph({x0:0,x1:TAU,y0:-ymax,y1:ymax,L:46,T:56,W:618,H:370,piStep:PI/6,labEvery:3,yStep:ymax>4?2:1}); M5.G=G;
     G.plot(Q.L,"var(--vert)",4); G.plot(Q.R,"var(--lin)",3,"10 6");
-    sseg(cv,[50,24],[74,24],"var(--vert)",4); stext(cv,[80,25],Q.lab[0],"sm","var(--vert)","start");
-    const off=96+Q.lab[0].length*8.4;
-    sseg(cv,[off,24],[off+24,24],"var(--lin)",3,"10 6"); stext(cv,[off+30,25],Q.lab[1],"sm","var(--lin)","start");
+    legend([[Q.lab[0],"var(--vert)"],[Q.lab[1],"var(--lin)","10 6"]],50,24);
     const xs=Q.xs();
     xs.forEach((x,i)=>{
       const y=Q.R(x), px=G.X(x), py=G.Y(y);
@@ -1174,9 +1176,9 @@ const M5={
     <div class="panel"><h3>Strategy</h3><div class="pad">
       <p>Every trig equation ends in the same place: <b>trig function of something = a number</b>. To get there, isolate the trig function, factor if it is quadratic, or use an identity so that only one function of one angle is left.</p>
       <p>Then find the <span class="term">reference angle</span> and place it in every quadrant where the sign is right. The pink dots on the graph are those solutions: the x-values where the two curves cross.</p>
-      <div class="eq">sin, cos repeat every 2π   →  + 2πk
-tan repeats every π        →  + πk
-f(bx): the period shrinks to 2π/b (or π/b)<small>A calculator's sin⁻¹, cos⁻¹, tan⁻¹ give only ONE answer (F-TF.B.6: they invert a restricted domain). You find the others.</small></div></div></div>
+      <div class="eq">sin, cos: period 2π → + 2πk
+tan: period π → + πk
+f(bx): period 2π/b (or π/b)<small>A calculator's sin⁻¹, cos⁻¹, tan⁻¹ give only ONE answer (F-TF.B.6: they invert a restricted domain). You find the others.</small></div></div></div>
     ${tryPanel(`<p>Choose <b>Build your own</b>, set sin, 2x and drag the orange handle on the right (the value of c). How many solutions does sin 2x = c have when −1 &lt; c &lt; 1? What happens at c = 1, and at c = 1.2?</p>`)}`;
   }
 };
