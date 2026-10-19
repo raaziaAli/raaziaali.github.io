@@ -489,8 +489,8 @@ function drawSynth(g,a,c,shown,box,anim){
   }
   if(shown>=2*n+1){ const w=Math.max(fs(S.b[n]).length*0.6+1.2,2)*fz_; g.appendChild(E("rect",{x:cx(n)-w/2,y:y3-1.05*fz_,width:w,height:1.45*fz_,rx:6,fill:"none",style:"stroke:var(--lin)","stroke-width":2.4}));
     const ly=y3+1.15*fz_, fsz=Math.max(11,fz_*0.62);
-    if(n>=1){ const t=E("text",{x:(cx(0)+cx(n-1))/2,y:ly,class:"ui","text-anchor":"middle",style:`font-size:${fsz}px;fill:var(--alt)`}); t.textContent="quotient coefficients (degree "+(n-1)+")"; g.appendChild(t); }
-    const t2=E("text",{x:cx(n),y:ly,class:"ui","text-anchor":"middle",style:`font-size:${fsz}px;fill:var(--lin)`}); t2.textContent="remainder"; g.appendChild(t2); }
+    if(n>=1){ const t=E("text",{x:cx(n)-w/2-0.3*fz_,y:ly,class:"ui","text-anchor":"end",style:`font-size:${fsz}px;fill:var(--alt)`}); t.textContent="quotient coefficients (degree "+(n-1)+")"; g.appendChild(t); }
+    const t2=E("text",{x:cx(n)+w/2+0.3*fz_,y:y3-0.2*fz_,class:"ui","text-anchor":"start",style:`font-size:${fsz}px;fill:var(--lin)`}); t2.textContent="remainder"; g.appendChild(t2); }
   // arrows for the current step
   if(shown>=2&&shown<=2*n+1){
     const j=Math.floor(shown/2);
@@ -850,7 +850,7 @@ const M4={
   place(p){ const V=M4.view(); M4.s.probe=Math.round(clamp(WX(V,p[0]),V.x0+0.05,V.x1-0.05)*100)/100; },
   draw(){
     const S=M4.s, I=M4.info(), V=M4.view(), g=drawGrid(V), hg=E("g",{}); cv.appendChild(hg);
-    I.va.forEach(a=>{ line(g,[SX(V,a),V.T],[SX(V,a),V.B],"var(--altx)",2.2,"9 6"); labelIn(hg,SX(V,a)+6,V.T+40*FS,"x = "+cstr(a),"#BE185D","start",V); });
+    I.va.forEach(a=>{ line(g,[SX(V,a),V.T],[SX(V,a),V.B],"var(--altx)",2.2,"9 6"); labelIn(hg,SX(V,a)-6,V.B-58*FS,"x = "+cstr(a),"#BE185D","end",V); });
     if(I.asym.type==="h"){ const y=fv(I.asym.y), sy=SY(V,y); line(g,[V.L,sy],[V.R,sy],"var(--alt)",2.2,"9 6"); labelIn(hg,V.R-10,sy-14*FS,"y = "+fs(I.asym.y),"#047857","end",V); }
     if(I.asym.type==="s"){ const q=I.asym.q; plotFn(g,V,x=>pEval(q,x),{color:"var(--alt)",width:2.2,dash:"9 6"}); const x=V.x0+0.85*(V.x1-V.x0); labelIn(hg,SX(V,x),SY(V,pEval(q,x))-18*FS,"y = "+pS(q),"#047857","end",V); }
     plotFn(g,V,I.fS,{color:"var(--corr)",width:3.4,breaks:I.va});
@@ -861,7 +861,7 @@ const M4={
     const px=S.probe, pv=I.fO(px), sx=SX(V,px);
     line(g,[sx,V.T],[sx,V.B],"var(--hand)",1.6,"3 4");
     if(isFinite(pv)){ const sy=SY(V,pv); if(sy>=V.T&&sy<=V.B)dot(g,[sx,sy],"var(--hand)",6); }
-    const txt="f("+num(px,2)+") = "+(isFinite(pv)?sig(pv):"undefined"), syp=isFinite(pv)?clamp(SY(V,pv),V.T+60*FS,V.B-60*FS):V.T+80;
+    const txt="f("+num(px,2)+") = "+(isFinite(pv)?sig(pv):"undefined"), syp=isFinite(pv)?clamp(SY(V,pv),V.T+60*FS,V.B-90*FS):V.T+80;
     labelIn(hg,sx+(px>V.x1-4?-12:12),syp-14*FS,(isFinite(pv)&&SY(V,pv)<V.T?"▲ ":isFinite(pv)&&SY(V,pv)>V.B?"▼ ":"")+txt,"#C2410C",px>V.x1-4?"end":"start",V);
     grab(hg,[sx,V.B-22*FS],"probe","var(--hand)");
     // factor handles: numerator zeros on the axis, denominator zeros at the top
