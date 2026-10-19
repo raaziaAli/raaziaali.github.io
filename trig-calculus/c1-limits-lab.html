@@ -1,0 +1,1421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limits Lab — Calculus Unit 1</title>
+<meta name="description" content="Interactive limits and continuity lab: limits from graphs and tables, algebraic techniques, squeeze theorem, infinite limits and asymptotes, epsilon-delta, continuity, the Intermediate Value Theorem, and practice problems.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M8 44 Q22 44 30 30' fill='none' stroke='%2300E5FF' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M38 22 Q46 12 56 12' fill='none' stroke='%2300E5FF' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='34' cy='26' r='5' fill='none' stroke='%23FF3D8A' stroke-width='3.5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .rel[data-pair]{cursor:pointer}
+  .rel[data-pair]:hover{background:rgba(255,255,255,.05)}
+  .rel.active{background:rgba(255,255,255,.09);box-shadow:inset 3px 0 0 var(--accent)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top}
+  table.facts .ab{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  table.facts .st{color:#DDDDF2}
+  table.facts .st i{display:block;color:var(--dim);font-style:normal;font-size:13px;margin-top:4px}
+  .cathead{padding-top:18px!important;padding-bottom:6px!important;font-family:var(--display);font-weight:600;
+    font-size:13px;letter-spacing:.02em;color:var(--yellow);border-bottom:none!important}
+  .chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-right:9px}
+  .chip.assume{background:rgba(255,217,61,.18);color:var(--yellow)}
+  .chip.proved{background:rgba(94,234,212,.16);color:var(--mint)}
+  ol.chain{margin:0;padding:6px 20px 18px 38px;font-size:15px;color:#CFCFEA}
+  ol.chain li{padding:8px 0} ol.chain li::marker{color:var(--accent);font-weight:700}
+  ol.chain li b{color:#fff}
+
+  .steps{width:100%;border-collapse:collapse;font-size:15px}
+  .steps td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:middle}
+  .steps .stmt{font-family:var(--mono);font-size:14px;font-weight:600;color:#fff;white-space:nowrap}
+  .steps .why{width:56%}
+  .steps tr.right .stmt{color:var(--mint)}
+  .steps tr.right select{border-color:rgba(94,234,212,.6)}
+  .steps tr.wrong select{border-color:var(--coral)}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.8;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.4;fill:none;stroke-dasharray:9 6}
+  .wedge{stroke-width:2.4;fill-opacity:.17;cursor:pointer}
+  .wedge.flat{cursor:default}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── Coordinate Line Lab additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible,.choice:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:16px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  @media (max-width:560px){ svg.canvas .sm{font-size:21px;stroke-width:5} svg.canvas .mk{font-size:27px} svg.canvas .num{font-size:22px} svg.canvas .ax{font-size:16px} }
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .leg{stroke-width:3;fill:none;stroke-dasharray:8 5;stroke-linecap:round}
+  .tick{stroke:var(--graphite);stroke-width:2.2}
+  .ghostdot{fill:#9AA8C7;stroke:#fff;stroke-width:2}
+  .nt{position:relative;display:inline-block;padding-top:.42em;line-height:1.05;font-family:var(--mono);font-weight:700;color:#fff;white-space:nowrap}
+  .nt::before{content:"";position:absolute;left:.06em;right:.06em;top:.2em;border-top:2px solid currentColor}
+  .nt.ray::after,.nt.line::after{content:"";position:absolute;right:-.12em;top:calc(.2em - 3.5px);border-left:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .nt.line .la{position:absolute;left:-.12em;top:calc(.2em - 3.5px);border-right:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .uterms{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+  .uterms span{font-family:var(--mono);font-size:12px;font-weight:600;padding:5px 11px;border-radius:100px;
+    border:1px solid var(--edge);color:var(--dim);opacity:.55}
+  .uterms span.on{opacity:1;color:#0A0A1F;background:var(--accent);border-color:var(--accent)}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px}
+  .choice{font-family:var(--ui);font-size:15px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:14px;padding:13px 12px;cursor:pointer;text-align:left;line-height:1.5;transition:.15s}
+  .choice:hover{background:rgba(255,255,255,.12)}
+  .choice.right{border-color:var(--mint);background:rgba(94,234,212,.16)}
+  .choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.14)}
+  .choice small{display:block;font-weight:400;color:var(--dim);font-size:12.5px}
+  .stepl{list-style:none;margin:0;padding:6px 0}
+  .stepl li{padding:10px 20px;border-left:3px solid transparent;color:var(--dim);font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li.done{color:#CFCFEA}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li b{color:#fff}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  @media (max-width:560px){
+    .choices{grid-template-columns:1fr}
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+  }
+</style>
+<style>
+  /* ── Limits Lab additions ── */
+  .pad sub,.eq sub,.rel sub,.prob sub,.stepl sub{font-size:.72em;line-height:0}
+  .pad sup,.eq sup,.rel sup,.prob sup,.stepl sup{font-size:.72em;line-height:0}
+  table.vt{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px;margin:4px 0 10px}
+  table.vt th{font-weight:600;color:var(--dim);text-align:left;padding:6px 8px;border-bottom:1px solid var(--edge);font-size:11.5px;letter-spacing:.04em}
+  table.vt td{padding:6px 8px;border-bottom:1px solid rgba(196,181,253,.10);color:#E7E9FA;white-space:nowrap}
+  table.vt td.l{color:#7DD3FC} table.vt td.r{color:#F9A8D4} table.vt td.m{color:var(--mint)}
+  table.vt tr.pr td{background:rgba(255,255,255,.07);font-weight:700}
+  .tbwrap{overflow-x:auto}
+  .ansrow label.fld{text-transform:none;letter-spacing:.02em;font-size:13px}
+  .rel .val{white-space:normal;text-align:right}
+  .rel .nm sub{font-size:.7em}
+  .chk3{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .chk3:last-child{border-bottom:none}
+  .chk3 .ic{font-family:var(--mono);font-weight:700;font-size:17px;text-align:center}
+  .chk3 .v{font-family:var(--mono);font-size:13.5px;font-weight:600;text-align:right}
+  .stepl li.wait{color:var(--dim);font-style:italic}
+  .bar .rng output{min-width:34px}
+  @media (max-width:560px){
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    table.vt{font-size:11.5px} table.vt td,table.vt th{padding:5px 5px}
+    .chk3{padding:11px 16px}
+    .board-head .lsn{white-space:normal;margin-left:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Limits &amp; Continuity Lab</h1>
+    <div class="eyebrow">Calculus · Unit 1 · Limits and Continuity</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Graph of a function"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every graph is live and every number is computed from the function on the board — drag a probe and the table follows. Topic numbers follow the AP Calculus AB/BC Course and Exam Description, Unit 1.
+    <div class="links"><a href="/trig-calculus/">← Trig &amp; Calculus courses</a><a href="/math/#trig-calculus">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg", VW=700, VH=460;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+const isInf=v=>v===Infinity||v===-Infinity;
+const fin=v=>typeof v==="number"&&isFinite(v);
+const near=(a,b,e)=>Math.abs(a-b)<(e||1e-9);
+function num(v,dp){ dp=(dp==null?2:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+function frac(v,maxD){
+  maxD=maxD||48; if(!fin(v))return null;
+  for(let d=1;d<=maxD;d++){ const n=Math.round(v*d);
+    if(Math.abs(n/d-v)<1e-9){ const g=gcd(n,d), N=n/g, D=d/g; return D===1? minus(String(N)) : minus(N+"/"+D); } }
+  return null;
+}
+function fx(v,dp){ const f=frac(v,24); return f!==null? f : num(v,dp==null?3:dp); }
+function fxa(v){ const f=frac(v,48); if(f!==null&&f.indexOf("/")>=0) return f+" ≈ "+num(v,4); return f!==null? f : "≈ "+num(v,4); }
+const SUP={"0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹","-":"⁻","+":""};
+const supN=n=>String(n).split("").map(c=>SUP[c]!=null?SUP[c]:c).join("");
+// table/readout value
+function tv(v){
+  if(v===undefined||v===null||Number.isNaN(v))return "undefined";
+  if(!isFinite(v))return v>0?"∞":"−∞";
+  const a=Math.abs(v);
+  if(a>=1e5||(a>0&&a<1e-4)){ const e=v.toExponential(2).split("e"); return minus(e[0])+"×10"+supN(+e[1]); }
+  return minus(String(+v.toPrecision(6)));
+}
+const par=v=>v<0?"("+minus(v)+")":minus(v);
+const sgnC=v=>v<0?"− "+minus(-v):"+ "+minus(v);            // "+ 3" / "− 3"
+const xm=r=>r===0?"x":(r>0?"x − "+minus(r):"x + "+minus(-r)); // x − r
+const LIM=to=>`lim<sub>x→${to}</sub>`;
+const LIMt=to=>"lim x→"+to;
+const SUPD={2:"²",3:"³",4:"⁴"};
+function polyStr(cs){ // highest degree first
+  const n=cs.length-1; let s="";
+  cs.forEach((c,i)=>{ const d=n-i; if(c===0)return;
+    const ac=Math.abs(c), co=(ac===1&&d>0)?"":minus(ac), v=d===0?"":(d===1?"x":"x"+SUPD[d]);
+    if(!s) s=(c<0?"−":"")+co+v; else s+=(c<0?" − ":" + ")+co+v; });
+  return s||"0";
+}
+function polyEv(cs,x){ return cs.reduce((a,c)=>a*x+c,0); }
+function limS(L){ if(L===undefined)return "not defined"; if(Number.isNaN(L))return "DNE"; if(isInf(L))return L>0?"∞":"−∞"; return fx(L); }
+let FS=1;
+function setFS(){ FS=(window.innerWidth<=560)?1.5:1; }
+
+/* svg primitives */
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+function View(x0,x1,y0,y1){ const V={x0,x1,y0,y1};
+  V.X=x=>(x-x0)/(x1-x0)*VW; V.Y=y=>VH-(y-y0)/(y1-y0)*VH;
+  V.ix=p=>x0+p/VW*(x1-x0); V.iy=p=>y0+(VH-p)/VH*(y1-y0); return V; }
+function niceStep(r){ const raw=r/9, p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p; }
+function tick(v){ return minus(String(+v.toPrecision(10))); }
+function grid(V,opt){
+  opt=opt||{};
+  const d=E("defs"); d.innerHTML='<clipPath id="fr"><rect width="'+VW+'" height="'+VH+'"/></clipPath>'; cv.appendChild(d);
+  const gg=E("g",{}); cv.appendChild(gg);
+  const sx=opt.sx||niceStep(V.x1-V.x0), sy=opt.sy||niceStep((V.y1-V.y0)*1.45);
+  const ox=V.X(0), oy=V.Y(0);
+  const lx=(V.X(sx)-V.X(0))<40*FS?2:1, ly=(V.Y(0)-V.Y(sy))<30*FS?2:1;
+  const labY=clamp(oy+15*FS,13*FS,VH-6), labX=clamp(ox-6,36*FS,VW-6);
+  for(let k=Math.ceil(V.x0/sx);k<=Math.floor(V.x1/sx);k++){ const x=k*sx, px=V.X(x);
+    gg.appendChild(E("line",{x1:px,y1:0,x2:px,y2:VH,style:"stroke:var(--grid)","stroke-width":1}));
+    if(k!==0&&k%lx===0&&!opt.nolabx){ const t=E("text",{x:px,y:labY,class:"ax","text-anchor":"middle"}); t.textContent=opt.fmtx?opt.fmtx(x):tick(x); gg.appendChild(t);} }
+  for(let k=Math.ceil(V.y0/sy);k<=Math.floor(V.y1/sy);k++){ const y=k*sy, py=V.Y(y);
+    gg.appendChild(E("line",{x1:0,y1:py,x2:VW,y2:py,style:"stroke:var(--grid)","stroke-width":1}));
+    if(k!==0&&k%ly===0){ const t=E("text",{x:labX,y:py+4,class:"ax","text-anchor":"end"}); t.textContent=tick(y); gg.appendChild(t);} }
+  if(oy>=0&&oy<=VH) gg.appendChild(E("line",{x1:0,y1:oy,x2:VW,y2:oy,stroke:"#8FA3C8","stroke-width":1.8}));
+  if(ox>=0&&ox<=VW) gg.appendChild(E("line",{x1:ox,y1:0,x2:ox,y2:VH,stroke:"#8FA3C8","stroke-width":1.8}));
+  if(ox>=0&&ox<=VW&&oy>=0&&oy<=VH){ const o=E("text",{x:ox-6,y:oy+15*FS,class:"ax","text-anchor":"end"}); o.textContent="0"; gg.appendChild(o); }
+  const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
+}
+function pathOf(V,f,a,b,n){
+  let d="",pen=false,prevPy=0,prevCl=0;
+  for(let i=0;i<=n;i++){ const x=a+(b-a)*i/n, y=f(x);
+    if(!fin(y)){pen=false;continue;}
+    let py=V.Y(y), cl=0; if(py<-400){py=-400;cl=-1;} else if(py>VH+400){py=VH+400;cl=1;}
+    if(pen&&Math.abs(py-prevPy)>VH*0.9&&(cl||prevCl)&&cl!==prevCl) pen=false;
+    d+=(pen?"L":"M")+V.X(x).toFixed(2)+" "+py.toFixed(2); pen=true; prevPy=py; prevCl=cl;
+  }
+  return d;
+}
+function plot(g,V,f,color,w,opts){
+  opts=opts||{};
+  const lo=Math.max(V.x0,opts.lo==null?-Infinity:opts.lo), hi=Math.min(V.x1,opts.hi==null?Infinity:opts.hi);
+  if(hi<=lo)return;
+  const eps=(V.x1-V.x0)*1e-7;
+  const br=(opts.breaks||[]).filter(b=>b>lo&&b<hi).sort((p,q)=>p-q);
+  const cuts=[lo].concat(br,[hi]); let d="";
+  for(let i=0;i<cuts.length-1;i++){
+    const a=cuts[i]+(i>0?eps:0), b=cuts[i+1]-(i<cuts.length-2?eps:0);
+    const n=opts.n? Math.round(opts.n*(b-a)/(V.x1-V.x0))+20 : Math.round(900*(b-a)/(V.x1-V.x0))+40;
+    d+=pathOf(V,f,a,b,n);
+  }
+  const at={d,fill:"none",style:"stroke:"+color,"stroke-width":w||3,"stroke-linecap":"round","stroke-linejoin":"round"};
+  if(opts.dash)at["stroke-dasharray"]=opts.dash;
+  const p=E("path",at); g.appendChild(p); return p;
+}
+function sseg(g,p,q,color,w,dash){
+  const a={x1:p[0],y1:p[1],x2:q[0],y2:q[1],style:"stroke:"+(color||"var(--graphite)"),"stroke-width":w||2,"stroke-linecap":"round"};
+  if(dash)a["stroke-dasharray"]=dash; const n=E("line",a); g.appendChild(n); return n;
+}
+function sdot(g,p,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:(r||5)*Math.min(FS,1.3),style:"fill:"+(color||"var(--ink)"),stroke:"#fff","stroke-width":2,"pointer-events":"none"})); }
+function odot(g,V,x,y,color){ if(!fin(y))return; g.appendChild(E("circle",{cx:V.X(x),cy:V.Y(y),r:6*Math.min(FS,1.3),fill:"#fff",style:"stroke:"+(color||"var(--ink)"),"stroke-width":2.8,"pointer-events":"none"})); }
+function cdot(g,V,x,y,color){ if(!fin(y))return; sdot(g,[V.X(x),V.Y(y)],color||"var(--ink)",6); }
+function stext(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("style","fill:"+color);
+  t.textContent=s; g.appendChild(t); return t;
+}
+// text whose box is kept on the board
+function ctext(g,p,s,color,anchor,cls){
+  const w=s.length*8.1*FS+6, h=10*FS; let x=p[0];
+  anchor=anchor||"middle";
+  if(anchor==="middle")x=clamp(x,w/2+4,VW-w/2-4);
+  else if(anchor==="start"){ if(x+w>VW-4){x=p[0]-(p[0]+w-(VW-4));} x=Math.max(x,4); }
+  else { if(x-w<4){x=w+4;} x=Math.min(x,VW-4); }
+  return stext(g,[x,clamp(p[1],h+4,VH-h-4)],s,cls||"sm",color,anchor);
+}
+function grab(g,p,id,color){
+  g.appendChild(E("circle",{cx:p[0],cy:p[1],r:15*FS,class:"grab","data-drag":id}));
+  sdot(g,p,color||"var(--hand)",5.5);
+}
+function vline(g,V,x,color,w,dash){ const px=V.X(x); return sseg(g,[px,0],[px,VH],color,w,dash); }
+function hline(g,V,y,color,w,dash){ const py=V.Y(y); return sseg(g,[0,py],[VW,py],color,w,dash); }
+
+/* ══════════════════════ answer parsing ══════════════════════ */
+function parseNum(src){
+  let s=String(src).replace(/−/g,"-").replace(/[×·]/g,"*").replace(/÷/g,"/").replace(/π/g,"pi").replace(/\s+/g,"").toLowerCase();
+  if(!s)return NaN;
+  const T=[]; let i=0;
+  while(i<s.length){ const ch=s[i];
+    if(/[0-9.]/.test(ch)){ let j=i; while(j<s.length&&/[0-9.]/.test(s[j]))j++; const t=s.slice(i,j); if((t.match(/\./g)||[]).length>1||t===".")return NaN; T.push({t:"n",v:parseFloat(t)}); i=j; continue; }
+    if(s.startsWith("sqrt",i)){T.push({t:"f"});i+=4;continue;}
+    if(ch==="√"){T.push({t:"f"});i++;continue;}
+    if(s.startsWith("pi",i)){T.push({t:"n",v:Math.PI});i+=2;continue;}
+    if(ch==="e"){T.push({t:"n",v:Math.E});i++;continue;}
+    if("+-*/^()".indexOf(ch)>=0){T.push({t:ch});i++;continue;}
+    return NaN;
+  }
+  let p=0; const pk=()=>T[p];
+  function expr(){ let v=term(); while(pk()&&(pk().t==="+"||pk().t==="-")){ const o=T[p++].t, w=term(); v=o==="+"?v+w:v-w; } return v; }
+  function term(){ let v=unary(); for(;;){ const k=pk(); if(!k)break;
+      if(k.t==="*"||k.t==="/"){ p++; const w=unary(); v=k.t==="*"?v*w:v/w; }
+      else if(k.t==="n"||k.t==="("||k.t==="f"){ v*=power(); } else break; } return v; }
+  function unary(){ const k=pk(); if(k&&k.t==="-"){p++;return -unary();} if(k&&k.t==="+"){p++;return unary();} return power(); }
+  function power(){ const b=atom(); if(pk()&&pk().t==="^"){ p++; return Math.pow(b,unary()); } return b; }
+  function atom(){ const k=T[p++]; if(!k)throw 0; if(k.t==="n")return k.v;
+    if(k.t==="("){ const v=expr(); if(!T[p]||T[p].t!==")")throw 0; p++; return v; }
+    if(k.t==="f") return Math.sqrt(power()); throw 0; }
+  try{ const v=expr(); return p===T.length? v : NaN; }catch(_){ return NaN; }
+}
+function parseAns(raw){
+  let s=String(raw==null?"":raw).trim().toLowerCase().replace(/−/g,"-");
+  s=s.replace(/^[xy]\s*=\s*/,"");
+  const w=s.replace(/[\s.'’]/g,"");
+  if(!w)return null;
+  if(["dne","doesnotexist","doesntexist","noexist","nolimit"].indexOf(w)>=0)return {k:"dne"};
+  if(["undefined","undef","none","noasymptote","noha","nova","nohorizontalasymptote","noverticalasymptote","notdefined","na"].indexOf(w)>=0)return {k:"none"};
+  if(/^\+?(inf|infinity|∞|oo)$/.test(w))return {k:"inf",s:1};
+  if(/^-(inf|infinity|∞|oo)$/.test(w))return {k:"inf",s:-1};
+  if(["yes","y","true"].indexOf(w)>=0)return {k:"yes"};
+  if(["no","n","false"].indexOf(w)>=0)return {k:"no"};
+  const v=parseNum(s); return isFinite(v)? {k:"num",v} : null;
+}
+function parseInterval(raw){
+  const s=String(raw||"").replace(/−/g,"-").replace(/[\[\]()]/g," ").replace(/\bto\b/gi,",").replace(/;/g,",");
+  const parts=s.split(",").map(t=>t.trim()).filter(Boolean);
+  if(parts.length!==2)return null;
+  const a=parseNum(parts[0]), b=parseNum(parts[1]); return (isFinite(a)&&isFinite(b))? [a,b] : null;
+}
+function ansOk(P,A){ // A: {k:'num',v} | {k:'inf',s} | {k:'dne'} | {k:'none'} | {k:'yes'|'no'}
+  if(!P)return false;
+  if(A.k==="num") return P.k==="num"&&Math.abs(P.v-A.v)<=Math.max(0.006,Math.abs(A.v)*0.002);
+  if(A.k==="inf") return P.k==="inf"&&P.s===A.s;
+  if(A.k==="none") return P.k==="none"||P.k==="dne";
+  return P.k===A.k;
+}
+const ansStr=A=>A.k==="num"?fx(A.v):A.k==="inf"?(A.s>0?"∞":"−∞"):A.k==="dne"?"DNE":A.k==="none"?"none":A.k;
+
+/* ══════════════════════ shared limit machinery ══════════════════════ */
+const HMIN=0.0005;
+function twoSided(F){
+  const Lm=F.Lm, Lp=F.Lp;
+  if(Lm===undefined||Lp===undefined) return {txt:"DNE",why:"f is not defined on one side of a, so there is no two-sided limit — only a one-sided limit.",exists:false};
+  if(Number.isNaN(Lm)||Number.isNaN(Lp)) return {txt:"DNE",why:"f oscillates and never settles on one height.",exists:false};
+  if(isInf(Lm)&&isInf(Lp)&&Lm===Lp) return {txt:Lm>0?"∞":"−∞",why:"both sides grow without bound in the same direction. Writing "+(Lm>0?"∞":"−∞")+" describes how the limit fails to exist as a real number.",exists:false,inf:true};
+  if(isInf(Lm)||isInf(Lp)) return {txt:"DNE",why:"the two sides do not head to the same place (at least one is unbounded).",exists:false};
+  if(near(Lm,Lp)) return {txt:fx(Lm),why:"both one-sided limits agree.",exists:true,v:Lm};
+  return {txt:"DNE",why:"the one-sided limits are different ("+fx(Lm)+" ≠ "+fx(Lp)+").",exists:false};
+}
+function classify(F){
+  const T=twoSided(F), c1=F.fa!=null, c2=T.exists, c3=c1&&c2&&near(F.fa,T.v,1e-9);
+  let type;
+  if(c3)type="continuous";
+  else if(F.Lm===undefined||F.Lp===undefined) type="endpoint";
+  else if(isInf(F.Lm)||isInf(F.Lp)) type="infinite";
+  else if(Number.isNaN(F.Lm)||Number.isNaN(F.Lp)) type="oscillating";
+  else if(c2) type="removable";
+  else type="jump";
+  return {c1,c2,c3,T,type};
+}
+function drawFL(g,V,F,color){
+  color=color||"var(--ink)";
+  const a=F.a;
+  if(isInf(F.Lm)||isInf(F.Lp)) vline(g,V,a,"#E11D48",1.8,"8 6"); else vline(g,V,a,"#94A3B8",1.4,"3 5");
+  plot(g,V,F.f,color,3.2,{breaks:[a].concat(F.breaks||[]),n:F.n});
+  [F.Lm,F.Lp].forEach(L=>{ if(fin(L)&&!(F.fa!=null&&near(F.fa,L))) odot(g,V,a,L,color); });
+  if(F.fa!=null) cdot(g,V,a,F.fa,color);
+}
+function aLabel(g,V,a,txt){ ctext(g,[V.X(a),14*FS],txt||("x = "+fx(a)),"#64748B"); }
+function xfmt(x){ return minus(String(+x.toFixed(5))); }
+function probe(g,V,f,a,h,side){
+  const x=a+side*h, col=side<0?"var(--corr)":"var(--altx)", tcol=side<0?"#0369A1":"#BE185D";
+  const px=V.X(x), by=VH-26*FS, y=f(x);
+  if(fin(y)){
+    const py=V.Y(y), inV=py>=2&&py<=VH-2;
+    sseg(g,[px,by],[px,clamp(py,0,VH)],col,2,"5 4");
+    if(inV){ sseg(g,[px,py],[V.X(a),py],col,1.4,"2 4"); sdot(g,[px,py],col,5.5);
+      ctext(g,[px+side*12,py-16*FS],"f ≈ "+tv(y),tcol,side<0?"end":"start"); }
+    else ctext(g,[px+side*10,py<0?16*FS:VH-62*FS],(py<0?"↑ f ≈ ":"↓ f ≈ ")+tv(y),tcol,side<0?"end":"start");
+  } else { sseg(g,[px,by],[px,by-40],col,2,"5 4"); ctext(g,[px+side*10,by-50*FS],"f undefined here",tcol,side<0?"end":"start"); }
+  g.appendChild(E("circle",{cx:px,cy:by,r:15*FS,class:"grab","data-drag":side<0?"pL":"pR"}));
+  sdot(g,[px,by],col,5.5);
+  ctext(g,[px+side*20*FS,by],"x = "+xfmt(x),tcol,side<0?"end":"start");
+}
+function valTable(f,a,hL,hR){
+  const hs=[1,0.1,0.01,0.001];
+  let r=`<div class="tbwrap"><table class="vt"><thead><tr><th>x → ${fx(a)}<sup>−</sup></th><th>f(x)</th><th>x → ${fx(a)}<sup>+</sup></th><th>f(x)</th></tr></thead><tbody>`;
+  hs.forEach(h=>{ r+=`<tr><td>${xfmt(a-h)}</td><td class="l">${tv(f(a-h))}</td><td>${xfmt(a+h)}</td><td class="r">${tv(f(a+h))}</td></tr>`; });
+  if(hL!=null) r+=`<tr class="pr"><td>${xfmt(a-hL)}</td><td class="l">${tv(f(a-hL))}</td><td>${xfmt(a+hR)}</td><td class="r">${tv(f(a+hR))}</td></tr>`;
+  return r+`</tbody></table></div>`;
+}
+const P=(t,h)=>`<div class="panel"><h3>${t}</h3><div class="pad">${h}</div></div>`;
+const tryPanel=h=>P("Try this",h);
+const rel=(c,nm,sub,val)=>`<div class="rel"><span class="dot" style="background:${c}"></span><span class="nm">${nm}${sub?`<em>${sub}</em>`:""}</span><span class="val">${val}</span></div>`;
+
+/* animation */
+let anim=null;
+function stopAnim(){ if(anim){ clearInterval(anim); anim=null; } }
+function closeIn(M){
+  stopAnim();
+  anim=setInterval(()=>{ M.s.hL=Math.max(HMIN,M.s.hL*0.86); M.s.hR=Math.max(HMIN,M.s.hR*0.86); update();
+    if(M.s.hL<=HMIN&&M.s.hR<=HMIN)stopAnim(); },45);
+}
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null;
+function svgPt(e){
+  const m=cv.getScreenCTM(); if(!m)return [0,0];
+  const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y];
+}
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag;
+  if(id){ dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); }
+});
+cv.addEventListener("pointermove",e=>{
+  if(!dragId)return; const M=MODS[cur]; if(!M.drag)return;
+  const p=svgPt(e); if(M.drag(dragId,[clamp(p[0],0,VW),clamp(p[1],0,VH)])!==false)update();
+});
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+
+/* bar builders */
+function btn(label,fn,cls){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(opts,val,fn,lab){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(lab)s.setAttribute("aria-label",lab);
+  opts.forEach(([k,l])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=l;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s;
+}
+function chips(opts,val,fn,color){
+  const row=document.createElement("div"); row.className="chiprow";
+  opts.forEach((l,i)=>{ const b=document.createElement("button"); b.type="button"; b.style.setProperty("--c",color||"var(--accent)");
+    b.textContent=l; b.setAttribute("aria-pressed",String(i===val)); b.onclick=()=>fn(i); row.appendChild(b); });
+  bar.appendChild(row); return row;
+}
+function selBox(opts,val,fn,lab){
+  const s=document.createElement("select"); s.setAttribute("aria-label",lab||"Choose");
+  opts.forEach((l,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=l; s.appendChild(o); });
+  s.value=val; s.onchange=()=>fn(+s.value); bar.appendChild(s); return s;
+}
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function slider(label,min,max,val,fn,fmt,step){
+  const l=document.createElement("label"); l.className="rng"; l.textContent=label+" ";
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=step||1; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); o.textContent=fmt?fmt(+val):minus(val);
+  i.oninput=()=>{ o.textContent=fmt?fmt(+i.value):minus(i.value); fn(+i.value); };
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l); return i;
+}
+
+/* ══════════════════════ TAB 1 · limits graphically ══════════════════════ */
+const FL=[
+  {name:"Removable hole",f:x=>(x*x-1)/(x-1),a:1,fa:null,Lm:2,Lp:2,view:[-3,5,-2,5],
+   html:"f(x) = (x² − 1)/(x − 1)",note:"For x ≠ 1 this equals x + 1, so the graph is a line with a <b>hole</b> at (1, 2). f(1) is undefined (0/0)."},
+  {name:"Hole + moved point",f:x=>x*x/2+1,a:2,fa:1,Lm:3,Lp:3,view:[-2,5,-1,7],
+   html:"f(x) = ⎧ x²/2 + 1,  x ≠ 2\n       ⎩ 1,         x = 2",note:"The curve heads to height 3 from both sides, but the actual point at x = 2 was moved down to 1."},
+  {name:"Jump (piecewise)",f:x=>x<1?x+1:4-x,a:1,fa:3,Lm:2,Lp:3,view:[-3,5,-2,6],
+   html:"f(x) = ⎧ x + 1,  x < 1\n       ⎩ 4 − x,  x ≥ 1",note:"Two pieces that do not meet. The left piece heads to 2, the right piece starts at 3 (filled dot)."},
+  {name:"Jump |x| / x",f:x=>Math.abs(x)/x,a:0,fa:null,Lm:-1,Lp:1,view:[-3,3,-2.5,2.5],
+   html:"f(x) = |x| / x",note:"For x &lt; 0 it is −1, for x &gt; 0 it is +1, and at 0 it is undefined (0/0)."},
+  {name:"Infinite, same sign",f:x=>1/((x-2)*(x-2)),a:2,fa:null,Lm:Infinity,Lp:Infinity,view:[-2,6,-2,8],
+   html:"f(x) = 1/(x − 2)²",note:"The denominator is a tiny <b>positive</b> number on both sides, so f shoots up on both sides of the vertical asymptote x = 2."},
+  {name:"Infinite, opposite signs",f:x=>2/(x-1),a:1,fa:null,Lm:-Infinity,Lp:Infinity,view:[-3,5,-6,6],
+   html:"f(x) = 2/(x − 1)",note:"Left of 1 the denominator is a tiny negative number (f → −∞); right of 1 it is tiny positive (f → +∞)."},
+  {name:"Oscillation sin(1/x)",f:x=>Math.sin(1/x),a:0,fa:null,Lm:NaN,Lp:NaN,view:[-1,1,-1.7,1.7],n:6000,
+   html:"f(x) = sin(1/x)",note:"As x → 0, 1/x races off to ±∞ and the sine wiggles between −1 and 1 infinitely often. Watch the table: the values never settle."},
+  {name:"Endpoint √x",f:x=>Math.sqrt(x),a:0,fa:0,Lm:undefined,Lp:0,view:[-3,6,-1.5,3.5],
+   html:"f(x) = √x",note:"The domain is x ≥ 0, so there is nothing to the left of 0. Only the right-hand limit makes sense."},
+  {name:"Continuous cubic",f:x=>x*x*x/2-x+1,a:1,fa:0.5,Lm:0.5,Lp:0.5,view:[-3,3,-3,4],
+   html:"f(x) = x³/2 − x + 1",note:"A polynomial: no holes, no jumps. The limit and the value are the same number."},
+  {name:"Continuous piecewise",f:x=>x<=2?x*x/2:4-x,a:2,fa:2,Lm:2,Lp:2,view:[-2,6,-2,5],
+   html:"f(x) = ⎧ x²/2,   x ≤ 2\n       ⎩ 4 − x,  x > 2",note:"Two different formulas, but they meet at (2, 2). A corner is fine for limits and continuity."}
+];
+const M1={
+  tab:"Limits graphically", lesson:"AP 1.2–1.4 · Limits & Continuity", accent:"var(--cyan)",
+  s:{fi:0,hL:1.5,hR:1.5},
+  title:()=>"Approach x = "+fx(FL[M1.s.fi].a)+" from both sides",
+  F:()=>FL[M1.s.fi], V:()=>View.apply(null,FL[M1.s.fi].view),
+  resetH(){ const v=M1.F().view; M1.s.hL=M1.s.hR=+((v[1]-v[0])*0.22).toFixed(2); },
+  bar(){
+    selBox(FL.map(f=>f.name),M1.s.fi,i=>{ stopAnim(); M1.s.fi=i; M1.resetH(); render(); },"Function");
+    btn("Close in",()=>closeIn(M1),"primary");
+    btn("Reset probes",()=>{ stopAnim(); M1.resetH(); update(); });
+    spacer("Drag the probes along the bottom");
+  },
+  drag(id,p){ const F=M1.F(), V=M1.V(), x=V.ix(p[0]); stopAnim();
+    if(id==="pL") M1.s.hL=clamp(F.a-x,HMIN,F.a-V.x0-0.02);
+    else if(id==="pR") M1.s.hR=clamp(x-F.a,HMIN,V.x1-F.a-0.02); else return false; },
+  draw(){ const F=M1.F(), V=M1.V(), g=grid(V); drawFL(g,V,F); aLabel(g,V,F.a,"a = "+fx(F.a));
+    probe(g,V,F.f,F.a,M1.s.hL,-1); probe(g,V,F.f,F.a,M1.s.hR,1); },
+  panel(){
+    const F=M1.F(), T=twoSided(F), a=fx(F.a), s=M1.s;
+    side.innerHTML=
+      P("The function",`<div class="eq">${F.html}</div><p>${F.note}</p>`)+
+      `<div class="panel"><h3>Limit vs. value at a = ${a}</h3>`+
+        rel("var(--corr)",`${LIM(a+"<sup>−</sup>")} f(x)`,"left-hand limit (blue probe)",limS(F.Lm))+
+        rel("var(--altx)",`${LIM(a+"<sup>+</sup>")} f(x)`,"right-hand limit (pink probe)",limS(F.Lp))+
+        rel("var(--cyan)",`${LIM(a)} f(x)`,T.why,T.txt)+
+        rel("#fff",`f(${a})`,F.fa!=null?"the filled dot — a separate question":"no filled dot at x = "+a,F.fa!=null?fx(F.fa):"undefined")+
+      `</div>`+
+      P("Table of values",valTable(F.f,F.a,s.hL,s.hR)+`<p>The highlighted row is your probes. Press <b>Close in</b> and watch both f(x) columns: do they settle on the same number?</p>`)+
+      P("The idea",`<p>The <span class="term">limit</span> of f(x) as x approaches a asks: <b>what height is the graph heading toward</b> as x gets closer and closer to a? It never looks at x = a itself.</p>
+        <p>A <span class="term">one-sided limit</span> approaches from only one side: x → a<sup>−</sup> from the left, x → a<sup>+</sup> from the right. The two-sided limit exists only when both one-sided limits exist and are equal.</p>
+        <p><b>f(a)</b> is a different question: the actual output at a (the filled dot). A limit can exist where f(a) is undefined, and f(a) can exist where the limit does not.</p>
+        <div class="eq">${LIM("a")} f(x) = L  ⇔  ${LIM("a<sup>−</sup>")} f(x) = L and ${LIM("a<sup>+</sup>")} f(x) = L</div>`)+
+      tryPanel(`<p>Pick <b>Hole + moved point</b>. What is f(2), and what is the limit as x → 2? Then pick <b>Jump (piecewise)</b> and press <b>Close in</b>: which column of the table settles on 2 and which on 3? Finally try <b>Oscillation</b> — why does a closer probe not help?</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 2 · limits algebraically ══════════════════════ */
+const PB=[
+  {name:"Substitute",key:"a",min:-4,max:3,lab:"a",
+   a:p=>p.a, f:()=>x=>x*x+3*x-1, L:p=>p.a*p.a+3*p.a-1, hole:false,
+   view:p=>{const L=p.a*p.a+3*p.a-1; return [p.a-4,p.a+4,L-7,L+7];},
+   expr:p=>`${LIM(minus(p.a))} (x² + 3x − 1)`,
+   steps:p=>{ const a=p.a, L=a*a+3*a-1; return [
+     `<b>Check the function.</b> x² + 3x − 1 is a polynomial. Polynomials are continuous everywhere, so the limit equals the value: ${LIM("a")} p(x) = p(a).`,
+     `<b>Substitute</b> x = ${minus(a)}:  ${par(a)}² + 3·${par(a)} − 1 = ${minus(a*a)} ${sgnC(3*a)} − 1`,
+     `<b>Answer:</b> ${LIM(minus(a))} (x² + 3x − 1) = <b>${minus(L)}</b>. There is no hole — the limit and f(${minus(a)}) are the same number.`]; },
+   idea:`<p>The <span class="term">limit laws</span> let you split a limit across +, −, ×, ÷ (when the bottom's limit is not 0) and powers. Together they say: for polynomials, and rational functions whose denominator is not 0 at a, <b>just substitute</b>.</p><p>Always try substitution first. A number means you are done. 0/0 means more algebra is needed. (Nonzero)/0 points to a vertical asymptote.</p>`,
+   eq:`lim (f ± g) = lim f ± lim g\nlim (f · g) = lim f · lim g\nlim (f / g) = lim f / lim g   (if lim g ≠ 0)\nlim c·f = c · lim f`},
+  {name:"Factor & cancel",key:"r",min:-5,max:5,lab:"r",
+   a:p=>p.r, f:p=>x=>(x*x-p.r*p.r)/(x-p.r), L:p=>2*p.r, hole:true,
+   view:p=>[p.r-5,p.r+5,2*p.r-6,2*p.r+6],
+   expr:p=>`${LIM(minus(p.r))} (${p.r?"x² − "+(p.r*p.r):"x²"})/(${xm(p.r)})`,
+   steps:p=>{ const r=p.r; return [
+     `<b>Try direct substitution:</b> (${par(r)}² − ${r*r})/(${minus(r)} − ${par(r)}) = 0/0. This is an <span class="term">indeterminate form</span>: it means "more work needed", not "no limit".`,
+     `<b>Factor</b> the top (difference of squares): ${r?"x² − "+(r*r):"x²"} = (${xm(r)})(${xm(-r)})`,
+     `<b>Cancel</b> the common factor (${xm(r)}). This is legal because x ≠ ${minus(r)} while x → ${minus(r)}: the two functions agree everywhere except at the hole.`,
+     `<b>Substitute</b> into the simpler function: ${xm(-r)} → ${minus(r)} ${sgnC(r)} = ${minus(2*r)}`,
+     `<b>Answer:</b> the limit is <b>${minus(2*r)}</b>. The graph is the line y = ${xm(-r)} with a hole at (${minus(r)}, ${minus(2*r)}).`]; },
+   idea:`<p>When substitution gives <b>0/0</b>, the top and bottom share a factor (x − a). Factor both, cancel, and substitute into what is left.</p><p>The cancelled function equals the original everywhere except x = a — and a limit never looks at x = a — so their limits are equal.</p>`,
+   eq:`(x² − a²)/(x − a) = (x − a)(x + a)/(x − a)\n                 = x + a   (x ≠ a)`},
+  {name:"Rationalize",key:"c",min:1,max:5,lab:"c",
+   a:()=>0, f:p=>x=>(Math.sqrt(x+p.c*p.c)-p.c)/x, L:p=>1/(2*p.c), hole:true,
+   view:p=>[-p.c*p.c-1,2*p.c*p.c+3,-0.35/p.c,1.45/p.c],
+   expr:p=>`${LIM(0)} (√(x + ${p.c*p.c}) − ${p.c}) / x`,
+   steps:p=>{ const c=p.c, c2=c*c; return [
+     `<b>Substitute</b> x = 0: (√${c2} − ${c})/0 = (${c} − ${c})/0 = 0/0 — indeterminate. There is nothing to factor, because of the square root.`,
+     `<b>Multiply by the conjugate</b> over itself (that is just multiplying by 1):<br>(√(x + ${c2}) − ${c})/x · (√(x + ${c2}) + ${c})/(√(x + ${c2}) + ${c})`,
+     `<b>Simplify the top</b> (difference of squares): (x + ${c2}) − ${c2} = x, so f(x) = x / [x(√(x + ${c2}) + ${c})]`,
+     `<b>Cancel</b> x (allowed, x ≠ 0): f(x) = 1/(√(x + ${c2}) + ${c})`,
+     `<b>Substitute</b> x = 0: 1/(√${c2} + ${c}) = 1/(${c} + ${c}) = <b>${fx(1/(2*c))}</b> ≈ ${num(1/(2*c),4)}`]; },
+   idea:`<p>Square roots in a 0/0 limit are cleared with the <span class="term">conjugate</span>: (√A − B)(√A + B) = A − B². The radical disappears from the top and the troublesome factor x appears, ready to cancel.</p>`,
+   eq:`(√A − B)(√A + B) = A − B²`},
+  {name:"Complex fraction",key:"k",min:1,max:4,lab:"c",
+   a:()=>0, f:p=>x=>(1/(x+p.k)-1/p.k)/x, L:p=>-1/(p.k*p.k), hole:true, breaks:p=>[-p.k],
+   view:p=>[-2*p.k-1.5,2*p.k+1.5,-3/(p.k*p.k),2/(p.k*p.k)],
+   expr:p=>`${LIM(0)} [ 1/(x + ${p.k}) − 1/${p.k} ] / x`,
+   steps:p=>{ const c=p.k; return [
+     `<b>Substitute</b> x = 0: (1/${c} − 1/${c})/0 = 0/0 — indeterminate.`,
+     `<b>Common denominator</b> on top: 1/(x + ${c}) − 1/${c} = (${c} − (x + ${c})) / (${c}(x + ${c})) = −x / (${c}(x + ${c}))`,
+     `<b>Divide by x</b> (multiply by 1/x) and cancel: −x/(${c}(x + ${c})) · 1/x = −1/(${c}(x + ${c}))   (x ≠ 0)`,
+     `<b>Substitute</b> x = 0: −1/(${c}·${c}) = <b>${fx(-1/(c*c))}</b>`]; },
+   idea:`<p>A <span class="term">complex fraction</span> (fractions inside a fraction) is simplified by combining the small fractions over a <b>common denominator</b>. The factor x then appears on top and cancels with the x underneath.</p><p>Notice the vertical asymptote at x = −c: the original function is undefined there too, but that is far from x = 0 and does not affect this limit.</p>`,
+   eq:`1/(x + c) − 1/c = (c − (x + c)) / (c(x + c))\n               = −x / (c(x + c))`},
+  {name:"Squeeze: sin x / x",sq:1,zooms:[8,4,2,1,0.5],
+   steps:()=>[
+     `<b>Try substitution:</b> sin 0 / 0 = 0/0, and there is nothing to factor or rationalize.`,
+     `<b>Trap it.</b> For 0 &lt; |x| &lt; π/2, comparing areas in the unit circle gives  cos x ≤ (sin x)/x ≤ 1.`,
+     `<b>Outer limits:</b> ${LIM(0)} cos x = cos 0 = 1 and ${LIM(0)} 1 = 1.`,
+     `<b>Squeeze:</b> the middle function is pinched between two functions that both approach 1, so ${LIM(0)} (sin x)/x = <b>1</b>.`],
+   idea:`<p>The <span class="term">Squeeze Theorem</span>: if g(x) ≤ f(x) ≤ h(x) near a, and g and h have the <b>same</b> limit L at a, then f is trapped and must have limit L too.</p><p>Here the lower curve is cos x, the upper is the line y = 1. Zoom in: the gap between them closes, and sin x / x has nowhere else to go.</p>`,
+   eq:`g(x) ≤ f(x) ≤ h(x) near a,  lim g = lim h = L\n⇒  lim f = L\n\ncos x ≤ (sin x)/x ≤ 1   (0 < |x| < π/2)`},
+  {name:"Squeeze: x² sin(1/x)",sq:2,zooms:[1,0.5,0.25,0.1,0.04],
+   steps:()=>[
+     `<b>Laws fail:</b> ${LIM(0)} sin(1/x) does not exist (it oscillates), so we cannot write lim x² · lim sin(1/x).`,
+     `<b>Bound the wiggly part:</b> −1 ≤ sin(1/x) ≤ 1 for every x ≠ 0. Multiply by x² ≥ 0:  −x² ≤ x² sin(1/x) ≤ x².`,
+     `<b>Outer limits:</b> ${LIM(0)} (−x²) = 0 and ${LIM(0)} x² = 0.`,
+     `<b>Squeeze:</b> ${LIM(0)} x² sin(1/x) = <b>0</b>, even though the function oscillates infinitely often near 0.`],
+   idea:`<p>The factor x² shrinks the oscillation to nothing: however fast sin(1/x) wiggles, it is trapped between the parabolas y = x² and y = −x², which pinch together at the origin.</p><p>Zoom in: the picture looks the same at every scale, but the vertical window shrinks like x².</p>`,
+   eq:`−1 ≤ sin(1/x) ≤ 1\n⇒  −x² ≤ x² sin(1/x) ≤ x²\nlim (−x²) = lim x² = 0  ⇒  lim x² sin(1/x) = 0`}
+];
+const M2={
+  tab:"Limits algebraically", lesson:"AP 1.5–1.8 · Limits & Continuity", accent:"var(--magenta)",
+  s:{pi:1,step:0,p:{a:1,r:3,c:3,k:2},hz:0.45,zi:1},
+  title:()=>PB[M2.s.pi].sq?"Squeeze theorem: "+PB[M2.s.pi].name.split(": ")[1]:"Technique: "+PB[M2.s.pi].name.toLowerCase(),
+  B:()=>PB[M2.s.pi],
+  sqView(){ const B=M2.B(), W=B.zooms[M2.s.zi];
+    if(B.sq===1){ let y0,y1; if(W>=4){y0=-0.45;y1=1.3;} else { const m=1-Math.cos(Math.min(W,1.5)); y0=1-m*1.25-0.02; y1=1+m*0.35+0.02; } return View(-W,W,y0,y1); }
+    return View(-W,W,-1.3*W*W,1.3*W*W); },
+  sqFns(){ return M2.B().sq===1?
+      {f:x=>Math.sin(x)/x,lo:x=>Math.abs(x)<Math.PI/2?Math.cos(x):NaN,hi:()=>1,L:1,lon:"cos x",hin:"1",fn:"sin x / x"}:
+      {f:x=>x*x*Math.sin(1/x),lo:x=>-x*x,hi:x=>x*x,L:0,lon:"−x²",hin:"x²",fn:"x² sin(1/x)"}; },
+  bar(){
+    chips(PB.map(b=>b.name),M2.s.pi,i=>{ M2.s.pi=i; M2.s.step=0; M2.s.zi=PB[i].sq===1?1:0; render(); });
+    const B=M2.B(), n=B.steps(M2.s.p).length;
+    btn("Next step",()=>{ M2.s.step=Math.min(n-1,M2.s.step+1); update(); },"primary");
+    btn("Show all",()=>{ M2.s.step=n-1; update(); });
+    btn("Restart",()=>{ M2.s.step=0; update(); });
+    if(B.key) slider(B.lab+" =",B.min,B.max,M2.s.p[B.key],v=>{ M2.s.p[B.key]=v; render(); });
+    if(B.sq){ btn("Zoom in",()=>{ M2.s.zi=Math.min(B.zooms.length-1,M2.s.zi+1); update(); }); btn("Zoom out",()=>{ M2.s.zi=Math.max(0,M2.s.zi-1); update(); }); }
+  },
+  drag(id,p){ if(id!=="sq"||!M2.B().sq)return false; const V=M2.sqView(), W=M2.B().zooms[M2.s.zi]; let h=V.ix(p[0])/W;
+    if(Math.abs(h)<0.004)h=(h<0?-1:1)*0.004; M2.s.hz=clamp(h,-0.98,0.98); },
+  draw(){
+    const B=M2.B();
+    if(B.sq){
+      const V=M2.sqView(), g=grid(V), F=M2.sqFns(), W=B.zooms[M2.s.zi], x=M2.s.hz*W;
+      plot(g,V,F.hi,"var(--alt)",2.6,{dash:"9 5"}); plot(g,V,F.lo,"var(--lin)",2.6,{dash:"9 5"});
+      plot(g,V,F.f,"var(--ink)",3,{breaks:[0],n:B.sq===2?5000:900});
+      odot(g,V,0,F.L,"var(--ink)");
+      const by=VH-26*FS, px=V.X(x);
+      sseg(g,[px,by],[px,0],"var(--vert)",1.6,"4 4");
+      [[F.hi(x),"var(--alt)"],[F.f(x),"var(--ink)"],[F.lo(x),"var(--lin)"]].forEach(([y,c])=>{ if(fin(y)) sdot(g,[px,V.Y(y)],c,5); });
+      const ex=x>0?V.X(W*0.62):V.X(-W*0.62), an=x>0?"start":"end";
+      ctext(g,[V.X(W*0.97),V.Y(fin(F.hi(W*0.97))?F.hi(W*0.97):1)-14*FS],"h(x) = "+F.hin,"#047857","end");
+      if(B.sq===2) ctext(g,[V.X(W*0.97),V.Y(F.lo(W*0.97))+14*FS],"g(x) = "+F.lon,"#C2410C","end");
+      else { const xl=Math.min(W*0.7,1.2); ctext(g,[V.X(xl),V.Y(Math.cos(xl))+18*FS],"g(x) = cos x","#C2410C","middle"); }
+      grab(g,[px,by],"sq","var(--vert)");
+      ctext(g,[px+(x>0?20:-20)*FS,by],"x = "+tv(x),"#6D28D9",x>0?"start":"end");
+      void ex; void an;
+      return;
+    }
+    const p=M2.s.p, a=B.a(p), L=B.L(p), f=B.f(p), V=View.apply(null,B.view(p)), g=grid(V), n=B.steps(p).length, done=M2.s.step>=n-1;
+    const br=[a].concat(B.breaks?B.breaks(p):[]);
+    (B.breaks?B.breaks(p):[]).forEach(b=>vline(g,V,b,"#E11D48",1.6,"8 6"));
+    if(done){ sseg(g,[V.X(a),V.Y(L)],[V.X(a),V.Y(Math.max(V.y0,Math.min(0,V.y1)))],"var(--magenta)",1.6,"4 4");
+      sseg(g,[V.X(a),V.Y(L)],[V.X(Math.max(V.x0,Math.min(0,V.x1))),V.Y(L)],"var(--magenta)",1.6,"4 4"); }
+    plot(g,V,f,"var(--ink)",3.2,{breaks:br});
+    if(B.hole) odot(g,V,a,L,done?"var(--magenta)":"var(--ink)"); else cdot(g,V,a,L,done?"#DB2777":"var(--ink)");
+    const lab=(done?"limit = "+fx(L):(B.hole?"hole at x = "+fx(a):"x = "+fx(a)));
+    ctext(g,[V.X(a)+14,V.Y(L)-20*FS],lab,"#BE185D","start");
+  },
+  panel(){
+    const B=M2.B(), p=M2.s.p, st=B.steps(p), k=M2.s.step;
+    let list=`<ol class="stepl">`+st.map((t,i)=>i<=k?`<li class="${i===k?"on":"done"}"><span class="sn">${i+1}</span>${t}</li>`:"").join("")+
+      (k<st.length-1?`<li class="wait">Press <b>Next step</b> for step ${k+2} of ${st.length}.</li>`:"")+`</ol>`;
+    let h="";
+    if(B.sq){
+      const F=M2.sqFns(), W=B.zooms[M2.s.zi], x=M2.s.hz*W, lo=F.lo(x), mid=F.f(x), hi=F.hi(x);
+      h+=P("The problem",`<div class="eq">${LIM(0)} ${F.fn}</div>`);
+      h+=`<div class="panel"><h3>Steps</h3>${list}</div>`;
+      h+=`<div class="panel"><h3>Pinched at x = ${tv(x)}</h3>`+
+        rel("var(--alt)","h(x) = "+F.hin,"upper bound",tv(hi))+
+        rel("#fff","f(x) = "+F.fn,"trapped in the middle",tv(mid))+
+        rel("var(--lin)","g(x) = "+F.lon,"lower bound",fin(lo)?tv(lo):"(bound used only for |x| < π/2)")+
+        rel("var(--vert)","gap h − g","shrinks to 0 as x → 0",fin(lo)?tv(hi-lo):"—")+`</div>`;
+      h+=P("The idea",B.idea+`<div class="eq">${B.eq}</div>`);
+      h+=tryPanel(`<p>Drag the purple probe toward 0, then press <b>Zoom in</b> several times. Check in the panel that g(x) ≤ f(x) ≤ h(x) at every probe position, and watch the gap h − g shrink.</p>`);
+    } else {
+      const a=B.a(p), f=B.f(p);
+      h+=P("The problem",`<div class="eq">${B.expr(p)}</div>`);
+      h+=`<div class="panel"><h3>Steps</h3>${list}</div>`;
+      h+=P("Check numerically",valTable(f,a)+`<p>Both columns should close in on ${k>=st.length-1?"<b>"+fx(B.L(p))+"</b>":"the same number"}. Numbers support an answer; the algebra proves it.</p>`);
+      h+=P("The idea",B.idea+`<div class="eq">${B.eq}</div>`);
+      h+=tryPanel(`<p>Move the <b>${B.lab}</b> slider and step through again. Which steps change, and which stay the same? Can you predict the limit for the next value of ${B.lab} before pressing <b>Show all</b>?</p>`);
+    }
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ TAB 3 · infinite limits & asymptotes ══════════════════════ */
+const EB=[
+  {name:"eˣ",html:"e<sup>x</sup>",f:Math.exp,Lp:Infinity,Lm:0,v:W=>[-W,W,-1,8],ha:0,
+   why:"Exponential growth: eˣ doubles roughly every 0.69 units, so it beats any bound as x → ∞. As x → −∞, eˣ = 1/e<sup>|x|</sup> → 0: the x-axis is a horizontal asymptote on the left only."},
+  {name:"e⁻ˣ",html:"e<sup>−x</sup>",f:x=>Math.exp(-x),Lp:0,Lm:Infinity,v:W=>[-W,W,-1,8],ha:0,
+   why:"The mirror image of eˣ: exponential decay to the right (horizontal asymptote y = 0), unbounded growth to the left."},
+  {name:"sin x / x",html:"(sin x) / x",f:x=>Math.sin(x)/x,Lp:0,Lm:0,v:W=>[-W,W,-0.45,1.15],ha:0,env:true,
+   why:"Squeeze: −1/|x| ≤ (sin x)/x ≤ 1/|x| and both bounds → 0. So y = 0 is a horizontal asymptote — and the graph crosses it infinitely often. An asymptote can be crossed!"},
+  {name:"ln x",html:"ln x",f:Math.log,Lp:Infinity,Lm:undefined,v:W=>[-W*0.1,W,-4,5],
+   why:"ln x grows without bound, but incredibly slowly: ln(1000) ≈ 6.9, ln(10⁶) ≈ 13.8. It is not defined for x ≤ 0, so x → −∞ makes no sense."},
+  {name:"x² / eˣ",html:"x² / e<sup>x</sup>",f:x=>x*x/Math.exp(x),Lp:0,Lm:Infinity,v:W=>[-3,W,-0.2,1.5],ha:0,
+   why:"Top and bottom both → ∞ as x → ∞, but the exponential dominates any power, so the ratio → 0."},
+  {name:"ln x / x",html:"(ln x) / x",f:x=>Math.log(x)/x,Lp:0,Lm:undefined,v:W=>[-0.5,W,-1.5,0.6],ha:0,
+   why:"Both → ∞, but x dominates ln x, so the ratio → 0. Any positive power of x beats the logarithm."},
+  {name:"Race: ln x · x² · 2ˣ",race:true}
+];
+const M3={
+  tab:"Infinite limits & asymptotes", lesson:"AP 1.14–1.15 · Limits & Continuity", accent:"var(--yellow)",
+  s:{mode:"va",a:1,n:1,sg:1,hL:1.2,hR:1.2,m:2,nd:2,p:2,q:1,W:10,ei:0,EW:12},
+  title:()=>({va:"Vertical asymptotes: x → a",inf:"Limits at infinity: rational functions",end:"End behavior & dominance"})[M3.s.mode],
+  vaF(){ const s=M3.s, k=2*s.sg; return {f:x=>k/Math.pow(x-s.a,s.n),a:s.a,fa:null,
+    Lp:s.sg*Infinity,Lm:(s.n%2===0?s.sg:-s.sg)*Infinity}; },
+  rat(){ const s=M3.s, N=[s.p].concat(Array(s.m).fill(0)), D=[s.q].concat(Array(s.nd).fill(0));
+    if(s.m>0)N[N.length-1]=1; if(s.nd>0)D[D.length-1]=4;
+    const ha=s.m<s.nd?0:(s.m===s.nd?s.p/s.q:null);
+    const sg=Math.sign(s.p/s.q), Lp=s.m<=s.nd?ha:sg*Infinity, Lm=s.m<=s.nd?ha:sg*((s.m-s.nd)%2?-1:1)*Infinity;
+    return {N,D,f:x=>polyEv(N,x)/polyEv(D,x),ha,Lp,Lm}; },
+  bar(){
+    const s=M3.s;
+    segBtns([["va","Vertical asymptotes"],["inf","Limits at ∞"],["end","End behavior"]],s.mode,k=>{ stopAnim(); s.mode=k; render(); },"Mode");
+    if(s.mode==="va"){
+      slider("a =",-3,3,s.a,v=>{ s.a=v; update(); });
+      segBtns([[1,"(x − a)¹"],[2,"(x − a)²"]],s.n,k=>{ s.n=k; render(); },"Power");
+      segBtns([[1,"k = 2"],[-1,"k = −2"]],s.sg,k=>{ s.sg=k; render(); },"Numerator");
+      btn("Close in",()=>closeIn(M3),"primary");
+      btn("Reset probes",()=>{ stopAnim(); s.hL=s.hR=1.2; update(); });
+    } else if(s.mode==="inf"){
+      slider("deg top",0,3,s.m,v=>{ s.m=v; update(); });
+      slider("deg bottom",0,3,s.nd,v=>{ s.nd=v; update(); });
+      slider("lead top",-3,3,s.p,v=>{ s.p=v||1; update(); },v=>minus(v||1));
+      slider("lead bottom",-3,3,s.q,v=>{ s.q=v||1; update(); },v=>minus(v||1));
+      segBtns([[10,"window ±10"],[100,"±100"],[1000,"±1000"]],s.W,k=>{ s.W=k; render(); },"Window");
+    } else {
+      chips(EB.map(e=>e.name),s.ei,i=>{ s.ei=i; render(); });
+      slider("window x ≤",3,60,s.EW,v=>{ s.EW=v; update(); });
+    }
+  },
+  drag(id,p){ const s=M3.s; if(s.mode!=="va")return false; const V=View(s.a-5,s.a+5,-8,8), x=V.ix(p[0]); stopAnim();
+    if(id==="pL")s.hL=clamp(s.a-x,HMIN,4.9); else if(id==="pR")s.hR=clamp(x-s.a,HMIN,4.9); else return false; },
+  draw(){
+    const s=M3.s;
+    if(s.mode==="va"){
+      const F=M3.vaF(), V=View(s.a-5,s.a+5,-8,8), g=grid(V);
+      hline(g,V,0,"#94A3B8",1.2,"6 6");
+      drawFL(g,V,F); ctext(g,[V.X(s.a)+8,30*FS],"x = "+minus(s.a),"#BE123C","start");
+      probe(g,V,F.f,s.a,s.hL,-1); probe(g,V,F.f,s.a,s.hR,1);
+    } else if(s.mode==="inf"){
+      const R=M3.rat(), Y=R.ha!==null?Math.max(4,Math.abs(R.ha)*2.5):6, V=View(-s.W,s.W,-Y,Y), g=grid(V);
+      if(R.ha!==null){ hline(g,V,R.ha,"var(--unk)",2,"9 6"); ctext(g,[VW-10,V.Y(R.ha)-14*FS],"y = "+fx(R.ha),"#BE123C","end"); }
+      plot(g,V,R.f,"var(--ink)",3.2,{n:2400});
+      if(R.ha===null) ctext(g,[VW/2,20*FS],s.m===s.nd+1?"no horizontal asymptote (slant asymptote instead)":"no horizontal asymptote","#BE123C","middle");
+    } else {
+      const e=EB[s.ei], W=s.EW;
+      if(e.race){
+        const Y=W*W, V=View(0,W,-0.08*Y,Y), g=grid(V);
+        plot(g,V,x=>Math.log(x),"var(--alt)",3); plot(g,V,x=>x*x,"var(--corr)",3); plot(g,V,x=>Math.pow(2,x),"var(--altx)",3);
+        const lb=(f,c,t)=>{ let xx=W*0.96; if(f(xx)>Y){ // find where it leaves the top
+            let lo=0,hi=W; for(let i=0;i<50;i++){const m=(lo+hi)/2; if(f(m)>Y)hi=m; else lo=m;} xx=lo; ctext(g,[V.X(xx)-6,22*FS],t,c,"end"); }
+          else ctext(g,[V.X(xx),V.Y(f(xx))-14*FS],t,c,"end"); };
+        lb(x=>x*x,"#0369A1","x²"); lb(x=>Math.pow(2,x),"#BE185D","2ˣ"); lb(x=>Math.log(x),"#047857","ln x");
+        return;
+      }
+      const V=View.apply(null,e.v(W)), g=grid(V);
+      if(e.ha!=null) hline(g,V,e.ha,"var(--unk)",1.8,"9 6");
+      if(e.env){ plot(g,V,x=>1/Math.abs(x),"#C4B5FD",2,{breaks:[0],dash:"5 5"}); plot(g,V,x=>-1/Math.abs(x),"#C4B5FD",2,{breaks:[0],dash:"5 5"}); }
+      plot(g,V,e.f,"var(--ink)",3.2,{breaks:e.env?[0]:[],n:2000});
+      if(e.env) odot(g,V,0,1,"var(--ink)");
+      ctext(g,[VW-10,24*FS],"y = "+e.name,"#14213D","end");
+    }
+  },
+  panel(){
+    const s=M3.s; let h="";
+    if(s.mode==="va"){
+      const F=M3.vaF(), k=2*s.sg, den=`(${xm(s.a)})${s.n===2?"²":""}`;
+      h+=P("The function",`<div class="eq">f(x) = ${minus(k)} / ${den}</div><p>At x = ${minus(s.a)} the top is ${minus(k)} (not 0) and the bottom is 0: a <b>nonzero number over zero</b> signals a <span class="term">vertical asymptote</span>.</p>`);
+      h+=`<div class="panel"><h3>One-sided infinite limits</h3>`+
+        rel("var(--corr)",`${LIM(minus(s.a)+"<sup>−</sup>")} f(x)`,`x − a is tiny and negative${s.n===2?"; squared it is positive":""}`,limS(F.Lm))+
+        rel("var(--altx)",`${LIM(minus(s.a)+"<sup>+</sup>")} f(x)`,"x − a is tiny and positive",limS(F.Lp))+
+        rel("var(--yellow)",`${LIM(minus(s.a))} f(x)`,twoSided(F).why,twoSided(F).txt)+`</div>`;
+      h+=P("Table of values",valTable(F.f,s.a,s.hL,s.hR)+`<p>The values do not settle — they grow without bound. Writing ∞ says <b>how</b> the limit fails to exist.</p>`);
+      h+=P("The idea",`<p>If f(x) → +∞ or −∞ as x → a from either side, the line <b>x = a</b> is a vertical asymptote.</p><p>To find the sign, look at the sign of the denominator just left and just right of a. An <b>odd</b> power changes sign across a (opposite infinities); an <b>even</b> power does not (same infinity on both sides).</p>
+        <div class="eq">k/(x − a)ⁿ near x = a:\n  top → k ≠ 0,  bottom → 0\n  sign of bottom decides ±∞</div>`);
+      h+=tryPanel(`<p>Predict the four one-sided limits for (x − a)¹ and (x − a)² with k = 2 and k = −2, then check each with the buttons. Which combination gives lim = −∞ from both sides?</p>`);
+    } else if(s.mode==="inf"){
+      const R=M3.rat(), xs=[10,100,1000,10000];
+      h+=P("The function",`<div class="eq">f(x) = (${polyStr(R.N)}) / (${polyStr(R.D)})</div><p>Degree of top: <b>${s.m}</b> · degree of bottom: <b>${s.nd}</b>.</p>`);
+      h+=`<div class="panel"><h3>End behavior</h3>`+
+        rel("var(--corr)",`${LIM("∞")} f(x)`,"x → +∞",limS(R.Lp))+
+        rel("var(--altx)",`${LIM("−∞")} f(x)`,"x → −∞",limS(R.Lm))+
+        rel("var(--unk)","Horizontal asymptote",s.m<s.nd?"degree top < degree bottom":s.m===s.nd?"equal degrees: ratio of leading coefficients":"degree top > degree bottom",R.ha===null?"none":"y = "+fx(R.ha))+`</div>`;
+      h+=P("Table of values",`<div class="tbwrap"><table class="vt"><thead><tr><th>x</th><th>f(x)</th><th>x</th><th>f(x)</th></tr></thead><tbody>`+
+        xs.map(x=>`<tr><td>${x}</td><td class="l">${tv(R.f(x))}</td><td>${minus(-x)}</td><td class="r">${tv(R.f(-x))}</td></tr>`).join("")+`</tbody></table></div>`);
+      h+=P("The idea",`<p>For huge |x|, only the <b>leading terms</b> matter: divide top and bottom by the highest power of x in the denominator and every smaller term goes to 0.</p>
+        <div class="eq">deg top < deg bottom  →  y = 0\ndeg top = deg bottom  →  y = (lead top)/(lead bottom)\ndeg top > deg bottom  →  no HA (f → ±∞)</div>
+        <p>Here, for large |x|: (${polyStr(R.N)})/(${polyStr(R.D)}) ≈ ${polyStr([s.p].concat(Array(s.m).fill(0)))} / ${polyStr([s.q].concat(Array(s.nd).fill(0)))}${s.m===s.nd?" = "+fx(s.p/s.q):s.m>s.nd?" = "+polyStr([s.p/s.q].concat(Array(s.m-s.nd).fill(0))).replace(/^(−?)([0-9.]+)/,(m0,a,b)=>a+fx(+b)):" = "+fx(s.p/s.q)+"/x"+(s.nd-s.m>1?SUPD[s.nd-s.m]:"")+" → 0"}.</p>`);
+      h+=tryPanel(`<p>Set both degrees to 2 and change the leading coefficients: the asymptote is their ratio. Then make the top degree 3: switch the window to ±1000 — why does the graph look like a parabola-shaped curve or a line far away?</p>`);
+    } else {
+      const e=EB[s.ei];
+      if(e.race){
+        const xs=[2,4,10,20,50,100];
+        h+=P("The race",`<div class="tbwrap"><table class="vt"><thead><tr><th>x</th><th>ln x</th><th>x²</th><th>2ˣ</th><th>x² / 2ˣ</th></tr></thead><tbody>`+
+          xs.map(x=>`<tr><td>${x}</td><td class="m">${tv(Math.log(x))}</td><td class="l">${tv(x*x)}</td><td class="r">${tv(Math.pow(2,x))}</td><td>${tv(x*x/Math.pow(2,x))}</td></tr>`).join("")+`</tbody></table></div>
+          <p>At x = 2 and x = 4 the square and the exponential tie; after x = 4, 2ˣ pulls away forever and the ratio x²/2ˣ → 0.</p>`);
+        h+=P("Dominance hierarchy",`<p>As x → ∞, every function in this chain eventually grows <b>much</b> faster than the one before it, so a ratio of an earlier one over a later one → 0.</p>
+          <div class="eq">ln x  ≪  xᵖ (p > 0)  ≪  bˣ (b > 1)\n\n${LIMt("∞")} (ln x)/xᵖ = 0\n${LIMt("∞")} xᵖ/bˣ = 0</div><p>Use it to read off limits like (x³ + 5)/eˣ → 0 or eˣ/x¹⁰⁰ → ∞ at a glance.</p>`);
+        h+=tryPanel(`<p>Drag the window slider down to 3: x² is ahead of 2ˣ. Slowly widen the window. Where does 2ˣ take the lead for good? Does ln x ever catch up with x²?</p>`);
+      } else {
+        const xs=[10,100,1000];
+        h+=P("The function",`<div class="eq">f(x) = ${e.html}</div><p>${e.why}</p>`);
+        h+=`<div class="panel"><h3>End behavior</h3>`+rel("var(--corr)",`${LIM("∞")} f(x)`,"x → +∞",limS(e.Lp))+
+          rel("var(--altx)",`${LIM("−∞")} f(x)`,"x → −∞",e.Lm===undefined?"not defined":limS(e.Lm))+
+          rel("var(--unk)","Horizontal asymptote","a finite limit at ±∞",e.ha!=null?"y = 0"+(fin(e.Lp)&&fin(e.Lm)?" (both ends)":fin(e.Lp)?" (right end)":" (left end)"):"none")+`</div>`;
+        h+=P("Table of values",`<div class="tbwrap"><table class="vt"><thead><tr><th>x</th><th>f(x)</th><th>x</th><th>f(x)</th></tr></thead><tbody>`+
+          xs.map(x=>`<tr><td>${x}</td><td class="l">${tv(e.f(x))}</td><td>${minus(-x)}</td><td class="r">${tv(e.f(-x))}</td></tr>`).join("")+`</tbody></table></div>`);
+        h+=P("The idea",`<p>A <span class="term">horizontal asymptote</span> y = L means f(x) → L as x → ∞ or as x → −∞. The two ends are separate questions and can have different answers.</p><div class="eq">ln x  ≪  xᵖ  ≪  bˣ   as x → ∞</div>`);
+        h+=tryPanel(`<p>Choose <b>sin x / x</b> and widen the window. The dashed lavender curves are ±1/x. Does the graph ever cross y = 0? Is y = 0 still an asymptote?</p>`);
+      }
+    }
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ TAB 4 · epsilon–delta ══════════════════════ */
+const EF=[
+  {name:"f(x) = 2x − 1, a = 2",f:x=>2*x-1,a:2,L:3,sx:2,sy:3,dl:e=>e/2,dtxt:"δ = ε/2",
+   why:"|f(x) − 3| = |2x − 4| = 2|x − 2|. This is less than ε exactly when |x − 2| < ε/2."},
+  {name:"f(x) = x², a = 1",f:x=>x*x,a:1,L:1,sx:1.5,sy:2.4,dl:e=>Math.sqrt(1+e)-1,dtxt:"δ = √(1 + ε) − 1",
+   why:"The parabola is steeper to the right of 1, so the right edge x = √(1 + ε) is the tighter one."},
+  {name:"f(x) = √x, a = 4",f:Math.sqrt,a:4,L:2,sx:3,sy:1.4,dl:e=>e<2?4*e-e*e:4,dtxt:"δ = 4 − (2 − ε)² = 4ε − ε²   (ε < 2)",
+   why:"√x flattens out to the right, so the left edge x = (2 − ε)² is closer to 4 and decides δ."},
+  {name:"f(x) = (x² − 1)/(x − 1), a = 1",f:x=>(x*x-1)/(x-1),a:1,L:2,sx:2,sy:3,dl:e=>e,dtxt:"δ = ε",hole:true,
+   why:"For x ≠ 1, f(x) = x + 1, so |f(x) − 2| = |x − 1|. The hole does not matter: the definition only looks at 0 < |x − a| < δ."},
+  {name:"Jump: no limit at a = 1",f:x=>x<1?x:x+1,a:1,L:1.5,none:true,sx:2,sy:2.5,dl:e=>e>0.5?e-0.5:0,dtxt:"works only while ε > 1/2: δ = ε − 1/2",
+   why:"Any L is at least 1/2 away from one of the one-sided heights 1 and 2. Choose ε ≤ 1/2 and no δ can work — so the limit does not exist."}
+];
+const M4={
+  tab:"Epsilon–delta", lesson:"AP 1.2 · Formal definition (enrichment)", accent:"var(--lavender)",
+  s:{ei:0,eps:0.6,del:0.15,Lg:3,z:1},
+  title:()=>"ε–δ: keep the graph inside the box",
+  F:()=>EF[M4.s.ei],
+  V(){ const F=M4.F(), z=M4.s.z; return View(F.a-F.sx/z,F.a+F.sx/z,F.L-F.sy/z,F.L+F.sy/z); },
+  dmax(){ // largest δ (sampled) with |f(x) − L| < ε for 0 < |x − a| < δ
+    const F=M4.F(), L=M4.s.Lg, e=M4.s.eps, cap=F.sx*1.5;
+    const bad=d=>{ for(const x of [F.a-d,F.a+d]){ const y=F.f(x); if(Number.isNaN(y))continue; if(!(Math.abs(y-L)<e))return true; } return false; };
+    let prev=0;
+    for(let d=1e-7;d<1e-3;d*=1.5){ if(bad(d))return {d:prev,capped:false}; prev=d; }
+    const step=cap/5000;
+    for(let d=1e-3;d<=cap;d+=step){ if(bad(d))return {d:prev,capped:false}; prev=d; }
+    return {d:cap,capped:true};
+  },
+  reset(){ const F=M4.F(); M4.s.Lg=F.L; M4.s.z=1; M4.s.eps=F.sy*0.25; M4.s.del=F.sx*0.08; },
+  bar(){
+    selBox(EF.map(f=>f.name),M4.s.ei,i=>{ M4.s.ei=i; M4.reset(); render(); },"Function");
+    btn("Find δ",()=>{ const D=M4.dmax(); if(D.d>0)M4.s.del=D.d*0.97; update(); },"primary");
+    btn("Halve ε",()=>{ M4.s.eps=Math.max(0.0005,M4.s.eps/2); update(); });
+    btn("Zoom in",()=>{ M4.s.z=Math.min(64,M4.s.z*2); update(); });
+    btn("Zoom out",()=>{ M4.s.z=Math.max(1,M4.s.z/2); update(); });
+    btn("Reset",()=>{ M4.reset(); update(); });
+  },
+  drag(id,p){ const F=M4.F(), V=M4.V(), z=M4.s.z;
+    if(id==="eps"){ M4.s.eps=clamp(V.iy(p[1])-M4.s.Lg,0.0005,F.sy*1.9/z); }
+    else if(id==="del"){ M4.s.del=clamp(V.ix(p[0])-F.a,0.0002,F.sx*0.98/z); }
+    else if(id==="L"){ let L=V.iy(p[1]); if(Math.abs(L-F.L)<F.sy*0.04/z)L=F.L; M4.s.Lg=clamp(L,V.y0,V.y1); }
+    else return false; },
+  draw(){
+    const F=M4.F(), V=M4.V(), g=grid(V), s=M4.s, L=s.Lg, e=s.eps, d=s.del, D=M4.dmax(), ok=d<=D.d+1e-12;
+    const yT=V.Y(L+e), yB=V.Y(L-e), xl=V.X(F.a-d), xr=V.X(F.a+d);
+    g.appendChild(E("rect",{x:0,y:yT,width:VW,height:Math.max(0,yB-yT),fill:"rgba(255,217,61,.22)"}));
+    g.appendChild(E("rect",{x:xl,y:0,width:Math.max(0,xr-xl),height:VH,fill:"rgba(2,132,199,.10)"}));
+    sseg(g,[0,yT],[VW,yT],"#CA8A04",1.6,"7 5"); sseg(g,[0,yB],[VW,yB],"#CA8A04",1.6,"7 5");
+    sseg(g,[xl,0],[xl,VH],"#0284C7",1.6,"7 5"); sseg(g,[xr,0],[xr,VH],"#0284C7",1.6,"7 5");
+    g.appendChild(E("rect",{x:xl,y:yT,width:Math.max(0,xr-xl),height:Math.max(0,yB-yT),fill:"none",style:"stroke:"+(ok?"#059669":"#E11D48"),"stroke-width":2.6}));
+    hline(g,V,L,"#7C3AED",1.6,"3 4"); vline(g,V,F.a,"#94A3B8",1.4,"3 5");
+    plot(g,V,F.f,"#64748B",2.4,{breaks:[F.a]});
+    // colour the part of the graph inside the δ-strip
+    let gd="",bd="",n=600;
+    for(let i=0;i<n;i++){ const x0=F.a-d+2*d*i/n, x1=F.a-d+2*d*(i+1)/n, xm=(x0+x1)/2;
+      if(x0<F.a&&x1>F.a)continue;
+      const y0=F.f(x0),y1=F.f(x1),ym=F.f(xm); if(!fin(y0)||!fin(y1))continue;
+      const seg="M"+V.X(x0).toFixed(2)+" "+V.Y(y0).toFixed(2)+"L"+V.X(x1).toFixed(2)+" "+V.Y(y1).toFixed(2);
+      if(Math.abs(ym-L)<e) gd+=seg; else bd+=seg; }
+    g.appendChild(E("path",{d:gd,fill:"none",style:"stroke:var(--alt)","stroke-width":4.2,"stroke-linecap":"round"}));
+    g.appendChild(E("path",{d:bd,fill:"none",style:"stroke:var(--unk)","stroke-width":4.2,"stroke-linecap":"round"}));
+    if(F.hole) odot(g,V,F.a,F.L,"var(--ink)");
+    if(F.none){ odot(g,V,F.a,1,"var(--ink)"); cdot(g,V,F.a,2,"var(--ink)"); }
+    // handles
+    grab(g,[46*FS,yT],"eps","#CA8A04"); ctext(g,[70*FS,yT-16*FS],"L + ε","#A16207","start");
+    ctext(g,[70*FS,yB+16*FS],"L − ε","#A16207","start");
+    grab(g,[VW-46*FS,V.Y(L)],"L","#7C3AED"); ctext(g,[VW-70*FS,V.Y(L)-16*FS],"L = "+tv(+L.toPrecision(4)),"#6D28D9","end");
+    const by=VH-26*FS; grab(g,[xr,by],"del","#0284C7"); ctext(g,[xr+20*FS,by],"a + δ","#0369A1","start");
+    ctext(g,[xl-10,by],"a − δ","#0369A1","end");
+  },
+  panel(){
+    const F=M4.F(), s=M4.s, D=M4.dmax(), ok=s.del<=D.d+1e-12, atL=near(s.Lg,F.L,1e-9);
+    const exact=atL? F.dl(s.eps) : null;
+    let verdict;
+    if(D.d<=0) verdict=`<div class="verdict bad"><b>No δ works.</b> However thin the blue strip, part of the graph next to x = ${fx(F.a)} sits outside the yellow ε-band. ${F.none?"That is exactly what “the limit does not exist” means.":"This L is not the limit — drag the purple handle back toward the curve."}</div>`;
+    else if(ok) verdict=`<div class="verdict good"><b>This δ works.</b> Every point of the graph in the strip 0 &lt; |x − ${fx(F.a)}| &lt; δ lies inside the band |f(x) − L| &lt; ε (green). Now halve ε — can you still find a δ?</div>`;
+    else verdict=`<div class="verdict bad"><b>δ is too wide.</b> Some x inside the strip give f(x) outside the band (red). Shrink δ to at most ≈ ${tv(+D.d.toPrecision(4))}.</div>`;
+    side.innerHTML=
+      P("The definition",`<p>${LIM("a")} f(x) = L means: <b>for every</b> ε &gt; 0 there is <b>some</b> δ &gt; 0 such that</p><div class="eq">0 < |x − a| < δ  ⇒  |f(x) − L| < ε</div><p>Think of a challenge. Someone picks the height tolerance ε (yellow band). You must answer with a width δ (blue strip) so the graph never leaves the box — except possibly at x = a itself.</p>`)+
+      `<div class="panel"><h3>Live check · ${F.name}</h3>`+
+        rel("#CA8A04","ε","band half-height (drag the gold handle)",tv(+s.eps.toPrecision(4)))+
+        rel("#0284C7","δ","strip half-width (drag the blue handle)",tv(+s.del.toPrecision(4)))+
+        rel("var(--mint)","largest δ that works","found by scanning the graph",D.d<=0?"none":(D.capped?"≥ ":"≈ ")+tv(+D.d.toPrecision(4)))+
+        (atL&&!F.none?rel("var(--lavender)","exact δ formula",F.dtxt,exact>0?tv(+exact.toPrecision(4)):"—"):"")+
+        (atL&&F.none?rel("var(--lavender)","with L = 3/2",F.dtxt,exact>0?tv(+exact.toPrecision(4)):"none"):"")+
+      `</div>`+verdict+
+      P("Why that δ",`<p>${F.why}</p><p>Visual intuition only: the panel finds δ by testing many x-values, not by proof. The algebra in the formula is what a proof would use.</p>`)+
+      tryPanel(`<p>Press <b>Halve ε</b> several times, then <b>Find δ</b> each time. Does δ shrink too? For the jump, set L anywhere you like and try ε = 0.4 — can you ever win?</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 5 · continuity & IVT ══════════════════════ */
+const FT=[
+  {html:"f(x) = ⎧ kx + 3,   x < 2\n       ⎩ x² − k,   x ≥ 2",c:2,L:(x,k)=>k*x+3,R:(x,k)=>x*x-k,lm:k=>2*k+3,lp:k=>4-k,fc:k=>4-k,view:[-2,6,-4,10],sk:1/3,
+   steps:[`Left-hand limit: ${LIM("2<sup>−</sup>")} (kx + 3) = 2k + 3`,`Right-hand limit and value: f(2) = 2² − k = 4 − k`,`Set them equal: 2k + 3 = 4 − k`,`3k = 1  ⇒  <b>k = 1/3</b>`]},
+  {html:"f(x) = ⎧ kx²,      x ≤ 1\n       ⎩ 3x − k,   x > 1",c:1,L:(x,k)=>k*x*x,R:(x,k)=>3*x-k,lm:k=>k,lp:k=>3-k,fc:k=>k,view:[-3,5,-5,8],sk:3/2,
+   steps:[`Left-hand limit and value: f(1) = k·1² = k`,`Right-hand limit: ${LIM("1<sup>+</sup>")} (3x − k) = 3 − k`,`Set them equal: k = 3 − k`,`2k = 3  ⇒  <b>k = 3/2</b>`]},
+  {html:"f(x) = ⎧ (x² − 4)/(x − 2),  x ≠ 2\n       ⎩ k,                 x = 2",c:2,L:x=>(x*x-4)/(x-2),R:x=>(x*x-4)/(x-2),lm:()=>4,lp:()=>4,fc:k=>k,view:[-3,5,-2,8],sk:4,
+   steps:[`For x ≠ 2: (x² − 4)/(x − 2) = (x − 2)(x + 2)/(x − 2) = x + 2`,`${LIM(2)} f(x) = 2 + 2 = 4 (a removable discontinuity)`,`Continuity needs f(2) = 4, so <b>k = 4</b>`]},
+  {html:"f(x) = ⎧ x + k,   x < 1\n       ⎩ kx,      x ≥ 1",c:1,L:(x,k)=>x+k,R:(x,k)=>k*x,lm:k=>1+k,lp:k=>k,fc:k=>k,view:[-3,5,-5,7],sk:null,
+   steps:[`Left-hand limit: 1 + k`,`Right-hand limit and value: k·1 = k`,`Set equal: 1 + k = k  ⇒  1 = 0 — impossible!`,`<b>No value of k works.</b> The gap between the pieces is always exactly 1.`]}
+];
+const IF=[
+  {name:"x³ − 3x + 1",f:x=>x*x*x-3*x+1,view:[-3,3,-5,6],a:-2,b:2,N:0.5},
+  {name:"x² − 2  (find √2)",f:x=>x*x-2,view:[-1,3,-3,6],a:0,b:2,N:0},
+  {name:"cos x",f:Math.cos,view:[-1,7,-2,2],a:0,b:3,N:0},
+  {name:"1/x  (not continuous at 0)",f:x=>1/x,view:[-3,3,-5,5],a:-1,b:2,N:0,disc:0}
+];
+function findCs(f,a,b,N){
+  const out=[], n=1500; let x0=a, g0=f(a)-N;
+  if(Math.abs(g0)<1e-12)out.push(a);
+  for(let i=1;i<=n;i++){ const x1=a+(b-a)*i/n, g1=f(x1)-N;
+    if(fin(g0)&&fin(g1)){
+      if(Math.abs(g1)<1e-12)out.push(x1);
+      else if(g0*g1<0&&Math.abs(g0)>1e-12){ let lo=x0,hi=x1,gl=g0; for(let k=0;k<60;k++){ const m=(lo+hi)/2, gm=f(m)-N; if(gl*gm<=0)hi=m; else {lo=m;gl=gm;} }
+        const c=(lo+hi)/2; if(Math.abs(f(c)-N)<1e-6)out.push(c); } }
+    x0=x1; g0=g1; }
+  return out.filter((c,i)=>i===0||Math.abs(c-out[i-1])>1e-6);
+}
+const M5={
+  tab:"Continuity & IVT", lesson:"AP 1.10–1.13 · 1.16 · Limits & Continuity", accent:"var(--mint)",
+  s:{mode:"check",fi:2,ti:0,ki:48,showSol:false,ii:0,a:-2,b:2,N:0.5,bis:null},
+  title:()=>({check:"Continuity at a point: the three conditions",fix:"Make it continuous: choose k",ivt:"Intermediate Value Theorem"})[M5.s.mode],
+  k:()=>(M5.s.ki-48)/12,
+  TF(){ const T=FT[M5.s.ti], k=M5.k(); return {f:x=>x<T.c?T.L(x,k):T.R(x,k),a:T.c,fa:T.fc(k),Lm:T.lm(k),Lp:T.lp(k)}; },
+  I:()=>IF[M5.s.ii],
+  resetI(){ const I=M5.I(); M5.s.a=I.a; M5.s.b=I.b; M5.s.N=I.N; M5.s.bis=null; },
+  bisInit(){ const I=M5.I(), s=M5.s, g=x=>I.f(x)-s.N, ga=g(s.a), gb=g(s.b);
+    if(!(fin(ga)&&fin(gb))||ga*gb>=0){ s.bis={err:true,hist:[]}; return false; }
+    s.bis={lo:s.a,hi:s.b,glo:ga,hist:[],done:false}; return true; },
+  bisStep(){ const s=M5.s, I=M5.I(); if(!s.bis||s.bis.err)M5.bisInit(); const B=s.bis; if(B.err||B.done){ stopAnim(); return; }
+    const m=(B.lo+B.hi)/2, gm=I.f(m)-s.N; B.hist.push({lo:B.lo,hi:B.hi,m,gm});
+    if(B.glo*gm<=0)B.hi=m; else {B.lo=m;B.glo=gm;}
+    if(B.hist.length>=14||B.hi-B.lo<1e-4){ B.done=true; stopAnim(); } },
+  bar(){
+    const s=M5.s;
+    segBtns([["check","Three conditions"],["fix","Make it continuous"],["ivt","IVT"]],s.mode,k=>{ stopAnim(); s.mode=k; render(); },"Mode");
+    if(s.mode==="check"){
+      selBox(FL.map(f=>f.name),s.fi,i=>{ s.fi=i; render(); },"Function");
+    } else if(s.mode==="fix"){
+      selBox(["Template A: kx + 3 | x² − k","Template B: kx² | 3x − k","Template C: removable hole","Template D: x + k | kx"],s.ti,i=>{ s.ti=i; s.showSol=false; render(); },"Piecewise function");
+      slider("k =",0,96,s.ki,v=>{ s.ki=v; update(); },v=>fx((v-48)/12));
+      btn("Solve for k",()=>{ const T=FT[s.ti]; s.showSol=true; if(T.sk!=null)s.ki=Math.round(T.sk*12)+48; render(); },"primary");
+    } else {
+      selBox(IF.map(f=>f.name),s.ii,i=>{ stopAnim(); s.ii=i; M5.resetI(); render(); },"Function");
+      btn("Run bisection",()=>{ stopAnim(); if(!M5.bisInit()){ update(); return; } anim=setInterval(()=>{ M5.bisStep(); update(); },550); },"primary");
+      btn("Step",()=>{ stopAnim(); if(!s.bis||s.bis.done)M5.bisInit(); M5.bisStep(); update(); });
+      btn("Reset",()=>{ stopAnim(); M5.resetI(); update(); });
+    }
+  },
+  drag(id,p){ const s=M5.s; if(s.mode!=="ivt")return false; const I=M5.I(), V=View.apply(null,I.view);
+    stopAnim(); s.bis=null;
+    const snapx=x=>Math.round(x*20)/20;
+    if(id==="ia") s.a=clamp(snapx(V.ix(p[0])),V.x0,s.b-0.1);
+    else if(id==="ib") s.b=clamp(snapx(V.ix(p[0])),s.a+0.1,V.x1);
+    else if(id==="iN") s.N=clamp(Math.round(V.iy(p[1])*20)/20,V.y0,V.y1);
+    else return false; },
+  draw(){
+    const s=M5.s;
+    if(s.mode==="check"){ const F=FL[s.fi], V=View.apply(null,F.view), g=grid(V); drawFL(g,V,F); aLabel(g,V,F.a,"a = "+fx(F.a)); return; }
+    if(s.mode==="fix"){
+      const T=FT[s.ti], F=M5.TF(), V=View.apply(null,T.view), g=grid(V), C=classify(F);
+      plot(g,V,x=>T.L(x,M5.k()),"var(--ink)",3.2,{hi:T.c-1e-9});
+      plot(g,V,x=>T.R(x,M5.k()),"var(--ink)",3.2,{lo:T.c+1e-9});
+      [F.Lm,F.Lp].forEach(L=>{ if(fin(L)&&!near(F.fa,L)) odot(g,V,T.c,L,"var(--ink)"); });
+      cdot(g,V,T.c,F.fa,C.c3?"var(--alt)":"var(--ink)");
+      if(!near(F.Lm,F.Lp)){ const x=V.X(T.c)+14; sseg(g,[x,V.Y(F.Lm)],[x,V.Y(F.Lp)],"var(--unk)",2.4); ctext(g,[x+8,(V.Y(F.Lm)+V.Y(F.Lp))/2],"gap "+fx(Math.abs(F.Lm-F.Lp)),"#BE123C","start"); }
+      ctext(g,[VW/2,20*FS],C.c3?"continuous at x = "+T.c+" ✓":"not continuous at x = "+T.c,C.c3?"#047857":"#BE123C","middle");
+      return;
+    }
+    const I=M5.I(), V=View.apply(null,I.view), g=grid(V), fa=I.f(s.a), fb=I.f(s.b);
+    if(fin(fa)&&fin(fb)) g.appendChild(E("rect",{x:0,y:V.Y(Math.max(fa,fb)),width:VW,height:Math.abs(V.Y(fa)-V.Y(fb)),fill:"rgba(255,217,61,.18)"}));
+    const B=s.bis;
+    if(B&&!B.err){ const lo=B.done&&B.hist.length?B.lo:B.lo, hi=B.hi; g.appendChild(E("rect",{x:V.X(lo),y:0,width:Math.max(1.5,V.X(hi)-V.X(lo)),height:VH,fill:"rgba(124,58,237,.16)"}));
+      B.hist.forEach((h,i)=>{ const px=V.X(h.m); sseg(g,[px,V.Y(0)-6],[px,V.Y(0)+6],"#7C3AED",2); if(i===B.hist.length-1&&fin(h.gm+s.N))sdot(g,[px,V.Y(h.gm+s.N)],"#7C3AED",4.5); }); }
+    plot(g,V,I.f,"#94A3B8",2.2,{breaks:I.disc!=null?[I.disc]:[]});
+    plot(g,V,I.f,"var(--ink)",3.6,{lo:s.a,hi:s.b,breaks:I.disc!=null?[I.disc]:[]});
+    hline(g,V,s.N,"var(--magenta)",2.2,"9 5");
+    const by=VH-26*FS;
+    [[s.a,"ia","a"],[s.b,"ib","b"]].forEach(([x,id,nm])=>{ const px=V.X(x), y=I.f(x);
+      if(fin(y)){ sseg(g,[px,by],[px,V.Y(y)],"var(--corr)",1.6,"4 4"); cdot(g,V,x,y,"var(--corr)"); ctext(g,[px+(nm==="a"?-10:10),V.Y(y)+(y>s.N?-16:16)*FS],"f("+nm+") ≈ "+num(y,2),"#0369A1",nm==="a"?"end":"start"); }
+      grab(g,[px,by],id,"var(--corr)"); ctext(g,[px,by+(-26)*FS],nm+" = "+num(x,2),"#0369A1","middle"); });
+    const cs=findCs(I.f,s.a,s.b,s.N);
+    cs.forEach(c=>{ const px=V.X(c); sseg(g,[px,V.Y(s.N)],[px,V.Y(0)],"var(--magenta)",1.6,"3 3"); sdot(g,[px,V.Y(s.N)],"var(--magenta)",6.5); ctext(g,[px,V.Y(s.N)-18*FS],"c ≈ "+num(c,3),"#BE185D","middle"); });
+    grab(g,[40*FS,V.Y(s.N)],"iN","var(--magenta)"); ctext(g,[VW-10,V.Y(s.N)+(s.N>V.y0+(V.y1-V.y0)*0.15?18:-18)*FS],"y = N = "+num(s.N,2),"#BE185D","end");
+  },
+  panel(){
+    const s=M5.s; let h="";
+    if(s.mode==="check"||s.mode==="fix"){
+      const F=s.mode==="check"?FL[s.fi]:M5.TF(), C=classify(F), a=fx(F.a), T=C.T;
+      const row=(ok,txt,val)=>`<div class="chk3"><span class="ic ${ok?"ok":"no"}">${ok?"✓":"✗"}</span><span>${txt}</span><span class="v">${val}</span></div>`;
+      const cls={continuous:`<b>Continuous at x = ${a}.</b> All three conditions hold: you can draw through this point without lifting your pencil.`,
+        removable:`<b>Removable discontinuity</b> (a hole). The limit exists, but f(${a}) is missing or in the wrong place. Redefining f(${a}) = ${T.txt} would fix it.`,
+        jump:`<b>Jump discontinuity.</b> Both one-sided limits are finite but different, so the two-sided limit does not exist.`,
+        infinite:`<b>Infinite discontinuity.</b> f is unbounded near x = ${a}: there is a vertical asymptote.`,
+        oscillating:`<b>Oscillating discontinuity.</b> f wiggles forever near x = ${a}; neither one-sided limit exists.`,
+        endpoint:`<b>Endpoint of the domain.</b> No two-sided limit, but f(${a}) equals the right-hand limit, so f is <b>continuous from the right</b> at ${a} — and continuous on its domain [0, ∞).`}[C.type];
+      if(s.mode==="fix"){ const T0=FT[s.ti]; h+=P("The function",`<div class="eq">${T0.html}</div><p>k = <b>${fx(M5.k())}</b>. Drag the slider until the pieces meet, or press <b>Solve for k</b>.</p>`); }
+      else h+=P("The function",`<div class="eq">${F.html}</div><p>Checking continuity at x = ${a}.</p>`);
+      h+=`<div class="panel"><h3>The three conditions at x = ${a}</h3>`+
+        row(C.c1,`1. f(${a}) is defined`,F.fa!=null?fx(F.fa):"undefined")+
+        row(C.c2,`2. ${LIM(a)} f(x) exists`,(s.mode==="fix"?`${fx(F.Lm)} | ${fx(F.Lp)} → `:"")+T.txt)+
+        row(C.c3,`3. ${LIM(a)} f(x) = f(${a})`,C.c3?"equal":"—")+`</div>`;
+      h+=`<div class="verdict ${C.c3?"good":"bad"}">${cls}</div>`;
+      if(s.mode==="fix"){
+        const T0=FT[s.ti];
+        h+=P("Solving for k",s.showSol?`<ol class="stepl">${T0.steps.map((t,i)=>`<li class="done"><span class="sn">${i+1}</span>${t}</li>`).join("")}</ol>`:`<p>For continuity at the break point, the left-hand limit, the right-hand limit and the value must all be equal. Write each one in terms of k and solve. Press <b>Solve for k</b> to see the algebra.</p>`);
+        h+=tryPanel(`<p>Template D has no solution. Drag k across its whole range and watch the "gap" label — why does it never change? What would you change in the formula to make a solution possible?</p>`);
+      } else {
+        h+=P("The idea",`<p>A function is <span class="term">continuous at x = a</span> when three things are true: f(a) exists, the limit as x → a exists, and they are the <b>same number</b>.</p><div class="eq">${LIM("a")} f(x) = f(a)</div><p>The first condition that fails tells you the kind of discontinuity: a hole (removable), a jump, or an infinite (asymptote) discontinuity.</p>`);
+        h+=tryPanel(`<p>Go through every function in the list. For each one, predict which of the three conditions fail before you look. Which discontinuities could be "repaired" by changing one point?</p>`);
+      }
+    } else {
+      const I=M5.I(), fa=I.f(s.a), fb=I.f(s.b), contOK=!(I.disc!=null&&I.disc>=s.a&&I.disc<=s.b);
+      const between=fin(fa)&&fin(fb)&&s.N>=Math.min(fa,fb)&&s.N<=Math.max(fa,fb);
+      const cs=findCs(I.f,s.a,s.b,s.N);
+      const row=(ok,txt,val)=>`<div class="chk3"><span class="ic ${ok?"ok":"no"}">${ok?"✓":"✗"}</span><span>${txt}</span><span class="v">${val}</span></div>`;
+      h+=P("The theorem",`<p>If f is <b>continuous on [a, b]</b> and N is any number <b>between f(a) and f(b)</b>, then there is at least one c in [a, b] with f(c) = N.</p><div class="eq">f continuous on [a, b],  f(a) ≤ N ≤ f(b) (or ≥)\n⇒  f(c) = N for some c in [a, b]</div><p>Drag a and b along the bottom and the pink line y = N up and down. The yellow band shows every height between f(a) and f(b).</p>`);
+      h+=`<div class="panel"><h3>Check the hypotheses · f(x) = ${I.name.split("  ")[0]}</h3>`+
+        row(contOK,`f continuous on [${num(s.a,2)}, ${num(s.b,2)}]`,contOK?"yes":"no — break at x = "+I.disc)+
+        row(between,`N between f(a) ≈ ${num(fa,2)} and f(b) ≈ ${num(fb,2)}`,"N = "+num(s.N,2))+`</div>`;
+      h+=(contOK&&between)?`<div class="verdict good"><b>The IVT guarantees a c.</b> Found: ${cs.map(c=>"c ≈ "+num(c,4)).join(", ")}. The theorem only promises <b>at least one</b>.</div>`:
+        `<div class="verdict bad"><b>No guarantee.</b> ${!contOK?"f is not continuous on the interval, so the IVT does not apply.":"N is not between f(a) and f(b)."} ${cs.length?`(There happen to be solutions anyway: ${cs.map(c=>"c ≈ "+num(c,3)).join(", ")}.)`:"And in fact no c in the interval works."}</div>`;
+      const B=s.bis;
+      let bt=`<p>Bisection uses the IVT over and over: keep the half of the interval where f − N changes sign. Press <b>Run bisection</b>.</p>`;
+      if(B&&B.err) bt=`<p><b>Bisection needs a sign change:</b> f(a) − N and f(b) − N must have opposite signs. Move N strictly between f(a) and f(b).</p>`;
+      else if(B&&B.hist.length){
+        const rows=B.hist.slice(-7);
+        bt=`<div class="tbwrap"><table class="vt"><thead><tr><th>n</th><th>lo</th><th>hi</th><th>mid</th><th>f(mid) − N</th></tr></thead><tbody>`+
+          rows.map(r=>`<tr><td>${B.hist.indexOf(r)+1}</td><td>${num(r.lo,5)}</td><td>${num(r.hi,5)}</td><td class="m">${num(r.m,5)}</td><td>${tv(r.gm)}</td></tr>`).join("")+`</tbody></table></div>`+
+          `<p>Interval width now ${tv(B.hi-B.lo)} — halved every step.${B.done?(Math.abs(B.hist[B.hist.length-1].gm)>0.1?` <b>But f(mid) − N is not shrinking:</b> the intervals close in on the discontinuity, not on a solution. Without continuity, bisection fails.`:` Root ≈ <b>${num((B.lo+B.hi)/2,4)}</b>.`):""}</p>`;
+      }
+      h+=P("Bisection: finding c",bt);
+      h+=tryPanel(`<p>Choose <b>1/x</b>: f(−1) = −1 and f(2) = 1/2, so N = 0 is between them — yet no c works. Which hypothesis fails? Then choose <b>x² − 2</b> and run bisection: it is closing in on √2 ≈ 1.41421.</p>`);
+    }
+    side.innerHTML=h;
+  }
+};
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+const KINDS=[["mix","Mixed practice"],["limit","Evaluate a limit"],["graph","One-sided limits from a graph"],["asym","Asymptotes"],["k","Continuity: find k"],["ivt","IVT reasoning"]];
+const N=v=>({k:"num",v}), INF=s=>({k:"inf",s}), DNE={k:"dne"}, NONE={k:"none"};
+function limFig(f,a,L,view,opt){
+  opt=opt||{};
+  return g0=>{ const V=View.apply(null,view), g=grid(V);
+    (opt.va||[]).forEach(x=>vline(g,V,x,"#E11D48",1.6,"8 6"));
+    if(opt.ha!=null) hline(g,V,opt.ha,"var(--unk)",1.6,"8 6");
+    plot(g,V,f,"var(--ink)",3,{breaks:[a].concat(opt.va||[]).filter(fin),n:1600});
+    if(fin(a)&&fin(L)&&opt.hole!==false) odot(g,V,a,L,"var(--magenta)"); void g0; };
+}
+function genLimit(){
+  const t=pick(["direct","factor","factor2","rat","cf","trig","inf","dne","one"]);
+  if(t==="direct"){ const r=rnd(-3,3), b=rnd(-4,4), c=rnd(-5,5), cs=[1,b,c], L=polyEv(cs,r);
+    return {q:`${LIM(minus(r))} (${polyStr(cs)})`,A:N(L),fig:limFig(x=>polyEv(cs,x),r,L,[r-4,r+4,L-7,L+7],{hole:false}),
+      sol:`Polynomial → continuous → substitute.\n(${minus(r)})² ${sgnC(b)}·${par(r)} ${sgnC(c)} = ${minus(L)}`,
+      hint:`Polynomials are continuous: just substitute x = ${minus(r)} carefully (watch the signs).`}; }
+  if(t==="factor"){ let r=rnd(-4,4), s=rnd(-5,5); if(s===r)s=r+2; const cs=[1,-(r+s),r*s];
+    return {q:`${LIM(minus(r))} (${polyStr(cs)}) / (${xm(r)})`,A:N(r-s),fig:limFig(x=>polyEv(cs,x)/(x-r),r,r-s,[r-5,r+5,r-s-6,r-s+6]),
+      sol:`Substitution gives 0/0.\nFactor: (${xm(r)})(${xm(s)}) / (${xm(r)})\nCancel: ${xm(s)}\nSubstitute: ${minus(r)} ${sgnC(-s)} = ${minus(r-s)}`,
+      hint:`Substituting gives 0/0, so (${xm(r)}) is a factor of the top. Factor, cancel, then substitute.`}; }
+  if(t==="factor2"){ let r=rnd(-3,3), s=rnd(-4,4), u=rnd(-4,4); if(s===r)s=r+1; if(u===r)u=r-1; if(u===s)u=s+(s+1===r?2:1); if(u===r)u=r+3;
+    const top=[1,-(r+s),r*s], bot=[1,-(r+u),r*u], L=(r-s)/(r-u);
+    return {q:`${LIM(minus(r))} (${polyStr(top)}) / (${polyStr(bot)})`,A:N(L),fig:limFig(x=>polyEv(top,x)/polyEv(bot,x),r,L,[r-5,r+5,-6,6],{va:[u]}),
+      sol:`Substitution gives 0/0.\nFactor: (${xm(r)})(${xm(s)}) / ((${xm(r)})(${xm(u)}))\nCancel: (${xm(s)}) / (${xm(u)})\nSubstitute: (${minus(r)} ${sgnC(-s)}) / (${minus(r)} ${sgnC(-u)}) = ${minus(r-s)}/${minus(r-u)} = ${fx(L)}`,
+      hint:`Both top and bottom are 0 at x = ${minus(r)}, so both contain the factor (${xm(r)}). Factor both quadratics.`}; }
+  if(t==="rat"){ const c=rnd(1,6), c2=c*c;
+    return {q:`${LIM(0)} (√(x + ${c2}) − ${c}) / x`,A:N(1/(2*c)),fig:limFig(x=>(Math.sqrt(x+c2)-c)/x,0,1/(2*c),[-c2-1,2*c2+3,-0.35/c,1.45/c]),
+      sol:`0/0 → multiply by the conjugate (√(x + ${c2}) + ${c}).\nTop: (x + ${c2}) − ${c2} = x\nf(x) = 1/(√(x + ${c2}) + ${c})  (x ≠ 0)\nSubstitute: 1/(${c} + ${c}) = ${fx(1/(2*c))}`,
+      hint:`Multiply top and bottom by the conjugate √(x + ${c2}) + ${c}. The top becomes x, which cancels.`}; }
+  if(t==="cf"){ const c=rnd(1,5);
+    return {q:`${LIM(0)} [ 1/(x + ${c}) − 1/${c} ] / x`,A:N(-1/(c*c)),fig:limFig(x=>(1/(x+c)-1/c)/x,0,-1/(c*c),[-2*c-1.5,2*c+1.5,-3/(c*c),2/(c*c)],{va:[-c]}),
+      sol:`Common denominator: (${c} − (x + ${c}))/(${c}(x + ${c})) = −x/(${c}(x + ${c}))\nDivide by x: −1/(${c}(x + ${c}))\nSubstitute: −1/${c*c} = ${fx(-1/(c*c))}`,
+      hint:`Combine 1/(x + ${c}) − 1/${c} over the common denominator ${c}(x + ${c}). An x appears on top and cancels.`}; }
+  if(t==="trig"){ const k=rnd(2,6), m=rnd(1,5), L=k/m;
+    return {q:`${LIM(0)} sin(${k}x) / (${m===1?"x":m+"x"})`,A:N(L),fig:limFig(x=>Math.sin(k*x)/(m*x),0,L,[-3,3,-1,L+1.5]),
+      sol:`Rewrite: sin(${k}x)/(${m===1?"":m}x) = (${k}/${m}) · sin(${k}x)/(${k}x)\nSince ${LIMt("0")} sin(u)/u = 1 (u = ${k}x → 0):\nlimit = ${k}/${m} = ${fx(L)}`,
+      hint:`Use ${LIM(0)} sin(u)/u = 1. Multiply and divide by ${k} so the denominator matches the angle ${k}x.`}; }
+  if(t==="inf"){ const v=pick(["same","low","high"]), p=pick([-4,-3,-2,2,3,4,5]), q=pick([1,2,3,4]), b=rnd(1,6), c=rnd(1,6);
+    if(v==="same"){ const top=[p,b,0], bot=[q,0,-c];
+      return {q:`${LIM("∞")} (${polyStr(top)}) / (${polyStr(bot)})`,A:N(p/q),fig:limFig(x=>polyEv(top,x)/polyEv(bot,x),NaN,NaN,[-30,30,-Math.abs(p/q)*3-1,Math.abs(p/q)*3+1],{ha:p/q}),
+        sol:`Equal degrees (2 and 2): the limit is the ratio of leading coefficients.\nDivide by x²: (${minus(p)} + ${b}/x) / (${q} − ${c}/x²) → ${minus(p)}/${q} = ${fx(p/q)}`,
+        hint:`Same degree on top and bottom: divide every term by x² — only the leading coefficients survive.`}; }
+    if(v==="low"){ const top=[p,b], bot=[q,0,c];
+      return {q:`${LIM(pick(["∞","−∞"]))} (${polyStr(top)}) / (${polyStr(bot)})`,A:N(0),fig:limFig(x=>polyEv(top,x)/polyEv(bot,x),NaN,NaN,[-30,30,-3,3],{ha:0}),
+        sol:`Degree of top (1) < degree of bottom (2), so the limit is 0.\nDivide by x²: (${minus(p)}/x + ${b}/x²)/(${q} + ${c}/x²) → 0/${q} = 0`,
+        hint:`Compare degrees: the bottom grows faster than the top.`}; }
+    const toM=Math.random()<0.5, top=[p,0,0,-b], bot=[q,0,c], sgn=Math.sign(p)*(toM?-1:1);
+    return {q:`${LIM(toM?"−∞":"∞")} (${polyStr(top)}) / (${polyStr(bot)})`,A:INF(sgn),fig:limFig(x=>polyEv(top,x)/polyEv(bot,x),NaN,NaN,[-30,30,-40,40]),
+      sol:`Degree of top (3) > degree of bottom (2): no horizontal asymptote, f → ±∞.\nFor large |x|: f(x) ≈ ${minus(p)}x³/(${q}x²) = ${fx(p/q)}·x\nAs x → ${toM?"−∞":"∞"}, ${fx(p/q)}·x → ${sgn>0?"∞":"−∞"}`,
+      hint:`The top's degree is bigger, so f(x) behaves like (${minus(p)}/${q})·x for large |x|. Think about its sign as x → ${toM?"−∞":"∞"}.`}; }
+  if(t==="dne"){ const r=rnd(-3,3), v=pick(["abs","odd","even","evenneg"]);
+    if(v==="abs") return {q:`${LIM(minus(r))} |${xm(r)}| / (${xm(r)})`,A:DNE,fig:g0=>{ const F={f:x=>Math.abs(x-r)/(x-r),a:r,fa:null,Lm:-1,Lp:1}; const V=View(r-4,r+4,-3,3), g=grid(V); drawFL(g,V,F); void g0; },
+      sol:`Left of ${minus(r)}: |${xm(r)}| = −(${xm(r)}), so f = −1.\nRight of ${minus(r)}: f = 1.\nOne-sided limits −1 ≠ 1  ⇒  DNE`,
+      hint:`Consider x slightly less than ${minus(r)} and slightly more. What is |${xm(r)}|/(${xm(r)}) on each side?`};
+    if(v==="odd") return {q:`${LIM(minus(r))} 3 / (${xm(r)})`,A:DNE,fig:limFig(x=>3/(x-r),r,NaN,[r-5,r+5,-8,8],{va:[r]}),
+      sol:`Top → 3, bottom → 0.\nLeft: bottom negative → −∞;  right: bottom positive → +∞.\nOpposite infinities ⇒ DNE`,
+      hint:`Nonzero over zero means an asymptote. Check the sign of (${xm(r)}) on each side.`};
+    const sg=v==="even"?1:-1;
+    return {q:`${LIM(minus(r))} ${sg<0?"−":""}2 / (${xm(r)})²`,A:INF(sg),alt:[DNE],fig:limFig(x=>sg*2/((x-r)*(x-r)),r,NaN,[r-5,r+5,-8,8],{va:[r]}),
+      sol:`Top → ${sg<0?"−":""}2, bottom → 0 through positive values (a square).\nBoth sides → ${sg>0?"+∞":"−∞"}, so we write ${sg>0?"∞":"−∞"}. (DNE is also accepted — the limit is not a real number.)`,
+      hint:`(${xm(r)})² is positive on both sides of ${minus(r)}. What does ${sg<0?"−":""}2 ÷ (tiny positive) do?`}; }
+  const r=rnd(-3,3), side=pick([-1,1]), k=pick([1,2,3,-1,-2]);
+  return {q:`${LIM(minus(r)+"<sup>"+(side<0?"−":"+")+"</sup>")} ${minus(k)} / (${xm(r)})`,A:INF(Math.sign(k)*side),fig:limFig(x=>k/(x-r),r,NaN,[r-5,r+5,-8,8],{va:[r]}),
+    sol:`x → ${minus(r)}${side<0?"⁻":"⁺"}: (${xm(r)}) is tiny and ${side<0?"negative":"positive"}.\n${minus(k)} / (tiny ${side<0?"negative":"positive"}) → ${Math.sign(k)*side>0?"+∞":"−∞"}`,
+    hint:`One-sided: look at the sign of the numerator and of (${xm(r)}) for x just ${side<0?"left":"right"} of ${minus(r)}.`};
+}
+function genGraph(){
+  const a=rnd(-2,2), type=pick(["jump","hole","holept","cont","inf"]);
+  const Lm=rnd(-3,3), s1=pick([-1,-0.5,0.5,1]), s2=pick([-1,-0.5,0.5,1,2]);
+  let Lp=Lm, fa=null, fL=x=>Lm+s1*(x-a), fR;
+  if(type==="jump"){ Lp=clamp(Lm+pick([-3,-2,2,3]),-4,5); if(Lp===Lm)Lp=Lm+2; fa=pick([Lm,Lp]); }
+  if(type==="holept"){ fa=Lm+pick([-2,2,3]); }
+  if(type==="cont"){ fa=Lm; }
+  fR=x=>Lp+s2*(x-a);
+  let F;
+  if(type==="inf"){ const sd=pick([-1,1]), sg=pick([-1,1]), c0=rnd(-1,1);
+    if(sd<0){ F={f:x=>x<a?c0+sg/(a-x):Lp+s2*(x-a),a,fa:Lp,Lm:sg*Infinity,Lp}; }
+    else { F={f:x=>x<a?Lm+s1*(x-a):c0+sg/(x-a),a,fa:Lm,Lm,Lp:sg*Infinity}; }
+  } else F={f:x=>x<a?fL(x):fR(x),a,fa,Lm,Lp};
+  const T=twoSided(F), am=minus(a);
+  const LA=v=>isInf(v)?INF(v>0?1:-1):N(v);
+  const two=T.exists?N(T.v):DNE;
+  return {q:`Use the graph of f. Find each one-sided limit, the two-sided limit, and f(${am}).`,graph:true,
+    fields:[{lab:`${LIM(am+"<sup>−</sup>")} f(x)`,A:LA(F.Lm)},{lab:`${LIM(am+"<sup>+</sup>")} f(x)`,A:LA(F.Lp)},{lab:`${LIM(am)} f(x)`,A:two,alt:T.inf?[LA(F.Lm)]:[]},{lab:`f(${am})`,A:F.fa==null?NONE:N(F.fa)}],
+    fig:g0=>{ const V=View(a-4,a+4,-5,6), g=grid(V,{sx:1,sy:1}); drawFL(g,V,F); void g0; },
+    sol:`From the left the graph heads to ${limS(F.Lm)}; from the right to ${limS(F.Lp)}.\nTwo-sided: ${T.txt} — ${T.why}\nf(${am}) = ${F.fa==null?"undefined (no filled dot)":fx(F.fa)+" (the filled dot)"}`,
+    hint:`Trace the curve toward x = ${am} from each side and read the height it approaches — open circles count for limits, only the filled dot gives f(${am}).`};
+}
+function genAsym(){
+  const t=pick(["lin","zero","none","sq","hole"]); let v=rnd(-3,3), p=pick([-3,-2,-1,1,2,3,4]), b=rnd(-5,5);
+  let q,f,HA,VA,sol,va=[];
+  if(t==="lin"){ if(p*v+b===0)b+=1; q=`(${polyStr([p,b])}) / (${xm(v)})`; f=x=>(p*x+b)/(x-v); HA=N(p); VA=v;
+    sol=`HA: equal degrees → y = ${minus(p)}/1 = ${minus(p)}\nVA: bottom = 0 at x = ${minus(v)}, top there = ${minus(p*v+b)} ≠ 0 → x = ${minus(v)}`; }
+  else if(t==="zero"){ if(b===0)b=3; q=`${minus(b)} / (${xm(v)})`; f=x=>b/(x-v); HA=N(0); VA=v;
+    sol=`HA: degree top (0) < degree bottom (1) → y = 0\nVA: x = ${minus(v)} (top ${minus(b)} ≠ 0)`; }
+  else if(t==="none"){ if(b+v*v===0)b+=1; q=`(${polyStr([1,0,b])}) / (${xm(v)})`; f=x=>(x*x+b)/(x-v); HA=NONE; VA=v;
+    sol=`HA: degree top (2) > degree bottom (1) → none (there is a slant asymptote)\nVA: x = ${minus(v)} (top = ${minus(v*v+b)} ≠ 0)`; }
+  else if(t==="sq"){ if(v===0)v=2; const qq=pick([1,2,3]); q=`${minus(p)}x² / (${qq===1?"":qq}(${xm(v)})²)`; f=x=>p*x*x/(qq*(x-v)*(x-v)); HA=N(p/qq); VA=v;
+    sol=`HA: expand the bottom: ${qq}x² + … → equal degrees → y = ${minus(p)}/${qq} = ${fx(p/qq)}\nVA: x = ${minus(v)} (top = ${minus(p*v*v)} ≠ 0)`; }
+  else { if(v===0)v=2; q=`(${xm(v)}) / (x² − ${v*v})`; f=x=>(x-v)/(x*x-v*v); HA=N(0); VA=-v;
+    sol=`Factor: (${xm(v)}) / ((${xm(v)})(${xm(-v)})) = 1/(${xm(-v)}) for x ≠ ${minus(v)}\nx = ${minus(v)} is a HOLE (removable), not an asymptote.\nVA: x = ${minus(-v)}\nHA: degree 1 < degree 2 → y = 0`; }
+  va=[VA];
+  const ha=HA.k==="num"?HA.v:null;
+  return {q:`Find the horizontal and vertical asymptotes of  f(x) = ${q}.`,
+    fields:[{lab:"Horizontal asymptote  y =",A:HA,ph:"number or none"},{lab:"Vertical asymptote  x =",A:N(VA),ph:"e.g. −2"}],
+    fig:limFig(f,NaN,NaN,[VA-8,VA+8,-8,8],{va,ha}),sol,
+    hint:`HA: compare degrees of top and bottom. VA: where the bottom is 0 — but first cancel any common factor (that gives a hole instead).`};
+}
+function genK(){
+  const t=pick(["A","B","C"]);
+  if(t==="A"){ let a=rnd(-3,3); if(a===0)a=2; const c1=rnd(-5,5), c2=rnd(-5,5), K=(a*a+c2-c1)/a;
+    const F=x=>x<a?K*x+c1:x*x+c2;
+    return {q:`Find k so that f is continuous everywhere:`,eq:`f(x) = ⎧ kx ${sgnC(c1)},   x < ${minus(a)}\n       ⎩ x² ${sgnC(c2)},   x ≥ ${minus(a)}`,A:N(K),
+      fig:g0=>{ const V=View(a-4,a+4,-8,10), g=grid(V); plot(g,V,F,"var(--ink)",3,{breaks:[a]}); cdot(g,V,a,a*a+c2,"var(--alt)"); void g0; },
+      sol:`Left limit: k·(${minus(a)}) ${sgnC(c1)}\nRight limit and f(${minus(a)}): (${minus(a)})² ${sgnC(c2)} = ${minus(a*a+c2)}\nSet equal: ${minus(a)}k ${sgnC(c1)} = ${minus(a*a+c2)}\nk = (${minus(a*a+c2)} ${sgnC(-c1)})/${par(a)} = ${fx(K)}`,
+      hint:`Both pieces must give the same height at x = ${minus(a)}. Plug x = ${minus(a)} into each piece and set them equal.`}; }
+  if(t==="B"){ const a=pick([2,3,-1,-2]); let c1=rnd(-4,4), c2=rnd(-4,4); if(c1===c2)c2=c1+3; const K=(c2-c1)/(a*a-a);
+    const F=x=>x<a?K*x*x+c1:K*x+c2;
+    return {q:`Find k so that f is continuous at x = ${minus(a)}:`,eq:`f(x) = ⎧ kx² ${sgnC(c1)},   x < ${minus(a)}\n       ⎩ kx ${sgnC(c2)},    x ≥ ${minus(a)}`,A:N(K),
+      fig:g0=>{ const V=View(a-4,a+4,-8,10), g=grid(V); plot(g,V,F,"var(--ink)",3,{breaks:[a]}); cdot(g,V,a,K*a+c2,"var(--alt)"); void g0; },
+      sol:`Left: k(${minus(a)})² ${sgnC(c1)} = ${a*a}k ${sgnC(c1)}\nRight and value: ${minus(a)}k ${sgnC(c2)}\n${a*a}k ${sgnC(c1)} = ${minus(a)}k ${sgnC(c2)}\n${minus(a*a-a)}k = ${minus(c2-c1)}  ⇒  k = ${fx(K)}`,
+      hint:`Substitute x = ${minus(a)} into both pieces (k stays as a letter), set them equal, and collect the k terms on one side.`}; }
+  let a=rnd(-4,4); if(a===0)a=3;
+  return {q:`Find k so that f is continuous at x = ${minus(a)}:`,eq:`f(x) = ⎧ (x² − ${a*a})/(${xm(a)}),   x ≠ ${minus(a)}\n       ⎩ k,                  x = ${minus(a)}`,A:N(2*a),
+    fig:g0=>{ const V=View(a-4,a+4,2*a-6,2*a+6), g=grid(V); plot(g,V,x=>x+a,"var(--ink)",3,{breaks:[a]}); cdot(g,V,a,2*a,"var(--alt)"); void g0; },
+    sol:`For x ≠ ${minus(a)}: (${xm(a)})(${xm(-a)})/(${xm(a)}) = ${xm(-a)}\n${LIMt(minus(a))} f(x) = ${minus(a)} ${sgnC(a)} = ${minus(2*a)}\nContinuity: k = f(${minus(a)}) must equal the limit ⇒ k = ${minus(2*a)}`,
+    hint:`k must equal the limit at x = ${minus(a)}. Factor the top as a difference of squares and cancel.`};
+}
+function genIVT(){
+  const want=Math.random()<0.55, disc=Math.random()<0.35;
+  let vals,Nv,d,guar,tries=0;
+  do{ vals=[0,1,2,3,4].map(()=>rnd(-5,6)); Nv=rnd(-4,5)+(Math.random()<0.4?0.5:0); d=disc?pick([0.5,1.5,2.5,3.5]):null;
+    if(vals.indexOf(Nv)>=0)continue;
+    guar=false; for(let k=0;k<4;k++){ if((vals[k]-Nv)*(vals[k+1]-Nv)<0&&!(d!=null&&d>k&&d<k+1))guar=true; }
+    tries++; } while((guar!==want||vals.indexOf(Nv)>=0)&&tries<400);
+  const okInt=iv=>{ if(!iv)return false; const m=iv[0],n=iv[1]; if(!(Number.isInteger(m)&&Number.isInteger(n)&&m>=0&&n<=4&&m<n))return false;
+    if(d!=null&&d>m&&d<n)return false; return (vals[m]-Nv)*(vals[n]-Nv)<0; };
+  let sol=""; for(let k=0;k<4;k++){ const br=(vals[k]-Nv)*(vals[k+1]-Nv)<0, cut=d!=null&&d>k&&d<k+1;
+    sol+=`[${k}, ${k+1}]: f = ${minus(vals[k])}, ${minus(vals[k+1])}  → ${br?(cut?"N is between, but f jumps at x = "+d+" — no guarantee":"N is between ✓ guaranteed c"):"N not between"}\n`; }
+  sol+=guar?"So yes: the IVT guarantees a c (any ✓ interval is a correct answer).":"No interval satisfies both hypotheses, so the IVT gives no guarantee (answer: no, none).";
+  const tbl=`<div class="tbwrap"><table class="vt"><thead><tr><th>x</th>${vals.map((_,i)=>`<th>${i}</th>`).join("")}</tr></thead><tbody><tr><td>f(x)</td>${vals.map(v=>`<td class="m">${minus(v)}</td>`).join("")}</tr></tbody></table></div>`;
+  return {q:`f is ${d==null?"continuous on [0, 4]":`continuous on [0, 4] except for a jump discontinuity at x = ${d}`}. Some values:${tbl}Does the IVT guarantee a c in (0, 4) with f(c) = <b>${fx(Nv)}</b>? If yes, name an interval [m, n] with whole-number endpoints from the table that must contain such a c.`,
+    fields:[{lab:"Guaranteed? (yes / no)",ok:P=>P&&P.k===(guar?"yes":"no"),ph:"yes or no",shown:guar?"yes":"no"},
+            {lab:"Interval [m, n] (or none)",raw:true,ok:(P,raw)=>guar?okInt(parseInterval(raw)):(P&&(P.k==="none"||P.k==="dne")),ph:guar?"e.g. [1, 2]":"e.g. [1, 2] or none",shown:guar?"an interval marked ✓ below":"none"}],
+    fig:g0=>{ const V=View(-0.6,4.6,-7,8), g=grid(V,{sx:1,sy:1}); hline(g,V,Nv,"var(--magenta)",2,"8 5"); ctext(g,[VW-8,V.Y(Nv)-14*FS],"y = "+fx(Nv),"#BE185D","end");
+      if(M6.show()) ivtCurve(g,V,vals,d);
+      vals.forEach((v,i)=>cdot(g,V,i,v,"var(--corr)")); void g0; },
+    sol,hint:`For each pair of neighbouring table values, ask: is ${fx(Nv)} strictly between them, and is f continuous on that piece${d!=null?` (it is not across x = ${d})`:""}?`};
+}
+function ivtCurve(g,V,vals,d){
+  // one possible continuous f through the table (Catmull–Rom), with a jump at d if present
+  const segs=[]; let cur=[];
+  for(let i=0;i<5;i++){ cur.push([i,vals[i]]); if(d!=null&&d>i&&d<i+1){ cur.push([d,vals[i]+(vals[i+1]>vals[i]?-1:1)*0.8]); segs.push(cur); cur=[[d,vals[i+1]+(vals[i+1]>vals[i]?1:-1)*0.8]]; } }
+  segs.push(cur);
+  segs.forEach((pts,si)=>{ let dd="M"+V.X(pts[0][0])+" "+V.Y(pts[0][1]);
+    for(let i=0;i<pts.length-1;i++){ const p0=pts[Math.max(0,i-1)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(pts.length-1,i+2)];
+      const c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6], c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
+      dd+="C"+V.X(c1[0])+" "+V.Y(c1[1])+" "+V.X(c2[0])+" "+V.Y(c2[1])+" "+V.X(p2[0])+" "+V.Y(p2[1]); }
+    g.appendChild(E("path",{d:dd,fill:"none",style:"stroke:#94A3B8","stroke-width":2.6,"stroke-dasharray":"2 0"}));
+    if(si<segs.length-1){ const e=pts[pts.length-1]; odot(g,V,e[0],e[1],"#94A3B8"); }
+    if(si>0){ cdot(g,V,pts[0][0],pts[0][1],"#94A3B8"); }
+  });
+  ctext(g,[12,20*FS],"one possible f","#64748B","start");
+}
+function genProblem(kind){
+  const k=kind==="mix"?pick(["limit","limit","graph","asym","k","ivt"]):kind;
+  let pr;
+  if(k==="limit"){ const L=genLimit(); pr={kind:k,q:`Evaluate:<div class="eq">${L.q}</div>`,fields:[{lab:"Limit",A:L.A,alt:L.alt,ph:"e.g. −3/4, DNE, inf, -inf"}],fig:L.fig,sol:L.sol,hint:L.hint}; }
+  else if(k==="graph"){ pr=genGraph(); pr.fields.forEach(f=>f.ph="number, DNE, inf, -inf, undefined"); }
+  else if(k==="asym") pr=genAsym();
+  else if(k==="k"){ const K=genK(); pr={kind:k,q:K.q+`<div class="eq">${K.eq}</div>`,fields:[{lab:"k =",A:K.A,ph:"e.g. 5/2"}],fig:K.fig,sol:K.sol,hint:K.hint}; }
+  else pr=genIVT();
+  pr.kind=k; return pr;
+}
+const M6={
+  tab:"Challenge", lesson:"AP 1.2–1.16 · Limits & Continuity", accent:"var(--coral)",
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  streakEl:null,
+  show:()=>M6.s.state==="right"||M6.s.reveal,
+  title:()=>"Practice: "+(KINDS.find(k=>k[0]===(M6.s.pr?M6.s.pr.kind:"limit"))||KINDS[1])[1].toLowerCase(),
+  newProb(){ M6.s.pr=genProblem(M6.s.kind); M6.s.state="open"; M6.s.reveal=false; M6.s.tries=0; },
+  bar(){
+    btn("New problem",()=>{ M6.newProb(); render(); },"primary");
+    selBox(KINDS.map(k=>k[1]),KINDS.findIndex(k=>k[0]===M6.s.kind),i=>{ M6.s.kind=KINDS[i][0]; M6.newProb(); render(); },"Problem type");
+    M6.streakEl=spacer(""); M6.upStreak();
+  },
+  upStreak(){ if(M6.streakEl)M6.streakEl.textContent="Streak "+M6.s.streak+" · Best "+M6.s.best+" · Solved "+M6.s.solved; },
+  draw(){
+    if(!M6.s.pr)M6.newProb();
+    const pr=M6.s.pr;
+    if(pr.graph||pr.kind==="ivt"||M6.show()){ pr.fig(); return; }
+    const V=View(-5,5,-4,4), g=grid(V);
+    ctext(g,[VW/2,VH/2-60],"Work it out first —","#64748B","middle");
+    ctext(g,[VW/2,VH/2-34],"the graph appears when you check or reveal.","#64748B","middle");
+  },
+  panel(full){
+    const pr=M6.s.pr;
+    if(!full&&document.getElementById("chk"))return;
+    side.innerHTML=`<div class="panel"><h3>Problem</h3><div class="pad"><div class="prob" id="prob">${pr.q}</div></div>
+      <div class="ansrow">${pr.fields.map((f,i)=>`<div><label class="fld" for="ans${i}">${f.lab}</label><input type="text" id="ans${i}" autocomplete="off" spellcheck="false" placeholder="${f.ph||""}"></div>`).join("")}</div>
+      <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button>
+        <button id="sol" class="ghost" type="button">Show solution</button>
+      </div><div id="fb6"></div><div style="height:4px"></div></div>
+      <div class="panel"><h3>How answers are checked</h3><div class="pad">
+      <p>Type a number, a fraction like <b>−3/4</b>, or a decimal (rounded to 2 places is fine). For limits that fail, type <b>DNE</b>; for unbounded ones type <b>inf</b> or <b>-inf</b> (∞ works too).</p>
+      <p>Use <b>undefined</b> when f(a) has no value, <b>none</b> when there is no asymptote, and write intervals as <b>[1, 2]</b>. A first-try correct answer grows your streak.</p></div></div>`;
+    const ins=pr.fields.map((_,i)=>document.getElementById("ans"+i)), fb=document.getElementById("fb6");
+    const showSol=pre=>{ fb.innerHTML=(pre||"")+`<div class="fldwrap"><div class="eq">${pr.sol}</div></div>`; };
+    const fieldOk=(f,raw)=>{ const Pz=parseAns(raw); if(f.ok)return f.ok(Pz,raw); return ansOk(Pz,f.A)||(f.alt||[]).some(A=>ansOk(Pz,A)); };
+    const check=()=>{
+      if(M6.s.state==="right")return;
+      const bad=pr.fields.findIndex((f,i)=>!f.raw&&parseAns(ins[i].value)===null&&!(f.raw));
+      if(bad>=0){ fb.innerHTML=`<div class="verdict bad"><b>I can't read “${(ins[bad].value||"").replace(/[<>&]/g,"")}”.</b> Use a number or fraction (−3/4), DNE, inf, -inf, undefined, none, yes or no.</div>`; return; }
+      const res=pr.fields.map((f,i)=>fieldOk(f,ins[i].value));
+      if(res.every(Boolean)){
+        M6.s.state="right"; if(M6.s.tries===0&&!M6.s.reveal){ M6.s.streak++; M6.s.best=Math.max(M6.s.best,M6.s.streak); } M6.s.solved++; M6.upStreak();
+        clear(); M6.draw();
+        showSol(`<div class="verdict good"><b>Correct!</b> ${M6.s.tries||M6.s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+M6.s.streak+"."} Compare with the worked solution, then press <b>New problem</b>.</div>`);
+        ins.forEach(x=>x.disabled=true);
+      } else {
+        M6.s.tries++; M6.s.streak=0; M6.upStreak();
+        const which=pr.fields.length>1? pr.fields.filter((_,i)=>!res[i]).map(f=>f.lab.replace(/<[^>]+>/g,"")).join("; ") : "";
+        fb.innerHTML=`<div class="verdict bad"><b>Not quite${which?" — check: "+which:""}.</b> ${pr.hint}</div>`;
+      }
+    };
+    document.getElementById("chk").onclick=check;
+    ins.forEach(x=>x.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); }));
+    document.getElementById("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){ M6.s.streak=0; M6.upStreak(); } clear(); M6.draw();
+      showSol(`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>Worked solution.</b> Expected: ${pr.fields.map(f=>f.shown||ansStr(f.A)).join(" · ")}. Study it, then try a new one.</div>`); };
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+let cur=0;
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
+function update(){ setFS(); const M=MODS[cur]; clear(); M.draw(); M.panel(false); }
+function render(){
+  setFS(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M6&&!M6.s.pr)M6.newProb();
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  bar.innerHTML=""; M.bar();
+  clear(); M.draw(); M.panel(true);
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ stopAnim(); cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+M1.resetH(); M4.reset(); M5.resetI();
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>

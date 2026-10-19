@@ -1,0 +1,1950 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Derivatives Lab — Calculus Unit 2</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M8 50C22 50 30 14 56 12' stroke='%2300E5FF' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M14 44L50 20' stroke='%23FF3D8A' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='5' fill='%23FFD93D'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .rel[data-pair]{cursor:pointer}
+  .rel[data-pair]:hover{background:rgba(255,255,255,.05)}
+  .rel.active{background:rgba(255,255,255,.09);box-shadow:inset 3px 0 0 var(--accent)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top}
+  table.facts .ab{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  table.facts .st{color:#DDDDF2}
+  table.facts .st i{display:block;color:var(--dim);font-style:normal;font-size:13px;margin-top:4px}
+  .cathead{padding-top:18px!important;padding-bottom:6px!important;font-family:var(--display);font-weight:600;
+    font-size:13px;letter-spacing:.02em;color:var(--yellow);border-bottom:none!important}
+  .chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-right:9px}
+  .chip.assume{background:rgba(255,217,61,.18);color:var(--yellow)}
+  .chip.proved{background:rgba(94,234,212,.16);color:var(--mint)}
+  ol.chain{margin:0;padding:6px 20px 18px 38px;font-size:15px;color:#CFCFEA}
+  ol.chain li{padding:8px 0} ol.chain li::marker{color:var(--accent);font-weight:700}
+  ol.chain li b{color:#fff}
+
+  .steps{width:100%;border-collapse:collapse;font-size:15px}
+  .steps td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:middle}
+  .steps .stmt{font-family:var(--mono);font-size:14px;font-weight:600;color:#fff;white-space:nowrap}
+  .steps .why{width:56%}
+  .steps tr.right .stmt{color:var(--mint)}
+  .steps tr.right select{border-color:rgba(94,234,212,.6)}
+  .steps tr.wrong select{border-color:var(--coral)}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.8;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.4;fill:none;stroke-dasharray:9 6}
+  .wedge{stroke-width:2.4;fill-opacity:.17;cursor:pointer}
+  .wedge.flat{cursor:default}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── shared additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible,.choice:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:16px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  @media (max-width:560px){ svg.canvas .sm{font-size:21px;stroke-width:5} svg.canvas .mk{font-size:27px} svg.canvas .num{font-size:22px} svg.canvas .ax{font-size:16px} }
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .leg{stroke-width:3;fill:none;stroke-dasharray:8 5;stroke-linecap:round}
+  .tick{stroke:var(--graphite);stroke-width:2.2}
+  .ghostdot{fill:#9AA8C7;stroke:#fff;stroke-width:2}
+  .nt{position:relative;display:inline-block;padding-top:.42em;line-height:1.05;font-family:var(--mono);font-weight:700;color:#fff;white-space:nowrap}
+  .nt::before{content:"";position:absolute;left:.06em;right:.06em;top:.2em;border-top:2px solid currentColor}
+  .nt.ray::after,.nt.line::after{content:"";position:absolute;right:-.12em;top:calc(.2em - 3.5px);border-left:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .nt.line .la{position:absolute;left:-.12em;top:calc(.2em - 3.5px);border-right:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .uterms{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+  .uterms span{font-family:var(--mono);font-size:12px;font-weight:600;padding:5px 11px;border-radius:100px;
+    border:1px solid var(--edge);color:var(--dim);opacity:.55}
+  .uterms span.on{opacity:1;color:#0A0A1F;background:var(--accent);border-color:var(--accent)}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px}
+  .choice{font-family:var(--ui);font-size:15px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:14px;padding:13px 12px;cursor:pointer;text-align:left;line-height:1.5;transition:.15s}
+  .choice:hover{background:rgba(255,255,255,.12)}
+  .choice.right{border-color:var(--mint);background:rgba(94,234,212,.16)}
+  .choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.14)}
+  .choice small{display:block;font-weight:400;color:var(--dim);font-size:12.5px}
+  .stepl{list-style:none;margin:0;padding:6px 0}
+  .stepl li{padding:10px 20px;border-left:3px solid transparent;color:var(--dim);font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li.done{color:#CFCFEA}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li b{color:#fff}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  @media (max-width:560px){
+    .choices{grid-template-columns:1fr}
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+  }
+  /* ── Derivatives Lab additions ── */
+  .fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .14em;line-height:1.3}
+  .fr>span{padding:0 .22em;white-space:nowrap}
+  .fr>span:first-child{border-bottom:1.6px solid currentColor;padding-bottom:1px}
+  .fr>span:last-child{padding-top:2px}
+  .ov{border-top:1.6px solid currentColor;padding-top:1px;margin-left:1px}
+  .fn{font-style:normal}
+  .eq i,.mth i{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-weight:600}
+  .mth{font-family:var(--mono);font-weight:600;color:#fff}
+  .cu{color:#5CD3FF} .cv{color:#FF7FB3} .cdu{color:#6EF0C0} .cdv{color:#FFD93D} .co{color:#C4B5FD}
+  .cu,.cv,.cdu,.cdv,.co{font-weight:700}
+  table.dq{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13.5px}
+  table.dq th{font-family:var(--ui);font-weight:600;font-size:12.5px;color:var(--dim);text-align:right;padding:8px 20px 6px;border-bottom:1px solid var(--edge)}
+  table.dq td{text-align:right;padding:6px 20px;border-bottom:1px solid rgba(196,181,253,.10);color:#E7E9FA}
+  table.dq tr.hl td{color:var(--accent);font-weight:700}
+  table.dq th:first-child,table.dq td:first-child{text-align:left}
+  .steplist{list-style:none;margin:0;padding:4px 0 8px;counter-reset:st}
+  .steplist li{padding:11px 20px 11px 52px;position:relative;border-bottom:1px solid rgba(196,181,253,.10);font-size:14.5px;color:#CFCFEA;line-height:1.9}
+  .steplist li:last-child{border-bottom:none}
+  .steplist li::before{counter-increment:st;content:counter(st);position:absolute;left:18px;top:12px;width:22px;height:22px;border-radius:22px;
+    background:var(--accent);color:#0A0A1F;font-family:var(--mono);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1}
+  .steplist li .mth{font-size:14.5px}
+  .steplist li b{color:#fff}
+  .tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    padding:3px 9px;border-radius:100px;background:rgba(255,255,255,.08);color:var(--accent);border:1px solid var(--accent);margin-left:6px;vertical-align:middle}
+  .bar input[type=text]{width:auto;flex:1 1 180px;min-width:150px;padding:10px 13px;font-family:var(--mono);font-size:14px}
+  .bar .err{color:var(--coral);font-size:13.5px;width:100%}
+  .bar .hint{color:var(--dim);font-size:13px;width:100%}
+  .fmlist .rel{grid-template-columns:1fr auto}
+  .fmlist .rel .val{font-size:13.5px;white-space:normal;text-align:right}
+  .lgd{display:inline-block;width:22px;height:0;border-top:3px solid;vertical-align:middle;margin-right:8px}
+  .lgd.dash{border-top-style:dashed}
+  .help{font-size:13.5px;color:var(--dim);padding:0 20px;margin:8px 0 0}
+  .help code{font-family:var(--mono);color:#E7E9FA;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:6px}
+  .lbl{font-family:var(--mono);font-weight:700;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ttl{font-family:var(--ui);font-weight:700;font-size:14px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .board-head .lsn{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  @media (max-width:560px){
+    svg.canvas .lbl{font-size:20px;stroke-width:5} svg.canvas .ttl{font-size:20px} svg.canvas .ax{font-size:16px}
+    .board-head .lsn{margin-left:0;white-space:normal}
+    .steplist li{padding-left:46px;padding-right:14px}
+    table.dq th,table.dq td{padding-left:14px;padding-right:14px}
+  }
+  .ansrow label.fld{text-transform:none;letter-spacing:.04em;font-size:13px}
+  .seg{flex-wrap:wrap;max-width:100%}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Derivatives Lab</h1>
+    <div class="eyebrow">Calculus · Unit 2 · Derivatives &amp; Differentiation</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Derivatives graph"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every graph is live: derivatives come from a built-in symbolic differentiator and are checked numerically. Topic numbers follow the AP Calculus AB/BC Course and Exam Description (Units 2–3).
+    <div class="links"><a href="/trig-calculus/">← Trig &amp; Calculus courses</a><a href="/math/#trig-calculus">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+<script>
+(function(){
+"use strict";
+/*CAS-BEGIN*/
+const CAS=(function(){
+/* ── exact rationals (fall back to floats when they get too big) ── */
+function gcdI(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a;}
+function Q(n,d){
+  if(d===undefined)d=1;
+  if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d)||d===0){ return {t:"num",n:n/d,d:1,f:true}; }
+  if(d<0){n=-n;d=-d;} const g=gcdI(n,d)||1; return {t:"num",n:n/g,d:d/g};
+}
+const ZERO=Q(0), ONE=Q(1), NEG1=Q(-1), TWO=Q(2), HALF=Q(1,2);
+const E={t:"const",n:"e"}, PI={t:"const",n:"pi"};
+const V=n=>({t:"var",n});
+const isNum=a=>a.t==="num";
+const val=q=>q.n/q.d;
+const isZ=q=>isNum(q)&&Math.abs(val(q))<1e-15;
+const is1=q=>isNum(q)&&!q.f&&q.n===1&&q.d===1;
+const isInt=q=>isNum(q)&&!q.f&&q.d===1;
+function qadd(a,b){ if(a.f||b.f)return Q(val(a)+val(b)); return Q(a.n*b.d+b.n*a.d,a.d*b.d); }
+function qmul(a,b){ if(a.f||b.f)return Q(val(a)*val(b)); return Q(a.n*b.n,a.d*b.d); }
+function iroot(n,k){ // exact integer k-th root of n>=0, or null
+  const r=Math.round(Math.pow(n,1/k)); for(let c=r-1;c<=r+1;c++){ if(c>=0&&Math.pow(c,k)===n)return c; } return null; }
+function qpow(b,e){ // b,e rational numbers -> node
+  if(b.f||e.f){ const v=Math.pow(val(b),val(e)); return isFinite(v)?Q(v):{t:"pow",b,e}; }
+  if(e.d===1){
+    const k=Math.abs(e.n); if(k>60)return {t:"pow",b,e};
+    let n=Math.pow(b.n,k), d=Math.pow(b.d,k);
+    if(!Number.isSafeInteger(n)||!Number.isSafeInteger(d))return {t:"pow",b,e};
+    if(e.n<0){ if(n===0)return {t:"pow",b,e}; [n,d]=[d,n]; }
+    return Q(n,d);
+  }
+  const k=e.d; if(b.n<0&&k%2===0)return {t:"pow",b,e};
+  const rn=iroot(Math.abs(b.n),k), rd=iroot(b.d,k);
+  if(rn===null||rd===null)return {t:"pow",b,e};
+  return qpow(Q(b.n<0?-rn:rn,rd),Q(e.n));
+}
+/* ── canonical keys & ordering ── */
+function key(a){
+  if(a._k)return a._k; let k;
+  switch(a.t){
+    case "num": k=a.f?("f"+a.n):(a.n+"/"+a.d); break;
+    case "var": k=a.n; break;
+    case "const": k="#"+a.n; break;
+    case "sum": k="S("+a.terms.map(key).join(",")+")"; break;
+    case "prod": k="P("+a.fs.map(key).join(",")+")"; break;
+    case "pow": k="^("+key(a.b)+","+key(a.e)+")"; break;
+    case "fn": k=a.f+"("+key(a.a)+")"; break;
+    case "log": k="log"+key(a.b)+"("+key(a.a)+")"; break;
+  }
+  Object.defineProperty(a,"_k",{value:k,enumerable:false}); return k;
+}
+const FORD={sin:0,cos:1,sec:2,tan:3,csc:4,cot:5,ln:6,asin:7,acos:8,atan:9};
+function frank(f){ const b=f.t==="pow"?f.b:f;
+  switch(b.t){ case "num":return 0.5; case "const":return b.n==="e"?2.5:1; case "var":return 2; case "fn":return 3+FORD[b.f]/20; case "log":return 3.6; case "sum":return 4; default:return 5; } }
+function fcmp(a,b){ const r=frank(a)-frank(b); if(r)return r; const ka=key(a.t==="pow"?a.b:a), kb=key(b.t==="pow"?b.b:b); return ka<kb?-1:ka>kb?1:0; }
+function deg(t){ let d=0; const fs=t.t==="prod"?t.fs:[t];
+  for(const f of fs){ if(f.t==="var")d+=1; else if(f.t==="pow"&&f.b.t==="var"&&isNum(f.e))d+=val(f.e); }
+  return d; }
+function tcmp(a,b){
+  const ca=a.t==="num"?1:0, cb=b.t==="num"?1:0; if(ca!==cb)return ca-cb;
+  const d=deg(b)-deg(a); if(d)return d;
+  const ka=key(splitCoef(a)[1]), kb=key(splitCoef(b)[1]); return ka<kb?-1:ka>kb?1:0; }
+function splitCoef(t){
+  if(t.t==="prod"&&t.fs[0].t==="num") return [t.fs[0], t.fs.length===2?t.fs[1]:{t:"prod",fs:t.fs.slice(1)}];
+  if(t.t==="num")return [t,ONE];
+  return [ONE,t];
+}
+/* ── smart constructors (they simplify as they build) ── */
+function mkSum(list){
+  const flat=[]; for(const t of list){ if(t.t==="sum")flat.push(...t.terms); else flat.push(t); }
+  let c=ZERO; const map=new Map(), order=[];
+  for(const t of flat){
+    if(t.t==="num"){ c=qadd(c,t); continue; }
+    const sc=splitCoef(t), k=key(sc[1]);
+    if(map.has(k)) map.get(k).c=qadd(map.get(k).c,sc[0]); else { map.set(k,{c:sc[0],r:sc[1]}); order.push(k); }
+  }
+  let out=[], again=false;
+  for(const k of order){ const o=map.get(k); if(isZ(o.c))continue; const p=mkProd([o.c,o.r]); if(p.t==="sum")again=true; out.push(p); }
+  if(!isZ(c))out.push(c);
+  if(again)return mkSum(out);
+  if(!out.length)return ZERO;
+  if(out.length===1)return out[0];
+  out.sort(tcmp); return {t:"sum",terms:out};
+}
+function mkProd(list){
+  const flat=[]; for(const f of list){ if(f.t==="prod")flat.push(...f.fs); else flat.push(f); }
+  let c=ONE; const map=new Map(), order=[];
+  for(const f of flat){
+    if(f.t==="num"){ c=qmul(c,f); continue; }
+    let b=f, e=ONE; if(f.t==="pow"){ b=f.b; e=f.e; }
+    const k=key(b);
+    if(map.has(k)) map.get(k).e.push(e); else { map.set(k,{b,e:[e]}); order.push(k); }
+  }
+  if(isZ(c))return ZERO;
+  const fs=[]; let redo=false;
+  for(const k of order){
+    const o=map.get(k), Ex=o.e.length===1?o.e[0]:mkSum(o.e), p=mkPow(o.b,Ex);
+    if(p.t==="num"){ c=qmul(c,p); continue; }
+    if(p.t==="prod")redo=true;
+    fs.push(p);
+  }
+  if(redo)return mkProd([c,...fs]);
+  if(!fs.length)return c;
+  fs.sort(fcmp);
+  if(fs.length===1&&fs[0].t==="sum"&&!is1(c)) return mkSum(fs[0].terms.map(t=>mkProd([c,t])));
+  if(is1(c)&&fs.length===1)return fs[0];
+  return {t:"prod",fs:is1(c)?fs:[c,...fs]};
+}
+function mkPow(b,e){
+  if(isNum(e)){ if(isZ(e))return ONE; if(is1(e))return b; }
+  if(isNum(b)){
+    if(isZ(b)) return (isNum(e)&&val(e)>0)?ZERO:{t:"pow",b,e};
+    if(is1(b)) return ONE;
+    if(isNum(e)) return qpow(b,e);
+  }
+  if(b.t==="pow"&&isInt(e)) return mkPow(b.b,mkProd([b.e,e]));
+  if(b.t==="prod"&&isInt(e)) return mkProd(b.fs.map(f=>mkPow(f,e)));
+  if(b.t==="const"&&b.n==="e"&&e.t==="fn"&&e.f==="ln") return e.a;
+  return {t:"pow",b,e};
+}
+function mkFn(f,a){
+  if(isNum(a)&&!a.f){
+    if(a.n===0){ if(f==="sin"||f==="tan"||f==="asin"||f==="atan")return ZERO; if(f==="cos"||f==="sec")return ONE; }
+    if(f==="ln"&&a.n===1&&a.d===1)return ZERO;
+  }
+  if(f==="ln"&&a.t==="const"&&a.n==="e")return ONE;
+  if(f==="ln"&&a.t==="pow"&&a.b.t==="const"&&a.b.n==="e")return a.e;
+  return {t:"fn",f,a};
+}
+function mkLog(b,a){ if(key(a)===key(b))return ONE; if(is1(a))return ZERO; return {t:"log",b,a}; }
+const neg=a=>mkProd([NEG1,a]);
+function expand(a){
+  switch(a.t){
+    case "sum": return mkSum(a.terms.map(expand));
+    case "prod": { let acc=[ONE]; for(const f0 of a.fs){ const f=expand(f0); const ts=f.t==="sum"?f.terms:[f]; const nx=[]; for(const p of acc)for(const t of ts)nx.push(mkProd([p,t])); acc=nx; if(acc.length>400)return a; } return mkSum(acc); }
+    case "pow": { const b=expand(a.b); if(b.t==="sum"&&isInt(a.e)&&a.e.n>1&&a.e.n<=6){ let r=b; for(let k=1;k<a.e.n;k++)r=expand(mkProd([r,b])); return r; } return mkPow(b,a.e); }
+    case "fn": return mkFn(a.f,expand(a.a));
+    default: return a;
+  }
+}
+function splitND(t){ // term -> [numerator factors, denominator {key:{b,e}} ]
+  const fs=t.t==="prod"?t.fs:[t], num=[], den=new Map();
+  for(const f of fs){
+    if(f.t==="pow"&&isNum(f.e)&&!f.e.f&&val(f.e)<0){ den.set(key(f.b),{b:f.b,e:qmul(f.e,NEG1)}); }
+    else if(f.t==="num"&&!f.f&&f.d!==1){ num.push(Q(f.n)); den.set("#n"+f.d,{b:Q(f.d),e:ONE,n:true}); }
+    else num.push(f);
+  }
+  return [num,den];
+}
+function together(a){
+  if(a.t!=="sum")return a;
+  const parts=a.terms.map(splitND), L=new Map();
+  for(const [,den] of parts) for(const [k,o] of den){
+    if(o.n){ const cur=L.get("#n"); const d=val(o.b); L.set("#n",{b:Q(cur?cur.b.n*d/gcdI(cur.b.n,d):d),e:ONE,n:true}); continue; }
+    if(!L.has(k)||val(o.e)>val(L.get(k).e))L.set(k,o); }
+  if(!L.size)return a;
+  const numTerms=parts.map(([num,den])=>{
+    const extra=[];
+    for(const [k,o] of L){
+      if(o.n){ const d=den.get([...den.keys()].find(kk=>kk.startsWith("#n"))||""); extra.push(Q(o.b.n/(d?d.b.n:1))); continue; }
+      const have=den.get(k); const e=have?qadd(o.e,qmul(have.e,NEG1)):o.e; if(!isZ(e))extra.push(mkPow(o.b,e)); }
+    return mkProd([...num,...extra]);
+  });
+  const N=expand(mkSum(numTerms));
+  const Dd=mkProd([...L.values()].map(o=>mkPow(o.b,o.e)));
+  return mkProd([N,mkPow(Dd,NEG1)]);
+}
+function nice(a){ // pick the shortest of a few equivalent forms
+  const c=[a]; try{ c.push(together(a)); }catch(_){}
+  try{ c.push(expand(a)); }catch(_){}
+  let best=a, bs=size(a);
+  for(const x of c){ const z=size(x); if(z<bs-1){best=x;bs=z;} }
+  return best;
+}
+function size(a){ const s=fmt(a,"t"); return s.length; }
+const sub=(a,b)=>mkSum([a,neg(b)]);
+const div=(a,b)=>mkProd([a,mkPow(b,NEG1)]);
+/* ── raw parse tree → canonical ── */
+function S(r){
+  switch(r.t){
+    case "num": case "var": case "const": return r;
+    case "add": return mkSum([S(r.a),S(r.b)]);
+    case "sub": return mkSum([S(r.a),neg(S(r.b))]);
+    case "neg": return neg(S(r.a));
+    case "mul": return mkProd([S(r.a),S(r.b)]);
+    case "div": return div(S(r.a),S(r.b));
+    case "pow": return mkPow(S(r.b),S(r.e));
+    case "fn": return mkFn(r.f,S(r.a));
+    case "log": return mkLog(S(r.b),S(r.a));
+    default: return r; // already canonical
+  }
+}
+/* ── calculus ── */
+function dep(a,v){
+  switch(a.t){ case "num": case "const": return false; case "var": return a.n===v;
+    case "sum": return a.terms.some(t=>dep(t,v)); case "prod": return a.fs.some(t=>dep(t,v));
+    case "pow": return dep(a.b,v)||dep(a.e,v); case "fn": return dep(a.a,v); case "log": return dep(a.a,v)||dep(a.b,v); }
+  return false;
+}
+function D(a,v){
+  v=v||"x"; if(!dep(a,v))return ZERO;
+  switch(a.t){
+    case "var": return ONE;
+    case "sum": return mkSum(a.terms.map(t=>D(t,v)));
+    case "prod": { const out=[]; a.fs.forEach((f,i)=>{ if(dep(f,v)) out.push(mkProd([D(f,v),...a.fs.filter((_,j)=>j!==i)])); }); return mkSum(out); }
+    case "pow": { const b=a.b, e=a.e;
+      if(!dep(e,v)) return mkProd([e,mkPow(b,mkSum([e,NEG1])),D(b,v)]);
+      if(!dep(b,v)) return mkProd([a,mkFn("ln",b),D(e,v)]);
+      return mkProd([a,mkSum([mkProd([D(e,v),mkFn("ln",b)]),mkProd([e,D(b,v),mkPow(b,NEG1)])])]); }
+    case "fn": return mkProd([dOuter(a.f,a.a),D(a.a,v)]);
+    case "log": return mkProd([D(a.a,v),mkPow(a.a,NEG1),mkPow(mkFn("ln",a.b),NEG1)]);
+  }
+  return ZERO;
+}
+function dOuter(f,u){ // derivative of f evaluated at u (without the chain factor)
+  const oneMinus=mkSum([ONE,neg(mkPow(u,TWO))]);
+  switch(f){
+    case "sin": return mkFn("cos",u);
+    case "cos": return neg(mkFn("sin",u));
+    case "tan": return mkPow(mkFn("sec",u),TWO);
+    case "sec": return mkProd([mkFn("sec",u),mkFn("tan",u)]);
+    case "csc": return mkProd([NEG1,mkFn("csc",u),mkFn("cot",u)]);
+    case "cot": return neg(mkPow(mkFn("csc",u),TWO));
+    case "ln": return mkPow(u,NEG1);
+    case "asin": return mkPow(oneMinus,Q(-1,2));
+    case "acos": return neg(mkPow(oneMinus,Q(-1,2)));
+    case "atan": return mkPow(mkSum([ONE,mkPow(u,TWO)]),NEG1);
+  }
+  throw new Error("no rule for "+f);
+}
+function subst(a,v,r){
+  switch(a.t){
+    case "var": return a.n===v?r:a;
+    case "num": case "const": return a;
+    case "sum": return mkSum(a.terms.map(t=>subst(t,v,r)));
+    case "prod": return mkProd(a.fs.map(t=>subst(t,v,r)));
+    case "pow": return mkPow(subst(a.b,v,r),subst(a.e,v,r));
+    case "fn": return mkFn(a.f,subst(a.a,v,r));
+    case "log": return mkLog(subst(a.b,v,r),subst(a.a,v,r));
+  }
+  return a;
+}
+function ev(a,env){
+  switch(a.t){
+    case "num": return a.n/a.d;
+    case "var": { const x=env[a.n]; return x===undefined?NaN:x; }
+    case "const": return a.n==="e"?Math.E:Math.PI;
+    case "sum": { let s=0; for(const t of a.terms)s+=ev(t,env); return s; }
+    case "prod": { let p=1; for(const f of a.fs)p*=ev(f,env); return p; }
+    case "pow": { const b=ev(a.b,env);
+      if(a.e.t==="num"&&!a.e.f){ const n=a.e.n, d=a.e.d;
+        if(d===1)return Math.pow(b,n);
+        if(b<0){ if(d%2===1){ const r=Math.pow(-b,n/d); return (n%2===0)?r:-r; } return NaN; }
+        return Math.pow(b,n/d); }
+      return Math.pow(b,ev(a.e,env)); }
+    case "fn": { const u=ev(a.a,env);
+      switch(a.f){ case "sin":return Math.sin(u); case "cos":return Math.cos(u); case "tan":return Math.tan(u);
+        case "sec":return 1/Math.cos(u); case "csc":return 1/Math.sin(u); case "cot":return Math.cos(u)/Math.sin(u);
+        case "ln":return u>0?Math.log(u):NaN; case "asin":return Math.asin(u); case "acos":return Math.acos(u); case "atan":return Math.atan(u); }
+      return NaN; }
+    case "log": { const u=ev(a.a,env), b=ev(a.b,env); return u>0&&b>0&&b!==1?Math.log(u)/Math.log(b):NaN; }
+  }
+  return NaN;
+}
+/* ── formatting: mode "h" = HTML, "t" = plain text that parses back ── */
+const FNAME={sin:"sin",cos:"cos",tan:"tan",sec:"sec",csc:"csc",cot:"cot",ln:"ln",asin:"arcsin",acos:"arccos",atan:"arctan"};
+const isNegT=t=>(t.t==="num"&&val(t)<0)||(t.t==="prod"&&t.fs[0].t==="num"&&val(t.fs[0])<0);
+function numStr(q){ if(q.f){ const r=Math.round(q.n*1e6)/1e6; return String(r); } return q.d===1?String(q.n):(q.n+"/"+q.d); }
+function fmt(a,m,inl){ m=m||"h"; const s=F(a,m,!!inl); return m==="h"?s.replace(/-/g,"−"):s; }
+function F(a,m,inl){
+  switch(a.t){
+    case "num": {
+      if(a.f||a.d===1) return numStr(a);
+      if(m==="h"&&!inl) return (a.n<0?"−":"")+frac(String(Math.abs(a.n)),String(a.d));
+      return numStr(a);
+    }
+    case "var": return m==="h"?"<i>"+a.n+"</i>":a.n;
+    case "const": return a.n==="pi"?(m==="h"?"π":"pi"):(m==="h"?"<i>e</i>":"e");
+    case "sum": {
+      let s="", terms=a.terms.slice();
+      if(isNegT(terms[0])){ const j=terms.findIndex(t=>!isNegT(t)); if(j>0){ const p=terms.splice(j,1)[0]; terms.unshift(p); } }
+      terms.forEach((t,i)=>{
+        if(i===0){ s+=F(t,m,inl); return; }
+        if(isNegT(t)) s+=" - "+F(neg(t),m,inl); else s+=" + "+F(t,m,inl);
+      }); return s; }
+    case "prod": return fprod(a.fs,m,inl);
+    case "pow": {
+      if(isNum(a.e)&&val(a.e)<0) return fprod([a],m,inl);
+      return fpow(a,m);
+    }
+    case "fn": return fname(a.f,m)+"("+F(a.a,m,true)+")";
+    case "log": return (m==="h"?"log<sub>"+F(a.b,m,true)+"</sub>":"log_"+(a.b.t==="num"&&a.b.d===1?F(a.b,m,true):"("+F(a.b,m,true)+")"))+"("+F(a.a,m,true)+")";
+  }
+  return "?";
+}
+function fname(f,m){ return m==="h"?'<span class="fn">'+FNAME[f]+"</span>":FNAME[f]; }
+function frac(n,d){ return '<span class="fr"><span>'+n+'</span><span>'+d+'</span></span>'; }
+function needsPar(f){ return f.t==="sum"; }
+function atomic(f){ return f.t==="var"||f.t==="const"||(f.t==="num"&&f.d===1&&val(f)>=0&&!f.f); }
+function fpow(a,m){
+  const b=a.b, e=a.e;
+  if(isNum(e)&&!e.f&&e.n===1&&e.d===2){
+    const inner=F(b,m,true);
+    if(m==="t")return "sqrt("+inner+")";
+    return atomic(b)?"√"+inner:'√<span class="ov">'+inner+"</span>";
+  }
+  if(b.t==="const"&&b.n==="e"){
+    if(m==="t")return "e^("+F(e,m,true)+")";
+    return "<i>e</i><sup>"+F(e,m,true)+"</sup>";
+  }
+  if(b.t==="fn"&&isInt(e)&&val(e)>0&&m==="h") return fname(b.f,m)+"<sup>"+e.n+"</sup>("+F(b.a,m,true)+")";
+  let bs=F(b,m,true);
+  if(!(atomic(b)||b.t==="fn"||b.t==="log")) bs="("+bs+")";
+  if(m==="t"){ const es=F(e,m,true); return bs+"^"+(atomic(e)?es:"("+es+")"); }
+  return bs+"<sup>"+F(e,m,true)+"</sup>";
+}
+function fprod(fs,m,inl){
+  let c=ONE, rest=fs;
+  if(fs[0].t==="num"){ c=fs[0]; rest=fs.slice(1); }
+  const num=[], den=[];
+  for(const f of rest){
+    if(f.t==="pow"&&isNum(f.e)&&val(f.e)<0) den.push(mkPow(f.b,qmul(f.e,NEG1)));
+    else num.push(f);
+  }
+  const sign=val(c)<0?"-":"";
+  let cn, cd;
+  if(c.f){ cn=numStr(Q(Math.abs(c.n))); cd=null; }
+  else { cn=String(Math.abs(c.n)); cd=c.d===1?null:String(c.d); }
+  const join=(list,coef,bare)=>{
+    let s="";
+    if(coef!==null&&(coef!=="1"||!list.length)) s=coef;
+    list.forEach((f,i)=>{
+      let fsx=F(f,m,true); if(needsPar(f)&&!(bare&&list.length===1&&(coef===null||coef==="1")))fsx="("+fsx+")";
+      if(i===0){ if(s){ s+=(m==="t"&&!/^[a-z(]/.test(fsx))?"*":""; } s+=fsx; }
+      else { const p=s.slice(-1)===")"&&fsx[0]==="(", sv=f=>f.t==="var"||(f.t==="pow"&&f.b.t==="var");
+        s+=(m==="t")?"*":((p||(sv(list[i-1])&&sv(f)))?"":"\u2009"); s+=fsx; }
+    });
+    return s;
+  };
+  if(!den.length&&cd===null) return sign+join(num,cn);
+  const stacked=(m==="h"&&!inl);
+  const N=join(num,cn,stacked);
+  const Dn=join(den,cd,stacked||(den.length===1&&cd===null));
+  const dCount=den.length+(cd!==null?1:0);
+  if(stacked) return (sign?"−":"")+frac(N,Dn);
+  const Ds=(dCount>1||(den.length===1&&(den[0].t==="sum"||den[0].t==="prod"||(den[0].t==="pow"&&m==="t"))))?"("+Dn+")":Dn;
+  const Ns=(m==="t"&&num.length>1)?"("+N+")":N;
+  return sign+Ns+"/"+Ds;
+}
+/* ── parser ── */
+const FNS=["arcsin","arccos","arctan","asin","acos","atan","sqrt","sin","cos","tan","sec","csc","cot","exp","log","ln"];
+class PErr extends Error{}
+function tokenize(str){
+  let s=String(str).toLowerCase()
+    .replace(/[−–—]/g,"-").replace(/[×·∙⋅]/g,"*").replace(/÷/g,"/").replace(/\*\*/g,"^")
+    .replace(/π/g,"pi").replace(/√/g," sqrt ").replace(/²/g,"^2").replace(/³/g,"^3").replace(/⁴/g,"^4")
+    .replace(/[\[{]/g,"(").replace(/[\]}]/g,")").replace(/′/g,"'");
+  const T=[]; let i=0;
+  while(i<s.length){
+    const ch=s[i];
+    if(/\s/.test(ch)){ i++; continue; }
+    if(/[0-9.]/.test(ch)){
+      const mm=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)); if(!mm)throw new PErr("I can't read the number near “"+s.slice(i,i+4)+"”.");
+      const txt=mm[1]; i+=txt.length;
+      const parts=txt.split("."), dec=(parts[1]||"");
+      const q=dec.length?Q(parseInt(parts[0]||"0",10)*Math.pow(10,dec.length)+parseInt(dec,10),Math.pow(10,dec.length)):Q(parseInt(parts[0],10));
+      T.push({k:"n",v:q}); continue;
+    }
+    if(/[a-z]/.test(ch)){
+      const mm=/^[a-z]+/.exec(s.slice(i))[0]; let j=0;
+      while(j<mm.length){
+        const rest=mm.slice(j); let hit=null;
+        for(const f of FNS) if(rest.startsWith(f)){ hit=f; break; }
+        if(hit){ T.push({k:"fn",v:hit}); j+=hit.length; continue; }
+        if(rest.startsWith("pi")){ T.push({k:"id",v:"pi"}); j+=2; continue; }
+        T.push({k:"id",v:rest[0]}); j++;
+      }
+      i+=mm.length; continue;
+    }
+    if("+-*/^".includes(ch)){ T.push({k:"op",v:ch}); i++; continue; }
+    if(ch==="("||ch===")"||ch==="_"||ch===","){ T.push({k:ch}); i++; continue; }
+    throw new PErr("I don't understand the symbol “"+ch+"”.");
+  }
+  return T;
+}
+function parse(str,vars){
+  vars=vars||["x"];
+  const T=tokenize(str); let i=0;
+  if(!T.length)throw new PErr("Type an expression first.");
+  const peek=()=>T[i], next=()=>T[i++];
+  const isOp=(t,o)=>t&&t.k==="op"&&o.includes(t.v);
+  function expect(k){ const t=next(); if(!t||t.k!==k)throw new PErr(k===")"?"A closing parenthesis “)” is missing.":"Expected "+k+"."); }
+  function expr(){ let a=term(); while(isOp(peek(),"+-")){ const o=next().v; const b=term(); a={t:o==="+"?"add":"sub",a,b}; } return a; }
+  const starts=t=>t&&(t.k==="n"||t.k==="id"||t.k==="fn"||t.k==="(");
+  function term(){ let a=unary();
+    for(;;){ const t=peek();
+      if(isOp(t,"*/")){ next(); const b=unary(); a={t:t.v==="*"?"mul":"div",a,b}; }
+      else if(starts(t)){ a={t:"mul",a,b:power()}; }
+      else break; }
+    return a; }
+  function unary(){ const t=peek(); if(isOp(t,"+-")){ next(); const a=unary(); return t.v==="-"?{t:"neg",a}:a; } return power(); }
+  function power(){ const b=postfix(); if(isOp(peek(),"^")){ next(); const e=unary(); return {t:"pow",b,e}; } return b; }
+  function postfix(){
+    const t=next();
+    if(!t)throw new PErr("The expression ends too soon.");
+    if(t.k==="n")return t.v;
+    if(t.k==="("){ const a=expr(); expect(")"); return a; }
+    if(t.k==="id"){
+      if(t.v==="pi")return PI; if(t.v==="e")return E;
+      if(vars.includes(t.v))return V(t.v);
+      throw new PErr("Unknown letter “"+t.v+"” — use "+vars.join(" and ")+".");
+    }
+    if(t.k==="fn")return fnCall(t.v);
+    if(t.k===")")throw new PErr("There is an extra “)”.");
+    throw new PErr("Something is missing before “"+(t.v||t.k)+"”.");
+  }
+  function fnArg(){
+    if(peek()&&peek().k==="("){ next(); const a=expr(); expect(")"); return a; }
+    if(!peek()||!starts(peek())||peek().k==="fn"){ if(peek()&&peek().k==="fn"){ return power(); } throw new PErr("A function needs an input, like sin(x)."); }
+    let a=power(); while(peek()&&(peek().k==="n"||peek().k==="id"||peek().k==="(")) a={t:"mul",a,b:power()};
+    return a;
+  }
+  function fnCall(name){
+    let base=null, pw=null;
+    if(name==="log"&&peek()&&peek().k==="_"){ next(); const bt=next();
+      if(bt&&bt.k==="n")base=bt.v; else if(bt&&bt.k==="id"&&bt.v==="e")base=E; else if(bt&&bt.k==="("){ base=expr(); expect(")"); }
+      else throw new PErr("Write a log base like log_2(x)."); }
+    if(isOp(peek(),"^")){ next(); const e=unary();
+      if(e.t==="neg"&&e.a.t==="num"&&e.a.n===1&&e.a.d===1&&["sin","cos","tan"].includes(name)) name="a"+name; else pw=e; }
+    const a=fnArg(); let node;
+    switch(name){
+      case "sqrt": node={t:"pow",b:a,e:HALF}; break;
+      case "exp": node={t:"pow",b:E,e:a}; break;
+      case "arcsin": node={t:"fn",f:"asin",a}; break;
+      case "arccos": node={t:"fn",f:"acos",a}; break;
+      case "arctan": node={t:"fn",f:"atan",a}; break;
+      case "log": node={t:"log",b:base||Q(10),a}; break;
+      default: node={t:"fn",f:name,a};
+    }
+    return pw?{t:"pow",b:node,e:pw}:node;
+  }
+  const r=expr();
+  if(i<T.length){ const t=T[i]; throw new PErr(t.k===")"?"There is an extra “)”.":"I got stuck at “"+(t.v&&t.v.t?"number":(t.v||t.k))+"”."); }
+  return r;
+}
+function P(str,vars){ return S(parse(str,vars)); }
+/* numeric equivalence of two canonical expressions in x */
+function equivX(a,b,xs,tolRel){
+  tolRel=tolRel||1e-6; let n=0;
+  for(const x of xs){ const u=ev(a,{x}), w=ev(b,{x}); if(!isFinite(u))continue;
+    if(!isFinite(w))return false;
+    if(Math.abs(u-w)>tolRel*(1+Math.abs(u)))return false; n++; }
+  return n>=3;
+}
+return {expand,size,together,nice,Q,ZERO,ONE,NEG1,TWO,HALF,E,PI,V,val,isNum,isInt,key,mkSum,mkProd,mkPow,mkFn,mkLog,neg,sub,div,S,D,dep,dOuter,subst,ev,fmt,parse,P,PErr,equivX,frac};
+})();
+/*CAS-END*/
+
+const C=CAS;
+const NS="http://www.w3.org/2000/svg", VW=700, VH=460;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+let FS=1, cur=0, anim=null;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+const PI=Math.PI;
+function num(v,dp){
+  if(!isFinite(v))return v>0?"∞":v<0?"−∞":"undefined";
+  dp=(dp==null?3:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s));
+}
+function fracS(v,maxD){
+  maxD=maxD||12; if(!isFinite(v))return null;
+  for(let d=1;d<=maxD;d++){ const n=Math.round(v*d); if(Math.abs(n)>1e6)return null;
+    if(Math.abs(n/d-v)<1e-9*(1+Math.abs(v))){ const g=gcd(n,d); return minus(d/g===1?String(n/g):(n/g)+"/"+(d/g)); } }
+  return null;
+}
+function nv(v,dp){ const f=fracS(v); return f!==null?f:num(v,dp); }
+function nva(v){ const f=fracS(v); if(f!==null)return f.indexOf("/")>=0? f+" ≈ "+num(v,3) : f; return "≈ "+num(v,3); }
+const par=v=>v<0?"("+num(v,3)+")":num(v,3);
+function qOf(a){ for(let d=1;d<=4;d++){ const n=Math.round(a*d); if(Math.abs(n/d-a)<1e-12)return C.Q(n,d); } return null; }
+function H(e,blk){ return C.fmt(e,"h",!blk); }
+function HP(e){ const s=H(e); return (e.t==="sum"||isNegE(e))?"("+s+")":s; }
+function isNegE(e){ return (e.t==="num"&&C.val(e)<0)||(e.t==="prod"&&e.fs[0].t==="num"&&C.val(e.fs[0])<0); }
+// exact value of an expression at x=a when it is reasonably short, else a decimal
+function exactAt(e,a){
+  const v=C.ev(e,{x:a}); if(!isFinite(v))return "undefined";
+  const f=fracS(v); if(f!==null)return f;
+  const q=qOf(a); if(q){ try{ const r=C.subst(e,"x",q); const t=C.fmt(r,"t");
+    if(r.t!=="num"&&t.length<=26) return H(r)+" ≈ "+num(v,4); }catch(_){} }
+  return "≈ "+num(v,4);
+}
+const eqv=t=>t.startsWith("≈")?t:"= "+t;
+const SUP={"0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹","-":"⁻"};
+function svgT(e){
+  return C.fmt(e,"t").replace(/e\^\(x\)/g,"eˣ").replace(/\^(-?\d+)(?![\d.\/])/g,(m,n)=>n.split("").map(c=>SUP[c]).join(""))
+    .replace(/\*/g,"·").replace(/sqrt/g,"√").replace(/pi/g,"π").replace(/-/g,"−");
+}
+const tv=(s,ctx)=>ctx?s.replace(/<i>x<\/i>/g,"<i>t</i>"):s;
+
+/* ══════════ function objects ══════════ */
+function mkF(src,win){
+  const e=C.P(src), d=C.D(e), dd=C.D(d), ddd=C.D(dd);
+  const F={src,e,d,dd,ddd,f:x=>C.ev(e,{x}),df:x=>C.ev(d,{x}),d2:x=>C.ev(dd,{x}),d3:x=>C.ev(ddd,{x})};
+  let cache={}; F.n=k=>{ if(!cache[k]){ const ex={d,dd,ddd}[k]; try{ cache[k]=C.fmt(ex,"t").length>140?ex:C.nice(ex); }catch(_){cache[k]=ex;} } return cache[k]; };
+  F.win=win?win.slice():autoWin(F.f,-5,5);
+  return F;
+}
+function autoY(fn,x0,x1,minSpan){
+  const ys=[]; for(let i=0;i<=300;i++){ const y=fn(x0+(x1-x0)*i/300); if(isFinite(y)&&Math.abs(y)<1e6)ys.push(y); }
+  if(ys.length<5)return [-5,5];
+  ys.sort((a,b)=>a-b);
+  let lo=ys[Math.floor(ys.length*0.03)], hi=ys[Math.ceil(ys.length*0.97)-1];
+  if(lo>0&&lo<(hi-lo)*0.5)lo=0; if(hi<0&&-hi<(hi-lo)*0.5)hi=0;
+  const sp=Math.max(hi-lo,minSpan||1.5); const m=(hi+lo)/2;
+  lo=m-sp/2; hi=m+sp/2; const p=sp*0.14;
+  return [clamp(lo-p,-60,60),clamp(hi+p,-60,60)];
+}
+function autoWin(fn,x0,x1){ const y=autoY(fn,x0,x1,2); return [x0,x1,y[0],y[1]]; }
+
+/* ══════════ svg helpers ══════════ */
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+function view(x0,x1,y0,y1,L,T,W,H){
+  const v={x0,x1,y0,y1,L,T,W,H};
+  v.X=x=>L+(x-x0)/(x1-x0)*W; v.Y=y=>T+(y1-y)/(y1-y0)*H;
+  v.ix=s=>x0+(s-L)/W*(x1-x0); v.iy=s=>y1-(s-T)/H*(y1-y0);
+  v.in=(sx,sy)=>sx>=L&&sx<=L+W&&sy>=T&&sy<=T+H;
+  return v;
+}
+let clipN=0;
+function niceStep(span,px,pi){
+  const want=span*(FS>1?100:62)/px;
+  if(pi){ const u=PI/2; let k=1; while(k*u<want)k*=2; return k*u; }
+  const p=Math.pow(10,Math.floor(Math.log10(want)));
+  for(const m of [1,2,5]) if(m*p>=want-1e-12) return m*p; return 10*p;
+}
+function piLab(v){ const k=Math.round(v/(PI/2)); if(k===0)return "0"; const s=k<0?"−":"", a=Math.abs(k);
+  if(a%2===0){ const m=a/2; return s+(m===1?"":m)+"π"; } return s+(a===1?"":a)+"π/2"; }
+function axes(v,o){
+  o=o||{};
+  const id="clp"+(++clipN), d=E("defs",{}), cp=E("clipPath",{id});
+  cp.appendChild(E("rect",{x:v.L,y:v.T,width:v.W,height:v.H})); d.appendChild(cp); cv.appendChild(d);
+  const g=E("g",{}); cv.appendChild(g);
+  if(o.frame) g.appendChild(E("rect",{x:v.L,y:v.T,width:v.W,height:v.H,fill:"rgba(255,255,255,.6)",stroke:"#C9D6EE","stroke-width":1.2,rx:6}));
+  const sx=niceStep(v.x1-v.x0,v.W,o.pi), sy=niceStep(v.y1-v.y0,v.H,false);
+  for(let k=Math.ceil(v.x0/sx-1e-9);k*sx<=v.x1+1e-9;k++){ const X=v.X(k*sx); g.appendChild(E("line",{x1:X,y1:v.T,x2:X,y2:v.T+v.H,style:"stroke:var(--grid)","stroke-width":1})); }
+  for(let k=Math.ceil(v.y0/sy-1e-9);k*sy<=v.y1+1e-9;k++){ const Y=v.Y(k*sy); g.appendChild(E("line",{x1:v.L,y1:Y,x2:v.L+v.W,y2:Y,style:"stroke:var(--grid)","stroke-width":1})); }
+  const ax=(v.y0<=0&&v.y1>=0)?v.Y(0):null, ay=(v.x0<=0&&v.x1>=0)?v.X(0):null;
+  if(ax!==null)g.appendChild(E("line",{x1:v.L,y1:ax,x2:v.L+v.W,y2:ax,stroke:"#8FA3C8","stroke-width":1.8}));
+  if(ay!==null)g.appendChild(E("line",{x1:ay,y1:v.T,x2:ay,y2:v.T+v.H,stroke:"#8FA3C8","stroke-width":1.8}));
+  const fh=FS>1?16:11;
+  const ly=ax!==null?clamp(ax+fh+3,v.T+fh+2,v.T+v.H-4):v.T+v.H-5;
+  if(!o.noX) for(let k=Math.ceil(v.x0/sx-1e-9);k*sx<=v.x1+1e-9;k++){ if(k===0)continue; const X=v.X(k*sx); if(X<v.L+16||X>v.L+v.W-16)continue;
+    const t=E("text",{x:X,y:ly,class:"ax","text-anchor":"middle"}); t.textContent=o.pi?piLab(k*sx):num(k*sx,4); g.appendChild(t); }
+  const lx=ay!==null?clamp(ay-5,v.L+(FS>1?42:28),v.L+v.W-4):v.L+(FS>1?42:28);
+  for(let k=Math.ceil(v.y0/sy-1e-9);k*sy<=v.y1+1e-9;k++){ if(k===0)continue; const Y=v.Y(k*sy);
+    if(Y<v.T+fh||Y>v.T+v.H-6)continue; if(ax!==null&&Math.abs(Y-ax)<fh)continue;
+    const t=E("text",{x:lx,y:Y+4,class:"ax","text-anchor":"end"}); t.textContent=num(k*sy,4); g.appendChild(t); }
+  if(o.xl&&ax!==null){ const t=E("text",{x:v.L+v.W-6,y:ax-6,class:"ax","text-anchor":"end"}); t.textContent=o.xl; g.appendChild(t); }
+  if(o.yl&&ay!==null){ const t=E("text",{x:ay+7,y:v.T+fh+2,class:"ax"}); t.textContent=o.yl; g.appendChild(t); }
+  const pg=E("g",{"clip-path":"url(#"+id+")"}); cv.appendChild(pg); return pg;
+}
+function plot(g,v,f,color,w,opt){
+  opt=opt||{};
+  const xa=Math.max(v.x0,opt.from==null?v.x0:opt.from), xb=Math.min(v.x1,opt.to==null?v.x1:opt.to);
+  if(xb<=xa)return null;
+  const eps=(v.x1-v.x0)*1e-7, brk=(opt.breaks||[]).filter(b=>b>xa&&b<xb).sort((a,b)=>a-b);
+  const segs=[]; let s=xa; for(const b of brk){ segs.push([s,b-eps]); s=b+eps; } segs.push([s,xb]);
+  let d=""; const top=v.T, bot=v.T+v.H;
+  for(const [a,b] of segs){
+    const N=Math.max(2,Math.ceil((v.X(b)-v.X(a))/1.5)); let pen=false, pOut=0;
+    for(let i=0;i<=N;i++){
+      const x=a+(b-a)*i/N, y=f(x);
+      if(!isFinite(y)){pen=false;continue;}
+      const sy=v.Y(y), out=sy<top-2?-1:sy>bot+2?1:0;
+      if(pen&&out&&pOut&&out!==pOut)pen=false;
+      d+=(pen?"L":"M")+v.X(x).toFixed(1)+","+clamp(sy,top-v.H,bot+v.H).toFixed(1); pen=true; pOut=out;
+    }
+  }
+  if(!d)return null;
+  const p=E("path",{d,fill:"none",stroke:color,"stroke-width":w||3,"stroke-linejoin":"round","stroke-linecap":"round"});
+  if(opt.dash)p.setAttribute("stroke-dasharray",opt.dash);
+  if(opt.op)p.setAttribute("opacity",opt.op);
+  g.appendChild(p); return p;
+}
+function shadeSign(g,v,f,pos,negc){
+  const N=Math.ceil(v.W/2), Y0=clamp(v.Y(0),v.T,v.T+v.H); let run=[], rs=0;
+  const flush=()=>{ if(run.length>1){ const pts=[[run[0][0],Y0],...run,[run[run.length-1][0],Y0]];
+      g.appendChild(E("polygon",{points:pts.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" "),fill:rs>0?pos:negc})); } run=[]; };
+  for(let i=0;i<=N;i++){ const x=v.x0+(v.x1-v.x0)*i/N, y=f(x);
+    if(!isFinite(y)||Math.abs(y)>1e6){flush();continue;}
+    const s=y>0?1:y<0?-1:0; if(s!==rs){ flush(); rs=s; }
+    if(s!==0)run.push([v.X(x),clamp(v.Y(y),v.T,v.T+v.H)]); }
+  flush();
+}
+function seg(g,x1,y1,x2,y2,color,w,dash){
+  const a={x1,y1,x2,y2,stroke:color||"var(--graphite)","stroke-width":w||2.4,"stroke-linecap":"round"};
+  if(dash)a["stroke-dasharray"]=dash; const n=E("line",a); g.appendChild(n); return n;
+}
+function infLine(g,v,x,y,m,color,w,dash){
+  if(!isFinite(m)){ return seg(g,v.X(x),v.T,v.X(x),v.T+v.H,color,w,dash); }
+  const xa=v.x0, xb=v.x1, ya=y+m*(xa-x), yb=y+m*(xb-x);
+  return seg(g,v.X(xa),clamp(v.Y(ya),-1e5,1e5),v.X(xb),clamp(v.Y(yb),-1e5,1e5),color,w,dash);
+}
+function tanSeg(g,v,x,y,m,len,color,w,dash){ // segment of fixed screen length centred at (x,y)
+  const sx=v.X(x), sy=v.Y(y); let dx=(v.W/(v.x1-v.x0)), dy=-m*(v.H/(v.y1-v.y0));
+  if(!isFinite(m)){dx=0;dy=1;} const L=Math.hypot(dx,dy)||1; dx=dx/L*len; dy=dy/L*len;
+  return seg(g,sx-dx,sy-dy,sx+dx,sy+dy,color,w,dash);
+}
+function dot(g,sx,sy,color,r,hollow){
+  g.appendChild(E("circle",{cx:sx,cy:sy,r:(r||5.5)*(FS>1?1.35:1),fill:hollow?"#fff":color,stroke:hollow?color:"#fff","stroke-width":hollow?2.6:2,"pointer-events":"none"}));
+}
+function grab(g,sx,sy,id,color){
+  g.appendChild(E("circle",{cx:sx,cy:sy,r:FS>1?26:15,class:"grab","data-drag":id}));
+  dot(g,sx,sy,color);
+}
+function txt(g,x,y,s,color,anchor,cls){
+  const t=E("text",{x,y,class:cls||"lbl","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.style.fill=color; t.textContent=s; g.appendChild(t); return t;
+}
+const cw=()=>FS>1?12:8.1;
+function lab(g,x,y,s,color,anchor){
+  const w=s.length*cw(); const a=anchor||"middle";
+  let lo=a==="start"?x:a==="end"?x-w:x-w/2; lo=clamp(lo,6,VW-6-w);
+  const nx=a==="start"?lo:a==="end"?lo+w:lo+w/2;
+  return txt(g,nx,clamp(y,12*FS,VH-10*FS),s,color,a);
+}
+function legend(g,lines,x,y,right){
+  const lh=FS>1?25:19, w=Math.max(...lines.map(l=>l.t.length))*cw()+20, h=lines.length*lh+10;
+  if(right)x=x-w;
+  g.appendChild(E("rect",{x,y,width:w,height:h,rx:9,fill:"rgba(255,255,255,.9)",stroke:"#C9D6EE","stroke-width":1.2}));
+  lines.forEach((l,i)=>txt(g,x+10,y+5+lh*(i+.5),l.t,l.c,"start"));
+}
+function lg(){ const g=E("g",{}); cv.appendChild(g); return g; }
+const COL={f:"#2563EB",d:"#EA580C",dd:"#7C3AED",ddd:"#0F766E",tan:"#059669",sec:"#EA580C",pt:"#14213D",u:"#0284C7",v:"#DB2777",du:"#059669",dv:"#B45309",o:"#7C3AED"};
+
+/* ══════════ animation ══════════ */
+function stopAnim(){ if(anim){ cancelAnimationFrame(anim.id); anim=null; } }
+function loop(step,drawOnly){
+  stopAnim(); const a={id:0}; anim=a; let last=performance.now();
+  const fr=t=>{ if(anim!==a)return; const dt=Math.min(0.05,Math.max(0,(t-last)/1000)); last=t;
+    const r=step(dt); if(drawOnly){ setFS(); clear(); MODS[cur].draw(); } else update(); if(r===false){ if(anim===a)anim=null; syncBar(); return; } a.id=requestAnimationFrame(fr); };
+  a.id=requestAnimationFrame(fr); syncBar();
+}
+function syncBar(){ const M=MODS[cur]; if(M.sync)M.sync(); }
+
+/* ══════════ drag plumbing ══════════ */
+let dragId=null;
+function svgPt(e){ const m=cv.getScreenCTM(); if(!m)return [0,0]; const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y]; }
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag, M=MODS[cur];
+  if(id){ dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); return; }
+  if(M.place){ const r=M.place(svgPt(e)); if(r){ dragId=r; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); } update(); }
+});
+cv.addEventListener("pointermove",e=>{ if(!dragId)return; const M=MODS[cur]; if(!M.drag)return; if(M.drag(dragId,svgPt(e))!==false)update(); });
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+
+/* ══════════ bar builders ══════════ */
+function btn(label,fn,cls){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(opts,val,fn,label){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(label)s.setAttribute("aria-label",label);
+  opts.forEach(([k,lab])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=lab;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s;
+}
+function chk(label,val,fn){
+  const l=document.createElement("label"); l.className="chk";
+  const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i;
+}
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function slider(label,min,max,step,val,fn,fmt){
+  const l=document.createElement("label"); l.className="rng"; l.textContent=label+" ";
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=step; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); fmt=fmt||(v=>num(v,2)); o.textContent=fmt(val);
+  i.oninput=()=>{ o.textContent=fmt(+i.value); fn(+i.value); };
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l);
+  return {i,o,set(v){ i.value=v; o.textContent=fmt(v); }};
+}
+function selectEl(opts,val,fn,label){
+  const s=document.createElement("select"); s.setAttribute("aria-label",label||"Choose");
+  opts.forEach(([k,l])=>{ const o=document.createElement("option"); o.value=k; o.textContent=l; s.appendChild(o); });
+  s.value=val; s.onchange=()=>fn(s.value); bar.appendChild(s); return s;
+}
+function brk(){ const d=document.createElement("div"); d.style.cssText="width:100%;height:0"; bar.appendChild(d); }
+/* function picker: preset select + text box; calls apply(F) on success */
+function fnPicker(presets,st,apply,label,xmode){
+  const sel=selectEl(presets.map((p,i)=>[String(i),(label||"f(x) = ")+(p.label||svgT(C.P(p.s)))]).concat([["c","Custom (type it)"]]),
+    st.pi==null?"c":String(st.pi),k=>{ if(k==="c"){ inp.focus(); return; } const p=presets[+k]; st.pi=+k;
+      inp.value=p.s; err.textContent=""; apply(mkF(p.s,p.w),p); },label?label+"preset":"Preset function");
+  const inp=document.createElement("input"); inp.type="text"; inp.value=st.F.src; inp.spellcheck=false; inp.autocomplete="off";
+  inp.setAttribute("aria-label","Type a function of x"); inp.placeholder="type f(x), e.g. x^2 sin(x)";
+  bar.appendChild(inp);
+  const go=btn("Graph",()=>doIt());
+  const err=document.createElement("div"); err.className="err"; err.setAttribute("role","status"); bar.appendChild(err);
+  function doIt(){
+    const s=inp.value.trim();
+    try{ const F=mkF(s,null); const x0=xmode&&xmode[0]!=null?xmode[0]:-5, x1=xmode&&xmode[1]!=null?xmode[1]:5;
+      F.win=autoWin(F.f,x0,x1); let ok=0; for(let i=0;i<=40;i++)if(isFinite(F.f(x0+(x1-x0)*i/40)))ok++;
+      if(ok<4)throw new C.PErr("That function has almost no real values between "+x0+" and "+x1+".");
+      st.pi=null; sel.value="c"; err.textContent=""; apply(F,null);
+    }catch(e){ err.textContent=(e instanceof C.PErr)?e.message:"I couldn't read that. Try something like 3x^2 - sin(2x)."; }
+  }
+  inp.addEventListener("keydown",e=>{ if(e.key==="Enter")doIt(); });
+  return {inp,sel,err,go};
+}
+const panel=(t,inner)=>`<div class="panel"><h3>${t}</h3>${inner}</div>`;
+const pad=h=>`<div class="pad">${h}</div>`;
+const rel=(c,n,sub,val)=>`<div class="rel"><span class="dot" style="background:${c}"></span><span class="nm">${n}${sub?"<em>"+sub+"</em>":""}</span><span class="val">${val}</span></div>`;
+const tryP=h=>panel("Try this",pad(h));
+const col=(c,h)=>`<span class="${c}">${h}</span>`;
+const fr=(a,b)=>C.frac(a,b);
+const X_="<i>x</i>";
+
+/* ══════════ rule explainer (shared by tabs 3 and 6) ══════════ */
+const RN={constant:"constant rule",power:"power rule",cmul:"constant multiple rule",sum:"sum/difference rule",product:"product rule",
+  quotient:"quotient rule",chain:"chain rule",basic:"basic derivative",logdiff:"logarithmic differentiation"};
+const cs=r=>C.S(r);
+const depR=r=>C.dep(cs(r),"x");
+const isXPow=r=>r.t==="var"||(r.t==="pow"&&r.b.t==="var"&&!depR(r.e));
+function ruleOf(r){
+  if(!depR(r))return "constant";
+  switch(r.t){
+    case "var": return "power";
+    case "add": case "sub": return "sum";
+    case "neg": return "cmul";
+    case "mul": return (!depR(r.a)||!depR(r.b))?"cmul":"product";
+    case "div": if(!depR(r.b))return "cmul"; if(!depR(r.a)&&isXPow(r.b))return "power"; return "quotient";
+    case "pow": if(!depR(r.e))return r.b.t==="var"?"power":"chain"; if(!depR(r.b))return r.e.t==="var"?"basic":"chain"; return "logdiff";
+    case "fn": return r.a.t==="var"?"basic":"chain";
+    case "log": return r.a.t==="var"?"basic":"chain";
+  }
+  return "basic";
+}
+const nd=r=>C.nice(C.D(cs(r)));
+const tagR=r=>`<span class="tag">${RN[ruleOf(r)]}</span>`;
+const dd_=(h)=>`<sup></sup>d/d${X_}[${h}]`;
+function sumTerms(r,sgn,out){
+  if(r.t==="add"){ sumTerms(r.a,sgn,out); sumTerms(r.b,sgn,out); }
+  else if(r.t==="sub"){ sumTerms(r.a,sgn,out); sumTerms(r.b,-sgn,out); }
+  else out.push({r,s:sgn});
+  return out;
+}
+function chainParts(r){
+  const U=C.V("u");
+  if(r.t==="pow"&&!depR(r.e)) return {inner:r.b,O:C.mkPow(U,cs(r.e))};
+  if(r.t==="pow") return {inner:r.e,O:C.mkPow(cs(r.b),U)};
+  if(r.t==="fn") return {inner:r.a,O:C.mkFn(r.f,U)};
+  if(r.t==="log") return {inner:r.a,O:C.mkLog(cs(r.b),U)};
+  return null;
+}
+const BASIC={sin:"The slope of sin x at any x is cos x.",cos:"The slope of cos x is −sin x (cos starts by going down).",tan:"tan x = sin x / cos x; the quotient rule gives 1/cos²x = sec²x.",
+  sec:"sec x = 1/cos x; the quotient (or chain) rule gives sec x tan x.",csc:"csc x = 1/sin x gives −csc x cot x.",cot:"cot x = cos x / sin x gives −csc²x.",
+  ln:"ln x is the inverse of eˣ; its slope at x is 1/x.",asin:"Implicit differentiation of sin y = x gives 1/√(1 − x²).",acos:"arccos x = π/2 − arcsin x, so its derivative is −1/√(1 − x²).",atan:"Implicit differentiation of tan y = x gives 1/(1 + x²)."};
+function explain(r){
+  const f=cs(r), res=nd(r), rule=ruleOf(r), S=[];
+  const fin=`Simplify: <span class="mth">f′(${X_}) = ${H(res,true)}</span>`;
+  switch(rule){
+    case "constant": S.push(`<span class="mth">${H(f)}</span> is a constant — its graph is a horizontal line, so its slope is <b>0</b>.`); break;
+    case "power": {
+      if(r.t==="div"){ const c=cs(r.a), n=C.mkProd([C.NEG1,r.b.t==="var"?C.ONE:cs(r.b.e)]);
+        S.push(`Rewrite with a negative exponent: <span class="mth">${H(f)} = ${H(c)}·${X_}<sup>${H(n)}</sup></span>`);
+        S.push(`Power rule (times the constant): bring down the exponent ${H(n)} and subtract 1: <span class="mth">${H(c)}·(${H(n)})${X_}<sup>${H(n)} − 1</sup></span>`);
+      } else { const n=r.t==="var"?C.ONE:cs(r.e);
+        S.push(`Power rule: <span class="mth">d/d${X_}[${X_}<sup>n</sup>] = n${X_}<sup>n − 1</sup></span>. Here n = <b>${H(n)}</b>.`);
+        S.push(`Bring the exponent down in front and subtract 1 from it: <span class="mth">${H(n)}·${X_}<sup>${H(n)} − 1</sup></span>`); }
+      S.push(fin); break; }
+    case "cmul": {
+      let c,g; if(r.t==="neg"){c=C.NEG1;g=r.a;} else if(r.t==="div"){c=C.mkPow(cs(r.b),C.NEG1);g=r.a;} else if(!depR(r.a)){c=cs(r.a);g=r.b;} else {c=cs(r.b);g=r.a;}
+      S.push(`Constant multiple rule: <span class="mth">d/d${X_}[c·g(${X_})] = c·g′(${X_})</span>. The constant ${col("co",H(c))} just rides along.`);
+      S.push(`g(${X_}) = <span class="mth">${col("cu",H(cs(g)))}</span>, so g′(${X_}) = <span class="mth">${col("cdu",H(nd(g)))}</span> ${tagR(g)}`);
+      S.push(`f′(${X_}) = <span class="mth">${col("co",HP(c))} · ${col("cdu",HP(nd(g)))}</span>`);
+      S.push(fin); break; }
+    case "sum": {
+      const T=sumTerms(r,1,[]);
+      S.push(`Sum/difference rule: the derivative of a sum is the sum of the derivatives — differentiate each of the ${T.length} terms and keep the signs.`);
+      T.forEach(t=>S.push(`<span class="mth">d/d${X_}[${H(cs(t.r))}] = ${H(nd(t.r))}</span> ${tagR(t.r)}`));
+      S.push(`Add the pieces (subtract where the term had a minus sign). `+fin); break; }
+    case "product": {
+      const u=r.a, v=r.b;
+      S.push(`Product rule: <span class="mth">(${col("cu","u")}${col("cv","v")})′ = ${col("cdu","u′")}${col("cv","v")} + ${col("cu","u")}${col("cdv","v′")}</span> — derivative of the first times the second, plus the first times the derivative of the second.`);
+      S.push(`${col("cu","u")} = <span class="mth">${col("cu",H(cs(u)))}</span>, &nbsp; ${col("cv","v")} = <span class="mth">${col("cv",H(cs(v)))}</span>`);
+      S.push(`${col("cdu","u′")} = <span class="mth">${col("cdu",H(nd(u)))}</span> ${tagR(u)}<br>${col("cdv","v′")} = <span class="mth">${col("cdv",H(nd(v)))}</span> ${tagR(v)}`);
+      S.push(`f′(${X_}) = <span class="mth">${col("cdu",HP(nd(u)))}·${col("cv",HP(cs(v)))} + ${col("cu",HP(cs(u)))}·${col("cdv",HP(nd(v)))}</span>`);
+      S.push(fin); break; }
+    case "quotient": {
+      const u=r.a, v=r.b;
+      S.push(`Quotient rule: <span class="mth">(${col("cu","u")}/${col("cv","v")})′ = ${fr(col("cdu","u′")+col("cv","v")+" − "+col("cu","u")+col("cdv","v′"),col("cv","v")+"<sup>2</sup>")}</span> — “low d-high minus high d-low, over low squared”.`);
+      S.push(`${col("cu","u")} = <span class="mth">${col("cu",H(cs(u)))}</span> (top), &nbsp; ${col("cv","v")} = <span class="mth">${col("cv",H(cs(v)))}</span> (bottom)`);
+      S.push(`${col("cdu","u′")} = <span class="mth">${col("cdu",H(nd(u)))}</span> ${tagR(u)}<br>${col("cdv","v′")} = <span class="mth">${col("cdv",H(nd(v)))}</span> ${tagR(v)}`);
+      S.push(`f′(${X_}) = <span class="mth">${fr(col("cdu",HP(nd(u)))+"·"+col("cv",HP(cs(v)))+" − "+col("cu",HP(cs(u)))+"·"+col("cdv",HP(nd(v))),"("+col("cv",H(cs(v)))+")<sup>2</sup>")}</span>`);
+      S.push(fin); break; }
+    case "chain": {
+      const P=chainParts(r), dO=C.D(P.O,"u"), inner=cs(P.inner), dIn=nd(P.inner), dOx=C.subst(dO,"u",inner);
+      S.push(`Chain rule: if y = f(${col("cu","u")}) and ${col("cu","u")} = g(${X_}), then <span class="mth">dy/d${X_} = ${col("co","dy/du")} · ${col("cdu","du/d"+X_)}</span> — derivative of the outside (inside left alone) times the derivative of the inside.`);
+      S.push(`Outside: <span class="mth">y = ${col("co",H(P.O))}</span>; &nbsp; inside: <span class="mth">${col("cu","<i>u</i> = "+H(inner))}</span>`);
+      S.push(`<span class="mth">${col("co","dy/du = "+H(dO))}</span>; &nbsp; <span class="mth">${col("cdu","du/d"+X_+" = "+H(dIn))}</span> ${tagR(P.inner)}`);
+      S.push(`Put the inside back into dy/du and multiply: <span class="mth">dy/d${X_} = ${col("co",HP(dOx))} · ${col("cdu",HP(dIn))}</span>`);
+      S.push(fin); break; }
+    case "basic": {
+      let why="";
+      if(r.t==="fn")why=BASIC[r.f]||"";
+      else if(r.t==="log")why=`Change of base: log<sub>b</sub>${X_} = ln ${X_} / ln b, so the slope is 1/(${X_} ln b).`;
+      else if(r.t==="pow"&&r.b.t==="const")why=`<i>e</i><sup>${X_}</sup> is its own derivative: at every point its slope equals its height.`;
+      else if(r.t==="pow")why=`a<sup>${X_}</sup> = <i>e</i><sup>${X_} ln a</sup>, so its slope is a<sup>${X_}</sup> times the constant ln a.`;
+      S.push(`Basic derivative: <span class="mth">d/d${X_}[${H(f)}] = ${H(res)}</span>`);
+      if(why)S.push(why);
+      break; }
+    case "logdiff": {
+      S.push(`Both base and exponent contain ${X_}, so neither the power rule nor the exponential rule applies. Use <b>logarithmic differentiation</b>.`);
+      S.push(`Let y = ${H(f)}. Take ln of both sides: <span class="mth">ln y = ${HP(cs(r.e))}·ln(${H(cs(r.b))})</span>, differentiate both sides (y′/y on the left), then multiply by y.`);
+      S.push(fin); break; }
+  }
+  return {rule,steps:S,res};
+}
+const stepList=S=>`<ol class="steplist">${S.map(s=>"<li>"+s+"</li>").join("")}</ol>`;
+
+/* ══════════ TAB 1 · secant → tangent ══════════ */
+const P1=[
+  {s:"x^2/2",w:[-4,5,-2,10]},
+  {s:"x^3/3 - 2x",w:[-4,4,-6,6]},
+  {s:"sin(x) + 2",w:[-1,7.5,-0.6,4]},
+  {s:"sqrt(x)",w:[-1,9,-1,4]},
+  {s:"e^(x/2)",w:[-4,4,-1,7]},
+  {s:"20x - 5x^2",w:[-0.5,4.5,-4,24],label:"20t − 5t² (ball)"},
+];
+const M1={
+  tab:"Secant → tangent", lesson:"AP 2.1–2.2 · Unit 2 Differentiation", accent:"var(--cyan)",
+  title:()=>M1.s.ctx?"Average velocity → instantaneous velocity":"Secant slope → tangent slope",
+  s:{F:null,pi:0,a:1,h:1.5,tan:true,ctx:false,snap:true},
+  init(){ M1.s.F=mkF(P1[0].s,P1[0].w); },
+  bar(){
+    const S=M1.s;
+    fnPicker(P1,S,(F,p)=>{ S.F=F; S.a=clamp(Math.round((F.win[0]+(F.win[1]-F.win[0])*0.35)*2)/2,F.win[0],F.win[1]); S.h=1.5; if(!isFinite(F.f(S.a)))S.a=F.win[0]+1; render(); });
+    brk();
+    M1.hs=slider("h",-3,3,0.01,S.h,v=>{ stopAnim(); S.h=Math.abs(v)<0.001?0.01:v; update(); },v=>num(v,3));
+    M1.ab=btn("Shrink h → 0",()=>{ if(anim){ stopAnim(); syncBar(); return; } if(Math.abs(S.h)<0.01)S.h=S.h<0?-2:2;
+      loop(dt=>{ S.h*=Math.pow(0.3,dt); if(Math.abs(S.h)<0.001){ S.h=S.h<0?-0.001:0.001; return false; } }); },"primary");
+    chk("Tangent line",S.tan,v=>{S.tan=v;update();});
+    chk("Snap a",S.snap,v=>{S.snap=v; if(v)S.a=Math.round(S.a*2)/2; update();});
+    segBtns([[false,"Graph"],[true,"Motion"]],S.ctx,v=>{ S.ctx=v; if(v&&S.pi!==5){ const p=P1[5]; S.pi=5; S.F=mkF(p.s,p.w); S.a=1; S.h=1.5; } render(); },"Context");
+  },
+  sync(){ if(M1.hs)M1.hs.set(M1.s.h); if(M1.ab)M1.ab.textContent=anim?"Pause":"Shrink h → 0"; },
+  draw(){
+    const S=M1.s, F=S.F, w=F.win, v=view(w[0],w[1],w[2],w[3],10,10,680,440); M1.v=v;
+    const g=axes(v,{xl:S.ctx?"t":"x",yl:S.ctx?"s":"y"});
+    plot(g,v,F.f,COL.f,3.2);
+    const a=S.a, h=S.h, fa=F.f(a), fb=F.f(a+h), m=(fb-fa)/h, mt=F.df(a);
+    const L=lg();
+    if(isFinite(fa)&&isFinite(fb)){
+      const Y0=clamp(v.Y(0),v.T,v.T+v.H);
+      seg(g,v.X(a),Y0,v.X(a),v.Y(fa),"#9AA8C7",1.5,"4 4"); seg(g,v.X(a+h),Y0,v.X(a+h),v.Y(fb),"#9AA8C7",1.5,"4 4");
+      if(S.tan&&isFinite(mt)) infLine(g,v,a,fa,mt,COL.tan,2.6,"10 6");
+      infLine(g,v,a,fa,m,COL.sec,2.8);
+      seg(g,v.X(a),v.Y(fa),v.X(a+h),v.Y(fa),"#B45309",2.2,"6 4"); seg(g,v.X(a+h),v.Y(fa),v.X(a+h),v.Y(fb),"#B45309",2.2,"6 4");
+      grab(g,v.X(a+h),v.Y(fb),"q",COL.sec); grab(g,v.X(a),v.Y(fa),"a",COL.pt);
+      const big=Math.abs(v.X(a+h)-v.X(a))>60;
+      if(big){ lab(L,(v.X(a)+v.X(a+h))/2,v.Y(fa)+(fb>fa?-14:16)*FS,(S.ctx?"Δt":"h")+" = "+num(h,3),"#92400E");
+        lab(L,v.X(a+h)+(h>0?10:-10),(v.Y(fa)+v.Y(fb))/2,(S.ctx?"Δs":"Δy")+" = "+num(fb-fa,3),"#92400E",h>0?"start":"end"); }
+      lab(L,v.X(a)+(h>0?-14:14),v.Y(fa)-14*FS,"P",COL.pt,h>0?"end":"start");
+      lab(L,v.X(a+h)+(h>0?14:-14),v.Y(fb)-14*FS,"Q",COL.sec,h>0?"start":"end");
+      const lines=[{t:(S.ctx?"average velocity = ":"secant slope = ")+num(m,4),c:"#C2410C"}];
+      if(S.tan)lines.push({t:(S.ctx?"velocity s′(a) = ":"tangent slope f′(a) = ")+num(mt,4),c:"#047857"});
+      lines.push({t:(S.ctx?"Δt":"h")+" = "+num(h,4),c:"#22314F"});
+      const left=v.X(a)>VW*0.5||v.X(a+h)>VW*0.6;
+      legend(L,lines,left?20:VW-20,20,!left);
+    } else { lab(L,VW/2,VH/2,"f is undefined here — move P","#B91C1C"); grab(g,v.X(a),v.Y(0),"a",COL.pt); }
+  },
+  drag(id,p){
+    const S=M1.s, v=M1.v; let x=v.ix(p[0]);
+    if(id==="a"){ stopAnim(); x=S.snap?Math.round(x*2)/2:Math.round(x*100)/100; x=clamp(x,v.x0,v.x1); if(!isFinite(S.F.f(x)))return false;
+      if(!isFinite(S.F.f(x+S.h)))S.h=-S.h; S.a=x; }
+    if(id==="q"){ stopAnim(); let h=Math.round((x-S.a)*1000)/1000; if(Math.abs(h)<0.001)h=h<0?-0.001:0.001; if(!isFinite(S.F.f(S.a+h)))return false; S.h=h; }
+    M1.sync();
+  },
+  panel(){
+    const S=M1.s, F=S.F, a=S.a, h=S.h, fa=F.f(a), fb=F.f(a+h), m=(fb-fa)/h, x=S.ctx, fn=x?"s":"f", vr=x?"t":"x";
+    const fH=tv(H(F.e),x), dH=tv(H(F.n("d")),x);
+    const rows=[1,0.1,0.01,0.001,-0.001,-0.01,-0.1,-1].map(k=>{ const q=(F.f(a+k)-fa)/k; return `<tr${Math.abs(k)===0.001?' class="hl"':""}><td>${num(k,3)}</td><td>${num(F.f(a+k),5)}</td><td>${num(q,5)}</td></tr>`; }).join("");
+    side.innerHTML=
+      panel(x?"Average vs. instantaneous velocity":"Slope of a secant line",pad(
+        (x?`<p>${fn}(${vr}) = ${fH} gives the <b>position</b> (meters) at time ${vr} (seconds). Over [a, a + Δt] the <span class="term">average velocity</span> is the change in position divided by the change in time — the slope of the secant line PQ.</p>
+           <p>Shrink Δt toward 0: the average velocities settle on one number, the <span class="term">instantaneous velocity</span> s′(a). That's the derivative.</p>`
+          :`<p>f(${vr}) = ${fH}. The <span class="term">secant line</span> through P(a, f(a)) and Q(a + h, f(a + h)) has slope equal to the <b>difference quotient</b> — the average rate of change of f on that interval.</p>
+           <p>As h → 0, Q slides into P and the secant turns into the <span class="term">tangent line</span>. Its slope is the derivative f′(a), the <b>instantaneous rate of change</b>.</p>`)
+        +`<div class="eq">${x?"v<sub>avg</sub>":"m<sub>sec</sub>"} = [${fn}(a + h) − ${fn}(a)] / h
+   = (${num(fb,4)} − ${par(fa)}) / ${num(h,3)}
+   = ${num(m,5)}</div>
+<div class="eq">${fn}′(a) = lim<sub>h→0</sub> [${fn}(a + h) − ${fn}(a)] / h
+${fn}′(${vr}) = ${dH}
+${fn}′(${num(a,2)}) ${eqv(exactAt(F.d,a))}</div>`))+
+      panel("Live values",
+        rel("#C4B5FD","a","point P",num(a,2))+rel("#B45309",x?"Δt":"h","run",num(h,3))+
+        rel(COL.f,fn+"(a)","",num(fa,4))+rel(COL.sec,fn+"(a + h)","",num(fb,4))+
+        rel(COL.sec,x?"average velocity":"secant slope","difference quotient",num(m,4))+
+        rel(COL.tan,x?"instantaneous velocity":"tangent slope",fn+"′(a)",num(F.df(a),4))+
+        rel("#9AA8C7","gap","secant − tangent",num(m-F.df(a),4)))+
+      panel("Difference quotients at a = "+num(a,2),`<table class="dq"><tr><th>h</th><th>${fn}(a + h)</th><th>[${fn}(a+h) − ${fn}(a)]/h</th></tr>${rows}</table>`+
+        pad(`<p>Both columns of quotients — h &gt; 0 (from the right) and h &lt; 0 (from the left) — close in on <b>${num(F.df(a),4)}</b>. When the two one-sided limits agree, f is differentiable at a.</p>`))+
+      tryP(x?`Pick the ball <b>20t − 5t²</b>. Drag P to t = 2. Shrink Δt to 0: what is the velocity at the top of the flight? Now try t = 1 and t = 3 — why are they opposites?`
+        :`Drag Q to the <b>left</b> of P (negative h). Do the secant slopes approach the same number from that side? Then press <b>Shrink h → 0</b> and watch the orange secant land on the green tangent.`);
+  }
+};
+
+/* ══════════ TAB 2 · derivative function ══════════ */
+const P2=[
+  {s:"x^3/3 - x^2 - 3x",w:[-3.2,5.2,-11,7]},
+  {s:"sin(x)",w:[-7,7,-1.6,1.6],pi:true},
+  {s:"x^4/4 - 2x^2",w:[-3.2,3.2,-5,4]},
+  {s:"4x e^(-x/2)",w:[-1.5,9,-4,4]},
+  {s:"x + 2cos(x)",w:[-7,7,-8,8],pi:true},
+];
+const ND=[
+  {id:"corner",name:"Corner",html:"f(x) = |x − 1| + 1",f:x=>Math.abs(x-1)+1,df:x=>x>1?1:x<1?-1:NaN,b:1,w:[-3,5,-0.8,4.6],
+    why:"The slope from the left is −1 and the slope from the right is +1. They don't agree, so there is no single tangent line at the corner."},
+  {id:"cusp",name:"Cusp",html:"f(x) = x<sup>2/3</sup>",f:x=>Math.cbrt(x*x),df:x=>x===0?NaN:2/(3*Math.cbrt(x)),b:0,w:[-4,4,-0.8,3.2],
+    why:"The one-sided slopes blow up in opposite directions (−∞ from the left, +∞ from the right). The graph comes to a sharp point — a cusp."},
+  {id:"vert",name:"Vertical tangent",html:"f(x) = ∛x = x<sup>1/3</sup>",f:Math.cbrt,df:x=>x===0?NaN:1/(3*Math.cbrt(x*x)),b:0,w:[-4,4,-2.2,2.2],
+    why:"At x = 0 the tangent line is vertical. A vertical line has undefined slope: the difference quotients grow without bound (to +∞ from both sides)."},
+  {id:"jump",name:"Jump",html:"f(x) = x/2 + 1 for x &lt; 1, &nbsp;x/2 + 3 for x ≥ 1",f:x=>x<1?x/2+1:x/2+3,df:x=>Math.abs(x-1)<1e-9?NaN:0.5,b:1,w:[-3,5,-0.5,6],breaks:[1],
+    why:"f is not continuous at x = 1, and differentiability requires continuity. Even though both pieces have slope ½, the difference quotient from the left blows up because f(1) sits on the upper piece."},
+];
+function signInfo(df,x0,x1){
+  const N=900, zeros=[], bounds=[]; let px=null, pv=null;
+  for(let i=0;i<=N;i++){ const x=x0+(x1-x0)*i/N, y=df(x);
+    if(!isFinite(y)){ if(px!==null)bounds.push(x); px=null; pv=null; continue; }
+    if(px!==null&&((pv<0&&y>0)||(pv>0&&y<0)||(y===0&&pv!==0))){
+      let a=px,b=x,fa=pv; for(let k=0;k<60;k++){ const m=(a+b)/2, fm=df(m); if(!isFinite(fm))break; if((fa<0)===(fm<0)&&fm!==0){a=m;fa=fm;}else b=m; }
+      const r=(a+b)/2; if(Math.abs(df(r))<1e-4){ if(!zeros.some(z=>Math.abs(z-r)<1e-6))zeros.push(r); } bounds.push(r);
+    }
+    px=x; pv=y; }
+  const cuts=[x0,...bounds.filter(b=>b>x0&&b<x1).sort((a,b)=>a-b),x1], pos=[], neg=[];
+  for(let i=0;i<cuts.length-1;i++){ const a=cuts[i],b=cuts[i+1]; if(b-a<1e-6)continue; const s=df((a+b)/2); if(!isFinite(s))continue;
+    const L=s>0?pos:s<0?neg:null; if(!L)continue; const last=L[L.length-1]; if(last&&Math.abs(last[1]-a)<1e-9&&!zeros.some(z=>Math.abs(z-a)<1e-6)&&!(bounds.indexOf(a)>=0&&!isFinite(df(a))))last[1]=b; else L.push([a,b]); }
+  return {zeros,pos,neg};
+}
+function ivs(L,x0,x1){ if(!L.length)return "nowhere in view"; return L.map(([a,b])=>"("+(Math.abs(a-x0)<1e-9?"…":nv(a,2))+", "+(Math.abs(b-x1)<1e-9?"…":nv(b,2))+")").join(" ∪ "); }
+const M2={
+  tab:"The derivative function", lesson:"AP 2.3–2.4 · Unit 2 Differentiation", accent:"var(--mint)",
+  title:()=>M2.s.kind==="nd"?"Where is f not differentiable?":"Build f′ by sliding a tangent along f",
+  s:{kind:"smooth",F:null,pi:0,nd:0,a:-2,trace:[],all:false,sign:true},
+  init(){ const p=P2[0]; M2.s.F=mkF(p.s,p.w); M2.s.F.pi=false; },
+  cur(){ const S=M2.s; if(S.kind==="nd"){ const n=ND[S.nd]; return {f:n.f,df:n.df,win:n.w,pi:false,breaks:n.breaks||[n.b],nd:n}; }
+    return {f:S.F.f,df:S.F.df,win:S.F.win,pi:S.F.pi,breaks:[],F:S.F}; },
+  bar(){
+    const S=M2.s;
+    segBtns([["smooth","Smooth f"],["nd","Not differentiable"]],S.kind,k=>{ stopAnim(); S.kind=k; S.trace=[]; S.a=M2.cur().win[0]+0.6; render(); },"Kind of function");
+    if(S.kind==="smooth"){
+      fnPicker(P2,S,(F,p)=>{ stopAnim(); F.pi=!!(p&&p.pi); S.F=F; S.trace=[]; S.a=F.win[0]+0.5; render(); });
+    } else {
+      selectEl(ND.map((n,i)=>[String(i),n.name]),String(S.nd),k=>{ stopAnim(); S.nd=+k; S.trace=[]; S.a=ND[S.nd].w[0]+0.5; render(); },"Example");
+    }
+    brk();
+    M2.sb=btn("Sweep tangent",()=>{ if(anim){stopAnim();return;} const c=M2.cur(); if(S.a>=c.win[1]-0.05){ S.a=c.win[0]; S.trace=[]; }
+      loop(dt=>{ const c=M2.cur(); S.a+=(c.win[1]-c.win[0])*dt/7; if(S.a>=c.win[1]){S.a=c.win[1];M2.addTrace();return false;} M2.addTrace(); }); },"primary");
+    btn("Clear trace",()=>{ S.trace=[]; update(); });
+    chk("Show all of f′",S.all,v=>{S.all=v;update();});
+    chk("Shade sign of f′",S.sign,v=>{S.sign=v;update();});
+  },
+  sync(){ if(M2.sb)M2.sb.textContent=anim?"Pause":"Sweep tangent"; },
+  addTrace(){ const S=M2.s, c=M2.cur(), m=c.df(S.a); if(isFinite(m))S.trace.push([S.a,m]); if(S.trace.length>1500)S.trace.shift(); },
+  draw(){
+    const S=M2.s, c=M2.cur(), w=c.win;
+    const vf=view(w[0],w[1],w[2],w[3],10,8,680,250);
+    let dy=autoY(c.df,w[0],w[1],2); if(c.nd)dy=[-3,3];
+    const vd=view(w[0],w[1],dy[0],dy[1],10,270,680,182); M2.vf=vf; M2.vd=vd;
+    const g1=axes(vf,{frame:true,pi:c.pi});
+    const sg=c.nd?[]:signInfo(c.df,w[0],w[1]).zeros;
+    plot(g1,vf,c.f,COL.f,3.2,{breaks:c.breaks});
+    const g2=axes(vd,{frame:true,pi:c.pi}), L=lg();
+    if(S.sign)shadeSign(g2,vd,c.df,"rgba(5,150,105,.16)","rgba(220,38,38,.14)");
+    if(S.all)plot(g2,vd,c.df,COL.d,2.4,{dash:"8 5",breaks:c.breaks,op:.8});
+    S.trace.forEach(([x,m])=>{ if(m>=vd.y0-1&&m<=vd.y1+1)g2.appendChild(E("circle",{cx:vd.X(x),cy:vd.Y(m),r:2.4*(FS>1?1.4:1),fill:COL.d})); });
+    sg.forEach(z=>{ seg(g1,vf.X(z),vf.T,vf.X(z),vf.T+vf.H,"#7C3AED",1.3,"3 4"); seg(g2,vd.X(z),vd.T,vd.X(z),vd.T+vd.H,"#7C3AED",1.3,"3 4");
+      const fz=c.f(z); dot(g1,vf.X(z),vf.Y(fz),"#7C3AED",4.5); dot(g2,vd.X(z),vd.Y(0),"#7C3AED",4.5); });
+    if(c.nd){ const b=c.nd.b; seg(g2,vd.X(b),vd.T,vd.X(b),vd.T+vd.H,"#DC2626",1.4,"3 4");
+      if(c.nd.id==="corner"||c.nd.id==="jump"){ const l=c.df(b-1e-6), r=c.df(b+1e-6); dot(g2,vd.X(b),vd.Y(l),COL.d,4.5,true); dot(g2,vd.X(b),vd.Y(r),COL.d,4.5,true); }
+      if(c.nd.id==="jump"){ dot(g1,vf.X(b),vf.Y(c.f(b-1e-9)),COL.f,5,true); dot(g1,vf.X(b),vf.Y(c.f(b)),COL.f,5); }
+      lab(L,vf.X(b)+12,vf.Y(c.f(b))+22*FS,c.nd.name.toLowerCase()+" at x = "+b,"#B91C1C","start"); }
+    const a=S.a, fa=c.f(a), m=c.df(a);
+    txt(L,vf.L+10,vf.T+15*FS,"f","#1D4ED8","start","ttl"); txt(L,vd.L+10,vd.T+15*FS,"f′  (slope of f)","#C2410C","start","ttl");
+    if(isFinite(fa)){
+      seg(L,vf.X(a),vf.Y(fa),vd.X(a),clamp(isFinite(m)?vd.Y(m):vd.T,vd.T,vd.T+vd.H),"#9AA8C7",1.4,"4 4");
+      const nearBad=c.nd&&Math.abs(a-c.nd.b)<0.06;
+      if(nearBad){ const b=c.nd.b, fb=c.f(b), hl=0.001, ml=(c.f(b-hl)-fb)/(-hl), mr=(c.f(b+hl)-fb)/hl;
+        tanSeg(g1,vf,b,fb,ml,70,"#DC2626",2.4,"7 5"); tanSeg(g1,vf,b,fb,mr,70,"#DC2626",2.4,"7 5");
+        lab(L,vf.X(b),vf.Y(fb)-26*FS,"no single tangent","#B91C1C"); }
+      else if(isFinite(m)) tanSeg(g1,vf,a,fa,m,95,COL.tan,3);
+      grab(g1,vf.X(a),vf.Y(fa),"a",COL.pt);
+      if(isFinite(m)&&m>=vd.y0&&m<=vd.y1)dot(g2,vd.X(a),vd.Y(m),COL.d,6);
+      const s=isFinite(m)?"slope = "+num(m,3):"slope undefined";
+      lab(L,vf.X(a)+(vf.X(a)>VW-160?-16:16),Math.max(vf.T+40,vf.Y(fa)-24*FS),s,isFinite(m)?"#047857":"#B91C1C",vf.X(a)>VW-160?"end":"start");
+    }
+  },
+  place(p){ const v=M2.vf; if(!(v.in(p[0],p[1])||M2.vd.in(p[0],p[1])))return null; M2.drag("a",p); return "a"; },
+  drag(id,p){ const S=M2.s, v=M2.vf, c=M2.cur(); stopAnim(); let x=clamp(v.ix(p[0]),v.x0,v.x1); x=Math.round(x*100)/100;
+    if(!isFinite(c.f(x)))return false; S.a=x; M2.addTrace(); },
+  panel(){
+    const S=M2.s, c=M2.cur(), w=c.win, a=S.a, m=c.df(a);
+    const beh=!isFinite(m)?"f′(a) does not exist":Math.abs(m)<1e-3?"horizontal tangent: f′ = 0":m>0?"f is increasing: f′ > 0":"f is decreasing: f′ < 0";
+    let top;
+    if(c.nd){
+      const b=c.nd.b, f=c.f, fb=f(b);
+      const rows=[-0.1,-0.01,-0.001,0.001,0.01,0.1].map(h=>`<tr><td>${num(h,3)}</td><td>${num((f(b+h)-fb)/h,4)}</td></tr>`).join("");
+      top=panel(c.nd.name+": "+c.nd.html,pad(`<p>${c.nd.why}</p><div class="eq">f′(${b}) = lim<sub>h→0</sub> [f(${b} + h) − f(${b})] / h   → does not exist</div><p>The derivative exists only when the left-hand and right-hand limits of the difference quotient exist and are <b>equal</b> (and finite).</p>`)+
+        `<table class="dq"><tr><th>h</th><th>[f(${b}+h) − f(${b})]/h</th></tr>${rows}</table>`)+
+        panel("Four ways to fail",pad(`<p><b>Corner</b> — one-sided slopes are different finite numbers. <b>Cusp</b> — they go to +∞ and −∞. <b>Vertical tangent</b> — both go to the same infinity. <b>Discontinuity</b> — f isn't even continuous, so it can't be differentiable.</p><p>Differentiable ⇒ continuous, but continuous does <b>not</b> guarantee differentiable (the first three examples are all continuous).</p>`));
+    } else {
+      const si=signInfo(c.df,w[0],w[1]);
+      top=panel("f and its derivative function",pad(`<p>Sliding the tangent along f and recording each slope as a height builds a brand-new function, the <span class="term">derivative</span> f′. Each orange dot is one slope.</p>
+        <div class="eq">f(${X_}) = ${H(S.F.e)}\nf′(${X_}) = ${H(S.F.n("d"))}</div>
+        <p>Where f rises, f′ is above the axis (green); where f falls, f′ is below (red). Where f has a peak or valley, the tangent is flat and f′ crosses 0 (purple).</p>`))+
+        panel("Read it off the graph (visible window)",rel("#059669","f′ > 0","f increasing",ivs(si.pos,w[0],w[1]))+rel("#DC2626","f′ < 0","f decreasing",ivs(si.neg,w[0],w[1]))+
+          rel("#7C3AED","f′ = 0","horizontal tangents",si.zeros.length?"x = "+si.zeros.map(z=>nv(z,3)).join(", "):"none"));
+    }
+    side.innerHTML=top+panel("At the tangent point",rel("#C4B5FD","a","",num(a,2))+rel(COL.f,"f(a)","",num(c.f(a),3))+rel(COL.d,"f′(a)",beh,num(m,3)))+
+      tryP(c.nd?`Drag the point right up to the trouble spot. Read the table: what do the slopes do from each side? Which of the four examples is <b>continuous</b> but still not differentiable?`
+        :`Hide f′ (uncheck “Show all of f′”), press <b>Clear trace</b>, and predict the shape of f′ before sweeping. Then try <b>sin(x)</b>: what familiar graph appears?`);
+  }
+};
+
+/* ══════════ TAB 3 · rules ══════════ */
+const EX3={
+  power:["x^5","x^(-3)","sqrt(x)","x^(2/3)","1/x^2"],
+  cmul:["7x^3","-4sqrt(x)","x^4/8","5sin(x)"],
+  sum:["x^3 + 5x^2 - 2x + 9","4sqrt(x) - 3/x","2x^4 - x + e^x"],
+  product:["x^2 sin(x)","(x^2 + 1)(3x - 2)","x e^x","sqrt(x) ln(x)"],
+  quotient:["(x + 1)/(x - 1)","sin(x)/x","x^2/(x^2 + 1)","e^x/x"],
+  chain:["(3x^2 + 1)^4","sin(x^2)","e^(3x)","sqrt(x^2 + 9)","ln(x^2 + 1)","cos(5x)"],
+};
+const RULES=[["power","Power"],["cmul","Constant ×"],["sum","Sum"],["product","Product"],["quotient","Quotient"],["chain","Chain"]];
+const M3={
+  tab:"Rules", lesson:"AP 2.5–2.8, 3.1 · Units 2–3", accent:"var(--yellow)",
+  title:()=>(RN[M3.s.det]||"Differentiation rules").replace(/^./,c=>c.toUpperCase())+(M3.s.view==="pic"&&M3.hasPic()?(M3.s.det==="product"?": area model":": rates multiply"):""),
+  s:{rule:"product",ex:0,src:"x^2 sin(x)",raw:null,F:null,det:"product",x:1,view:"pic",dx:0.35,th:0,typed:false},
+  init(){ M3.load(M3.s.src); },
+  load(src){ const S=M3.s; const raw=C.parse(src); S.raw=raw; S.src=src; S.F=mkF(src); S.det=ruleOf(raw);
+    S.F.win=autoWin(S.F.f,-4,4); if(!isFinite(S.F.f(S.x))||!isFinite(S.F.df(S.x))){ for(const t of [1,2,0.5,3,-1,0]) if(isFinite(S.F.f(t))&&isFinite(S.F.df(t))){S.x=t;break;} } },
+  hasPic(){ const d=M3.s.det; return d==="product"||d==="chain"; },
+  bar(){
+    const S=M3.s;
+    segBtns(RULES,S.typed?null:S.rule,k=>{ stopAnim(); S.rule=k; S.ex=0; S.typed=false; M3.load(EX3[k][0]); render(); },"Rule");
+    brk();
+    selectEl(EX3[S.rule].map((s,i)=>[String(i),"f(x) = "+svgT(C.P(s))]),S.typed?"0":String(S.ex),k=>{ stopAnim(); S.ex=+k; S.typed=false; M3.load(EX3[S.rule][S.ex]); render(); },"Example");
+    const inp=document.createElement("input"); inp.type="text"; inp.placeholder="or type your own f(x)"; inp.spellcheck=false; inp.autocomplete="off"; inp.setAttribute("aria-label","Type a function of x");
+    if(S.typed)inp.value=S.src; bar.appendChild(inp);
+    const err=document.createElement("div"); err.className="err"; err.setAttribute("role","status");
+    const go=()=>{ try{ stopAnim(); M3.load(inp.value.trim()); S.typed=true; const map={power:"power",cmul:"cmul",sum:"sum",product:"product",quotient:"quotient",chain:"chain"}; if(map[S.det])S.rule=map[S.det]; render(); }
+      catch(e){ err.textContent=(e instanceof C.PErr)?e.message:"I couldn't read that."; } };
+    btn("Apply rules",go); inp.addEventListener("keydown",e=>{ if(e.key==="Enter")go(); });
+    bar.appendChild(err);
+    M3.xs=slider("x",-3,3,0.05,S.x,v=>{ if(isFinite(S.F.f(v)))S.x=v; update(); });
+    if(M3.hasPic()){ segBtns([["pic",S.det==="product"?"Area model":"Gears"],["graph","Graphs"]],S.view,k=>{ S.view=k; render(); },"Picture");
+      if(S.det==="product"&&S.view==="pic")slider("Δx",0.05,1,0.05,S.dx,v=>{S.dx=v;update();}); }
+    if(S.det==="chain"&&S.view==="pic"){ loop(dt=>{ S.th+=dt*0.9; },true); }
+  },
+  sync(){ if(M3.xs)M3.xs.set(M3.s.x); },
+  draw(){
+    const S=M3.s;
+    if(S.view==="pic"&&S.det==="product")return M3.drawArea();
+    if(S.view==="pic"&&S.det==="chain")return M3.drawGears();
+    const F=S.F, w=F.win, dy=autoY(F.df,w[0],w[1],2), y0=Math.min(w[2],dy[0]), y1=Math.max(w[3],dy[1]);
+    const v=view(w[0],w[1],y0,y1,10,10,680,440); M3.v=v;
+    const g=axes(v,{}), L=lg();
+    plot(g,v,F.df,COL.d,2.6,{dash:"9 6"}); plot(g,v,F.f,COL.f,3.2);
+    const x=S.x, fx=F.f(x), m=F.df(x);
+    if(isFinite(fx)){
+      if(isFinite(m)){ tanSeg(g,v,x,fx,m,90,COL.tan,2.6); seg(g,v.X(x),v.Y(fx),v.X(x),v.Y(m),"#9AA8C7",1.4,"4 4"); dot(g,v.X(x),v.Y(m),COL.d,6); }
+      grab(g,v.X(x),v.Y(fx),"x",COL.pt);
+    }
+    legend(L,[{t:"f(x) = "+svgT(F.e),c:"#1D4ED8"},{t:"f′(x) (dashed)",c:"#C2410C"},{t:"at x = "+num(x,2)+":  f′ = "+num(m,3),c:"#047857"}],20,20);
+  },
+  drawArea(){
+    const S=M3.s, r=S.raw, u=cs(r.a), vv=cs(r.b), x=S.x, dx=S.dx;
+    const u0=C.ev(u,{x}), v0=C.ev(vv,{x}), du=C.ev(u,{x:x+dx})-u0, dv=C.ev(vv,{x:x+dx})-v0;
+    const L=lg(); M3.v=null;
+    if(![u0,v0,du,dv].every(isFinite)){ lab(L,VW/2,VH/2,"u or v is undefined at this x — move the x slider","#B91C1C"); return; }
+    const W=Math.abs(u0)+Math.abs(du), Hh=Math.abs(v0)+Math.abs(dv), sc=Math.min(520/(W||1),300/(Hh||1));
+    const ox=110, oy=400, uw=Math.abs(u0)*sc, vh=Math.abs(v0)*sc, dw=Math.abs(du)*sc, dh=Math.abs(dv)*sc;
+    const R=(x,y,w,h,f,s)=>L.appendChild(E("rect",{x,y,width:Math.max(w,0.5),height:Math.max(h,0.5),fill:f,stroke:s,"stroke-width":2}));
+    R(ox,oy-vh,uw,vh,"rgba(37,99,235,.13)","#2563EB");
+    R(ox+uw,oy-vh,dw,vh,"rgba(5,150,105,.25)","#059669");
+    R(ox,oy-vh-dh,uw,dh,"rgba(217,119,6,.28)","#B45309");
+    R(ox+uw,oy-vh-dh,dw,dh,"rgba(100,116,139,.35)","#64748B");
+    txt(L,VW/2,22*FS,"Area = u·v. When x grows by Δx, the rectangle grows by three pieces.","#22314F","middle","ttl");
+    if(uw>("u·v = "+num(u0*v0,3)).length*cw()+10&&vh>40)txt(L,ox+uw/2,oy-vh/2,"u·v = "+num(u0*v0,3),"#1D4ED8");
+    txt(L,ox+uw/2,oy+18*FS,"u = "+num(u0,3),"#0369A1"); txt(L,ox-10,oy-vh/2,"v = "+num(v0,3),"#BE185D","end");
+    if(dw>4)txt(L,ox+uw+dw/2,oy+18*FS+(uw<120?20*FS:0),"Δu = "+num(du,3),"#047857");
+    if(dh>4)txt(L,ox-10,oy-vh-dh/2-(vh<60?18*FS:0),"Δv = "+num(dv,3),"#B45309","end");
+    const lbl2="v·Δu = "+num(v0*du,3), lw=lbl2.length*cw();
+    if(dw>lw+10&&vh>30) txt(L,ox+uw+dw/2,oy-vh*0.5,lbl2,"#047857");
+    else if(ox+uw+dw+14+lw<VW-6) txt(L,ox+uw+dw+14,oy-vh*0.5,lbl2,"#047857","start");
+    else txt(L,VW-10,oy-vh-dh-14*FS-22*FS,lbl2,"#047857","end");
+    txt(L,ox+uw/2,oy-vh-dh-14*FS,"u·Δv = "+num(u0*dv,3),"#B45309");
+    if(u0<0||v0<0)txt(L,VW/2,VH-12,"(drawn with |u| and |v| — the algebra holds for any signs)","#64748B");
+  },
+  drawGears(){
+    const S=M3.s, P=chainParts(S.raw), inner=cs(P.inner), x=S.x, u0=C.ev(inner,{x}), gp=C.ev(C.D(inner),{x}), fp=C.ev(C.D(P.O,"u"),{u:u0}), tot=gp*fp;
+    const L=lg(); M3.v=null;
+    if(![u0,gp,fp].every(isFinite)){ lab(L,VW/2,VH/2,"undefined at this x — move the x slider","#B91C1C"); return; }
+    const cy=245, R=[78,64,64], cxs=[125,350,575];
+    const spd=r=>Math.sign(r)*Math.min(4,Math.log2(1+Math.abs(r)));
+    const gear=(cx,r,th,fill,stroke)=>{ const n=Math.max(8,Math.round(r/6.5)); let d="";
+      for(let i=0;i<n;i++){ const a=th+i*2*PI/n, s=PI/n;
+        const pts=[[r-3,a-s*0.5],[r+5,a-s*0.28],[r+5,a+s*0.28],[r-3,a+s*0.5],[r-3,a+s*1.5]];
+        pts.forEach(([Rr,A],k)=>{ d+=(i===0&&k===0?"M":"L")+(cx+Rr*Math.cos(A)).toFixed(1)+","+(cy+Rr*Math.sin(A)).toFixed(1); }); }
+      L.appendChild(E("path",{d:d+"Z",fill,stroke,"stroke-width":2,"stroke-linejoin":"round"}));
+      L.appendChild(E("circle",{cx,cy,r:r*0.25,fill:"#fff",stroke,"stroke-width":2}));
+      seg(L,cx,cy,cx+(r-6)*Math.cos(th),cy+(r-6)*Math.sin(th),stroke,4); };
+    const t=S.th;
+    gear(cxs[0],R[0],t,"rgba(37,99,235,.18)","#1D4ED8");
+    gear(cxs[1],R[1],t*spd(gp)+0.3,"rgba(2,132,199,.16)","#0369A1");
+    gear(cxs[2],R[2],t*spd(tot),"rgba(124,58,237,.16)","#6D28D9");
+    const arr=(x1,x2,lbl,c)=>{ const y=cy; seg(L,x1,y,x2-8,y,c,2.6,"6 4"); L.appendChild(E("polygon",{points:`${x2},${y} ${x2-10},${y-6} ${x2-10},${y+6}`,fill:c}));
+      txt(L,(x1+x2)/2,y-18*FS,lbl,c,"middle","lbl"); };
+    arr(cxs[0]+R[0]+10,cxs[1]-R[1]-10,"× "+num(gp,2),"#0369A1");
+    arr(cxs[1]+R[1]+10,cxs[2]-R[2]-10,"× "+num(fp,2),"#6D28D9");
+    const ty=cy-R[0]-34*FS, by=cy+R[0]+30*FS, cl=(s,n)=>s.length>n?s.slice(0,n-1)+"…":s;
+    txt(L,cxs[0],ty,"x","#1D4ED8","middle","ttl");
+    txt(L,cxs[1],ty,cl("u = "+svgT(inner),FS>1?13:22),"#0369A1","middle","ttl");
+    txt(L,cxs[2],ty,cl("y = "+svgT(P.O),FS>1?13:22),"#6D28D9","middle","ttl");
+    txt(L,cxs[0],by,"rate 1","#1D4ED8"); txt(L,cxs[1],by,"du/dx = "+num(gp,3),"#0369A1"); txt(L,cxs[2],by,"dy/dx = "+num(tot,3),"#6D28D9");
+    txt(L,VW/2,24*FS,"dy/dx = dy/du · du/dx = "+num(fp,3)+" × "+num(gp,3)+" = "+num(tot,3),"#22314F","middle","ttl");
+    txt(L,VW/2,VH-14,"x = "+num(x,2)+",  u = "+num(u0,3)+"   (spin speeds on a compressed scale)","#64748B");
+  },
+  place(p){ if(!M3.v)return null; M3.drag("x",p); return "x"; },
+  drag(id,p){ const S=M3.s, v=M3.v; if(!v)return false; let x=Math.round(clamp(v.ix(p[0]),-3,3)*20)/20; if(!isFinite(S.F.f(x)))return false; S.x=x; M3.sync(); },
+  panel(){
+    const S=M3.s; let ex;
+    try{ ex=explain(S.raw); }catch(e){ ex={rule:S.det,steps:["This expression is outside what the step-by-step explainer handles."],res:S.F.n("d")}; }
+    const x=S.x;
+    let pic="";
+    if(S.det==="product"){ const u=cs(S.raw.a), v=cs(S.raw.b), u0=C.ev(u,{x}), v0=C.ev(v,{x}), dx=S.dx, du=C.ev(u,{x:x+dx})-u0, dv=C.ev(v,{x:x+dx})-v0, up=C.ev(C.D(u),{x}), vp=C.ev(C.D(v),{x});
+      pic=panel("Why the product rule works",pad(`<p>Think of f = u·v as the <b>area</b> of a rectangle with sides u and v. Nudge x by Δx: the area gains a strip v·Δu, a strip u·Δv, and a tiny corner Δu·Δv.</p>
+        <div class="eq">Δ(uv) = v·Δu + u·Δv + Δu·Δv
+      = ${num(v0*du,4)} + ${num(u0*dv,4)} + ${num(du*dv,4)}
+Δ(uv)/Δx = ${num((v0*du+u0*dv+du*dv)/dx,4)}
+(uv)′ = u′v + uv′ = ${num(up*v0+u0*vp,4)}</div><p>Divide by Δx and let Δx → 0: the corner shrinks twice as fast and vanishes, leaving u′v + uv′. Slide Δx down and watch Δ(uv)/Δx approach (uv)′.</p>`)); }
+    if(S.det==="chain"){ const P=chainParts(S.raw), inner=cs(P.inner), u0=C.ev(inner,{x}), gp=C.ev(C.D(inner),{x}), fp=C.ev(C.D(P.O,"u"),{u:u0});
+      pic=panel("Rates multiply",pad(`<p>Gears: when the x gear turns once, the u gear turns du/dx times as fast, and the y gear turns dy/du times as fast as u. So y turns <b>(dy/du)(du/dx)</b> times as fast as x.</p>
+        <div class="eq">at x = ${num(x,2)}:  u = ${num(u0,3)}
+dy/du = ${num(fp,4)},  du/dx = ${num(gp,4)}
+dy/dx = ${num(fp,4)} × ${num(gp,4)} = ${num(fp*gp,4)}</div><p>A negative rate means that gear runs backward relative to x.</p>`)); }
+    side.innerHTML=panel(`f(${X_}) = <span class="mth">${H(cs(S.raw))}</span>`+(S.typed?` <span class="tag">${RN[ex.rule]}</span>`:""),stepList(ex.steps))+
+      pic+panel("Check it",rel(COL.f,"f′("+num(x,2)+")","from the rule",num(S.F.df(x),5))+rel("#9AA8C7","[f(x+h) − f(x−h)]/2h","h = 0.001, numeric",num((S.F.f(x+1e-3)-S.F.f(x-1e-3))/2e-3,5)))+
+      tryP(S.det==="product"?`Type <b>x^3</b> as a product: <b>x · x^2</b>. Does the product rule give 3x²? Then try a product where you think (uv)′ = u′v′ — compare with the Check panel.`
+        :S.det==="chain"?`Make the inside faster: compare <b>sin(x)</b>, <b>sin(2x)</b> and <b>sin(5x)</b>. How does the size of du/dx show up in the gears?`
+        :`Type an expression of your own (e.g. <b>x^2 e^(3x)/(x+1)</b>). Which rule is used first? The outermost operation always decides.`);
+  }
+};
+
+/* ══════════ TAB 4 · transcendental ══════════ */
+const TF=[
+  {id:"sin",l:"sin x",s:"sin(x)",w:[-6.8,6.8,-2.2,2.2],pi:true,d:"cos x"},
+  {id:"cos",l:"cos x",s:"cos(x)",w:[-6.8,6.8,-2.2,2.2],pi:true,d:"−sin x"},
+  {id:"tan",l:"tan x",s:"tan(x)",w:[-4.8,4.8,-5,5],pi:true,d:"sec²x"},
+  {id:"sec",l:"sec x",s:"sec(x)",w:[-4.8,4.8,-5,5],pi:true,d:"sec x tan x"},
+  {id:"csc",l:"csc x",s:"csc(x)",w:[-4.8,4.8,-5,5],pi:true,d:"−csc x cot x"},
+  {id:"cot",l:"cot x",s:"cot(x)",w:[-4.8,4.8,-5,5],pi:true,d:"−csc²x"},
+  {id:"exp",l:"eˣ",s:"e^x",w:[-3.5,2.6,-1,8],d:"eˣ"},
+  {id:"ax",l:"aˣ",s:"2^x",w:[-3.5,3,-1,8],d:"aˣ ln a"},
+  {id:"ln",l:"ln x",s:"ln(x)",w:[-0.6,8,-3.2,3],d:"1/x"},
+  {id:"logb",l:"log_b x",s:"log_2(x)",w:[-0.6,8,-3.2,3.6],d:"1/(x ln b)"},
+  {id:"asin",l:"arcsin x",s:"arcsin(x)",w:[-1.6,1.6,-2,3.5],d:"1/√(1 − x²)"},
+  {id:"acos",l:"arccos x",s:"arccos(x)",w:[-1.6,1.6,-2.4,3.8],d:"−1/√(1 − x²)"},
+  {id:"atan",l:"arctan x",s:"arctan(x)",w:[-6,6,-2,2],d:"1/(1 + x²)"},
+];
+const TXT4={
+  sin:"<p>Sweep the tangent along sin x. The slope starts at 1 (x = 0), drops to 0 at the peak (π/2), reaches −1 at π… That trace is exactly <b>cos x</b>.</p><p>This uses the special limit lim<sub>h→0</sub> sin h / h = 1 (radians!).</p>",
+  cos:"<p>cos x starts at its peak (slope 0) and then falls, so its slope trace starts at 0 and goes negative: it is <b>−sin x</b>.</p>",
+  tan:"<p>tan x = sin x / cos x. The quotient rule gives (cos²x + sin²x)/cos²x = 1/cos²x = <b>sec²x</b>. Always positive: tan increases on every piece of its graph.</p>",
+  sec:"<p>sec x = 1/cos x. By the chain (or quotient) rule: −(cos x)<sup>−2</sup>·(−sin x) = <b>sec x tan x</b>.</p>",
+  csc:"<p>csc x = 1/sin x gives −(sin x)<sup>−2</sup>·cos x = <b>−csc x cot x</b>. Co-functions (cos, cot, csc) get the minus sign.</p>",
+  cot:"<p>cot x = cos x / sin x. The quotient rule gives −(sin²x + cos²x)/sin²x = <b>−csc²x</b>. Always negative: cot decreases on every piece.</p>",
+  exp:"<p><i>e</i> ≈ 2.718 is the one base whose exponential has <b>slope equal to its height</b> at every point. The purple height and the green rise (over a run of 1) are always equal.</p>",
+  ax:"<p>For any base a, aˣ = <i>e</i><sup>x ln a</sup>, so its slope is aˣ·ln a. The ratio slope ÷ height is the same constant <b>ln a</b> everywhere. Slide a to 2.718… and the ratio becomes 1.</p>",
+  ln:"<p>ln x is the inverse of eˣ, so its graph is eˣ reflected in y = x — slopes flip to reciprocals. At x the slope is <b>1/x</b>: steep near 0, flatter and flatter as x grows.</p>",
+  logb:"<p>Change of base: log<sub>b</sub>x = ln x / ln b. That's ln x times a constant, so the derivative is <b>1/(x ln b)</b>.</p>",
+  asin:"<p>If y = arcsin x then sin y = x. Implicitly: cos y · y′ = 1, so y′ = 1/cos y = <b>1/√(1 − x²)</b>. Undefined at x = ±1, where the tangent is vertical.</p>",
+  acos:"<p>arccos x = π/2 − arcsin x, so its derivative is just the negative: <b>−1/√(1 − x²)</b>.</p>",
+  atan:"<p>If y = arctan x then tan y = x, so sec²y · y′ = 1 and y′ = 1/sec²y = 1/(1 + tan²y) = <b>1/(1 + x²)</b>. Biggest slope (1) at x = 0.</p>",
+};
+const M4={
+  tab:"Transcendental", lesson:"AP 2.7, 2.9, 3.2–3.3 · Units 2–3", accent:"var(--magenta)",
+  title:()=>"Derivative of "+TF[M4.s.k].l,
+  s:{k:0,a:0.5,trace:[],show:false,base:2},
+  F(){ const T=TF[M4.s.k]; if(T.id==="ax")return mkF(num(M4.s.base,2).replace("−","-")+"^x",T.w); if(T.id==="logb")return mkF("log_("+M4.s.base+")(x)",T.w); return mkF(T.s,T.w); },
+  bar(){
+    const S=M4.s;
+    selectEl(TF.map((t,i)=>[String(i),"f(x) = "+t.l]),String(S.k),k=>{ stopAnim(); S.k=+k; S.trace=[]; const T=TF[S.k]; S.a=T.id==="ln"||T.id==="logb"?1:T.id==="asin"||T.id==="acos"?0:0.5; M4.cache=null; render(); },"Function");
+    const T=TF[S.k];
+    if(T.id==="ax"||T.id==="logb") slider(T.id==="ax"?"a":"b",0.2,5,0.05,S.base,v=>{ if(Math.abs(v-1)<0.02)v=1.05; S.base=v; S.trace=[]; M4.cache=null; update(); });
+    M4.sb=btn("Sweep tangent",()=>{ if(anim){stopAnim();return;} const w=TF[S.k].w; if(S.a>=w[1]-0.05){S.a=w[0];S.trace=[];}
+      loop(dt=>{ const w=TF[S.k].w; S.a+=(w[1]-w[0])*dt/7; const ok=M4.addTrace(); if(S.a>=w[1]){S.a=w[1]-0.01;return false;} }); },"primary");
+    btn("Clear trace",()=>{ S.trace=[]; update(); });
+    chk("Show f′ formula graph",S.show,v=>{S.show=v;update();});
+  },
+  sync(){ if(M4.sb)M4.sb.textContent=anim?"Pause":"Sweep tangent"; },
+  getF(){ if(!M4.cache)M4.cache=M4.F(); return M4.cache; },
+  addTrace(){ const S=M4.s, F=M4.getF(), h=1e-4, m=(F.f(S.a+h)-F.f(S.a-h))/(2*h); if(isFinite(m)&&isFinite(F.f(S.a)))S.trace.push([S.a,m]); if(S.trace.length>1500)S.trace.shift(); },
+  draw(){
+    const S=M4.s, T=TF[S.k], F=M4.getF(), w=T.w, v=view(w[0],w[1],w[2],w[3],10,10,680,440); M4.v=v;
+    const g=axes(v,{pi:T.pi}), L=lg();
+    const brks=T.pi&&["tan","sec","csc","cot"].includes(T.id)?[-3*PI/2,-PI,-PI/2,0,PI/2,PI,3*PI/2].filter(b=>T.id==="tan"||T.id==="sec"?Math.abs(Math.cos(b))<1e-9:Math.abs(Math.sin(b))<1e-9):[];
+    if(S.show)plot(g,v,F.df,COL.d,2.4,{dash:"9 6",breaks:brks});
+    plot(g,v,F.f,COL.f,3.2,{breaks:brks});
+    S.trace.forEach(([x,m])=>{ if(m>=w[2]-1&&m<=w[3]+1)g.appendChild(E("circle",{cx:v.X(x),cy:v.Y(m),r:2.4*(FS>1?1.4:1),fill:COL.d})); });
+    const a=S.a, fa=F.f(a), m=F.df(a);
+    if(isFinite(fa)){
+      if(T.id==="exp"||T.id==="ax"){
+        seg(g,v.X(a),v.Y(0),v.X(a),v.Y(fa),"#7C3AED",3.2);
+        seg(g,v.X(a),v.Y(fa),v.X(a+1),v.Y(fa),"#059669",2,"5 4"); seg(g,v.X(a+1),v.Y(fa),v.X(a+1),v.Y(fa+m),"#059669",3);
+        lab(L,v.X(a)-8,v.Y(fa/2),"height "+num(fa,3),"#6D28D9","end");
+        lab(L,v.X(a+1)+8,v.Y(fa+m/2),"rise "+num(m,3)+" (run 1)","#047857","start");
+      }
+      if(isFinite(m))infLine(g,v,a,fa,m,COL.tan,2.4,"10 6");
+      grab(g,v.X(a),v.Y(fa),"a",COL.pt);
+      if(isFinite(m)&&m>=w[2]&&m<=w[3]){ dot(g,v.X(a),v.Y(m),COL.d,5.5); }
+    }
+    const lines=[{t:"f(x) = "+(T.id==="ax"?num(S.base,2)+"ˣ":T.id==="logb"?"log_"+num(S.base,2)+" x":T.l),c:"#1D4ED8"},{t:"slope at x = "+num(a,2)+":  "+num(m,3),c:"#047857"},{t:"orange: slope trace"+(S.show?" / f′ = "+T.d:""),c:"#C2410C"}];
+    legend(L,lines,20,20);
+  },
+  place(p){ M4.drag("a",p); return "a"; },
+  drag(id,p){ const S=M4.s, v=M4.v, F=M4.getF(); stopAnim(); let x=Math.round(clamp(v.ix(p[0]),v.x0,v.x1)*100)/100; if(!isFinite(F.f(x)))return false; S.a=x; M4.addTrace(); },
+  panel(){
+    const S=M4.s, T=TF[S.k], F=M4.getF(), a=S.a, fa=F.f(a), m=F.df(a), h=1e-4, numd=(F.f(a+h)-F.f(a-h))/(2*h);
+    const rowsT=TF.map((t,i)=>`<div class="rel" style="${i===S.k?"background:rgba(255,255,255,.09);box-shadow:inset 3px 0 0 var(--accent)":""}"><span class="nm">d/dx [${t.l}]</span><span class="val">${t.d}</span></div>`).join("");
+    let extra="";
+    if(T.id==="exp"||T.id==="ax") extra=rel("#7C3AED","slope ÷ height",T.id==="exp"?"always 1 for eˣ":"always ln a = "+num(Math.log(S.base),4),num(m/fa,4));
+    if(T.id==="ln"||T.id==="logb") extra=rel("#7C3AED","1/(slope)",T.id==="ln"?"equals x":"equals x·ln b",num(1/m,4));
+    side.innerHTML=panel("d/dx ["+(T.id==="ax"?"a<sup>x</sup>":T.id==="logb"?"log<sub>b</sub> x":T.l)+"] = "+T.d,pad(TXT4[T.id]+`<div class="eq">f(${X_}) = ${H(F.e)}\nf′(${X_}) = ${H(F.n("d"))}\nf′(${num(a,2)}) ${eqv(exactAt(F.d,a))}</div>`))+
+      panel("Slope check",rel(COL.f,"f(a)","a = "+num(a,2),num(fa,4))+rel(COL.tan,"slope from formula","f′(a)",num(m,4))+rel(COL.d,"numeric slope","central difference, h = 0.0001",num(numd,4))+extra)+
+      panel("Derivative table",`<div class="fmlist">${rowsT}</div>`)+
+      tryP(T.pi?"Check <b>Show f′ formula graph</b> off, sweep, then turn it on: does the orange trace sit exactly on the formula? Try tan: why is the trace never below the x-axis?"
+        :T.id==="ax"?"Slide a until slope ÷ height reads 1.000. What value of a did you find? (That's e.)":"Drag the point and compare slope with 1/x (or height). Where is the graph steepest?");
+  }
+};
+
+/* ══════════ TAB 5 · implicit & higher-order ══════════ */
+const IMP=[
+  {s:"x^2 + y^2 = 25",w:[-9,9],p:[3,4],n:"circle"},
+  {s:"x^2/16 + y^2/9 = 1",w:[-7,7],p:[2,1.5*Math.sqrt(3)],n:"ellipse"},
+  {s:"x^3 + y^3 = 6x y",w:[-6,7],p:[3,3],n:"folium of Descartes"},
+  {s:"y^2 = x^3 - 3x + 3",w:[-5,5],p:[1,1],n:"elliptic curve"},
+];
+const P5=[
+  {s:"x^3 - 3x",w:[-2.6,2.6]},{s:"sin(x)",w:[-7,7],pi:true},{s:"x^4/4 - x^3",w:[-1.8,3.9]},{s:"e^(-x^2)",w:[-3,3]},{s:"x e^(-x)",w:[-1,7]},
+];
+const PM=[
+  {s:"x^3 - 6x^2 + 9x",w:[0,4.5],label:"t³ − 6t² + 9t"},{s:"20x - 5x^2",w:[0,4],label:"20t − 5t² (ball)"},{s:"2sin(x) + x/2",w:[0,9],label:"2 sin t + t/2"},{s:"x^2 - 4x + 3",w:[0,5],label:"t² − 4t + 3"},
+];
+function mkImp(src){
+  const parts=src.split("="); if(parts.length!==2)throw new C.PErr("Type an equation with one “=”, like x^2 + y^2 = 25.");
+  const Lh=C.P(parts[0],["x","y"]), Rh=C.P(parts[1],["x","y"]), F=C.sub(Lh,Rh), Fx=C.D(F,"x"), Fy=C.D(F,"y");
+  return {src,Lh,Rh,F,Fx,Fy,f:(x,y)=>C.ev(F,{x,y}),fx:(x,y)=>C.ev(Fx,{x,y}),fy:(x,y)=>C.ev(Fy,{x,y})};
+}
+function projImp(I,p,fixX){
+  let [x,y]=p;
+  for(let k=0;k<40;k++){ const f=I.f(x,y); if(!isFinite(f))return null; if(Math.abs(f)<1e-11)break;
+    if(fixX){ const gy=I.fy(x,y); if(!isFinite(gy)||Math.abs(gy)<1e-12)return null; y-=f/gy; }
+    else { const gx=I.fx(x,y), gy=I.fy(x,y), g2=gx*gx+gy*gy; if(!(g2>1e-14))return null; x-=f*gx/g2; y-=f*gy/g2; } }
+  return Math.abs(I.f(x,y))<1e-7?[x,y]:null;
+}
+function contour(g,v,fn,color,w){
+  const nx=Math.round(v.W/4), ny=Math.round(v.H/4), G=[];
+  for(let j=0;j<=ny;j++){ const row=[]; const y=v.y1-(v.y1-v.y0)*j/ny; for(let i=0;i<=nx;i++)row.push(fn(v.x0+(v.x1-v.x0)*i/nx,y)); G.push(row); }
+  const sx=i=>v.L+v.W*i/nx, sy=j=>v.T+v.H*j/ny; let d="";
+  for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){
+    const a=G[j][i],b=G[j][i+1],c=G[j+1][i+1],e=G[j+1][i];
+    if(![a,b,c,e].every(isFinite))continue;
+    const P=[[a,b,[i,j],[i+1,j]],[b,c,[i+1,j],[i+1,j+1]],[c,e,[i+1,j+1],[i,j+1]],[e,a,[i,j+1],[i,j]]], X=[];
+    P.forEach(([p,q,A,B],k)=>{ if((p>0)!==(q>0)){ const t=p/(p-q); X.push([sx(A[0]+(B[0]-A[0])*t),sy(A[1]+(B[1]-A[1])*t)]); } });
+    if(X.length===2)d+="M"+X[0][0].toFixed(1)+","+X[0][1].toFixed(1)+"L"+X[1][0].toFixed(1)+","+X[1][1].toFixed(1);
+    else if(X.length===4)d+="M"+X[0].join(",")+"L"+X[1].join(",")+"M"+X[2].join(",")+"L"+X[3].join(",");
+  }
+  g.appendChild(E("path",{d,fill:"none",stroke:color,"stroke-width":w||3,"stroke-linecap":"round"}));
+}
+const YP=`<span class="cdu"><i>y</i>′</span>`;
+function impSteps(I,P){
+  const q=C.V("z");
+  const side=S=>{ const e=C.mkSum([C.D(S,"x"),C.mkProd([C.D(S,"y"),q])]); return H(e).replace(/<i>z<\/i>/g,"\u2009"+YP); };
+  const ny=C.nice(C.mkProd([C.NEG1,I.Fx,C.mkPow(I.Fy,C.NEG1)]));
+  const S=[`Start with <span class="mth">${H(I.Lh)} = ${H(I.Rh)}</span> and think of y as a function of x.`,
+    `Differentiate both sides with respect to x. Every y-term picks up a factor ${YP} = dy/dx (chain rule):<br><span class="mth">${side(I.Lh)} = ${side(I.Rh)}</span>`,
+    `Collect the ${YP} terms on one side: <span class="mth">(${H(I.Fy)})·${YP} = ${H(C.neg(I.Fx))}</span>`,
+    `Divide: <span class="mth">dy/dx = ${H(ny,true)}</span>`];
+  if(P){ const fx=I.fx(P[0],P[1]), fy=I.fy(P[0],P[1]), m=-fx/fy;
+    S.push(Math.abs(fy)<1e-9?`At (${nv(P[0],3)}, ${nv(P[1],3)}) the denominator is 0: the tangent line is <b>vertical</b> (dy/dx undefined).`
+      :`At (${nv(P[0],3)}, ${nv(P[1],3)}): <span class="mth">dy/dx = −(${num(fx,4)})/(${num(fy,4)}) ${eqv(nva(m))}</span>`);
+    if(Math.abs(fy)>=1e-9)S.push(`Tangent line: <span class="mth">y − ${par(P[1]).replace(/^\((.*)\)$/,"($1)")} = ${nv(m,3)}(x − ${par(P[0])})</span>`); }
+  return S;
+}
+const M5={
+  tab:"Implicit & higher-order", lesson:"AP 3.2, 3.6 · Unit 3 Composite, Implicit & Inverse", accent:"var(--lavender)",
+  title:()=>({imp:"Implicit differentiation",hi:"f, f′, f″ stacked",mo:"Position, velocity, acceleration"})[M5.s.mode],
+  s:{mode:"imp",ik:0,I:null,P:[3,4],snap:false,F:null,pi:0,a:1,third:false,M:null,mi:0,t:0.5},
+  init(){ const S=M5.s; S.I=mkImp(IMP[0].s); S.F=mkF(P5[0].s); S.F.win=[-2.6,2.6]; S.M=mkF(PM[0].s); S.M.win=PM[0].w.slice(); },
+  bar(){
+    const S=M5.s;
+    segBtns([["imp","Implicit curves"],["hi","Higher derivatives"],["mo","Motion"]],S.mode,k=>{ stopAnim(); S.mode=k; render(); },"Mode");
+    brk();
+    if(S.mode==="imp"){
+      selectEl(IMP.map((c,i)=>[String(i),c.n+": "+c.s]).concat([["c","Custom equation"]]),S.ik==null?"c":String(S.ik),k=>{ if(k==="c"){inp.focus();return;} S.ik=+k; S.I=mkImp(IMP[S.ik].s); S.P=IMP[S.ik].p.slice(); inp.value=IMP[S.ik].s; err.textContent=""; render(); },"Curve");
+      const inp=document.createElement("input"); inp.type="text"; inp.value=S.I.src; inp.spellcheck=false; inp.setAttribute("aria-label","Type an equation in x and y"); bar.appendChild(inp);
+      const err=document.createElement("div"); err.className="err";
+      const go=()=>{ try{ const I=mkImp(inp.value.trim()); S.I=I; S.ik=null; const w=M5.win(); let P=null;
+          for(let k=0;k<60&&!P;k++){ const t=projImp(I,[w[0]+(w[1]-w[0])*Math.random(),w[2]+(w[3]-w[2])*Math.random()]); if(t&&t[0]>w[0]&&t[0]<w[1]&&t[1]>w[2]&&t[1]<w[3])P=t; }
+          S.P=P||[0,0]; err.textContent=P?"":"No points of this curve found in the window."; render(); }
+        catch(e){ err.textContent=(e instanceof C.PErr)?e.message:"I couldn't read that equation."; } };
+      btn("Draw",go); inp.addEventListener("keydown",e=>{ if(e.key==="Enter")go(); }); bar.appendChild(err);
+      chk("Snap x to ½-grid",S.snap,v=>{ S.snap=v; if(v){ const t=projImp(S.I,[Math.round(S.P[0]*2)/2,S.P[1]],true); if(t)S.P=t; } update(); });
+      spacer("click the curve to move the point");
+    } else if(S.mode==="hi"){
+      fnPicker(P5,S,(F,p)=>{ F.win=p?p.w.slice():[-5,5]; F.pi=!!(p&&p.pi); S.F=F; S.a=(F.win[0]+F.win[1])/2+0.3; render(); });
+      chk("Show f‴",S.third,v=>{S.third=v;update();});
+    } else {
+      fnPicker(PM,{F:S.M,pi:S.mi},(F,p)=>{ F.win=p?p.w.slice():[0,6]; S.M=F; S.mi=p?PM.indexOf(p):null; S.t=F.win[0]+0.3; render(); },"s(t) = ",[0,6]);
+      M5.pb=btn("Play motion",()=>{ if(anim){stopAnim();return;} const w=S.M.win; if(S.t>=w[1]-0.02)S.t=w[0];
+        loop(dt=>{ const w=S.M.win; S.t+=(w[1]-w[0])*dt/9; if(S.t>=w[1]){S.t=w[1];return false;} }); },"primary");
+    }
+  },
+  sync(){ if(M5.pb)M5.pb.textContent=anim?"Pause":"Play motion"; },
+  win(){ const c=M5.s.ik!=null?IMP[M5.s.ik].w:[-8,8]; const xr=c[1]-c[0], yr=xr*440/680; return [c[0],c[1],-yr/2,yr/2]; },
+  draw(){
+    const S=M5.s;
+    if(S.mode==="imp"){
+      const w=M5.win(), v=view(w[0],w[1],w[2],w[3],10,10,680,440); M5.v=v;
+      const g=axes(v,{xl:"x",yl:"y"}), L=lg(), I=S.I;
+      contour(g,v,I.f,COL.f,3.2);
+      const P=S.P, fx=I.fx(P[0],P[1]), fy=I.fy(P[0],P[1]), m=-fx/fy;
+      if(Math.abs(fy)<1e-9) seg(g,v.X(P[0]),v.T,v.X(P[0]),v.T+v.H,COL.tan,2.6,"10 6"); else infLine(g,v,P[0],P[1],m,COL.tan,2.6,"10 6");
+      grab(g,v.X(P[0]),v.Y(P[1]),"p",COL.pt);
+      lab(L,v.X(P[0])+14,v.Y(P[1])-18*FS,"("+num(P[0],2)+", "+num(P[1],2)+")",COL.pt,v.X(P[0])>VW-170?"end":"start");
+      legend(L,[{t:I.src.replace(/\*/g,"·").replace(/\^2/g,"²").replace(/\^3/g,"³"),c:"#1D4ED8"},{t:"dy/dx = "+(Math.abs(fy)<1e-9?"undefined (vertical)":num(m,4)),c:"#047857"}],20,20);
+      return;
+    }
+    const mo=S.mode==="mo", F=mo?S.M:S.F, w=F.win, fns=[F.f,F.df,F.d2]; if(!mo&&S.third)fns.push(F.d3);
+    const n=fns.length, top=mo?82:8, gap=8, hh=(VH-top-8-gap*(n-1))/n;
+    const names=mo?["s(t)  position","v(t) = s′(t)  velocity","a(t) = v′(t) = s″(t)  acceleration"]:["f","f′","f″","f‴"];
+    const cols=[COL.f,COL.d,COL.dd,COL.ddd], tcols=["#1D4ED8","#C2410C","#6D28D9","#0F766E"];
+    const a=mo?S.t:S.a, late=[]; M5.views=[];
+    fns.forEach((fn,i)=>{
+      const yr=autoY(fn,w[0],w[1],1.5), v=view(w[0],w[1],yr[0],yr[1],10,top+i*(hh+gap),680,hh); M5.views.push(v);
+      const g=axes(v,{frame:true,pi:F.pi,noX:i<n-1&&FS>1});
+      if(i>0)shadeSign(g,v,fn,i===1?"rgba(5,150,105,.13)":"rgba(124,58,237,.13)",i===1?"rgba(220,38,38,.12)":"rgba(234,88,12,.12)");
+      plot(g,v,fn,cols[i],3);
+      seg(g,v.X(a),v.T,v.X(a),v.T+v.H,"#9AA8C7",1.4,"4 4");
+      const y=fn(a), next=fns[i+1]||[F.df,F.d2,F.d3,null][i];
+      if(isFinite(y)){ if(next&&i<2&&isFinite(next(a)))tanSeg(g,v,a,y,next(a),60,COL.tan,2.2); if(i===0)grab(g,v.X(a),v.Y(y),"a",COL.pt); else dot(g,v.X(a),v.Y(y),cols[i],5); }
+      late.push(L=>{ txt(L,v.L+10,v.T+14*FS,names[i],tcols[i],"start","ttl"); txt(L,v.L+v.W-10,v.T+14*FS,"= "+num(y,3),tcols[i],"end","ttl"); });
+    });
+    const L=lg(); late.forEach(fn=>fn(L));
+    if(!mo){ const v0=M5.views[0], si=signInfo(F.d2,w[0],w[1]);
+      si.zeros.forEach(z=>{ const y=F.f(z); if(isFinite(y)){ const X=v0.X(z), Y=v0.Y(y); L.appendChild(E("rect",{x:X-5,y:Y-5,width:10,height:10,transform:`rotate(45 ${X} ${Y})`,fill:"#7C3AED",stroke:"#fff","stroke-width":1.5})); } }); }
+    if(mo){
+      const sr=autoY(F.f,w[0],w[1],1.5), nl=view(w[0],w[1],0,1,10,0,680,1), X=s=>40+(s-sr[0])/(sr[1]-sr[0])*620, yl=46;
+      seg(L,30,yl,670,yl,"#8FA3C8",2);
+      const st=niceStep(sr[1]-sr[0],620,false);
+      for(let k=Math.ceil(sr[0]/st);k*st<=sr[1];k++){ seg(L,X(k*st),yl-5,X(k*st),yl+5,"#8FA3C8",1.5); const t=E("text",{x:X(k*st),y:yl+20,class:"ax","text-anchor":"middle"}); t.textContent=num(k*st,3); L.appendChild(t); }
+      const s=F.f(a), vv=F.df(a), ac=F.d2(a);
+      if(isFinite(s)){ const px=X(s), vs=620/(sr[1]-sr[0])*0.35;
+        const arrow=(len,y,c)=>{ if(Math.abs(len)<2)return; const e=px+clamp(len,-260,260); seg(L,px,y,e,y,c,3.4); const d=Math.sign(len);
+          L.appendChild(E("polygon",{points:`${e+d*9},${y} ${e},${y-6} ${e},${y+6}`,fill:c})); };
+        arrow(vv*vs,yl-16,"#C2410C"); arrow(ac*vs,yl+0.1-16+(-8),"#7C3AED");
+        L.appendChild(E("circle",{cx:px,cy:yl,r:9*(FS>1?1.3:1),fill:"#2563EB",stroke:"#fff","stroke-width":2.5}));
+        txt(L,14,14,"particle on a line  —  orange: velocity, purple: acceleration","#22314F","start","ax"); }
+    }
+  },
+  place(p){ const S=M5.s;
+    if(S.mode==="imp"){ const v=M5.v; if(!v.in(p[0],p[1]))return null; M5.drag("p",p); return "p"; }
+    M5.drag("a",p); return "a"; },
+  drag(id,p){ const S=M5.s;
+    if(S.mode==="imp"){ const v=M5.v; let w=[v.ix(p[0]),v.iy(p[1])], t=null;
+      if(S.snap){ t=projImp(S.I,[Math.round(w[0]*2)/2,w[1]],true); }
+      if(!t)t=projImp(S.I,w,false); if(!t)return false;
+      if(Math.hypot(v.X(t[0])-p[0],v.Y(t[1])-p[1])>120)return false; S.P=t; return; }
+    stopAnim(); const v=M5.views[0], x=Math.round(clamp(v.ix(p[0]),v.x0,v.x1)*100)/100;
+    const F=S.mode==="mo"?S.M:S.F; if(!isFinite(F.f(x)))return false;
+    if(S.mode==="mo")S.t=x; else S.a=x; },
+  panel(){
+    const S=M5.s;
+    if(S.mode==="imp"){
+      side.innerHTML=panel("Implicit differentiation, step by step",stepList(impSteps(S.I,S.P)))+
+        panel("The idea",pad(`<p>A curve like x³ + y³ = 6xy isn't the graph of one function y = f(x), but near most points it <b>is</b> locally. So we differentiate the equation as it stands, treating y as an unknown function of x.</p><p>The chain rule is the key: d/dx[y³] = 3y²·y′, d/dx[xy] = y + x·y′ (product rule).</p>`))+
+        tryP(`Drag the point around the circle. Where is dy/dx = 0? Where is it undefined? For the folium, find the point where the tangent is horizontal (hint: 3x² = 6y).`);
+      return;
+    }
+    const mo=S.mode==="mo", F=mo?S.M:S.F, a=mo?S.t:S.a, vr=mo?"t":"x";
+    const f0=F.f(a), f1=F.df(a), f2=F.d2(a), f3=F.d3(a);
+    if(mo){
+      const dir=Math.abs(f1)<1e-9?"at rest (v = 0)":f1>0?"moving right (v > 0)":"moving left (v < 0)";
+      const sp=Math.abs(f1)<1e-9?"—":f1*f2>0?"speeding up (v and a same sign)":f1*f2<0?"slowing down (v and a opposite signs)":"constant speed for an instant";
+      side.innerHTML=panel("s, v, a",pad(`<div class="eq">s(t) = ${tv(H(F.e),1)}\nv(t) = s′(t) = ${tv(H(F.n("d")),1)}\na(t) = v′(t) = ${tv(H(F.n("dd")),1)}</div><p><span class="term">Velocity</span> is the rate of change of position; <span class="term">acceleration</span> is the rate of change of velocity — the second derivative of position.</p>`))+
+        panel("At t = "+num(a,2),rel(COL.f,"position s(t)","",num(f0,3))+rel(COL.d,"velocity v(t)",dir,num(f1,3))+rel(COL.dd,"acceleration a(t)","",num(f2,3))+rel("#9AA8C7","speed |v(t)|",sp,num(Math.abs(f1),3)))+
+        tryP(`Play <b>t³ − 6t² + 9t</b>. When does the particle turn around? (v = 0.) When is it speeding up even though v is negative?`);
+      return;
+    }
+    side.innerHTML=panel("Higher-order derivatives",pad(`<p>The derivative of f′ is the <span class="term">second derivative</span> f″ — it measures how fast the slope changes. f″ &gt; 0: slopes increase, f is <b>concave up</b>. f″ &lt; 0: <b>concave down</b>. Purple diamonds mark <b>inflection points</b>, where f″ changes sign.</p>
+      <div class="eq">f(${X_}) = ${H(F.e)}\nf′(${X_}) = ${H(F.n("d"))}\nf″(${X_}) = ${H(F.n("dd"))}${S.third?"\nf‴("+X_+") = "+H(F.n("ddd")):""}</div><p>Notation: f″(x) = d²y/dx² = y″.</p>`))+
+      panel("At x = "+num(a,2),rel(COL.f,"f(a)","",num(f0,4))+rel(COL.d,"f′(a)",f1>0?"increasing":f1<0?"decreasing":"flat",exactAt(F.d,a))+
+        rel(COL.dd,"f″(a)",f2>0?"concave up":f2<0?"concave down":"possible inflection",exactAt(F.dd,a))+(S.third?rel(COL.ddd,"f‴(a)","",num(f3,4)):""))+
+      tryP(`Each green tangent's slope is the value in the graph below it. Find where f′ has a peak: what is f″ there, and what is happening to f?`);
+  }
+};
+
+/* ══════════ TAB 6 · challenge ══════════ */
+const DT=[
+  ()=>`${rnd(2,9)}x^${rnd(3,7)} - ${rnd(2,9)}x^2 + ${rnd(1,9)}x - ${rnd(1,9)}`,
+  ()=>`${rnd(2,6)}sqrt(x) + ${rnd(2,9)}/x`,
+  ()=>`x^${rnd(2,4)} ${pick(["sin(x)","cos(x)","e^x","ln(x)"])}`,
+  ()=>`(${rnd(2,5)}x + ${rnd(1,6)})^${rnd(3,6)}`,
+  ()=>`${pick(["sin","cos","tan"])}(${rnd(2,5)}x)`,
+  ()=>`${pick(["sin","cos"])}(x^${rnd(2,3)})`,
+  ()=>`e^(${rnd(2,5)}x^2)`,
+  ()=>`ln(x^2 + ${rnd(1,9)})`,
+  ()=>`sqrt(${rnd(2,9)}x^2 + ${rnd(1,9)})`,
+  ()=>`(${rnd(2,5)}x + ${rnd(1,6)})/(x - ${rnd(1,6)})`,
+  ()=>`${pick(["sin(x)","e^x","ln(x)"])}/x`,
+  ()=>`x^2/(x^2 + ${rnd(1,9)})`,
+  ()=>`e^x ${pick(["sin(x)","cos(x)"])}`,
+  ()=>`x ln(x)`,
+  ()=>`arctan(${rnd(2,5)}x)`,
+  ()=>`${rnd(2,5)}${pick(["sec","csc","cot"])}(x)`,
+  ()=>`${pick([2,3,5,10])}^x`,
+  ()=>`log_${pick([2,3,5])}(x)`,
+  ()=>`sin(x)^${rnd(2,4)}`,
+  ()=>`x^2 e^(${pick([-3,-2,2,3])}x)`,
+  ()=>`arcsin(x/${rnd(2,4)})`,
+];
+const TP=[
+  ()=>{ const A=rnd(1,3)*pick([1,-1]), B=rnd(-4,4), Cc=rnd(-5,5); return {src:`${A}x^2 ${B<0?"-":"+"} ${Math.abs(B)}x ${Cc<0?"-":"+"} ${Math.abs(Cc)}`,a:rnd(-2,3)}; },
+  ()=>({src:`x^3 - ${rnd(1,6)}x`,a:rnd(-2,2)}),
+  ()=>({src:"sqrt(x)",a:pick([1,4,9])}),
+  ()=>({src:`${rnd(1,6)}/x`,a:pick([1,2,-1])}),
+  ()=>({src:"(2x - 3)^3",a:pick([1,2])}),
+  ()=>({src:"x/(x + 1)",a:pick([0,1])}),
+  ()=>({src:"e^(x - 1)",a:1}),
+  ()=>({src:`ln(${pick([1,2])}x)`,a:1}),
+  ()=>({src:pick(["sin(x)","x + cos(x)","x e^x","tan(x)"]),a:0}),
+  ()=>({src:`(x^2 + 1)(x - ${rnd(1,3)})`,a:pick([0,1])}),
+];
+const ST=[
+  ()=>({src:`${rnd(1,4)}x^${rnd(3,5)} - ${rnd(1,9)}x^2 + ${rnd(1,9)}x`,a:rnd(-2,2)}),
+  ()=>({src:`e^(${rnd(2,3)}x)`,a:0}),
+  ()=>({src:"x ln(x)",a:rnd(1,4)}),
+  ()=>({src:"ln(x^2 + 1)",a:rnd(0,2)}),
+  ()=>({src:`${rnd(1,4)}/x`,a:pick([1,2])}),
+  ()=>({src:"sqrt(x)",a:pick([1,4])}),
+  ()=>({src:"x^2 e^x",a:0}),
+  ()=>({src:`(2x - 1)^${rnd(3,5)}`,a:1}),
+  ()=>({src:`sin(${rnd(1,3)}x)`,a:1}),
+];
+const LT=[
+  ()=>{ const a=rnd(1,4), n=rnd(2,4); return {f:`x^${n}`,a,aS:String(a),num:`(${a} + h)<sup>${n}</sup> − ${Math.pow(a,n)}`}; },
+  ()=>{ const a=pick([1,4,9,16]); return {f:"sqrt(x)",a,aS:String(a),num:`√(${a} + h) − ${Math.sqrt(a)}`}; },
+  ()=>{ const c=pick([[6,"π/6"],[3,"π/3"],[4,"π/4"],[2,"π/2"]]), fn=pick(["sin","cos"]), a=PI/c[0];
+    const V={sin:{6:"1/2",3:"√3/2",4:"√2/2",2:"1"},cos:{6:"√3/2",3:"1/2",4:"√2/2",2:"0"}}[fn][c[0]];
+    return {f:`${fn}(x)`,a,aS:c[1],num:`${fn}(${c[1]} + h)`+(V==="0"?"":" − "+V)}; },
+  ()=>{ const k=rnd(1,3); return {f:"e^x",a:k,aS:String(k),num:`<i>e</i><sup>${k} + h</sup> − <i>e</i><sup>${k}</sup>`}; },
+  ()=>{ const a=rnd(1,5); return {f:"ln(x)",a,aS:String(a),num:a===1?"ln(1 + h)":`ln(${a} + h) − ln ${a}`}; },
+  ()=>{ const a=rnd(1,4); return {f:"1/x",a,aS:String(a),num:`${fr("1",a+" + h")} − ${a===1?"1":fr("1",String(a))}`}; },
+];
+const IT=[
+  ()=>{ let p=rnd(-6,6), q=pick([-5,-4,-3,-2,-1,1,2,3,4,5]); return {s:`x^2 + y^2 = ${p*p+q*q}`,p:[p,q]}; },
+  ()=>{ let p,q,k; do{ p=rnd(-3,3); q=rnd(-3,3); k=pick([1,2,3]); }while(p+2*q===0&&true||(k*p+2*q===0)); return {s:`x^2 + ${k===1?"":k}x y + y^2 = ${p*p+k*p*q+q*q}`,p:[p,q]}; },
+  ()=>{ let p=rnd(-3,3), q=pick([-2,-1,1,2]); return {s:`x^2 y + y^3 = ${p*p*q+q*q*q}`,p:[p,q]}; },
+  ()=>{ let p,q; do{ p=rnd(-3,3); q=rnd(-3,3); }while(p+2*q===0); return {s:`x y + y^2 = ${p*q+q*q}`,p:[p,q]}; },
+  ()=>pick([{s:"x^3 + y^3 = 6x y",p:[3,3]},{s:"x^3 + y^3 = 6x y",p:[4/3,8/3]}]),
+  ()=>{ let p=rnd(1,4), q=pick([-3,-2,-1,1,2,3]), k=rnd(2,4); return {s:`${k}x^2 - y^2 = ${k*p*p-q*q}`,p:[p,q]}; },
+];
+const KINDS=[["mix","Mixed practice"],["diff","Differentiate f(x)"],["tangent","Tangent line equation"],["slope","Slope of tangent"],["limit","Limit definition"],["implicit","Implicit dy/dx"],["second","Second derivative"]];
+const TESTX=[0.37,0.71,1.13,1.58,2.21,2.67,-0.43,-1.27,-1.91,0.123,3.1,-2.6];
+function parseNumAns(s){ s=String(s).replace(/^\s*[a-z′'()\d\/]*\s*=\s*/i,m=>/[a-z]/i.test(m)?"":m); const e=C.P(s,[]); return C.ev(e,{}); }
+function genProblem(kind){
+  if(kind==="mix")kind=pick(["diff","diff","tangent","slope","limit","implicit","second"]);
+  for(let tries=0;tries<50;tries++){
+    if(kind==="diff"){ const src=pick(DT)(), F=mkF(src); const xs=TESTX.filter(x=>isFinite(F.f(x))&&isFinite(F.df(x))&&Math.abs(F.df(x))<1e7); if(xs.length<4)continue;
+      return {kind,src,F,raw:C.parse(src),xs,fields:["f′(x) ="],q:`Find the derivative of <div class="eq">f(${X_}) = ${H(F.e,true)}</div>`}; }
+    if(kind==="tangent"||kind==="slope"){
+      let o=pick(TP)(); if(kind==="slope"&&Math.random()<0.5){ o={src:pick(DT)(),a:pick([1,2])}; }
+      const F=mkF(o.src), fa=F.f(o.a), m=F.df(o.a); if(!isFinite(fa)||!isFinite(m)||Math.abs(m)>1e4)continue;
+      const b=fa-m*o.a;
+      return {kind,src:o.src,F,a:o.a,fa,m,b,ans:m,fields:[kind==="slope"?"f′("+o.a+") =":"Tangent line:"],
+        q:kind==="slope"?`Find the slope of the tangent line to the graph of <div class="eq">f(${X_}) = ${H(F.e,true)}</div> at ${X_} = ${o.a}.`
+          :`Write an equation of the line tangent to the graph of <div class="eq">f(${X_}) = ${H(F.e,true)}</div> at ${X_} = ${o.a}.`}; }
+    if(kind==="limit"){ const o=pick(LT)(), F=mkF(o.f), ans=F.df(o.a);
+      return {kind,src:o.f,F,a:o.a,aS:o.aS,ans,fields:["Limit ="],q:`Evaluate by recognizing the limit as a derivative:<div class="eq">lim<sub>h→0</sub> ${fr(o.num,"h")}</div>`}; }
+    if(kind==="implicit"){ const o=pick(IT)(), I=mkImp(o.s), fy=I.fy(o.p[0],o.p[1]); if(Math.abs(fy)<1e-9)continue; const ans=-I.fx(o.p[0],o.p[1])/fy;
+      return {kind,I,P:o.p,ans,fields:["dy/dx ="],q:`The curve <div class="eq">${H(I.Lh)} = ${H(I.Rh)}</div> passes through the point (${nv(o.p[0])}, ${nv(o.p[1])}). Find dy/dx there.`}; }
+    if(kind==="second"){ const o=pick(ST)(), F=mkF(o.src), ans=F.d2(o.a); if(!isFinite(ans))continue;
+      return {kind,src:o.src,F,a:o.a,ans,fields:["f″("+o.a+") ="],q:`Let <div class="eq">f(${X_}) = ${H(F.e,true)}</div> Find f″(${o.a}), the second derivative at ${X_} = ${o.a}.`}; }
+  }
+  return genProblem("diff");
+}
+function lineFromAns(s){ // returns fn(x)->y for a typed line (any equivalent form) or throws
+  s=s.replace(/[−–]/g,"-");
+  if(s.indexOf("=")<0){ const e=C.P(s.replace(/^\s*y\s*/,""),["x"]); return x=>C.ev(e,{x}); }
+  const parts=s.split("="); if(parts.length!==2)throw new C.PErr("Use exactly one “=”.");
+  const G=C.sub(C.P(parts[0],["x","y"]),C.P(parts[1],["x","y"]));
+  return x=>{ const g0=C.ev(G,{x,y:0}), g1=C.ev(G,{x,y:1}); return -g0/(g1-g0); };
+}
+const M6={
+  tab:"Challenge", lesson:"AP 2.1–3.6 · Units 2–3 practice", accent:"var(--coral)",
+  title:()=>"Practice: "+(KINDS.find(k=>k[0]===(M6.s.pr?M6.s.pr.kind:"diff"))||KINDS[1])[1].toLowerCase(),
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  newProb(){ M6.s.pr=genProblem(M6.s.kind); M6.s.state="open"; M6.s.reveal=false; M6.s.tries=0; },
+  bar(){
+    btn("New problem",()=>{ M6.newProb(); render(); },"primary");
+    selectEl(KINDS,M6.s.kind,k=>{ M6.s.kind=k; M6.newProb(); render(); },"Problem type");
+    M6.streakEl=spacer(""); M6.upStreak();
+  },
+  upStreak(){ if(M6.streakEl)M6.streakEl.textContent="Streak "+M6.s.streak+" · Best "+M6.s.best+" · Solved "+M6.s.solved; },
+  draw(){
+    const pr=M6.s.pr, show=M6.s.state==="right"||M6.s.reveal, L0=null;
+    if(pr.kind==="implicit"){
+      const P=pr.P, r=Math.max(6,Math.abs(P[0])+3,Math.abs(P[1])+3), yr=r*2*440/680/2*1.0;
+      const v=view(-r,r,-r*440/680,r*440/680,10,10,680,440), g=axes(v,{}), L=lg();
+      contour(g,v,pr.I.f,COL.f,3.2);
+      if(show)infLine(g,v,P[0],P[1],pr.ans,COL.tan,2.6,"10 6");
+      dot(g,v.X(P[0]),v.Y(P[1]),COL.pt,6.5);
+      lab(L,v.X(P[0])+14,v.Y(P[1])-18*FS,"("+nv(P[0])+", "+nv(P[1])+")",COL.pt,"start");
+      return;
+    }
+    const F=pr.F, a=pr.a!=null?pr.a:0.5;
+    const x0=pr.a!=null?a-4:-4, x1=pr.a!=null?a+4:4, y=autoY(F.f,x0,x1,2), v=view(x0,x1,y[0],y[1],10,10,680,440);
+    const g=axes(v,{pi:false}), L=lg();
+    if(pr.kind==="diff"&&show)plot(g,v,F.df,COL.d,2.6,{dash:"9 6"});
+    if(pr.kind==="second"&&show)plot(g,v,F.d2,COL.dd,2.6,{dash:"9 6"});
+    plot(g,v,F.f,COL.f,3.2);
+    if(pr.a!=null){ const fa=F.f(a), m=F.df(a);
+      if(pr.kind==="limit"&&!show){ const h=Math.min(1.2,(x1-a)*0.5), fb=F.f(a+h); if(isFinite(fb)){ infLine(g,v,a,fa,(fb-fa)/h,COL.sec,2.2,"7 5"); dot(g,v.X(a+h),v.Y(fb),COL.sec,5); } }
+      if(show&&isFinite(m))infLine(g,v,a,fa,m,COL.tan,2.8);
+      if(isFinite(fa)){ dot(g,v.X(a),v.Y(fa),COL.pt,6.5); lab(L,v.X(a)+14,v.Y(fa)+22*FS,"x = "+(pr.aS||nv(a)),COL.pt,"start"); }
+    }
+    const lines=[{t:"f(x) = "+svgT(F.e),c:"#1D4ED8"}];
+    if(show&&pr.kind==="diff")lines.push({t:"f′ (dashed)",c:"#C2410C"});
+    if(show&&pr.kind==="second")lines.push({t:"f″ (dashed)",c:"#6D28D9"});
+    legend(L,lines,20,20);
+  },
+  solution(pr){
+    if(pr.kind==="diff"){ const ex=explain(pr.raw); return stepList(ex.steps); }
+    if(pr.kind==="tangent"||pr.kind==="slope"){ const F=pr.F;
+      const S=[`f′(${X_}) = <span class="mth">${H(F.n("d"),true)}</span>`,`Slope: <span class="mth">m = f′(${pr.a}) ${eqv(nva(pr.m))}</span>`];
+      if(pr.kind==="tangent"){ S.push(`Point: <span class="mth">f(${pr.a}) ${eqv(nva(pr.fa))}</span>, so the line passes through (${pr.a}, ${nv(pr.fa)}).`);
+        S.push(`Point-slope: <span class="mth">y − ${par(pr.fa)} = ${nv(pr.m)}(x − ${par(pr.a)})</span>`);
+        S.push(`Slope-intercept: <span class="mth">y = ${nv(pr.m)}x ${pr.b<0?"−":"+"} ${nv(Math.abs(pr.b))}</span>`); }
+      return stepList(S); }
+    if(pr.kind==="limit"){ const F=pr.F, rows=[0.1,0.01,0.001].map(h=>`h = ${h}: ${num((F.f(pr.a+h)-F.f(pr.a))/h,5)}`).join("<br>");
+      return stepList([`The limit has the form <span class="mth">lim<sub>h→0</sub> [f(a + h) − f(a)]/h = f′(a)</span> with <span class="mth">f(${X_}) = ${H(F.e)}</span> and a = ${pr.aS}.`,
+        `f′(${X_}) = <span class="mth">${H(F.n("d"))}</span>`,`f′(${pr.aS}) = <span class="mth">${nva(pr.ans)}</span>`,`Numerical check of the difference quotient:<br><span class="mth">${rows}</span>`]); }
+    if(pr.kind==="implicit") return stepList(impSteps(pr.I,pr.P));
+    if(pr.kind==="second"){ const F=pr.F; return stepList([`f′(${X_}) = <span class="mth">${H(F.n("d"),true)}</span>`,`Differentiate again: f″(${X_}) = <span class="mth">${H(F.n("dd"),true)}</span>`,`f″(${pr.a}) = <span class="mth">${exactAt(F.dd,pr.a)}</span>`]); }
+  },
+  hint(pr,raw){
+    if(pr.kind==="diff"){ const rule=ruleOf(pr.raw); let extra="";
+      try{ const u=C.P(raw.replace(/^\s*(f['′]\s*\(x\)|y['′]|dy\/dx)\s*=\s*/i,"")); const eq=e=>C.equivX(u,e,pr.xs,2e-4);
+        if(eq(pr.F.e))extra="That is f itself — you need its derivative. ";
+        else if(eq(C.neg(pr.F.d)))extra="Your answer is the negative of the correct derivative — check a sign (d/dx cos x = −sin x). ";
+        else if(rule==="product"&&eq(C.mkProd([C.D(cs(pr.raw.a)),C.D(cs(pr.raw.b))])))extra="The derivative of a product is <b>not</b> the product of the derivatives. ";
+        else if(rule==="chain"){ const P=chainParts(pr.raw); if(eq(C.subst(C.D(P.O,"u"),"u",cs(P.inner))))extra="You differentiated the outside but forgot to multiply by the derivative of the inside. "; }
+        else if(rule==="quotient"){ const u=cs(pr.raw.a), v=cs(pr.raw.b); if(eq(C.mkProd([C.sub(C.mkProd([u,C.D(v)]),C.mkProd([C.D(u),v])),C.mkPow(v,C.Q(-2))])))extra="The numerator is in the wrong order: it's u′v − uv′ (low d-high <b>minus</b> high d-low). "; }
+      }catch(_){}
+      return extra+`This one starts with the <b>${RN[rule]}</b>. Find the outermost operation first, then apply the rule to each piece.`; }
+    if(pr.kind==="tangent")return `You need two things: the slope m = f′(${pr.a}) and the point (${pr.a}, f(${pr.a})). Then use y − y₁ = m(x − x₁).`;
+    if(pr.kind==="slope")return `Differentiate first, then substitute ${X_} = ${pr.a} into f′ (not into f).`;
+    if(pr.kind==="limit")return `Match the pattern [f(a + h) − f(a)]/h. What function f is being evaluated, and at what a? The limit equals f′(a).`;
+    if(pr.kind==="implicit")return `Differentiate both sides with respect to x. Each y-term gets a factor dy/dx, and a product like xy needs the product rule. Then solve for dy/dx and plug in the point.`;
+    if(pr.kind==="second")return `Differentiate twice, then evaluate f″ at ${X_} = ${pr.a}.`;
+  },
+  panel(full){
+    const pr=M6.s.pr;
+    if(!full&&document.getElementById("chk"))return;
+    const giv={kind:pr.kind,src:pr.src||null,a:pr.a!=null?pr.a:null,eq:pr.I?pr.I.src:null,pt:pr.P||null};
+    const isExpr=pr.kind==="diff", isLine=pr.kind==="tangent";
+    side.innerHTML=`<div class="panel"><h3>Problem</h3><div class="pad"><div class="prob" id="prob" data-given='${JSON.stringify(giv)}'>${pr.q}</div></div>
+      <div class="ansrow"><div><label class="fld" for="ans0">${pr.fields[0]}</label><input type="text" id="ans0" autocomplete="off" spellcheck="false" placeholder="${isExpr?"e.g. 2x cos(x^2)":isLine?"e.g. y = 3x − 2":"e.g. −3/4, sqrt(3)/2, e^2"}"></div></div>
+      <p class="help">${isExpr?"Type an expression in x: <code>^</code> powers, <code>sqrt()</code>, <code>sin cos tan sec csc cot</code>, <code>e^x</code>, <code>ln</code>, <code>log_2()</code>, <code>arctan</code>. Any equivalent form is accepted (checked at many x-values)."
+        :isLine?"Any form works: <code>y = 2x + 1</code>, <code>y - 3 = 2(x - 1)</code>, or just <code>2x + 1</code>."
+        :"A number, fraction or exact value: <code>-5/4</code>, <code>sqrt(3)/2</code>, <code>pi</code>, <code>e^2</code>. Decimals to 3 places are fine."}</p>
+      <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button>
+        <button id="sol" class="ghost" type="button">Show solution</button>
+      </div><div id="fb6" aria-live="polite"></div><div style="height:4px"></div></div>
+      ${panel("How it works",pad("<p>Get one right on the first try to grow your streak. A wrong answer resets it and gives a hint — try again. <b>Show solution</b> gives the full worked steps.</p>"))}`;
+    const inp=document.getElementById("ans0"), fb=document.getElementById("fb6");
+    const showSol=head=>{ fb.innerHTML=head+`<div class="fldwrap"><div class="panel" style="margin:0 0 6px">${M6.solution(pr)}</div></div>`; };
+    const check=()=>{
+      if(M6.s.state==="right")return;
+      const raw=inp.value.trim(); if(!raw){ fb.innerHTML=`<div class="verdict bad"><b>Type an answer first.</b></div>`; return; }
+      let ok=false;
+      try{
+        if(isExpr){ const u=C.P(raw.replace(/^\s*(f['′]\s*\(x\)|y['′]|dy\/dx)\s*=\s*/i,"")); ok=C.equivX(u,pr.F.d,pr.xs,2e-4); }
+        else if(isLine){ const fn=lineFromAns(raw); ok=[pr.a-1.3,pr.a,pr.a+0.7,pr.a+2].every(x=>{ const y=fn(x), t=pr.fa+pr.m*(x-pr.a); return isFinite(y)&&Math.abs(y-t)<=0.006+1e-3*Math.abs(t); }); }
+        else { const v=parseNumAns(raw); if(!isFinite(v))throw new C.PErr("That doesn't evaluate to a real number."); ok=Math.abs(v-pr.ans)<=0.0011+5e-4*Math.abs(pr.ans); }
+      }catch(e){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> ${(e instanceof C.PErr)?e.message:""}</div>`; return; }
+      if(ok){
+        M6.s.state="right"; if(M6.s.tries===0&&!M6.s.reveal){ M6.s.streak++; M6.s.best=Math.max(M6.s.best,M6.s.streak); } M6.s.solved++; M6.upStreak();
+        clear(); M6.draw(); inp.disabled=true;
+        showSol(`<div class="verdict good"><b>Correct!</b> ${M6.s.tries||M6.s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+M6.s.streak+"."} Compare with the worked solution, then press <b>New problem</b>.</div>`);
+      } else {
+        M6.s.tries++; M6.s.streak=0; M6.upStreak();
+        fb.innerHTML=`<div class="verdict bad"><b>Not quite.</b> ${M6.hint(pr,raw)}</div>`;
+      }
+    };
+    document.getElementById("chk").onclick=check;
+    inp.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); });
+    document.getElementById("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){ M6.s.streak=0; M6.upStreak(); } clear(); M6.draw();
+      showSol(`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+  }
+};
+
+/* ══════════ controller ══════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
+function update(){ setFS(); const M=MODS[cur]; clear(); M.draw(); M.panel(false); }
+function render(){
+  setFS(); stopAnim(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M6&&!M6.s.pr)M6.newProb();
+  bar.innerHTML=""; M.bar();
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  clear(); M.draw(); M.panel(true);
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ stopAnim(); cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+M1.init(); M2.init(); M3.init(); M5.init();
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+
+})();
+</script>
+</body>
+</html>

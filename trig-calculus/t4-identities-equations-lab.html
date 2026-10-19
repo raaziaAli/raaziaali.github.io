@@ -1,0 +1,1434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Identities &amp; Equations Lab — Trigonometry Unit 4</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M10 50L54 14' stroke='%2300E5FF' stroke-width='6' stroke-linecap='round'/%3E%3Ccircle cx='10' cy='50' r='6' fill='%23FF3D8A'/%3E%3Ccircle cx='54' cy='14' r='6' fill='%23FFD93D'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .rel[data-pair]{cursor:pointer}
+  .rel[data-pair]:hover{background:rgba(255,255,255,.05)}
+  .rel.active{background:rgba(255,255,255,.09);box-shadow:inset 3px 0 0 var(--accent)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top}
+  table.facts .ab{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  table.facts .st{color:#DDDDF2}
+  table.facts .st i{display:block;color:var(--dim);font-style:normal;font-size:13px;margin-top:4px}
+  .cathead{padding-top:18px!important;padding-bottom:6px!important;font-family:var(--display);font-weight:600;
+    font-size:13px;letter-spacing:.02em;color:var(--yellow);border-bottom:none!important}
+  .chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-right:9px}
+  .chip.assume{background:rgba(255,217,61,.18);color:var(--yellow)}
+  .chip.proved{background:rgba(94,234,212,.16);color:var(--mint)}
+  ol.chain{margin:0;padding:6px 20px 18px 38px;font-size:15px;color:#CFCFEA}
+  ol.chain li{padding:8px 0} ol.chain li::marker{color:var(--accent);font-weight:700}
+  ol.chain li b{color:#fff}
+
+  .steps{width:100%;border-collapse:collapse;font-size:15px}
+  .steps td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:middle}
+  .steps .stmt{font-family:var(--mono);font-size:14px;font-weight:600;color:#fff;white-space:nowrap}
+  .steps .why{width:56%}
+  .steps tr.right .stmt{color:var(--mint)}
+  .steps tr.right select{border-color:rgba(94,234,212,.6)}
+  .steps tr.wrong select{border-color:var(--coral)}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.8;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.4;fill:none;stroke-dasharray:9 6}
+  .wedge{stroke-width:2.4;fill-opacity:.17;cursor:pointer}
+  .wedge.flat{cursor:default}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── Coordinate Line Lab additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible,.choice:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:16px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  @media (max-width:560px){ svg.canvas .sm{font-size:21px;stroke-width:5} svg.canvas .mk{font-size:27px} svg.canvas .num{font-size:22px} svg.canvas .ax{font-size:16px} }
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .leg{stroke-width:3;fill:none;stroke-dasharray:8 5;stroke-linecap:round}
+  .tick{stroke:var(--graphite);stroke-width:2.2}
+  .ghostdot{fill:#9AA8C7;stroke:#fff;stroke-width:2}
+  .nt{position:relative;display:inline-block;padding-top:.42em;line-height:1.05;font-family:var(--mono);font-weight:700;color:#fff;white-space:nowrap}
+  .nt::before{content:"";position:absolute;left:.06em;right:.06em;top:.2em;border-top:2px solid currentColor}
+  .nt.ray::after,.nt.line::after{content:"";position:absolute;right:-.12em;top:calc(.2em - 3.5px);border-left:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .nt.line .la{position:absolute;left:-.12em;top:calc(.2em - 3.5px);border-right:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .uterms{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+  .uterms span{font-family:var(--mono);font-size:12px;font-weight:600;padding:5px 11px;border-radius:100px;
+    border:1px solid var(--edge);color:var(--dim);opacity:.55}
+  .uterms span.on{opacity:1;color:#0A0A1F;background:var(--accent);border-color:var(--accent)}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px}
+  .choice{font-family:var(--ui);font-size:15px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:14px;padding:13px 12px;cursor:pointer;text-align:left;line-height:1.5;transition:.15s}
+  .choice:hover{background:rgba(255,255,255,.12)}
+  .choice.right{border-color:var(--mint);background:rgba(94,234,212,.16)}
+  .choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.14)}
+  .choice small{display:block;font-weight:400;color:var(--dim);font-size:12.5px}
+  .stepl{list-style:none;margin:0;padding:6px 0}
+  .stepl li{padding:10px 20px;border-left:3px solid transparent;color:var(--dim);font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li.done{color:#CFCFEA}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li b{color:#fff}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  @media (max-width:560px){
+    .choices{grid-template-columns:1fr}
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+  }
+
+  /* ── Identities & Equations Lab additions ── */
+  .wk{list-style:none;margin:0;padding:4px 0 8px}
+  .wk li{padding:10px 20px;border-bottom:1px solid rgba(196,181,253,.11);font-size:14.5px;color:#CFCFEA}
+  .wk li:last-child{border-bottom:none}
+  .wk li .ex{display:block;font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;word-break:break-word}
+  .wk li .rs{display:block;font-size:13px;color:var(--dim);margin-top:3px}
+  .wk li .rs b{color:var(--accent)}
+  .wk li.fin .ex{color:var(--mint)}
+  .moves{display:flex;flex-wrap:wrap;gap:8px;padding:14px 20px}
+  .moves button{font-family:var(--ui);font-size:13.5px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:100px;padding:9px 14px;cursor:pointer;transition:.15s}
+  .moves button:hover{background:rgba(255,255,255,.13)}
+  .moves button:disabled{opacity:.4;cursor:default}
+  .moves button:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .six{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px 20px}
+  .six div{background:rgba(0,0,0,.25);border:1px solid var(--edge);border-radius:12px;padding:8px 10px;text-align:center}
+  .six div span{display:block;font-family:var(--mono);font-size:11.5px;color:var(--dim);letter-spacing:.06em}
+  .six div b{font-family:var(--mono);font-size:14px;color:#fff;word-break:break-word}
+  .gtitle{font-family:var(--display);font-weight:600;font-size:14px;fill:var(--ink)}
+  .fn{fill:none;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px}
+  .two label.fld{margin:14px 0 7px}
+  .cmp{width:100%;border-collapse:collapse;font-size:14px}
+  .cmp td{padding:9px 20px;border-bottom:1px solid rgba(196,181,253,.11);font-family:var(--mono);color:#fff}
+  .cmp td:first-child{font-family:var(--ui);color:#CFCFEA}
+  .cmp td:last-child{text-align:right;white-space:nowrap}
+  .bar select{max-width:100%;min-width:0;text-overflow:ellipsis}
+  .yn{display:flex;gap:10px;padding:14px 20px}
+  .yn .choice{flex:1;text-align:center}
+  @media (max-width:560px){ .six{grid-template-columns:repeat(2,1fr)} .two{grid-template-columns:1fr} svg.canvas .gtitle{font-size:19px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Identities &amp; Equations Lab</h1>
+    <div class="eyebrow">Trigonometry · Unit 4 · Identities &amp; Equations</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Trigonometry figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every figure is live and every number is computed from the drawing — drag a point and the work follows. Standards: Common Core HS Functions, Trigonometric Functions (F-TF).
+    <div class="links"><a href="/trig-calculus/">← Trig &amp; Calculus courses</a><a href="/math/#trig-calculus">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460, PI=Math.PI, TAU=2*Math.PI;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+const D2R=PI/180;
+const norm=d=>((d%360)+360)%360;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+function num(v,dp){ dp=(dp==null?3:dp); if(!isFinite(v))return "undefined"; const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+function frac(v,maxd){
+  maxd=maxd||24; if(!isFinite(v))return null;
+  for(let d=1;d<=maxd;d++){ const n=Math.round(v*d);
+    if(Math.abs(n/d-v)<1e-9){ const g=gcd(n,d), N=n/g, D=d/g; return D===1? minus(String(N)) : minus(N+"/"+D); } }
+  return null;
+}
+// radian value → "5π/6" when it is a nice multiple of π
+function piFrac(v,maxd){
+  maxd=maxd||36; if(Math.abs(v)<1e-9)return "0";
+  const r=v/PI;
+  for(let d=1;d<=maxd;d++){ const n=Math.round(r*d);
+    if(Math.abs(n/d-r)<1e-8&&n!==0){ const g=gcd(n,d), N=n/g, D=d/g;
+      const top=(N===1?"":N===-1?"−":minus(String(N)))+"π"; return D===1? top : top+"/"+D; } }
+  return null;
+}
+const radStr=v=>piFrac(v)||num(v,4);
+// √n simplified → [k, r] with n = k²r
+function sqrtSplit(n){ n=Math.round(n); let k=1,r=n; for(let i=Math.floor(Math.sqrt(n));i>1;i--){ if(n%(i*i)===0){k=i;r=n/(i*i);break;} } return [k,r]; }
+// (a√r)/b as a tidy string
+function radFrac(a,r,b){
+  if(b<0){a=-a;b=-b;}
+  if(r!==1){ const sp=sqrtSplit(r); a*=sp[0]; r=sp[1]; }
+  if(a===0)return "0";
+  const g=gcd(a,b); a/=g; b/=g;
+  const sg=a<0?"−":""; a=Math.abs(a);
+  const top=r===1? String(a) : (a===1?"":a)+"√"+r;
+  return sg+(b===1? top : top+"/"+b);
+}
+const sup=n=>({2:"²",3:"³",4:"⁴"}[n]||"^"+n);
+
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+let FS=1;
+function sseg(g,p,q,color,w,dash){
+  const a={x1:p[0],y1:p[1],x2:q[0],y2:q[1],style:"stroke:"+(color||"var(--graphite)"),"stroke-width":w||2.8,"stroke-linecap":"round",fill:"none"};
+  if(dash)a["stroke-dasharray"]=dash; const n=E("line",a); g.appendChild(n); return n;
+}
+function sdot(g,p,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||5,style:"fill:"+(color||"var(--ink)"),stroke:"#fff","stroke-width":2,"pointer-events":"none"})); }
+function sgrab(g,p,id,color){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?26:17,class:"grab","data-drag":id})); sdot(g,p,color||"var(--hand)",6); }
+function stext(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("style","fill:"+color);
+  t.textContent=s; g.appendChild(t); return t;
+}
+function arc(g,c,r,a0,a1,color,w){ // math angles (deg), counter-clockwise from a0 to a1
+  if(Math.abs(a1-a0)<0.5)return;
+  const p0=[c[0]+r*Math.cos(a0*D2R),c[1]-r*Math.sin(a0*D2R)], p1=[c[0]+r*Math.cos(a1*D2R),c[1]-r*Math.sin(a1*D2R)];
+  const large=Math.abs(a1-a0)>180?1:0, sweep=a1>a0?0:1;
+  g.appendChild(E("path",{d:`M${p0[0]},${p0[1]} A${r},${r} 0 ${large} ${sweep} ${p1[0]},${p1[1]}`,style:"stroke:"+color,"stroke-width":w||2.4,fill:"none"}));
+}
+function bgRect(){ cv.appendChild(E("rect",{width:VW,height:VH,fill:"rgba(255,255,255,0)"})); }
+let clipN=0;
+function clipG(x,y,w,h){ const id="cp"+(++clipN); const d=E("defs",{}); const cp=E("clipPath",{id}); cp.appendChild(E("rect",{x,y,width:w,height:h})); d.appendChild(cp); cv.appendChild(d); const g=E("g",{"clip-path":"url(#"+id+")"}); cv.appendChild(g); return g; }
+
+/* unit circle frame: returns helpers */
+function unitCircle(cx,cy,R,opts){
+  opts=opts||{};
+  const g=E("g",{}); cv.appendChild(g);
+  const X=x=>cx+x*R, Y=y=>cy-y*R;
+  const ext=opts.ext||1.35;
+  sseg(g,[cx-R*ext,cy],[cx+R*ext,cy],"#8FA3C8",1.6); sseg(g,[cx,cy-R*ext],[cx,cy+R*ext],"#8FA3C8",1.6);
+  g.appendChild(E("circle",{cx,cy,r:R,style:"stroke:var(--graphite)","stroke-width":2.2,fill:"rgba(2,132,199,.04)"}));
+  [[1,0,"1"],[-1,0,"−1"],[0,1,"1"],[0,-1,"−1"]].forEach(([a,b,s])=>{ stext(g,[X(a)+(a?(a>0?10:-12):-10),Y(b)+(b?(b>0?-9:11):13)],s,"ax"); });
+  return {g,X,Y,P:deg=>[X(Math.cos(deg*D2R)),Y(Math.sin(deg*D2R))],cx,cy,R};
+}
+
+/* function graph frame */
+function graph(o){
+  // o: {x0,x1,y0,y1,L,T,W,H,piStep (radians), yStep}
+  const g=E("g",{}); cv.appendChild(g);
+  const X=x=>o.L+(x-o.x0)/(o.x1-o.x0)*o.W, Y=y=>o.T+(o.y1-y)/(o.y1-o.y0)*o.H;
+  const ps=o.piStep||PI/2, ys=o.yStep||1;
+  for(let k=Math.ceil(o.x0/ps);k*ps<=o.x1+1e-9;k++){ const sx=X(k*ps); sseg(g,[sx,o.T],[sx,o.T+o.H],"var(--grid)",1); }
+  for(let k=Math.ceil(o.y0/ys);k*ys<=o.y1+1e-9;k++){ const sy=Y(k*ys); sseg(g,[o.L,sy],[o.L+o.W,sy],"var(--grid)",1); }
+  const ax0=clamp(Y(0),o.T,o.T+o.H), ay0=clamp(X(0),o.L,o.L+o.W);
+  sseg(g,[o.L,ax0],[o.L+o.W,ax0],"#8FA3C8",1.8); sseg(g,[ay0,o.T],[ay0,o.T+o.H],"#8FA3C8",1.8);
+  const lab=Math.max(1,Math.round((o.labEvery||1)));
+  for(let k=Math.ceil(o.x0/ps);k*ps<=o.x1+1e-9;k++){ if(!k||k%lab)continue; const t=E("text",{x:X(k*ps),y:ax0+15,class:"ax","text-anchor":"middle"}); t.textContent=piFrac(k*ps)||num(k*ps,2); g.appendChild(t); }
+  for(let k=Math.ceil(o.y0/ys);k*ys<=o.y1+1e-9;k++){ if(!k)continue; const t=E("text",{x:ay0-6,y:Y(k*ys)+4,class:"ax","text-anchor":"end"}); t.textContent=minus(num(k*ys,2)); g.appendChild(t); }
+  const cg=clipG(o.L,o.T,o.W,o.H);
+  function plot(f,color,w,dash,opac){
+    const N=o.samples||700, span=o.y1-o.y0; let d="", pen=false, prev=null;
+    for(let i=0;i<=N;i++){
+      const x=o.x0+(o.x1-o.x0)*i/N; let y; try{y=f(x);}catch(_){y=NaN;}
+      if(!isFinite(y)||Math.abs(y)>span*20){ pen=false; prev=null; continue; }
+      if(prev!=null&&Math.abs(y-prev)>span*1.5){ pen=false; }
+      d+=(pen?"L":"M")+X(x).toFixed(2)+","+Y(y).toFixed(2); pen=true; prev=y;
+    }
+    const p=E("path",{d,class:"fn",style:"stroke:"+color+(opac?";opacity:"+opac:""),"stroke-width":w||3});
+    if(dash)p.setAttribute("stroke-dasharray",dash);
+    cg.appendChild(p); return p;
+  }
+  return {g,cg,X,Y,plot,o,inv:sx=>o.x0+(sx-o.L)/o.W*(o.x1-o.x0)};
+}
+
+/* ══════════════════════ expression parser (x or θ) ══════════════════════ */
+const FUN={sin:Math.sin,cos:Math.cos,tan:Math.tan,sec:v=>1/Math.cos(v),csc:v=>1/Math.sin(v),cot:v=>Math.cos(v)/Math.sin(v)};
+const IDS=["sqrt","sin","cos","tan","sec","csc","cot","pi","x"];
+function compile(str){
+  let s=String(str).toLowerCase().replace(/\s+/g,"").replace(/θ/g,"x").replace(/π/g,"pi").replace(/[−–]/g,"-")
+    .replace(/[·×]/g,"*").replace(/÷/g,"/").replace(/\*\*/g,"^").replace(/²/g,"^2").replace(/³/g,"^3").replace(/⁴/g,"^4");
+  if(!s)return null;
+  const T=[]; let i=0;
+  while(i<s.length){
+    const c=s[i];
+    if(/[0-9.]/.test(c)){ const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)); if(!m)return null; T.push({t:"n",v:parseFloat(m[0])}); i+=m[0].length; continue; }
+    if(/[a-z]/.test(c)){ const id=IDS.find(w=>s.startsWith(w,i)); if(!id)return null; T.push({t:"id",v:id==="sqrt"?"√":id}); i+=id.length; continue; }
+    if("+-*/^()√".indexOf(c)>=0){ T.push({t:"op",v:c}); i++; continue; }
+    return null;
+  }
+  let p=0;
+  const pk=()=>T[p], isOp=v=>T[p]&&T[p].t==="op"&&T[p].v===v;
+  const startsAtom=()=>{ const t=T[p]; return t&&(t.t==="n"||t.t==="id"||(t.t==="op"&&(t.v==="("||t.v==="√"))); };
+  function expr(){ let v=term(); while(isOp("+")||isOp("-")){ const o=T[p++].v, a=v, b=term(); v=o==="+"?(x=>a(x)+b(x)):(x=>a(x)-b(x)); } return v; }
+  function term(){ let v=unary(); for(;;){
+      if(isOp("*")||isOp("/")){ const o=T[p++].v, a=v, b=unary(); v=o==="*"?(x=>a(x)*b(x)):(x=>a(x)/b(x)); }
+      else if(startsAtom()){ const a=v, b=power(); v=x=>a(x)*b(x); }
+      else break; } return v; }
+  function unary(){ if(isOp("-")){p++; const a=unary(); return x=>-a(x);} if(isOp("+")){p++; return unary();} return power(); }
+  function power(){ const b=atom(); if(isOp("^")){ p++; const e=unary(); return x=>Math.pow(b(x),e(x)); } return b; }
+  function simple(){ // number, pi or x (for sin2x style arguments)
+    const t=pk(); if(!t)throw 0;
+    if(t.t==="n"){p++; const v=t.v; return ()=>v;}
+    if(t.t==="id"&&t.v==="pi"){p++; return ()=>PI;}
+    if(t.t==="id"&&t.v==="x"){p++; return x=>x;}
+    throw 0;
+  }
+  function atom(){
+    const t=pk(); if(!t)throw 0;
+    if(t.t==="n"||(t.t==="id"&&(t.v==="pi"||t.v==="x")))return simple();
+    if(t.t==="op"&&t.v==="("){ p++; const v=expr(); if(!isOp(")"))throw 0; p++; return v; }
+    if(t.t==="op"&&t.v==="√"||t.t==="id"&&t.v==="√"){ p++; const a=atom(); return x=>Math.sqrt(a(x)); }
+    if(t.t==="id"&&FUN[t.v]){
+      p++; const F=FUN[t.v]; let ex=null;
+      if(isOp("^")){ p++; ex=atom(); }
+      let arg;
+      if(isOp("(")){ p++; arg=expr(); if(!isOp(")"))throw 0; p++; }
+      else { arg=simple(); while(pk()&&(pk().t==="n"||(pk().t==="id"&&(pk().v==="pi"||pk().v==="x")))){ const a=arg,b=simple(); arg=x=>a(x)*b(x); } }
+      const A=arg; if(ex){ const e=ex; return x=>Math.pow(F(A(x)),e(x)); } return x=>F(A(x));
+    }
+    throw 0;
+  }
+  try{ const f=expr(); if(p!==T.length)return null; return f; }catch(_){ return null; }
+}
+function evalNum(str){ const f=compile(str); if(!f)return NaN; const v=f(0.3719); return v; }
+function hasX(str){ return /x|θ/i.test(String(str).replace(/max|exp/gi,"")); }
+// numeric equivalence of two functions of x
+function sameFn(f,g){
+  let ok=0;
+  for(let i=0;i<40&&ok<10;i++){
+    const x=-3+6.1*Math.random(); const a=f(x), b=g(x);
+    if(!isFinite(a)||!isFinite(b)||Math.abs(a)>1e5||Math.abs(b)>1e5)continue;
+    if(Math.abs(a-b)>1e-6*Math.max(1,Math.abs(a)))return false; ok++;
+  }
+  return ok>=6;
+}
+// pretty-print a parseable expression
+function pretty(s){
+  let t=String(s);
+  t=t.replace(/(sin|cos|tan|sec|csc|cot)\((\d*\*?x)\)\^(\d)/g,(m,f,a,n)=>f+sup(n)+a.replace("*",""));
+  t=t.replace(/(sin|cos|tan|sec|csc|cot)\((\d*\*?x)\)/g,(m,f,a)=>f+" "+a.replace("*",""));
+  t=t.replace(/sqrt\((\d+)\)/g,"√$1").replace(/\^(\d)/g,(m,n)=>sup(n)).replace(/pi/g,"π");
+  t=t.replace(/(\d)\*(?=[a-zπ(√])/g,"$1").replace(/\*(?=[a-z])/g," ").replace(/(\d)(?=(sin|cos|tan|sec|csc|cot))/g,"$1 ").replace(/\*/g,"·").replace(/\+/g," + ").replace(/(\S)-/g,"$1 − ").replace(/-/g,"−");
+  return t;
+}
+
+/* ══════════════════════ exact values of standard angles ══════════════════════ */
+// value of sin/cos at multiples of 15° as {a,b,c,d,den}: (a + b√2 + c√3 + d√6)/den
+function qv(a,b,c,d,den){ return {a,b,c,d,den}; }
+const QZ=qv(0,0,0,0,1);
+function baseSC(fn,deg){ // deg multiple of 30 or 45
+  deg=norm(deg); const s=Math.round(Math.sin(deg*D2R)*1e9)/1e9, c=Math.round(Math.cos(deg*D2R)*1e9)/1e9;
+  const v=fn==="sin"?s:c; const sg=v<0?-1:1, av=Math.abs(v);
+  if(av<1e-9)return QZ; if(Math.abs(av-1)<1e-9)return qv(sg,0,0,0,1); if(Math.abs(av-.5)<1e-9)return qv(sg,0,0,0,2);
+  if(Math.abs(av-Math.SQRT1_2)<1e-9)return qv(0,sg,0,0,2); return qv(0,0,sg,0,2);
+}
+function qmul(p,q){ // basis 1,√2,√3,√6
+  const A=[p.a,p.b,p.c,p.d], B=[q.a,q.b,q.c,q.d], R=[0,0,0,0];
+  const tbl=[[[0,1],[1,1],[2,1],[3,1]],[[1,1],[0,2],[3,1],[2,2]],[[2,1],[3,1],[0,3],[1,3]],[[3,1],[2,2],[1,3],[0,6]]];
+  for(let i=0;i<4;i++)for(let j=0;j<4;j++){ const [k,m]=tbl[i][j]; R[k]+=A[i]*B[j]*m; }
+  return qv(R[0],R[1],R[2],R[3],p.den*q.den);
+}
+function qadd(p,q,sg){ sg=sg||1; const D=p.den*q.den/gcd(p.den,q.den), u=D/p.den, w=D/q.den;
+  return qv(p.a*u+sg*q.a*w,p.b*u+sg*q.b*w,p.c*u+sg*q.c*w,p.d*u+sg*q.d*w,D); }
+const qval=q=>(q.a+q.b*Math.SQRT2+q.c*Math.sqrt(3)+q.d*Math.sqrt(6))/q.den;
+function qstr(q,keep){ // keep: show unreduced denominator
+  let {a,b,c,d,den}=q;
+  if(!keep){ const g=gcd(gcd(gcd(a,b),gcd(c,d)),den); if(a||b||c||d){a/=g;b/=g;c/=g;d/=g;den/=g;} }
+  const parts=[]; [[a,""],[b,"√2"],[c,"√3"],[d,"√6"]].forEach(([k,r])=>{ if(!k)return; parts.push({k,r}); });
+  if(!parts.length)return "0";
+  // put positive terms first for readability
+  const RO={"√6":3,"√3":2,"√2":1,"":0}; parts.sort((u,v)=>((v.k>0)-(u.k>0))||(RO[v.r]-RO[u.r]));
+  let top=""; parts.forEach((t,i)=>{ const ak=Math.abs(t.k), body=(ak===1&&t.r?"":ak)+t.r;
+    top+= i===0? (t.k<0?"−":"")+body : (t.k<0?" − ":" + ")+body; });
+  if(den===1)return top;
+  if(parts.length>1){ if(parts.every(t=>t.k<0)){ return "−("+top.replace(/^−/,"").replace(/ − /g," + ")+")/"+den; } return "("+top+")/"+den; }
+  return top+"/"+den;
+}
+// exact sin/cos/tan of a multiple of 15°
+function exact15(fn,deg){
+  deg=norm(Math.round(deg));
+  const isBase=deg%30===0||deg%45===0;
+  if(fn==="tan"){
+    const c=Math.cos(deg*D2R); if(Math.abs(c)<1e-9)return "undefined";
+    const t=Math.tan(deg*D2R), at=Math.abs(t), sg=t<0?"−":"";
+    const map=[[0,"0"],[1,"1"],[Math.sqrt(3),"√3"],[Math.sqrt(3)/3,"√3/3"],[2-Math.sqrt(3),"2 − √3"],[2+Math.sqrt(3),"2 + √3"]];
+    const m=map.find(e=>Math.abs(e[0]-at)<1e-9); if(!m)return num(t,4);
+    if(m[1]==="0")return "0"; return sg&&m[1].indexOf(" ")>0? "−("+m[1]+")" : sg+m[1];
+  }
+  if(isBase)return qstr(baseSC(fn,deg));
+  const s=Math.sin(deg*D2R), c=Math.cos(deg*D2R), v=fn==="sin"?s:c, av=Math.abs(v);
+  const s15=(Math.sqrt(6)-Math.SQRT2)/4; const sg=v<0?"−":"";
+  return sg+(Math.abs(av-s15)<1e-9? "(√6 − √2)/4" : "(√6 + √2)/4");
+}
+
+/* ══════════════════════ drag plumbing & bar builders ══════════════════════ */
+let dragId=null;
+function svgPt(e){ const m=cv.getScreenCTM(); if(!m)return [0,0]; const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y]; }
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag, M=MODS[cur];
+  if(id){ dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); if(M.drag)M.drag(id,svgPt(e)); update(); return; }
+  if(M.tap){ if(M.tap(svgPt(e))!==false)update(); }
+});
+cv.addEventListener("pointermove",e=>{ if(!dragId)return; const M=MODS[cur]; if(!M.drag)return; if(M.drag(dragId,svgPt(e))!==false)update(); });
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+
+function btn(label,fn,cls){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(opts,val,fn,lab){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(lab)s.setAttribute("aria-label",lab);
+  opts.forEach(([k,l])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=l;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s;
+}
+function chk(label,val,fn){ const l=document.createElement("label"); l.className="chk"; const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked); l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i; }
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function slider(label,min,max,step,val,fn,show){
+  const l=document.createElement("label"); l.className="rng"; l.textContent=label+" ";
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=step; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); o.textContent=show?show(val):val;
+  i.oninput=()=>{o.textContent=show?show(+i.value):i.value; fn(+i.value);};
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l); return i;
+}
+function selectBox(opts,val,fn,lab){ const s=document.createElement("select"); s.setAttribute("aria-label",lab||"Choose");
+  opts.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;s.appendChild(o);}); s.value=String(val); s.onchange=()=>fn(s.value); bar.appendChild(s); return s; }
+function tryPanel(html){ return `<div class="panel"><h3>Try this</h3><div class="pad">${html}</div></div>`; }
+let degMode=true;
+const angStr=d=>degMode? num(d,1)+"°" : (piFrac(d*D2R,12)||num(d*D2R,3));
+const angSnap=(a,step)=>step? Math.round(a/step)*step : Math.round(a);
+// legend row: items [label,color,dash]; measured so labels never collide
+function legend(items,x,y){ let lx=x; items.forEach(it=>{ sseg(cv,[lx,y],[lx+24,y],it[1],4,it[2]); const t=stext(cv,[lx+30,y+1],it[0],"sm",it[1],"start"); let w=it[0].length*8.2; try{ w=t.getComputedTextLength()||w; }catch(_){} lx+=w+54; }); }
+const angFrom=(cx,cy,p)=>norm(Math.atan2(-(p[1]-cy),p[0]-cx)/D2R);
+
+/* exact-looking value from a number whose square is rational: ±√(p/q) simplified */
+function ratApprox(v,maxd){ maxd=maxd||600; const cands=[1,2,3,4,5,6,8,9,10,12,13,15,16,17,18,20,24,25,32,36,49,50,64,72,81,100,144,169,225,289,576,625,841,961,1225,1681,2401,4096]; for(const d of cands){ if(d>maxd)break; const n=Math.round(v*d); if(Math.abs(n/d-v)<1e-9*Math.max(1,Math.abs(v)))return [n,d]; } for(let d=1;d<=maxd;d++){ const n=Math.round(v*d); if(Math.abs(n/d-v)<1e-9*Math.max(1,Math.abs(v)))return [n,d]; } return null; }
+function sqExact(w){
+  if(!isFinite(w)||Math.abs(w)>1e9)return "undefined";
+  if(Math.abs(w)<1e-12)return "0";
+  const r=ratApprox(w*w,5000); if(!r)return num(w,4);
+  const [n,d]=r, g=gcd(n,d);
+  const s=radFrac(1,(n/g)*(d/g),d/g);
+  return (w<0?"−":"")+s;
+}
+const exA=w=>{ const fq=isFinite(w)?frac(w,5000):null; const s=fq||sqExact(w); return (s.indexOf("√")>=0||s.indexOf("/")>=0)? s+" ≈ "+num(w,3) : s; };
+
+/* ══════════════════════ TAB 1 · Pythagorean identities ══════════════════════ */
+const QN=["I","II","III","IV"];
+const quadOf=d=>{ d=norm(d); if(d%90===0)return -1; return Math.floor(d/90); };
+const M1={
+  tab:"Pythagorean identities", lesson:"F-TF.C.8", accent:"var(--cyan)",
+  s:{th:40,focus:"all",snap:true,given:"sin",val:"3/5",quad:"2",res:null},
+  title:()=>"Pythagorean identities on the unit circle",
+  bar(){
+    segBtns([["all","All three"],["p1","sin² + cos²"],["p2","1 + tan²"],["p3","1 + cot²"]],M1.s.focus,k=>{M1.s.focus=k;render();},"Identity to show");
+    segBtns([["deg","Degrees"],["rad","Radians"]],degMode?"deg":"rad",k=>{degMode=k==="deg";render();},"Angle unit");
+    chk("Snap 5°",M1.s.snap,v=>{M1.s.snap=v;});
+  },
+  drag(id,p){ let a=angFrom(240,235,p); a=M1.s.snap?angSnap(a,5)%360:Math.round(a); M1.s.th=a; },
+  draw(){
+    bgRect();
+    const th=M1.s.th, C=unitCircle(240,235,140), g=C.g, X=C.X, Y=C.Y, F=M1.s.focus;
+    const c=Math.cos(th*D2R), s=Math.sin(th*D2R), t=s/c, ct=c/s;
+    const O=[C.cx,C.cy], P=C.P(th), cl=clipG(0,0,VW,VH);
+    const show=k=>F==="all"||F===k;
+    const tanOK=Math.abs(c)>0.03, cotOK=Math.abs(s)>0.03;
+    // tangent lines
+    if(show("p2"))sseg(cl,[X(1),0],[X(1),VH],"rgba(234,88,12,.35)",1.6,"6 5");
+    if(show("p3"))sseg(cl,[0,Y(1)],[VW,Y(1)],"rgba(5,150,105,.35)",1.6,"6 5");
+    // terminal line through O
+    sseg(cl,[O[0]-Math.cos(th*D2R)*600,O[1]+Math.sin(th*D2R)*600],[O[0]+Math.cos(th*D2R)*600,O[1]-Math.sin(th*D2R)*600],"rgba(34,49,79,.22)",1.4);
+    arc(g,O,34,0,th,"var(--vert)",2.4);
+    const mid=th/2; stext(g,[O[0]+56*Math.cos(mid*D2R),O[1]-56*Math.sin(mid*D2R)],"θ","mk","var(--vert)");
+    if(show("p2")&&tanOK){
+      const T=[X(1),Y(t)];
+      sseg(cl,O,T,"var(--vert)",3.2,c<0?"9 6":null);
+      sseg(cl,[X(1),O[1]],T,"var(--lin)",4.2);
+      sdot(cl,T,"var(--lin)",5);
+      const ty=clamp(Y(t/2),20,VH-20);
+      stext(cl,[X(1)+12,ty],"tan θ = "+num(t,3),"sm","#C2410C","start");
+      const sm=[(O[0]+clamp(T[0],0,VW))/2,(O[1]+clamp(T[1],10,VH-10))/2];
+      stext(cl,[sm[0]+(c<0?0:-8),sm[1]+(t>0?-14:14)*(c<0?-1:1)],"sec θ = "+num(1/c,3),"sm","#6D28D9");
+    }
+    if(show("p3")&&cotOK){
+      const K=[X(ct),Y(1)];
+      sseg(cl,O,K,"var(--altx)",3.2,s<0?"9 6":null);
+      sseg(cl,[O[0],Y(1)],K,"var(--alt)",4.2);
+      sdot(cl,K,"var(--alt)",5);
+      const kx=clamp(X(ct/2),70,VW-70);
+      stext(cl,[kx,Y(1)-14],"cot θ = "+num(ct,3),"sm","#047857");
+      const km=[(O[0]+clamp(K[0],0,VW))/2,(O[1]+K[1])/2];
+      stext(cl,[km[0]+(ct>0?-62:62)*(s<0?-1:1),km[1]],"csc θ = "+num(1/s,3),"sm","#BE185D");
+    }
+    if(show("p1")){
+      const Fp=[X(c),O[1]];
+      sseg(g,O,Fp,"var(--corr)",4.2); sseg(g,Fp,P,"var(--same)",4.2);
+      if(Math.abs(c)>0.08&&Math.abs(s)>0.08){ const ux=c>0?-1:1, uy=s>0?-1:1; g.appendChild(E("polyline",{points:[[Fp[0]+ux*11,Fp[1]],[Fp[0]+ux*11,Fp[1]+uy*11],[Fp[0],Fp[1]+uy*11]].map(q=>q.join(",")).join(" "),class:"rt"})); }
+      stext(g,[(O[0]+Fp[0])/2,O[1]+(s>=0?16:-16)],"cos θ = "+num(c,3),"sm","#0369A1");
+      stext(g,[Fp[0]+(c>=0?10:-10),(Fp[1]+P[1])/2],"sin θ = "+num(s,3),"sm","#B91C1C",c>=0?"start":"end");
+    }
+    sseg(g,O,P,"var(--ink)",3);
+    sdot(g,O,"var(--ink)",4);
+    sgrab(g,P,"P");
+    const lp=[P[0]+26*Math.cos(th*D2R),P[1]-26*Math.sin(th*D2R)];
+    stext(g,lp,"P","mk","var(--hand)");
+    stext(g,[C.cx-R1L(),24],"θ = "+angStr(th)+(quadOf(th)>=0?"  (Quadrant "+QN[quadOf(th)]+")":"  (quadrantal)"),"sm","var(--ink)","start");
+    // proportion bars
+    const bx=468, bw=212, rows=[
+      ["p1","sin²θ + cos²θ = 1",[["cos²",c*c,"var(--corr)"],["sin²",s*s,"var(--same)"]],"1"],
+      ["p2","1 + tan²θ = sec²θ",tanOK?[["1",1,"#94A3B8"],["tan²",t*t,"var(--lin)"]]:null,tanOK?num(1/(c*c),3):"undef."],
+      ["p3","1 + cot²θ = csc²θ",cotOK?[["1",1,"#94A3B8"],["cot²",ct*ct,"var(--alt)"]]:null,cotOK?num(1/(s*s),3):"undef."]];
+    const bg=E("g",{}); cv.appendChild(bg);
+    rows.forEach((r,i)=>{
+      const y=92+i*120, on=show(r[0]);
+      bg.setAttribute("opacity","1");
+      const gg=E("g",{opacity:on?1:.3}); bg.appendChild(gg);
+      stext(gg,[bx,y-26],r[1],"gtitle",null,"start");
+      gg.appendChild(E("rect",{x:bx,y:y-12,width:bw,height:26,rx:6,fill:"#E2E8F0"}));
+      if(r[2]){ const tot=r[2].reduce((a,q)=>a+q[1],0); let x=bx;
+        r[2].forEach(q=>{ const w=bw*q[1]/tot; if(w>0.3)gg.appendChild(E("rect",{x,y:y-12,width:w,height:26,style:"fill:"+q[2]}));
+          if(w>40)stext(gg,[x+w/2,y+1],q[0],"ax",null).setAttribute("style","fill:#fff;font-weight:700;font-size:12px"); x+=w; });
+        stext(gg,[bx,y+30],r[2].map(q=>num(q[1],3)).join(" + ")+" = "+r[3],"sm","var(--ink)","start");
+      } else stext(gg,[bx,y+30],"undefined at θ = "+angStr(th),"sm","#B91C1C","start");
+    });
+  },
+  panel(full){
+    const th=M1.s.th, c=Math.cos(th*D2R), s=Math.sin(th*D2R);
+    const live=`sin²θ + cos²θ = ${num(s*s,4)} + ${num(c*c,4)} = ${num(s*s+c*c,4)}
+1 + tan²θ = ${Math.abs(c)>1e-9?"1 + "+num((s/c)**2,4)+" = "+num(1+(s/c)**2,4):"undefined"}
+sec²θ = ${Math.abs(c)>1e-9?num(1/(c*c),4):"undefined"}
+1 + cot²θ = ${Math.abs(s)>1e-9?"1 + "+num((c/s)**2,4)+" = "+num(1+(c/s)**2,4):"undefined"}
+csc²θ = ${Math.abs(s)>1e-9?num(1/(s*s),4):"undefined"}`;
+    if(!full&&document.getElementById("live1")){ document.getElementById("live1").textContent=live; return; }
+    side.innerHTML=`<div class="panel"><h3>Three identities from one triangle</h3><div class="pad">
+      <p>The point P on the <span class="term">unit circle</span> is (cos θ, sin θ). Its legs are |cos θ| and |sin θ| and its hypotenuse is the radius, 1. The Pythagorean theorem gives the first identity.</p>
+      <div class="eq">sin²θ + cos²θ = 1
+÷ cos²θ:  tan²θ + 1 = sec²θ
+÷ sin²θ:  1 + cot²θ = csc²θ<small>Dividing is allowed only where cos θ ≠ 0 (or sin θ ≠ 0), which is why tan and sec are undefined at 90° and 270°.</small></div>
+      <p>The other two identities have triangles of their own. The orange segment on the tangent line x = 1 has length |tan θ|, and the purple segment from O to it is |sec θ|. On the line y = 1 the green segment is |cot θ| and the pink one is |csc θ|. Each triangle has a leg of 1.</p>
+      <div class="eq" id="live1">${live}</div></div></div>
+    <div class="panel"><h3>Find all six from one</h3><div class="pad" style="padding-bottom:0"><p>Give one value and the quadrant of θ. The Pythagorean identity finds the partner value and the quadrant sets the sign.</p></div>
+      <div class="ansrow"><div><label class="fld" for="g1f">Given</label><select id="g1f">${["sin","cos","tan","csc","sec","cot"].map(f=>`<option value="${f}">${f} θ</option>`).join("")}</select></div>
+        <div><label class="fld" for="g1v">Value</label><input type="text" id="g1v" autocomplete="off" spellcheck="false" placeholder="e.g. 3/5 or −√5/3"></div>
+        <div><label class="fld" for="g1q">Quadrant</label><select id="g1q">${QN.map((q,i)=>`<option value="${i+1}">${q}</option>`).join("")}</select></div></div>
+      <div class="fldwrap" style="margin:16px 0 4px"><button class="go" id="g1go" type="button">Find all six values</button></div>
+      <div id="g1out"></div><div style="height:6px"></div></div>
+    ${tryPanel(`<p>Drag P into Quadrant II. Which of the six values are negative? Now press <b>1 + tan²</b> and drag P toward 90°. Why does the orange segment run off the board, and what happens to sec θ?</p><p>Then solve: sin θ = −5/13 with θ in Quadrant III. Check that the circle moves to your angle.</p>`)}`;
+    const f=document.getElementById("g1f"), v=document.getElementById("g1v"), q=document.getElementById("g1q");
+    f.value=M1.s.given; v.value=M1.s.val; q.value=M1.s.quad;
+    const run=()=>{ M1.s.given=f.value; M1.s.val=v.value; M1.s.quad=q.value; const out=document.getElementById("g1out"); const r=sixFrom(f.value,v.value,+q.value);
+      if(r.err){ out.innerHTML=`<div class="verdict bad">${r.err}</div>`; return; }
+      M1.s.th=Math.round(r.deg); clear(); M1.draw(); M1.panelLive();
+      out.innerHTML=`<div class="six">${["sin","cos","tan","csc","sec","cot"].map(k=>`<div><span>${k} θ</span><b>${r.vals[k]}</b></div>`).join("")}</div><div class="fldwrap"><div class="eq">${r.work}</div></div>`; };
+    document.getElementById("g1go").onclick=run; v.addEventListener("keydown",e=>{if(e.key==="Enter")run();});
+  },
+  panelLive(){ M1.panel(false); }
+};
+function R1L(){ return 216; }
+function sixFrom(fn,str,quad){
+  const v=evalNum(str); if(!isFinite(v)||hasX(str))return {err:"<b>I can't read that value.</b> Try a fraction like 3/5, a decimal, or a radical like −√5/3 (type sqrt(5) or √5)."};
+  const sx=(quad===1||quad===4)?1:-1, sy=(quad===1||quad===2)?1:-1;
+  const nameQ="Quadrant "+QN[quad-1];
+  let x,y,work="";
+  const vs=exA(v);
+  const need=(cond,msg)=>{ if(!cond)throw msg; };
+  try{
+    if(fn==="sin"||fn==="csc"){
+      const sv=fn==="sin"?v:1/v;
+      need(fn==="sin"?Math.abs(v)<=1:Math.abs(v)>=1, fn==="sin"?"sin θ must be between −1 and 1.":"csc θ must be ≤ −1 or ≥ 1.");
+      need(Math.sign(sv)===sy||sv===0,`sin θ is ${sy>0?"positive":"negative"} in ${nameQ}, so this value can't happen there.`);
+      y=sv; x=sx*Math.sqrt(Math.max(0,1-sv*sv));
+      if(fn==="csc")work+=`sin θ = 1/csc θ = ${exA(sv)}\n`;
+      work+=`cos²θ = 1 − sin²θ = 1 − (${sqExact(sv)})² = ${frac(1-sv*sv,600)||num(1-sv*sv,4)}\ncos θ = ${sx>0?"+":"−"}√(${frac(1-sv*sv,600)||num(1-sv*sv,4)}) = ${exA(x)}   (cos is ${sx>0?"+":"−"} in ${nameQ})`;
+    } else if(fn==="cos"||fn==="sec"){
+      const cv_=fn==="cos"?v:1/v;
+      need(fn==="cos"?Math.abs(v)<=1:Math.abs(v)>=1, fn==="cos"?"cos θ must be between −1 and 1.":"sec θ must be ≤ −1 or ≥ 1.");
+      need(Math.sign(cv_)===sx||cv_===0,`cos θ is ${sx>0?"positive":"negative"} in ${nameQ}, so this value can't happen there.`);
+      x=cv_; y=sy*Math.sqrt(Math.max(0,1-cv_*cv_));
+      if(fn==="sec")work+=`cos θ = 1/sec θ = ${exA(cv_)}\n`;
+      work+=`sin²θ = 1 − cos²θ = 1 − (${sqExact(cv_)})² = ${frac(1-cv_*cv_,600)||num(1-cv_*cv_,4)}\nsin θ = ${sy>0?"+":"−"}√(${frac(1-cv_*cv_,600)||num(1-cv_*cv_,4)}) = ${exA(y)}   (sin is ${sy>0?"+":"−"} in ${nameQ})`;
+    } else if(fn==="tan"){
+      need(Math.sign(v)===sx*sy||v===0,`tan θ is ${sx*sy>0?"positive":"negative"} in ${nameQ}, so this value can't happen there.`);
+      const sec=sx*Math.sqrt(1+v*v); x=1/sec; y=v*x;
+      work+=`sec²θ = 1 + tan²θ = 1 + (${sqExact(v)})² = ${frac(1+v*v,600)||num(1+v*v,4)}\nsec θ = ${sx>0?"+":"−"}√(${frac(1+v*v,600)||num(1+v*v,4)}) = ${exA(sec)}   (cos, so sec, is ${sx>0?"+":"−"} in ${nameQ})\ncos θ = 1/sec θ = ${exA(x)},  sin θ = tan θ · cos θ = ${exA(y)}`;
+    } else {
+      need(Math.sign(v)===sx*sy||v===0,`cot θ is ${sx*sy>0?"positive":"negative"} in ${nameQ}, so this value can't happen there.`);
+      const csc=sy*Math.sqrt(1+v*v); y=1/csc; x=v*y;
+      work+=`csc²θ = 1 + cot²θ = 1 + (${sqExact(v)})² = ${frac(1+v*v,600)||num(1+v*v,4)}\ncsc θ = ${sy>0?"+":"−"}√(${frac(1+v*v,600)||num(1+v*v,4)}) = ${exA(csc)}   (sin, so csc, is ${sy>0?"+":"−"} in ${nameQ})\nsin θ = 1/csc θ = ${exA(y)},  cos θ = cot θ · sin θ = ${exA(x)}`;
+    }
+  }catch(msg){ return {err:"<b>No angle fits.</b> "+msg}; }
+  if(Math.abs(x)<1e-12||Math.abs(y)<1e-12) return {err:"<b>That value puts θ on an axis</b> (a quadrantal angle), so it is not inside a quadrant. Try a value strictly between the extremes."};
+  work+=`\ntan θ = sin θ / cos θ,  then reciprocals:\ncsc θ = 1/sin θ,  sec θ = 1/cos θ,  cot θ = 1/tan θ`;
+  const vals={sin:exA(y),cos:exA(x),tan:exA(y/x),csc:exA(1/y),sec:exA(1/x),cot:exA(x/y)};
+  return {vals,work,x,y,deg:Math.round(norm(Math.atan2(y,x)/D2R)*10)/10};
+}
+
+/* ══════════════════════ TAB 2 · Verifying identities ══════════════════════ */
+const MOVES=[
+  ["sc","Rewrite in sin & cos"],["pyth","Pythagorean substitution"],["cd","Common denominator"],
+  ["factor","Factor"],["expand","Expand / multiply out"],["conj","Multiply by conjugate"],["simp","Simplify / cancel"]];
+const MOVE_NAME=Object.fromEntries(MOVES);
+// L, R and each step's expression are parseable; side tells which side the proof works on
+const IDLIB=[
+  {L:"tan(x)*cos(x)",R:"sin(x)",side:"L",steps:[
+    ["sc","(sin(x)/cos(x))*cos(x)","tan x = sin x / cos x"],
+    ["simp","sin(x)","cos x cancels (where cos x ≠ 0)"]]},
+  {L:"sec(x)-cos(x)",R:"sin(x)*tan(x)",side:"L",steps:[
+    ["sc","1/cos(x)-cos(x)","sec x = 1 / cos x"],
+    ["cd","(1-cos(x)^2)/cos(x)","write cos x as cos²x / cos x and subtract"],
+    ["pyth","sin(x)^2/cos(x)","1 − cos²x = sin²x"],
+    ["simp","sin(x)*tan(x)","split sin²x / cos x = sin x · (sin x / cos x) = sin x · tan x"]]},
+  {L:"(1-cos(x)^2)*(1+cot(x)^2)",R:"1",side:"L",steps:[
+    ["pyth","sin(x)^2*csc(x)^2","1 − cos²x = sin²x and 1 + cot²x = csc²x"],
+    ["sc","sin(x)^2*(1/sin(x)^2)","csc²x = 1 / sin²x"],
+    ["simp","1","sin²x cancels"]]},
+  {L:"sin(x)^4-cos(x)^4",R:"sin(x)^2-cos(x)^2",side:"L",steps:[
+    ["factor","(sin(x)^2-cos(x)^2)*(sin(x)^2+cos(x)^2)","difference of squares: a⁴ − b⁴ = (a² − b²)(a² + b²)"],
+    ["pyth","(sin(x)^2-cos(x)^2)*1","sin²x + cos²x = 1"],
+    ["simp","sin(x)^2-cos(x)^2","multiplying by 1 changes nothing"]]},
+  {L:"1/(1-sin(x))+1/(1+sin(x))",R:"2*sec(x)^2",side:"L",steps:[
+    ["cd","((1+sin(x))+(1-sin(x)))/((1-sin(x))*(1+sin(x)))","common denominator (1 − sin x)(1 + sin x)"],
+    ["expand","2/(1-sin(x)^2)","numerator: the sin x terms cancel; denominator: (1 − s)(1 + s) = 1 − s²"],
+    ["pyth","2/cos(x)^2","1 − sin²x = cos²x"],
+    ["simp","2*sec(x)^2","1 / cos²x = sec²x"]]},
+  {L:"cos(x)/(1-sin(x))",R:"(1+sin(x))/cos(x)",side:"L",steps:[
+    ["conj","(cos(x)*(1+sin(x)))/((1-sin(x))*(1+sin(x)))","multiply top and bottom by the conjugate 1 + sin x"],
+    ["expand","(cos(x)*(1+sin(x)))/(1-sin(x)^2)","(1 − sin x)(1 + sin x) = 1 − sin²x"],
+    ["pyth","(cos(x)*(1+sin(x)))/cos(x)^2","1 − sin²x = cos²x"],
+    ["simp","(1+sin(x))/cos(x)","cancel one factor of cos x"]]},
+  {L:"csc(x)-sin(x)",R:"cos(x)*cot(x)",side:"L",steps:[
+    ["sc","1/sin(x)-sin(x)","csc x = 1 / sin x"],
+    ["cd","(1-sin(x)^2)/sin(x)","write sin x as sin²x / sin x and subtract"],
+    ["pyth","cos(x)^2/sin(x)","1 − sin²x = cos²x"],
+    ["simp","cos(x)*cot(x)","cos²x / sin x = cos x · (cos x / sin x) = cos x · cot x"]]},
+  {L:"(sin(x)+cos(x))^2",R:"1+2*sin(x)*cos(x)",side:"L",steps:[
+    ["expand","sin(x)^2+2*sin(x)*cos(x)+cos(x)^2","(a + b)² = a² + 2ab + b²"],
+    ["pyth","1+2*sin(x)*cos(x)","regroup: sin²x + cos²x = 1"]]},
+  {L:"tan(x)+cot(x)",R:"sec(x)*csc(x)",side:"L",steps:[
+    ["sc","sin(x)/cos(x)+cos(x)/sin(x)","tan = sin/cos, cot = cos/sin"],
+    ["cd","(sin(x)^2+cos(x)^2)/(sin(x)*cos(x))","common denominator sin x cos x"],
+    ["pyth","1/(sin(x)*cos(x))","sin²x + cos²x = 1"],
+    ["simp","sec(x)*csc(x)","1/(sin x cos x) = (1/cos x)(1/sin x)"]]},
+  {L:"(sec(x)^2-1)/sec(x)^2",R:"sin(x)^2",side:"L",steps:[
+    ["pyth","tan(x)^2/sec(x)^2","sec²x − 1 = tan²x"],
+    ["sc","(sin(x)^2/cos(x)^2)/(1/cos(x)^2)","tan²x = sin²x / cos²x, sec²x = 1 / cos²x"],
+    ["simp","sin(x)^2","dividing by 1/cos²x is multiplying by cos²x"]]}
+];
+const FAKES=[
+  ["sin(2*x)","2*sin(x)","sin 2x looks like it should be 2 sin x, but doubling the angle is not doubling the output."],
+  ["(sin(x)+cos(x))^2","1","Squaring a sum is not the sum of squares: the 2 sin x cos x term is missing."],
+  ["sin(x)+cos(x)","1","True at x = 0 and x = π/2, but false in between (try x = π/4)."],
+  ["sec(x)-cos(x)","sin(x)","Close to identity #2, but the right side should be sin x tan x."],
+  ["cos(x+pi/4)","cos(x)+cos(pi/4)","cos(A + B) ≠ cos A + cos B. Use the sum formula instead."],
+  ["tan(x)^2-sec(x)^2","1","The Pythagorean identity gives tan²x − sec²x = −1, not 1."]
+];
+const M2={
+  tab:"Verifying identities", lesson:"F-TF.C.8", accent:"var(--lavender)",
+  s:{id:1,done:0,fb:null,mode:"proof",fake:0,cl:"",cr:"",tx:1.0},
+  title:()=>M2.s.mode==="proof"? "Prove: "+pretty(IDLIB[M2.s.id].L)+" = "+pretty(IDLIB[M2.s.id].R) : "Graph check: is it an identity?",
+  bar(){
+    selectBox(IDLIB.map((I,i)=>[i,(i+1)+". "+pretty(I.L)+" = "+pretty(I.R)]),M2.s.id,v=>{M2.s.id=+v;M2.s.done=0;M2.s.fb=null;M2.s.mode="proof";render();},"Identity to prove");
+    segBtns([["proof","Identity"],["fake","Non-identity"]],M2.s.mode,k=>{M2.s.mode=k;if(k==="fake"&&!M2.s.cl){M2.s.cl=FAKES[0][0];M2.s.cr=FAKES[0][1];}render();},"Graph overlay");
+    btn("Reset proof",()=>{M2.s.done=0;M2.s.fb=null;render();});
+  },
+  fns(){
+    if(M2.s.mode==="proof"){ const I=IDLIB[M2.s.id]; return [compile(I.L),compile(I.R),pretty(I.L),pretty(I.R)]; }
+    return [compile(M2.s.cl),compile(M2.s.cr),pretty(M2.s.cl),pretty(M2.s.cr)];
+  },
+  drag(id,p){ M2.s.tx=clamp(M2.G?M2.G.inv(p[0]):p[0],-TAU+0.01,TAU-0.01); },
+  tap(p){ if(p[1]>40&&M2.G){ M2.s.tx=clamp(M2.G.inv(p[0]),-TAU+0.01,TAU-0.01); return true; } return false; },
+  draw(){
+    bgRect();
+    const [f,g,ls,rs]=M2.fns();
+    const G=graph({x0:-TAU,x1:TAU,y0:-4,y1:4,L:30,T:44,W:640,H:390,piStep:PI/2,labEvery:2,yStep:1}); M2.G=G;
+    legend([["y = "+(ls||"?"),"var(--vert)"],["y = "+(rs||"?"),"var(--lin)","8 6"]],34,22);
+    if(!f||!g){ stext(cv,[350,240],"Type both sides in the panel to graph them","sm","#B91C1C"); return; }
+    const same=sameFn(f,g);
+    if(!same){ // shade the gap
+      let d=""; const N=500, pts=[], pts2=[];
+      for(let i=0;i<=N;i++){ const x=-TAU+2*TAU*i/N, a=f(x), b=g(x); if(isFinite(a)&&isFinite(b)&&Math.abs(a)<8&&Math.abs(b)<8){ pts.push([G.X(x),G.Y(a)]); pts2.push([G.X(x),G.Y(b)]); } else if(pts.length){ d+="M"+pts.map(q=>q.join(",")).join("L")+"L"+pts2.reverse().map(q=>q.join(",")).join("L")+"Z"; pts.length=0; pts2.length=0; } }
+      if(pts.length)d+="M"+pts.map(q=>q.join(",")).join("L")+"L"+pts2.reverse().map(q=>q.join(",")).join("L")+"Z";
+      G.cg.appendChild(E("path",{d,style:"fill:rgba(220,38,38,.10);stroke:none"}));
+    }
+    G.plot(f,"var(--vert)",5.5,null,.85);
+    G.plot(g,"var(--lin)",3,"10 8");
+    const x=M2.s.tx, a=f(x), b=g(x);
+    sseg(G.cg,[G.X(x),44],[G.X(x),434],"rgba(34,49,79,.45)",1.5,"4 4");
+    if(isFinite(a)&&Math.abs(a)<4)sdot(G.cg,[G.X(x),G.Y(a)],"var(--vert)",6);
+    if(isFinite(b)&&Math.abs(b)<4)sdot(G.cg,[G.X(x),G.Y(b)],"var(--lin)",4);
+    const bx=clamp(G.X(x),110,590);
+    stext(cv,[bx,62],"x = "+num(x,2)+":  left "+num(a,3)+",  right "+num(b,3),"sm",Math.abs(a-b)<1e-6||(!isFinite(a)&&!isFinite(b))?"#047857":"#B91C1C");
+    sgrab(cv,[G.X(x),434],"tx");
+    stext(cv,[668,418],same?"graphs coincide":"graphs differ","sm",same?"#047857":"#B91C1C","end");
+  },
+  panel(full){
+    const [f,g]=M2.fns(), x=M2.s.tx;
+    if(!full)return;
+    const I=IDLIB[M2.s.id], st=I.steps, d=M2.s.done, fin=d>=st.length;
+    let h="";
+    if(M2.s.mode==="proof"){
+      const sideName=I.side==="L"?"left":"right";
+      h+=`<div class="panel"><h3>Proof workspace</h3>
+      <div class="pad" style="padding-bottom:4px"><p>Goal: transform the <b>${sideName} side</b> until it matches the other side exactly. Work on one side only; never move terms across the = sign (that would assume what you are proving).</p></div>
+      <ul class="wk" id="prf"><li><span class="ex">${pretty(I.L)}</span><span class="rs">left side (start)</span></li>
+      ${st.slice(0,d).map((s,i)=>`<li class="${i===st.length-1?"fin":""}"><span class="ex">= ${pretty(s[1])}</span><span class="rs"><b>${MOVE_NAME[s[0]]}</b> · ${s[2]}</span></li>`).join("")}
+      ${fin?`<li class="fin"><span class="ex">= ${pretty(I.R)}  ✓</span><span class="rs">matches the right side</span></li>`:""}</ul>
+      <div class="moves" role="group" aria-label="Transformations">${MOVES.map(([k,l])=>`<button type="button" data-mv="${k}" ${fin?"disabled":""}>${l}</button>`).join("")}</div>
+      <div id="fb2">${fin?`<div class="verdict good"><b>Proved in ${st.length} steps.</b> The left side became the right side using only identities you already know, so the equation is true for every x where both sides are defined. The graphs coincide too.</div>`:M2.s.fb||""}</div>
+      <div class="fldwrap" style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap"><button class="ghost" id="hint2" type="button" ${fin?"disabled":""}>Hint</button><button class="ghost" id="undo2" type="button" ${d?"":"disabled"}>Undo step</button></div></div>`;
+    } else {
+      h+=`<div class="panel"><h3>Quick graph check</h3><div class="pad"><p>If two expressions are identical, their graphs lie on top of each other everywhere. If you can see a gap anywhere (shaded red), it is <b>not</b> an identity. One point of agreement is not enough.</p></div>
+      <div class="moves" role="group" aria-label="Non-identity examples">${FAKES.map((F,i)=>`<button type="button" data-fk="${i}">${pretty(F[0])} = ${pretty(F[1])}?</button>`).join("")}</div>
+      <div class="two"><div><label class="fld" for="cl2">Left side</label><input type="text" id="cl2" value="${M2.s.cl}" autocomplete="off" spellcheck="false"></div>
+      <div><label class="fld" for="cr2">Right side</label><input type="text" id="cr2" value="${M2.s.cr}" autocomplete="off" spellcheck="false"></div></div>
+      <div class="fldwrap" style="margin:14px 0 4px"><button class="go" id="gr2" type="button">Graph both sides</button></div>
+      <div id="fb2">${M2.verdictFake(f,g)}</div></div>`;
+    }
+    h+=`<div class="panel"><h3>How to verify an identity</h3><div class="pad">
+      <p>An <span class="term">identity</span> is an equation that is true for <b>every</b> input where both sides are defined. To verify one, start from the messier side and rewrite it, one justified step at a time, until it looks exactly like the other side.</p>
+      <div class="eq">Reciprocal:
+  sec = 1/cos   csc = 1/sin   cot = 1/tan
+Quotient:
+  tan = sin/cos   cot = cos/sin
+Pythagorean:
+  sin² + cos² = 1
+  1 + tan² = sec²    1 + cot² = csc²</div>
+      <p>Good first moves: rewrite everything in sin and cos, combine fractions, or factor. A graph is a quick check, but a graph alone is not a proof.</p></div></div>`;
+    h+=tryPanel(`<p>Prove identity 5 using only the move menu. Then switch to <b>Non-identity</b> and type your own guess, such as <b>cos(2x)</b> and <b>2cos(x)</b>. Where do the two graphs agree, and why isn't that enough?</p>`);
+    side.innerHTML=h;
+    side.querySelectorAll("[data-mv]").forEach(b=>b.onclick=()=>{
+      const want=st[M2.s.done]; if(!want)return;
+      if(b.dataset.mv===want[0]){ M2.s.done++; M2.s.fb=null; }
+      else M2.s.fb=`<div class="verdict bad"><b>${MOVE_NAME[b.dataset.mv]} doesn't help here.</b> ${M2.whyNot(b.dataset.mv,want)}</div>`;
+      M2.panel(true);
+    });
+    const hb=document.getElementById("hint2"); if(hb)hb.onclick=()=>{ const w=st[M2.s.done]; M2.s.fb=`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>Hint:</b> try <b>${MOVE_NAME[w[0]]}</b>, because ${w[2]}.</div>`; M2.panel(true); };
+    const ub=document.getElementById("undo2"); if(ub)ub.onclick=()=>{ M2.s.done=Math.max(0,M2.s.done-1); M2.s.fb=null; M2.panel(true); };
+    side.querySelectorAll("[data-fk]").forEach(b=>b.onclick=()=>{ const F=FAKES[+b.dataset.fk]; M2.s.cl=F[0]; M2.s.cr=F[1]; update(); M2.panel(true); });
+    const gr=document.getElementById("gr2");
+    if(gr){ const go=()=>{ M2.s.cl=document.getElementById("cl2").value; M2.s.cr=document.getElementById("cr2").value; render(); };
+      gr.onclick=go; ["cl2","cr2"].forEach(id=>document.getElementById(id).addEventListener("keydown",e=>{if(e.key==="Enter")go();})); }
+  },
+  verdictFake(f,g){
+    if(!f||!g)return `<div class="verdict bad"><b>I can't read one side.</b> Use x, sin, cos, tan, sec, csc, cot, sqrt, pi and ^ (e.g. sin(x)^2 or 2cos(2x)).</div>`;
+    if(sameFn(f,g))return `<div class="verdict good"><b>The graphs coincide</b>, so this looks like an identity. Prove it algebraically to be sure.</div>`;
+    let cx=null; for(let i=0;i<200;i++){ const x=-3+i*0.03+0.017; const a=f(x),b=g(x); if(isFinite(a)&&isFinite(b)&&Math.abs(a-b)>0.05){cx=x;break;} }
+    const F=FAKES.find(q=>q[0]===M2.s.cl&&q[1]===M2.s.cr);
+    return `<div class="verdict bad"><b>Not an identity.</b> ${cx!=null?`At x = ${num(cx,2)}, the left side is ${num(f(cx),3)} but the right side is ${num(g(cx),3)}. One counterexample is enough to disprove it.`:""} ${F?F[2]:""}</div>`;
+  },
+  whyNot(mv,want){
+    const msgs={sc:"Everything you need is already written in a useful form.",pyth:"There's no sin² + cos², 1 + tan², 1 + cot² (or a rearrangement of one) to replace yet.",
+      cd:"There aren't two fractions to combine at this point.",factor:"Nothing here factors in a helpful way yet.",expand:"There's no product or square that needs multiplying out right now.",
+      conj:"Multiplying by a conjugate is for a denominator like 1 − sin x. It isn't needed at this step.",simp:"Nothing cancels yet. You need to change the form first."};
+    return msgs[mv]+" Look at the expression and pick a different move, or press Hint.";
+  }
+};
+
+/* ══════════════════════ TAB 3 · Sum & difference formulas ══════════════════════ */
+const STD=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
+const TANX={0:"0",30:"√3/3",45:"1",60:"√3",120:"−√3",135:"−1",150:"−√3/3",180:"0",210:"√3/3",225:"1",240:"√3",300:"−√3",315:"−1",330:"−√3/3"};
+function decompose(th){ // θ = a ± b with a, b standard; prefer small values
+  const cand=[];
+  const A=[30,45,60,90,120,135,150,180,210,225,240,270,300,315], B=[30,45,60];
+  A.forEach(a=>B.forEach(b=>{ if(a+b===th)cand.push([a,b,1]); if(a-b===th)cand.push([a,b,-1]); }));
+  cand.sort((u,v)=>(u[0]+u[1])-(v[0]+v[1])||(v[2]-u[2]));
+  return cand[0]||null;
+}
+function sumSteps(fn,th){
+  const dcp=decompose(th); if(!dcp)return null;
+  const [a,b,sg]=dcp, op=sg>0?"+":"−", opp=sg>0?"−":"+";
+  const sa=baseSC("sin",a), ca=baseSC("cos",a), sb=baseSC("sin",b), cb=baseSC("cos",b);
+  const P=s=>{ const t=qstr(s); return /^−|\s/.test(t)?"("+t+")":t; };
+  let t=`${th}° = ${a}° ${op} ${b}°\n`, res;
+  if(fn==="sin"){
+    t+=`sin(${a}° ${op} ${b}°) = sin ${a}° cos ${b}° ${op} cos ${a}° sin ${b}°\n`;
+    t+=`  = ${P(sa)}·${P(cb)} ${op} ${P(ca)}·${P(sb)}\n`;
+    const m1=qmul(sa,cb), m2=qmul(ca,sb); res=qadd(m1,m2,sg);
+    t+=`  = ${qstr(m1,true)} ${op} ${P(m2)}\n  = ${qstr(res)}`;
+  } else if(fn==="cos"){
+    t+=`cos(${a}° ${op} ${b}°) = cos ${a}° cos ${b}° ${opp} sin ${a}° sin ${b}°\n`;
+    t+=`  = ${P(ca)}·${P(cb)} ${opp} ${P(sa)}·${P(sb)}\n`;
+    const m1=qmul(ca,cb), m2=qmul(sa,sb); res=qadd(m1,m2,-sg);
+    t+=`  = ${qstr(m1,true)} ${opp} ${P(m2)}\n  = ${qstr(res)}`;
+  } else {
+    const ta=TANX[a], tb=TANX[b];
+    if(ta==null){ // a = 90 or 270: use sin/cos instead
+      t+=`tan ${a}° is undefined, so use tan θ = sin θ / cos θ.\n`;
+      return {text:t+`sin ${th}° = ${exact15("sin",th)},  cos ${th}° = ${exact15("cos",th)}\ntan ${th}° = ${exact15("tan",th)}`,ans:Math.tan(th*D2R)};
+    }
+    const w=s=>/^−|\s/.test(s)?"("+s+")":s;
+    t+=`tan(${a}° ${op} ${b}°) = (tan ${a}° ${op} tan ${b}°) / (1 ${opp} tan ${a}° tan ${b}°)\n`;
+    t+=`  = (${ta} ${op} ${w(tb)}) / (1 ${opp} ${w(ta)}·${w(tb)})\n`;
+    t+=`  = ${exact15("tan",th)}   (rationalize: multiply by the conjugate)`;
+    return {text:t,ans:Math.tan(th*D2R)};
+  }
+  return {text:t,ans:qval(res)};
+}
+const M3={
+  tab:"Sum & difference", lesson:"F-TF.C.9", accent:"var(--mint)",
+  s:{A:110,B:35,step:0,fn:"sin",th:75},
+  title:()=>"Why cos(A − B) = cos A cos B + sin A sin B",
+  bar(){
+    btn("◀ Back",()=>{M3.s.step=Math.max(0,M3.s.step-1);render();});
+    btn("Next step ▶",()=>{M3.s.step=Math.min(M3.STEPS.length-1,M3.s.step+1);render();},"primary");
+    slider("A",0,360,1,M3.s.A,v=>{M3.s.A=v;update();},v=>v+"°");
+    slider("B",0,360,1,M3.s.B,v=>{M3.s.B=v;update();},v=>v+"°");
+    spacer("Step "+(M3.s.step+1)+" of "+M3.STEPS.length);
+  },
+  STEPS:[
+    ["Two angles","Put P at angle A and Q at angle B on the unit circle: P = (cos A, sin A), Q = (cos B, sin B). The angle between them is A − B."],
+    ["Rotate by −B","Turn the whole picture clockwise by B. Q lands on S = (1, 0) and P lands on R = (cos(A − B), sin(A − B)). A rotation does not change lengths, so <b>PQ = RS</b>."],
+    ["Distance PQ","PQ² = (cos A − cos B)² + (sin A − sin B)²\n = cos²A + sin²A + cos²B + sin²B − 2cos A cos B − 2 sin A sin B\n = 2 − 2(cos A cos B + sin A sin B)"],
+    ["Distance RS","RS² = (cos(A − B) − 1)² + sin²(A − B)\n = cos²(A − B) + sin²(A − B) − 2cos(A − B) + 1\n = 2 − 2cos(A − B)"],
+    ["Set equal","PQ² = RS², so 2 − 2(cos A cos B + sin A sin B) = 2 − 2cos(A − B).\nTherefore cos(A − B) = cos A cos B + sin A sin B."],
+    ["The rest follow","Replace B with −B\n(cos(−B) = cos B, sin(−B) = −sin B):\n  cos(A + B) = cos A cos B − sin A sin B\nUse sin θ = cos(90° − θ):\n  sin(A ± B) = sin A cos B ± cos A sin B\nDivide sin by cos:\n  tan(A ± B) = (tan A ± tan B)\n              / (1 ∓ tan A tan B)"]
+  ],
+  drag(id,p){ const a=Math.round(angFrom(id==="B"||id==="A"?180:520,240,p)); if(id==="A")M3.s.A=a; else M3.s.B=a; },
+  draw(){
+    bgRect();
+    const st=M3.s.step, A=M3.s.A, B=M3.s.B, D=norm(A-B);
+    const L=unitCircle(180,240,140,{ext:1.18}), R=unitCircle(520,240,140,{ext:1.18});
+    stext(cv,[180,28],"Original: P at A, Q at B","gtitle");
+    stext(cv,[520,28],st>=1?"Rotated by −B":"(rotation comes next)","gtitle");
+    const P=L.P(A), Q=L.P(B), Rr=R.P(D), S=R.P(0);
+    arc(L.g,[180,240],30,0,A,"var(--vert)",2.4); arc(L.g,[180,240],44,0,B,"var(--lin)",2.4);
+    sseg(L.g,[180,240],P,"var(--vert)",2.4); sseg(L.g,[180,240],Q,"var(--lin)",2.4);
+    sseg(L.g,P,Q,"var(--same)",st>=2?4.4:3.2);
+    const mPQ=[(P[0]+Q[0])/2,(P[1]+Q[1])/2];
+    const chord=Math.hypot(Math.cos(A*D2R)-Math.cos(B*D2R),Math.sin(A*D2R)-Math.sin(B*D2R));
+    stext(L.g,[mPQ[0]+(mPQ[0]-180)*.18,mPQ[1]+(mPQ[1]-240)*.18+(Math.abs(mPQ[1]-240)<8?-14:0)],"PQ = "+num(chord,3),"sm","#B91C1C");
+    sgrab(L.g,P,"A","var(--vert)"); sgrab(L.g,Q,"B","var(--lin)");
+    stext(L.g,[180+164*Math.cos(A*D2R),240-164*Math.sin(A*D2R)],"P","mk","var(--vert)");
+    stext(L.g,[180+164*Math.cos(B*D2R),240-164*Math.sin(B*D2R)],"Q","mk","var(--lin)");
+    stext(L.g,[180,420],"A = "+A+"°,  B = "+B+"°","sm","var(--ink)");
+    if(st>=1){
+      arc(R.g,[520,240],34,0,D,"var(--alt)",2.4);
+      sseg(R.g,[520,240],Rr,"var(--alt)",2.4); sseg(R.g,[520,240],S,"var(--lin)",2.4);
+      sseg(R.g,Rr,S,"var(--same)",st>=3?4.4:3.2);
+      sdot(R.g,Rr,"var(--alt)",6); sdot(R.g,S,"var(--lin)",6);
+      stext(R.g,[520+164*Math.cos(D*D2R),240-164*Math.sin(D*D2R)],"R","mk","var(--alt)");
+      stext(R.g,[680,262],"S","mk","var(--lin)");
+      const mRS=[(Rr[0]+S[0])/2,(Rr[1]+S[1])/2];
+      const rs=Math.hypot(Math.cos(D*D2R)-1,Math.sin(D*D2R));
+      stext(R.g,[mRS[0]+(mRS[0]-520)*.18,mRS[1]+(mRS[1]-240)*.18+(Math.abs(mRS[1]-240)<8?-14:0)],"RS = "+num(rs,3),"sm","#B91C1C");
+      stext(R.g,[520,420],"A − B = "+D+"°","sm","var(--ink)");
+    }
+  },
+  panel(full){
+    const A=M3.s.A*D2R, B=M3.s.B*D2R, st=M3.s.step;
+    const rows=[
+      ["sin(A + B)",Math.sin(A+B),Math.sin(A)*Math.cos(B)+Math.cos(A)*Math.sin(B),"sin A cos B + cos A sin B"],
+      ["sin(A − B)",Math.sin(A-B),Math.sin(A)*Math.cos(B)-Math.cos(A)*Math.sin(B),"sin A cos B − cos A sin B"],
+      ["cos(A + B)",Math.cos(A+B),Math.cos(A)*Math.cos(B)-Math.sin(A)*Math.sin(B),"cos A cos B − sin A sin B"],
+      ["cos(A − B)",Math.cos(A-B),Math.cos(A)*Math.cos(B)+Math.sin(A)*Math.sin(B),"cos A cos B + sin A sin B"],
+      ["sin A + sin B ?",Math.sin(A+B),Math.sin(A)+Math.sin(B),"the tempting wrong guess"]];
+    const tbl=`<table class="cmp">${rows.map(r=>`<tr><td>${r[0]} = ${num(r[1],4)}<br><small style="color:var(--dim)">${r[3]}</small></td><td class="${Math.abs(r[1]-r[2])<1e-9?"ok":"no"}">${num(r[2],4)} ${Math.abs(r[1]-r[2])<1e-9?"✓":"✗"}</td></tr>`).join("")}</table>`;
+    if(!full&&document.getElementById("cmp3")){ document.getElementById("cmp3").innerHTML=tbl; return; }
+    const S=M3.STEPS[st];
+    const ths=[15,75,105,165,195,255,285,345];
+    side.innerHTML=`<div class="panel"><h3>Proof · step ${st+1}: ${S[0]}</h3><div class="pad"><div class="eq" style="margin-top:0">${S[1]}</div>
+      <p>Drag P and Q (or use the A and B sliders). The two chords stay equal at every setting.</p></div></div>
+    <div class="panel"><h3>Live check: A = ${M3.s.A}°, B = ${M3.s.B}°</h3><div id="cmp3">${tbl}</div></div>
+    <div class="panel"><h3>Exact-value calculator</h3><div class="pad" style="padding-bottom:0"><p>Write the angle as a sum or difference of two angles you already know (30°, 45°, 60°, …), then use a formula.</p></div>
+      <div class="ansrow"><div><label class="fld" for="c3f">Function</label><select id="c3f">${["sin","cos","tan"].map(f=>`<option>${f}</option>`).join("")}</select></div>
+      <div><label class="fld" for="c3t">Angle</label><select id="c3t">${ths.map(t=>`<option value="${t}">${t}°</option>`).join("")}</select></div></div>
+      <div class="fldwrap" id="c3o"></div><div style="height:6px"></div></div>
+    ${tryPanel(`<p>Set A = 45° and B = 30°. Read sin(A + B) from the table, then pick sin 75° in the calculator. Do the two match? Now find two angles A and B that make sin A + sin B equal to sin(A + B). (Hint: try B = 0°.)</p>`)}`;
+    const f=document.getElementById("c3f"), t=document.getElementById("c3t");
+    f.value=M3.s.fn; t.value=String(M3.s.th);
+    const run=()=>{ M3.s.fn=f.value; M3.s.th=+t.value; const r=sumSteps(M3.s.fn,M3.s.th);
+      document.getElementById("c3o").innerHTML=`<div class="eq">${r.text}\n≈ ${num(r.ans,4)}<small>Calculator check: ${M3.s.fn} ${M3.s.th}° = ${num(Math[M3.s.fn](M3.s.th*D2R),6)}</small></div>`; };
+    f.onchange=run; t.onchange=run; run();
+  }
+};
+
+/* ══════════════════════ TAB 4 · Double & half-angle ══════════════════════ */
+const M4={
+  tab:"Double & half angle", lesson:"F-TF.C.9", accent:"var(--yellow)",
+  s:{mode:"sin",x:1.0,form:"all",given:"sin",val:"3/5",quad:"2"},
+  title:()=>({sin:"sin 2θ is not 2 sin θ",cos:"Three forms of cos 2θ",half:"Half-angle: sin(θ/2) and cos(θ/2)"}[M4.s.mode]),
+  bar(){
+    segBtns([["sin","sin 2θ vs 2 sin θ"],["cos","cos 2θ forms"],["half","Half-angle"]],M4.s.mode,k=>{M4.s.mode=k;render();},"Graph");
+    if(M4.s.mode==="cos")selectBox([["all","Show all three forms"],["f1","cos²θ − sin²θ"],["f2","2cos²θ − 1"],["f3","1 − 2sin²θ"]],M4.s.form,v=>{M4.s.form=v;update();},"Form");
+  },
+  drag(id,p){ M4.s.x=clamp(M4.G.inv(p[0]),0.001,TAU-0.001); },
+  tap(p){ if(!M4.G)return false; M4.s.x=clamp(M4.G.inv(p[0]),0.001,TAU-0.001); return true; },
+  curves(){
+    const m=M4.s.mode;
+    if(m==="sin")return [[x=>Math.sin(2*x),"var(--vert)","y = sin 2θ",5],[x=>2*Math.sin(x),"var(--lin)","y = 2 sin θ",3.2]];
+    if(m==="cos"){ const F=[[x=>Math.cos(2*x),"var(--ink)","y = cos 2θ",7,null,.25]];
+      const fm={f1:[x=>Math.cos(x)**2-Math.sin(x)**2,"var(--vert)","cos²θ − sin²θ",4.6],f2:[x=>2*Math.cos(x)**2-1,"var(--lin)","2cos²θ − 1",3.4,"12 9"],f3:[x=>1-2*Math.sin(x)**2,"var(--alt)","1 − 2sin²θ",2.4,"4 7"]};
+      (M4.s.form==="all"?["f1","f2","f3"]:[M4.s.form]).forEach(k=>F.push(fm[k])); return F; }
+    return [[x=>Math.sin(x/2),"var(--vert)","y = sin(θ/2)",5],[x=>Math.sqrt((1-Math.cos(x))/2),"var(--lin)","y = √((1 − cos θ)/2)",3,"10 7"],[x=>Math.cos(x/2),"var(--alt)","y = cos(θ/2)",4],[x=>Math.sqrt((1+Math.cos(x))/2),"var(--altx)","y = √((1 + cos θ)/2)",2.6,"10 7"]];
+  },
+  draw(){
+    bgRect();
+    const G=graph({x0:0,x1:TAU,y0:-2.4,y1:2.4,L:40,T:60,W:620,H:370,piStep:PI/4,labEvery:2,yStep:1}); M4.G=G;
+    const C=M4.curves();
+    legend(C.map(c=>[c[2],c[1],c[4]]),44,26);
+    C.forEach(c=>G.plot(c[0],c[1],c[3],c[4],c[5]));
+    const x=M4.s.x;
+    sseg(G.cg,[G.X(x),60],[G.X(x),430],"rgba(34,49,79,.45)",1.5,"4 4");
+    C.forEach(c=>{ const y=c[0](x); if(Math.abs(y)<2.4)sdot(G.cg,[G.X(x),G.Y(y)],c[1],5); });
+    sgrab(cv,[G.X(x),430],"x");
+    stext(cv,[clamp(G.X(x),70,630),48],"θ = "+radStr(x)+" ≈ "+num(x/D2R,1)+"°","sm","var(--ink)");
+  },
+  panel(full){
+    const x=M4.s.x, s=Math.sin(x), c=Math.cos(x), m=M4.s.mode;
+    let live;
+    if(m==="sin")live=`sin 2θ = ${num(Math.sin(2*x),4)}\n2 sin θ cos θ = 2(${num(s,4)})(${num(c,4)}) = ${num(2*s*c,4)} ✓\n2 sin θ = ${num(2*s,4)}  ${Math.abs(2*s-Math.sin(2*x))<1e-9?"(equal here)":"✗ different"}`;
+    else if(m==="cos")live=`cos 2θ = ${num(Math.cos(2*x),4)}\ncos²θ − sin²θ = ${num(c*c-s*s,4)}\n2cos²θ − 1 = ${num(2*c*c-1,4)}\n1 − 2sin²θ = ${num(1-2*s*s,4)}`;
+    else live=`θ/2 = ${num(x/2/D2R,1)}°, in Quadrant ${QN[quadOf(x/2/D2R)]||"—"}\nsin(θ/2) = ${num(Math.sin(x/2),4)},  √((1 − cos θ)/2) = ${num(Math.sqrt((1-c)/2),4)}\ncos(θ/2) = ${num(Math.cos(x/2),4)},  ${Math.cos(x/2)<0?"−":""}√((1 + cos θ)/2) = ${num((Math.cos(x/2)<0?-1:1)*Math.sqrt((1+c)/2),4)}`;
+    if(!full&&document.getElementById("live4")){ document.getElementById("live4").textContent=live; return; }
+    const exp={
+      sin:`<p>Put B = A in the sum formula: sin(A + A) = sin A cos A + cos A sin A. That gives the <span class="term">double-angle formula</span>.</p><div class="eq">sin 2θ = 2 sin θ cos θ</div><p>Doubling the angle does <b>not</b> double the output. The graph of sin 2θ squeezes the wave horizontally and keeps its height at 1. The graph of 2 sin θ stretches it vertically to height 2. They cross only where 2 sin θ cos θ = 2 sin θ, which means sin θ = 0 or cos θ = 1.</p>`,
+      cos:`<p>From cos(A + A) = cos A cos A − sin A sin A:</p><div class="eq">cos 2θ = cos²θ − sin²θ
+       = 2cos²θ − 1
+       = 1 − 2sin²θ<small>Line 2 replaces sin²θ with 1 − cos²θ. Line 3 replaces cos²θ with 1 − sin²θ.</small></div><p>All three are the same function, so all three graphs lie exactly on the pale cos 2θ curve. Choose the form that matches what you know. If you only know cos θ, use 2cos²θ − 1.</p>`,
+      half:`<p>Solve cos 2u = 1 − 2sin²u for sin u, then put u = θ/2. This gives the <span class="term">half-angle formulas</span>.</p><div class="eq">sin(θ/2) = ±√((1 − cos θ)/2)
+cos(θ/2) = ±√((1 + cos θ)/2)
+tan(θ/2) = (1 − cos θ)/sin θ<small>The ± is not "both". Choose the sign from the quadrant of θ/2.</small></div><p>A square root is never negative, so the dashed root curves match sin(θ/2) and cos(θ/2) only where those are positive. Drag θ past π and watch cos(θ/2) turn negative.</p>`}[m];
+    side.innerHTML=`<div class="panel"><h3>${m==="half"?"Half-angle as an extension":"Derive it from the sum formula"}</h3><div class="pad">${exp}<div class="eq" id="live4">${live}</div></div></div>
+    <div class="panel"><h3>Double &amp; half-angle calculator</h3><div class="pad" style="padding-bottom:0"><p>Give one value of θ (with 0 ≤ θ < 360°) and its quadrant.</p></div>
+      <div class="ansrow"><div><label class="fld" for="g4f">Given</label><select id="g4f">${["sin","cos","tan"].map(f=>`<option value="${f}">${f} θ</option>`).join("")}</select></div>
+      <div><label class="fld" for="g4v">Value</label><input type="text" id="g4v" autocomplete="off" spellcheck="false"></div>
+      <div><label class="fld" for="g4q">Quadrant</label><select id="g4q">${QN.map((q,i)=>`<option value="${i+1}">${q}</option>`).join("")}</select></div></div>
+      <div class="fldwrap" style="margin:16px 0 4px"><button class="go" id="g4go" type="button">Find sin 2θ, cos 2θ, tan 2θ, half-angles</button></div><div id="g4out"></div><div style="height:6px"></div></div>
+    ${tryPanel(m==="sin"?`<p>Find every θ in [0, 2π) where the two graphs meet. Check your answer with the algebra: 2 sin θ cos θ = 2 sin θ.</p>`:m==="cos"?`<p>Show one form at a time. Explain why <b>2cos²θ − 1</b> never goes below −1, even though 2cos²θ can be as large as 2.</p>`:`<p>Let cos θ = −7/25 with θ in Quadrant II. Which quadrant is θ/2 in? Use the calculator to check your signs.</p>`)}`;
+    const f=document.getElementById("g4f"), v=document.getElementById("g4v"), q=document.getElementById("g4q");
+    f.value=M4.s.given; v.value=M4.s.val; q.value=M4.s.quad;
+    const run=()=>{ M4.s.given=f.value; M4.s.val=v.value; M4.s.quad=q.value; const out=document.getElementById("g4out");
+      const r=sixFrom(f.value,v.value,+q.value); if(r.err){ out.innerHTML=`<div class="verdict bad">${r.err}</div>`; return; }
+      const s=r.y, c=r.x, th=Math.atan2(s,c)<0?Math.atan2(s,c)+TAU:Math.atan2(s,c), hq=quadOf(th/D2R/2);
+      const hs=Math.sqrt((1-c)/2), hc=(Math.cos(th/2)<0?-1:1)*Math.sqrt((1+c)/2);
+      const fr=v=>frac(v,5000)||num(v,4);
+      out.innerHTML=`<div class="fldwrap"><div class="eq">sin θ = ${exA(s)},  cos θ = ${exA(c)}   (θ ≈ ${num(r.deg,2)}°)
+sin 2θ = 2 sin θ cos θ = ${exA(2*s*c)}
+cos 2θ = cos²θ − sin²θ = ${exA(c*c-s*s)}
+tan 2θ = sin 2θ / cos 2θ = ${Math.abs(c*c-s*s)<1e-12?"undefined":exA(2*s*c/(c*c-s*s))}
+θ/2 ≈ ${num(r.deg/2,2)}° is in Quadrant ${QN[hq]||"—"}
+sin(θ/2) = +√((1 − cos θ)/2) = √(${fr((1-c)/2)}) = ${exA(hs)}
+cos(θ/2) = ${hc<0?"−":"+"}√((1 + cos θ)/2) = ${hc<0?"−":""}√(${fr((1+c)/2)}) = ${exA(hc)}</div></div>`;
+      M4.s.x=th; clear(); M4.draw(); M4.panel(false); };
+    document.getElementById("g4go").onclick=run; v.addEventListener("keydown",e=>{if(e.key==="Enter")run();});
+  }
+};
+
+/* ══════════════════════ TAB 5 · Solving trig equations ══════════════════════ */
+// general solver for f(b·x) = c on [0, 2π)
+function solveBasic(fn,b,c){
+  const out={fn,b,c,base:[],xs:[],per:fn==="tan"?PI:TAU,ref:null,none:false};
+  if(fn!=="tan"&&Math.abs(c)>1+1e-12){ out.none=true; return out; }
+  const cc=fn==="tan"?c:clamp(c,-1,1);
+  if(fn==="sin"){ const a=Math.asin(cc); out.ref=Math.asin(Math.abs(cc)); out.base=Math.abs(Math.abs(cc)-1)<1e-12?[norm2(a)]:[norm2(a),norm2(PI-a)]; }
+  else if(fn==="cos"){ const a=Math.acos(cc); out.ref=Math.acos(Math.abs(cc)); out.base=(Math.abs(Math.abs(cc)-1)<1e-12)?[norm2(a)]:[norm2(a),norm2(TAU-a)]; }
+  else { const a=Math.atan(cc); out.ref=Math.atan(Math.abs(cc)); out.base=[a<0?a+PI:a]; }
+  out.base=uniq(out.base.sort((u,v)=>u-v));
+  const xs=[]; out.base.forEach(u=>{ for(let k=-2;k<b*2+3;k++){ const x=(u+k*out.per)/b; if(x>-1e-9&&x<TAU-1e-9)xs.push(Math.abs(x)<1e-9?0:x); } });
+  out.xs=uniq(xs.sort((u,v)=>u-v));
+  return out;
+}
+function norm2(a){ a=a%TAU; if(a<0)a+=TAU; if(Math.abs(a-TAU)<1e-12)a=0; return a; }
+function uniq(a){ const r=[]; a.forEach(v=>{ if(!r.some(w=>Math.abs(w-v)<1e-7))r.push(v); }); return r; }
+const per=(b,p)=>{ const f=piFrac(p/b); return f==="π"?"πk":f==="2π"?"2πk":f.replace("π","πk"); };
+const cStr=c=>{ const f=frac(c); if(f)return f; return sqExact(c); };
+function basicText(S,arg){ // text for solving f(arg) = c
+  const F=S.fn, ex=v=>{ const p=piFrac(v,36); return p?p+(Math.abs(v)>1e-9?" ≈ "+num(v,4):""):num(v,4); };
+  let t="";
+  if(S.none)return `${F} ${arg} = ${cStr(S.c)} has no solution: ${F} is always between −1 and 1.`;
+  const exact=S.base.every(u=>piFrac(u,36)!=null);
+  if(S.ref!=null){
+    t+= exact? `reference angle: ${F}⁻¹(${cStr(Math.abs(S.c))}) = ${piFrac(S.ref,36)||num(S.ref,4)}\n` : `reference angle (calculator): ${F}⁻¹(${num(Math.abs(S.c),4)}) ≈ ${num(S.ref,4)} rad\n`;
+  }
+  const where={sin:S.c>0?"I and II (sin > 0)":S.c<0?"III and IV (sin < 0)":"on the x-axis",cos:S.c>0?"I and IV (cos > 0)":S.c<0?"II and III (cos < 0)":"on the y-axis",tan:S.c>0?"I and III (tan > 0)":S.c<0?"II and IV (tan < 0)":"on the x-axis"}[F];
+  if(Math.abs(Math.abs(S.c)-1)>1e-12||F==="tan")t+=`${F} is ${S.c===0?"0":S.c>0?"positive":"negative"} → angles ${where}\n`;
+  t+=`${arg} = ${S.base.map(ex).join(",  ")}   (+ ${F==="tan"?"πk":"2πk"})`;
+  return t;
+}
+const EQS=[
+  {name:"2 sin x − 1 = 0",type:"Linear in sin",L:x=>2*Math.sin(x)-1,R:()=>0,lab:["y = 2 sin x − 1","y = 0"],
+    steps:()=>["Isolate the trig function:\n2 sin x = 1  →  sin x = 1/2",basicText(solveBasic("sin",1,.5),"x")],gen:"x = π/6 + 2πk  or  x = 5π/6 + 2πk",xs:()=>solveBasic("sin",1,.5).xs},
+  {name:"2 cos x + √3 = 0",type:"Linear in cos",L:x=>2*Math.cos(x)+Math.sqrt(3),R:()=>0,lab:["y = 2 cos x + √3","y = 0"],
+    steps:()=>["Isolate: cos x = −√3/2",basicText(solveBasic("cos",1,-Math.sqrt(3)/2),"x")],gen:"x = 5π/6 + 2πk  or  x = 7π/6 + 2πk",xs:()=>solveBasic("cos",1,-Math.sqrt(3)/2).xs},
+  {name:"√3 tan x − 1 = 0",type:"Linear in tan",L:x=>Math.sqrt(3)*Math.tan(x)-1,R:()=>0,lab:["y = √3 tan x − 1","y = 0"],
+    steps:()=>["Isolate: tan x = 1/√3 = √3/3",basicText(solveBasic("tan",1,1/Math.sqrt(3)),"x"),"tan repeats every π, so add π to get the second solution."],gen:"x = π/6 + πk",xs:()=>solveBasic("tan",1,1/Math.sqrt(3)).xs},
+  {name:"2 sin²x − sin x − 1 = 0",type:"Quadratic in sin",L:x=>2*Math.sin(x)**2-Math.sin(x)-1,R:()=>0,lab:["y = 2sin²x − sin x − 1","y = 0"],
+    steps:()=>["Let u = sin x:  2u² − u − 1 = 0","Factor: (2u + 1)(u − 1) = 0  →  sin x = −1/2  or  sin x = 1","sin x = −1/2:\n"+basicText(solveBasic("sin",1,-.5),"x"),"sin x = 1:  x = π/2"],gen:"x = 7π/6 + 2πk,  11π/6 + 2πk,  π/2 + 2πk",xs:()=>uniq([...solveBasic("sin",1,-.5).xs,PI/2]).sort((a,b)=>a-b)},
+  {name:"2 cos²x + 3 cos x + 1 = 0",type:"Quadratic in cos",L:x=>2*Math.cos(x)**2+3*Math.cos(x)+1,R:()=>0,lab:["y = 2cos²x + 3cos x + 1","y = 0"],
+    steps:()=>["Let u = cos x:  2u² + 3u + 1 = 0","Factor: (2u + 1)(u + 1) = 0  →  cos x = −1/2  or  cos x = −1","cos x = −1/2:\n"+basicText(solveBasic("cos",1,-.5),"x"),"cos x = −1:  x = π"],gen:"x = 2π/3 + 2πk,  4π/3 + 2πk,  π + 2πk",xs:()=>uniq([...solveBasic("cos",1,-.5).xs,PI]).sort((a,b)=>a-b)},
+  {name:"sin 2x = cos x",type:"Needs an identity",L:x=>Math.sin(2*x),R:x=>Math.cos(x),lab:["y = sin 2x","y = cos x"],
+    steps:()=>["Double-angle: 2 sin x cos x = cos x","Move everything to one side (never divide by cos x, or you lose solutions):\n2 sin x cos x − cos x = 0","Factor: cos x (2 sin x − 1) = 0","cos x = 0:  x = π/2, 3π/2","sin x = 1/2:  x = π/6, 5π/6"],gen:"x = π/2 + πk,  π/6 + 2πk,  5π/6 + 2πk",xs:()=>[PI/6,PI/2,5*PI/6,3*PI/2]},
+  {name:"cos 2x = sin x",type:"Needs an identity",L:x=>Math.cos(2*x),R:x=>Math.sin(x),lab:["y = cos 2x","y = sin x"],
+    steps:()=>["Use the form of cos 2x that matches sin:\n1 − 2sin²x = sin x","Rearrange: 2sin²x + sin x − 1 = 0","Factor: (2 sin x − 1)(sin x + 1) = 0","sin x = 1/2:  x = π/6, 5π/6","sin x = −1:  x = 3π/2"],gen:"x = π/6 + 2πk,  5π/6 + 2πk,  3π/2 + 2πk",xs:()=>[PI/6,5*PI/6,3*PI/2]},
+  {name:"sin 3x = 1/2",type:"Multiple angle",L:x=>Math.sin(3*x),R:()=>.5,lab:["y = sin 3x","y = 1/2"],
+    steps:()=>["Let u = 3x. When 0 ≤ x < 2π, u runs over 0 ≤ u < 6π: three full turns.",basicText(solveBasic("sin",1,.5),"u"),"Divide by 3:  x = π/18 + 2πk/3  or  x = 5π/18 + 2πk/3","k = 0, 1, 2 give six solutions in [0, 2π)"],gen:"x = π/18 + (2π/3)k  or  x = 5π/18 + (2π/3)k",xs:()=>solveBasic("sin",3,.5).xs},
+  {name:"3 sin x − 1 = 0",type:"Calculator",L:x=>3*Math.sin(x)-1,R:()=>0,lab:["y = 3 sin x − 1","y = 0"],
+    steps:()=>["Isolate: sin x = 1/3. This is not a special value, so use a calculator in radian mode.",basicText(solveBasic("sin",1,1/3),"x"),"Second solution: π − 0.3398 ≈ 2.8018"],gen:"x ≈ 0.3398 + 2πk  or  x ≈ 2.8018 + 2πk",xs:()=>solveBasic("sin",1,1/3).xs},
+  {name:"5 cos x + 2 = 0",type:"Calculator",L:x=>5*Math.cos(x)+2,R:()=>0,lab:["y = 5 cos x + 2","y = 0"],
+    steps:()=>["Isolate: cos x = −2/5 = −0.4","Reference angle: cos⁻¹(0.4) ≈ 1.1593 (always use the positive value)","cos < 0 in Quadrants II and III:\nx = π − 1.1593 ≈ 1.9823,  x = π + 1.1593 ≈ 4.3009","Note: cos⁻¹(−0.4) ≈ 1.9823 gives only the Quadrant II answer."],gen:"x ≈ 1.9823 + 2πk  or  x ≈ 4.3009 + 2πk",xs:()=>solveBasic("cos",1,-.4).xs},
+  {name:"Build your own: f(bx) = c",type:"Live",custom:true}
+];
+const M5={
+  tab:"Solving equations", lesson:"F-TF.B.7 · F-TF.B.6", accent:"var(--magenta)",
+  s:{i:0,fn:"sin",b:1,c:0.5,rev:99},
+  title:()=>{ const Q=EQS[M5.s.i]; return Q.custom? "Solve "+M5.s.fn+(M5.s.b>1?" "+M5.s.b+"x":" x")+" = "+num(M5.s.c,2)+" on [0, 2π)" : "Solve "+Q.name+" on [0, 2π)"; },
+  bar(){
+    selectBox(EQS.map((Q,i)=>[i,Q.type+": "+Q.name]),M5.s.i,v=>{M5.s.i=+v;M5.s.rev=99;render();},"Equation");
+    if(EQS[M5.s.i].custom){
+      segBtns([["sin","sin"],["cos","cos"],["tan","tan"]],M5.s.fn,k=>{M5.s.fn=k;render();},"Function");
+      segBtns([[1,"x"],[2,"2x"],[3,"3x"]],M5.s.b,k=>{M5.s.b=k;render();},"Multiple");
+      M5.sl=slider("c",-1.5,1.5,0.05,M5.s.c,v=>{M5.s.c=v;bTitle.textContent=M5.title();update();},v=>num(v,2));
+    }
+  },
+  cur(){
+    const Q=EQS[M5.s.i];
+    if(!Q.custom)return Q;
+    const F=FUN[M5.s.fn], b=M5.s.b, c=M5.s.c, S=solveBasic(M5.s.fn,b,c), arg=b>1?b+"x":"x", fn=M5.s.fn;
+    const steps=[];
+    if(b>1)steps.push(`Let u = ${arg}. For 0 ≤ x < 2π, u runs over 0 ≤ u < ${b*2}π.`);
+    steps.push(basicText(S,b>1?"u":"x"));
+    if(b>1&&!S.none)steps.push(`Divide by ${b}:  x = ${S.base.map(u=>(piFrac(u/b,36)||num(u/b,4))).join(", ")} + ${per(b,S.per)}`);
+    const gen=S.none?"no solution":S.base.map(u=>"x = "+(piFrac(u/b,36)||num(u/b,4))+" + "+per(b,S.per)).join("  or  ");
+    return {name:fn+" "+arg+" = "+num(c,2),L:x=>F(b*x),R:()=>c,lab:["y = "+fn+" "+arg,"y = "+num(c,2)],steps:()=>steps,gen,xs:()=>S.xs,custom:true};
+  },
+  drag(id,p){ if(!M5.G)return false; M5.s.c=clamp(Math.round(((M5.G.o.y1-(p[1]-M5.G.o.T)/M5.G.o.H*(M5.G.o.y1-M5.G.o.y0)))*20)/20,-1.5,1.5); if(M5.sl){M5.sl.value=M5.s.c; M5.sl.nextSibling.textContent=num(M5.s.c,2);} bTitle.textContent=M5.title(); },
+  draw(){
+    bgRect();
+    const Q=M5.cur();
+    let ymax=2.5; [0.3,1.1,2.2,3.7,5.1].forEach(x=>{ const v=Math.abs(Q.L(x)); if(isFinite(v)&&v<9)ymax=Math.max(ymax,Math.ceil(v+.5)); });
+    if(Q.custom)ymax=2.5;
+    const G=graph({x0:0,x1:TAU,y0:-ymax,y1:ymax,L:46,T:56,W:618,H:370,piStep:PI/6,labEvery:3,yStep:ymax>4?2:1}); M5.G=G;
+    G.plot(Q.L,"var(--vert)",4); G.plot(Q.R,"var(--lin)",3,"10 6");
+    legend([[Q.lab[0],"var(--vert)"],[Q.lab[1],"var(--lin)","10 6"]],50,24);
+    const xs=Q.xs();
+    xs.forEach((x,i)=>{
+      const y=Q.R(x), px=G.X(x), py=G.Y(y);
+      sseg(G.cg,[px,py],[px,G.Y(0)],"rgba(219,39,119,.5)",1.4,"3 4");
+      sdot(G.cg,[px,py],"var(--altx)",6.5);
+      const lab=piFrac(x,36)||num(x,3);
+      const up=(i%2===0)?-1:1;
+      stext(cv,[clamp(px,22,678),clamp(py+up*20,66,416)],lab,"sm","#BE185D");
+    });
+    if(Q.custom)sgrab(cv,[664,G.Y(M5.s.c)],"c","var(--lin)");
+    stext(cv,[664,48],xs.length+" solution"+(xs.length===1?"":"s")+" in [0, 2π)","sm","var(--ink)","end");
+  },
+  panel(full){
+    const Q=M5.cur(), st=Q.steps(), xs=Q.xs();
+    const sol=xs.length? xs.map(x=>{ const p=piFrac(x,36); return p? p+" ≈ "+num(x,4) : "≈ "+num(x,4); }).join("\n") : "no solutions";
+    const body=`<ol class="chain">${st.map(s=>`<li><span style="font-family:var(--mono);white-space:pre-wrap;color:#fff;font-size:14px">${s}</span></li>`).join("")}</ol>
+      <div class="pad" style="padding-top:0"><div class="eq" style="margin-top:0">Solutions in [0, 2π):\n${sol}<small>General solution: ${Q.gen}   (k any integer)</small></div></div>`;
+    if(!full&&document.getElementById("slv5")){ document.getElementById("slv5").innerHTML=body; return; }
+    side.innerHTML=`<div class="panel"><h3>Step by step</h3><div id="slv5">${body}</div></div>
+    <div class="panel"><h3>Strategy</h3><div class="pad">
+      <p>Every trig equation ends in the same place: <b>trig function of something = a number</b>. To get there, isolate the trig function, factor if it is quadratic, or use an identity so that only one function of one angle is left.</p>
+      <p>Then find the <span class="term">reference angle</span> and place it in every quadrant where the sign is right. The pink dots on the graph are those solutions: the x-values where the two curves cross.</p>
+      <div class="eq">sin, cos: period 2π → + 2πk
+tan: period π → + πk
+f(bx): period 2π/b (or π/b)<small>A calculator's sin⁻¹, cos⁻¹, tan⁻¹ give only ONE answer (F-TF.B.6: they invert a restricted domain). You find the others.</small></div></div></div>
+    ${tryPanel(`<p>Choose <b>Build your own</b>, set sin, 2x and drag the orange handle on the right (the value of c). How many solutions does sin 2x = c have when −1 &lt; c &lt; 1? What happens at c = 1, and at c = 1.2?</p>`)}`;
+  }
+};
+
+/* ══════════════════════ TAB 6 · Challenge ══════════════════════ */
+const SIMP=[
+  ["sin(x)*cot(x)","cos(x)","cot x = cos x / sin x, so sin x cancels."],
+  ["1-cos(x)^2","sin(x)^2","Pythagorean: sin²x + cos²x = 1."],
+  ["sec(x)^2-tan(x)^2","1","1 + tan²x = sec²x, so sec²x − tan²x = 1."],
+  ["2*sin(x)*cos(x)","sin(2*x)","Double-angle: sin 2x = 2 sin x cos x."],
+  ["cos(x)^2-sin(x)^2","cos(2*x)","Double-angle: cos 2x = cos²x − sin²x."],
+  ["tan(x)*csc(x)","sec(x)","(sin x / cos x)(1 / sin x) = 1 / cos x."],
+  ["(1-sin(x)^2)/cos(x)","cos(x)","1 − sin²x = cos²x, then cancel one cos x."],
+  ["sin(x)/csc(x)+cos(x)/sec(x)","1","sin x / csc x = sin²x and cos x / sec x = cos²x."],
+  ["cos(x)*tan(x)+sin(x)","2*sin(x)","cos x tan x = sin x."],
+  ["(sec(x)-1)*(sec(x)+1)","tan(x)^2","Difference of squares gives sec²x − 1 = tan²x."],
+  ["sin(x+pi)","-sin(x)","sin(x + π) = sin x cos π + cos x sin π = −sin x."],
+  ["cos(pi/2-x)","sin(x)","cos(π/2 − x) = cos(π/2)cos x + sin(π/2)sin x = sin x."],
+  ["2*cos(x)^2-1","cos(2*x)","One of the three forms of cos 2x."],
+  ["csc(x)^2-1","cot(x)^2","1 + cot²x = csc²x."],
+  ["(1+tan(x)^2)*cos(x)^2","1","1 + tan²x = sec²x and sec²x · cos²x = 1."],
+  ["sin(x)^2*sec(x)^2+1","sec(x)^2","sin²x / cos²x = tan²x, and tan²x + 1 = sec²x."]
+];
+const YESNO=[
+  ...IDLIB.map(I=>[I.L,I.R,true,"It can be proved step by step (see tab 2)."]),
+  ["sin(2*x)","2*sin(x)*cos(x)",true,"This is the double-angle formula."],
+  ["cos(2*x)","1-2*sin(x)^2",true,"One of the three forms of cos 2x."],
+  ["sin(x-pi/2)","-cos(x)",true,"sin x cos(π/2) − cos x sin(π/2) = −cos x."],
+  ["cos(x)^4-sin(x)^4","cos(2*x)",true,"Factor: (cos² − sin²)(cos² + sin²) = cos 2x · 1."],
+  ["tan(2*x)","2*tan(x)/(1-tan(x)^2)",true,"The tan double-angle formula, from tan(A + B) with B = A."],
+  ...FAKES.map(F=>[F[0],F[1],false,F[2]]),
+  ["cos(2*x)","2*cos(x)",false,"cos 2x stays between −1 and 1, but 2cos x reaches 2."],
+  ["sin(x)^2-cos(x)^2","1",false,"sin² + cos² = 1, not sin² − cos²."],
+  ["tan(x)/sec(x)","cos(x)",false,"(sin x / cos x)·cos x = sin x, not cos x."],
+  ["1+cot(x)^2","sec(x)^2",false,"1 + cot²x = csc²x, not sec²x."],
+  ["sin(x/2)","sin(x)/2",false,"Halving the angle is not halving the output."]
+];
+const QUADS=[ // [text, f, solutions, factor work]
+  ["2sin²x − 3 sin x + 1 = 0",x=>2*Math.sin(x)**2-3*Math.sin(x)+1,()=>[PI/6,PI/2,5*PI/6],"(2 sin x − 1)(sin x − 1) = 0 → sin x = 1/2 or 1"],
+  ["2cos²x − cos x − 1 = 0",x=>2*Math.cos(x)**2-Math.cos(x)-1,()=>[0,2*PI/3,4*PI/3],"(2 cos x + 1)(cos x − 1) = 0 → cos x = −1/2 or 1"],
+  ["tan²x − 1 = 0",x=>Math.tan(x)**2-1,()=>[PI/4,3*PI/4,5*PI/4,7*PI/4],"(tan x − 1)(tan x + 1) = 0 → tan x = ±1"],
+  ["4sin²x − 3 = 0",x=>4*Math.sin(x)**2-3,()=>[PI/3,2*PI/3,4*PI/3,5*PI/3],"sin²x = 3/4 → sin x = ±√3/2"],
+  ["2cos²x + cos x = 0",x=>2*Math.cos(x)**2+Math.cos(x),()=>[PI/2,2*PI/3,4*PI/3,3*PI/2],"cos x (2 cos x + 1) = 0 → cos x = 0 or −1/2"],
+  ["sin 2x = sin x",x=>Math.sin(2*x)-Math.sin(x),()=>[0,PI/3,PI,5*PI/3],"2 sin x cos x − sin x = 0 → sin x (2 cos x − 1) = 0"],
+  ["cos 2x + cos x = 0",x=>Math.cos(2*x)+Math.cos(x),()=>[PI/3,PI,5*PI/3],"2cos²x + cos x − 1 = 0 → (2cos x − 1)(cos x + 1) = 0"],
+  ["2sin²x + sin x = 0",x=>2*Math.sin(x)**2+Math.sin(x),()=>[0,PI,7*PI/6,11*PI/6],"sin x (2 sin x + 1) = 0 → sin x = 0 or −1/2"]
+];
+const NICE={sin:[[0,"0"],[.5,"1/2"],[-.5,"−1/2"],[Math.SQRT1_2,"√2/2"],[-Math.SQRT1_2,"−√2/2"],[Math.sqrt(3)/2,"√3/2"],[-Math.sqrt(3)/2,"−√3/2"],[1,"1"],[-1,"−1"]],
+  tan:[[1,"1"],[-1,"−1"],[Math.sqrt(3),"√3"],[-Math.sqrt(3),"−√3"],[Math.sqrt(3)/3,"√3/3"],[-Math.sqrt(3)/3,"−√3/3"],[0,"0"]]};
+NICE.cos=NICE.sin;
+const KINDS6=[["mix","Mix"],["exact","Exact values"],["simp","Simplify"],["solve","Solve on [0, 2π)"],["ident","Identity?"]];
+function gen6(kind){
+  if(kind==="mix")kind=pick(["exact","simp","solve","ident"]);
+  const pr={kind};
+  if(kind==="exact"){
+    if(Math.random()<.6){
+      const fn=pick(["sin","cos","tan"]), th=pick([15,75,105,165,195,255,285,345]);
+      const r=sumSteps(fn,th); pr.ans=Math[fn](th*D2R);
+      pr.q=`Find the exact value of <b>${fn} ${th}°</b> using a sum or difference formula.`; pr.sol=r.text+`\n≈ ${num(pr.ans,4)}`;
+      pr.exact=exact15(fn,th); pr.hint=`Write ${th}° as a sum or difference of 30°, 45°, 60°, 90°, 180°, … (for example ${decompose(th)[0]}° ${decompose(th)[2]>0?"+":"−"} ${decompose(th)[1]}°).`;
+    } else {
+      const tr=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25]]), q=rnd(1,4), fn=pick(["sin","cos"]), want=pick(["sin 2θ","cos 2θ","tan 2θ"]);
+      const sx=(q===1||q===4)?1:-1, sy=(q<=2)?1:-1;
+      const ii=Math.random()<.5?0:1; const s=sy*tr[ii]/tr[2], c=sx*tr[1-ii]/tr[2];
+      const given=fn==="sin"?s:c; pr.quad=q; pr.theta=norm(Math.atan2(s,c)/D2R);
+      const S2=2*s*c, C2=c*c-s*s;
+      pr.ans=want==="sin 2θ"?S2:want==="cos 2θ"?C2:S2/C2;
+      pr.q=`If <b>${fn} θ = ${frac(given,100)}</b> and θ is in Quadrant ${QN[q-1]}, find the exact value of <b>${want}</b>.`;
+      pr.sol=`${fn==="sin"?"cos":"sin"} θ = ${fn==="sin"?(sx>0?"+":"−"):(sy>0?"+":"−")}√(1 − (${frac(given,100)})²) = ${frac(fn==="sin"?c:s,100)}   (sign from Quadrant ${QN[q-1]})
+sin 2θ = 2 sin θ cos θ = 2(${frac(s,100)})(${frac(c,100)}) = ${frac(S2,2000)}
+cos 2θ = cos²θ − sin²θ = ${frac(c*c,2000)} − ${frac(s*s,2000)} = ${frac(C2,2000)}
+tan 2θ = sin 2θ / cos 2θ = ${frac(S2/C2,5000)||num(S2/C2,4)}
+So ${want} = ${frac(pr.ans,5000)} ≈ ${num(pr.ans,4)}`;
+      pr.exact=frac(pr.ans,5000)||num(pr.ans,4);
+      pr.hint=`First find ${fn==="sin"?"cos":"sin"} θ with sin²θ + cos²θ = 1, using the quadrant for its sign. Then use the double-angle formula.`;
+    }
+    pr.fmt=`Type an exact value like <b>(√6+√2)/4</b>, <b>(sqrt6-sqrt2)/4</b>, <b>-24/25</b>, or a decimal to 3 places.`;
+    pr.ph="e.g. (√6+√2)/4";
+  }
+  if(kind==="simp"){
+    const S=pick(SIMP); pr.expr=S[0]; pr.target=S[1]; pr.why=S[2];
+    pr.q=`Simplify to a single term (or a constant):<br><span style="font-family:var(--mono);font-size:17px;color:#fff">${pretty(S[0])}</span>`;
+    pr.sol=`${pretty(S[0])} = ${pretty(S[1])}\n${S[2]}`; pr.hint="Rewrite in sin and cos, then look for a Pythagorean or double-angle identity.";
+    pr.fmt=`Use x as the variable: <b>sin(x)</b>, <b>cos(x)^2</b>, <b>sin(2x)</b>, <b>sec(x)</b>, <b>1</b>… Any equivalent simpler form is accepted. It is checked numerically at many x values.`;
+    pr.ph="e.g. cos(x)";
+  }
+  if(kind==="solve"){
+    if(Math.random()<.35){ const Q=pick(QUADS); pr.fx=Q[1]; pr.xs=Q[2](); pr.q=`Solve on <b>[0, 2π)</b>:<br><span style="font-family:var(--mono);font-size:17px;color:#fff">${Q[0]}</span>`;
+      pr.sol=Q[3]+"\nx = "+pr.xs.map(x=>piFrac(x,36)).join(", "); pr.hint="Factor it like a quadratic, then solve each factor."; }
+    else {
+      const fn=pick(["sin","cos","tan"]), b=pick([1,1,2,3].filter(v=>!(fn==="tan"&&v===3))), V=pick(NICE[fn]);
+      const S=solveBasic(fn,b,V[0]); pr.xs=S.xs; pr.fx=x=>FUN[fn](b*x)-V[0];
+      // dress up as a·f(bx) + d = 0
+      const arg=b>1?b+"x":"x";
+      let eqs=`${fn} ${arg} = ${V[1]}`;
+      if(V[1]==="1/2"||V[1]==="−1/2")eqs=`2 ${fn} ${arg} ${V[1][0]==="−"?"+":"−"} 1 = 0`;
+      else if(/^−?√\d\/2$/.test(V[1]))eqs=`2 ${fn} ${arg} ${V[1][0]==="−"?"+":"−"} ${V[1].replace(/[−\/2]/g,"")} = 0`;
+      pr.q=`Solve on <b>[0, 2π)</b>:<br><span style="font-family:var(--mono);font-size:17px;color:#fff">${eqs}</span>`;
+      pr.sol=(b>1?`Let u = ${arg}; u runs over [0, ${2*b}π).\n`:"")+basicText(S,b>1?"u":"x")+(b>1?`\nDivide by ${b} and keep x in [0, 2π):`:"")+`\nx = ${pr.xs.map(x=>piFrac(x,36)).join(", ")}`;
+      pr.hint=`Isolate ${fn} ${arg}. Find the reference angle and every quadrant with the right sign.${b>1?` Because the angle is ${arg}, go around ${b} times (u from 0 to ${2*b}π) before dividing by ${b}.`:""}`;
+    }
+    pr.fmt=`List every solution in radians, separated by commas, in any order: <b>pi/6, 5pi/6</b> or <b>π/6, 5π/6</b>. Decimals (2 places) are fine.`;
+    pr.ph="e.g. π/6, 5π/6";
+  }
+  if(kind==="ident"){
+    const Y=pick(YESNO); pr.L=Y[0]; pr.R=Y[1]; pr.yes=Y[2]; pr.why=Y[3];
+    pr.q=`Is this an identity (true for every x where both sides are defined)?<br><span style="font-family:var(--mono);font-size:17px;color:#fff">${pretty(Y[0])} = ${pretty(Y[1])}</span>`;
+    let cx=""; if(!Y[2]){ const f=compile(Y[0]),g=compile(Y[1]); for(let i=0;i<200;i++){ const x=0.37+i*0.05; if(isFinite(f(x))&&isFinite(g(x))&&Math.abs(f(x)-g(x))>.05){ cx=`\nCounterexample: x = ${num(x,2)} gives ${num(f(x),3)} ≠ ${num(g(x),3)}`; break; } } }
+    pr.sol=(Y[2]?"Yes, it is an identity. ":"No, it is not an identity. ")+Y[3]+cx;
+    pr.hint="Graph both sides in your head, or test a value like x = π/6. A single counterexample proves it is not an identity.";
+    pr.fmt="Choose Yes or No.";
+  }
+  return pr;
+}
+function parseList(str){
+  const parts=String(str).split(/[,;]+/).map(t=>t.trim()).filter(Boolean);
+  const v=parts.map(p=>/x|θ/i.test(p)?NaN:evalNum(p.replace(/^x\s*=\s*/i,"")));
+  return v;
+}
+const M6={
+  tab:"Challenge", lesson:"F-TF.B.7 · F-TF.C.8 · F-TF.C.9", accent:"var(--coral)",
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  streakEl:null,
+  title:()=>"Practice: "+({exact:"exact values",simp:"simplify",solve:"solve on [0, 2π)",ident:"identity or not?"}[M6.s.pr?M6.s.pr.kind:"exact"]),
+  newProb(){ M6.s.pr=gen6(M6.s.kind); M6.s.state="open"; M6.s.reveal=false; M6.s.tries=0; },
+  bar(){
+    btn("New problem",()=>{M6.newProb();render();},"primary");
+    selectBox(KINDS6,M6.s.kind,v=>{M6.s.kind=v;M6.newProb();render();},"Problem type");
+    M6.streakEl=spacer(""); M6.upStreak();
+  },
+  upStreak(){ if(M6.streakEl)M6.streakEl.textContent="Streak "+M6.s.streak+" · Best "+M6.s.best+" · Solved "+M6.s.solved; },
+  draw(){
+    bgRect(); const pr=M6.s.pr, show=M6.s.state==="right"||M6.s.reveal;
+    if(pr.kind==="exact"){
+      const m=/(sin|cos|tan) (\d+)°/.exec(pr.q.replace(/<[^>]+>/g,""));
+      if(m){ const th=+m[2], C=unitCircle(350,235,170); const P=C.P(th);
+        arc(C.g,[350,235],40,0,th,"var(--vert)",2.6); sseg(C.g,[350,235],P,"var(--vert)",3);
+        const dcp=decompose(th); const a=dcp[0];
+        sseg(C.g,[350,235],C.P(a),"rgba(5,150,105,.7)",2.2,"7 5"); stext(C.g,[350+196*Math.cos(a*D2R),235-196*Math.sin(a*D2R)],a+"°","sm","#047857");
+        sdot(C.g,P,"var(--vert)",6); stext(C.g,[350+200*Math.cos(th*D2R),235-200*Math.sin(th*D2R)],th+"°","sm","#6D28D9");
+        if(show){ sseg(C.g,[C.X(Math.cos(th*D2R)),235],P,"var(--same)",3); sseg(C.g,[350,235],[C.X(Math.cos(th*D2R)),235],"var(--corr)",3);
+          stext(cv,[350,445],"("+num(Math.cos(th*D2R),4)+", "+num(Math.sin(th*D2R),4)+")","sm","var(--ink)"); }
+        stext(cv,[20,24],th+"° = "+dcp[0]+"° "+(dcp[2]>0?"+":"−")+" "+dcp[1]+"°","sm","var(--ink)","start");
+      } else {
+        const C=unitCircle(350,235,170);
+        const qi=pr.quad-1, qa=45+90*qi;
+        C.g.appendChild(E("path",{d:`M350,235 L${C.X(Math.cos((qa-45)*D2R))},${C.Y(Math.sin((qa-45)*D2R))} A170,170 0 0 0 ${C.X(Math.cos((qa+45)*D2R))},${C.Y(Math.sin((qa+45)*D2R))} Z`,style:"fill:rgba(255,107,107,.13);stroke:none"}));
+        stext(C.g,[350+110*Math.cos(qa*D2R),235-110*Math.sin(qa*D2R)],"θ is in Quadrant "+QN[qi],"sm","#B91C1C");
+        if(show){ const th=pr.theta, P=C.P(th);
+          sseg(C.g,[350,235],P,"var(--vert)",3); sseg(C.g,[350,235],[P[0],235],"var(--corr)",3.4); sseg(C.g,[P[0],235],P,"var(--same)",3.4);
+          sdot(C.g,P,"var(--vert)",6); stext(cv,[350,445],"cos θ = "+frac(Math.cos(th*D2R),100)+",  sin θ = "+frac(Math.sin(th*D2R),100),"sm","var(--ink)"); }
+      }
+      return;
+    }
+    if(pr.kind==="solve"||pr.kind==="ident"||pr.kind==="simp"){
+      const G=graph({x0:pr.kind==="solve"?0:-TAU,x1:TAU,y0:-3,y1:3,L:40,T:50,W:624,H:380,piStep:pr.kind==="solve"?PI/6:PI/2,labEvery:pr.kind==="solve"?3:2,yStep:1});
+      if(pr.kind==="solve"){
+        // graph f(x) as LHS - RHS ... show only after answer; otherwise show grid with sin/cos reference faintly
+        if(show){ G.plot(pr.fx,"var(--vert)",3.6);
+          pr.xs.forEach((x,i)=>{ sdot(G.cg,[G.X(x),G.Y(0)],"var(--altx)",7); stext(cv,[G.X(x),G.Y(0)+(i%2?22:-20)],piFrac(x,36)||num(x,2),"sm","#BE185D"); }); }
+        stext(cv,[352,26],show?"y = left side − right side: solutions are its zeros":"The graph appears after you answer","sm","var(--ink)");
+        return;
+      }
+      const f=compile(pr.kind==="ident"?pr.L:pr.expr), g=compile(pr.kind==="ident"?pr.R:pr.target);
+      if(show){ G.plot(f,"var(--vert)",5,null,.85); G.plot(g,"var(--lin)",3,"10 7");
+        stext(cv,[352,26],"purple: left side · dashed orange: "+(pr.kind==="ident"?"right side":"simplified form"),"sm","var(--ink)"); }
+      else stext(cv,[352,26],"The graphs appear after you answer","sm","var(--ink)");
+    }
+  },
+  panel(full){
+    if(!full)return;
+    const pr=M6.s.pr;
+    const yn=pr.kind==="ident";
+    side.innerHTML=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob">${pr.q}</p></div>
+      ${yn?`<div class="yn"><button class="choice" type="button" data-yn="1">Yes, identity</button><button class="choice" type="button" data-yn="0">No, not an identity</button></div>`
+        :`<div class="fldwrap"><label class="fld" for="ans6" style="margin:0 0 7px">Your answer</label><input type="text" id="ans6" autocomplete="off" spellcheck="false" placeholder="${pr.ph}"></div>
+      <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap"><button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button><button id="sol" class="ghost" type="button">Show solution</button></div>`}
+      ${yn?`<div class="fldwrap" style="margin-bottom:6px"><button id="sol" class="ghost" type="button">Show solution</button></div>`:""}
+      <div id="fb6"></div><div style="height:4px"></div></div>
+      <div class="panel"><h3>How answers are checked</h3><div class="pad"><p>${pr.fmt}</p><p>Get one right on the first try to grow your streak. A wrong answer resets it and gives you a hint, and you can try again.</p></div></div>`;
+    const fb=document.getElementById("fb6"), inp=document.getElementById("ans6");
+    const showSol=(head)=>{ fb.innerHTML=(head||"")+`<div class="fldwrap"><div class="eq">${pr.sol}</div></div>`; };
+    const win=()=>{ M6.s.state="right"; if(M6.s.tries===0&&!M6.s.reveal){ M6.s.streak++; M6.s.best=Math.max(M6.s.best,M6.s.streak); } M6.s.solved++; M6.upStreak(); clear(); M6.draw();
+      showSol(`<div class="verdict good"><b>Correct!</b> ${M6.s.tries||M6.s.reveal?"You got there. Only first-try answers count toward the streak.":"Streak "+M6.s.streak+"."}${pr.exact?" Exact value: <b>"+pr.exact+"</b>.":""} Press <b>New problem</b> for another.</div>`); if(inp)inp.disabled=true; };
+    const lose=msg=>{ M6.s.tries++; M6.s.streak=0; M6.upStreak(); fb.innerHTML=`<div class="verdict bad"><b>Not quite.</b> ${msg} ${pr.hint}</div>`; };
+    const check=()=>{
+      if(M6.s.state==="right")return;
+      const v=inp.value.trim(); if(!v){ fb.innerHTML=`<div class="verdict bad"><b>Type an answer first.</b></div>`; return; }
+      if(pr.kind==="exact"){
+        if(hasX(v)){ fb.innerHTML=`<div class="verdict bad"><b>The answer is a number</b>, so it should not contain x.</div>`; return; }
+        const n=evalNum(v); if(!isFinite(n)){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Try (sqrt6+sqrt2)/4, (√6−√2)/4, -24/25 or 0.966.</div>`; return; }
+        if(Math.abs(n-pr.ans)<=0.0011)win(); else lose(Math.abs(Math.abs(n)-Math.abs(pr.ans))<=0.0011?"Check your sign: which quadrant is the angle in?":`Your value is ≈ ${num(n,4)}.`);
+      } else if(pr.kind==="simp"){
+        const f=compile(v); if(!f){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that expression.</b> Write things like sin(x), cos(x)^2, 2sin(x), sec(x).</div>`; return; }
+        const norm_=s=>s.replace(/\s+/g,"").toLowerCase();
+        if(norm_(v)===norm_(pr.expr)){ fb.innerHTML=`<div class="verdict bad"><b>That's the original expression.</b> Simplify it further.</div>`; return; }
+        if(sameFn(f,compile(pr.target))){ if(v.replace(/\s+/g,"").length>pr.expr.replace(/\s+/g,"").length+2){ fb.innerHTML=`<div class="verdict bad"><b>That's equivalent, but it isn't simpler.</b> Aim for one or two short terms.</div>`; return; } win(); }
+        else lose("Your expression has different values (try x = 1).");
+      } else if(pr.kind==="solve"){
+        const vals=parseList(v);
+        if(!vals.length||vals.some(x=>!isFinite(x))){ fb.innerHTML=`<div class="verdict bad"><b>I can't read one of those.</b> Separate answers with commas, e.g. pi/6, 5pi/6, 3π/2.</div>`; return; }
+        const out=vals.filter(x=>x<-1e-6||x>=TAU-1e-6);
+        const got=pr.xs.filter(s=>vals.some(x=>Math.abs(x-s)<0.006));
+        const extra=vals.filter(x=>!pr.xs.some(s=>Math.abs(x-s)<0.006));
+        const dup=vals.length!==uniq(vals.map(x=>Math.round(x*1000)/1000)).length;
+        if(got.length===pr.xs.length&&!extra.length)win();
+        else lose(out.length?"Every answer must be in [0, 2π).":extra.length?`${extra.length} of your values ${extra.length>1?"are not solutions":"is not a solution"}.`:`You found ${got.length} of ${pr.xs.length} solutions.${dup?" (You listed one twice.)":""}`);
+      }
+    };
+    const cb=document.getElementById("chk"); if(cb)cb.onclick=check;
+    if(inp)inp.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); });
+    side.querySelectorAll("[data-yn]").forEach(b=>b.onclick=()=>{
+      if(M6.s.state==="right")return;
+      const yes=b.dataset.yn==="1";
+      if(yes===pr.yes){ b.classList.add("right"); win(); }
+      else { b.classList.add("wrong"); lose(pr.yes?"It is an identity, so the graphs coincide everywhere.":"It is not. Look for one x where the two sides differ."); }
+    });
+    document.getElementById("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){M6.s.streak=0;M6.upStreak();} clear(); M6.draw();
+      showSol(`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+let cur=0;
+function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
+function update(){ setFS(); const M=MODS[cur]; clear(); M.draw(); M.panel(false); }
+function render(){
+  setFS(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M6&&!M6.s.pr)M6.newProb();
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  bar.innerHTML=""; M.bar();
+  clear(); M.draw(); M.panel(true);
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>

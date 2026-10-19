@@ -1,0 +1,1414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Applying Derivatives Lab — Calculus Unit 3</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M8 48C20 10 44 10 56 48' stroke='%2300E5FF' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M14 19H50' stroke='%23FF3D8A' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='19.5' r='5' fill='%23FFD93D'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .rel[data-pair]{cursor:pointer}
+  .rel[data-pair]:hover{background:rgba(255,255,255,.05)}
+  .rel.active{background:rgba(255,255,255,.09);box-shadow:inset 3px 0 0 var(--accent)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top}
+  table.facts .ab{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent);white-space:nowrap}
+  table.facts .st{color:#DDDDF2}
+  table.facts .st i{display:block;color:var(--dim);font-style:normal;font-size:13px;margin-top:4px}
+  .cathead{padding-top:18px!important;padding-bottom:6px!important;font-family:var(--display);font-weight:600;
+    font-size:13px;letter-spacing:.02em;color:var(--yellow);border-bottom:none!important}
+  .chip{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-right:9px}
+  .chip.assume{background:rgba(255,217,61,.18);color:var(--yellow)}
+  .chip.proved{background:rgba(94,234,212,.16);color:var(--mint)}
+  ol.chain{margin:0;padding:6px 20px 18px 38px;font-size:15px;color:#CFCFEA}
+  ol.chain li{padding:8px 0} ol.chain li::marker{color:var(--accent);font-weight:700}
+  ol.chain li b{color:#fff}
+
+  .steps{width:100%;border-collapse:collapse;font-size:15px}
+  .steps td{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:middle}
+  .steps .stmt{font-family:var(--mono);font-size:14px;font-weight:600;color:#fff;white-space:nowrap}
+  .steps .why{width:56%}
+  .steps tr.right .stmt{color:var(--mint)}
+  .steps tr.right select{border-color:rgba(94,234,212,.6)}
+  .steps tr.wrong select{border-color:var(--coral)}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.8;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.4;fill:none;stroke-dasharray:9 6}
+  .wedge{stroke-width:2.4;fill-opacity:.17;cursor:pointer}
+  .wedge.flat{cursor:default}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── Coordinate Line Lab additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible,.choice:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:16px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  @media (max-width:560px){ svg.canvas .sm{font-size:21px;stroke-width:5} svg.canvas .mk{font-size:27px} svg.canvas .num{font-size:22px} svg.canvas .ax{font-size:16px} }
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .leg{stroke-width:3;fill:none;stroke-dasharray:8 5;stroke-linecap:round}
+  .tick{stroke:var(--graphite);stroke-width:2.2}
+  .ghostdot{fill:#9AA8C7;stroke:#fff;stroke-width:2}
+  .nt{position:relative;display:inline-block;padding-top:.42em;line-height:1.05;font-family:var(--mono);font-weight:700;color:#fff;white-space:nowrap}
+  .nt::before{content:"";position:absolute;left:.06em;right:.06em;top:.2em;border-top:2px solid currentColor}
+  .nt.ray::after,.nt.line::after{content:"";position:absolute;right:-.12em;top:calc(.2em - 3.5px);border-left:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .nt.line .la{position:absolute;left:-.12em;top:calc(.2em - 3.5px);border-right:7px solid currentColor;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .uterms{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+  .uterms span{font-family:var(--mono);font-size:12px;font-weight:600;padding:5px 11px;border-radius:100px;
+    border:1px solid var(--edge);color:var(--dim);opacity:.55}
+  .uterms span.on{opacity:1;color:#0A0A1F;background:var(--accent);border-color:var(--accent)}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px}
+  .choice{font-family:var(--ui);font-size:15px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text);
+    border:1px solid var(--edge);border-radius:14px;padding:13px 12px;cursor:pointer;text-align:left;line-height:1.5;transition:.15s}
+  .choice:hover{background:rgba(255,255,255,.12)}
+  .choice.right{border-color:var(--mint);background:rgba(94,234,212,.16)}
+  .choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.14)}
+  .choice small{display:block;font-weight:400;color:var(--dim);font-size:12.5px}
+  .stepl{list-style:none;margin:0;padding:6px 0}
+  .stepl li{padding:10px 20px;border-left:3px solid transparent;color:var(--dim);font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li.done{color:#CFCFEA}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li b{color:#fff}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  @media (max-width:560px){
+    .choices{grid-template-columns:1fr}
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+  }
+
+  /* ── Applying Derivatives Lab additions ── */
+  .rng output{min-width:34px}
+  .seg{flex-wrap:wrap}
+  @media (max-width:960px){.stage{grid-template-columns:minmax(0,1fr)}}
+  @media (max-width:560px){ .bar .rng{flex-wrap:wrap} .rng.wide input{width:120px} .board-head .lsn{margin-left:0} }
+  .rng.wide output{min-width:96px}
+  .sc-wrap{overflow-x:auto;padding:2px 20px 14px}
+  table.sc{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:100%}
+  table.sc td,table.sc th{border:1px solid rgba(196,181,253,.18);padding:6px 7px;text-align:center;white-space:nowrap;color:#DDDDF2}
+  table.sc th{color:var(--accent);font-weight:700;text-align:left}
+  table.sc td.pt{background:rgba(255,255,255,.05);color:#fff;font-weight:700}
+  table.sc td.iv{color:var(--dim);font-size:12px}
+  .pos{color:var(--mint)!important;font-weight:700} .neg{color:var(--coral)!important;font-weight:700}
+  table.cand{width:100%;border-collapse:collapse;font-size:14px;font-family:var(--mono)}
+  table.cand td,table.cand th{padding:8px 20px;border-bottom:1px solid rgba(196,181,253,.11);text-align:left}
+  table.cand th{color:var(--accent);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+  table.cand tr.hi td{color:var(--mint);font-weight:700}
+  table.cand tr.lo td{color:var(--coral);font-weight:700}
+  .hud{font-family:var(--mono);font-weight:700;font-size:14px}
+  .pq{font-family:var(--ui);font-size:19px;fill:#14213D}
+  .pqh{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.06em}
+  .lim{font-family:var(--mono);font-weight:600}
+  .stepl li .why{display:block;color:var(--dim);font-size:13px}
+  @media (max-width:560px){ svg.canvas .hud{font-size:20px} svg.canvas .pq{font-size:26px} svg.canvas .pqh{font-size:20px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Applying Derivatives Lab</h1>
+    <div class="eyebrow">Calculus · Unit 3 · Applications of Differentiation</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Calculus figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every figure is live: rates, extrema, sign charts and limits are computed from the current picture (exact forms where the math is exact, careful numerics otherwise). Topic numbers follow the AP Calculus AB/BC Course and Exam Description (Units 4–5).
+    <div class="links"><a href="/trig-calculus/">← Trig &amp; Calculus courses</a><a href="/math/#trig-calculus">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg", VW=700, VH=460, PI=Math.PI;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const minus=s=>String(s).replace(/-/g,"−");
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const sub=(p,q)=>[p[0]-q[0],p[1]-q[1]], add=(p,q)=>[p[0]+q[0],p[1]+q[1]], mul=(p,k)=>[p[0]*k,p[1]*k];
+const len=v=>Math.hypot(v[0],v[1]);
+const unit=v=>{const l=len(v)||1;return [v[0]/l,v[1]/l];};
+const cbrt=Math.cbrt;
+function fixd(v,dp){ if(v===Infinity)return "∞"; if(v===-Infinity)return "−∞"; if(!isFinite(v))return "undefined";
+  let s=v.toFixed(dp==null?2:dp); if(/^-0\.?0*$/.test(s))s=s.slice(1); return minus(s); }
+function num(v,dp){ dp=(dp==null?2:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+function fracO(v,maxD,tol){ tol=tol||1e-7;
+  for(let d=1;d<=maxD;d++){ const n=Math.round(v*d); if(Math.abs(n/d-v)<tol*Math.max(1,Math.abs(v))){ const g=gcd(n,d); return {n:n/g,d:d/g}; } }
+  return null; }
+const fracStr=o=>minus(o.d===1?String(o.n):o.n+"/"+o.d);
+function rootParts(n){ let k=1,r=n; for(let i=Math.floor(Math.sqrt(n));i>1;i--){ if(n%(i*i)===0){k=i;r=n/(i*i);break;} } return {k,r}; }
+function piStr(o){ const s=o.n<0?"−":"", a=Math.abs(o.n); return s+(a===1?"":a)+"π"+(o.d===1?"":"/"+o.d); }
+// exact-looking form (integer, fraction, multiple of π, or a/b·√c) or null
+function niceS(v){
+  if(!isFinite(v))return null; if(Math.abs(v)<1e-10)return "0";
+  let f=fracO(v,24); if(f)return fracStr(f);
+  f=fracO(v/PI,12); if(f)return piStr(f);
+  f=fracO(v*v,12);
+  if(f&&f.n*f.d<=600){ const N=f.n*f.d, D=f.d, rp=rootParts(N); if(rp.r===1)return null;
+    const g=gcd(rp.k,D), kk=rp.k/g, dd=D/g;
+    return (v<0?"−":"")+(kk===1?"":kk)+"√"+rp.r+(dd===1?"":"/"+dd); }
+  return null;
+}
+const ex=(v,dp)=>niceS(v)||fixd(v,dp==null?3:dp);
+function exa(v,dp){ const s=niceS(v); if(s===null)return "≈ "+fixd(v,dp==null?3:dp); return /[\/√π]/.test(s)? s+" ≈ "+fixd(v,dp==null?3:dp) : s; }
+const fq=s=>String(s).replace(/=\s+≈/g,"≈");
+const par=s=>(/^[−-]/.test(s)?"("+s+")":s);
+function niceStep(range,target){ const raw=range/(target||8), p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3?2:m<7?5:10)*p; }
+function tickLab(v,step){ const dec=Math.max(0,-Math.floor(Math.log10(step)+1e-9)); return fixd(v,dec); }
+const d1=(f,x,h)=>{h=h||1e-5;return (f(x+h)-f(x-h))/(2*h);};
+// zeros of fn on [lo,hi]: sign changes (bisection, verified) + touching zeros (golden section on |fn|)
+function zeros(fn,lo,hi,N){
+  N=N||1500; const xs=[],ys=[],out=[];
+  for(let i=0;i<=N;i++){ const x=lo+(hi-lo)*i/N; xs.push(x); ys.push(fn(x)); }
+  const ok=v=>isFinite(v);
+  const addR=r=>{ const f=fracO(r,24,1e-8); if(f)r=f.n/f.d; else { const g=fracO(r/PI,12,1e-8); if(g)r=g.n/g.d*PI; } out.push(r); };
+  for(let i=0;i<N;i++){
+    const fa=ys[i], fb=ys[i+1];
+    if(ok(fa)&&fa===0){ addR(xs[i]); continue; }
+    if(ok(fa)&&ok(fb)&&fa*fb<0){
+      let a=xs[i],b=xs[i+1],A=fa;
+      for(let k=0;k<80;k++){ const m=(a+b)/2, M=fn(m); if(!ok(M))break; if(M===0){a=b=m;break;} if(A*M<0)b=m; else {a=m;A=M;} }
+      const r=(a+b)/2, v=fn(r); if(ok(v)&&Math.abs(v)<1e-6)addR(r);
+    }
+  }
+  for(let i=1;i<N;i++){
+    const a=Math.abs(ys[i-1]),b=Math.abs(ys[i]),c=Math.abs(ys[i+1]);
+    if(!(ok(a)&&ok(b)&&ok(c)))continue;
+    if(b<=a&&b<=c&&ys[i-1]*ys[i+1]>0&&b<1e-2*(1+Math.max(a,c))){
+      let L=xs[i-1],R=xs[i+1]; const g=(Math.sqrt(5)-1)/2;
+      for(let k=0;k<90;k++){ const m1=R-g*(R-L), m2=L+g*(R-L); if(Math.abs(fn(m1))<Math.abs(fn(m2)))R=m2; else L=m1; }
+      const r=(L+R)/2; if(Math.abs(fn(r))<1e-9)addR(r);
+    }
+  }
+  out.sort((a,b)=>a-b); const u=[]; out.forEach(r=>{ if(!u.length||Math.abs(r-u[u.length-1])>1e-6)u.push(r); }); return u;
+}
+
+/* ══════════════════════ svg primitives ══════════════════════ */
+let FS=1;
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+function sseg(g,p,q,col,w,dash,op){ const a={x1:p[0],y1:p[1],x2:q[0],y2:q[1],style:"stroke:"+(col||"var(--graphite)"),"stroke-width":w||2.6,"stroke-linecap":"round",fill:"none"};
+  if(dash)a["stroke-dasharray"]=dash; if(op!=null)a.opacity=op; const n=E("line",a); g.appendChild(n); return n; }
+function fin(p){ return isFinite(p[0])&&isFinite(p[1]); }
+function sdot(g,p,col,r){ if(!fin(p))return; g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||5,style:"fill:"+(col||"var(--ink)"),stroke:"#fff","stroke-width":2,"pointer-events":"none"})); }
+function ring(g,p,col,r){ if(!fin(p))return; g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||6,fill:"#fff",style:"stroke:"+(col||"var(--ink)"),"stroke-width":2.6,"pointer-events":"none"})); }
+function sgrab(g,p,id,col){ if(!fin(p))return; g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?24:16,class:"grab","data-drag":id})); sdot(g,p,col||"var(--hand)",6); }
+function stext(g,p,s,cls,col,anchor){ const t=E("text",{x:p[0],y:p[1],class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(col)t.setAttribute("style","fill:"+col); t.textContent=s; g.appendChild(t); return t; }
+function arrowHead(g,tip,dir,col,sz){ sz=sz||12; const n=[-dir[1],dir[0]], b=[tip[0]-dir[0]*sz,tip[1]-dir[1]*sz];
+  g.appendChild(E("polygon",{points:[tip,[b[0]+n[0]*sz*.48,b[1]+n[1]*sz*.48],[b[0]-n[0]*sz*.48,b[1]-n[1]*sz*.48]].map(p=>p.join(",")).join(" "),style:"fill:"+(col||"var(--graphite)")})); }
+function arrow(g,p,q,col,w){ if(len(sub(q,p))<2)return; const d=unit(sub(q,p)); sseg(g,p,sub(q,mul(d,8)),col,w||3); arrowHead(g,q,d,col,13); }
+function smartLabel(g,anchor,dir,text,col,cls){
+  const w=text.length*8.3*FS+4, h=16*FS, d=unit(dir), off=14*FS;
+  let cx=anchor[0]+d[0]*(off+w/2*Math.abs(d[0])), cy=anchor[1]+d[1]*(off+h/2*Math.abs(d[1])+2);
+  cx=clamp(cx,w/2+6,VW-w/2-6); cy=clamp(cy,h/2+6,VH-h/2-6);
+  return stext(g,[cx,cy],text,cls||"sm",col);
+}
+function hud(g,lines,pos){
+  const w=Math.max(...lines.map(l=>l[0].length))*8.6*FS+26, lh=21*FS, h=lines.length*lh+14;
+  const x=pos==="tr"? VW-14-w : 14, y=14;
+  g.appendChild(E("rect",{x,y,width:w,height:h,rx:10,fill:"rgba(255,255,255,.93)",stroke:"#C9D6EE","stroke-width":1.5}));
+  lines.forEach((l,i)=>stext(g,[x+13,y+7+lh*(i+.5)],l[0],"hud",l[1]||"var(--ink)","start"));
+}
+function pth(g,d,col,w,dash,fill){ const a={d,style:"stroke:"+col,"stroke-width":w||3,fill:fill||"none","stroke-linejoin":"round","stroke-linecap":"round"}; if(dash)a["stroke-dasharray"]=dash; const n=E("path",a); g.appendChild(n); return n; }
+
+/* ── function graphs ── */
+let CLIP=0;
+function mkG(box,win){
+  const G={box,win};
+  G.X=x=>box.x+(x-win.x0)/(win.x1-win.x0)*box.w;
+  G.Y=y=>box.y+box.h-(y-win.y0)/(win.y1-win.y0)*box.h;
+  G.iX=sx=>win.x0+(sx-box.x)/box.w*(win.x1-win.x0);
+  G.iY=sy=>win.y0+(box.y+box.h-sy)/box.h*(win.y1-win.y0);
+  G.P=(x,y)=>[G.X(x),G.Y(y)];
+  return G;
+}
+function graph(g,G,o){
+  o=o||{}; const b=G.box, W=G.win;
+  g.appendChild(E("rect",{x:b.x,y:b.y,width:b.w,height:b.h,fill:"rgba(255,255,255,.75)",stroke:"#C9D6EE","stroke-width":1}));
+  const sx=o.pi? PI/(o.piDiv||2) : niceStep(W.x1-W.x0,o.xt||9), sy=niceStep(W.y1-W.y0,o.yt||6);
+  const gg=E("g",{}); g.appendChild(gg);
+  const xs=[],ys=[];
+  for(let v=Math.ceil(W.x0/sx-1e-9)*sx; v<=W.x1+1e-9; v+=sx){ xs.push(v); gg.appendChild(E("line",{x1:G.X(v),y1:b.y,x2:G.X(v),y2:b.y+b.h,style:"stroke:var(--grid)","stroke-width":1})); }
+  for(let v=Math.ceil(W.y0/sy-1e-9)*sy; v<=W.y1+1e-9; v+=sy){ ys.push(v); gg.appendChild(E("line",{x1:b.x,y1:G.Y(v),x2:b.x+b.w,y2:G.Y(v),style:"stroke:var(--grid)","stroke-width":1})); }
+  const ax0=W.y0<=0&&W.y1>=0, ay0=W.x0<=0&&W.x1>=0;
+  const axY=ax0?G.Y(0):b.y+b.h, axX=ay0?G.X(0):b.x;
+  if(ax0)gg.appendChild(E("line",{x1:b.x,y1:axY,x2:b.x+b.w,y2:axY,stroke:"#8FA3C8","stroke-width":1.8}));
+  if(ay0)gg.appendChild(E("line",{x1:axX,y1:b.y,x2:axX,y2:b.y+b.h,stroke:"#8FA3C8","stroke-width":1.8}));
+  if(o.noLabels)return clipG(g,G);
+  const every=Math.max(1,Math.ceil(46*FS/(b.w/Math.max(1,xs.length))));
+  xs.forEach((v,i)=>{ if(Math.abs(v)<1e-9&&ay0&&ax0)return; if(i%every)return;
+    const lab=o.pi? (Math.abs(v)<1e-9?"0":piStr(fracO(v/PI,12)||{n:0,d:1})) : tickLab(v,sx);
+    const ty=clamp(axY+13*FS,b.y+10,b.y+b.h-6); stext(gg,[G.X(v),ty],lab,"ax","#7C8AAB"); });
+  const everyY=Math.max(1,Math.ceil(20*FS/(b.h/Math.max(1,ys.length))));
+  ys.forEach((v,i)=>{ if(Math.abs(v)<1e-9&&ax0&&ay0)return; if(i%everyY)return; const tx=clamp(axX-5,b.x+4+24*FS,b.x+b.w);
+    stext(gg,[tx,G.Y(v)],tickLab(v,sy),"ax","#7C8AAB","end"); });
+  if(o.xl)stext(gg,[b.x+b.w-8,clamp(axY-10,b.y+10,b.y+b.h-10)],o.xl,"ax","#5B6B8C","end");
+  if(o.yl)stext(gg,[clamp(axX+8,b.x+6,b.x+b.w-40),b.y+11],o.yl,"ax","#5B6B8C","start");
+  return clipG(g,G);
+}
+function clipG(g,G){ const id="cl"+(CLIP++), b=G.box;
+  const d=E("defs",{}); const cp=E("clipPath",{id}); cp.appendChild(E("rect",{x:b.x,y:b.y,width:b.w,height:b.h})); d.appendChild(cp); g.appendChild(d);
+  const c=E("g",{"clip-path":"url(#"+id+")"}); g.appendChild(c); return c; }
+// sample fn densely, breaking at gaps/asymptotes; colFn optional → multi-coloured
+function plot(g,G,fn,col,w,dash,lo,hi,colFn,N){
+  lo=Math.max(lo==null?G.win.x0:lo,G.win.x0); hi=Math.min(hi==null?G.win.x1:hi,G.win.x1); N=N||700;
+  const R=G.win.y1-G.win.y0, ylo=G.win.y0-2*R, yhi=G.win.y1+2*R;
+  const segs=[]; let curS=null, prev=null;
+  for(let i=0;i<=N;i++){
+    const x=lo+(hi-lo)*i/N, y=fn(x);
+    if(!isFinite(y)||y<ylo||y>yhi){curS=null;prev=null;continue;}
+    if(prev!==null&&Math.abs(y-prev.y)>1.5*R){curS=null;}
+    const c=colFn?colFn(x):col, P=G.X(x).toFixed(1)+" "+G.Y(y).toFixed(1);
+    if(!curS||curS.c!==c){ const s={c,d:(curS&&prev?"M"+prev.P+"L":"M")+P}; segs.push(s); curS=s; }
+    else curS.d+="L"+P;
+    prev={y,P};
+  }
+  segs.forEach(s=>pth(g,s.d,s.c,w||3.2,dash));
+}
+function lineW(g,G,x0,y0,m,col,w,dash){ const a=G.win.x0-1,b=G.win.x1+1; sseg(g,G.P(a,y0+m*(a-x0)),G.P(b,y0+m*(b-x0)),col,w||2.4,dash); }
+
+/* ══════════════════════ drag plumbing & bar builders ══════════════════════ */
+let dragId=null, cur=0;
+function svgPt(e){ const m=cv.getScreenCTM(); if(!m)return [0,0]; const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y]; }
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag; if(!id)return;
+  dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault();
+});
+cv.addEventListener("pointermove",e=>{ if(!dragId)return; const M=MODS[cur]; if(!M.drag)return; if(M.drag(dragId,svgPt(e))!==false)update(); });
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+
+function btn(label,fn,cls,parent){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; (parent||bar).appendChild(b); return b; }
+function segBtns(opts,val,fn){ const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group");
+  opts.forEach(([k,lab])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=lab; b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s; }
+function chips(items,val,fn,col){ const row=document.createElement("div"); row.className="chiprow";
+  items.forEach(([k,lab])=>{ const b=document.createElement("button"); b.type="button"; b.style.setProperty("--c",col||"var(--accent)"); b.textContent=lab;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); row.appendChild(b); });
+  bar.appendChild(row); return row; }
+function chk(label,val,fn){ const l=document.createElement("label"); l.className="chk"; const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i; }
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function slider(label,min,max,step,val,fn,fmtO,wide){
+  const l=document.createElement("label"); l.className="rng"+(wide?" wide":""); l.textContent=label+" ";
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=step; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); const F=fmtO||(v=>num(v,2)); o.textContent=F(+val);
+  i.oninput=()=>{ o.textContent=F(+i.value); fn(+i.value); };
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l);
+  return {i,o,set(v){ i.value=v; o.textContent=F(v); }};
+}
+function tryPanel(html){ return `<div class="panel"><h3>Try this</h3><div class="pad">${html}</div></div>`; }
+function panel(t,html){ return `<div class="panel"><h3>${t}</h3>${html}</div>`; }
+const live=id=>document.getElementById(id);
+
+/* ══════════════════════ TAB 1 · related rates ══════════════════════ */
+const f2=v=>fixd(v,2), f3=v=>fixd(v,3);
+const RRS={
+  ladder:{label:"Sliding ladder",
+    params:[["L","Ladder L",10,20,1,13,"ft"],["r","dx/dt",0.5,3,0.1,1,"ft/s"]],
+    range:p=>[0,(0.96-0.25)*p.L/p.r], tu:"s",
+    st(p,t){ const x=0.25*p.L+p.r*t, y=Math.sqrt(Math.max(1e-9,p.L*p.L-x*x)); return {x,y,dy:-x*p.r/y,dth:-p.r/y,th:Math.atan2(y,x)}; },
+    draw(g,p,s){
+      const k=17, Wx=560, Gy=410;
+      g.appendChild(E("rect",{x:30,y:Gy,width:640,height:50,fill:"#E2E8F0"}));
+      sseg(g,[30,Gy],[670,Gy],"#475569",3);
+      g.appendChild(E("rect",{x:Wx,y:26,width:24,height:Gy-26,fill:"#CBD5E1",stroke:"#475569","stroke-width":2}));
+      for(let yy=50;yy<Gy;yy+=24)sseg(g,[Wx,yy],[Wx+24,yy],"#94A3B8",1);
+      const B=[Wx-s.x*k,Gy], T=[Wx,Gy-s.y*k], u=unit(sub(T,B)), n=[-u[1],u[0]];
+      sseg(g,add(B,mul(n,5)),add(T,mul(n,5)),"#B45309",4); sseg(g,sub(B,mul(n,5)),sub(T,mul(n,5)),"#B45309",4);
+      for(let i=1;i<p.L;i++){ const c=add(B,mul(u,i*k)); sseg(g,add(c,mul(n,5)),sub(c,mul(n,5)),"#B45309",2.4); }
+      // θ arc
+      const r=42, A2=add(B,[r*Math.cos(s.th),-r*Math.sin(s.th)]);
+      pth(g,`M${B[0]+r} ${Gy}A${r} ${r} 0 0 0 ${A2[0]} ${A2[1]}`,"var(--vert)",2.4);
+      stext(g,add(B,[ (r+14)*Math.cos(s.th/2), -(r+14)*Math.sin(s.th/2)]),"θ","mk","var(--vert)");
+      // dims
+      sseg(g,[B[0],Gy+18],[Wx,Gy+18],"var(--lin)",2.4); sseg(g,[B[0],Gy+10],[B[0],Gy+26],"var(--lin)",2); sseg(g,[Wx,Gy+10],[Wx,Gy+26],"var(--lin)",2);
+      stext(g,[(B[0]+Wx)/2,Gy+36],"x = "+f2(s.x),"sm","var(--lin)");
+      sseg(g,[Wx+40,Gy],[Wx+40,T[1]],"var(--corr)",2.4); sseg(g,[Wx+32,T[1]],[Wx+48,T[1]],"var(--corr)",2);
+      stext(g,[Wx+48,(Gy+T[1])/2],"y = "+f2(s.y),"sm","var(--corr)","start");
+      smartLabel(g,add(B,mul(u,p.L*k*0.5)),n,"L = "+p.L,"#92400E");
+      // rate arrows
+      arrow(g,[B[0]-12,Gy-16],[B[0]-12-clamp(22*p.r,16,70),Gy-16],"var(--lin)",3.4);
+      arrow(g,[Wx+12,T[1]+4],[Wx+12,T[1]+4+clamp(22*Math.abs(s.dy),14,90)],"var(--corr)",3.4);
+      hud(g,[["dx/dt = "+f2(p.r)+" ft/s","#C2410C"],["dy/dt = "+f3(s.dy)+" ft/s","#0369A1"],["dθ/dt = "+f3(s.dth)+" rad/s","#6D28D9"]],"tl");
+    },
+    eq(p,s,t){ return `x² + y² = L²          (L = ${p.L} ft is constant)
+d/dt:  2x·(dx/dt) + 2y·(dy/dt) = 0
+  ⇒   dy/dt = −(x/y)·(dx/dt)
+
+At t = ${f2(t)} s:  x = ${f2(s.x)} ft,  y = √(${p.L}² − ${f2(s.x)}²) = ${f2(s.y)} ft
+      dy/dt = −(${f2(s.x)} / ${f2(s.y)})·(${f2(p.r)}) = ${f3(s.dy)} ft/s`; },
+    rates:(p,s)=>[["dx/dt","bottom slides away (given)",p.r,"ft/s","var(--lin)"],["dy/dt","top of the ladder",s.dy,"ft/s","var(--corr)"],["dθ/dt","angle with the ground, from cos θ = x/L",s.dth,"rad/s","var(--vert)"]],
+    intro:`<p>A ladder of fixed length L leans on a wall. The bottom is pulled away at a steady rate, so x grows at a constant speed. The top <b>does not</b> fall at a constant speed: it speeds up as the ladder flattens.</p><p>The Pythagorean theorem ties x and y together at <b>every</b> instant, so we differentiate it with respect to time t. Both x and y are functions of t, so each term picks up a chain-rule factor.</p>`,
+    tryit:`<p>Pause when x = y (θ = 45°). What is dy/dt compared with dx/dt? Explain from dy/dt = −(x/y)·dx/dt.</p><p>Let the animation run to the end. Why does the formula predict the top would move "infinitely fast" as y → 0? (The model breaks: the top leaves the wall.)</p>`},
+  cone:{label:"Filling cone",
+    params:[["R","Tank radius R",2,6,1,4,"ft"],["k","dV/dt",1,10,0.5,3,"ft³/min"]],
+    tu:"min", H:12,
+    range(p){ const Vt=PI*p.R*p.R*12/3; return [0.02*Vt/p.k,0.97*Vt/p.k]; },
+    st(p,t){ const H=12, Vt=PI*p.R*p.R*H/3, V=p.k*t, h=H*Math.cbrt(V/Vt), r=p.R*h/H, dh=p.k/(PI*r*r); return {V,h,r,dh,dr:p.R/H*dh,dA:2*PI*r*p.R/H*dh}; },
+    draw(g,p,s){
+      const k=28, cx=400, vy=425, H=12, top=vy-H*k, R=p.R*k;
+      g.appendChild(E("polygon",{points:`${cx},${vy} ${cx-R},${top} ${cx+R},${top}`,fill:"rgba(148,163,184,.12)",stroke:"#475569","stroke-width":2.6,"stroke-linejoin":"round"}));
+      g.appendChild(E("ellipse",{cx,cy:top,rx:R,ry:13,fill:"rgba(226,232,240,.6)",stroke:"#475569","stroke-width":2.2}));
+      const wy=vy-s.h*k, wr=s.r*k;
+      g.appendChild(E("polygon",{points:`${cx},${vy} ${cx-wr},${wy} ${cx+wr},${wy}`,fill:"rgba(14,165,233,.35)",stroke:"#0284C7","stroke-width":1.6}));
+      g.appendChild(E("ellipse",{cx,cy:wy,rx:wr,ry:Math.max(2,13*wr/R),fill:"rgba(56,189,248,.55)",stroke:"#0284C7","stroke-width":1.6}));
+      // inflow pipe
+      sseg(g,[640,46],[cx+6,46],"#64748B",10); sseg(g,[cx+2,50],[cx+2,wy-4],"#38BDF8",3,"6 5");
+      arrowHead(g,[cx+2,wy-2],[0,1],"#0284C7",10);
+      stext(g,[620,28],"dV/dt = "+num(p.k,1)+" ft³/min","sm","#0369A1","end");
+      // dims
+      const dx=cx+R+26; sseg(g,[dx,vy],[dx,wy],"var(--corr)",2.4); sseg(g,[dx-7,wy],[dx+7,wy],"var(--corr)",2); sseg(g,[dx-7,vy],[dx+7,vy],"var(--corr)",2);
+      stext(g,[dx+10,(vy+wy)/2],"h = "+f2(s.h),"sm","var(--corr)","start");
+      sseg(g,[cx,wy],[cx+wr,wy],"var(--lin)",2.6); stext(g,[cx+wr/2,wy-16],"r","sm","var(--lin)");
+      stext(g,[cx-R-12,top],"R = "+p.R,"sm","#475569","end"); stext(g,[cx-R-12,top+22],"H = 12","sm","#475569","end");
+      hud(g,[["V = "+f2(s.V)+" ft³"],["dh/dt = "+f3(s.dh)+" ft/min","#0369A1"],["dr/dt = "+f3(s.dr)+" ft/min","#C2410C"]],"tl");
+    },
+    eq(p,s,t){ const q=fracStr(fracO(p.R/12,24)), q2=fracStr(fracO(p.R*p.R/144,200)), c=fracStr(fracO(p.R*p.R/432,500));
+      return `V = (1/3)πr²h,   similar triangles: r/h = R/H = ${p.R}/12 = ${q}
+  ⇒ r = (${q})h   ⇒   V = (1/3)π(${q}h)²h = (${c})πh³
+d/dt:  dV/dt = (${q2})πh²·(dh/dt)
+  ⇒   dh/dt = (dV/dt) / ((${q2})πh²)
+
+At t = ${f2(t)} min:  V = ${f2(s.V)} ft³,  h = ${f2(s.h)} ft
+      dh/dt = ${num(p.k,1)} / ((${q2})π·${f2(s.h)}²) = ${f3(s.dh)} ft/min`; },
+    rates:(p,s)=>[["dV/dt","water pumped in (given)",p.k,"ft³/min","var(--corr)"],["dh/dt","depth of the water",s.dh,"ft/min","var(--alt)"],["dr/dt","radius of the surface",s.dr,"ft/min","var(--lin)"],["dA/dt","area of the water surface",s.dA,"ft²/min","var(--vert)"]],
+    intro:`<p>Water pours into an inverted cone at a <b>constant volume rate</b> dV/dt. The level rises fast at first (the cone is narrow) and slowly near the top (the cone is wide).</p><p>The trick is to use <b>similar triangles</b> to remove r <b>before</b> differentiating, so the volume formula has only one changing variable, h.</p>`,
+    tryit:`<p>Double dV/dt. Does dh/dt double at the same depth h? Then double the depth instead: what happens to dh/dt? (It is divided by 4: dh/dt ∝ 1/h².)</p>`},
+  ripple:{label:"Circle ripple",
+    params:[["c","dr/dt",0.5,4,0.1,1.5,"ft/s"]], tu:"s",
+    range:p=>[0.3/p.c,10/p.c],
+    st(p,t){ const r=p.c*t; return {r,A:PI*r*r,dA:2*PI*r*p.c,dC:2*PI*p.c}; },
+    draw(g,p,s){
+      g.appendChild(E("rect",{x:0,y:0,width:VW,height:VH,fill:"#E0F2FE"}));
+      const C=[440,235], k=20;
+      [3,1.5].forEach((d,i)=>{ if(s.r-d>0.05)g.appendChild(E("circle",{cx:C[0],cy:C[1],r:(s.r-d)*k,fill:"none",stroke:"#7DD3FC","stroke-width":2,opacity:.5+.2*i})); });
+      g.appendChild(E("circle",{cx:C[0],cy:C[1],r:s.r*k,fill:"rgba(2,132,199,.14)",stroke:"#0284C7","stroke-width":3.2}));
+      sdot(g,C,"#334155",5);
+      const a=-PI/6, E1=add(C,[s.r*k*Math.cos(a),s.r*k*Math.sin(a)]);
+      sseg(g,C,E1,"var(--lin)",2.6); smartLabel(g,mul(add(C,E1),.5),[-.5,-1],"r = "+f2(s.r),"#C2410C");
+      const dir=unit(sub(E1,C)); arrow(g,add(E1,mul(dir,4)),add(E1,mul(dir,4+clamp(16*p.c,14,60))),"#C2410C",3.4);
+      hud(g,[["r = "+f2(s.r)+" ft"],["A = "+f2(s.A)+" ft²"],["dr/dt = "+f2(p.c)+" ft/s","#C2410C"],["dA/dt = "+f2(s.dA)+" ft²/s","#0369A1"],["dC/dt = "+f2(s.dC)+" ft/s","#047857"]],"tl");
+    },
+    eq(p,s,t){ return `A = πr²
+d/dt:  dA/dt = 2πr·(dr/dt)
+C = 2πr  ⇒  dC/dt = 2π·(dr/dt)
+
+At t = ${f2(t)} s:  r = ${f2(p.c)}·${f2(t)} = ${f2(s.r)} ft
+      dA/dt = 2π(${f2(s.r)})(${f2(p.c)}) = ${f2(s.dA)} ft²/s
+      dC/dt = 2π(${f2(p.c)}) = ${f2(s.dC)} ft/s  (constant!)`; },
+    rates:(p,s)=>[["dr/dt","ripple spreads (given)",p.c,"ft/s","var(--lin)"],["dA/dt","area inside the ripple",s.dA,"ft²/s","var(--corr)"],["dC/dt","circumference",s.dC,"ft/s","var(--alt)"]],
+    intro:`<p>A stone drops into a pond and the ripple's radius grows at a constant rate dr/dt. The <b>area</b> grows faster and faster, because each new ring of water is longer than the last.</p><p>Notice dA/dt = 2πr·dr/dt = (circumference)·(dr/dt): the new area per second is a thin ring of length 2πr and width dr/dt.</p>`,
+    tryit:`<p>Pause when r = 5 ft and read dA/dt. Predict dA/dt at r = 10 ft, then play to check. Why does dC/dt never change?</p>`},
+  shadow:{label:"Walking shadow",
+    params:[["P","Lamp height",12,20,1,15,"ft"],["w","dx/dt",2,6,0.5,4,"ft/s"]], tu:"s",
+    range:p=>[0,(30*(p.P-6)/p.P-2)/p.w],
+    st(p,t){ const x=2+p.w*t, s=6*x/(p.P-6); return {x,s,ds:6*p.w/(p.P-6),dz:p.P*p.w/(p.P-6)}; },
+    draw(g,p,s){
+      const k=19, Gy=410, L0=50, top=Gy-p.P*k, X=L0+s.x*k, Tp=X+s.s*k;
+      g.appendChild(E("rect",{x:0,y:Gy,width:VW,height:50,fill:"#E2E8F0"})); sseg(g,[0,Gy],[VW,Gy],"#475569",3);
+      g.appendChild(E("polygon",{points:`${L0},${top} ${Tp},${Gy} ${L0},${Gy}`,fill:"rgba(253,224,71,.16)"}));
+      sseg(g,[L0,Gy],[L0,top],"#475569",6); sseg(g,[L0,top],[L0+16,top],"#475569",5);
+      g.appendChild(E("circle",{cx:L0+18,cy:top+5,r:12,fill:"rgba(250,204,21,.45)"})); sdot(g,[L0+18,top+5],"#EAB308",6);
+      sseg(g,[L0+18,top+5],[Tp,Gy],"#CA8A04",2,"7 5");
+      sseg(g,[X,Gy],[Tp,Gy],"#1E293B",7,null,.55);
+      const hh=6*k; // person
+      g.appendChild(E("circle",{cx:X,cy:Gy-hh+10,r:10,fill:"#FF3D8A"}));
+      sseg(g,[X,Gy-hh+20],[X,Gy-46],"#BE185D",5); sseg(g,[X,Gy-46],[X-12,Gy],"#BE185D",5); sseg(g,[X,Gy-46],[X+12,Gy],"#BE185D",5);
+      sseg(g,[X,Gy-hh+40],[X-14,Gy-60],"#BE185D",4); sseg(g,[X,Gy-hh+40],[X+14,Gy-62],"#BE185D",4);
+      arrow(g,[X+16,Gy-hh+6],[X+16+clamp(10*p.w,20,60),Gy-hh+6],"var(--lin)",3.2);
+      stext(g,[X-14,Gy-hh-12],"6 ft","sm","#BE185D","end");
+      stext(g,[L0+26,top-12],"P = "+p.P+" ft","sm","#475569","start");
+      sseg(g,[L0,Gy+16],[X,Gy+16],"var(--lin)",2.4); sseg(g,[X,Gy+16],[Tp,Gy+16],"var(--corr)",2.4);
+      [L0,X,Tp].forEach(v=>sseg(g,[v,Gy+9],[v,Gy+23],"#475569",2));
+      stext(g,[(L0+X)/2,Gy+34],"x","sm","var(--lin)"); stext(g,[(X+Tp)/2,Gy+34],"s","sm","var(--corr)");
+      hud(g,[["x = "+f2(s.x)+" ft","#C2410C"],["s = "+f2(s.s)+" ft","#0369A1"],["dx/dt = "+f2(p.w)+" ft/s","#C2410C"],["ds/dt = "+f3(s.ds)+" ft/s","#0369A1"],["tip: "+f3(s.dz)+" ft/s","#047857"]],"tr");
+    },
+    eq(p,s,t){ const q=fracStr(fracO(6/(p.P-6),24)), q2=fracStr(fracO(p.P/(p.P-6),24));
+      return `Similar triangles:  s/6 = (x + s)/${p.P}
+  ⇒ ${p.P}s = 6x + 6s  ⇒  ${p.P-6}s = 6x  ⇒  s = (${q})x
+d/dt:  ds/dt = (${q})·(dx/dt)
+Tip of shadow z = x + s = (${q2})x  ⇒  dz/dt = (${q2})·(dx/dt)
+
+At t = ${f2(t)} s:  x = ${f2(s.x)} ft,  s = ${f2(s.s)} ft
+      ds/dt = (${q})(${f2(p.w)}) = ${f3(s.ds)} ft/s
+      dz/dt = (${q2})(${f2(p.w)}) = ${f3(s.dz)} ft/s`; },
+    rates:(p,s)=>[["dx/dt","walker moves away from the lamp (given)",p.w,"ft/s","var(--lin)"],["ds/dt","length of the shadow",s.ds,"ft/s","var(--corr)"],["dz/dt","tip of the shadow",s.dz,"ft/s","var(--alt)"]],
+    intro:`<p>A 6-ft person walks away from a street lamp. The light ray over their head makes two <b>similar right triangles</b>: the lamp's and the person's.</p><p>The proportion gives s as a constant multiple of x, so the shadow grows at a <b>constant</b> rate, and the tip of the shadow outruns the walker. Watch out: ds/dt and dz/dt answer different questions.</p>`,
+    tryit:`<p>Raise the lamp. Does the shadow grow faster or slower? What would happen if the lamp were exactly 6 ft tall?</p>`},
+  cars:{label:"Two cars",
+    params:[["a","Car A speed",20,70,5,50,"mph"],["b","Car B speed",20,70,5,40,"mph"]], tu:"h",
+    range:p=>[0,0.98*Math.min(30/p.a,55/p.b)],
+    st(p,t){ const y=30-p.a*t, x=p.b*t, D=Math.hypot(x,y); return {x,y,D,dD:(x*p.b+y*(-p.a))/D}; },
+    draw(g,p,s){
+      const k=10, O=[110,400];
+      g.appendChild(E("rect",{x:O[0]-16,y:10,width:32,height:440,fill:"#CBD5E1"}));
+      g.appendChild(E("rect",{x:20,y:O[1]-16,width:670,height:32,fill:"#CBD5E1"}));
+      sseg(g,[O[0],14],[O[0],446],"#fff",2,"12 10"); sseg(g,[24,O[1]],[686,O[1]],"#fff",2,"12 10");
+      const A=[O[0],O[1]-s.y*k], B=[O[0]+s.x*k,O[1]];
+      sseg(g,A,B,"var(--vert)",3,"9 6");
+      sseg(g,[O[0]-30,O[1]],[O[0]-30,A[1]],"var(--alt)",2.2); stext(g,[O[0]-36,(O[1]+A[1])/2],"y","sm","var(--alt)","end");
+      sseg(g,[O[0],O[1]+28],[B[0],O[1]+28],"var(--lin)",2.2); stext(g,[(O[0]+B[0])/2,O[1]+44],"x","sm","var(--lin)");
+      g.appendChild(E("rect",{x:A[0]-9,y:A[1]-15,width:18,height:30,rx:5,fill:"#FF3D8A",stroke:"#9D174D","stroke-width":2}));
+      g.appendChild(E("rect",{x:B[0]-15,y:B[1]-9,width:30,height:18,rx:5,fill:"#0284C7",stroke:"#075985","stroke-width":2}));
+      arrow(g,[A[0]+22,A[1]-10],[A[0]+22,A[1]+clamp(p.a*.7,18,46)],"#BE185D",3);
+      arrow(g,[B[0]-10,B[1]-22],[B[0]+clamp(p.b*.7,18,46),B[1]-22],"#0369A1",3);
+      const m=mul(add(A,B),.5), n=[-(B[1]-A[1]),B[0]-A[0]]; smartLabel(g,m,n[0]<0?mul(n,-1):n,"D = "+f2(s.D),"#6D28D9");
+      stext(g,add(A,[-20,0]),"A","mk","#BE185D","end"); stext(g,add(B,[0,34]),"B","mk","#0369A1");
+      hud(g,[["x = "+f2(s.x)+" mi   y = "+f2(s.y)+" mi"],["dx/dt = "+p.b+" mph","#C2410C"],["dy/dt = −"+p.a+" mph","#047857"],["dD/dt = "+f2(s.dD)+" mph","#6D28D9"]],"tr");
+    },
+    eq(p,s,t){ return `D² = x² + y²
+d/dt:  2D·(dD/dt) = 2x·(dx/dt) + 2y·(dy/dt)
+  ⇒   dD/dt = (x·(dx/dt) + y·(dy/dt)) / D        dx/dt = ${p.b},  dy/dt = −${p.a}
+
+At t = ${fixd(t,3)} h:  x = ${f2(s.x)} mi,  y = ${f2(s.y)} mi,  D = ${f2(s.D)} mi
+      dD/dt = (${f2(s.x)}·${p.b} + ${f2(s.y)}·(−${p.a})) / ${f2(s.D)} = ${f2(s.dD)} mph`; },
+    rates:(p,s)=>[["dx/dt","car B heads east (given)",p.b,"mph","var(--lin)"],["dy/dt","car A heads south toward the corner (given)",-p.a,"mph","var(--alt)"],["dD/dt","distance between the cars",s.dD,"mph","var(--vert)"]],
+    intro:`<p>Car A starts 30 miles north of an intersection and drives toward it. Car B leaves the intersection heading east. Is the distance between them shrinking or growing?</p><p>At first D shrinks (dD/dt &lt; 0). Later it grows. At the instant dD/dt = 0 the cars are <b>as close as they will get</b>, which is an optimization answer hiding inside a related-rates problem.</p>`,
+    tryit:`<p>Scrub the time slider to find when dD/dt = 0. Check it: at that instant x·(dx/dt) + y·(dy/dt) must be 0. What is the minimum distance?</p>`}
+};
+const RRK=Object.keys(RRS);
+let raf=0;
+const M1={
+  tab:"Related rates", lesson:"AP 4.4–4.5 · Unit 4", accent:"var(--cyan)",
+  title:()=>"Related rates: "+RRS[M1.s.sc].label.toLowerCase(),
+  s:{sc:"ladder",u:0.2,play:false,last:0,P:{}},
+  init(){ RRK.forEach(k=>{ const o={}; RRS[k].params.forEach(q=>o[q[0]]=q[5]); M1.s.P[k]=o; }); },
+  cur(){ const S=RRS[M1.s.sc], p=M1.s.P[M1.s.sc], R=S.range(p), t=R[0]+M1.s.u*(R[1]-R[0]); return {S,p,R,t,st:S.st(p,t)}; },
+  bar(){
+    chips(RRK.map(k=>[k,RRS[k].label]),M1.s.sc,k=>{M1.s.sc=k;M1.s.u=0.2;M1.stop();render();});
+    M1.pb=btn(M1.s.play?"❚❚ Pause":"▶ Play",()=>{ if(M1.s.play)M1.stop(); else { if(M1.s.u>=1)M1.s.u=0; M1.s.play=true; M1.s.last=0; M1.pb.textContent="❚❚ Pause"; if(!raf)raf=requestAnimationFrame(M1.tick); } },"primary");
+    btn("Reset",()=>{M1.stop();M1.s.u=0;update();M1.sync();});
+    const C=M1.cur();
+    M1.ts=slider("t",0,1,0.001,M1.s.u,v=>{M1.stop();M1.s.u=v;update();},v=>{const R=RRS[M1.s.sc].range(M1.s.P[M1.s.sc]);return fixd(R[0]+v*(R[1]-R[0]),M1.s.sc==="cars"?3:2)+" "+C.S.tu;},true);
+    C.S.params.forEach(q=>{ slider(q[1],q[2],q[3],q[4],C.p[q[0]],v=>{C.p[q[0]]=v;update();M1.sync();},v=>num(v,1)+" "+q[6]); });
+  },
+  stop(){ M1.s.play=false; if(M1.pb)M1.pb.textContent="▶ Play"; },
+  tick(ts){
+    if(cur!==0||!M1.s.play){raf=0;return;}
+    const dt=M1.s.last?Math.min(0.05,(ts-M1.s.last)/1000):0; M1.s.last=ts;
+    M1.s.u=Math.min(1,M1.s.u+dt/12); if(M1.s.u>=1)M1.stop();
+    update(); M1.sync(); raf=requestAnimationFrame(M1.tick);
+  },
+  sync(){ if(M1.ts)M1.ts.set(M1.s.u); },
+  draw(){ const C=M1.cur(); C.S.draw(cv,C.p,C.st); },
+  side(){ const S=RRS[M1.s.sc];
+    return panel("The situation",`<div class="pad">${S.intro}<p><b>Recipe:</b> (1) write an equation that holds at every instant, (2) differentiate both sides with respect to t, (3) only <b>then</b> substitute the values at the instant you care about.</p></div>`)+
+      panel("Equation → differentiate → solve",`<div class="fldwrap"><div class="eq" id="rrEq"></div></div>`)+
+      panel("Live rates",`<div id="rrRates"></div>`)+tryPanel(S.tryit); },
+  live(){ const C=M1.cur(), e=live("rrEq"), r=live("rrRates"); if(!e)return;
+    e.textContent=fq(C.S.eq(C.p,C.st,C.t));
+    r.innerHTML=C.S.rates(C.p,C.st).map(q=>`<div class="rel"><span class="dot" style="background:${q[4]}"></span><span class="nm">${q[0]}<em>${q[1]}</em></span><span class="val ${q[2]>=0?"ok":"no"}">${fixd(q[2],3)} ${q[3]}</span></div>`).join(""); }
+};
+
+/* ══════════════════════ TAB 2 · optimization ══════════════════════ */
+const OPTS={
+  box:{label:"Open box",xn:"x",xu:"in",fn:"V",fu:"in³",kind:"max",
+    params:[], seg:[["12x12","12 × 12"],["10x16","10 × 16"],["8x15","8 × 15"]],
+    pv:p=>{const a=p.sheet.split("x").map(Number);return {W:a[0],L:a[1]};},
+    dom:p=>{const q=OPTS.box.pv(p);return [0,q.W/2];},
+    f(p,x){const q=OPTS.box.pv(p);return x*(q.W-2*x)*(q.L-2*x);},
+    fp(p,x){const q=OPTS.box.pv(p);return 12*x*x-4*(q.W+q.L)*x+q.W*q.L;},
+    fpp(p,x){const q=OPTS.box.pv(p);return 24*x-4*(q.W+q.L);},
+    xs(p){const q=OPTS.box.pv(p), s=q.W+q.L;return (s-Math.sqrt(s*s-3*q.W*q.L))/6;},
+    text(p){ const q=OPTS.box.pv(p), s=q.W+q.L, x1=OPTS.box.xs(p), x2=(s+Math.sqrt(s*s-3*q.W*q.L))/6;
+      return {setup:`Cut a square of side x from each corner of a ${q.W} × ${q.L} in sheet and fold up the sides. The box is x high with a base of (${q.W} − 2x) by (${q.L} − 2x).`,
+        f:`V(x) = x(${q.W} − 2x)(${q.L} − 2x) = 4x³ − ${2*s}x² + ${q.W*q.L}x,   0 &lt; x &lt; ${ex(q.W/2)}`,
+        fp:`V′(x) = 12x² − ${4*s}x + ${q.W*q.L}`,
+        solve:`V′(x) = 0  ⇒  x = (${4*s} ± √(${16*s*s-48*q.W*q.L}))/24\n  x = ${exa(x1)}   or   x = ${exa(x2)} (not in the domain 0 &lt; x &lt; ${ex(q.W/2)})`}; },
+    pic(g,p,x){ const q=OPTS.box.pv(p), k=Math.min(290/q.W,205/q.L), w=q.W*k, h=q.L*k, x0=175-w/2, y0=20, c=x*k;
+      g.appendChild(E("rect",{x:x0,y:y0,width:w,height:h,fill:"#FEF3C7",stroke:"#B45309","stroke-width":2.4}));
+      [[x0,y0],[x0+w-c,y0],[x0,y0+h-c],[x0+w-c,y0+h-c]].forEach(P=>g.appendChild(E("rect",{x:P[0],y:P[1],width:c,height:c,fill:"rgba(220,38,38,.22)",stroke:"#DC2626","stroke-width":1.6,"stroke-dasharray":"5 3"})));
+      g.appendChild(E("rect",{x:x0+c,y:y0+c,width:Math.max(0,w-2*c),height:Math.max(0,h-2*c),fill:"none",stroke:"#92400E","stroke-width":1.4,"stroke-dasharray":"6 4"}));
+      stext(g,[175,y0+h+16],q.W+" × "+q.L+" in sheet  ·  cut x = "+f2(x),"sm","#92400E");
+      // oblique box
+      const bl=q.L-2*x, bd=q.W-2*x, k2=Math.min(270/(q.L+0.45*q.W),300/q.W)*0.95, F=bl*k2, Hh=x*k2, dx=bd*k2*0.43, dy=bd*k2*0.25, by=440, bx=175-(F+dx)/2;
+      const P=(a,b)=>a+","+b;
+      g.appendChild(E("polygon",{points:[P(bx,by-Hh),P(bx+F,by-Hh),P(bx+F+dx,by-Hh-dy),P(bx+dx,by-Hh-dy)].join(" "),fill:"#FDE68A",stroke:"#92400E","stroke-width":1.4}));
+      g.appendChild(E("polygon",{points:[P(bx+dx,by-Hh-dy),P(bx+F+dx,by-Hh-dy),P(bx+F+dx,by-dy),P(bx+dx,by-dy)].join(" "),fill:"#FCD34D",stroke:"#92400E","stroke-width":1}));
+      g.appendChild(E("polygon",{points:[P(bx,by),P(bx+F,by),P(bx+F,by-Hh),P(bx,by-Hh)].join(" "),fill:"#FBBF24",stroke:"#92400E","stroke-width":2}));
+      g.appendChild(E("polygon",{points:[P(bx+F,by),P(bx+F+dx,by-dy),P(bx+F+dx,by-Hh-dy),P(bx+F,by-Hh)].join(" "),fill:"#F59E0B",stroke:"#92400E","stroke-width":2}));
+      OPTS.box._h=[x0,y0,k,q.W];
+      return [x0+c,y0+c];
+    },
+    picX(p,sp){ const [x0,y0,k,W]=OPTS.box._h; return clamp(((sp[0]-x0)+(sp[1]-y0))/2/k,0.01,W/2-0.01); }},
+  fence:{label:"Fence by a river",xn:"x",xu:"m",fn:"A",fu:"m²",kind:"max",
+    params:[["P","Fencing P",100,400,20,240,"m"]],
+    dom:p=>[0,p.P/2], f:(p,x)=>x*(p.P-2*x), fp:(p,x)=>p.P-4*x, fpp:()=>-4, xs:p=>p.P/4,
+    text:p=>({setup:`You have ${p.P} m of fence for a rectangular field along a straight river; no fence is needed on the river side. The two sides perpendicular to the river are x; the side parallel to it is y = ${p.P} − 2x.`,
+      f:`A(x) = x(${p.P} − 2x) = ${p.P}x − 2x²,   0 &lt; x &lt; ${ex(p.P/2)}`, fp:`A′(x) = ${p.P} − 4x`,
+      solve:`A′(x) = 0  ⇒  x = ${p.P}/4 = ${ex(p.P/4)} m,   y = ${p.P} − 2(${ex(p.P/4)}) = ${ex(p.P/2)} m\n  A = ${ex(p.P*p.P/8)} m²`}),
+    pic(g,p,x){ const k=300/p.P, yk=(p.P-2*x)*k, xk=x*k, L=175-yk/2, T=64;
+      g.appendChild(E("rect",{x:14,y:16,width:322,height:44,fill:"#BFDBFE"}));
+      pth(g,"M18 38 q10 -7 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0","#3B82F6",1.6);
+      stext(g,[175,28],"river (no fence)","sm","#1D4ED8");
+      g.appendChild(E("rect",{x:L,y:T,width:yk,height:xk,fill:"rgba(5,150,105,.16)"}));
+      pth(g,`M${L} ${T}V${T+xk}H${L+yk}V${T}`,"#92400E",4.5); sseg(g,[L,T],[L+yk,T],"#3B82F6",2,"6 4");
+      stext(g,[L-10,T+xk/2],"x","sm","#92400E","end"); stext(g,[175,T+xk+18],"y = "+f2(p.P-2*x),"sm","#92400E");
+      stext(g,[175,T+xk/2],"A","mk","#047857");
+      stext(g,[175,300],"x = "+f2(x)+" m,  y = "+f2(p.P-2*x)+" m","sm","#14213D"); stext(g,[175,328],"A = "+f2(x*(p.P-2*x))+" m²","sm","#047857");
+      stext(g,[175,356],"fence used: 2x + y = "+p.P+" m","sm","#92400E");
+      OPTS.fence._h=[T,k,p.P]; return [L+yk,T+xk]; },
+    picX(p,sp){ const [T,k,P]=OPTS.fence._h; return clamp((sp[1]-T)/k,0.5,P/2-0.5); }},
+  can:{label:"Can: least metal",xn:"r",xu:"cm",fn:"S",fu:"cm²",kind:"min",
+    params:[["V","Volume V",200,1000,5,355,"cm³"]],
+    dom:()=>[1.5,9], f:(p,r)=>2*PI*r*r+2*p.V/r, fp:(p,r)=>4*PI*r-2*p.V/(r*r), fpp:(p,r)=>4*PI+4*p.V/(r*r*r), xs:p=>Math.cbrt(p.V/(2*PI)),
+    text(p){ const r=Math.cbrt(p.V/(2*PI)); return {setup:`A closed cylindrical can must hold ${p.V} cm³. Find the radius r that uses the least metal (surface area). From V = πr²h, h = ${p.V}/(πr²).`,
+      f:`S(r) = 2πr² + 2πrh = 2πr² + ${2*p.V}/r,   r &gt; 0`, fp:`S′(r) = 4πr − ${2*p.V}/r²`,
+      solve:`S′(r) = 0  ⇒  4πr³ = ${2*p.V}  ⇒  r = ∛(${p.V}/(2π)) ≈ ${f3(r)} cm\n  h = ${p.V}/(πr²) ≈ ${f3(p.V/(PI*r*r))} cm = 2r  (height = diameter!)`}; },
+    pic(g,p,r){ const h=p.V/(PI*r*r), k=Math.min(130/r,290/h), R=r*k, Hh=h*k, cx=175, by=405, ry=Math.max(6,R*0.28);
+      g.appendChild(E("rect",{x:cx-R,y:by-Hh,width:2*R,height:Hh,fill:"#E2E8F0"}));
+      g.appendChild(E("ellipse",{cx,cy:by,rx:R,ry,fill:"#CBD5E1",stroke:"#475569","stroke-width":2.2}));
+      g.appendChild(E("rect",{x:cx-R,y:by-Hh,width:2*R,height:Hh,fill:"#E2E8F0",stroke:"none"}));
+      sseg(g,[cx-R,by],[cx-R,by-Hh],"#475569",2.2); sseg(g,[cx+R,by],[cx+R,by-Hh],"#475569",2.2);
+      pth(g,`M${cx-R} ${by}A${R} ${ry} 0 0 0 ${cx+R} ${by}`,"#475569",2.2);
+      g.appendChild(E("ellipse",{cx,cy:by-Hh,rx:R,ry,fill:"#F1F5F9",stroke:"#475569","stroke-width":2.2}));
+      sseg(g,[cx,by-Hh],[cx+R,by-Hh],"var(--lin)",2.6); stext(g,[cx+R/2,by-Hh-ry-12],"r","sm","var(--lin)");
+      sseg(g,[cx+R+18,by],[cx+R+18,by-Hh],"var(--corr)",2.2); stext(g,[cx+R+26,by-Hh/2],"h","sm","var(--corr)","start");
+      stext(g,[175,24],"r = "+f2(r)+" cm,  h = "+f2(h)+" cm","sm","#14213D"); stext(g,[175,48],"h ÷ r = "+f2(h/r)+"  (shape to scale)","sm","#475569");
+      return null; }},
+  near:{label:"Closest point",xn:"x",xu:"",fn:"D",fu:"",kind:"min",
+    params:[["a","Point (a, 0): a",1,5,0.5,3,""]],
+    dom:p=>[0,p.a+2], f:(p,x)=>Math.sqrt((x-p.a)*(x-p.a)+x), fp:(p,x)=>(2*(x-p.a)+1)/(2*Math.sqrt((x-p.a)*(x-p.a)+x)),
+    fpp:(p,x)=>d1(t=>OPTS.near.fp(p,t),x,1e-4), xs:p=>p.a-0.5,
+    text:p=>({setup:`Which point P(x, √x) on the curve y = √x is closest to Q(${ex(p.a)}, 0)? Minimizing D is the same as minimizing D², which avoids the square root.`,
+      f:`D(x) = √((x − ${ex(p.a)})² + (√x)²) = √((x − ${ex(p.a)})² + x),   x ≥ 0`,
+      fp:`D′(x) = (2(x − ${ex(p.a)}) + 1) / (2√((x − ${ex(p.a)})² + x))`,
+      solve:`D′(x) = 0  ⇔  2(x − ${ex(p.a)}) + 1 = 0  ⇒  x = ${ex(p.a-0.5)}\n  P = (${ex(p.a-0.5)}, ${exa(Math.sqrt(p.a-0.5))}),   D = √(${ex(p.a-0.25)}) ${exa(Math.sqrt(p.a-0.25)).replace(/^[^≈]*/,"")}`}),
+    pic(g,p,x){ const span=p.a+3, ppu=316/span, G=mkG({x:18,y:70,w:316,h:330},{x0:-0.5,x1:p.a+2.5,y0:-0.6,y1:-0.6+330/ppu});
+      const c=graph(g,G,{xt:6,yt:5}); plot(c,G,Math.sqrt,"var(--graphite)",3,null,0);
+      const P=G.P(x,Math.sqrt(x)), Q=G.P(p.a,0); sseg(c,P,Q,"var(--vert)",2.6,"8 5");
+      sdot(g,Q,"var(--magenta)",6); stext(g,add(Q,[0,22]),"Q","mk","#BE185D");
+      smartLabel(g,mul(add(P,Q),.5),[1,-1],"D = "+f3(Math.sqrt((x-p.a)**2+x)),"#6D28D9");
+      stext(g,[175,26],"y = √x   ·   P("+f2(x)+", "+f2(Math.sqrt(x))+")","sm","#14213D");
+      OPTS.near._G=G; return P; },
+    picX(p,sp){ return clamp(OPTS.near._G.iX(sp[0]),0,p.a+2); }},
+  pipe:{label:"Cheapest pipe",xn:"x",xu:"km",fn:"C",fu:"×$100k",kind:"min",
+    params:[["c","Underwater cost",4,8,0.5,5,"/km"]],
+    dom:()=>[0,6], f:(p,x)=>p.c*Math.sqrt(4+x*x)+3*(6-x), fp:(p,x)=>p.c*x/Math.sqrt(4+x*x)-3, fpp:(p,x)=>4*p.c/Math.pow(4+x*x,1.5),
+    xs:p=>6/Math.sqrt(p.c*p.c-9),
+    text(p){ const xs=6/Math.sqrt(p.c*p.c-9); return {setup:`A plant on one bank of a 2-km-wide river pipes oil to a refinery 6 km downstream on the other bank. Underwater pipe costs ${num(p.c,1)} and land pipe costs 3 (hundred-thousand dollars per km). Cross to a point x km downstream, then run along the bank.`,
+      f:`C(x) = ${num(p.c,1)}√(4 + x²) + 3(6 − x),   0 ≤ x ≤ 6`, fp:`C′(x) = ${num(p.c,1)}x/√(4 + x²) − 3`,
+      solve:`C′(x) = 0  ⇒  ${num(p.c,1)}x = 3√(4 + x²)  ⇒  ${fixd(p.c*p.c,2).replace(/\.00$/,"")}x² = 9(4 + x²)\n  x² = 36/${fixd(p.c*p.c-9,2).replace(/\.00$/,"")}  ⇒  x = ${exa(xs)} km,   C = ${f3(OPTS.pipe.f(p,xs))}`}; },
+    pic(g,p,x){ const k=44.3, X=u=>20+(u+0.5)*k, N=140, S=228;
+      g.appendChild(E("rect",{x:10,y:60,width:330,height:N-60,fill:"#DCFCE7"})); g.appendChild(E("rect",{x:10,y:N,width:330,height:S-N,fill:"#BFDBFE"}));
+      g.appendChild(E("rect",{x:10,y:S,width:330,height:90,fill:"#DCFCE7"}));
+      stext(g,[300,(N+S)/2],"river 2 km","sm","#1D4ED8","end");
+      const P=[X(0),N], Q=[X(x),S], R=[X(6),S];
+      sseg(g,P,Q,"#1D4ED8",5); sseg(g,Q,R,"#92400E",5);
+      g.appendChild(E("rect",{x:P[0]-12,y:N-26,width:24,height:24,fill:"#475569"})); stext(g,[P[0]+16,N-34],"Plant","sm","#334155","start");
+      g.appendChild(E("rect",{x:R[0]-12,y:S+2,width:24,height:24,fill:"#475569"})); stext(g,[R[0],S+42],"Refinery","sm","#334155","end");
+      sseg(g,[X(0),S+60],[X(x),S+60],"var(--lin)",2.4); [X(0),X(x)].forEach(v=>sseg(g,[v,S+52],[v,S+68],"var(--lin)",2));
+      stext(g,[(X(0)+X(x))/2,S+80],"x = "+f2(x),"sm","var(--lin)");
+      stext(g,[175,350],"underwater √(4 + x²) = "+f2(Math.sqrt(4+x*x))+" km","sm","#1D4ED8");
+      stext(g,[175,376],"land 6 − x = "+f2(6-x)+" km","sm","#92400E");
+      stext(g,[175,402],"cost C = "+f2(OPTS.pipe.f(p,x))+" (×$100k)","sm","#14213D");
+      OPTS.pipe._k=[k]; return Q; },
+    picX(p,sp){ return clamp((sp[0]-20)/44.3-0.5,0,6); }}
+};
+const OPK=Object.keys(OPTS);
+const M2={
+  tab:"Optimization", lesson:"AP 5.11–5.12 · Unit 5", accent:"var(--yellow)",
+  title:()=>"Optimize: "+OPTS[M2.s.pb].label.toLowerCase(),
+  s:{pb:"box",P:{},X:{}},
+  init(){ OPK.forEach(k=>{ const o={}; OPTS[k].params.forEach(q=>o[q[0]]=q[5]); if(k==="box")o.sheet="12x12"; M2.s.P[k]=o; const d=OPTS[k].dom(o); M2.s.X[k]=d[0]+(d[1]-d[0])*0.22; }); },
+  C(){ const O=OPTS[M2.s.pb], p=M2.s.P[M2.s.pb]; return {O,p,x:M2.s.X[M2.s.pb]}; },
+  setX(v){ const {O,p}=M2.C(), d=O.dom(p); M2.s.X[M2.s.pb]=clamp(v,d[0]+(d[1]-d[0])*0.002,d[1]-(d[1]-d[0])*0.002); },
+  bar(){
+    const {O,p}=M2.C(), d=O.dom(p);
+    chips(OPK.map(k=>[k,OPTS[k].label]),M2.s.pb,k=>{M2.s.pb=k;render();});
+    if(O.seg)segBtns(O.seg,p.sheet,k=>{p.sheet=k;M2.setX(M2.s.X.box);render();});
+    O.params.forEach(q=>slider(q[1],q[2],q[3],q[4],p[q[0]],v=>{p[q[0]]=v;M2.setX(M2.s.X[M2.s.pb]);M2.full();},v=>num(v,1)+(q[6]?" "+q[6]:"")));
+    M2.xs=slider(O.xn,d[0],d[1],(d[1]-d[0])/1000,M2.s.X[M2.s.pb],v=>{M2.setX(v);update();},v=>fixd(v,2));
+    btn("Jump to optimum",()=>{M2.setX(O.xs(p));update();M2.sync();},"primary");
+  },
+  full(){ clear(); M2.draw(); side.innerHTML=fq(M2.side()); M2.live(); M2.sync(); },
+  sync(){ if(M2.xs){ const {O,p}=M2.C(), d=O.dom(p); M2.xs.i.min=d[0]; M2.xs.i.max=d[1]; M2.xs.i.step=(d[1]-d[0])/1000; M2.xs.set(M2.s.X[M2.s.pb]); } },
+  drag(id,sp){ const {O,p}=M2.C(); if(id==="gx")M2.setX(M2.G.iX(sp[0])); else if(id==="px"&&O.picX)M2.setX(O.picX(p,sp)); M2.sync(); },
+  draw(){
+    const {O,p,x}=M2.C(), d=O.dom(p), xs=O.xs(p);
+    sseg(cv,[350,14],[350,446],"#C9D6EE",1.5);
+    const ph=O.pic(cv,p,x); if(ph&&O.picX)sgrab(cv,ph,"px");
+    let lo=Infinity,hi=-Infinity; for(let i=0;i<=300;i++){ const v=O.f(p,d[0]+(d[1]-d[0])*(0.003+0.994*i/300)); if(isFinite(v)){lo=Math.min(lo,v);hi=Math.max(hi,v);} }
+    if(O.kind==="max")lo=Math.min(lo,0); const pad=(hi-lo)*0.1||1;
+    const G=mkG({x:366,y:30,w:320,h:400},{x0:d[0]-(d[1]-d[0])*0.04,x1:d[1]+(d[1]-d[0])*0.04,y0:lo-pad,y1:hi+pad}); M2.G=G;
+    const c=graph(cv,G,{xt:6,yt:7,xl:O.xn,yl:O.fn+"("+O.xn+")"});
+    plot(c,G,t=>O.f(p,t),"#B45309",3.4,null,d[0]+1e-9,d[1]-1e-9);
+    const fs=O.f(p,xs); sseg(c,G.P(xs-(d[1]-d[0])*0.25,fs),G.P(xs+(d[1]-d[0])*0.25,fs),"var(--alt)",2.4,"8 5");
+    sseg(c,G.P(xs,G.win.y0),G.P(xs,fs),"var(--alt)",1.6,"4 4");
+    ring(cv,G.P(xs,fs),"var(--alt)",7);
+    smartLabel(cv,G.P(xs,fs),O.kind==="max"?[0,-1]:[0.15,-1],O.fn+"′ = 0 at "+O.xn+" ≈ "+f2(xs),"#047857");
+    const fx=O.f(p,x), m=O.fp(p,x), P=G.P(x,fx), dir=unit([G.X(1)-G.X(0),G.Y(m)-G.Y(0)]), col=Math.abs(m)<1e-3*(1+Math.abs(fs))?"#047857":m>0?"#0284C7":"#DC2626";
+    sseg(c,sub(P,mul(dir,55)),add(P,mul(dir,55)),col,2.6);
+    sseg(c,[P[0],G.box.y+G.box.h],P,"var(--hand)",1.4,"3 4");
+    sgrab(cv,P,"gx");
+    stext(cv,[526,448],"drag the orange point · tangent slope = "+O.fn+"′("+O.xn+")","ax","#5B6B8C");
+  },
+  side(){ const {O,p}=M2.C(), T=O.text(p);
+    return panel("The problem",`<div class="pad"><p>${T.setup}</p><p>Strategy: write the <b>objective</b> as a function of one variable, state its domain, set the derivative equal to 0, then <b>justify</b> that the critical point really is the ${O.kind==="max"?"maximum":"minimum"}.</p></div>`)+
+      panel("Objective & derivative",`<div class="fldwrap"><div class="eq">${T.f}\n${T.fp}\n\n${T.solve}</div></div>`)+
+      panel("Right now",`<div id="opLive"></div>`)+
+      panel("Justify it",`<div class="pad" id="opJust"></div>`)+
+      tryPanel(`<p>Drag the point slowly across the optimum and watch the tangent line: its slope changes sign exactly there. Then change the ${O.params.length?O.params[0][1].toLowerCase():"sheet size"} and predict where the new optimum will be before you look.</p>`); },
+  live(){ const {O,p,x}=M2.C(), el=live("opLive"); if(!el)return;
+    const fx=O.f(p,x), m=O.fp(p,x), xs=O.xs(p), d=O.dom(p), u=O.fu?" "+O.fu:"";
+    el.innerHTML=`<div class="rel"><span class="dot" style="background:var(--hand)"></span><span class="nm">${O.xn} = ${f3(x)}${O.xu?" "+O.xu:""}<em>design variable (drag it)</em></span><span class="val">${O.fn} = ${f2(fx)}${u}</span></div>
+      <div class="rel"><span class="dot" style="background:${m>0?"var(--corr)":"var(--same)"}"></span><span class="nm">${O.fn}′(${O.xn}) = ${f3(m)}<em>${Math.abs(m)<1e-3?"tangent is horizontal: you are at the critical point":m>0?"positive: "+O.fn+" is increasing here":"negative: "+O.fn+" is decreasing here"}</em></span><span class="val ${m>=0?"ok":"no"}">${m>0?"↗":"↘"}</span></div>
+      <div class="rel"><span class="dot" style="background:var(--alt)"></span><span class="nm">Optimum ${O.fn}(${f3(xs)})<em>you are ${f2(Math.abs(fx-O.f(p,xs)))}${u} ${O.kind==="max"?"below":"above"} the best value</em></span><span class="val ok">${f2(O.f(p,xs))}${u}</span></div>`;
+    const dl=(d[1]-d[0])*0.02, a=O.fp(p,xs-dl), b=O.fp(p,xs+dl), s2=O.fpp(p,xs);
+    live("opJust").innerHTML=`<p><b>First derivative test:</b> ${O.fn}′(${f2(xs-dl)}) = ${f3(a)} ${a>0?"&gt; 0":"&lt; 0"} and ${O.fn}′(${f2(xs+dl)}) = ${f3(b)} ${b>0?"&gt; 0":"&lt; 0"}. ${O.fn}′ changes from ${a>0?"positive to negative":"negative to positive"}, so ${O.fn} has a local <b>${a>0?"maximum":"minimum"}</b> at ${O.xn} ≈ ${f3(xs)}.</p>
+      <p><b>Second derivative test:</b> ${O.fn}″(${f3(xs)}) ≈ ${f3(s2)} ${s2<0?"&lt; 0 (concave down) → maximum":"&gt; 0 (concave up) → minimum"}.</p>
+      <p><b>Absolute?</b> It is the only critical point in the domain, so the local ${O.kind==="max"?"maximum":"minimum"} is the absolute one. (Check the ends: ${O.fn}(${ex(d[0])}) ${isFinite(O.f(p,d[0]))?"= "+f2(O.f(p,d[0])):"→ ∞"}, ${O.fn}(${ex(d[1])}) = ${f2(O.f(p,d[1]))}.)</p>`;
+  }
+};
+
+/* ══════════════════════ TAB 3 · curve sketching ══════════════════════ */
+const SK=[
+  {k:"cubic",label:"x³ − 3x² − 9x + 5",f:x=>x*x*x-3*x*x-9*x+5,fp:x=>3*x*x-6*x-9,fpp:x=>6*x-6,
+    ft:"x³ − 3x² − 9x + 5",fpt:"3x² − 6x − 9 = 3(x + 1)(x − 3)",fppt:"6x − 6 = 6(x − 1)",
+    xr:[-4,6],y0:[-30,22],y1:[-15,30],y2:[-30,30],dom:[-4,6],inf:true,ab:[-2,5]},
+  {k:"quart",label:"x⁴ − 4x³",f:x=>x**4-4*x**3,fp:x=>4*x**3-12*x*x,fpp:x=>12*x*x-24*x,
+    ft:"x⁴ − 4x³",fpt:"4x³ − 12x² = 4x²(x − 3)",fppt:"12x² − 24x = 12x(x − 2)",
+    xr:[-2,4.5],y0:[-32,30],y1:[-30,40],y2:[-20,40],dom:[-2,4.5],inf:true,ab:[-1,4]},
+  {k:"xex",label:"x·e⁻ˣ",f:x=>x*Math.exp(-x),fp:x=>(1-x)*Math.exp(-x),fpp:x=>(x-2)*Math.exp(-x),
+    ft:"x e<sup>−x</sup>",fpt:"(1 − x)e<sup>−x</sup>",fppt:"(x − 2)e<sup>−x</sup>",
+    xr:[-0.8,7],y0:[-1,0.6],y1:[-0.5,1.6],y2:[-1.6,0.3],dom:[-0.8,7],inf:true,ab:[0,4]},
+  {k:"trig",label:"x − 2 sin x",f:x=>x-2*Math.sin(x),fp:x=>1-2*Math.cos(x),fpp:x=>2*Math.sin(x),pi:true,
+    ft:"x − 2 sin x",fpt:"1 − 2 cos x",fppt:"2 sin x",
+    xr:[-2*PI,2*PI],y0:[-8,8],y1:[-1.5,3.5],y2:[-2.6,2.6],dom:[-2*PI,2*PI],inf:false,ab:[0,2*PI]},
+  {k:"cusp",label:"x^(5/3) − 5x^(2/3)",f:x=>{const c=cbrt(x);return c**5-5*c*c;},fp:x=>5*(x-2)/(3*cbrt(x)),fpp:x=>10*(x+1)/(9*x*cbrt(x)),sing:[0],
+    ft:"x<sup>5/3</sup> − 5x<sup>2/3</sup>",fpt:"(5/3)x<sup>2/3</sup> − (10/3)x<sup>−1/3</sup> = 5(x − 2) / (3∛x)",fppt:"(10/9)x<sup>−1/3</sup> + (10/9)x<sup>−4/3</sup> = 10(x + 1) / (9x∛x)",
+    xr:[-2,6],y0:[-12,5],y1:[-8,8],y2:[-8,8],dom:[-2,6],inf:true,ab:[-1,4]},
+  {k:"rat",label:"x / (x² + 1)",f:x=>x/(x*x+1),fp:x=>(1-x*x)/(x*x+1)**2,fpp:x=>2*x*(x*x-3)/(x*x+1)**3,
+    ft:"x / (x² + 1)",fpt:"(1 − x²) / (x² + 1)²",fppt:"2x(x² − 3) / (x² + 1)³",
+    xr:[-6,6],y0:[-0.7,0.7],y1:[-0.3,1.15],y2:[-0.8,0.8],dom:[-6,6],inf:true,ab:[-2,3]}
+];
+function analyze(P){
+  const [lo,hi]=P.dom, sing=(P.sing||[]).filter(x=>x>lo&&x<hi);
+  const crit=zeros(P.fp,lo,hi).filter(x=>x>lo+1e-9&&x<hi-1e-9).concat(sing).sort((a,b)=>a-b);
+  const del=(c,list)=>{ let g=(hi-lo)*1e-3; list.forEach(o=>{ if(o!==c)g=Math.min(g,Math.abs(o-c)*0.4); }); g=Math.min(g,(c-lo)*0.5,(hi-c)*0.5); return g; };
+  const cr=crit.map(c=>{ const d=del(c,crit), l=P.fp(c-d), r=P.fp(c+d); return {x:c,und:sing.includes(c),type:l>0&&r<0?"max":l<0&&r>0?"min":"none"}; });
+  const z2=zeros(P.fpp,lo,hi).filter(x=>x>lo+1e-9&&x<hi-1e-9).concat(sing).sort((a,b)=>a-b);
+  const in2=z2.map(c=>{ const d=del(c,z2), l=P.fpp(c-d), r=P.fpp(c+d); return {x:c,und:sing.includes(c),infl:l*r<0}; });
+  return {cr,in2,lo,hi};
+}
+function signChart(P,pts,der,rowName,lab){
+  const lo=P.dom[0], hi=P.dom[1], xs=[lo].concat(pts.map(o=>o.x),[hi]);
+  const L=v=>v===lo&&P.inf?"−∞":v===hi&&P.inf?"∞":ex(v,2);
+  let r0=`<tr><th>x</th>`, r1=`<tr><th>${rowName}</th>`, r2=`<tr><th>f</th>`;
+  for(let i=0;i<xs.length-1;i++){
+    const a=xs[i], b=xs[i+1], s=der((a+b)/2);
+    r0+=`<td class="iv">(${L(a)}, ${L(b)})</td>`; r1+=`<td class="${s>0?"pos":"neg"}">${s>0?"+":"−"}</td>`; r2+=`<td>${lab.iv(s)}</td>`;
+    if(i<pts.length){ const o=pts[i]; r0+=`<td class="pt">${ex(o.x,2)}</td>`; r1+=`<td class="pt">${o.und?"und.":"0"}</td>`; r2+=`<td class="pt">${lab.pt(o)}</td>`; }
+  }
+  return `<div class="sc-wrap"><table class="sc">${r0}</tr>${r1}</tr>${r2}</tr></table></div>`;
+}
+const M3={
+  tab:"Curve sketching", lesson:"AP 5.3–5.9 · Unit 5", accent:"var(--mint)",
+  title:()=>"f, f′, f″ linked: f(x) = "+SK[M3.s.i].label,
+  s:{i:0,xc:0.5,a:-2,b:5,mode:"d1",snap:true,an:null},
+  P:()=>SK[M3.s.i],
+  load(i){ M3.s.i=i; const P=SK[i]; M3.s.an=analyze(P); M3.s.a=P.ab[0]; M3.s.b=P.ab[1]; M3.s.xc=P.dom[0]+(P.dom[1]-P.dom[0])*0.3; if(P.sing&&Math.abs(M3.s.xc)<0.05)M3.s.xc+=0.3; },
+  init(){ M3.load(0); },
+  snapX(x){ if(!M3.s.snap)return x; const st=M3.P().pi?PI/12:0.25; return Math.round(x/st)*st; },
+  bar(){
+    chips(SK.map((P,i)=>[i,P.label]),M3.s.i,i=>{M3.load(i);render();});
+    segBtns([["d1","Colour f by f′ sign"],["d2","by f″ sign"],["none","plain"]],M3.s.mode,k=>{M3.s.mode=k;render();});
+    chk("Snap",M3.s.snap,v=>{M3.s.snap=v;});
+    spacer("Drag the cursor on f, or the a / b markers");
+  },
+  bands(){ const P=M3.P(), W=(y)=>({x0:P.xr[0],x1:P.xr[1],y0:y[0],y1:y[1]});
+    return [mkG({x:52,y:10,w:636,h:204},W(P.y0)),mkG({x:52,y:226,w:636,h:104},W(P.y1)),mkG({x:52,y:342,w:636,h:104},W(P.y2))]; },
+  drag(id,sp){ const P=M3.P(), G=M3.G[0]; let x=M3.snapX(clamp(G.iX(sp[0]),P.dom[0],P.dom[1]));
+    if(id==="cur"){ M3.s.xc=x; }
+    if(id==="ia"){ M3.s.a=Math.min(x,M3.s.b-0.1); }
+    if(id==="ib"){ M3.s.b=Math.max(x,M3.s.a+0.1); } },
+  draw(){
+    const P=M3.P(), A=M3.s.an, G=M3.bands(); M3.G=G;
+    const o={pi:P.pi,yt:3,xt:10};
+    const c0=graph(cv,G[0],{pi:P.pi,yt:6,xt:10}), c1=graph(cv,G[1],o), c2=graph(cv,G[2],o);
+    stext(cv,[24,G[0].box.y+G[0].box.h/2],"f","mk","#14213D"); stext(cv,[24,G[1].box.y+52],"f′","mk","#0369A1"); stext(cv,[24,G[2].box.y+52],"f″","mk","#7C3AED");
+    // interval shading
+    c0.appendChild(E("rect",{x:G[0].X(M3.s.a),y:G[0].box.y,width:G[0].X(M3.s.b)-G[0].X(M3.s.a),height:G[0].box.h,fill:"rgba(255,217,61,.16)"}));
+    // guide lines
+    const allx=A.cr.map(q=>q.x).concat(A.in2.filter(q=>q.infl).map(q=>q.x));
+    allx.forEach(x=>G.forEach(g=>sseg(cv,[g.X(x),g.box.y],[g.X(x),g.box.y+g.box.h],"#94A3B8",1.2,"4 4")));
+    const cf=M3.s.mode==="d1"?(x=>P.fp(x)>=0?"#059669":"#DC2626"):M3.s.mode==="d2"?(x=>P.fpp(x)>=0?"#0284C7":"#EA580C"):null;
+    plot(c0,G[0],P.f,"#14213D",3.4,null,P.dom[0],P.dom[1],cf,900);
+    plot(c1,G[1],P.fp,"#0284C7",2.8,null,P.dom[0],P.dom[1],null,900);
+    plot(c2,G[2],P.fpp,"#7C3AED",2.8,null,P.dom[0],P.dom[1],null,900);
+    // marks
+    A.cr.forEach(q=>{ const y=P.f(q.x), p=G[0].P(q.x,y);
+      if(q.type!=="none"){ sdot(cv,p,q.type==="max"?"var(--magenta)":"var(--corr)",6.5); smartLabel(cv,p,q.type==="max"?[0,-1]:[0,1],q.type==="max"?"max":"min",q.type==="max"?"#BE185D":"#0369A1"); }
+      else { ring(cv,p,"#64748B",6); smartLabel(cv,p,[1,-1],"crit, no ext.","#475569"); }
+      if(!q.und){ const z=G[1].P(q.x,0); if(z[1]>=G[1].box.y&&z[1]<=G[1].box.y+G[1].box.h)sdot(cv,z,"#0284C7",4.5); } });
+    A.in2.forEach(q=>{ if(!q.und){ const z=G[2].P(q.x,0); if(z[1]>=G[2].box.y&&z[1]<=G[2].box.y+G[2].box.h)sdot(cv,z,"#7C3AED",4.5); }
+      if(q.infl){ const p=G[0].P(q.x,P.f(q.x)); cv.appendChild(E("rect",{x:p[0]-6,y:p[1]-6,width:12,height:12,transform:`rotate(45 ${p[0]} ${p[1]})`,fill:"#7C3AED",stroke:"#fff","stroke-width":2})); smartLabel(cv,p,[-1,-1],"infl","#6D28D9"); } });
+    // a,b markers
+    [["ia",M3.s.a,"a"],["ib",M3.s.b,"b"]].forEach(([id,x,l])=>{ const p=[G[0].X(x),G[0].box.y+G[0].box.h-14];
+      sseg(cv,[p[0],G[0].box.y],[p[0],G[0].box.y+G[0].box.h],"#CA8A04",2,"6 4");
+      cv.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?22:15,class:"grab","data-drag":id})); stext(cv,p,l,"sm","#92400E"); });
+    // cursor
+    const xc=M3.s.xc; G.forEach((g,i)=>sseg(cv,[g.X(xc),g.box.y],[g.X(xc),g.box.y+g.box.h],"var(--hand)",1.6));
+    const fy=P.f(xc); if(isFinite(fy)){ const p=G[0].P(xc,clamp(fy,P.y0[0],P.y0[1])); sgrab(cv,p,"cur"); }
+    [[1,P.fp,"#0284C7"],[2,P.fpp,"#7C3AED"]].forEach(([i,fn,col])=>{ const v=fn(xc); if(isFinite(v)&&v>=G[i].win.y0&&v<=G[i].win.y1)sdot(cv,G[i].P(xc,v),col,5); });
+    if(cf){ stext(cv,[684,G[0].box.y+14],M3.s.mode==="d1"?"green: f′ > 0 (increasing) · red: f′ < 0 (decreasing)":"blue: f″ > 0 (concave up) · orange: f″ < 0 (concave down)","ax","#475569","end"); }
+  },
+  side(){ const P=M3.P(), A=M3.s.an;
+    const c1=signChart(P,A.cr,P.fp,"f′",{iv:s=>s>0?"↗ inc":"↘ dec",pt:o=>o.type==="none"?"no ext.":o.type});
+    const c2=signChart(P,A.in2,P.fpp,"f″",{iv:s=>s>0?"∪ up":"∩ down",pt:o=>o.infl?"infl. pt":"no change"});
+    const dn=P.inf?"all real numbers (window shown)":`[${ex(P.dom[0])}, ${ex(P.dom[1])}]`;
+    return panel("Three graphs, one story",`<div class="pad"><p>Where <b>f′ &gt; 0</b>, f rises; where <b>f′ &lt; 0</b>, f falls. A <b>critical number</b> is where f′ = 0 or f′ is undefined (and f is defined). If f′ changes from + to −, f has a <b>local maximum</b>; from − to +, a <b>local minimum</b> (first derivative test).</p><p>Where <b>f″ &gt; 0</b>, f is concave up (f′ increasing); where <b>f″ &lt; 0</b>, concave down. An <b>inflection point</b> is where concavity actually changes; f″ = 0 alone is not enough.</p></div>`)+
+      panel("The functions",`<div class="fldwrap"><div class="eq">f(x) = ${P.ft}\nf′(x) = ${P.fpt}\nf″(x) = ${P.fppt}<small>Domain studied: ${dn}. Sign charts below are generated from the zeros and undefined points that are found numerically.</small></div></div>`)+
+      panel("Sign chart of f′ (increase / decrease)",c1)+
+      panel("Sign chart of f″ (concavity)",c2)+
+      panel("At the cursor",`<div id="skCur"></div>`)+
+      panel("Candidates test on [a, b]",`<div id="skCand"></div>`)+
+      tryPanel(`<p>Put the cursor where f′ has its lowest point. What is happening to f there? (It is an inflection point: f′ has an extremum where f″ changes sign.)</p><p>For x⁴ − 4x³, explain why x = 0 is a critical number but not an extremum.</p>`); },
+  live(){ const P=M3.P(), A=M3.s.an, xc=M3.s.xc, el=live("skCur"); if(!el)return;
+    const v=P.f(xc), d=P.fp(xc), dd=P.fpp(xc);
+    el.innerHTML=`<div class="rel"><span class="dot" style="background:var(--hand)"></span><span class="nm">x = ${ex(xc,3)}<em>f(x) = ${fixd(v,3)}</em></span><span class="val"></span></div>
+      <div class="rel"><span class="dot" style="background:#0284C7"></span><span class="nm">f′(x) = ${fixd(d,3)}<em>${!isFinite(d)?"undefined: a cusp or vertical tangent":Math.abs(d)<1e-9?"horizontal tangent":d>0?"f is increasing here":"f is decreasing here"}</em></span><span class="val ${d>0?"ok":"no"}">${!isFinite(d)?"—":d>0?"↗":"↘"}</span></div>
+      <div class="rel"><span class="dot" style="background:#7C3AED"></span><span class="nm">f″(x) = ${fixd(dd,3)}<em>${!isFinite(dd)?"undefined":Math.abs(dd)<1e-9?"no concavity at this exact point":dd>0?"concave up: f′ is increasing":"concave down: f′ is decreasing"}</em></span><span class="val ${dd>0?"ok":"no"}">${!isFinite(dd)?"—":dd>0?"∪":"∩"}</span></div>`;
+    const a=M3.s.a, b=M3.s.b, cand=[{x:a,w:"endpoint a"}].concat(A.cr.filter(q=>q.x>a+1e-9&&q.x<b-1e-9).map(q=>({x:q.x,w:q.und?"f′ undefined":"f′ = 0"})),[{x:b,w:"endpoint b"}]);
+    cand.forEach(c=>c.y=P.f(c.x)); const mx=Math.max(...cand.map(c=>c.y)), mn=Math.min(...cand.map(c=>c.y));
+    live("skCand").innerHTML=`<table class="cand"><tr><th>x</th><th>why</th><th>f(x)</th></tr>${cand.map(c=>`<tr class="${Math.abs(c.y-mx)<1e-9?"hi":Math.abs(c.y-mn)<1e-9?"lo":""}"><td>${ex(c.x,3)}</td><td>${c.w}</td><td>${fixd(c.y,3)}</td></tr>`).join("")}</table>
+      <div class="pad"><p>On [${ex(a,2)}, ${ex(b,2)}]: <b class="ok">absolute max ${fixd(mx,3)}</b>, <b class="no">absolute min ${fixd(mn,3)}</b>. The Extreme Value Theorem guarantees both exist because f is continuous on a closed interval; they can only occur at critical numbers or endpoints.</p></div>`;
+  }
+};
+
+/* ══════════════════════ TAB 4 · Mean Value Theorem ══════════════════════ */
+const MV=[
+  {label:"x³ − 3x",f:x=>x*x*x-3*x,fp:x=>3*x*x-3,win:[-2.6,2.6,-4.2,4.2],ab:[-2,2],ft:"x³ − 3x",fpt:"3x² − 3"},
+  {label:"sin x",f:Math.sin,fp:Math.cos,win:[-1,7.3,-1.7,1.7],ab:[0.5,5],pi:true,ft:"sin x",fpt:"cos x"},
+  {label:"√x",f:x=>x<0?NaN:Math.sqrt(x),fp:x=>x<=0?NaN:1/(2*Math.sqrt(x)),win:[-0.6,9.5,-0.8,3.6],ab:[1,9],dlo:0,ft:"√x",fpt:"1/(2√x)",note:"defined for x ≥ 0; f′(0) is undefined, but 0 can only be an endpoint, which is allowed."},
+  {label:"|x|",f:Math.abs,fp:x=>x===0?NaN:Math.sign(x),win:[-2.2,2.2,-0.6,2.4],ab:[-1,1],bad:{x:0,why:"a corner: f is not differentiable at x = 0",t:"d"},ft:"|x|",fpt:"−1 for x &lt; 0,  1 for x &gt; 0,  undefined at 0"},
+  {label:"x^(2/3)",f:x=>{const c=cbrt(x);return c*c;},fp:x=>x===0?NaN:2/(3*cbrt(x)),win:[-2.2,2.2,-0.6,2.4],ab:[-1,1],bad:{x:0,why:"a cusp: f is not differentiable at x = 0",t:"d"},ft:"x<sup>2/3</sup>",fpt:"2/(3∛x),  undefined at 0"},
+  {label:"1/x",f:x=>1/x,fp:x=>-1/(x*x),win:[-3,3,-4,4],ab:[-1,2],bad:{x:0,why:"a vertical asymptote: f is not continuous at x = 0",t:"c"},ft:"1/x",fpt:"−1/x²"}
+];
+const M4={
+  tab:"Mean Value Thm", lesson:"AP 5.1–5.2 · Unit 5", accent:"var(--lavender)",
+  title:()=>"Mean Value Theorem: f(x) = "+MV[M4.s.i].label,
+  s:{i:0,a:-2,b:2,snap:true,msg:""},
+  load(i){ M4.s.i=i; M4.s.a=MV[i].ab[0]; M4.s.b=MV[i].ab[1]; M4.s.msg=""; },
+  init(){ M4.load(0); },
+  P:()=>MV[M4.s.i],
+  snapX(x){ if(!M4.s.snap)return x; const st=M4.P().pi?PI/12:0.25; return Math.round(x/st)*st; },
+  bar(){
+    chips(MV.map((P,i)=>[i,"f(x) = "+P.label]),M4.s.i,i=>{M4.load(i);render();});
+    btn("Rolle: make f(b) = f(a)",()=>M4.rolle(),"primary");
+    btn("Reset interval",()=>{M4.load(M4.s.i);update();});
+    chk("Snap",M4.s.snap,v=>{M4.s.snap=v;});
+    spacer("Drag a and b along the curve");
+  },
+  rolle(){ const P=M4.P(), a=M4.s.a, fa=P.f(a), z=zeros(x=>P.f(x)-fa,a+0.05,P.win[1],2000).filter(x=>x>a+0.04);
+    if(z.length){ M4.s.b=z[0]; M4.s.msg=""; } else M4.s.msg=`No b &gt; a in view has f(b) = f(a) = ${f3(fa)} for this function, so Rolle's case cannot be set up from this a. Try another a.`;
+    update(); },
+  drag(id,sp){ const P=M4.P(); let x=M4.snapX(clamp(M4.G.iX(sp[0]),P.dlo!=null?P.dlo:P.win[0],P.win[1]));
+    if(P.bad&&P.bad.t==="c"&&Math.abs(x-P.bad.x)<0.2)x=P.bad.x+(x<P.bad.x?-0.2:0.2);
+    if(id==="a")M4.s.a=Math.min(x,M4.s.b-0.1); if(id==="b")M4.s.b=Math.max(x,M4.s.a+0.1); M4.s.msg=""; },
+  info(){ const P=M4.P(), a=M4.s.a, b=M4.s.b, fa=P.f(a), fb=P.f(b), m=(fb-fa)/(b-a);
+    let cont=true, diff=true, why="";
+    if(P.bad&&P.bad.x>=a-1e-12&&P.bad.x<=b+1e-12){ if(P.bad.t==="c"){cont=false;diff=false;why=P.bad.why;} else if(P.bad.x>a+1e-12&&P.bad.x<b-1e-12){diff=false;why=P.bad.why;} }
+    let cs=[]; if(isFinite(m))cs=zeros(c=>P.fp(c)-m,a+1e-7,b-1e-7,1600).filter(c=>c>a&&c<b&&(!P.bad||Math.abs(c-P.bad.x)>1e-6)&&Math.abs(P.fp(c)-m)<1e-6);
+    return {a,b,fa,fb,m,cont,diff,why,cs,rolle:Math.abs(fa-fb)<1e-9}; },
+  draw(){
+    const P=M4.P(), w=P.win, G=mkG({x:44,y:14,w:642,h:432},{x0:w[0],x1:w[1],y0:w[2],y1:w[3]}); M4.G=G;
+    const c=graph(cv,G,{pi:P.pi,yt:7});
+    const I=M4.info();
+    c.appendChild(E("rect",{x:G.X(I.a),y:G.box.y,width:G.X(I.b)-G.X(I.a),height:G.box.h,fill:"rgba(196,181,253,.13)"}));
+    if(P.bad&&P.bad.t==="c")sseg(c,[G.X(0),G.box.y],[G.X(0),G.box.y+G.box.h],"#DC2626",1.6,"6 5");
+    plot(c,G,P.f,"#14213D",3.4,null,P.dlo);
+    if(isFinite(I.m)){ lineW(c,G,I.a,I.fa,I.m,"#DB2777",1.6,"3 5"); sseg(c,G.P(I.a,I.fa),G.P(I.b,I.fb),"#DB2777",3.2); }
+    const cols=["#059669","#0284C7","#EA580C","#7C3AED"];
+    I.cs.forEach((cc,i)=>{ const col=cols[i%4], y=P.f(cc); lineW(c,G,cc,y,I.m,col,2.4,"10 6");
+      sseg(c,G.P(cc,y),[G.X(cc),G.Y(0)],col,1.4,"3 4"); sdot(cv,G.P(cc,y),col,6.5);
+      const Ly=clamp(G.Y(0)+(i%2?34:18),G.box.y+12,G.box.y+G.box.h-10); stext(cv,[G.X(cc),Ly],"c"+(I.cs.length>1?"₁₂₃₄"[i]:"")+" ≈ "+f2(cc),"sm",col); });
+    if(P.bad&&P.bad.t==="d"){ const p=G.P(0,P.f(0)); ring(cv,p,"#DC2626",7); smartLabel(cv,p,[0,1],P.bad.x===0&&M4.s.i===3?"corner":"cusp","#DC2626"); }
+    [["a",I.a,I.fa],["b",I.b,I.fb]].forEach(([id,x,y])=>{ const p=G.P(x,y); sgrab(cv,p,id,"#DB2777"); smartLabel(cv,p,id==="a"?[-1,-1]:[1,-1],id,"#BE185D","mk"); });
+    hud(cv,[["secant slope = "+(isFinite(I.m)?f3(I.m):"undefined"),"#BE185D"],[I.cs.length?I.cs.length+" tangent"+(I.cs.length>1?"s":"")+" parallel":"no parallel tangent","#047857"]],"tr");
+  },
+  side(){ const P=M4.P();
+    return panel("The theorem",`<div class="pad"><p><b>Mean Value Theorem.</b> If f is <b>continuous on [a, b]</b> and <b>differentiable on (a, b)</b>, then there is at least one c in (a, b) where the tangent slope equals the secant slope:</p>
+      <div class="eq">f′(c) = (f(b) − f(a)) / (b − a)<small>Instantaneous rate = average rate, somewhere inside the interval.</small></div>
+      <p><b>Rolle's Theorem</b> is the special case f(a) = f(b): the secant is horizontal, so some c has f′(c) = 0.</p><p>Both hypotheses matter. Pick |x|, x<sup>2/3</sup> or 1/x and the conclusion can fail.</p></div>`)+
+      panel("f and f′",`<div class="fldwrap"><div class="eq">f(x) = ${P.ft}\nf′(x) = ${P.fpt}${P.note?`<small>${P.note}</small>`:""}</div></div>`)+
+      panel("Check the hypotheses, find c",`<div id="mvLive"></div>`)+
+      tryPanel(`<p>Choose |x| and set [a, b] = [−1, 1]. The secant slope is 0, yet no tangent is horizontal. Which hypothesis fails? Now move a to −0.5 and b to 1: does some c appear even though the hypothesis still fails?</p><p>Choose sin x and press <b>Rolle</b>. Where is c?</p>`); },
+  live(){ const el=live("mvLive"); if(!el)return; const P=M4.P(), I=M4.info();
+    const ok=(b,t)=>`<div class="rel"><span class="dot" style="background:${b?"var(--mint)":"var(--coral)"}"></span><span class="nm">${t}</span><span class="val ${b?"ok":"no"}">${b?"✓":"✗"}</span></div>`;
+    let h=ok(I.cont,`Continuous on [${ex(I.a,2)}, ${ex(I.b,2)}]${!I.cont?"<em>"+I.why+"</em>":""}`)+ok(I.diff,`Differentiable on (${ex(I.a,2)}, ${ex(I.b,2)})${I.cont&&!I.diff?"<em>"+I.why+"</em>":""}`);
+    h+=`<div class="fldwrap"><div class="eq">secant slope = (f(b) − f(a))/(b − a)\n  = (${fixd(I.fb,3)} − ${par(fixd(I.fa,3))}) / (${ex(I.b,3)} − ${par(ex(I.a,3))})\n  = ${isFinite(I.m)?exa(I.m):"undefined"}\nSolve f′(c) = ${isFinite(I.m)?ex(I.m,3):"—"}:  ${I.cs.length?I.cs.map(c=>"c = "+exa(c)).join(",  "):"no solution in (a, b)"}</div></div>`;
+    const hyp=I.cont&&I.diff;
+    if(hyp)h+=`<div class="verdict good"><b>${I.rolle?"Rolle's Theorem applies":"MVT applies"}.</b> ${I.rolle?"f(a) = f(b), so the secant is horizontal and f′(c) = 0 at "+I.cs.map(c=>ex(c,3)).join(", ")+".":"The guaranteed c"+(I.cs.length>1?" values are":" is")+" shown as parallel tangent"+(I.cs.length>1?"s":"")+"."}</div>`;
+    else if(!I.cs.length)h+=`<div class="verdict bad"><b>No c exists.</b> A hypothesis fails (${I.why}), so the MVT makes no promise, and here its conclusion really is false.</div>`;
+    else h+=`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>A c exists anyway.</b> The hypotheses fail (${I.why}), so the MVT does not <i>guarantee</i> c; it just happens to exist on this interval.</div>`;
+    if(M4.s.msg)h+=`<div class="note">${M4.s.msg}</div>`;
+    el.innerHTML=fq(h); }
+};
+
+/* ══════════════════════ TAB 5 · L'Hôpital's Rule ══════════════════════ */
+const LD=[
+  {label:"sin 2x ⁄ (eˣ − 1)",a:0,f:x=>Math.sin(2*x),g:x=>Math.exp(x)-1,fp:x=>2*Math.cos(2*x),gp:Math.exp,ft:"sin 2x",gt:"e<sup>x</sup> − 1",fpt:"2cos 2x",gpt:"e<sup>x</sup>"},
+  {label:"ln x ⁄ (x² − 1)",a:1,f:x=>x>0?Math.log(x):NaN,g:x=>x*x-1,fp:x=>1/x,gp:x=>2*x,ft:"ln x",gt:"x² − 1",fpt:"1/x",gpt:"2x"},
+  {label:"(x² − 4) ⁄ sin(πx/2)",a:2,f:x=>x*x-4,g:x=>Math.sin(PI*x/2),fp:x=>2*x,gp:x=>PI/2*Math.cos(PI*x/2),ft:"x² − 4",gt:"sin(πx/2)",fpt:"2x",gpt:"(π/2)cos(πx/2)"}
+];
+const LIMS=[
+  {cat:"std",chip:"sin 3x / x",tex:"lim<sub>x→0</sub> sin(3x) / x",a:0,fn:x=>Math.sin(3*x)/x,win:[-3,3,-1,4],ans:3,
+    steps:["Form: sin(3·0) = 0 and the denominator → 0, so the limit has the form <b>0/0</b>. L'Hôpital's Rule applies.","Differentiate top and bottom <b>separately</b> (this is not the quotient rule): (sin 3x)′ = 3cos 3x and (x)′ = 1.","lim<sub>x→0</sub> 3cos(3x) / 1 = 3cos 0 = <b>3</b>."]},
+  {cat:"std",chip:"(1 − cos x) / x²",tex:"lim<sub>x→0</sub> (1 − cos x) / x²",a:0,fn:x=>(1-Math.cos(x))/(x*x),win:[-6,6,-0.15,0.75],ans:0.5,
+    steps:["Form: 1 − cos 0 = 0 and 0² = 0, so <b>0/0</b>.","Apply once: lim sin x / (2x). Still <b>0/0</b>, so apply the rule again.","Apply twice: lim cos x / 2 = cos 0 / 2 = <b>1/2</b>."]},
+  {cat:"std",chip:"(x − sin x) / x³",tex:"lim<sub>x→0</sub> (x − sin x) / x³",a:0,fn:x=>(x-Math.sin(x))/(x*x*x),win:[-6,6,-0.04,0.24],ans:1/6,
+    steps:["Form: <b>0/0</b>.","Once: (1 − cos x) / (3x²). Still 0/0.","Twice: sin x / (6x). Still 0/0.","Three times: cos x / 6 → <b>1/6</b>. Repeat the rule as long as the form stays indeterminate."]},
+  {cat:"std",chip:"x² / eˣ",tex:"lim<sub>x→∞</sub> x² / e<sup>x</sup>",a:Infinity,fn:x=>x*x/Math.exp(x),win:[0,16,-0.08,0.7],ans:0,
+    steps:["Form: both top and bottom → ∞, so <b>∞/∞</b>.","Once: 2x / e<sup>x</sup>. Still ∞/∞.","Twice: 2 / e<sup>x</sup> → <b>0</b>. Exponentials outgrow every power of x."]},
+  {cat:"std",chip:"ln x / √x",tex:"lim<sub>x→∞</sub> ln x / √x",a:Infinity,fn:x=>Math.log(x)/Math.sqrt(x),win:[0,120,-0.3,0.9],ans:0,
+    steps:["Form: <b>∞/∞</b>.","Differentiate: (1/x) / (1/(2√x)) = 2√x / x = 2/√x.","2/√x → <b>0</b>. Powers of x outgrow ln x."]},
+  {cat:"std",chip:"(3x² + 1) / (5x² − x)",tex:"lim<sub>x→∞</sub> (3x² + 1) / (5x² − x)",a:Infinity,fn:x=>(3*x*x+1)/(5*x*x-x),win:[0.5,30,0,1.4],lo:0.5,ans:0.6,
+    steps:["Form: <b>∞/∞</b>.","Once: 6x / (10x − 1). Still ∞/∞.","Twice: 6/10 = <b>3/5</b>, the ratio of the leading coefficients, as dividing by x² would also show."]},
+  {cat:"form",chip:"x ln x   (0·∞)",tex:"lim<sub>x→0⁺</sub> x ln x",a:0,right:true,fn:x=>x>0?x*Math.log(x):NaN,win:[-0.1,1.6,-0.5,0.8],ans:0,
+    steps:["Form: 0 · (−∞), the indeterminate product <b>0·∞</b>. Rewrite it as a quotient.","x ln x = ln x / (1/x), which has the form −∞/∞.","L'Hôpital: (1/x) / (−1/x²) = −x.","−x → <b>0</b> as x → 0⁺."]},
+  {cat:"form",chip:"1/x − 1/sin x   (∞−∞)",tex:"lim<sub>x→0</sub> (1/x − 1/sin x)",a:0,fn:x=>1/x-1/Math.sin(x),win:[-3,3,-1.5,1.5],ans:0,
+    steps:["Form: <b>∞ − ∞</b>. Combine into one fraction.","1/x − 1/sin x = (sin x − x) / (x sin x), form 0/0.","Once: (cos x − 1) / (sin x + x cos x). Still 0/0.","Twice: (−sin x) / (2cos x − x sin x) → 0/2 = <b>0</b>."]},
+  {cat:"form",chip:"(1 + 1/x)ˣ   (1^∞)",tex:"lim<sub>x→∞</sub> (1 + 1/x)<sup>x</sup>",a:Infinity,fn:x=>x>0?Math.pow(1+1/x,x):NaN,win:[0,30,0,3.2],lo:0.05,ans:Math.E,
+    steps:["Form: <b>1<sup>∞</sup></b>. Let y = (1 + 1/x)<sup>x</sup> and take logs: ln y = x·ln(1 + 1/x).","Rewrite: ln y = ln(1 + 1/x) / (1/x), form 0/0.","L'Hôpital: [(−1/x²)/(1 + 1/x)] / (−1/x²) = 1/(1 + 1/x) → 1.","So ln y → 1 and y → e<sup>1</sup> = <b>e ≈ 2.718</b>."]},
+  {cat:"form",chip:"xˣ   (0⁰)",tex:"lim<sub>x→0⁺</sub> x<sup>x</sup>",a:0,right:true,fn:x=>x>0?Math.pow(x,x):NaN,win:[-0.1,2,0,2.5],ans:1,
+    steps:["Form: <b>0<sup>0</sup></b>. Let y = x<sup>x</sup>, so ln y = x ln x.","x ln x → 0 (see the 0·∞ example: rewrite as ln x/(1/x), then L'Hôpital).","ln y → 0, so y → e<sup>0</sup> = <b>1</b>."]},
+  {cat:"form",chip:"x^(1/x)   (∞⁰)",tex:"lim<sub>x→∞</sub> x<sup>1/x</sup>",a:Infinity,fn:x=>x>0?Math.pow(x,1/x):NaN,win:[0,60,0,1.8],lo:0.2,ans:1,
+    steps:["Form: <b>∞<sup>0</sup></b>. Let y = x<sup>1/x</sup>, so ln y = ln x / x, form ∞/∞.","L'Hôpital: (1/x) / 1 = 1/x → 0.","ln y → 0, so y → e<sup>0</sup> = <b>1</b>."]}
+];
+const M5={
+  tab:"L'Hôpital's Rule", lesson:"AP 4.7 · Unit 4", accent:"var(--magenta)",
+  title:()=>M5.s.mode==="demo"?"Zoom in: f/g near a common zero":"Limit: "+LIMS[M5.s.li].chip.replace(/\s+\(.*\)$/,""),
+  s:{mode:"demo",di:0,zv:0,pf:0.6,li:0,step:0},
+  zoom:()=>Math.pow(10,M5.s.zv/40),
+  bar(){
+    segBtns([["demo","Why it works"],["std","0/0 and ∞/∞"],["form","0·∞, ∞−∞, 1^∞ …"]],M5.s.mode==="demo"?"demo":LIMS[M5.s.li].cat,k=>{
+      if(k==="demo")M5.s.mode="demo"; else { M5.s.mode="lim"; if(LIMS[M5.s.li].cat!==k)M5.s.li=LIMS.findIndex(L=>L.cat===k); M5.s.step=0; } render(); });
+    if(M5.s.mode==="demo"){
+      chips(LD.map((d,i)=>[i,d.label]),M5.s.di,i=>{M5.s.di=i;M5.s.zv=0;M5.s.pf=0.6;render();});
+      M5.zs=slider("Zoom",0,100,1,M5.s.zv,v=>{M5.s.zv=v;update();},v=>"×"+num(Math.pow(10,v/40),v>40?0:1),true);
+      btn("Zoom in",()=>{M5.s.zv=Math.min(100,M5.s.zv+12);M5.zs.set(M5.s.zv);update();});
+      btn("Zoom out",()=>{M5.s.zv=Math.max(0,M5.s.zv-12);M5.zs.set(M5.s.zv);update();});
+    } else {
+      const cat=LIMS[M5.s.li].cat;
+      chips(LIMS.map((L,i)=>[i,L.chip]).filter(q=>LIMS[q[0]].cat===cat),M5.s.li,i=>{M5.s.li=i;M5.s.step=0;render();});
+      btn("◀ Back",()=>{M5.s.step=Math.max(0,M5.s.step-1);M5.side2();});
+      btn("Next step ▶",()=>{M5.s.step=Math.min(LIMS[M5.s.li].steps.length-1,M5.s.step+1);M5.side2();},"primary");
+      btn("Show all",()=>{M5.s.step=LIMS[M5.s.li].steps.length-1;M5.side2();});
+    }
+  },
+  side2(){ side.innerHTML=fq(M5.side()); M5.live(); clear(); M5.draw(); },
+  win(){ const D=LD[M5.s.di], hw=2.6/M5.zoom(), hh=hw*432/642; return {x0:D.a-hw,x1:D.a+hw,y0:-hh,y1:hh,hw}; },
+  drag(id,sp){ if(id==="pr"){ const W=M5.win(), x=M5.G.iX(sp[0]); let pf=(x-LD[M5.s.di].a)/W.hw; pf=clamp(pf,-0.95,0.95); if(Math.abs(pf)<0.04)pf=pf<0?-0.04:0.04; M5.s.pf=pf; } },
+  draw(){
+    if(M5.s.mode==="demo"){
+      const D=LD[M5.s.di], W=M5.win(), G=mkG({x:44,y:14,w:642,h:432},W); M5.G=G;
+      const c=graph(cv,G,{yt:7});
+      const fa=D.fp(D.a), ga=D.gp(D.a);
+      lineW(c,G,D.a,0,fa,"#DB2777",2,"9 6"); lineW(c,G,D.a,0,ga,"#0284C7",2,"9 6");
+      plot(c,G,D.f,"#DB2777",3.4); plot(c,G,D.g,"#0284C7",3.4);
+      sdot(cv,G.P(D.a,0),"#14213D",6);
+      const x=D.a+M5.s.pf*W.hw, fx=D.f(x), gx=D.g(x);
+      sseg(c,[G.X(x),G.box.y],[G.X(x),G.box.y+G.box.h],"var(--hand)",1.5,"4 4");
+      if(isFinite(fx))sdot(cv,G.P(x,clamp(fx,W.y0,W.y1)),"#DB2777",5.5); if(isFinite(gx))sdot(cv,G.P(x,clamp(gx,W.y0,W.y1)),"#0284C7",5.5);
+      const hp=[G.X(x),clamp(G.Y(0),G.box.y+20,G.box.y+G.box.h-20)]; sgrab(cv,hp,"pr");
+      hud(cv,[["f(x) = "+D.ft.replace(/<\/?sup>/g,"").replace("ex","eˣ"),"#BE185D"],["g(x) = "+D.gt.replace(/<sup>x<\/sup>/g,"ˣ"),"#0369A1"],["f(x)/g(x) = "+fixd(fx/gx,5)],["f′(a)/g′(a) = "+fixd(fa/ga,5),"#047857"]],"tl");
+      stext(cv,[680,440],"zoom ×"+num(M5.zoom(),1)+" around x = "+ex(D.a),"ax","#5B6B8C","end");
+    } else {
+      const L=LIMS[M5.s.li], w=L.win, G=mkG({x:44,y:14,w:642,h:432},{x0:w[0],x1:w[1],y0:w[2],y1:w[3]}); M5.G=G;
+      const c=graph(cv,G,{yt:7});
+      sseg(c,G.P(w[0],L.ans),G.P(w[1],L.ans),"var(--alt)",2,"8 6");
+      plot(c,G,L.fn,"#DB2777",3.4,null,L.lo!=null?L.lo:(L.right?1e-6:null),null,null,1400);
+      if(isFinite(L.a)){ ring(cv,G.P(L.a,L.ans),"#DB2777",7); smartLabel(cv,G.P(L.a,L.ans),[1,-1],"limit "+(niceS(L.ans)||f3(L.ans)),"#047857"); }
+      else { stext(cv,[676,clamp(G.Y(L.ans)-14,24,440)],"y = "+(L.ans===Math.E?"e":niceS(L.ans))+" as x → ∞","sm","#047857","end"); }
+      hud(cv,[[L.tex.replace(/<sub>|<\/sub>/g," ").replace(/<sup>/g,"^").replace(/<\/sup>/g,"").replace(/\s+/g," "),"#BE185D"]],"tr");
+    }
+  },
+  side(){
+    if(M5.s.mode==="demo"){ const D=LD[M5.s.di];
+      return panel("Why the rule works",`<div class="pad"><p>When f(a) = 0 and g(a) = 0, the ratio f(x)/g(x) looks like 0/0 at x = a, which tells us nothing. But <b>zoom in</b>: near x = a every differentiable curve looks like its tangent line.</p><p>So f(x) ≈ f′(a)(x − a) and g(x) ≈ g′(a)(x − a). The (x − a) factors cancel, and the ratio of the functions approaches the <b>ratio of their slopes</b>.</p></div>`)+
+        panel("This pair",`<div class="fldwrap"><div class="eq">f(x) = ${D.ft},   g(x) = ${D.gt},   a = ${ex(D.a)}\nf(${ex(D.a)}) = 0 and g(${ex(D.a)}) = 0  →  form 0/0\nf′(x) = ${D.fpt},   g′(x) = ${D.gpt}\nlim f(x)/g(x) = f′(a)/g′(a) = ${exa(D.fp(D.a)/D.gp(D.a))}</div></div>`)+
+        panel("At the probe",`<div id="lhLive"></div>`)+
+        tryPanel(`<p>Zoom all the way in. The two curves become straight lines through (a, 0). Drag the probe toward a: does f(x)/g(x) settle on f′(a)/g′(a)?</p><p>L'Hôpital's Rule says: if lim f/g is 0/0 or ±∞/±∞, then lim f(x)/g(x) = lim f′(x)/g′(x), provided the right side exists.</p>`); }
+    const L=LIMS[M5.s.li];
+    return panel("The limit",`<div class="pad"><p class="lim" style="font-size:18px;color:#fff">${L.tex}</p><p>${L.cat==="std"?"L'Hôpital's Rule needs the form <b>0/0</b> or <b>±∞/±∞</b>. Check the form first, every time you apply it.":"These forms are not quotients, so <b>rewrite</b> first: a product becomes a quotient, a difference becomes one fraction, and a power is handled by taking ln."}</p></div>`)+
+      panel("Step by step",`<ol class="stepl">${L.steps.map((t,i)=>`<li class="${i===M5.s.step?"on":i<M5.s.step?"done":""}" ${i>M5.s.step?'style="opacity:.35"':""}><span class="sn">${i+1}</span>${i<=M5.s.step?t:"…"}</li>`).join("")}</ol>`)+
+      panel("Numerical check",`<div id="lhLive"></div>`)+
+      tryPanel(`<p>Before pressing <b>Next step</b>, predict what the derivatives of the top and bottom will be. Look at the graph: the open circle (or the dashed line) is the limit the steps should reach.</p>`);
+  },
+  live(){ const el=live("lhLive"); if(!el)return;
+    if(M5.s.mode==="demo"){ const D=LD[M5.s.di], W=M5.win(), x=D.a+M5.s.pf*W.hw, fx=D.f(x), gx=D.g(x), r=D.fp(D.a)/D.gp(D.a);
+      el.innerHTML=`<div class="rel"><span class="dot" style="background:var(--hand)"></span><span class="nm">x = ${fixd(x,6)}<em>distance to a: ${fixd(Math.abs(x-D.a),6)}</em></span><span class="val"></span></div>
+       <div class="rel"><span class="dot" style="background:#DB2777"></span><span class="nm">f(x) / g(x)<em>${fixd(fx,6)} / ${fixd(gx,6)}</em></span><span class="val">${fixd(fx/gx,5)}</span></div>
+       <div class="rel"><span class="dot" style="background:var(--alt)"></span><span class="nm">f′(a) / g′(a)<em>ratio of tangent slopes</em></span><span class="val ok">${fixd(r,5)}</span></div>
+       <div class="pad"><p>Gap: ${fixd(Math.abs(fx/gx-r),6)}. Halve the distance to a and the gap roughly halves too.</p></div>`; return; }
+    const L=LIMS[M5.s.li], hs=isFinite(L.a)?[0.1,0.01,0.001]:[10,100,1000];
+    const rows=[]; hs.forEach(h=>{ if(isFinite(L.a)){ rows.push(L.a+h); if(!L.right)rows.unshift(L.a-h); } else rows.push(h); });
+    el.innerHTML=`<table class="cand"><tr><th>x</th><th>value</th></tr>${rows.map(x=>`<tr><td>${fixd(x,isFinite(L.a)?3:0)}</td><td>${fixd(L.fn(x),6)}</td></tr>`).join("")}</table><div class="pad"><p>The values approach <b>${L.ans===Math.E?"e ≈ 2.718282":niceS(L.ans)}</b>, matching the algebra.</p></div>`; }
+};
+
+/* ══════════════════════ TAB 6 · linearization ══════════════════════ */
+const LN=[
+  {label:"√x",f:x=>Math.sqrt(x),fp:x=>1/(2*Math.sqrt(x)),fpp:x=>-1/(4*Math.pow(x,1.5)),a:4,x:4.6,hw:3,dlo:0.05,ft:"√x",fpt:"1/(2√x)"},
+  {label:"sin x",f:Math.sin,fp:Math.cos,fpp:x=>-Math.sin(x),a:0,x:0.5,hw:2,ft:"sin x",fpt:"cos x"},
+  {label:"eˣ",f:Math.exp,fp:Math.exp,fpp:Math.exp,a:0,x:0.4,hw:1.5,ft:"e<sup>x</sup>",fpt:"e<sup>x</sup>"},
+  {label:"ln x",f:x=>x>0?Math.log(x):NaN,fp:x=>1/x,fpp:x=>-1/(x*x),a:1,x:1.3,hw:1,dlo:0.05,ft:"ln x",fpt:"1/x"},
+  {label:"∛x",f:cbrt,fp:x=>1/(3*cbrt(x)**2),fpp:x=>-2/(9*x*cbrt(x)**2),a:8,x:8.8,hw:4,dlo:0.2,ft:"∛x",fpt:"1/(3∛x²)"},
+  {label:"1/x",f:x=>1/x,fp:x=>-1/(x*x),fpp:x=>2/(x*x*x),a:2,x:2.3,hw:1.5,dlo:0.15,ft:"1/x",fpt:"−1/x²"}
+];
+const M6={
+  tab:"Linearization", lesson:"AP 4.6 · Unit 4", accent:"var(--coral)",
+  title:()=>"Tangent-line approximation of "+LN[M6.s.i].label,
+  s:{i:0,a:4,x:4.6,hw:3,cx:4,snap:true},
+  load(i){ const P=LN[i]; Object.assign(M6.s,{i,a:P.a,x:P.x,hw:P.hw,cx:P.a}); },
+  init(){ M6.load(0); },
+  P:()=>LN[M6.s.i],
+  bar(){
+    chips(LN.map((P,i)=>[i,"f(x) = "+P.label]),M6.s.i,i=>{M6.load(i);render();});
+    btn("Zoom in",()=>{M6.s.hw/=2;M6.s.cx=M6.s.a;M6.fitX();update();},"primary");
+    btn("Zoom out",()=>{M6.s.hw=Math.min(M6.s.hw*2,16);M6.s.cx=M6.s.a;update();});
+    btn("Re-center on a",()=>{M6.s.cx=M6.s.a;update();});
+    chk("Snap",M6.s.snap,v=>{M6.s.snap=v;});
+    spacer("Drag a (tangency) and x (target)");
+  },
+  fitX(){ const s=M6.s; if(Math.abs(s.x-s.a)>s.hw*0.9)s.x=s.a+Math.sign(s.x-s.a||1)*s.hw*0.5; },
+  win(){ const s=M6.s, P=M6.P(), cy=P.f(s.cx), hh=s.hw*280/642; return {x0:s.cx-s.hw,x1:s.cx+s.hw,y0:cy-hh,y1:cy+hh}; },
+  snapV(v){ if(!M6.s.snap)return v; const st=niceStep(2*M6.s.hw,8)/2; return Math.round(v/st)*st; },
+  drag(id,sp){ const P=M6.P(), W=M6.win(); let v=M6.snapV(clamp(M6.G.iX(sp[0]),W.x0,W.x1)); if(P.dlo!=null)v=Math.max(v,P.dlo);
+    if(id==="a")M6.s.a=v; if(id==="x")M6.s.x=v; },
+  draw(){
+    const P=M6.P(), s=M6.s, W=M6.win(), G=mkG({x:46,y:12,w:640,h:280},W); M6.G=G;
+    const c=graph(cv,G,{yt:5});
+    const fa=P.f(s.a), m=P.fp(s.a), L=x=>fa+m*(x-s.a);
+    lineW(c,G,s.a,fa,m,"#0284C7",2.6);
+    plot(c,G,P.f,"#14213D",3.4,null,P.dlo!=null?Math.min(P.dlo,1e-6):null);
+    const fx=P.f(s.x), lx=L(s.x);
+    sseg(c,G.P(s.x,fx),G.P(s.x,lx),"#DC2626",3.4);
+    sdot(cv,G.P(s.x,lx),"#0284C7",5.5);
+    smartLabel(cv,add(G.P(s.x,(fx+lx)/2),[s.x>=s.a?14:-14,22]),[s.x>=s.a?1:-1,0.6],"error "+fixd(Math.abs(fx-lx),4),"#B91C1C");
+    sgrab(cv,G.P(s.a,fa),"a","#0284C7"); smartLabel(cv,G.P(s.a,fa),[-1,-1],"a","#0369A1","mk");
+    sgrab(cv,G.P(s.x,fx),"x"); smartLabel(cv,G.P(s.x,fx),[0,-1],"x","#C2410C","mk");
+    // error vs distance
+    const hw=s.hw; let mx=0; for(let i=0;i<=200;i++){ const d=-hw+2*hw*i/200, e=P.f(s.a+d)-L(s.a+d); if(isFinite(e))mx=Math.max(mx,Math.abs(e)); }
+    mx=mx*1.15||1e-6; const G2=mkG({x:46,y:318,w:640,h:130},{x0:-hw,x1:hw,y0:-mx,y1:mx});
+    const c2=graph(cv,G2,{yt:3,xl:"Δx = x − a"});
+    plot(c2,G2,d=>(P.fpp(s.a)/2)*d*d,"#7C3AED",2,"7 5");
+    plot(c2,G2,d=>P.f(s.a+d)-L(s.a+d),"#DC2626",3,null,P.dlo!=null?P.dlo-s.a:null);
+    const de=s.x-s.a, ee=fx-lx; if(isFinite(ee))sdot(cv,G2.P(de,ee),"#DC2626",5);
+    stext(cv,[54,306],"error E = f(x) − L(x) vs distance Δx   (dashed: (f″(a)/2)·Δx²)","ax","#475569","start");
+  },
+  side(){ const P=M6.P();
+    return panel("The idea",`<div class="pad"><p>Zoom in on a smooth curve and it looks straight. The <b>tangent line</b> at x = a is the best straight-line stand-in for f near a, so we use it to estimate values that are hard to compute by hand.</p><p>The error grows as you move away from a. Close to a it behaves like <b>(f″(a)/2)·(x − a)²</b>: half the distance, about a quarter of the error.</p></div>`)+
+      panel("Local linearization",`<div class="fldwrap"><div class="eq">L(x) = f(a) + f′(a)(x − a)\nf(x) = ${P.ft},   f′(x) = ${P.fpt}</div></div>`)+
+      panel("Live estimate",`<div id="lnLive"></div>`)+
+      tryPanel(`<p>For √x with a = 4, put x at 4.5 and read the error. Now put x at 4.25. Did the error drop to about one quarter?</p><p>When is L(x) an over-estimate? Compare with the sign of f″(a): concave down means the tangent lies <b>above</b> the curve.</p>`); },
+  live(){ const el=live("lnLive"); if(!el)return; const P=M6.P(), s=M6.s, fa=P.f(s.a), m=P.fp(s.a), lx=fa+m*(s.x-s.a), fx=P.f(s.x), fpp=P.fpp(s.a), e=fx-lx;
+    el.innerHTML=`<div class="fldwrap"><div class="eq">a = ${ex(s.a,3)}:  f(a) = ${exa(fa)},  f′(a) = ${exa(m)}
+L(x) = ${ex(fa,4)} + ${par(ex(m,4))}(x − ${par(ex(s.a,3))})
+L(${ex(s.x,3)}) = ${ex(fa,4)} + ${par(ex(m,4))}(${ex(s.x-s.a,3)}) = ${fixd(lx,5)}</div></div>
+      <div class="rel"><span class="dot" style="background:#0284C7"></span><span class="nm">Estimate L(x)<em>tangent-line value</em></span><span class="val">${fixd(lx,5)}</span></div>
+      <div class="rel"><span class="dot" style="background:#14213D"></span><span class="nm">Actual f(x)<em>calculator value</em></span><span class="val">${fixd(fx,5)}</span></div>
+      <div class="rel"><span class="dot" style="background:#DC2626"></span><span class="nm">Error f(x) − L(x)<em>${Math.abs(fx)>1e-9?"relative error "+fixd(Math.abs(e/fx)*100,3)+"%":""}</em></span><span class="val no">${fixd(e,5)}</span></div>
+      <div class="pad"><p>f″(a) = ${fixd(fpp,4)}: f is ${Math.abs(fpp)<1e-9?"neither concave up nor down at a, so the error is unusually small":fpp<0?"<b>concave down</b> at a, so the tangent lies above the curve and L(x) is an <b>over-estimate</b>":"<b>concave up</b> at a, so the tangent lies below the curve and L(x) is an <b>under-estimate</b>"}.</p></div>`; el.innerHTML=fq(el.innerHTML); }
+};
+
+/* ══════════════════════ TAB 7 · challenge ══════════════════════ */
+function parseExpr(str){
+  const s=String(str).toLowerCase().replace(/−/g,"-").replace(/[×·]/g,"*").replace(/÷/g,"/").replace(/π/g,"pi").replace(/√/g,"sqrt").replace(/\s+/g,"");
+  if(!s)return NaN; const T=[]; let i=0;
+  while(i<s.length){ const rest=s.slice(i), m=/^(\d+\.?\d*|\.\d+)/.exec(rest);
+    if(m){T.push({t:"n",v:parseFloat(m[0])});i+=m[0].length;continue;}
+    const w=/^(sqrt|ln|log|sin|cos|tan|exp|pi|e)/.exec(rest);
+    if(w){ T.push(w[0]==="pi"?{t:"n",v:PI}:w[0]==="e"?{t:"n",v:Math.E}:{t:"f",v:w[0]}); i+=w[0].length; continue; }
+    if("+-*/^()".indexOf(rest[0])>=0){T.push({t:rest[0]});i++;continue;}
+    return NaN; }
+  let p=0; const pk=()=>T[p];
+  const FN={sqrt:Math.sqrt,ln:Math.log,log:Math.log10,sin:Math.sin,cos:Math.cos,tan:Math.tan,exp:Math.exp};
+  function expr(){ let v=term(); while(pk()&&(pk().t==="+"||pk().t==="-")){ const o=T[p++].t, r=term(); v=o==="+"?v+r:v-r; } return v; }
+  function term(){ let v=unary(); for(;;){ const k=pk(); if(!k)break; if(k.t==="*"||k.t==="/"){ p++; const r=unary(); v=k.t==="*"?v*r:v/r; } else if(k.t==="n"||k.t==="f"||k.t==="("){ v*=power(); } else break; } return v; }
+  function unary(){ const k=pk(); if(k&&k.t==="-"){p++;return -unary();} if(k&&k.t==="+"){p++;return unary();} return power(); }
+  function power(){ const b=atom(); if(pk()&&pk().t==="^"){ p++; return Math.pow(b,unary()); } return b; }
+  function atom(){ const k=T[p++]; if(!k)throw 0; if(k.t==="n")return k.v;
+    if(k.t==="("){ const v=expr(); if(!pk()||pk().t!==")")throw 0; p++; return v; }
+    if(k.t==="f")return FN[k.v](power()); throw 0; }
+  try{ const v=expr(); return p===T.length?v:NaN; }catch(_){ return NaN; }
+}
+function parseList(str){ const t=String(str).trim(); if(/^(none|no|dne|∅|no solution)?$/i.test(t))return []; return t.split(/[,;]/).map(q=>parseExpr(q)); }
+function poly(cs){ // [c_n … c_0]
+  const n=cs.length-1, sup=["","","²","³","⁴"]; let s="";
+  cs.forEach((c,i)=>{ const d=n-i; if(Math.abs(c)<1e-12)return; const a=Math.abs(c), sg=c<0?"−":"+";
+    const cs1=(a===1&&d>0)?"":num(a,3); const t=cs1+(d>0?"x"+sup[d]:"");
+    s+= s? " "+sg+" "+t : (c<0?"−":"")+t; });
+  return s||"0"; }
+const KINDS=[["mix","Mix"],["rr","Related rates"],["opt","Optimization"],["crit","Extrema / inflection"],["mvt","MVT c-value"],["lhop","L'Hôpital limits"],["lin","Linear approx."]];
+function genProblem(kind){
+  if(kind==="mix")kind=pick(["rr","opt","crit","mvt","lhop","lin"]);
+  const pr={kind,fields:["Answer"],list:false,tol:[0.01,0.005]};
+  if(kind==="rr"){ const t=pick(["ladder","cone","circle","shadow","cars"]);
+    if(t==="ladder"){ const [L,x,y]=pick([[10,6,8],[13,5,12],[15,9,12],[17,8,15],[25,7,24],[10,8,6],[13,12,5]]), r=pick([0.5,1,1.5,2,3]);
+      pr.q=`A ${L}-ft ladder leans against a vertical wall. Its bottom slides away from the wall at ${r} ft/s. Find dy/dt, the rate the top moves, when the bottom is ${x} ft from the wall. (Negative means moving down.)`;
+      pr.ans=[-x*r/y]; pr.unit="ft/s"; pr.hint=`Differentiate x² + y² = ${L}² with respect to t: 2x·dx/dt + 2y·dy/dt = 0. Find y first: y = √(${L}² − ${x}²).`;
+      pr.sol=`x² + y² = ${L}²  ⇒  2x(dx/dt) + 2y(dy/dt) = 0\ny = √(${L*L} − ${x*x}) = ${y}\ndy/dt = −(x/y)(dx/dt) = −(${x}/${y})(${r}) = ${exa(-x*r/y)} ft/s`; }
+    if(t==="cone"){ const [R,H]=pick([[3,6],[2,6],[4,8],[5,10],[3,9],[4,12]]), k=pick([2,3,4,5,8,10]), h=pick([2,3,4,5].filter(v=>v<H));
+      const q=R/H, ans=k/(PI*q*q*h*h), co=fracO(k/(q*q*h*h),2000);
+      pr.q=`Water flows at ${k} ft³/min into an inverted conical tank with top radius ${R} ft and height ${H} ft. How fast is the water level rising when the water is ${h} ft deep? Answer dh/dt in ft/min.`;
+      pr.ans=[ans]; pr.unit="ft/min"; pr.hint=`Use similar triangles r/h = ${R}/${H} to write V in terms of h only, then differentiate: dV/dt = π(${fracStr(fracO(q*q,200))})h²·dh/dt.`;
+      pr.sol=`r = (${fracStr(fracO(q,50))})h  ⇒  V = (1/3)πr²h = (${fracStr(fracO(q*q/3,500))})πh³\ndV/dt = (${fracStr(fracO(q*q,200))})πh²·(dh/dt)\n${k} = (${fracStr(fracO(q*q,200))})π(${h})²·(dh/dt)\ndh/dt = ${co?fracStr(co)+"/π":"…"} ≈ ${f3(ans)} ft/min`; }
+    if(t==="circle"){ const c=pick([2,3,4,5]), r=pick([5,6,8,10,12]);
+      pr.q=`A circular oil slick spreads so that its radius grows at ${c} m/min. How fast is its area growing when the radius is ${r} m? (Exact answers like 40π are fine.)`;
+      pr.ans=[2*PI*r*c]; pr.unit="m²/min"; pr.hint="A = πr², so dA/dt = 2πr·(dr/dt).";
+      pr.sol=`A = πr²  ⇒  dA/dt = 2πr(dr/dt) = 2π(${r})(${c}) = ${2*r*c}π ≈ ${f2(2*PI*r*c)} m²/min`; }
+    if(t==="shadow"){ const P=pick([12,15,16,18,24]), w=pick([3,4,5,6]), tip=Math.random()<.5;
+      const k1=6/(P-6), k2=P/(P-6);
+      pr.q=`A 6-ft person walks away from a ${P}-ft street lamp at ${w} ft/s. How fast is ${tip?"the tip of the shadow moving":"the length of the shadow changing"}? Answer in ft/s.`;
+      pr.ans=[tip?k2*w:k1*w]; pr.unit="ft/s"; pr.hint=`Similar triangles: s/6 = (x + s)/${P}, so s = (${fracStr(fracO(k1,50))})x.${tip?" The tip is at z = x + s.":""}`;
+      pr.sol=`s/6 = (x + s)/${P}  ⇒  ${P-6}s = 6x  ⇒  s = (${fracStr(fracO(k1,50))})x\nds/dt = (${fracStr(fracO(k1,50))})(${w}) = ${exa(k1*w)} ft/s\ntip z = x + s = (${fracStr(fracO(k2,50))})x  ⇒  dz/dt = ${exa(k2*w)} ft/s`; }
+    if(t==="cars"){ const [x,y,D]=pick([[3,4,5],[6,8,10],[5,12,13],[9,12,15],[8,15,17],[12,9,15]]), a=pick([30,40,50,60]), b=pick([30,40,50,60]);
+      pr.q=`Car A drives north from an intersection at ${a} mph; car B drives east from it at ${b} mph. How fast is the distance between them growing when A is ${y} mi north and B is ${x} mi east of the intersection? (mph)`;
+      pr.ans=[(x*b+y*a)/D]; pr.unit="mph"; pr.hint="D² = x² + y², so 2D·dD/dt = 2x·dx/dt + 2y·dy/dt. Find D first.";
+      pr.sol=`D = √(${x}² + ${y}²) = ${D}\ndD/dt = (x·dx/dt + y·dy/dt)/D = (${x}·${b} + ${y}·${a})/${D} = ${exa((x*b+y*a)/D)} mph`; }
+  }
+  if(kind==="opt"){ const t=pick(["fence","box","prod","can","near"]);
+    if(t==="fence"){ const P=20*rnd(5,30), askA=Math.random()<.5;
+      pr.q=`A farmer has ${P} m of fence for a rectangular field along a straight river (no fence on the river side). ${askA?"What is the maximum area (m²)?":"How long should each side perpendicular to the river be (m) to maximize the area?"}`;
+      pr.ans=[askA?P*P/8:P/4]; pr.hint=`A(x) = x(${P} − 2x). Set A′(x) = ${P} − 4x = 0.`;
+      pr.sol=`A(x) = x(${P} − 2x),  A′(x) = ${P} − 4x = 0  ⇒  x = ${ex(P/4)} m\nA″ = −4 &lt; 0 → maximum.  y = ${ex(P/2)} m,  A = ${ex(P*P/8)} m²`; }
+    if(t==="box"){ const [W,L]=pick([[12,12],[10,16],[6,6],[18,18],[24,24],[20,32],[8,15]]), s=W+L, x=(s-Math.sqrt(s*s-3*W*L))/6, V=x*(W-2*x)*(L-2*x), askV=Math.random()<.5;
+      pr.q=`An open box is made from a ${W} × ${L} in sheet by cutting equal squares of side x from the corners and folding up the sides. ${askV?"Find the maximum volume (in³).":"Find the x that maximizes the volume (in)."}`;
+      pr.ans=[askV?V:x]; pr.hint=`V(x) = x(${W} − 2x)(${L} − 2x). Expand, set V′(x) = 12x² − ${4*s}x + ${W*L} = 0, and keep the root with 0 &lt; x &lt; ${W/2}.`;
+      pr.sol=`V′(x) = 12x² − ${4*s}x + ${W*L} = 0  ⇒  x = ${exa(x)}  (other root is outside 0 &lt; x &lt; ${W/2})\nV = ${exa(V)} in³`; }
+    if(t==="prod"){ if(Math.random()<.5){ const S=2*rnd(5,30); pr.q=`Two positive numbers add to ${S}. What is the largest possible value of their product?`; pr.ans=[S*S/4];
+        pr.hint=`P(x) = x(${S} − x). Set P′(x) = ${S} − 2x = 0.`; pr.sol=`P(x) = x(${S} − x),  P′(x) = ${S} − 2x = 0  ⇒  x = ${S/2}\nP″ = −2 &lt; 0 → maximum.  P = ${S*S/4}`; }
+      else { const k=rnd(2,12); pr.q=`For x &gt; 0, find the minimum value of f(x) = x + ${k*k}/x.`; pr.ans=[2*k]; pr.hint=`f′(x) = 1 − ${k*k}/x² = 0.`;
+        pr.sol=`f′(x) = 1 − ${k*k}/x² = 0  ⇒  x = ${k}\nf″(x) = ${2*k*k}/x³ &gt; 0 → minimum.  f(${k}) = ${2*k}`; } }
+    if(t==="can"){ const r=pick([2,3,4,5]), V=2*r*r*r, askH=Math.random()<.5;
+      pr.q=`A closed cylindrical can holds ${V}π cm³. Find the ${askH?"height h":"radius r"} (cm) that minimizes the surface area.`;
+      pr.ans=[askH?2*r:r]; pr.hint=`S(r) = 2πr² + 2V/r with V = ${V}π. Set S′(r) = 4πr − 2V/r² = 0.`;
+      pr.sol=`S(r) = 2πr² + ${2*V}π/r,  S′(r) = 4πr − ${2*V}π/r² = 0\n  ⇒ r³ = ${V/2}  ⇒  r = ${r} cm,  h = V/(πr²) = ${2*r} cm`; }
+    if(t==="near"){ const a=pick([1.5,2,2.5,3,4,5]), askD=Math.random()<.5;
+      pr.q=`On the curve y = √x, find ${askD?"the minimum distance to":"the x-coordinate of the point closest to"} the point (${num(a,1)}, 0).`;
+      pr.ans=[askD?Math.sqrt(a-0.25):a-0.5]; pr.hint=`Minimize D² = (x − ${num(a,1)})² + x. Its derivative is 2(x − ${num(a,1)}) + 1.`;
+      pr.sol=`D² = (x − ${num(a,1)})² + x,  d/dx = 2(x − ${num(a,1)}) + 1 = 0  ⇒  x = ${ex(a-0.5)}\nD = √(${ex(a-0.25)}) ${exa(Math.sqrt(a-0.25)).indexOf("≈")>=0?exa(Math.sqrt(a-0.25)).slice(exa(Math.sqrt(a-0.25)).indexOf("≈")):"= "+ex(Math.sqrt(a-0.25))}`; }
+  }
+  if(kind==="crit"){ pr.list=true; pr.tol=[0.01,0];
+    let F,crit,mx,mn,inf,txt,fpT;
+    if(Math.random()<.6){ let p,q; do{p=rnd(-4,4);q=rnd(-3,5);}while(p===q||(p+q)%2!==0); if(p>q){const t=p;p=q;q=t;} const k=pick([1,-1]), c0=rnd(-5,5);
+      const cs=[k,-1.5*(p+q)*k,3*p*q*k,c0]; txt=poly(cs); fpT=`${k<0?"−":""}3(x ${p<0?"+":"−"} ${Math.abs(p)})(x ${q<0?"+":"−"} ${Math.abs(q)})`.replace(/\(x [+−] 0\)/g,"x");
+      F=x=>cs[0]*x**3+cs[1]*x*x+cs[2]*x+cs[3]; crit=[p,q]; mx=[k>0?p:q]; mn=[k>0?q:p]; inf=[(p+q)/2]; }
+    else { const p=pick([-3,-2,-1,1,2,3]); const cs=[1,-4*p,0,0,rnd(-4,4)]; txt=poly(cs); fpT=`4x²(x ${p<0?"+":"−"} ${Math.abs(3*p)})`;
+      F=x=>x**4-4*p*x**3+cs[4]; crit=[0,3*p].sort((a,b)=>a-b); mx=[]; mn=[3*p]; inf=[0,2*p].sort((a,b)=>a-b); }
+    const ask=pick(["critical","max","min","infl"]), nm={critical:"all critical numbers",max:"every x-value where f has a local maximum",min:"every x-value where f has a local minimum",infl:"the x-value(s) of every inflection point"}[ask];
+    pr.q=`f(x) = ${txt}. Find ${nm}. Enter a comma list (e.g. −1, 3) or "none".`;
+    pr.ans={critical:crit,max:mx,min:mn,infl:inf}[ask]; pr.fields=["x-values"];
+    pr.hint=ask==="infl"?"Find where f″ = 0, then check that f″ actually changes sign there.":"Factor f′(x) = "+fpT+". Critical numbers make f′ = 0; use a sign chart of f′ to classify them.";
+    pr.sol=`f′(x) = ${fpT}  →  critical numbers: ${crit.join(", ")}\nlocal max at: ${mx.length?mx.join(", "):"none"}   local min at: ${mn.length?mn.join(", "):"none"}\ninflection points at x = ${inf.map(v=>ex(v)).join(", ")}  (f″ changes sign)`;
+    pr.plot={fn:F,marks:crit.concat(inf)};
+  }
+  if(kind==="mvt"){ const t=pick(["quad","cube","sqrt","recip"]);
+    if(t==="quad"){ const b=rnd(-5,5), c=rnd(-6,6), p=rnd(-4,2), q=p+rnd(1,6); pr.q=`f(x) = ${poly([1,b,c])} on [${p}, ${q}]. Find the value of c guaranteed by the Mean Value Theorem.`;
+      pr.ans=[(p+q)/2]; pr.hint="Secant slope = (f(b) − f(a))/(b − a). Then solve f′(c) = 2c + "+b+" = that slope."; pr.sol=`secant slope = (f(${q}) − f(${p}))/(${q} − ${p}) = ${ex(q+p+b)}\nf′(c) = 2c ${b<0?"−":"+"} ${Math.abs(b)} = ${ex(q+p+b)}  ⇒  c = ${ex((p+q)/2)}  (the midpoint, always, for a quadratic)`;
+      pr.plot={fn:x=>x*x+b*x+c,a:p,b:q}; }
+    if(t==="cube"){ const k=pick([1,2,3,4]); pr.q=`f(x) = x³ on [0, ${k}]. Find the value of c guaranteed by the Mean Value Theorem.`; pr.ans=[k/Math.sqrt(3)];
+      pr.hint=`Secant slope = ${k}³/${k} = ${k*k}. Solve 3c² = ${k*k} with 0 &lt; c &lt; ${k}.`; pr.sol=`secant slope = (${k**3} − 0)/${k} = ${k*k}\n3c² = ${k*k}  ⇒  c = ${exa(k/Math.sqrt(3))}  (take the root inside (0, ${k}))`; pr.plot={fn:x=>x**3,a:0,b:k}; }
+    if(t==="sqrt"){ const b=pick([1,4,9,16]); pr.q=`f(x) = √x on [0, ${b}]. Find the value of c guaranteed by the Mean Value Theorem.`; pr.ans=[b/4];
+      pr.hint=`Secant slope = √${b}/${b}. Solve 1/(2√c) = that slope.`; pr.sol=`secant slope = (${Math.sqrt(b)} − 0)/${b} = ${ex(1/Math.sqrt(b))}\n1/(2√c) = ${ex(1/Math.sqrt(b))}  ⇒  √c = ${ex(Math.sqrt(b)/2)}  ⇒  c = ${ex(b/4)}`; pr.plot={fn:x=>Math.sqrt(x),a:0,b}; }
+    if(t==="recip"){ const [p,q]=pick([[1,4],[2,8],[1,9],[4,9],[2,18],[3,12],[1,16]]); pr.q=`f(x) = 1/x on [${p}, ${q}]. Find the value of c guaranteed by the Mean Value Theorem.`; pr.ans=[Math.sqrt(p*q)];
+      pr.hint=`Secant slope = (1/${q} − 1/${p})/(${q} − ${p}) = −1/(${p}·${q}). Solve −1/c² = that slope.`; pr.sol=`secant slope = (1/${q} − 1/${p})/(${q - p}) = −1/${p*q}\n−1/c² = −1/${p*q}  ⇒  c² = ${p*q}  ⇒  c = ${Math.sqrt(p*q)}`; pr.plot={fn:x=>1/x,a:p,b:q}; }
+  }
+  if(kind==="lhop"){ const t=pick(["sin","exp","cos","ln","pow","inf","e"]); pr.tol=[0.005,0.002];
+    const k=rnd(1,6), m=rnd(1,5), fr=fracStr(fracO(k/m,10));
+    if(t==="sin"){ pr.q=`Evaluate  lim (x→0)  sin(${k}x) / (${m}x).`; pr.ans=[k/m]; pr.sol=`0/0 form.  L'Hôpital: ${k}cos(${k}x)/${m} → ${k}/${m} = ${fr}`; pr.plot={fn:x=>Math.sin(k*x)/(m*x),a:0}; }
+    if(t==="exp"){ pr.q=`Evaluate  lim (x→0)  (e^(${k}x) − 1) / (${m}x).`; pr.ans=[k/m]; pr.sol=`0/0 form.  L'Hôpital: ${k}e^(${k}x)/${m} → ${fr}`; pr.plot={fn:x=>(Math.exp(k*x)-1)/(m*x),a:0}; }
+    if(t==="cos"){ pr.q=`Evaluate  lim (x→0)  (1 − cos(${k}x)) / x².`; pr.ans=[k*k/2]; pr.sol=`0/0.  Once: ${k}sin(${k}x)/(2x), still 0/0.\nTwice: ${k*k}cos(${k}x)/2 → ${ex(k*k/2)}`; pr.plot={fn:x=>(1-Math.cos(k*x))/(x*x),a:0}; }
+    if(t==="ln"){ pr.q=`Evaluate  lim (x→0)  ln(1 + ${k}x) / (${m}x).`; pr.ans=[k/m]; pr.sol=`0/0.  L'Hôpital: [${k}/(1 + ${k}x)] / ${m} → ${fr}`; pr.plot={fn:x=>Math.log(1+k*x)/(m*x),a:0}; }
+    if(t==="pow"){ const n=pick([3,4,5]), a=pick([1,2,-1]); pr.q=`Evaluate  lim (x→${a})  (x^${n} − ${par(String(a**n)).replace(/-/g,"−")}) / (x − ${par(String(a)).replace(/-/g,"−")}).`; pr.ans=[n*a**(n-1)];
+      pr.sol=`0/0.  L'Hôpital: ${n}x^${n-1} / 1 → ${n}(${a})^${n-1} = ${n*a**(n-1)}`; pr.plot={fn:x=>(x**n-a**n)/(x-a),a}; }
+    if(t==="inf"){ const A=rnd(2,9),B=rnd(2,9),c=rnd(1,9); pr.q=`Evaluate  lim (x→∞)  (${A}x² + ${c}) / (${B}x² − x).`; pr.ans=[A/B]; pr.sol=`∞/∞.  Once: ${2*A}x/(${2*B}x − 1), still ∞/∞.\nTwice: ${2*A}/${2*B} = ${fracStr(fracO(A/B,10))}`; }
+    if(t==="e"){ const kk=rnd(1,4); pr.q=`Evaluate  lim (x→∞)  (1 + ${kk}/x)^x.  (You may type e^${kk}.)`; pr.ans=[Math.exp(kk)];
+      pr.sol=`1^∞ form.  ln y = x·ln(1 + ${kk}/x) = ln(1 + ${kk}/x)/(1/x), 0/0.\nL'Hôpital → ${kk}/(1 + ${kk}/x) → ${kk}, so y → e^${kk} ≈ ${f3(Math.exp(kk))}`; }
+    pr.hint="Check the form first (0/0 or ∞/∞), then differentiate the top and the bottom separately. Repeat if the form is still indeterminate.";
+  }
+  if(kind==="lin"){ const t=pick(["sqrt","cbrt","exp","ln","pow"]); pr.tol=[0.0011,0];
+    if(t==="sqrt"){ const a=rnd(3,10), d=pick([-2,-1,1,2,3]), n=a*a+d; pr.q=`Use the tangent line to f(x) = √x at x = ${a*a} to approximate √${n}. (Give the tangent-line estimate, not the calculator value.)`;
+      pr.ans=[a+d/(2*a)]; pr.sol=`f(${a*a}) = ${a},  f′(x) = 1/(2√x) ⇒ f′(${a*a}) = 1/${2*a}\nL(x) = ${a} + (1/${2*a})(x − ${a*a})\nL(${n}) = ${a} + ${fracStr(fracO(d/(2*a),100))} = ${exa(a+d/(2*a),4)}   (actual √${n} ≈ ${fixd(Math.sqrt(n),4)})`;
+      pr.hint=`L(x) = f(a) + f′(a)(x − a) with a = ${a*a}: f(a) = ${a}, f′(a) = 1/(2·${a}).`; pr.plot={fn:Math.sqrt,lin:a*a,x:n}; }
+    if(t==="cbrt"){ const a=pick([2,3,4]), d=pick([-1,1,2]), n=a**3+d; pr.q=`Use the tangent line to f(x) = ∛x at x = ${a**3} to approximate ∛${n}.`;
+      pr.ans=[a+d/(3*a*a)]; pr.sol=`f(${a**3}) = ${a},  f′(x) = 1/(3∛x²) ⇒ f′(${a**3}) = 1/${3*a*a}\nL(${n}) = ${a} + (${d})/${3*a*a} = ${exa(a+d/(3*a*a),4)}   (actual ≈ ${fixd(cbrt(n),4)})`;
+      pr.hint=`f′(x) = 1/(3x^(2/3)), so f′(${a**3}) = 1/(3·${a*a}).`; pr.plot={fn:cbrt,lin:a**3,x:n}; }
+    if(t==="exp"){ const h=pick([0.1,0.2,-0.1,0.05,0.3]); pr.q=`Use the linearization of f(x) = eˣ at x = 0 to approximate e^${num(h,2)}.`; pr.ans=[1+h];
+      pr.sol=`f(0) = 1, f′(0) = 1  ⇒  L(x) = 1 + x\nL(${num(h,2)}) = ${num(1+h,2)}   (actual ≈ ${fixd(Math.exp(h),4)})`; pr.hint="eˣ is its own derivative, so f(0) = f′(0) = 1."; pr.plot={fn:Math.exp,lin:0,x:h}; }
+    if(t==="ln"){ const h=pick([0.1,0.05,-0.1,0.2,0.02]); pr.q=`Use the linearization of f(x) = ln x at x = 1 to approximate ln(${num(1+h,2)}).`; pr.ans=[h];
+      pr.sol=`f(1) = 0, f′(1) = 1  ⇒  L(x) = x − 1\nL(${num(1+h,2)}) = ${num(h,2)}   (actual ≈ ${fixd(Math.log(1+h),4)})`; pr.hint="f′(x) = 1/x, so the slope at x = 1 is 1."; pr.plot={fn:Math.log,lin:1,x:1+h}; }
+    if(t==="pow"){ const a=pick([1,2,3]), n=pick([2,3,4]), h=pick([0.1,-0.1,0.2,0.05]); pr.q=`Use the tangent line to f(x) = x${["","","²","³","⁴"][n]} at x = ${a} to approximate (${num(a+h,2)})${["","","²","³","⁴"][n]}.`;
+      pr.ans=[a**n+n*a**(n-1)*h]; pr.sol=`f(${a}) = ${a**n},  f′(${a}) = ${n}(${a})^${n-1} = ${n*a**(n-1)}\nL(${num(a+h,2)}) = ${a**n} + ${n*a**(n-1)}(${num(h,2)}) = ${num(a**n+n*a**(n-1)*h,4)}   (actual ${fixd((a+h)**n,4)})`;
+      pr.hint=`L(x) = f(a) + f′(a)(x − a) with f′(x) = ${n}x^${n-1}.`; pr.plot={fn:x=>x**n,lin:a,x:a+h}; }
+    pr.fields=["Estimate"];
+  }
+  return pr;
+}
+function wrapText(t,w){ const words=t.split(/\s+/), out=[]; let line=""; words.forEach(wd=>{ if((line+" "+wd).trim().length>w){ out.push(line.trim()); line=wd; } else line+=" "+wd; }); if(line.trim())out.push(line.trim()); return out; }
+const M7={
+  tab:"Challenge", lesson:"AP 4.4–5.12 · Units 4–5", accent:"var(--cyan)",
+  title:()=>"Practice: "+(KINDS.find(k=>k[0]===(M7.s.pr?M7.s.pr.kind:"mix"))||KINDS[0])[1].toLowerCase(),
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  newProb(){ M7.s.pr=genProblem(M7.s.kind); M7.s.state="open"; M7.s.reveal=false; M7.s.tries=0; },
+  bar(){ btn("New problem",()=>{M7.newProb();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    KINDS.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=M7.s.kind; sel.onchange=()=>{M7.s.kind=sel.value;M7.newProb();render();}; bar.appendChild(sel);
+    M7.stEl=spacer(""); M7.upStreak(); },
+  upStreak(){ if(M7.stEl)M7.stEl.textContent="Streak "+M7.s.streak+" · Best "+M7.s.best+" · Solved "+M7.s.solved; },
+  draw(){
+    if(!M7.s.pr)M7.newProb(); const pr=M7.s.pr, show=M7.s.state==="right"||M7.s.reveal;
+    if(show&&pr.plot){
+      const pl=pr.plot; let x0,x1;
+      if(pl.marks){ const mm=pl.marks; x0=Math.min(...mm)-2.5; x1=Math.max(...mm)+2.5; }
+      else if(pl.a!=null&&pl.b!=null){ const w=pl.b-pl.a; x0=pl.a-0.4*w; x1=pl.b+0.4*w; if(pl.fn(-1)!==pl.fn(-1)||pr.q.indexOf("√x")>=0||pr.q.indexOf("1/x")>=0)x0=Math.max(x0,pl.a>0?pl.a*0.3:0); }
+      else if(pl.lin!=null){ const w=Math.max(Math.abs(pl.x-pl.lin)*3,1); x0=pl.lin-w; x1=pl.lin+w; if(pr.q.indexOf("√x")>=0||pr.q.indexOf("ln x")>=0||pr.q.indexOf("∛x")>=0)x0=Math.max(x0,pl.lin*0.2+1e-3); }
+      else { const a=pl.a; x0=a-3; x1=a+3; }
+      let lo=Infinity,hi=-Infinity; for(let i=0;i<=200;i++){ const v=pl.fn(x0+(x1-x0)*i/200); if(isFinite(v)){lo=Math.min(lo,v);hi=Math.max(hi,v);} }
+      if(!isFinite(lo)){lo=-1;hi=1;} const pd=(hi-lo)*0.12||1;
+      const G=mkG({x:44,y:14,w:642,h:432},{x0,x1,y0:lo-pd,y1:hi+pd}), c=graph(cv,G,{yt:7});
+      plot(c,G,pl.fn,"#14213D",3.4);
+      if(pl.marks)pl.marks.forEach(x=>sdot(cv,G.P(x,pl.fn(x)),"var(--magenta)",6));
+      if(pl.a!=null&&pl.b!=null){ const fa=pl.fn(pl.a), fb=pl.fn(pl.b), m=(fb-fa)/(pl.b-pl.a), cc=pr.ans[0];
+        sseg(c,G.P(pl.a,fa),G.P(pl.b,fb),"#DB2777",3); lineW(c,G,cc,pl.fn(cc),m,"#059669",2.4,"9 6"); sdot(cv,G.P(cc,pl.fn(cc)),"#059669",6); }
+      if(pl.lin!=null){ const a=pl.lin, fa=pl.fn(a), m=d1(pl.fn,a); lineW(c,G,a,fa,m,"#0284C7",2.4); sdot(cv,G.P(a,fa),"#0284C7",6); sdot(cv,G.P(pl.x,fa+m*(pl.x-a)),"#DC2626",6); }
+      if(pl.a!=null&&pl.b==null){ ring(cv,G.P(pl.a,pr.ans[0]),"#DB2777",7); }
+      return;
+    }
+    cv.appendChild(E("rect",{x:24,y:24,width:652,height:412,rx:18,fill:"rgba(255,255,255,.8)",stroke:"#C9D6EE","stroke-width":1.5}));
+    stext(cv,[50,62],({rr:"RELATED RATES",opt:"OPTIMIZATION",crit:"EXTREMA & INFLECTION",mvt:"MEAN VALUE THEOREM",lhop:"L'HÔPITAL'S RULE",lin:"LINEAR APPROXIMATION"})[pr.kind],"pqh","#0284C7","start");
+    const lines=wrapText(pr.q.replace(/<[^>]+>/g,"").replace(/&lt;/g,"<").replace(/&gt;/g,">"),Math.round(56/FS));
+    lines.slice(0,10).forEach((l,i)=>stext(cv,[50,104+i*32*FS],l,"pq",null,"start"));
+    stext(cv,[650,412],show?"":"The graph appears once you solve it.","ax","#7C8AAB","end");
+  },
+  side(){ const pr=M7.s.pr;
+    return `<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob">${pr.q}</p></div>
+      <div class="ansrow">${pr.fields.map((f,i)=>`<div><label class="fld" for="ans${i}">${f}${pr.unit?" ("+pr.unit+")":""}</label><input type="text" id="ans${i}" autocomplete="off" spellcheck="false" placeholder="${pr.list?"e.g. −1, 3   or   none":"e.g. −0.75, 3/4, 8π, e^2"}"></div>`).join("")}</div>
+      <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button>
+        <button id="sol" class="ghost" type="button">Show solution</button></div><div id="fb7"></div><div style="height:4px"></div></div>
+      <div class="panel"><h3>How answers are checked</h3><div class="pad">
+      <p>Type a number, a fraction like <b>−3/4</b>, or an exact form like <b>8π</b>, <b>sqrt(3)/3</b>, <b>e^2</b>. Decimals rounded to two places are accepted (three for linear approximations).</p>
+      <p>For lists, separate x-values with commas in any order, or type <b>none</b>. A first-try correct answer grows the streak.</p></div></div>`; },
+  after(){ const pr=M7.s.pr, inp=document.getElementById("ans0"), fb=document.getElementById("fb7");
+    const showSol=g=>{ fb.innerHTML=(g||"")+`<div class="fldwrap"><div class="eq">${fq(pr.sol)}</div></div>`; };
+    const close=(v,a)=>Math.abs(v-a)<=Math.max(pr.tol[0],pr.tol[1]*Math.abs(a));
+    const check=()=>{
+      if(M7.s.state==="right")return; let ok;
+      if(pr.list){ const L=parseList(inp.value); if(L.some(v=>!isFinite(v))){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Use a comma list such as −1, 3 or type none.</div>`; return; }
+        const A=pr.ans.slice().sort((a,b)=>a-b), B=L.slice().sort((a,b)=>a-b); ok=A.length===B.length&&A.every((a,i)=>close(B[i],a)); }
+      else { const v=parseExpr(inp.value); if(!isFinite(v)){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Use numbers, fractions like 3/4, or forms like 2π, sqrt(2), e^3.</div>`; return; } ok=close(v,pr.ans[0]); }
+      if(ok){ M7.s.state="right"; if(M7.s.tries===0&&!M7.s.reveal){M7.s.streak++;M7.s.best=Math.max(M7.s.best,M7.s.streak);} M7.s.solved++; M7.upStreak(); clear(); M7.draw();
+        showSol(`<div class="verdict good"><b>Correct!</b> ${M7.s.tries||M7.s.reveal?"Got there; the streak counts first-try answers only.":"Streak "+M7.s.streak+"."} Compare with the full work below, then press <b>New problem</b>.</div>`); inp.disabled=true; }
+      else { M7.s.tries++; M7.s.streak=0; M7.upStreak(); fb.innerHTML=`<div class="verdict bad"><b>Not quite.</b> ${pr.hint}</div>`; }
+    };
+    document.getElementById("chk").onclick=check; inp.addEventListener("keydown",e=>{if(e.key==="Enter")check();});
+    document.getElementById("sol").onclick=()=>{ M7.s.reveal=true; if(M7.s.state!=="right"){M7.s.streak=0;M7.upStreak();} clear(); M7.draw();
+      showSol(`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6,M7];
+function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)render(); });
+function update(){ clear(); MODS[cur].draw(); if(MODS[cur].live)MODS[cur].live(); }
+function render(){
+  setFS(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M7&&!M7.s.pr)M7.newProb();
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  bar.innerHTML=""; M.bar();
+  clear(); M.draw(); side.innerHTML=fq(M.side()); if(M.live)M.live(); if(M.after)M.after();
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ if(cur===0&&i!==0)M1.stop(); cur=clamp(i,0,MODS.length-1);
+  if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+[M1,M2,M3,M4,M6].forEach(M=>M.init());
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>

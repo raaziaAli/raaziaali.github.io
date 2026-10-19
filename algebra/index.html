@@ -296,7 +296,7 @@ document.getElementById('units').innerHTML = COURSES.map(c => `
     </section>
     ${c.earlier ? `
     <section class="unit" style="--u:${c.color}">
-      <div class="unit-head"><div><h2>More Algebra 1 tools</h2><p>Earlier interactives and games that pair with these units.</p></div></div>
+      <div class="unit-head"><div><h2>More ${c.title} tools</h2><p>Earlier interactives and games that pair with these units.</p></div></div>
       <div class="grid">${c.earlier.map(s => card(s, null, c.color, 'live')).join('')}</div>
     </section>` : ''}
   </div>`).join('');

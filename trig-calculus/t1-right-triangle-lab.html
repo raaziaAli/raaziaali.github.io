@@ -1,0 +1,1097 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Right Triangle Trig Lab — Trigonometry Unit 1</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M12 50H52V16Z' fill='none' stroke='%2300E5FF' stroke-width='5' stroke-linejoin='round'/%3E%3Cpath d='M44 50V42H52' fill='none' stroke='%23FFD93D' stroke-width='3'/%3E%3Cpath d='M24 50A12 12 0 0 0 22.5 43' fill='none' stroke='%23FF3D8A' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict.info{background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .verdict b{color:#fff}
+
+  table.facts{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.facts td,table.facts th{padding:9px 12px;border-bottom:1px solid rgba(196,181,253,.11);vertical-align:top;text-align:left}
+  table.facts th{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:700;letter-spacing:.06em}
+  table.facts td{font-family:var(--mono);font-size:13.5px;color:#E7E9FA;white-space:nowrap}
+  table.facts tr.on td{background:rgba(255,255,255,.08);color:#fff}
+
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── drawing ── */
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+
+  /* ── Unit Circle Lab additions (shared with Coordinate Line Lab) ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.go:focus-visible,.ghost:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:44px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .lg{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .xs{font-family:var(--mono);font-weight:600;font-size:11.5px;paint-order:stroke;stroke:#fff;stroke-width:3.5;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB;paint-order:stroke;stroke:#F4F8FF;stroke-width:3}
+  @media (max-width:560px){ svg.canvas .sm{font-size:20px;stroke-width:5} svg.canvas .lg{font-size:22px} svg.canvas .xs{font-size:16px} svg.canvas .mk{font-size:26px} svg.canvas .ax{font-size:16px} }
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  .fmt{font-size:13px;color:var(--dim);padding:8px 20px 0}
+  .conv{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .conv .out{font-family:var(--mono);font-size:13.5px;color:var(--mint);margin-top:6px;min-height:22px}
+  .astc{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+  .astc div{border:1px solid var(--edge);border-radius:12px;padding:8px 10px;font-size:13.5px;color:var(--dim)}
+  .astc div b{display:block;font-family:var(--mono);color:#fff}
+  .astc div.on{border-color:var(--accent);background:rgba(255,255,255,.08);color:#fff}
+  .tblwrap{overflow-x:auto}
+  @media (max-width:560px){
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+    .conv{grid-template-columns:1fr}
+  }
+  /* ── Right Triangle Trig Lab additions ── */
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .chiprow button:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  ol.chain{margin:0;padding:6px 20px 18px 38px;font-size:15px;color:#CFCFEA}
+  ol.chain li{padding:8px 0} ol.chain li::marker{color:var(--accent);font-weight:700}
+  ol.chain li b{color:#fff}
+  ol.chain .eq{margin:8px 0 2px}
+  ol.chain li.next{color:var(--dim);font-style:italic;list-style:none;margin-left:-18px}
+  table.facts td.y{color:var(--mint)} table.facts td.n{color:#77779C}
+  .stage > *{min-width:0}
+  .seg{flex-wrap:wrap}
+  .verdict.mini{margin:12px 0 0;padding:10px 13px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Right Triangle Trig Lab</h1>
+    <div class="eyebrow">Trigonometry · Unit 1 · Right Triangle Trigonometry</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Right triangle figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every triangle is live and every number is computed from the drawing — drag a vertex and the ratios, equations and answers follow. Vocabulary follows Common Core Geometry (G-SRT.C) and Precalculus right-triangle trigonometry.
+    <div class="links"><a href="/trig-calculus/">← Trig &amp; Calculus courses</a><a href="/math/#trig-calculus">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const PI=Math.PI, D2R=PI/180;
+const norm=d=>((d%360)+360)%360;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const near=(a,b,e)=>Math.abs(a-b)<(e||1e-9);
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+function num(v,dp){ dp=(dp==null?2:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+const f3=v=>minus((Math.abs(v)<5e-4?0:v).toFixed(3));
+const dg=v=>num(v,1)+"°";
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const isHalf=v=>near(v*2,Math.round(v*2),1e-7);
+function sqrtParts(n){ n=Math.round(n); let k=1,r=n; for(let i=Math.floor(Math.sqrt(n));i>1;i--){ if(n%(i*i)===0){k=i;r=n/(i*i);break;} } return [k,r]; }
+function rootStr(n){ n=Math.round(n); if(n===0)return "0"; const [k,r]=sqrtParts(n); if(r===1)return String(k); return (k>1?k:"")+"√"+r; }
+// √(P/Q), simplified and rationalised
+function radFrac(P,Q){
+  P=Math.round(P); Q=Math.round(Q); if(P===0)return "0";
+  const g0=gcd(P,Q); P/=g0; Q/=g0;
+  let [k,r]=sqrtParts(P*Q); let den=Q; const g=gcd(k,den); k/=g; den/=g;
+  const top=r===1? String(k) : (k===1?"":k)+"√"+r;
+  return den===1? top : top+"/"+den;
+}
+// √sq / den, simplified; rational → decimal
+function lenStr(sq,den){ den=den||1; const [m,r]=sqrtParts(sq); if(r===1)return num(m/den,3); const g=gcd(m,den), mm=m/g, dd=den/g; return (mm===1?"":mm)+"√"+r+(dd===1?"":"/"+dd); }
+function sFrac(p,q){ p=Math.round(p); q=Math.round(q); const g=gcd(p,q); p/=g; q/=g; return q===1? String(p) : p+"/"+q; }
+
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+const sub=(p,q)=>[p[0]-q[0],p[1]-q[1]];
+const add=(p,q)=>[p[0]+q[0],p[1]+q[1]];
+const mul=(p,k)=>[p[0]*k,p[1]*k];
+const len=v=>Math.hypot(v[0],v[1]);
+const unit=v=>{const l=len(v)||1;return [v[0]/l,v[1]/l];};
+const angOf=(c,p)=>norm(Math.atan2(-(p[1]-c[1]),p[0]-c[0])/D2R);
+const PT=(c,r,deg)=>[c[0]+r*Math.cos(deg*D2R), c[1]-r*Math.sin(deg*D2R)];
+let FS=1;
+
+function sseg(g,p,q,style,w,dash,op){
+  const a={x1:p[0],y1:p[1],x2:q[0],y2:q[1],style:"stroke:"+(style||"var(--graphite)"),"stroke-width":w||2.8,"stroke-linecap":"round",fill:"none"};
+  if(dash)a["stroke-dasharray"]=dash; if(op)a.opacity=op; const n=E("line",a); g.appendChild(n); return n;
+}
+function sdot(g,p,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||5,style:"fill:"+(color||"var(--ink)"),stroke:"#fff","stroke-width":2,"pointer-events":"none"})); }
+function sgrab(g,p,id,color){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?26:16,class:"grab","data-drag":id})); sdot(g,p,color,6); }
+function stext(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("style","fill:"+color);
+  t.textContent=s; g.appendChild(t); return t;
+}
+function pathD(pts){ return pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(""); }
+function spath(g,d,color,w,dash,extra){ const a={d,fill:"none",style:"stroke:"+color,"stroke-width":w||3,"stroke-linecap":"round","stroke-linejoin":"round"}; if(dash)a["stroke-dasharray"]=dash; if(extra)for(const k in extra)a[k]=extra[k]; const n=E("path",a); g.appendChild(n); return n; }
+function arrowHead(g,tip,dir,color,sz){ sz=sz||13;
+  const n=[-dir[1],dir[0]], b=[tip[0]-dir[0]*sz,tip[1]-dir[1]*sz];
+  g.appendChild(E("polygon",{points:[tip,[b[0]+n[0]*sz*.46,b[1]+n[1]*sz*.46],[b[0]-n[0]*sz*.46,b[1]-n[1]*sz*.46]].map(p=>p.join(",")).join(" "),style:"fill:"+(color||"var(--graphite)")}));
+}
+function tw(text,cls){ return text.length*(cls==="xs"?7.1:cls==="lg"?9.8:cls==="mk"?13:8.3)*FS; }
+function smartLabel(g,anchor,dir,text,color,cls){
+  const w=tw(text,cls)+4, h=16*FS, d=unit(dir), off=14*FS;
+  let cx=anchor[0]+d[0]*(off+w/2*Math.abs(d[0])), cy=anchor[1]+d[1]*(off+h/2*Math.abs(d[1])+2);
+  cx=clamp(cx,w/2+6,VW-w/2-6); cy=clamp(cy,h/2+6,VH-h/2-6);
+  return stext(g,[cx,cy],text,cls||"sm",color);
+}
+function rightMark(g,c,u,v,s){ s=s||12;
+  const a=[c[0]+u[0]*s,c[1]+u[1]*s], b=[a[0]+v[0]*s,a[1]+v[1]*s], e=[c[0]+v[0]*s,c[1]+v[1]*s];
+  g.appendChild(E("polyline",{points:[a,b,e].map(p=>p.join(",")).join(" "),class:"rt"}));
+}
+function arcPts(c,r,a0,a1,step){ step=step||2; const n=Math.max(2,Math.ceil(Math.abs(a1-a0)/step)); const pts=[]; for(let i=0;i<=n;i++)pts.push(PT(c,r,a0+(a1-a0)*i/n)); return pts; }
+function wedge(g,c,r,a0,a1,fill,stroke){ const pts=arcPts(c,r,a0,a1,1); g.appendChild(E("path",{d:"M"+c[0]+" "+c[1]+"L"+pathD(pts).slice(1)+"Z",style:"fill:"+fill+";stroke:"+(stroke||"none"),"stroke-width":1.6})); }
+function infoBox(g,x,y,lines,color,anchorRight){
+  lines=lines.filter(s=>s!=null&&s!=="");
+  if(!lines.length)return;
+  const lh=19*FS, w=Math.max(...lines.map(s=>s.length))*8.4*FS+20, h=lines.length*lh+12;
+  const x0=anchorRight? x-w : x;
+  g.appendChild(E("rect",{x:x0,y:y,width:w,height:h,rx:10,fill:"rgba(255,255,255,.9)",stroke:"#C7D2E8","stroke-width":1.2}));
+  lines.forEach((s,i)=>{ const t=E("text",{x:x0+10,y:y+6+lh*(i+.5),class:"sm","dominant-baseline":"middle",style:"fill:"+(i===0?(color||"var(--ink)"):"#334155")}); t.textContent=s; g.appendChild(t); });
+  return {x0,y,w,h};
+}
+function gg(){ const g=E("g",{}); cv.appendChild(g); return g; }
+function gridU(ox,oy,U){
+  const g=E("g",{}), x0=ox-Math.floor(ox/U)*U, y0=oy-Math.floor(oy/U)*U;
+  for(let x=x0;x<=VW;x+=U) g.appendChild(E("line",{x1:x,y1:0,x2:x,y2:VH,style:"stroke:var(--grid)","stroke-width":1}));
+  for(let y=y0;y<=VH;y+=U) g.appendChild(E("line",{x1:0,y1:y,x2:VW,y2:y,style:"stroke:var(--grid)","stroke-width":1}));
+  cv.appendChild(g);
+}
+
+/* answers: numbers, fractions, radicals, π, degrees */
+function parseExpr(s){
+  if(!s)return NaN;
+  let i=0;
+  const peek=()=>s[i];
+  function expr(){ let v=term(); while(peek()==="+"||peek()==="-"){ const o=s[i++]; const r=term(); v=o==="+"?v+r:v-r; } return v; }
+  function term(){ let v=unary(); for(;;){ const c=peek();
+      if(c==="*"||c==="/"){ i++; const r=unary(); v=c==="*"?v*r:v/r; }
+      else if(c==="√"||c==="("||c==="π"){ v*=power(); }
+      else break; } return v; }
+  function unary(){ if(peek()==="-"){i++;return -unary();} if(peek()==="+"){i++;return unary();} return power(); }
+  function power(){ const b=atom(); if(peek()==="^"){i++;return Math.pow(b,unary());} return b; }
+  function atom(){ const c=peek();
+    if(c==="("){ i++; const v=expr(); if(peek()!==")")throw 0; i++; return v; }
+    if(c==="√"){ i++; return Math.sqrt(power()); }
+    if(c==="π"){ i++; return PI; }
+    const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)); if(!m)throw 0; i+=m[0].length; return parseFloat(m[0]); }
+  try{ const v=expr(); if(i!==s.length)return NaN; return v; }catch(_){ return NaN; }
+}
+function parseAns(str){
+  let s=String(str||"").trim().toLowerCase();
+  s=s.replace(/[−–]/g,"-").replace(/[×·]/g,"*").replace(/÷/g,"/").replace(/\s+/g,"")
+     .replace(/^(x|θ|t|h|d|m∠[ab]|∠[ab]|[ab])=/,"").replace(/°|degrees?|deg/g,"")
+     .replace(/(km|ft|in|m)$/,"").replace(/sqrt/g,"√").replace(/pi/g,"π");
+  return {v:parseExpr(s),raw:s};
+}
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null, cur=0;
+function svgPt(e){
+  const m=cv.getScreenCTM(); if(!m)return [0,0];
+  const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y];
+}
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag;
+  if(id){ dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); }
+});
+cv.addEventListener("pointermove",e=>{
+  if(!dragId)return; const M=MODS[cur]; if(!M.drag)return;
+  if(M.drag(dragId,svgPt(e))!==false)update();
+});
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{ if(dragId){ dragId=null; const M=MODS[cur]; if(M.dragEnd)M.dragEnd(); } }));
+
+/* bar builders */
+function btn(label,fn,cls){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(opts,val,fn,lab){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(lab)s.setAttribute("aria-label",lab);
+  opts.forEach(([k,l])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=l;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s;
+}
+function chk(label,val,fn){
+  const l=document.createElement("label"); l.className="chk";
+  const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i;
+}
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function islider(label,min,max,val,fmt,fn){
+  const l=document.createElement("label"); l.className="rng"; l.textContent=label+" ";
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=1; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); o.textContent=fmt(val);
+  i.oninput=()=>{o.textContent=fmt(+i.value); fn(+i.value);};
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l);
+  return {set(v){ i.value=v; o.textContent=fmt(v); }, el:i};
+}
+function tryPanel(html){ return `<div class="panel"><h3>Try this</h3><div class="pad">${html}</div></div>`; }
+const rel=(color,name,sub,val)=>`<div class="rel"><span class="dot" style="background:${color}"></span><span class="nm">${name}${sub?`<em>${sub}</em>`:""}</span><span class="val">${val}</span></div>`;
+
+/* ══════════════════════ right-triangle vocabulary ══════════════════════ */
+const ROLES=["opp","adj","hyp"];
+const COL={opp:"#DB2777",adj:"#0284C7",hyp:"#7C3AED"}, TXT={opp:"#BE185D",adj:"#0369A1",hyp:"#6D28D9"};
+const DCOL={opp:"#FF7AB8",adj:"#5CC8FF",hyp:"#C4B5FD"};
+const NAME={opp:"opposite",adj:"adjacent",hyp:"hypotenuse"}, SH={opp:"opp",adj:"adj",hyp:"hyp"};
+const THC="#EA580C", THT="#C2410C", COC="#059669", COT="#047857", UNK="#E11D48", GRY="#94A3B8";
+const sp=(r,t)=>`<b style="color:${DCOL[r]}">${t||NAME[r]}</b>`;
+// f: [numerator, denominator, reciprocal, cofunction]
+const FN={sin:["opp","hyp","csc","cos"],cos:["adj","hyp","sec","sin"],tan:["opp","adj","cot","cot"],
+          csc:["hyp","opp","sin","sec"],sec:["hyp","adj","cos","csc"],cot:["adj","opp","tan","tan"]};
+const FNS=["sin","cos","tan","csc","sec","cot"];
+const MN={sin:"SOH",cos:"CAH",tan:"TOA"};
+const CHIP={sin:"#FF3D8A",cos:"#00E5FF",tan:"#FFD93D",csc:"#C4B5FD",sec:"#5EEAD4",cot:"#FF6B6B"};
+const TRIG={sin:Math.sin,cos:Math.cos,tan:Math.tan,csc:x=>1/Math.sin(x),sec:x=>1/Math.cos(x),cot:x=>1/Math.tan(x)};
+const trigD=(f,d)=>TRIG[f](d*D2R);
+const fval=(f,R)=>R[FN[f][0]]/R[FN[f][1]];
+function pickFn(x,y){ const s=[x,y]; return s.includes("hyp")? (s.includes("opp")?"sin":"cos") : "tan"; }
+const segMap=at=>at==="A"?{opp:"BC",adj:"AC",hyp:"AB"}:{opp:"AC",adj:"BC",hyp:"AB"};
+
+function sideLab(g,P,Q,O,txt,col,cls){ const m=mul(add(P,Q),.5), d=sub(Q,P); let n=unit([-d[1],d[0]]); if(n[0]*(m[0]-O[0])+n[1]*(m[1]-O[1])<0)n=mul(n,-1); return smartLabel(g,m,n,txt,col,cls||"sm"); }
+// right angle at C; A bottom-left, C bottom-right, B above C
+function drawRT(g,A,B,C,o){
+  o=o||{}; const O=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3], S=o.sides||{};
+  g.appendChild(E("polygon",{points:[A,B,C].map(p=>p.join(",")).join(" "),style:"fill:"+(o.fill||"rgba(124,58,237,.06)")}));
+  const segs={AC:[A,C],BC:[B,C],AB:[A,B]};
+  for(const k in segs){ const s=S[k]||{}; sseg(g,segs[k][0],segs[k][1],s.c||"var(--graphite)",s.w||3.4,s.dash); }
+  rightMark(g,C,unit(sub(A,C)),unit(sub(B,C)),14);
+  const tA=angOf(A,B), tB=90-tA;
+  const arc=(V,a0,a1,q)=>{ const r=q.r||36; if(q.fill)wedge(g,V,r,a0,a1,q.fill); spath(g,pathD(arcPts(V,r,a0,a1,1)),q.c||GRY,2.6); };
+  if(o.angA){ arc(A,0,tA,o.angA); if(o.angA.t){ const r=(o.angA.r||36)+10*FS; const p=PT(A,r,tA/2); stext(g,[p[0]+2,p[1]-(tA<25?6:0)],o.angA.t,"sm",o.angA.tc||o.angA.c,"start"); } }
+  if(o.angB){ arc(B,180+tA,270,o.angB); if(o.angB.t){ const w=tw(o.angB.t,"sm"), right=B[0]+14+w<VW-4;
+      stext(g,right?[B[0]+14,B[1]+4]:[B[0]-14,B[1]-14*FS],o.angB.t,"sm",o.angB.tc||o.angB.c,right?"start":"end"); } }
+  if(o.vl!==false){ [[A,"A"],[B,"B"],[C,"C"]].forEach(([P,t])=>smartLabel(g,P,sub(P,O),t,"var(--ink)","mk")); }
+  for(const k in segs){ if(S[k]&&S[k].t) sideLab(g,segs[k][0],segs[k][1],O,S[k].t,S[k].tc||S[k].c); }
+  return {A,B,C,O,tA};
+}
+
+/* ══════════════════════ shared triangle (tabs 1–2) ══════════════════════ */
+const T={a:3,b:4,k:1,ref:"A",snap:true,fam:false,fn:"sin",co:false};
+const AX=70, AY=410, U1=52;
+function fitT(){ const st=T.snap?0.5:0.1; T.a=clamp(T.a,1,Math.floor(370/(T.k*U1)/st)*st); T.b=clamp(T.b,1,Math.floor(600/(T.k*U1)/st)*st); }
+function triP(k){ k=k==null?T.k:k; const A=[AX,AY],C=[AX+T.b*k*U1,AY],B=[C[0],AY-T.a*k*U1]; return {A,B,C}; }
+function relT(){ const h=Math.hypot(T.a,T.b), r=T.ref==="A";
+  return {opp:r?T.a:T.b, adj:r?T.b:T.a, hyp:h, seg:{opp:r?"BC":"AC",adj:r?"AC":"BC",hyp:"AB"}, th:Math.atan2(r?T.a:T.b,r?T.b:T.a)/D2R}; }
+function sqT(){ if(!isHalf(T.a)||!isHalf(T.b))return null; const R=relT(), po=Math.round(2*R.opp), pa=Math.round(2*R.adj); return {opp:po*po, adj:pa*pa, hyp:po*po+pa*pa}; }
+const fexact=(f,Q)=>Q? radFrac(Q[FN[f][0]],Q[FN[f][1]]) : null;
+function hypStr(k){ const Q=sqT(), d=num(k*Math.hypot(T.a,T.b),2); if(!Q||!isHalf(k*2))return d; const kk=Math.round(4*k); const s=lenStr(kk*kk*Q.hyp,8); return s.indexOf("√")>=0? s+" ≈ "+d : s; }
+function dragT(id,p){ const st=T.snap?0.5:0.1, r=v=>Math.round(v/st)*st;
+  if(id==="B")T.a=clamp(r((AY-p[1])/(T.k*U1)),1,6); else if(id==="C")T.b=clamp(r((p[0]-AX)/(T.k*U1)),1,10); else return false; fitT(); }
+function ratioBox(g,P,lines,col){ const left=P.B[0]>330||P.B[1]>150+(FS>1?60:0); infoBox(g,left?12:VW-12,12,lines,col||THT,!left); }
+function refBtns(){ segBtns([["A","θ at A"],["B","θ at B"]],T.ref,k=>{T.ref=k;render();},"Reference angle"); }
+
+/* ══════════════════════ TAB 1 · SOH CAH TOA ══════════════════════ */
+const M1={
+  tab:"SOH CAH TOA", lesson:"G-SRT.C.6", accent:"var(--cyan)",
+  title:()=>"Name the sides from θ · θ = "+dg(relT().th),
+  bar(){
+    refBtns();
+    islider("Scale k",2,8,Math.round(T.k*4),i=>"×"+num(i/4,2),i=>{T.k=i/4;fitT();update();});
+    chk("Snap ½ unit",T.snap,v=>{T.snap=v;if(v){T.a=Math.round(T.a*2)/2;T.b=Math.round(T.b*2)/2;}update();});
+    chk("Similar family",T.fam,v=>{T.fam=v;update();});
+    btn("3-4-5",()=>{T.a=3;T.b=4;fitT();update();});
+    btn("2.5-6-6.5",()=>{T.a=2.5;T.b=6;fitT();update();});
+    btn("45-45-90",()=>{T.a=3;T.b=3;fitT();update();});
+  },
+  drag:dragT,
+  draw(){
+    gridU(AX,AY,U1); const g=gg();
+    const R=relT(), P=triP(), k=T.k;
+    if(T.fam){ [0.5,1,1.5,2].filter(f=>T.b*f*U1<=620&&T.a*f*U1<=390).forEach(f=>{ if(near(f,k))return; const Q=triP(f);
+      g.appendChild(E("polygon",{points:[Q.A,Q.B,Q.C].map(p=>p.join(",")).join(" "),fill:"none",stroke:"#94A3B8","stroke-width":1.6,"stroke-dasharray":"6 5"}));
+      stext(g,[Q.B[0]+8,Q.B[1]+10],"×"+num(f,2),"xs","#64748B","start"); }); }
+    const sides={}; ROLES.forEach(r=>{ sides[R.seg[r]]={c:COL[r],tc:TXT[r],w:4.4,t:(FS>1?SH[r]:NAME[r])+" = "+num(k*R[r],2)}; });
+    const onA=T.ref==="A", thq={c:THC,tc:THT,fill:"rgba(234,88,12,.16)",t:"θ = "+dg(R.th),r:34}, oth={c:GRY,r:26};
+    drawRT(g,P.A,P.B,P.C,{sides,angA:onA?thq:oth,angB:onA?oth:thq});
+    sgrab(g,P.B,"B","var(--ink)"); sgrab(g,P.C,"C","var(--ink)");
+    const L=["sin","cos","tan"].map(f=>`${f} θ = ${FN[f][0]}/${FN[f][1]} ≈ ${f3(fval(f,R))}`); L.push("1 grid square = 1 unit");
+    ratioBox(g,P,L);
+  },
+  panel(){
+    const R=relT(), Q=sqT(), k=T.k;
+    const desc={opp:"across from θ",adj:"touches θ (not the hypotenuse)",hyp:"across from the right angle · longest"};
+    const rows=ROLES.map(r=>rel(COL[r],cap(NAME[r]),desc[r]+" · side "+R.seg[r], r==="hyp"?hypStr(k):num(k*R[r],2))).join("");
+    const line=f=>{ const ex=fexact(f,Q); return `${f} θ = ${FN[f][0]}/${FN[f][1]} = ${num(k*R[FN[f][0]],2)}/${num(k*R[FN[f][1]],2)}${ex?" = "+ex:""} ≈ ${f3(fval(f,R))}`; };
+    const ks=[...new Set([0.5,1,1.5,2,k])].sort((a,b)=>a-b);
+    const trs=ks.map(kk=>`<tr class="${near(kk,k)?"on":""}"><td>×${num(kk,2)}</td><td>${num(kk*R.opp,2)}</td><td>${num(kk*R.adj,2)}</td><td>${num(kk*R.hyp,2)}</td><td>${f3(R.opp/R.hyp)}</td><td>${f3(R.adj/R.hyp)}</td><td>${f3(R.opp/R.adj)}</td></tr>`).join("");
+    side.innerHTML=`<div class="panel"><h3>Sides relative to θ = ${dg(R.th)}</h3>${rows}</div>
+    <div class="panel"><h3>SOH · CAH · TOA</h3><div class="pad">
+      <div class="eq">${["sin","cos","tan"].map(line).join("\n")}<small>SOH: Sine = Opposite / Hypotenuse · CAH: Cosine = Adjacent / Hypotenuse · TOA: Tangent = Opposite / Adjacent</small></div>
+      <p>Choose one <b>acute angle θ</b> as the reference. The ${sp("opp")} side is across from θ, the ${sp("adj")} side is the leg that touches θ, and the ${sp("hyp")} is across from the right angle. Switch θ to the other acute angle: opposite and adjacent trade places, but the hypotenuse never moves.</p>
+      <p>Because the hypotenuse is the longest side, sin θ and cos θ are always between 0 and 1. Tangent compares the two legs, so it can be any positive number.</p></div></div>
+    <div class="panel"><h3>Similar triangles keep the same ratios</h3><div class="tblwrap"><table class="facts"><tr><th>scale</th><th>opp</th><th>adj</th><th>hyp</th><th>sin θ</th><th>cos θ</th><th>tan θ</th></tr>${trs}</table></div>
+      <div class="pad"><p>Every right triangle with the same acute angle θ is <span class="term">similar</span> (AA: a right angle and θ). Similar triangles have proportional sides, so each ratio is the same at every size. That is why sine, cosine and tangent depend <b>only on the angle</b> — they are functions of θ (G-SRT.C.6).</p></div></div>`+
+    tryPanel(`<p>1. Press <b>3-4-5</b> with θ at A. Predict sin θ, cos θ and tan θ as fractions, then check the panel.</p><p>2. Slide the scale from ×0.5 to ×2 (turn on <b>Similar family</b>). Which numbers in the table change, and which never do?</p><p>3. Drag B upward. As θ grows, what happens to sin θ and cos θ? Can tan θ be bigger than 1? Can sin θ?</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 2 · reciprocal functions ══════════════════════ */
+const M2={
+  tab:"Reciprocal functions", lesson:"F-TF · G-SRT.C.6–7", accent:"var(--magenta)",
+  title:()=>`${T.fn} θ = ${FN[T.fn][0]}/${FN[T.fn][1]} · θ = ${dg(relT().th)}`,
+  bar(){
+    const row=document.createElement("div"); row.className="chiprow"; row.setAttribute("role","group"); row.setAttribute("aria-label","Trig function");
+    FNS.forEach(f=>{ const b=document.createElement("button"); b.type="button"; b.textContent=f+" θ"; b.style.setProperty("--c",CHIP[f]);
+      b.setAttribute("aria-pressed",String(T.fn===f)); b.onclick=()=>{T.fn=f;render();}; row.appendChild(b); });
+    bar.appendChild(row);
+    btn("Flip it (reciprocal)",()=>{T.fn=FN[T.fn][2];render();},"primary");
+    btn("Cofunction: other angle",()=>{T.fn=FN[T.fn][3];T.ref=T.ref==="A"?"B":"A";T.co=true;render();});
+    refBtns();
+    chk("Show 90° − θ",T.co,v=>{T.co=v;update();});
+  },
+  drag:dragT,
+  draw(){
+    gridU(AX,AY,U1); const g=gg();
+    const R=relT(), P=triP(), k=T.k, f=T.fn, [nu,de,rc,cf]=FN[f], Q=sqT();
+    const swp={opp:"adj",adj:"opp",hyp:"hyp"};
+    const sides={}; ROLES.forEach(r=>{ const used=r===nu||r===de;
+      const nm= T.co&&r!=="hyp"? `${SH[r]}(θ) = ${SH[swp[r]]}(90°−θ)` : (FS>1?SH[r]:NAME[r]);
+      sides[R.seg[r]]={c:used?COL[r]:GRY,tc:used?TXT[r]:"#64748B",w:used?5.6:2.6,t:nm+(FS>1&&T.co?"":" = "+num(k*R[r],2))}; });
+    const onA=T.ref==="A", thq={c:THC,tc:THT,fill:"rgba(234,88,12,.16)",t:"θ = "+dg(R.th),r:34},
+          oth=T.co? {c:COC,tc:COT,fill:"rgba(5,150,105,.14)",t:"90° − θ = "+dg(90-R.th),r:28} : {c:GRY,r:26};
+    drawRT(g,P.A,P.B,P.C,{sides,angA:onA?thq:oth,angB:onA?oth:thq});
+    sgrab(g,P.B,"B","var(--ink)"); sgrab(g,P.C,"C","var(--ink)");
+    const ex=fexact(f,Q), v=fval(f,R);
+    ratioBox(g,P,[`${f} θ = ${nu}/${de} = ${num(k*R[nu],2)}/${num(k*R[de],2)}`, ex&&ex!==num(v,3)? `= ${ex} ≈ ${f3(v)}` : `≈ ${f3(v)}`, `= 1 / ${rc} θ`, T.co?`= ${cf}(90° − θ) = ${cf} ${dg(90-R.th)}`:null], CHIP[f]==="#FFD93D"?"#A16207":TXT[nu]);
+  },
+  panel(){
+    const R=relT(), Q=sqT(), th=R.th;
+    const trs=FNS.map(fn=>{ const [a,b,rc]=FN[fn]; return `<tr class="${fn===T.fn?"on":""}"><td>${fn} θ</td><td>${a}/${b}</td><td>${fexact(fn,Q)||"—"}</td><td>${f3(fval(fn,R))}</td><td>1 / ${rc} θ</td></tr>`; }).join("");
+    const pr=[["sin","csc"],["cos","sec"],["tan","cot"]].map(([a,b])=>`${a} θ · ${b} θ = ${f3(fval(a,R))} × ${f3(fval(b,R))} = ${f3(fval(a,R)*fval(b,R))}`).join("\n");
+    const co=[["sin","cos"],["tan","cot"],["sec","csc"]].map(([a,b])=>`${a} ${dg(th)} = ${f3(trigD(a,th))}   ${b} ${dg(90-th)} = ${f3(trigD(b,90-th))} ✓`).join("\n");
+    side.innerHTML=`<div class="panel"><h3>All six ratios · θ = ${dg(th)}</h3><div class="tblwrap"><table class="facts"><tr><th>function</th><th>ratio</th><th>exact</th><th>≈</th><th>reciprocal</th></tr>${trs}</table></div></div>
+    <div class="panel"><h3>Reciprocal pairs: flip the fraction</h3><div class="pad">
+      <p>Turn each basic ratio upside down to get its <span class="term">reciprocal</span>: <b>cosecant</b> csc θ = hyp/opp = 1/sin θ, <b>secant</b> sec θ = hyp/adj = 1/cos θ, <b>cotangent</b> cot θ = adj/opp = 1/tan θ. A number times its reciprocal is 1:</p>
+      <div class="eq">${pr}</div>
+      <p>Careful: csc θ = 1/sin θ is <b>not</b> sin<sup>−1</sup> θ. The −1 in sin<sup>−1</sup> names the <i>inverse</i> function, which gives back an angle (tab 4).</p></div></div>
+    <div class="panel"><h3>Cofunctions: complementary angles</h3><div class="pad">
+      <p>The two acute angles add to 90°, so they are <span class="term">complementary</span>. The leg opposite θ is adjacent to 90° − θ, so each function of θ equals its <b>co</b>function of 90° − θ. The “co” in cosine, cotangent and cosecant stands for <i>complement</i>.</p>
+      <div class="eq">sin θ = cos(90° − θ)   tan θ = cot(90° − θ)   sec θ = csc(90° − θ)\n${co}</div></div></div>`+
+    tryPanel(`<p>1. Choose <b>sin θ</b>, then press <b>Flip it</b>. Which two sides stay highlighted, and what happens to the fraction?</p><p>2. With sin θ chosen, press <b>Cofunction: other angle</b>. The function changes to cos and θ moves to the other vertex — why is the number the same?</p><p>3. Drag until θ = 45° (try the 45-45-90 preset in tab 1). Which pairs of functions become equal?</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 3 · solving for sides ══════════════════════ */
+const S3={th:35,known:"hyp",find:"opp",val:12,step:6};
+const A3=[90,400], L3=360;
+function sides3(){ const t=S3.th*D2R; const h= S3.known==="hyp"?S3.val : S3.known==="opp"? S3.val/Math.sin(t) : S3.val/Math.cos(t); return {opp:h*Math.sin(t),adj:h*Math.cos(t),hyp:h}; }
+function steps3(){
+  const f=pickFn(S3.known,S3.find), [nu,de,rc]=FN[f], xTop=nu===S3.find, K=S3.val, th=S3.th, sd=sides3(), X=sd[S3.find], tv=trigD(f,th);
+  const r2=v=>Math.round(v*100)/100, o=S3.find==="opp"?r2(X):r2(sd.opp), a=S3.find==="adj"?r2(X):r2(sd.adj), h=S3.find==="hyp"?r2(X):r2(sd.hyp);
+  return [
+    {h:`<b>Label the sides from θ = ${th}°.</b> The given side, ${K}, is the ${sp(S3.known)}. The side you want, x, is the ${sp(S3.find)}.`},
+    {h:`<b>Choose the ratio that uses both.</b> ${sp(nu)} and ${sp(de)} → <b>${MN[f]}</b> → <b>${f}</b>.`, eq:`${f} θ = ${nu} / ${de}`},
+    {h:`<b>Set up the equation.</b> Put in the angle, the known side and x.`, eq:`${f} ${th}° = ${xTop?"x":K} / ${xTop?K:"x"}`},
+    xTop? {h:`<b>Solve.</b> x is on top, so multiply both sides by ${K}.`, eq:`x = ${K} · ${f} ${th}°`}
+        : {h:`<b>Watch out — x is in the denominator.</b> Multiply both sides by x, then divide both sides by ${f} ${th}°.`, eq:`x · ${f} ${th}° = ${K}\nx = ${K} / ${f} ${th}°<small>Same as x = ${K} · ${rc} ${th}°: dividing by ${f} is multiplying by its reciprocal.</small>`},
+    {h:`<b>Calculate</b> (calculator in <b>degree</b> mode).`, eq:`${f} ${th}° ≈ ${num(tv,4)}\nx ${xTop?"= "+K+" × "+num(tv,4):"= "+K+" ÷ "+num(tv,4)} ≈ ${num(X,2)}`},
+    {h:`<b>Check.</b> The hypotenuse must be the longest side, and the Pythagorean theorem should (nearly) balance with rounded sides.`, eq:`${num(o,2)}² + ${num(a,2)}² ≈ ${num(o*o+a*a,1)}\n${num(h,2)}² ≈ ${num(h*h,1)}  ✓`}
+  ];
+}
+const M3={
+  tab:"Solving for sides", lesson:"G-SRT.C.8", accent:"var(--yellow)", sl:{},
+  title:()=>`Find the ${NAME[S3.find]} · θ = ${S3.th}°, ${NAME[S3.known]} = ${S3.val}`,
+  bar(){
+    segBtns(ROLES.map(r=>[r,"Know "+SH[r]]),S3.known,k=>{S3.known=k; if(S3.find===k)S3.find=ROLES.find(r=>r!==k); render();},"Given side");
+    segBtns(ROLES.filter(r=>r!==S3.known).map(r=>[r,"Find "+SH[r]]),S3.find,k=>{S3.find=k;render();},"Unknown side");
+    M3.sl.th=islider("θ",10,80,S3.th,v=>v+"°",v=>{S3.th=v;update();});
+    M3.sl.v=islider("Given",2,30,S3.val,v=>String(v),v=>{S3.val=v;update();});
+    btn("Step by step",()=>{S3.step=1;update();});
+    btn("Next step",()=>{S3.step=Math.min(6,S3.step+1);update();},"primary");
+    btn("Show all",()=>{S3.step=6;update();});
+    btn("Random",()=>{S3.th=rnd(15,75);S3.known=pick(ROLES);S3.find=pick(ROLES.filter(r=>r!==S3.known));S3.val=rnd(4,30);S3.step=1;render();});
+  },
+  drag(id,p){ if(id!=="B")return false; let a=angOf(A3,p); if(a>180)a=a>270?10:80; S3.th=clamp(Math.round(a),10,80); M3.sl.th&&M3.sl.th.set(S3.th); },
+  draw(){
+    const g=gg(), t=S3.th, A=A3, B=PT(A,L3,t), C=[B[0],A[1]], sd=sides3(), segm={opp:"BC",adj:"AC",hyp:"AB"}, st=S3.step;
+    gridU(0,0,40); cv.appendChild(g);
+    const sides={}; ROLES.forEach(r=>{
+      if(r===S3.known) sides[segm[r]]={c:COL[r],tc:TXT[r],w:4.8,t:SH[r]+" = "+S3.val};
+      else if(r===S3.find) sides[segm[r]]={c:UNK,tc:UNK,w:4.8,t:SH[r]+": x "+(st>=5?"≈ "+num(sd[r],2):"= ?")};
+      else sides[segm[r]]={c:GRY,tc:"#64748B",w:2.6,t:SH[r]};
+    });
+    drawRT(g,A,B,C,{sides,angA:{c:THC,tc:THT,fill:"rgba(234,88,12,.16)",t:"θ = "+t+"°",r:44},angB:{c:GRY,r:28}});
+    sgrab(g,B,"B","var(--ink)");
+    const f=pickFn(S3.known,S3.find), xTop=FN[f][0]===S3.find;
+    const lines= st>=3? [`${f} ${t}° = ${xTop?"x":S3.val} / ${xTop?S3.val:"x"}`, st>=4?(xTop?`x = ${S3.val} · ${f} ${t}°`:`x = ${S3.val} / ${f} ${t}°`):null, st>=5?`x ≈ ${num(sd[S3.find],2)}`:null]
+      : [st>=2? `use ${f} (${MN[f]})` : "Step 1: label the sides from θ"];
+    infoBox(g,VW-12,12,lines,"#A16207",true);
+    stext(g,[12,VH-12],"drawn to scale · drag B to change θ","xs","#64748B","start");
+  },
+  panel(){
+    const f=pickFn(S3.known,S3.find), has=(fn,r)=>FN[fn][0]===r||FN[fn][1]===r;
+    const dec=["sin","cos","tan"].map(fn=>`<tr class="${fn===f?"on":""}"><td>${MN[fn]}</td><td>${fn} = ${FN[fn][0]}/${FN[fn][1]}</td><td class="${has(fn,S3.known)?"y":"n"}">${has(fn,S3.known)?"✓":"✗"} given ${SH[S3.known]}</td><td class="${has(fn,S3.find)?"y":"n"}">${has(fn,S3.find)?"✓":"✗"} x = ${SH[S3.find]}</td></tr>`).join("");
+    const S=steps3();
+    const lis=S.slice(0,S3.step).map(s=>`<li>${s.h}${s.eq?`<div class="eq">${s.eq}</div>`:""}</li>`).join("")+(S3.step<6?`<li class="next">Press “Next step” to continue…</li>`:"");
+    side.innerHTML=`<div class="panel"><h3>Decision helper: which ratio?</h3><div class="tblwrap"><table class="facts"><tr><th>rule</th><th>ratio</th><th>known?</th><th>unknown?</th></tr>${dec}</table></div>
+      <div class="pad"><p>Exactly one of SOH, CAH, TOA uses <b>both</b> the side you know and the side you want — that is the one to use: <b>${f}</b>.</p></div></div>
+    <div class="panel"><h3>Step by step</h3><ol class="chain">${lis}</ol></div>
+    <div class="panel"><h3>Why the denominator matters</h3><div class="pad">
+      <p>When x is on top (like sin 35° = x/12), just multiply: x = 12 · sin 35°. When x lands on the bottom (like cos 35° = 12/x), multiply both sides by x first and then divide: x = 12 / cos 35°.</p>
+      <p>A common mistake is to write x = 12 · cos 35° anyway. Sanity check: a hypotenuse must come out <b>longer</b> than either leg.</p></div></div>`+
+    tryPanel(`<p>1. Choose <b>Know adj</b>, <b>Find hyp</b> with θ = 40° and adj = 10. Before step 5, predict: is x more or less than 10?</p><p>2. Keep the same numbers but <b>Find opp</b>. Which ratio does the helper pick now, and is x on top or bottom?</p><p>3. Drag B to make θ tiny, then huge. What happens to the opposite side when the hypotenuse is fixed?</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 4 · solving for angles ══════════════════════ */
+const S4={pair:"oa",o:5,a:12,h:13,step:6};
+const A4=[80,405], U4=26;
+const PAIR={oa:["opp","adj","tan"],oh:["opp","hyp","sin"],ah:["adj","hyp","cos"]};
+const K4={opp:"o",adj:"a",hyp:"h"}, RNG4={opp:[2,24],adj:[2,40],hyp:[4,40]};
+function norm4(){ const s=S4;
+  if(s.pair==="oa"){ s.o=clamp(s.o,1,12); s.a=clamp(s.a,1,20); s.h=Math.hypot(s.o,s.a); }
+  else if(s.pair==="oh"){ s.h=clamp(s.h,2,20); s.o=clamp(s.o,0.5,Math.min(12,s.h-0.5)); s.a=Math.sqrt(s.h*s.h-s.o*s.o); }
+  else { s.h=clamp(s.h,2,20); const amin=Math.max(0.5,Math.ceil(Math.sqrt(Math.max(0,s.h*s.h-144))*2)/2); s.a=clamp(s.a,amin,s.h-0.5); s.o=Math.sqrt(s.h*s.h-s.a*s.a); }
+}
+function info4(){
+  const [r1,r2,f]=PAIR[S4.pair], v={opp:S4.o,adj:S4.a,hyp:S4.h}, th=Math.atan2(S4.o,S4.a)/D2R;
+  const third=ROLES.find(r=>r!==r1&&r!==r2), p1=Math.round(2*v[r1]), p2=Math.round(2*v[r2]);
+  const fr=sFrac(p1,p2), n1=num(v[r1],1), n2=num(v[r2],1);
+  const tsq=third==="hyp"? p1*p1+p2*p2 : p2*p2-p1*p1, tex=lenStr(tsq,2);
+  return {r1,r2,f,v,th,third,fr,n1,n2,tex,raw:n1+"/"+n2};
+}
+function steps4(){
+  const I=info4(), {r1,r2,f,v,th,third}=I, seg={opp:"BC",adj:"AC",hyp:"AB"};
+  const ratioTxt=I.fr!==I.raw? `${I.raw} = ${I.fr}` : I.fr;
+  const tval=num(v[third],2), tsq=num(v[third]*v[third],4);
+  const thirdEq= third==="hyp"? `AB² = ${I.n1}² + ${I.n2}² = ${tsq}\nAB = ${I.tex}${I.tex.indexOf("√")>=0?" ≈ "+tval:""}`
+    : `${seg[third]}² = ${I.n2}² − ${I.n1}² = ${tsq}\n${seg[third]} = ${I.tex}${I.tex.indexOf("√")>=0?" ≈ "+tval:""}`;
+  const cf= f==="tan"?"sin":"tan", cfv=fval(cf,v);
+  return [
+    {h:`<b>Name the given sides from θ = m∠A.</b> ${seg[r1]} = ${I.n1} is the ${sp(r1)}; ${seg[r2]} = ${I.n2} is the ${sp(r2)}.`},
+    {h:`<b>Pick the ratio that uses them:</b> ${SH[r1]} & ${SH[r2]} → <b>${f}</b>.`, eq:`${f} θ = ${SH[r1]} / ${SH[r2]} = ${ratioTxt}`},
+    {h:`<b>Undo ${f} with its inverse, ${f}<sup>−1</sup></b> (degree mode). ${f}<sup>−1</sup> answers “which angle has this ratio?”`, eq:`θ = ${f}⁻¹(${I.fr}) ≈ ${num(th,2)}°<small>${f}⁻¹ is the inverse function, not 1/${f}.</small>`},
+    {h:`<b>Find the other acute angle.</b> The acute angles of a right triangle are complementary.`, eq:`m∠B = 90° − ${num(th,2)}° = ${num(90-th,2)}°`},
+    {h:`<b>Find the third side</b> with the Pythagorean theorem.`, eq:thirdEq},
+    {h:`<b>Check the whole triangle.</b>`, eq:`${num(S4.o,2)}² + ${num(S4.a,2)}² = ${num(S4.o*S4.o+S4.a*S4.a,3)} = ${num(S4.h,2)}² ✓\n${num(th,2)}° + ${num(90-th,2)}° + 90° = 180° ✓\n${cf} θ = ${SH[FN[cf][0]]}/${SH[FN[cf][1]]} ≈ ${f3(cfv)},  ${cf} ${num(th,2)}° ≈ ${f3(trigD(cf,Math.round(th*100)/100))} ✓`}
+  ];
+}
+const M4={
+  tab:"Solving for angles", lesson:"G-SRT.C.8", accent:"var(--mint)", sl:{},
+  title:()=>{ const I=info4(); return `Two sides → θ = ${I.f}⁻¹(${I.fr})${S4.step>=3?" ≈ "+dg(I.th):""}`; },
+  bar(){
+    segBtns([["oa","opp & adj"],["oh","opp & hyp"],["ah","adj & hyp"]],S4.pair,k=>{S4.pair=k; const [r1,r2]=PAIR[k]; S4[K4[r1]]=Math.round(S4[K4[r1]]*2)/2; S4[K4[r2]]=Math.round(S4[K4[r2]]*2)/2; norm4(); render();},"Given sides");
+    const [r1,r2]=PAIR[S4.pair];
+    [r1,r2].forEach((r,i)=>{ M4.sl["s"+i]=islider(SH[r],RNG4[r][0],RNG4[r][1],Math.round(S4[K4[r]]*2),v=>num(v/2,1),v=>{S4[K4[r]]=v/2; norm4(); M4.sync(); update();}); });
+    btn("Step by step",()=>{S4.step=1;update();});
+    btn("Next step",()=>{S4.step=Math.min(6,S4.step+1);update();},"primary");
+    btn("Show all",()=>{S4.step=6;update();});
+    btn("Random",()=>{ S4.pair=pick(["oa","oh","ah"]);
+      if(S4.pair==="oa"){S4.o=rnd(2,12);S4.a=rnd(2,18);} else { S4.h=rnd(4,20); if(S4.pair==="oh")S4.o=rnd(1,Math.min(12,S4.h-1)); else S4.a=rnd(Math.max(1,Math.ceil(Math.sqrt(Math.max(0,S4.h*S4.h-144)))),S4.h-1); }
+      norm4(); S4.step=1; render(); });
+  },
+  sync(){ const [r1,r2]=PAIR[S4.pair]; [r1,r2].forEach((r,i)=>{ const s=M4.sl["s"+i]; if(s)s.set(Math.round(S4[K4[r]]*2)); }); },
+  drag(id,p){ const [r1,r2]=PAIR[S4.pair], r=v=>Math.round(v*2)/2;
+    if(id==="B"&&(r1==="opp"))S4.o=r((A4[1]-p[1])/U4);
+    else if(id==="C"&&(r1==="adj"||r2==="adj"))S4.a=r((p[0]-A4[0])/U4);
+    else return false; norm4(); M4.sync(); },
+  draw(){
+    gridU(A4[0],A4[1],U4); const g=gg();
+    const I=info4(), st=S4.step, A=A4, C=[A[0]+S4.a*U4,A[1]], B=[C[0],A[1]-S4.o*U4], seg={opp:"BC",adj:"AC",hyp:"AB"};
+    const sides={}; ROLES.forEach(r=>{
+      if(r===I.r1||r===I.r2) sides[seg[r]]={c:COL[r],tc:TXT[r],w:4.8,t:SH[r]+" = "+num(I.v[r],1)};
+      else sides[seg[r]]={c:st>=5?UNK:GRY,tc:st>=5?UNK:"#64748B",w:st>=5?4.2:2.6,dash:st>=5?null:"8 6",t:SH[r]+(st>=5?" ≈ "+num(I.v[r],2):" = ?")};
+    });
+    const P={A,B,C};
+    drawRT(g,A,B,C,{sides,angA:{c:THC,tc:THT,fill:"rgba(234,88,12,.16)",t:st>=3?"θ ≈ "+num(I.th,1)+"°":"θ = ?",r:40},angB:{c:st>=4?COC:GRY,tc:COT,t:st>=4?"≈ "+num(90-I.th,1)+"°":"",r:28}});
+    if(I.r1==="opp")sgrab(g,B,"B","var(--ink)");
+    if(I.r1==="adj"||I.r2==="adj")sgrab(g,C,"C","var(--ink)");
+    ratioBox(g,P,[`${I.f} θ = ${SH[I.r1]}/${SH[I.r2]} = ${I.fr}`, st>=3?`θ = ${I.f}⁻¹(${I.fr}) ≈ ${num(I.th,1)}°`:null, "1 grid square = 1 unit"],THT);
+  },
+  panel(){
+    const I=info4(), S=steps4(), st=S4.step, given=r=>r===I.r1||r===I.r2;
+    const lis=S.slice(0,st).map(s=>`<li>${s.h}${s.eq?`<div class="eq">${s.eq}</div>`:""}</li>`).join("")+(st<6?`<li class="next">Press “Next step” to continue…</li>`:"");
+    const sv=(r)=>given(r)?num(I.v[r],2)+" (given)":(st>=5?num(I.v[r],2):"?");
+    side.innerHTML=`<div class="panel"><h3>Step by step</h3><ol class="chain">${lis}</ol></div>
+    <div class="panel"><h3>The solved triangle</h3>
+      ${rel(THC,"m∠A = θ","acute angle",st>=3?dg(I.th):"?")}${rel(COC,"m∠B","acute angle, 90° − θ",st>=4?dg(90-I.th):"?")}${rel("#64748B","m∠C","right angle","90°")}
+      ${rel(COL.opp,"a = BC","opposite ∠A",sv("opp"))}${rel(COL.adj,"b = AC","adjacent to ∠A",sv("adj"))}${rel(COL.hyp,"c = AB","hypotenuse",sv("hyp"))}</div>
+    <div class="panel"><h3>Inverse trig functions</h3><div class="pad">
+      <p>sin, cos and tan take an <b>angle</b> and give a <b>ratio</b>. The inverse functions sin<sup>−1</sup>, cos<sup>−1</sup>, tan<sup>−1</sup> (also written arcsin, arccos, arctan) go backwards: give them a ratio and they return the acute angle with that ratio.</p>
+      <p>To <span class="term">solve a right triangle</span> means to find all three sides and all three angles. After one inverse function gives θ, the other acute angle is 90° − θ and the Pythagorean theorem gives the last side.</p></div></div>`+
+    tryPanel(`<p>1. Use <b>opp & adj</b> with 5 and 12. Why does the hypotenuse come out to a whole number?</p><p>2. Switch to <b>opp & hyp</b> and make opp exactly half of hyp. What angle do you get every time? (This is the 30-60-90 triangle.)</p><p>3. Make the two legs equal. Which angle appears, and what is tan θ?</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 5 · applications ══════════════════════ */
+const G5=400;
+function ground(g,x0,x1,col,edge){ g.appendChild(E("rect",{x:x0,y:G5,width:x1-x0,height:VH-G5,fill:col||"#E7F0DC"})); sseg(g,[x0,G5],[x1,G5],edge||"#65A30D",2.4); }
+function dimH(g,x0,x1,y,txt,col){ sseg(g,[x0,y],[x1,y],col,1.6); sseg(g,[x0,y-6],[x0,y+6],col,1.6); sseg(g,[x1,y-6],[x1,y+6],col,1.6); const w=tw(txt,"sm"); stext(g,[clamp((x0+x1)/2,w/2+6,VW-w/2-6),y+15*FS],txt,"sm",col); }
+function dimV(g,x,y0,y1,col){ sseg(g,[x,y0],[x,y1],col,1.6); sseg(g,[x-6,y0],[x+6,y0],col,1.6); sseg(g,[x-6,y1],[x+6,y1],col,1.6); }
+function arcLab(g,V,r,a0,a1,col,fill){ if(fill)wedge(g,V,r,a0,a1,fill); spath(g,pathD(arcPts(V,r,a0,a1,1)),col,2.6); }
+const u5=(v,u,dp)=>num(v,dp==null?1:dp)+" "+u;
+const tri3=(o)=>`${o}`;
+
+// elevation
+const EL={d:30,H:22,th:35,eye:true,mode:"A"}; const elS=8, elW=500, elBW=70;
+const eyeH=()=>EL.eye?1.6:0;
+function elSnap(){ const e=eyeH(); EL.d=clamp(Math.round(EL.d),5,58); EL.H=clamp(EL.H,e+1,42);
+  if(EL.mode==="A"){ let th=clamp(Math.round(Math.atan2(EL.H-e,EL.d)/D2R),5,75); while(th>5&&e+EL.d*Math.tan(th*D2R)>42)th--; EL.th=th; EL.H=e+EL.d*Math.tan(th*D2R); }
+  else { EL.H=clamp(Math.round(EL.H),Math.ceil(e)+1,42); EL.th=Math.atan2(EL.H-e,EL.d)/D2R; } }
+// depression
+const DP={h:40,d:60,th:34,mode:"A"}; const dpS=6, dpX=110;
+function dpSnap(){ DP.h=clamp(Math.round(DP.h),10,55); DP.d=clamp(DP.d,15,90);
+  if(DP.mode==="A"){ let th=clamp(Math.round(Math.atan2(DP.h,DP.d)/D2R),7,74); while(DP.h/Math.tan(th*D2R)>90)th++; while(DP.h/Math.tan(th*D2R)<15)th--; DP.th=th; DP.d=DP.h/Math.tan(th*D2R); }
+  else { DP.d=clamp(Math.round(DP.d),15,90); DP.th=Math.atan2(DP.h,DP.d)/D2R; } }
+// ramp
+const RP={rise:2,run:24,th:4.8,mode:"B"}; const rpS=18, rpX=70;
+function rpSnap(){ RP.rise=clamp(Math.round(RP.rise*4)/4,0.5,5); RP.run=clamp(RP.run,3,30);
+  if(RP.mode==="A"){ let th=clamp(Math.round(Math.atan2(RP.rise,RP.run)/D2R*2)/2,1,59); while(RP.rise/Math.tan(th*D2R)>30)th+=0.5; while(RP.rise/Math.tan(th*D2R)<3)th-=0.5; RP.th=th; RP.run=RP.rise/Math.tan(th*D2R); }
+  else { RP.run=clamp(Math.round(RP.run*2)/2,3,30); RP.th=Math.atan2(RP.rise,RP.run)/D2R; } }
+// ladder
+const LD={L:20,f:5,th:75.5,mode:"B"}; const ldS=13, ldW=600;
+function ldSnap(){ LD.L=clamp(Math.round(LD.L),10,28); const fmax=LD.L*Math.cos(30*D2R); LD.f=clamp(LD.f,0.3,fmax);
+  if(LD.mode==="A"){ LD.th=clamp(Math.round(Math.acos(LD.f/LD.L)/D2R),30,85); LD.f=LD.L*Math.cos(LD.th*D2R); }
+  else { LD.f=clamp(Math.round(LD.f*2)/2,0.5,Math.floor(fmax*2)/2); LD.th=Math.acos(LD.f/LD.L)/D2R; } }
+// bearing
+const BR={E:3,N:4,d:5,b:36.87,mode:"A"}; const brS=34, BP=[350,240];
+function brSnap(){ BR.E=clamp(BR.E,-9.6,9.6); BR.N=clamp(BR.N,-6.3,6.3);
+  if(BR.mode==="A"){ let d=clamp(Math.round(Math.hypot(BR.E,BR.N)*2)/2,0.5,11); const b=norm(Math.round(Math.atan2(BR.E,BR.N)/D2R)); let E=d*Math.sin(b*D2R), N=d*Math.cos(b*D2R);
+    while(d>0.5&&(Math.abs(E)>9.6||Math.abs(N)>6.3)){ d-=0.5; E=d*Math.sin(b*D2R); N=d*Math.cos(b*D2R); } BR.d=d; BR.b=b; BR.E=E; BR.N=N; }
+  else { BR.E=Math.round(BR.E*2)/2; BR.N=Math.round(BR.N*2)/2; if(BR.E===0&&BR.N===0)BR.N=0.5; BR.d=Math.hypot(BR.E,BR.N); BR.b=norm(Math.atan2(BR.E,BR.N)/D2R); } }
+const b3=b=>String(Math.round(norm(b))%360).padStart(3,"0")+"°";
+function brRef(){ const a=Math.abs(BR.E), n=Math.abs(BR.N); return n<1e-9?90:Math.atan2(a,n)/D2R; }
+function qBear(){ const al=brRef(); if(Math.abs(BR.E)<1e-9)return BR.N>=0?"due north":"due south"; if(Math.abs(BR.N)<1e-9)return BR.E>0?"due east":"due west";
+  return (BR.N>0?"N ":"S ")+num(al,1)+"° "+(BR.E>0?"E":"W"); }
+
+const SC={
+  elev:{nm:"Elevation", s:EL, snap:elSnap, modes:[["A","Given d & θ → height"],["B","Given d & height → θ"]],
+    title:()=>"Angle of elevation · θ = "+dg(EL.th),
+    drag(id,p){ if(id==="obs")EL.d=(elW-p[0])/elS; else if(id==="top")EL.H=(G5-p[1])/elS; else return false; elSnap(); },
+    draw(g){
+      const e=eyeH(), xo=elW-EL.d*elS, ey=G5-e*elS, top=G5-EL.H*elS, E0=[xo,ey], Tp=[elW,top], A=EL.mode==="A";
+      ground(g,0,VW);
+      g.appendChild(E("rect",{x:elW,y:top,width:elBW,height:G5-top,fill:"#CBD5E1",stroke:"#64748B","stroke-width":1.6}));
+      for(let y=top+10;y<G5-16;y+=22)for(let c=0;c<2;c++)g.appendChild(E("rect",{x:elW+12+c*28,y,width:18,height:12,fill:"#93C5FD",opacity:.8}));
+      // person (to scale)
+      const pc="#334155"; sseg(g,[xo-3,G5],[xo,G5-0.85*elS],pc,2); sseg(g,[xo+3,G5],[xo,G5-0.85*elS],pc,2); sseg(g,[xo,G5-0.85*elS],[xo,G5-1.45*elS],pc,2.2);
+      g.appendChild(E("circle",{cx:xo,cy:G5-1.65*elS,r:2.6,fill:pc}));
+      sseg(g,E0,[elW,ey],COL.adj,3.4,"9 6"); sseg(g,[elW-2,ey],[elW-2,top],A?UNK:COL.opp,4.6); sseg(g,E0,Tp,COL.hyp,3);
+      rightMark(g,[elW-2,ey],[-1,0],[0,-1],12);
+      arcLab(g,E0,52,0,EL.th,THC,"rgba(234,88,12,.15)");
+      const lp=PT(E0,62,EL.th/2); stext(g,[lp[0]+4,lp[1]-(EL.th<20?8:0)],"θ = "+(A?EL.th+"°":dg(EL.th)),"sm",A?THT:UNK,"start");
+      sideLab(g,E0,Tp,[elW,ey+40],"line of sight",TXT.hyp,"xs");
+      dimH(g,xo,elW,G5+22,"d = "+EL.d+" m",TXT.adj);
+      stext(g,[elW-10,(ey+top)/2],"x = "+num(EL.H-e,1)+" m","sm",A?UNK:TXT.opp,"end");
+      dimV(g,elW+elBW+14,G5,top,A?UNK:"#334155"); stext(g,[elW+elBW+22,(G5+top)/2-10*FS],"H","sm",A?UNK:"#334155","start"); stext(g,[elW+elBW+22,(G5+top)/2+10*FS],num(EL.H,1)+" m","sm",A?UNK:"#334155","start");
+      if(e)stext(g,[xo-8,ey-10],"eye 1.6 m","xs","#475569","end");
+      sgrab(g,[xo,G5-8],"obs","var(--ink)"); sgrab(g,[elW+elBW/2,top],"top","var(--ink)");
+    },
+    info(){ const e=eyeH(), A=EL.mode==="A", x=EL.H-e;
+      return {given:A?[[COL.adj,"Distance d","horizontal, eye to building",EL.d+" m"],[THC,"Angle of elevation θ","measured up from horizontal",EL.th+"°"]]:[[COL.adj,"Distance d","horizontal",EL.d+" m"],["#334155","Height H","of the building",EL.H+" m"]],
+        unk:A?[[UNK,"Height H","x + eye height",u5(EL.H,"m",2)]]:[[UNK,"Angle of elevation θ","",dg(EL.th)]],
+        eq:A?`tan θ = opp / adj\ntan ${EL.th}° = x / ${EL.d}\nx = ${EL.d} · tan ${EL.th}° ≈ ${num(x,2)} m${e?`\nH = x + ${e} ≈ ${num(EL.H,2)} m`:""}`
+            :`opp = H − ${e} = ${num(x,1)} m,  adj = d = ${EL.d} m\ntan θ = ${num(x,1)} / ${EL.d} ≈ ${num(x/EL.d,4)}\nθ = tan⁻¹(${num(x/EL.d,4)}) ≈ ${dg(EL.th)}`,
+        text:`<p>The <span class="term">angle of elevation</span> is measured <b>up</b> from a horizontal line to the line of sight. The horizontal distance and the height above eye level are the two legs, so tangent connects them.</p><p>Surveyors and students with a clinometer measure from their eye, not the ground — so add the eye height back at the end. Turn it off to treat the observer as a point on the ground.</p>`,
+        tr:`<p>1. Keep θ = 35° and walk toward the building. Does the height you compute change? Why not?</p><p>2. Switch to “Given d & height”. Stand 20 m away from a 21.6 m building. What angle do you get, and why is it 45°?</p>`}; }
+  },
+  depr:{nm:"Depression", s:DP, snap:dpSnap, modes:[["A","Given h & θ → distance"],["B","Given h & distance → θ"]],
+    title:()=>"Angle of depression · θ = "+dg(DP.th),
+    drag(id,p){ if(id==="boat")DP.d=(p[0]-dpX)/dpS; else if(id==="top")DP.h=(G5-p[1])/dpS; else return false; dpSnap(); },
+    draw(g){
+      const A=DP.mode==="A", top=G5-DP.h*dpS, T0=[dpX,top], Bt=[dpX+DP.d*dpS,G5], cliffY=G5-0.45*DP.h*dpS;
+      g.appendChild(E("rect",{x:0,y:G5,width:VW,height:VH-G5,fill:"#CFE8F7"})); sseg(g,[0,G5],[VW,G5],"#0284C7",2);
+      g.appendChild(E("path",{d:`M0 ${G5}L0 ${cliffY}L150 ${cliffY}L162 ${G5}Z`,fill:"#D6CBB5",stroke:"#A8977A","stroke-width":1.6}));
+      g.appendChild(E("path",{d:`M${dpX-14} ${cliffY}L${dpX-8} ${top+12}L${dpX+8} ${top+12}L${dpX+14} ${cliffY}Z`,fill:"#FFFFFF",stroke:"#64748B","stroke-width":1.6}));
+      g.appendChild(E("rect",{x:dpX-10,y:top,width:20,height:12,fill:"#FDE68A",stroke:"#64748B","stroke-width":1.4}));
+      sseg(g,T0,[dpX,G5],COL.opp,3.4,"8 5"); sseg(g,[dpX,G5],Bt,A?UNK:COL.adj,4.4); sseg(g,T0,Bt,COL.hyp,3);
+      rightMark(g,[dpX,G5],[0,-1],[1,0],12);
+      sseg(g,T0,[Math.min(VW-6,Bt[0]+60),top],"#64748B",1.8,"6 5"); stext(g,[Math.min(VW-8,Bt[0]+60),top-12],"horizontal","xs","#64748B","end");
+      arcLab(g,T0,60,-DP.th,0,THC,"rgba(234,88,12,.15)");
+      const lp=PT(T0,72,-DP.th/2); stext(g,[lp[0]+2,lp[1]+(DP.th<20?8:0)],"depression "+(A?DP.th+"°":dg(DP.th)),"sm",A?THT:UNK,"start");
+      arcLab(g,Bt,56,180-DP.th,180,COC,"rgba(5,150,105,.14)");
+      const bp=PT(Bt,66,180-DP.th/2); stext(g,[bp[0]-2,bp[1]-(DP.th<20?8:0)],"elevation "+(A?DP.th+"°":dg(DP.th)),"sm",COT,"end");
+      // boat
+      g.appendChild(E("path",{d:`M${Bt[0]-16} ${G5-8}L${Bt[0]+16} ${G5-8}L${Bt[0]+10} ${G5}L${Bt[0]-10} ${G5}Z`,fill:"#7C2D12"}));
+      g.appendChild(E("path",{d:`M${Bt[0]} ${G5-9}L${Bt[0]} ${G5-30}L${Bt[0]+12} ${G5-10}Z`,fill:"#FFFFFF",stroke:"#7C2D12","stroke-width":1.2}));
+      dimH(g,dpX,Bt[0],G5+22,"d = "+num(DP.d,1)+" m",A?UNK:TXT.adj);
+      stext(g,[dpX+10,(top+G5)/2],"h = "+DP.h+" m","sm",TXT.opp,"start");
+      sgrab(g,T0,"top","var(--ink)"); sgrab(g,[Bt[0],G5-6],"boat","var(--ink)");
+    },
+    info(){ const A=DP.mode==="A";
+      return {given:A?[[COL.opp,"Height h","top of lighthouse above water",DP.h+" m"],[THC,"Angle of depression θ","measured down from horizontal",DP.th+"°"]]:[[COL.opp,"Height h","",DP.h+" m"],[COL.adj,"Distance d","base to boat",DP.d+" m"]],
+        unk:A?[[UNK,"Distance d","base of lighthouse to boat",u5(DP.d,"m",2)]]:[[UNK,"Angle of depression θ","",dg(DP.th)]],
+        eq:A?`angle at the boat = angle of depression = ${DP.th}°\ntan ${DP.th}° = ${DP.h} / d      ← d is in the denominator\nd = ${DP.h} / tan ${DP.th}° ≈ ${num(DP.d,2)} m`
+            :`tan θ = h / d = ${DP.h} / ${DP.d} ≈ ${num(DP.h/DP.d,4)}\nθ = tan⁻¹(${num(DP.h/DP.d,4)}) ≈ ${dg(DP.th)}`,
+        text:`<p>The <span class="term">angle of depression</span> is measured <b>down</b> from the horizontal at the top. That horizontal is parallel to the water, so the line of sight is a transversal and the angle of depression equals the angle of elevation from the boat (<b>alternate interior angles</b>).</p><p>That is why you can place θ inside the triangle, at the boat, and use tan θ = h/d.</p>`,
+        tr:`<p>1. Drag the boat closer. Does the angle of depression get bigger or smaller?</p><p>2. In “Given h & θ” mode, set θ = 45°. How far away is the boat compared with the height h?</p>`}; }
+  },
+  ramp:{nm:"Ramp", s:RP, snap:rpSnap, modes:[["B","Given rise & run → θ"],["A","Given rise & θ → run, length"]],
+    title:()=>"Wheelchair ramp · θ = "+dg(RP.th),
+    drag(id,p){ if(id!=="end")return false; RP.run=(p[0]-rpX)/rpS; RP.rise=(G5-p[1])/rpS; rpSnap(); },
+    draw(g){
+      const A=RP.mode==="A", A0=[rpX,G5], Ex=[rpX+RP.run*rpS,G5-RP.rise*rpS], Fx=[Ex[0],G5], L=Math.hypot(RP.rise,RP.run), ok=RP.run/RP.rise>=12-1e-9;
+      ground(g,0,VW);
+      g.appendChild(E("rect",{x:Ex[0],y:Ex[1],width:Math.max(0,VW-Ex[0]),height:G5-Ex[1],fill:"#CBD5E1",stroke:"#64748B","stroke-width":1.4}));
+      g.appendChild(E("rect",{x:Ex[0]+26,y:Ex[1]-54,width:28,height:54,fill:"#A16207",opacity:.75}));
+      g.appendChild(E("polygon",{points:[A0,Ex,Fx].map(p=>p.join(",")).join(" "),fill:"#E2E8F0"}));
+      const ada=[rpX+RP.run*rpS,G5-RP.run*rpS/12]; sseg(g,A0,ada,"#64748B",1.8,"6 5"); stext(g,[ada[0]-4,ada[1]-12],"1:12 limit","xs","#64748B","end");
+      sseg(g,A0,Fx,A?UNK:COL.adj,4.4); sseg(g,Fx,Ex,COL.opp,4.4); sseg(g,A0,Ex,A?UNK:COL.hyp,4);
+      rightMark(g,Fx,[-1,0],[0,-1],10);
+      arcLab(g,A0,96,0,RP.th,THC,"rgba(234,88,12,.15)");
+      { const lx=A0[0]+102; stext(g,[lx,G5-(lx-A0[0])*Math.tan(RP.th*D2R)-16*FS],"θ = "+(A?num(RP.th,1)+"°":dg(RP.th)),"sm",A?THT:UNK,"start"); }
+      { const q=add(A0,mul(sub(Ex,A0),.5)); stext(g,[q[0]+20,q[1]-24*FS],"ramp L = "+num(L,2)+" ft","sm",A?UNK:TXT.hyp,"middle"); }
+      dimH(g,rpX,Fx[0],G5+22,"run = "+num(RP.run,A?2:1)+" ft",A?UNK:TXT.adj);
+      { const far=Fx[0]+170>VW; stext(g,far?[Fx[0]-8,Ex[1]-30*FS]:[Fx[0]+62,Ex[1]-14],"rise "+num(RP.rise,2)+" ft","sm",TXT.opp,far?"end":"start"); }
+      infoBox(g,12,12,["slope = 1 : "+num(RP.run/RP.rise,1), ok?"meets ADA (1:12 or flatter)":"too steep for ADA"],ok?COT:UNK);
+      sgrab(g,Ex,"end","var(--ink)");
+    },
+    info(){ const A=RP.mode==="A", L=Math.hypot(RP.rise,RP.run);
+      return {given:A?[[COL.opp,"Rise","vertical height",num(RP.rise,2)+" ft"],[THC,"Angle θ","with the ground",num(RP.th,1)+"°"]]:[[COL.opp,"Rise","vertical height",num(RP.rise,2)+" ft"],[COL.adj,"Run","horizontal distance",num(RP.run,1)+" ft"]],
+        unk:A?[[UNK,"Run","",u5(RP.run,"ft",2)],[UNK,"Ramp length L","",u5(L,"ft",2)]]:[[UNK,"Angle θ","",dg(RP.th)],[UNK,"Ramp length L","",u5(L,"ft",2)]],
+        eq:A?`tan ${num(RP.th,1)}° = ${num(RP.rise,2)} / run   →  run = ${num(RP.rise,2)} / tan ${num(RP.th,1)}° ≈ ${num(RP.run,2)} ft\nsin ${num(RP.th,1)}° = ${num(RP.rise,2)} / L   →  L = ${num(RP.rise,2)} / sin ${num(RP.th,1)}° ≈ ${num(L,2)} ft`
+            :`tan θ = rise / run = ${num(RP.rise,2)} / ${num(RP.run,1)}\nθ = tan⁻¹(${num(RP.rise/RP.run,4)}) ≈ ${dg(RP.th)}\nL = √(${num(RP.rise,2)}² + ${num(RP.run,1)}²) ≈ ${num(L,2)} ft`,
+        text:`<p>Accessibility guidelines (ADA) allow a ramp slope of at most <b>1 : 12</b> — one unit of rise for every 12 units of run. That means tan θ ≤ 1/12, so θ ≤ tan<sup>−1</sup>(1/12) ≈ <b>4.76°</b>. The dashed line shows the limit.</p><p>Small angles make long ramps: rising 2 ft needs at least 24 ft of run.</p>`,
+        tr:`<p>1. Make the rise 2.5 ft. What is the shortest legal run? Drag until the panel says it meets ADA.</p><p>2. In “Given rise & θ”, set θ = 5°. Is that ramp legal? How much longer would it be at 4°?</p>`}; }
+  },
+  ladder:{nm:"Ladder", s:LD, snap:ldSnap, modes:[["B","Given L & foot → θ"],["A","Given L & θ → height"]],
+    title:()=>"Ladder against a wall · θ = "+dg(LD.th),
+    drag(id,p){ if(id==="foot")LD.f=(ldW-p[0])/ldS; else if(id==="top"){ const h=clamp((G5-p[1])/ldS,LD.L*0.5,LD.L-0.01); LD.f=Math.sqrt(LD.L*LD.L-h*h); } else return false; ldSnap(); },
+    draw(g){
+      const A=LD.mode==="A", h=Math.sqrt(LD.L*LD.L-LD.f*LD.f), F=[ldW-LD.f*ldS,G5], Tp=[ldW,G5-h*ldS], ok=LD.th>=70&&LD.th<=80;
+      ground(g,0,VW);
+      g.appendChild(E("rect",{x:ldW,y:20,width:44,height:G5-20,fill:"#E2E8F0",stroke:"#94A3B8","stroke-width":1.4}));
+      for(let y=40;y<G5;y+=20)sseg(g,[ldW,y],[ldW+44,y],"#CBD5E1",1);
+      sseg(g,F,[ldW,G5],A?UNK:COL.adj,4.4); sseg(g,[ldW-2,G5],[ldW-2,Tp[1]],A?UNK:COL.opp,4.4);
+      const d=unit(sub(Tp,F)), n=[-d[1]*6,d[0]*6];
+      for(let i=1;i<LD.L;i++){ const p=add(F,mul(d,i*ldS)); sseg(g,add(p,n),sub(p,n),"#A78BFA",2); }
+      sseg(g,add(F,n),add(Tp,n),COL.hyp,3); sseg(g,sub(F,n),sub(Tp,n),COL.hyp,3);
+      rightMark(g,[ldW-2,G5],[-1,0],[0,-1],12);
+      arcLab(g,F,46,0,LD.th,THC,"rgba(234,88,12,.15)");
+      const lp=PT(F,56,LD.th/2); stext(g,[lp[0]+6,lp[1]],"θ = "+(A?LD.th+"°":dg(LD.th)),"sm",A?THT:UNK,"start");
+      { const m=mul(add(F,Tp),.5); stext(g,[m[0]-16,m[1]-30],"L = "+LD.L+" ft","sm",TXT.hyp,"end"); }
+      dimH(g,F[0],ldW,G5+22,"foot "+num(LD.f,A?2:1)+" ft",A?UNK:TXT.adj);
+      stext(g,[ldW-12,(Tp[1]+G5)/2],"h = "+num(h,2)+" ft","sm",UNK,"end");
+      infoBox(g,12,12,["4-to-1 rule: θ ≈ 75°", ok?"safe angle":LD.th<70?"foot too far out":"too steep"],ok?COT:UNK);
+      sgrab(g,F,"foot","var(--ink)"); sgrab(g,Tp,"top","var(--ink)");
+    },
+    info(){ const A=LD.mode==="A", h=Math.sqrt(LD.L*LD.L-LD.f*LD.f);
+      return {given:A?[[COL.hyp,"Ladder length L","hypotenuse",LD.L+" ft"],[THC,"Angle θ","with the ground",LD.th+"°"]]:[[COL.hyp,"Ladder length L","hypotenuse",LD.L+" ft"],[COL.adj,"Foot distance","from the wall",num(LD.f,1)+" ft"]],
+        unk:A?[[UNK,"Height reached h","",u5(h,"ft",2)],[UNK,"Foot distance","",u5(LD.f,"ft",2)]]:[[UNK,"Angle θ","",dg(LD.th)],[UNK,"Height reached h","",u5(h,"ft",2)]],
+        eq:A?`sin ${LD.th}° = h / ${LD.L}  →  h = ${LD.L} · sin ${LD.th}° ≈ ${num(h,2)} ft\ncos ${LD.th}° = foot / ${LD.L}  →  foot = ${LD.L} · cos ${LD.th}° ≈ ${num(LD.f,2)} ft`
+            :`cos θ = adj / hyp = ${num(LD.f,1)} / ${LD.L} ≈ ${num(LD.f/LD.L,4)}\nθ = cos⁻¹(${num(LD.f/LD.L,4)}) ≈ ${dg(LD.th)}\nh = √(${LD.L}² − ${num(LD.f,1)}²) ≈ ${num(h,2)} ft`,
+        text:`<p>Safety guides use the <b>4-to-1 rule</b>: put the foot 1 ft out for every 4 ft of height up the wall to the top support. Then cos θ ≈ 1/4, so θ = cos<sup>−1</sup>(1/4) ≈ <b>75.5°</b>.</p><p>The ladder is the hypotenuse — it never changes length as you slide it, so the height and the foot distance trade off.</p>`,
+        tr:`<p>1. With a 20 ft ladder, where should the foot go for the 4-to-1 rule? Check the angle.</p><p>2. Switch to “Given L & θ” and set θ = 75°. How high does a 24 ft ladder reach? Can it reach a 25 ft gutter?</p>`}; }
+  },
+  bear:{nm:"Bearings", s:BR, snap:brSnap, modes:[["A","Given distance & bearing → N/E"],["B","Given N/E → distance & bearing"]],
+    title:()=>"Navigation · bearing "+b3(BR.b)+" ("+qBear()+")",
+    drag(id,p){ if(id!=="ship")return false; BR.E=(p[0]-BP[0])/brS; BR.N=(BP[1]-p[1])/brS; brSnap(); },
+    draw(g){
+      const A=BR.mode==="A", S=[BP[0]+BR.E*brS,BP[1]-BR.N*brS], K=[BP[0],S[1]], al=brRef();
+      const gl=E("g",{}); for(let x=BP[0]%brS;x<=VW;x+=brS)gl.appendChild(E("line",{x1:x,y1:0,x2:x,y2:VH,style:"stroke:var(--grid)","stroke-width":1}));
+      for(let y=BP[1]%brS;y<=VH;y+=brS)gl.appendChild(E("line",{x1:0,y1:y,x2:VW,y2:y,style:"stroke:var(--grid)","stroke-width":1})); g.appendChild(gl);
+      sseg(g,[BP[0],8],[BP[0],VH-8],"#8FA3C8",1.6); sseg(g,[8,BP[1]],[VW-8,BP[1]],"#8FA3C8",1.6);
+      arrowHead(g,[BP[0],6],[0,-1],"#475569",12);
+      stext(g,[BP[0]+14,16],"N","mk","#334155"); stext(g,[VW-14,BP[1]-16],"E","mk","#334155"); stext(g,[BP[0]+14,VH-14],"S","mk","#334155"); stext(g,[14,BP[1]-16],"W","mk","#334155");
+      const O=[(BP[0]+K[0]+S[0])/3,(BP[1]+K[1]+S[1])/3];
+      if(Math.abs(BR.N)>0.05){ sseg(g,BP,K,A?UNK:COL.adj,4.4); }
+      if(Math.abs(BR.E)>0.05){ sseg(g,K,S,A?UNK:COL.opp,4.4); }
+      if(Math.abs(BR.E)>0.2&&Math.abs(BR.N)>0.2)rightMark(g,K,unit(sub(BP,K)),unit(sub(S,K)),11);
+      sseg(g,BP,S,COL.hyp,3.4);
+      const m0=90, m1=90-BR.b; spath(g,pathD(arcPts(BP,40,m0,m1,1)),THC,2.6); const e=PT(BP,40,m1), pv=PT(BP,40,m1+4); arrowHead(g,e,unit(sub(e,pv)),THC,10);
+      const bl=PT(BP,58,90-BR.b/2); stext(g,bl,"β = "+(A?b3(BR.b):dg(BR.b)),"sm",A?THT:UNK,BR.b<180?"start":"end");
+      if(!(BR.E>=0&&BR.N>=0)&&Math.abs(BR.E)>0.05&&Math.abs(BR.N)>0.05){ const v=BR.N>=0?90:270, mp=norm(90-BR.b), dl=((mp-v+540)%360)-180;
+        arcLab(g,BP,72,v,v+dl,COC,"rgba(5,150,105,.14)"); stext(g,PT(BP,90,v+dl/2),"α = "+num(al,1)+"°","xs",COT); }
+      if(Math.abs(BR.N)>0.05)sideLab(g,BP,K,O,num(Math.abs(BR.N),2)+" km "+(BR.N>0?"N":"S"),A?UNK:TXT.adj);
+      if(Math.abs(BR.E)>0.05)sideLab(g,K,S,O,num(Math.abs(BR.E),2)+" km "+(BR.E>0?"E":"W"),A?UNK:TXT.opp);
+      { const q=add(BP,mul(sub(S,BP),.78)), dd=unit(sub(S,BP)); let n=[-dd[1],dd[0]]; const ref=Math.abs(BR.E)>0.05&&Math.abs(BR.N)>0.05?O:add(BP,[BR.N*9,BR.E*9]);
+        if(n[0]*(q[0]-ref[0])+n[1]*(q[1]-ref[1])<0)n=mul(n,-1); smartLabel(g,q,n,"d = "+num(BR.d,2)+" km",A?TXT.hyp:UNK,"sm"); }
+      g.appendChild(E("rect",{x:BP[0]-6,y:BP[1]-6,width:12,height:12,fill:"#0F172A"})); stext(g,[BP[0]-10,BP[1]+16],"port","xs","#334155","end");
+      g.appendChild(E("path",{d:`M${S[0]-11} ${S[1]+2}L${S[0]+11} ${S[1]+2}L${S[0]+7} ${S[1]+8}L${S[0]-7} ${S[1]+8}Z`,fill:"#7C2D12"}));
+      sgrab(g,S,"ship","var(--ink)");
+    },
+    info(){ const A=BR.mode==="A", al=brRef(), ns=BR.N>=0?"north":"south", ew=BR.E>=0?"east":"west";
+      const conv= BR.E>=0&&BR.N>=0? `β = α` : BR.E>=0? `β = 180° − α` : BR.N<0? `β = 180° + α` : `β = 360° − α`;
+      return {given:A?[[COL.hyp,"Distance d","straight-line from port",num(BR.d,1)+" km"],[THC,"Bearing β","clockwise from north",b3(BR.b)]]:[[COL.adj,"North–south","",num(Math.abs(BR.N),1)+" km "+ns],[COL.opp,"East–west","",num(Math.abs(BR.E),1)+" km "+ew]],
+        unk:A?[[UNK,"North–south leg","",u5(Math.abs(BR.N),"km "+ns,2)],[UNK,"East–west leg","",u5(Math.abs(BR.E),"km "+ew,2)]]:[[UNK,"Distance d","",u5(BR.d,"km",2)],[UNK,"Bearing β","= "+qBear(),b3(BR.b)+" ("+dg(BR.b)+")"]],
+        eq:A?`reference angle from the N–S line: α = ${num(al,1)}°\nN–S leg = d · cos α = ${num(BR.d,1)} · cos ${num(al,1)}° ≈ ${num(Math.abs(BR.N),2)} km ${ns}\nE–W leg = d · sin α = ${num(BR.d,1)} · sin ${num(al,1)}° ≈ ${num(Math.abs(BR.E),2)} km ${ew}`
+            :`d = √(${num(Math.abs(BR.E),1)}² + ${num(Math.abs(BR.N),1)}²) ≈ ${num(BR.d,2)} km\nα = tan⁻¹(E–W / N–S) = tan⁻¹(${num(Math.abs(BR.E),1)}/${num(Math.abs(BR.N),1)}) ≈ ${num(al,1)}°\n${conv} ≈ ${dg(BR.b)}  →  bearing ${b3(BR.b)}, or ${qBear()}`,
+        text:`<p>A <span class="term">true bearing</span> is measured <b>clockwise from north</b> and written with three digits (045°, 210°). A <b>quadrant bearing</b> like N 30° E starts at north or south and turns toward east or west.</p><p>Drop a perpendicular from the ship to the north–south line and you get a right triangle: the distance sailed is the hypotenuse, and the reference angle α sits at the port next to the N–S leg — so N–S = d cos α and E–W = d sin α.</p>`,
+        tr:`<p>1. Sail 6 km on bearing 120°. Is the ship north or south of port? Predict the quadrant bearing first.</p><p>2. Switch to “Given N/E” and place the ship 3 km west and 4 km south. What is the bearing back to port from the ship?</p>`}; }
+  }
+};
+const SCN=["elev","depr","ramp","ladder","bear"];
+const S5={sc:"elev"};
+const M5={
+  tab:"Applications", lesson:"G-SRT.C.8 · G-MG.A.1", accent:"var(--lavender)",
+  title:()=>SC[S5.sc].title(),
+  bar(){
+    segBtns(SCN.map(k=>[k,SC[k].nm]),S5.sc,k=>{S5.sc=k;render();},"Scene");
+    const sc=SC[S5.sc]; segBtns(sc.modes,sc.s.mode,k=>{sc.s.mode=k;sc.snap();render();},"What is given");
+    if(S5.sc==="elev")chk("Eye height 1.6 m",EL.eye,v=>{EL.eye=v;elSnap();update();});
+    if(S5.sc==="ladder")islider("Ladder L",10,28,LD.L,v=>v+" ft",v=>{LD.L=v;ldSnap();update();});
+  },
+  drag(id,p){ return SC[S5.sc].drag(id,p); },
+  draw(){ const g=gg(); SC[S5.sc].draw(g); },
+  panel(){
+    const I=SC[S5.sc].info();
+    side.innerHTML=`<div class="panel"><h3>Given (drag to change)</h3>${I.given.map(r=>rel(...r)).join("")}</div>
+    <div class="panel"><h3>Solved live</h3>${I.unk.map(r=>rel(...r)).join("")}<div class="pad"><div class="eq">${I.eq}</div></div></div>
+    <div class="panel"><h3>The idea</h3><div class="pad">${I.text}</div></div>`+tryPanel(I.tr);
+  }
+};
+SCN.forEach(k=>SC[k].snap());
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+const TRIPLES=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29],[9,40,41],[6,8,10],[9,12,15]];
+const PRIM=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29],[12,35,37]];
+const KINDS=[["mix","Mixed practice"],["side","Find a missing side"],["angle","Find a missing angle"],["six","Evaluate the six ratios"],["rc","Reciprocals & cofunctions"],["word","Word problems"]];
+const tenth=(label,ans,unitTxt)=>({label,ph:"e.g. 12.3",check(s){ const a=parseAns(s); if(!isFinite(a.v))return "unread"; const d=Math.abs(a.v-ans); return d<=Math.max(0.051,0.002*Math.abs(ans))?"ok":d<=Math.max(0.6,0.02*Math.abs(ans))?"close":"bad"; }});
+const exactF=(label,ans)=>({label,ph:"e.g. 3/5 or 2√13/13",check(s){ const a=parseAns(s); if(!isFinite(a.v))return "unread"; const d=Math.abs(a.v-ans); return d<=6e-4?"ok":d<=6e-3?"close":"bad"; }});
+const intF=(label,ans)=>({label,ph:"e.g. 62",check(s){ const a=parseAns(s); if(!isFinite(a.v))return "unread"; return Math.abs(a.v-ans)<0.01?"ok":"bad"; }});
+const CLOSE10="Round to the nearest tenth — your answer is close, so check your rounding or keep more decimals until the end.";
+const CLOSEX="Give the exact fraction (like 3/5 or 2√13/13) or a decimal to 3 places.";
+function figTri(BC,AC){ return {BC,AC,lab:{},at:null}; }
+const GEN={
+  side(){
+    const th=rnd(15,75), at=pick(["A","B"]), known=pick(ROLES), find=pick(ROLES.filter(r=>r!==known)), K=rnd(4,40), t=th*D2R;
+    const h= known==="hyp"?K : known==="opp"?K/Math.sin(t) : K/Math.cos(t), sd={opp:h*Math.sin(t),adj:h*Math.cos(t),hyp:h}, sg=segMap(at), ans=sd[find];
+    const f=pickFn(known,find), xTop=FN[f][0]===find;
+    const F=figTri(at==="A"?sd.opp:sd.adj, at==="A"?sd.adj:sd.opp); F.at=at; F.ang=th+"°";
+    F.lab[sg[known]]={t:String(K),c:COL.adj,tc:TXT.adj}; F.lab[sg[find]]={t:"x",st:"x ≈ "+num(ans,2),c:UNK,tc:UNK};
+    return {kind:"side",fig:F,q:`In right △ABC, ∠C = 90° and m∠${at} = ${th}°. ${sg[known]} = ${K}. Find <b>x = ${sg[find]}</b> to the nearest tenth.`,
+      fields:[tenth("x",ans)], fmt:"Type a decimal to the nearest tenth, e.g. 8.6.", close:CLOSE10,
+      hint:`From ∠${at}, ${sg[known]} is the <b>${NAME[known]}</b> and x is the <b>${NAME[find]}</b>, so use <b>${f}</b> (${MN[f]}). ${xTop?`x is on top: x = ${K} · ${f} ${th}°.`:`x ends up in the denominator: x = ${K} ÷ ${f} ${th}°.`} Calculator in degree mode.`,
+      sol:`From ∠${at}: ${sg[known]} = ${NAME[known]}, ${sg[find]} = ${NAME[find]} → ${f} (${MN[f]})\n${f} ${th}° = ${xTop?"x":K} / ${xTop?K:"x"}\nx = ${xTop?K+" · "+f+" "+th+"°":K+" / "+f+" "+th+"°"} ≈ ${num(ans,3)}\nx ≈ ${ans.toFixed(1)}`};
+  },
+  angle(){
+    let at,pair,o,a,h,ans; do{ at=pick(["A","B"]); pair=pick(["oa","oh","ah"]);
+      if(pair==="oa"){o=rnd(2,20);a=rnd(2,20);h=Math.hypot(o,a);} else { h=rnd(5,30); const l=rnd(2,h-1); if(pair==="oh"){o=l;a=Math.sqrt(h*h-l*l);} else {a=l;o=Math.sqrt(h*h-l*l);} }
+      ans=Math.atan2(o,a)/D2R; }while(ans<8||ans>82);
+    const [r1,r2,f]=PAIR[pair], v={opp:o,adj:a,hyp:h}, sg=segMap(at);
+    const F=figTri(at==="A"?o:a, at==="A"?a:o); F.at=at; F.ang="θ"; F.angS="θ ≈ "+num(ans,1)+"°";
+    F.lab[sg[r1]]={t:String(v[r1]),c:COL.adj,tc:TXT.adj}; F.lab[sg[r2]]={t:String(v[r2]),c:COL.adj,tc:TXT.adj};
+    return {kind:"angle",fig:F,q:`In right △ABC, ∠C = 90°, ${sg[r1]} = ${v[r1]} and ${sg[r2]} = ${v[r2]}. Find <b>m∠${at}</b> to the nearest tenth of a degree.`,
+      fields:[tenth("m∠"+at+" (degrees)",ans)], fmt:"Type degrees to the nearest tenth, e.g. 36.9 (the ° sign is optional).", close:CLOSE10,
+      hint:`From ∠${at}, ${sg[r1]} is the <b>${NAME[r1]}</b> and ${sg[r2]} is the <b>${NAME[r2]}</b>. Use ${f}, then the inverse: m∠${at} = ${f}⁻¹(${v[r1]}/${v[r2]}).`,
+      sol:`From ∠${at}: ${sg[r1]} = ${NAME[r1]}, ${sg[r2]} = ${NAME[r2]} → ${f}\n${f} ${at} = ${v[r1]} / ${v[r2]}\nm∠${at} = ${f}⁻¹(${sFrac(v[r1],v[r2])}) ≈ ${num(ans,3)}°\nm∠${at} ≈ ${ans.toFixed(1)}°`};
+  },
+  six(){
+    const mode=rnd(0,2); let sq, hide=null;
+    if(mode===0){ const t=pick(TRIPLES), sw=Math.random()<.5; sq={BC:(sw?t[0]:t[1])**2,AC:(sw?t[1]:t[0])**2,AB:t[2]**2}; if(Math.random()<.4)hide=pick(["BC","AC","AB"]); }
+    else if(mode===1){ let p,q; do{p=rnd(1,7);q=rnd(1,7);}while(Number.isInteger(Math.sqrt(p*p+q*q))); sq={BC:p*p,AC:q*q,AB:p*p+q*q}; if(Math.random()<.5)hide="AB"; }
+    else { let l,hh; do{hh=rnd(3,9);l=rnd(1,hh-1);}while(Number.isInteger(Math.sqrt(hh*hh-l*l))); const sw=Math.random()<.5; sq=sw?{BC:l*l,AC:hh*hh-l*l,AB:hh*hh}:{BC:hh*hh-l*l,AC:l*l,AB:hh*hh}; if(Math.random()<.5)hide=sw?"AC":"BC"; }
+    const at=pick(["A","B"]), f=pick(FNS), sg=segMap(at), [nu,de]=FN[f], ans=Math.sqrt(sq[sg[nu]]/sq[sg[de]]), ex=radFrac(sq[sg[nu]],sq[sg[de]]);
+    const F=figTri(Math.sqrt(sq.BC),Math.sqrt(sq.AC)); F.at=at; F.ang=at; F.angS=at;
+    ["BC","AC","AB"].forEach(k=>{ F.lab[k]= k===hide? {t:"?",st:rootStr(sq[k]),c:UNK,tc:UNK} : {t:rootStr(sq[k]),c:"var(--graphite)",tc:"#334155"}; });
+    const shown=["BC","AC","AB"].filter(k=>k!==hide).map(k=>`${k} = ${rootStr(sq[k])}`).join(", ");
+    let py=""; if(hide){ py= hide==="AB"? `AB² = BC² + AC² = ${sq.BC} + ${sq.AC} = ${sq.AB} → AB = ${rootStr(sq.AB)}\n` : `${hide}² = AB² − ${hide==="BC"?"AC":"BC"}² = ${sq.AB} − ${sq[hide==="BC"?"AC":"BC"]} = ${sq[hide]} → ${hide} = ${rootStr(sq[hide])}\n`; }
+    return {kind:"six",fig:F,q:`In right △ABC, ∠C = 90° and ${shown}.${hide?` (Find ${hide} first.)`:""} Find <b>${f} ${at}</b>.`,
+      fields:[exactF(f+" "+at,ans)], fmt:"Exact answers like 3/5, 13/12, 2√13/13 (or 2sqrt(13)/13, 2/sqrt(13)) or a decimal to 3 places.", close:CLOSEX,
+      hint:`${hide?`First use the Pythagorean theorem to find ${hide}. `:""}From ∠${at}: opposite = ${sg.opp}, adjacent = ${sg.adj}, hypotenuse = AB. ${f} = ${nu}/${de}.`,
+      sol:`${py}From ∠${at}: opp = ${sg.opp} = ${rootStr(sq[sg.opp])}, adj = ${sg.adj} = ${rootStr(sq[sg.adj])}, hyp = AB = ${rootStr(sq.AB)}\n${f} ${at} = ${nu}/${de} = ${rootStr(sq[sg[nu]])}/${rootStr(sq[sg[de]])} = ${ex} ≈ ${f3(ans)}`};
+  },
+  rc(){
+    const sub=pick(["recip","coang","cotri"]);
+    if(sub==="recip"){
+      const t=pick(PRIM), sw=Math.random()<.5, R={opp:sw?t[0]:t[1],adj:sw?t[1]:t[0],hyp:t[2]}, f=pick(FNS), [nu,de,rc]=FN[f];
+      const given=sFrac(R[nu],R[de]), ans=R[de]/R[nu], ex=sFrac(R[de],R[nu]);
+      const F=figTri(R.opp,R.adj); F.at="A"; F.ang="θ"; F.angS="θ"; F.lab={BC:{t:"",st:String(R.opp),c:COL.opp,tc:TXT.opp},AC:{t:"",st:String(R.adj),c:COL.adj,tc:TXT.adj},AB:{t:"",st:String(R.hyp),c:COL.hyp,tc:TXT.hyp}};
+      return {kind:"rc",fig:F,q:`θ is an acute angle and <b>${f} θ = ${given}</b>. What is <b>${rc} θ</b>?`, fields:[exactF(rc+" θ",ans)],
+        fmt:"Type a fraction like 13/5 or a decimal to 3 places.", close:CLOSEX,
+        hint:`${rc} is the reciprocal of ${f}: ${rc} θ = 1 / ${f} θ. Flip the fraction.`, sol:`${rc} θ = 1 / ${f} θ = 1 ÷ ${given} = ${ex}\n(${f} = ${nu}/${de}, so ${rc} = ${de}/${nu})`};
+    }
+    if(sub==="coang"){
+      const a=rnd(5,85), pr=pick([["sin","cos"],["cos","sin"],["tan","cot"],["cot","tan"],["sec","csc"],["csc","sec"]]);
+      const F=figTri(Math.sin(a*D2R),Math.cos(a*D2R)); F.at="A"; F.ang=a+"°"; F.angS=a+"°"; F.angB="x°"; F.angBS=(90-a)+"°";
+      return {kind:"rc",fig:F,q:`Find x, with 0 &lt; x &lt; 90, so that <b>${pr[0]} ${a}° = ${pr[1]} x°</b>.`, fields:[intF("x",90-a)],
+        fmt:"Type a whole number of degrees.", close:"",
+        hint:`Cofunctions are equal for complementary angles: ${pr[0]} θ = ${pr[1]}(90° − θ). The two angles must add to 90°.`,
+        sol:`${pr[0]} θ = ${pr[1]}(90° − θ)\nx = 90 − ${a} = ${90-a}\ncheck: ${pr[0]} ${a}° ≈ ${f3(trigD(pr[0],a))},  ${pr[1]} ${90-a}° ≈ ${f3(trigD(pr[1],90-a))}`};
+    }
+    const t=pick(PRIM), sw=Math.random()<.5, BC=sw?t[0]:t[1], AC=sw?t[1]:t[0], AB=t[2];
+    const RA={opp:BC,adj:AC,hyp:AB}, RB={opp:AC,adj:BC,hyp:AB}, fA=pick(FNS), fB=pick(FNS);
+    const given=sFrac(RA[FN[fA][0]],RA[FN[fA][1]]), ans=fval(fB,RB), ex=sFrac(RB[FN[fB][0]],RB[FN[fB][1]]);
+    const F=figTri(BC,AC); F.at=null; F.lab={BC:{t:"",st:"BC = "+BC,c:"var(--graphite)",tc:"#334155"},AC:{t:"",st:"AC = "+AC,c:"var(--graphite)",tc:"#334155"},AB:{t:"",st:"AB = "+AB,c:"var(--graphite)",tc:"#334155"}};
+    const isCo=FN[fA][3]===fB;
+    return {kind:"rc",fig:F,q:`In right △ABC with ∠C = 90°, <b>${fA} A = ${given}</b>. Find <b>${fB} B</b>.`, fields:[exactF(fB+" B",ans)],
+      fmt:"Type a fraction like 5/13 or a decimal to 3 places.", close:CLOSEX,
+      hint:isCo?`∠A and ∠B are complementary, and ${fB} is the cofunction of ${fA}: ${fB} B = ${fA} A.`:`Build the triangle from ${fA} A = ${given} (use the Pythagorean theorem for the third side). From ∠B the opposite side is AC and the adjacent side is BC.`,
+      sol:`${fA} A = ${FN[fA][0]}/${FN[fA][1]} = ${given}  →  BC = ${BC}, AC = ${AC}, AB = ${AB}\nFrom ∠B: opp = AC = ${AC}, adj = BC = ${BC}, hyp = ${AB}\n${fB} B = ${FN[fB][0]}/${FN[fB][1]} = ${ex}${isCo?`\nShortcut: ${fB} B = ${fA}(90° − B) = ${fA} A (cofunctions)`:""}`};
+  },
+  word(){
+    const w=pick(["tree","light","ladder","foot","ramp","kite","ship"]); let o={};
+    if(w==="tree"){ const d=rnd(15,60), th=rnd(20,65), ans=d*Math.tan(th*D2R); const F=figTri(ans,d); F.at="A"; F.ang=th+"°"; F.lab={AC:{t:d+" m",c:COL.adj,tc:TXT.adj},BC:{t:"tree x",st:"x ≈ "+num(ans,1)+" m",c:UNK,tc:UNK}};
+      o={fig:F,ans,u:"m",q:`From a point on level ground ${d} m from the base of a tree, the angle of elevation to the top of the tree is ${th}°. How tall is the tree, to the nearest tenth of a meter?`,
+        hint:`The height is opposite the ${th}° angle and the ${d} m is adjacent, so use tangent: x = ${d} · tan ${th}°.`, sol:`tan ${th}° = x / ${d}\nx = ${d} · tan ${th}° ≈ ${num(ans,3)}\nThe tree is about ${ans.toFixed(1)} m tall.`}; }
+    else if(w==="light"){ const h=rnd(20,80), th=rnd(10,45), ans=h/Math.tan(th*D2R); const F=figTri(h,ans); F.at=null; F.depr=th+"°"; F.lab={BC:{t:"lighthouse "+h+" m",c:COL.opp,tc:TXT.opp},AC:{t:"x",st:"x ≈ "+num(ans,1)+" m",c:UNK,tc:UNK}};
+      o={fig:F,ans,u:"m",q:`From the top of a ${h} m lighthouse, the angle of depression to a boat is ${th}°. How far is the boat from the base of the lighthouse, to the nearest tenth of a meter?`,
+        hint:`The angle of depression equals the angle of elevation from the boat (alternate interior angles). Then tan ${th}° = ${h}/x — x is in the denominator, so x = ${h} ÷ tan ${th}°.`, sol:`angle at the boat = ${th}° (alternate interior angles)\ntan ${th}° = ${h} / x\nx = ${h} / tan ${th}° ≈ ${num(ans,3)}\nThe boat is about ${ans.toFixed(1)} m away.`}; }
+    else if(w==="ladder"||w==="foot"){ const L=rnd(12,30), th=rnd(60,80), hh=L*Math.sin(th*D2R), ff=L*Math.cos(th*D2R), up=w==="ladder", ans=up?hh:ff;
+      const F=figTri(hh,ff); F.at="A"; F.ang=th+"°"; F.lab={AB:{t:"ladder "+L+" ft",c:COL.hyp,tc:TXT.hyp}}; F.lab[up?"BC":"AC"]={t:"x",st:"x ≈ "+num(ans,1)+" ft",c:UNK,tc:UNK};
+      o={fig:F,ans,u:"ft",q:`A ${L} ft ladder leans against a vertical wall and makes a ${th}° angle with the level ground. ${up?"How high up the wall does the ladder reach":"How far is the foot of the ladder from the wall"}, to the nearest tenth of a foot?`,
+        hint:`The ladder is the hypotenuse. The ${up?"height on the wall is opposite":"distance along the ground is adjacent to"} the ${th}° angle, so use ${up?"sine":"cosine"}: x = ${L} · ${up?"sin":"cos"} ${th}°.`, sol:`${up?"sin":"cos"} ${th}° = x / ${L}\nx = ${L} · ${up?"sin":"cos"} ${th}° ≈ ${num(ans,3)}\nx ≈ ${ans.toFixed(1)} ft`}; }
+    else if(w==="ramp"){ const rise=pick([1,1.5,2,2.5,3]), run=rnd(12,40), ans=Math.atan2(rise,run)/D2R; const F=figTri(rise,run); F.at="A"; F.ang="θ"; F.angS="θ ≈ "+num(ans,1)+"°"; F.lab={BC:{t:"rise "+rise+" ft",c:COL.opp,tc:TXT.opp},AC:{t:"run "+run+" ft",c:COL.adj,tc:TXT.adj}};
+      o={fig:F,ans,u:"°",deg:true,q:`A wheelchair ramp rises ${rise} ft over a horizontal run of ${run} ft. What angle does the ramp make with the ground, to the nearest tenth of a degree?`,
+        hint:`Rise is opposite the angle and run is adjacent, so tan θ = ${rise}/${run}. Use the inverse: θ = tan⁻¹(${rise}/${run}).`, sol:`tan θ = ${rise} / ${run}\nθ = tan⁻¹(${num(rise/run,4)}) ≈ ${num(ans,3)}°\nθ ≈ ${ans.toFixed(1)}°   (${ans<=4.764?"meets":"steeper than"} the ADA 1:12 limit)`}; }
+    else if(w==="kite"){ const L=rnd(40,150), th=rnd(30,70), ans=L*Math.sin(th*D2R); const F=figTri(ans,L*Math.cos(th*D2R)); F.at="A"; F.ang=th+"°"; F.lab={AB:{t:"string "+L+" m",c:COL.hyp,tc:TXT.hyp},BC:{t:"x",st:"x ≈ "+num(ans,1)+" m",c:UNK,tc:UNK}};
+      o={fig:F,ans,u:"m",q:`A kite flies at the end of a straight ${L} m string that makes a ${th}° angle with the ground. Ignoring the height of the person, how high is the kite, to the nearest tenth of a meter?`,
+        hint:`The string is the hypotenuse and the height is opposite the ${th}° angle: x = ${L} · sin ${th}°.`, sol:`sin ${th}° = x / ${L}\nx = ${L} · sin ${th}° ≈ ${num(ans,3)}\nx ≈ ${ans.toFixed(1)} m`}; }
+    else { const d=rnd(8,60), b=rnd(15,75), east=Math.random()<.5, E1=d*Math.sin(b*D2R), N1=d*Math.cos(b*D2R), ans=east?E1:N1;
+      const F=figTri(N1,E1); F.at=null; F.north=String(b).padStart(3,"0")+"°"; F.lab={AB:{t:d+" km",c:COL.hyp,tc:TXT.hyp}}; F.lab[east?"AC":"BC"]={t:east?"east x":"north x",st:"x ≈ "+num(ans,1)+" km",c:UNK,tc:UNK};
+      o={fig:F,ans,u:"km",q:`A ship leaves port and sails ${d} km on a bearing of ${String(b).padStart(3,"0")}°. How far ${east?"east":"north"} of the port is the ship, to the nearest tenth of a kilometer?`,
+        hint:`The bearing ${b}° is measured from north, so it sits next to the north leg. ${east?"East is opposite that angle: x = "+d+" · sin "+b+"°.":"North is adjacent to that angle: x = "+d+" · cos "+b+"°."}`, sol:`angle between north and the course = ${b}°\n${east?"east = "+d+" · sin "+b+"°":"north = "+d+" · cos "+b+"°"} ≈ ${num(ans,3)}\nx ≈ ${ans.toFixed(1)} km`}; }
+    return {kind:"word",fig:o.fig,q:o.q,fields:[tenth(o.deg?"θ (degrees)":"x ("+o.u+")",o.ans)],fmt:"Type a decimal to the nearest tenth (units optional).",close:CLOSE10,hint:o.hint,sol:o.sol};
+  }
+};
+function genProblem(kind){ if(kind==="mix")kind=pick(["side","angle","six","rc","word"]); return GEN[kind](); }
+function drawFig(F,show){
+  const g=gg();
+  const U=Math.min(520/F.AC,290/F.BC), A=[350-F.AC*U/2,250+F.BC*U/2], C=[A[0]+F.AC*U,A[1]], B=[C[0],A[1]-F.BC*U];
+  const sides={}; for(const k in F.lab){ const L=F.lab[k]; sides[k]={c:L.c,tc:L.tc,w:4,t:show&&L.st?L.st:L.t}; }
+  const angA=F.at==="A"?{c:THC,tc:THT,fill:"rgba(234,88,12,.16)",t:show&&F.angS?F.angS:F.ang,r:36}:(F.at===null&&F.angB?null:{c:GRY,r:26});
+  let angB=F.at==="B"?{c:THC,tc:THT,fill:"rgba(234,88,12,.16)",t:show&&F.angS?F.angS:F.ang,r:36}:{c:GRY,r:24};
+  if(F.angB)angB={c:COC,tc:COT,fill:"rgba(5,150,105,.14)",t:show?F.angBS:F.angB,r:30};
+  if(F.depr||F.north){ drawRT(g,A,B,C,{sides,angA:{c:GRY,r:24},angB:{c:GRY,r:24}}); }
+  else drawRT(g,A,B,C,{sides,angA:angA||{c:GRY,r:24},angB});
+  const tA=angOf(A,B);
+  if(F.depr){ sseg(g,B,[Math.max(8,A[0]-20),B[1]],"#64748B",1.8,"6 5"); arcLab(g,B,54,180,180+tA,THC,"rgba(234,88,12,.16)");
+    const p=PT(B,66,180+tA/2); stext(g,[p[0]-4,p[1]+(tA<20?10:0)],"depression "+F.depr,"sm",THT,"end"); }
+  if(F.north){ const top=[A[0],Math.max(14,B[1]-30)]; sseg(g,A,top,"#64748B",1.8,"6 5"); arrowHead(g,top,[0,-1],"#64748B",10); stext(g,[top[0]-12,top[1]+4],"N","sm","#334155","end");
+    arcLab(g,A,50,tA,90,THC,"rgba(234,88,12,.16)"); const p=PT(A,64,(tA+90)/2); stext(g,[p[0]+2,p[1]],"bearing "+F.north,"sm",THT,"start"); }
+}
+const M6={
+  tab:"Challenge", lesson:"G-SRT.C.6–8 · F-TF · G-MG.A.1", accent:"var(--coral)",
+  title:()=>"Practice: "+({side:"find a missing side",angle:"find a missing angle",six:"evaluate a trig ratio",rc:"reciprocals & cofunctions",word:"word problem"}[M6.s.pr?M6.s.pr.kind:"side"]),
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  streakEl:null,
+  newProb(){ M6.s.pr=genProblem(M6.s.kind); M6.s.state="open"; M6.s.reveal=false; M6.s.tries=0; },
+  bar(){
+    btn("New problem",()=>{M6.newProb();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    KINDS.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=M6.s.kind; sel.onchange=()=>{M6.s.kind=sel.value;M6.newProb();render();}; bar.appendChild(sel);
+    M6.streakEl=spacer(""); M6.upStreak();
+  },
+  upStreak(){ if(M6.streakEl)M6.streakEl.textContent="Streak "+M6.s.streak+" · Best "+M6.s.best+" · Solved "+M6.s.solved; },
+  draw(){ if(!M6.s.pr)M6.newProb(); gridU(0,0,40); drawFig(M6.s.pr.fig,M6.s.state==="right"||M6.s.reveal); },
+  panel(full){
+    const pr=M6.s.pr;
+    if(!full&&document.getElementById("chk"))return;
+    side.innerHTML=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob" data-kind="${pr.kind}">${pr.q}</p></div>
+      <div class="ansrow">${pr.fields.map((f,i)=>`<div><label class="fld" for="ans${i}">${f.label}</label><input type="text" id="ans${i}" autocomplete="off" spellcheck="false" placeholder="${f.ph}"></div>`).join("")}</div>
+      <p class="fmt">${pr.fmt}</p>
+      <div class="fldwrap" style="margin:14px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button>
+        <button id="sol" class="ghost" type="button">Show solution</button>
+      </div><div id="fb6"></div><div style="height:4px"></div></div>
+      <div class="panel"><h3>How answers are checked</h3><div class="pad">
+      <p>Sides and angles: round to the <b>nearest tenth</b>. Ratios: give the exact value (3/5, 2√13/13 or 2/sqrt(13) all work) or a decimal to 3 places.</p>
+      <p>Get one right on the first try to grow your streak. A wrong answer resets it, gives you a hint, and lets you try again.</p></div></div>`;
+    const ins=pr.fields.map((_,i)=>document.getElementById("ans"+i));
+    const fb=document.getElementById("fb6");
+    const showSol=(good)=>{ fb.innerHTML=(good||"")+`<div class="fldwrap"><div class="eq">${pr.sol}</div></div>`; };
+    const redraw=()=>{ clear(); M6.draw(); };
+    const check=()=>{
+      if(M6.s.state==="right")return;
+      const res=pr.fields.map((f,i)=>f.check(ins[i].value));
+      if(res.some(r=>r==="unread")){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Use a number like 12.3, a fraction like 5/13, or a root like 2√13/13 or 2sqrt(13)/13.</div>`; return; }
+      if(res.every(r=>r==="ok")){
+        M6.s.state="right"; if(M6.s.tries===0&&!M6.s.reveal){ M6.s.streak++; M6.s.best=Math.max(M6.s.best,M6.s.streak); } M6.s.solved++; M6.upStreak();
+        redraw(); bTitle.textContent=M6.title();
+        showSol(`<div class="verdict good"><b>Correct!</b> ${M6.s.tries||M6.s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+M6.s.streak+"."} Compare your work, then press <b>New problem</b>.</div>`);
+        ins.forEach(x=>x.disabled=true);
+      } else {
+        M6.s.tries++; M6.s.streak=0; M6.upStreak();
+        const close=res.some(r=>r==="close")&&!res.some(r=>r==="bad");
+        fb.innerHTML=close&&pr.close? `<div class="verdict bad"><b>Close!</b> ${pr.close}</div>` : `<div class="verdict bad"><b>Not quite.</b> ${pr.hint}</div>`;
+      }
+    };
+    document.getElementById("chk").onclick=check;
+    ins.forEach(x=>x.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); }));
+    document.getElementById("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){M6.s.streak=0;M6.upStreak();} redraw(); bTitle.textContent=M6.title(); showSol(`<div class="verdict info"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+function setFS(){ FS=(window.innerWidth<=560)?1.5:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
+function update(){ setFS(); const M=MODS[cur]; bTitle.textContent=M.title(); cv.setAttribute("aria-label",M.tab+" — "+M.title()); clear(); M.draw(); M.panel(false); }
+function render(){
+  setFS(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M6&&!M6.s.pr)M6.newProb();
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  bar.innerHTML=""; M.bar();
+  clear(); M.draw(); M.panel(true);
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>
