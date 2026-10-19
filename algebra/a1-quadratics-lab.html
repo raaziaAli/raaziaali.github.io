@@ -1,0 +1,1326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quadratics Lab — Algebra 1 Unit 6</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M10 12Q32 92 54 12' stroke='%2300E5FF' stroke-width='6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='52' r='6' fill='%23FF3D8A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+    --curve:#2563EB;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-bottom:2px}
+  .chiprow button{font-family:var(--ui);font-size:13.5px;font-weight:600;cursor:pointer;
+    padding:8px 14px;border-radius:100px;background:rgba(255,255,255,.05);
+    border:1.5px solid var(--c);color:#E7E9FA;transition:.15s;display:flex;align-items:center;gap:8px}
+  .chiprow button::before{content:"";width:10px;height:10px;border-radius:10px;background:var(--c)}
+  .chiprow button:hover{background:rgba(255,255,255,.12)}
+  .chiprow button[aria-pressed="true"]{background:var(--c);color:#0A0A1F;font-weight:700}
+  .chiprow button[aria-pressed="true"]::before{background:rgba(10,10,31,.55)}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict.info{background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .verdict b{color:#fff}
+
+  /* ── drawing ── */
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── Quadratics Lab additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.chiprow button:focus-visible,.go:focus-visible,.ghost:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:42px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .axn{font-family:var(--mono);font-size:12px;font-weight:700;fill:#56658A;paint-order:stroke;stroke:#fff;stroke-width:4}
+  .big{font-family:var(--display);font-weight:600;font-size:17px;fill:#22314F}
+  @media (max-width:560px){ svg.canvas .sm{font-size:21px;stroke-width:5} svg.canvas .ax{font-size:16px} svg.canvas .axn{font-size:17px} svg.canvas .big{font-size:24px} }
+  table.tv{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13.5px;text-align:center}
+  table.tv th{font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.06em;color:var(--dim);padding:8px 4px;border-bottom:1px solid var(--edge)}
+  table.tv td{padding:6px 4px;border-bottom:1px solid rgba(196,181,253,.10);color:#fff}
+  table.tv td.d1{color:var(--yellow)} table.tv td.d2{color:var(--mint);font-weight:700}
+  table.tv td.lin{color:#FDBA74} table.tv td.sep,table.tv th.sep{border-left:1px solid var(--edge)}
+  table.tv tr.hl td{background:rgba(255,107,53,.16)}
+  .tvwrap{overflow-x:auto;padding:4px 12px 14px}
+  .stepl{list-style:none;margin:0;padding:6px 0}
+  .stepl li{padding:11px 20px;border-left:3px solid transparent;color:#CFCFEA;font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li b{color:#fff}
+  .stepl li .eq{margin:8px 0 2px}
+  .stepl li.wait{color:var(--dim);font-style:italic}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  .prob .pe{display:block;font-family:var(--mono);font-weight:700;font-size:16px;color:#fff;margin:10px 0 2px}
+  .fmt{font-size:13px;color:var(--dim);padding:6px 20px 0}
+  .formc{border-left-width:4px}
+  .formc .tag{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:2px}
+  .segp{display:flex;flex-wrap:wrap;gap:6px;padding:14px 20px 0}
+  .segp button{font-family:var(--ui);font-size:13.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:8px 13px;border-radius:100px;cursor:pointer}
+  .segp button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .segp button:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  @media (max-width:560px){
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+    .bar .spacer{margin-left:0;width:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Quadratics Lab</h1>
+    <div class="eyebrow">Algebra 1 · Unit 6 · Quadratic Functions</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Graph of a quadratic function"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every graph is live and every number is computed from the current function — drag a point or move a slider and the work follows. Vocabulary follows Common Core / Eureka Math (EngageNY) Algebra I, Module 4.
+    <div class="links"><a href="/algebra/">← Algebra courses</a><a href="/math/#algebra">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const isInt=v=>Math.abs(v-Math.round(v))<1e-9;
+const near=(a,b,e)=>Math.abs(a-b)<(e||1e-9);
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+function num(v,dp){ dp=(dp==null?1:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+function frac(v,maxD){
+  maxD=maxD||12;
+  for(let d=1;d<=maxD;d++){ const n=Math.round(v*d);
+    if(Math.abs(n/d-v)<1e-7){ const g=gcd(n,d), N=n/g, D=d/g; return D===1? minus(String(N===0?0:N)) : minus(N+"/"+D); } }
+  return null;
+}
+const fc=v=>frac(v)||num(v,2);                       // coefficient: exact fraction if simple
+function fq(v){ if(Math.abs(v*100-Math.round(v*100))<1e-6) return num(v,2); return frac(v)||num(v,2); } // coordinate
+const pv=(v,f)=>{ f=f||fc; return v<-1e-12? "("+f(v)+")" : f(v); };
+const unit=v=>{const l=Math.hypot(v[0],v[1])||1;return [v[0]/l,v[1]/l];};
+let snap=true, FS=1, cur=0;
+const snapV=(v,st)=>Math.round(v/st)*st;
+
+/* ── quadratic algebra ── */
+function Qv(a,h,k){ // from vertex form
+  const b=-2*a*h, c=a*h*h+k, D=b*b-4*a*c; let roots=[];
+  if(Math.abs(a)>1e-12){
+    const dd=-k/a;
+    if(dd>1e-9){ const s=Math.sqrt(dd); roots=[h-s,h+s]; }
+    else if(Math.abs(dd)<=1e-9) roots=[h];
+  }
+  return {a,b,c,h,k,D,roots,f:x=>a*(x-h)*(x-h)+k};
+}
+const Qs=(a,b,c)=>{ const h=-b/(2*a); return Qv(a,h,c-b*b/(4*a)); };
+function term(c,vp,first){
+  if(Math.abs(c)<1e-12) return "";
+  const neg=c<0, ab=Math.abs(c); let cs=fc(ab);
+  if(vp){ if(near(ab,1)) cs=""; else if(cs.indexOf("/")>=0) cs="("+cs+")"; }
+  const body=cs+vp;
+  return first? (neg?"−":"")+body : (neg?" − ":" + ")+body;
+}
+function stdStr(a,b,c,v){ v=v||"x"; let s=term(a,v+"²",true); s+=term(b,v,s===""); s+=term(c,"",s===""); return s||"0"; }
+function binom(r,v){ v=v||"x"; if(Math.abs(r)<1e-12) return v; return "("+v+(r>0?" − ":" + ")+fc(Math.abs(r))+")"; }
+function coefPre(a){ if(near(a,1))return ""; if(near(a,-1))return "−"; const s=fc(Math.abs(a)); return (a<0?"−":"")+(s.indexOf("/")>=0?"("+s+")":s); }
+function vtxStr(a,h,k,v){ v=v||"x"; const inner=Math.abs(h)<1e-12? v+"²" : binom(h,v)+"²"; let s=coefPre(a)+inner; if(Math.abs(k)>1e-12)s+=(k<0?" − ":" + ")+fc(Math.abs(k)); return s; }
+function linF(p,q){ const xs=(p===1?"":p===-1?"−":String(p))+"x"; if(q===0) return xs; return xs+(q>0?" + ":" − ")+Math.abs(q); }
+function factorInt(a,b,c){ // integers only: returns {g, fs:[[p,q],[r,s]]} meaning g(px+q)(rx+s)
+  if(![a,b,c].every(isInt)||Math.abs(a)<1e-12) return null;
+  a=Math.round(a); b=Math.round(b); c=Math.round(c);
+  let g=gcd(gcd(a,b),c); if(a<0)g=-g; const A=a/g,B=b/g,C=c/g;
+  if(C===0) return {g,A,B,C,fs:[[1,0],[A,B]]};
+  for(let p=1;p<=A;p++){ if(A%p)continue; const r=A/p;
+    for(let q=-Math.abs(C);q<=Math.abs(C);q++){ if(q===0||C%q)continue; const s=C/q; if(p*s+q*r===B) return {g,A,B,C,fs:[[p,q],[r,s]]}; } }
+  return null;
+}
+function facStr(F){
+  let coef=F.g, xs=0; const bins=[];
+  F.fs.forEach(([p,q])=>{ if(q===0){ xs++; coef*=p; } else bins.push(linF(p,q)); });
+  let pre=coefPre(coef)+(xs===0?"":xs===1?"x":"x²");
+  if(pre==="−"&&bins.length===0) pre="−1";
+  if(bins.length===2&&bins[0]===bins[1]) return pre+"("+bins[0]+")²";
+  return pre+bins.map(b=>"("+b+")").join("");
+}
+const rootsF=F=>{ const r=F.fs.map(([p,q])=>-q/p+0).sort((u,v)=>u-v); return r.filter((v,i)=>i===0||!near(v,r[i-1],1e-9)); };
+function facRootsStr(a,roots){ // a(x − r1)(x − r2) with fractions or decimals
+  const f=v=>{ const e=frac(v); return e? e : num(v,2); };
+  const b=r=>Math.abs(r)<1e-12?"x":"(x"+(r>0?" − ":" + ")+f(Math.abs(r))+")";
+  if(roots.length===1) return coefPre(a)+(Math.abs(roots[0])<1e-12?"x²":b(roots[0])+"²");
+  return coefPre(a)+b(roots[0])+b(roots[1]);
+}
+function factoredForm(q){
+  if(!q.roots.length) return null;
+  const F=factorInt(q.a,q.b,q.c); if(F) return facStr(F);
+  return facRootsStr(q.a,q.roots);
+}
+const allExact=rs=>rs.every(r=>frac(r)!==null);
+// worked factoring lines: [{why, eq}] (eq is an expression)
+function factorSteps(A,B,C){
+  const F=factorInt(A,B,C), out=[];
+  if(![A,B,C].every(isInt)) return {F:null,lines:[{why:"The coefficients aren't all integers, so factoring by hand isn't practical here.",eq:""}]};
+  if(!F){ const D=B*B-4*A*C;
+    out.push({why: D<0? `No pair of integers works. In fact b² − 4ac = ${num(D,2)} &lt; 0, so there are <b>no real zeros</b> at all — the parabola never touches the x-axis.`
+      : `No pair of integers works: b² − 4ac = ${num(D,2)} is not a perfect square, so this <b>does not factor over the integers</b>. Its zeros are irrational.`,eq:""});
+    return {F:null,lines:out}; }
+  const g=F.g, Ap=F.A, Bp=F.B, Cp=F.C, wrap=s=> (g===1? s : coefPre(g)+"("+s+")");
+  if(Cp===0){
+    out.push({why:`Every term has a factor of x${Math.abs(g)!==1?" (and of "+fc(Math.abs(g))+")":""}. Factor out the <b>GCF ${coefPre(g)||""}x</b>.`,eq:facStr(F)});
+    return {F,lines:out};
+  }
+  if(g!==1) out.push({why: g===-1? "Factor out −1 so the x² term is positive." : `Factor out the <b>GCF ${fc(g)}</b>.`, eq:wrap(stdStr(Ap,Bp,Cp))});
+  const [[p,q],[r,s]]=F.fs;
+  const sq=v=>v>0&&isInt(Math.sqrt(v));
+  if(Bp===0&&Cp<0&&sq(Ap)&&sq(-Cp)){
+    out.push({why:`<b>Difference of squares:</b> a² − b² = (a + b)(a − b), with a = ${Ap===1?"x":Math.sqrt(Ap)+"x"} and b = ${Math.sqrt(-Cp)}.`,eq:facStr(F)});
+  } else if(Ap===1){
+    out.push({why:`Find two integers with <b>product ${fc(Cp)}</b> and <b>sum ${fc(Bp)}</b>: ${fc(q)} and ${fc(s)} &nbsp;(${pv(q)}·${pv(s)} = ${fc(Cp)}, ${pv(q)} + ${pv(s)} = ${fc(Bp)}).`,eq:facStr(F)});
+  } else {
+    const m=p*s, n=q*r;
+    out.push({why:`a·c = ${Ap}·${pv(Cp)} = ${fc(Ap*Cp)}. Find two integers with <b>product ${fc(Ap*Cp)}</b> and <b>sum ${fc(Bp)}</b>: ${fc(m)} and ${fc(n)}. Split the middle term:`,
+      eq:wrap(term(Ap,"x²",true)+term(m,"x",false)+term(n,"x",false)+term(Cp,"",false))});
+    const grp=`${p===1?"":p}x(${linF(r,s)})${q>=0?" + ":" − "}${Math.abs(q)}(${linF(r,s)})`;
+    out.push({why:"Group in pairs and factor the GCF out of each pair:",eq:wrap(grp)});
+    out.push({why:`Factor out the common binomial (${linF(r,s)}):`,eq:facStr(F)});
+  }
+  return {F,lines:out};
+}
+
+/* ── expression parser (implicit multiplication, ^, ², √) ── */
+function compile(src){
+  let s=String(src).toLowerCase().replace(/[−–—]/g,"-").replace(/[×·∙]/g,"*").replace(/÷/g,"/")
+    .replace(/²/g,"^2").replace(/³/g,"^3").replace(/\*\*/g,"^").replace(/sqrt/g,"√").replace(/\s+/g,"");
+  s=s.replace(/^(y|[a-z]\([a-z]\))=/,"");
+  if(!s||/=/.test(s)) return null;
+  let i=0, usesX=false;
+  const peek=()=>s[i];
+  const startsAtom=c=>c!==undefined&&/[0-9.xt(√]/.test(c);
+  function expr(){ let f=term_(); while(peek()==="+"||peek()==="-"){ const op=s[i++]; const g=term_(), a=f; f= op==="+"? x=>a(x)+g(x) : x=>a(x)-g(x);} return f; }
+  function term_(){ let f=unary(); for(;;){ const c=peek();
+      if(c==="*"||c==="/"){ i++; const g=unary(), a=f; f=c==="*"?x=>a(x)*g(x):x=>a(x)/g(x); }
+      else if(startsAtom(c)){ const g=power(), a=f; f=x=>a(x)*g(x); }
+      else break; } return f; }
+  function unary(){ if(peek()==="-"){i++; const g=unary(); return x=>-g(x);} if(peek()==="+"){i++; return unary();} return power(); }
+  function power(){ const b=atom(); if(peek()==="^"){ i++; const e=unary(); return x=>Math.pow(b(x),e(x)); } return b; }
+  function atom(){ const c=peek();
+    if(c==="("){ i++; const f=expr(); if(peek()!==")") throw 0; i++; return f; }
+    if(c==="√"){ i++; const g=atom(); return x=>Math.sqrt(g(x)); }
+    if(c==="x"||c==="t"){ i++; usesX=true; return x=>x; }
+    const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)); if(m){ i+=m[0].length; const v=parseFloat(m[0]); return ()=>v; }
+    throw 0; }
+  try{ const f=expr(); if(i!==s.length) return null; return {f,usesX}; }catch(e){ return null; }
+}
+function parseNum(str){
+  const s=String(str).trim().replace(/^[a-z]\s*=/i,""); if(!s) return NaN;
+  const c=compile(s); if(!c||c.usesX) return NaN; const v=c.f(0); return isFinite(v)?v:NaN;
+}
+function parseList(str){
+  let s=String(str).replace(/[xt]\s*=/gi,"").replace(/\b(and|or)\b/gi,",").replace(/\+\/-|\+-/g,"±");
+  const parts=s.split(/[,;]+/).map(t=>t.trim()).filter(Boolean); if(!parts.length) return null;
+  const out=[];
+  for(const p of parts){
+    const k=p.indexOf("±");
+    if(k>=0){ const base=k>0?parseNum(p.slice(0,k)):0, d=parseNum(p.slice(k+1)); if(!isFinite(base)||!isFinite(d)) return null; out.push(base-d,base+d); }
+    else { const v=parseNum(p); if(!isFinite(v)) return null; out.push(v); }
+  }
+  return out;
+}
+const uniq=(arr,tol)=>{ const r=arr.slice().sort((a,b)=>a-b); return r.filter((v,i)=>i===0||Math.abs(v-r[i-1])>tol); };
+function sameSet(user,ans,tol){ const u=uniq(user,tol), a=uniq(ans,tol); return u.length===a.length && u.every((v,i)=>Math.abs(v-a[i])<=tol); }
+function sameFn(f,g){ const xs=[-2.5,-1,0,0.5,1.7,3]; return xs.every(x=>{ const u=f(x), v=g(x); return isFinite(u)&&Math.abs(u-v)<=1e-6*Math.max(1,Math.abs(v)); }); }
+function fitQuad(f){ const c=f(0), a=(f(1)+f(-1)-2*c)/2, b=(f(1)-f(-1))/2; const ok=[2,-3,0.5].every(x=>Math.abs(f(x)-(a*x*x+b*x+c))<1e-6*Math.max(1,Math.abs(f(x)))); return ok?{a,b,c}:null; }
+
+/* ══════════════════════ graph window ══════════════════════ */
+let WIN=null;
+function setWin(x0,x1,y0,y1,rect){ rect=rect||[0,0,VW,VH];
+  WIN={x0,x1,y0,y1,L:rect[0],T:rect[1],R:rect[2],B:rect[3]}; WIN.kx=(WIN.R-WIN.L)/(x1-x0); WIN.ky=(WIN.B-WIN.T)/(y1-y0); }
+function sqWin(cx,cy,u){ setWin(cx-VW/2/u,cx+VW/2/u,cy-VH/2/u,cy+VH/2/u); }
+const W2S=p=>[WIN.L+(p[0]-WIN.x0)*WIN.kx, WIN.B-(p[1]-WIN.y0)*WIN.ky];
+const S2W=p=>[WIN.x0+(p[0]-WIN.L)/WIN.kx, WIN.y0+(WIN.B-p[1])/WIN.ky];
+const inWin=(p,m)=>{ m=m||0; return p[0]>=WIN.x0-m&&p[0]<=WIN.x1+m&&p[1]>=WIN.y0-m&&p[1]<=WIN.y1+m; };
+function niceStep(pxPerUnit,target){ const raw=target/pxPerUnit, p=Math.pow(10,Math.floor(Math.log10(raw))); for(const m of [1,2,5,10]) if(m*p>=raw-1e-12) return m*p; return 10*p; }
+function fitWin(xs,ys,f){
+  let xa=Math.min.apply(null,xs), xb=Math.max.apply(null,xs); xa=Math.min(xa-3,-1); xb=Math.max(xb+3,1);
+  if(xb-xa<12){ const c=(xa+xb)/2; xa=c-6; xb=c+6; }
+  const yy=ys.slice(); if(f){ yy.push(f(xa+1.2)); yy.push(f(xb-1.2)); }
+  let ya=Math.min(0,Math.min.apply(null,yy)), yb=Math.max(0,Math.max.apply(null,yy));
+  const sp=Math.max(yb-ya,8); ya-=sp*0.12; yb+=sp*0.12;
+  setWin(xa,xb,ya,yb);
+}
+
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+function gridBg(o){
+  o=o||{};
+  const d=E("defs",{}); d.innerHTML=`<clipPath id="fr"><rect x="${WIN.L}" y="${WIN.T}" width="${WIN.R-WIN.L}" height="${WIN.B-WIN.T}"/></clipPath>`;
+  cv.appendChild(d);
+  const gg=E("g",{});
+  const gx=o.gx||niceStep(WIN.kx,20), gy=o.gy||niceStep(WIN.ky,20);
+  const lx=o.lx||niceStep(WIN.kx,46*FS), ly=o.ly||niceStep(WIN.ky,32*FS);
+  for(let i=Math.ceil(WIN.x0/gx-1e-9); i*gx<=WIN.x1+1e-9; i++){ const sx=W2S([i*gx,0])[0]; gg.appendChild(E("line",{x1:sx,y1:WIN.T,x2:sx,y2:WIN.B,style:"stroke:var(--grid)","stroke-width":1})); }
+  for(let i=Math.ceil(WIN.y0/gy-1e-9); i*gy<=WIN.y1+1e-9; i++){ const sy=W2S([0,i*gy])[1]; gg.appendChild(E("line",{x1:WIN.L,y1:sy,x2:WIN.R,y2:sy,style:"stroke:var(--grid)","stroke-width":1})); }
+  const hasX=WIN.y0<=0&&WIN.y1>=0, hasY=WIN.x0<=0&&WIN.x1>=0;
+  const o0=W2S([0,0]);
+  const axY=hasX? o0[1] : WIN.B, axX=hasY? o0[0] : WIN.L;
+  if(hasX) gg.appendChild(E("line",{x1:WIN.L,y1:axY,x2:WIN.R,y2:axY,stroke:"#8FA3C8","stroke-width":1.8}));
+  if(hasY) gg.appendChild(E("line",{x1:axX,y1:WIN.T,x2:axX,y2:WIN.B,stroke:"#8FA3C8","stroke-width":1.8}));
+  const ty=clamp(axY+15*FS,WIN.T+12,WIN.B+(o.below?16*FS:-4));
+  for(let i=Math.ceil(WIN.x0/lx-1e-9); i*lx<=WIN.x1+1e-9; i++){ const x=i*lx; if(Math.abs(x)<1e-9&&hasY)continue;
+    const sx=W2S([x,0])[0]; if(sx<WIN.L+10||sx>WIN.R-10)continue;
+    const t=E("text",{x:sx,y:ty,class:"ax","text-anchor":"middle"}); t.textContent=num(x,2); gg.appendChild(t); }
+  const leftSide=(axX-8-30*FS<WIN.L)&&!o.leftOut;
+  const tx=o.leftOut? WIN.L-6 : (leftSide? axX+6 : axX-6);
+  for(let i=Math.ceil(WIN.y0/ly-1e-9); i*ly<=WIN.y1+1e-9; i++){ const y=i*ly; if(Math.abs(y)<1e-9&&hasX&&!o.leftOut)continue;
+    const sy=W2S([0,y])[1]; if(sy<WIN.T+8||sy>WIN.B-6)continue;
+    const t=E("text",{x:tx,y:sy+4,class:"ax","text-anchor":(leftSide&&!o.leftOut)?"start":"end"}); t.textContent=num(y,2); gg.appendChild(t); }
+  if(hasX&&hasY&&!o.leftOut){ const t=E("text",{x:axX-6,y:axY+15*FS,class:"ax","text-anchor":"end"}); t.textContent="0"; gg.appendChild(t); }
+  const xn=E("text",{x:WIN.R-8,y:axY-8,class:"axn","text-anchor":"end"}); xn.textContent=o.xn||"x"; gg.appendChild(xn);
+  const yn=E("text",{x:(o.leftOut?WIN.L+8:axX+8),y:WIN.T+16,class:"axn"}); yn.textContent=o.yn||"y"; gg.appendChild(yn);
+  cv.appendChild(gg);
+  const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
+}
+function plotFn(g,f,color,w,dash,xa,xb){
+  xa=(xa==null?WIN.x0:Math.max(xa,WIN.x0)); xb=(xb==null?WIN.x1:Math.min(xb,WIN.x1)); if(xb<=xa) return;
+  const n=Math.max(2,Math.ceil((xb-xa)*WIN.kx/2)); let d="";
+  for(let i=0;i<=n;i++){ const x=xa+(xb-xa)*i/n, y=f(x); if(!isFinite(y))continue;
+    const s=W2S([x,y]); d+=(d?"L":"M")+s[0].toFixed(1)+","+clamp(s[1],WIN.T-4000,WIN.B+4000).toFixed(1); }
+  const a={d,fill:"none",style:"stroke:"+(color||"var(--curve)"),"stroke-width":w||3.2,"stroke-linecap":"round","stroke-linejoin":"round"};
+  if(dash)a["stroke-dasharray"]=dash; g.appendChild(E("path",a));
+}
+function sseg(g,p,q,color,w,dash){
+  const a={x1:p[0],y1:p[1],x2:q[0],y2:q[1],style:"stroke:"+(color||"var(--graphite)"),"stroke-width":w||2.4,"stroke-linecap":"round"};
+  if(dash)a["stroke-dasharray"]=dash; g.appendChild(E("line",a));
+}
+const wseg=(g,P,Q,c,w,d)=>sseg(g,W2S(P),W2S(Q),c,w,d);
+function sdot(g,p,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:(r||5)*(FS>1?1.25:1),style:"fill:"+(color||"var(--ink)"),stroke:"#fff","stroke-width":2,"pointer-events":"none"})); }
+function sgrab(g,p,id,color){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?26:16,class:"grab","data-drag":id})); sdot(g,p,color||"var(--hand)",6); }
+function stext(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("style","fill:"+color); t.textContent=s; g.appendChild(t); return t;
+}
+function smartLabel(g,anchor,dir,text,color,cls){
+  const w=text.length*8.3*FS+4, h=16*FS, d=unit(dir), off=14*FS;
+  let cx=anchor[0]+d[0]*(off+w/2*Math.abs(d[0])), cy=anchor[1]+d[1]*(off+h/2*Math.abs(d[1])+2);
+  cx=clamp(cx,WIN.L+w/2+4,WIN.R-w/2-4); cy=clamp(cy,WIN.T+h/2+4,WIN.B-h/2-4);
+  return stext(g,[cx,cy],text,cls||"sm",color);
+}
+const pt=(x,y)=>"("+fq(x)+", "+fq(y)+")";
+const COL={vtx:"#6D28D9",yint:"#C2410C",zero:"#047857",axis:"#BE185D",curve:"#1D4ED8",pt:"#C2410C"};
+function featureMarks(g,q,o){
+  const marks=[];
+  const add=(p,name,color,dot,dir)=>{ const m=marks.find(m=>near(m.p[0],p[0],1e-6)&&near(m.p[1],p[1],1e-6)); if(m)m.names.push(name); else marks.push({p,names:[name],color,dot,dir}); };
+  if(o.axis&&q.h>=WIN.x0&&q.h<=WIN.x1){ wseg(g,[q.h,WIN.y0],[q.h,WIN.y1],COL.axis,2.2,"9 6");
+    const yTop=q.a>0? WIN.y1 : WIN.y0; const s=W2S([q.h,yTop]);
+    smartLabel(g,[s[0],q.a>0?WIN.T+4:WIN.B-4],[1,q.a>0?1:-1],(o.short?"":"axis of symmetry ")+"x = "+fq(q.h),COL.axis); }
+  if(o.vertex) add([q.h,q.k],"vertex"+(o.minmax?(q.a>0?" (min)":" (max)"):""),COL.vtx,"var(--vert)",[0,q.a>0?1:-1]);
+  if(o.yint) add([0,q.c],"y-int",COL.yint,"var(--lin)",[-1,q.a>0?0.5:-0.5]);
+  if(o.zeros) q.roots.forEach((r,i)=>add([r,0],"zero",COL.zero,"var(--alt)",[q.roots.length>1?(i?1:-1):1, q.a>0?0.9:-0.9]));
+  marks.forEach(m=>{ if(!inWin(m.p))return; const s=W2S(m.p); sdot(g,s,m.dot,6.5);
+    smartLabel(g,s,m.dir,m.names.join(" · ")+" "+pt(m.p[0],m.p[1]),m.color); });
+  if(o.opens&&Math.abs(q.a)>1e-12){
+    const span=(WIN.y1-WIN.y0)*0.32, dx=Math.sqrt(span/Math.abs(q.a)), x=q.h+dx;
+    const p=W2S([x,q.f(x)]); if(p[0]<WIN.R-40) stext(g,[Math.min(p[0]+16*FS,WIN.R-60*FS),p[1]],q.a>0?"opens up (a > 0)":"opens down (a < 0)","sm",COL.curve,"start");
+  }
+}
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null;
+function svgPt(e){
+  const m=cv.getScreenCTM(); if(!m)return [0,0];
+  const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y];
+}
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag;
+  if(id){ dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); const M=MODS[cur]; if(M.dragStart)M.dragStart(id); }
+});
+cv.addEventListener("pointermove",e=>{
+  if(!dragId)return; const M=MODS[cur]; if(!M.drag)return;
+  if(M.drag(dragId,svgPt(e))!==false)update();
+});
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+
+/* bar builders */
+function btn(label,fn,cls,parent){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; (parent||bar).appendChild(b); return b; }
+function segBtns(opts,val,fn,parent){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group");
+  opts.forEach(([k,lab])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=lab;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  (parent||bar).appendChild(s); return s;
+}
+function chk(label,val,fn){
+  const l=document.createElement("label"); l.className="chk";
+  const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i;
+}
+function snapChk(){ return chk("Snap to grid",snap,v=>{snap=v; MODS.forEach(M=>M.resnap&&M.resnap()); render();}); }
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.textContent=t; bar.appendChild(s); return s; }
+function slider(label,min,max,step,val,fn,fmt){
+  fmt=fmt||(v=>fc(v));
+  const l=document.createElement("label"); l.className="rng"; l.appendChild(document.createTextNode(label+" "));
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=step; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); o.textContent=fmt(val);
+  i.oninput=()=>{ const v=+i.value; o.textContent=fmt(v); fn(v); };
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l);
+  return {inp:i,set(v){ i.value=v; o.textContent=fmt(v); }};
+}
+function zoomBtns(M){
+  btn("−",()=>{M.s.zi=Math.max(0,M.s.zi-1);update();},null).setAttribute("aria-label","Zoom out");
+  btn("+",()=>{M.s.zi=Math.min(ZOOM.length-1,M.s.zi+1);update();},null).setAttribute("aria-label","Zoom in");
+}
+const ZOOM=[16,22,30,42,56];
+function tryPanel(html){ return `<div class="panel"><h3>Try this</h3><div class="pad">${html}</div></div>`; }
+const $=id=>document.getElementById(id);
+
+/* ══════════════════════ TAB 1 · Meet the parabola ══════════════════════ */
+const PRE1={
+  sq:{a:1,h:0,k:0,c:[0,4]}, neg:{a:-1,h:0,k:4,c:[0,1]}, shift:{a:1,h:1,k:-4,c:[1,1]},
+  wide:{a:-0.5,h:2,k:8,c:[2,3]}, none:{a:1,h:0,k:2,c:[0,4]}
+};
+const M1={
+  tab:"Meet the parabola", lesson:"F-IF.B.4 · F-IF.C.7a", accent:"var(--cyan)",
+  title:()=>"The graph of y = "+stdStr(M1.q().a,M1.q().b,M1.q().c),
+  s:{pre:"sq",px:2,curve:true,feats:true,lin:false,zi:2},
+  q(){ const P=PRE1[M1.s.pre]; return Qv(P.a,P.h,P.k); },
+  resnap(){ if(snap)M1.s.px=snapV(M1.s.px,0.5); },
+  bar(){
+    const row=document.createElement("div"); row.className="chiprow";
+    Object.keys(PRE1).forEach(k=>{ const P=PRE1[k], q=Qv(P.a,P.h,P.k); const b=document.createElement("button"); b.type="button";
+      b.style.setProperty("--c","var(--cyan)"); b.textContent="y = "+stdStr(q.a,q.b,q.c); b.setAttribute("aria-pressed",String(M1.s.pre===k));
+      b.onclick=()=>{ M1.s.pre=k; M1.s.px=P.h+2; render(); }; row.appendChild(b); });
+    bar.appendChild(row);
+    chk("Curve",M1.s.curve,v=>{M1.s.curve=v;update();});
+    chk("Key features",M1.s.feats,v=>{M1.s.feats=v;update();});
+    chk("Compare linear",M1.s.lin,v=>{M1.s.lin=v;render();});
+    snapChk(); zoomBtns(M1);
+    spacer("Drag P along the curve");
+  },
+  drag(id,p){
+    const q=M1.q(); let x=S2W(p)[0]; x=snap? snapV(x,0.5) : Math.round(x*20)/20;
+    x=clamp(x,WIN.x0+0.2,WIN.x1-0.2); const y=q.f(x); if(y<WIN.y0||y>WIN.y1)return false; M1.s.px=x;
+  },
+  draw(){
+    const P=PRE1[M1.s.pre], q=M1.q(); sqWin(P.c[0],P.c[1],ZOOM[M1.s.zi]);
+    const g=gridBg(); const xs=[]; for(let i=-3;i<=3;i++)xs.push(q.h+i);
+    if(M1.s.lin){ plotFn(g,x=>2*x+1,"var(--lin)",2.6,"10 6");
+      xs.forEach(x=>{ const s=W2S([x,2*x+1]); g.appendChild(E("rect",{x:s[0]-4.5,y:s[1]-4.5,width:9,height:9,style:"fill:var(--lin)",stroke:"#fff","stroke-width":1.5})); });
+      const lp=W2S([WIN.x0+1.5, 2*(WIN.x0+1.5)+1]); if(inWin([WIN.x0+1.5,2*(WIN.x0+1.5)+1])) stext(g,[lp[0]+10,lp[1]],"y = 2x + 1 (linear)","sm","#C2410C","start"); }
+    if(M1.s.feats) featureMarks(g,q,{axis:true});
+    if(M1.s.curve) plotFn(g,q.f,"var(--curve)",3.4);
+    xs.forEach(x=>{ const y=q.f(x); if(inWin([x,y])) sdot(g,W2S([x,y]),"var(--graphite)",4.2); });
+    if(M1.s.feats) featureMarks(g,q,{vertex:true,yint:true,zeros:true,opens:true,minmax:true});
+    // P and its symmetric partner
+    const x=M1.s.px, y=q.f(x), x2=2*q.h-x, sP=W2S([x,y]), sQ=W2S([x2,y]);
+    if(Math.abs(x-q.h)>1e-9){
+      sseg(g,sP,sQ,"var(--hand)",2.2,"6 5");
+      const sA=W2S([q.h,y]); const d=Math.abs(x-q.h);
+      stext(g,[(sP[0]+sA[0])/2,sA[1]-11*FS],fq(d),"sm","#C2410C"); stext(g,[(sQ[0]+sA[0])/2,sA[1]-11*FS],fq(d),"sm","#C2410C");
+      sdot(g,sQ,"#FDBA74",6.5);
+      const sx=Math.sign(x2-q.h); smartLabel(g,sQ,[sx,q.a>0?0.6:-0.6],"P′"+pt(x2,y),"#C2410C");
+    }
+    sgrab(g,sP,"P"); const sx=Math.sign(x-q.h)||1; smartLabel(g,sP,[sx,q.a>0?0.6:-0.6],"P"+pt(x,y),"#C2410C");
+  },
+  panel(full){
+    if(full||!$("t1feat")){
+      side.innerHTML=`<div class="panel"><h3>What is a parabola?</h3><div class="pad">
+        <p>A <span class="term">quadratic function</span> can be written f(x) = ax² + bx + c with a ≠ 0. Its graph is a U-shaped curve called a <span class="term">parabola</span>.</p>
+        <p>The turning point is the <b>vertex</b>. A vertical line through the vertex, the <b>axis of symmetry</b>, cuts the parabola into mirror-image halves. If a &gt; 0 it <b>opens up</b> and the vertex is a <b>minimum</b>; if a &lt; 0 it <b>opens down</b> and the vertex is a <b>maximum</b>.</p>
+        <div class="eq" id="t1eq"></div></div></div>
+        <div class="panel"><h3>Key features</h3><div id="t1feat"></div></div>
+        <div class="panel"><h3>Table of values</h3><div class="tvwrap" id="t1tab"></div><div class="pad" id="t1tabtxt" style="padding-top:0"></div></div>`+
+        tryPanel(`Drag P to x = 3 on y = x². Where is P′? Now pick <b>y = x² − 2x − 3</b>: the axis is x = 1, so a point 2 units right of the axis has a partner 2 units left. Use symmetry to predict f(−1) from f(3) before you look.`);
+    }
+    M1.live();
+  },
+  live(){
+    const q=M1.q(), x=M1.s.px, y=q.f(x), x2=2*q.h-x;
+    $("t1eq").innerHTML=`f(x) = ${stdStr(q.a,q.b,q.c)}<small>a = ${fc(q.a)}, b = ${fc(q.b)}, c = ${fc(q.c)}</small>`;
+    const zs=q.roots.length? q.roots.map(r=>"("+fq(r)+", 0)").join(" and ") : "none";
+    const rows=[["var(--curve)","Opens",q.a>0?"a &gt; 0":"a &lt; 0",q.a>0?"up":"down"],
+      ["var(--vert)","Vertex",q.a>0?"lowest point":"highest point",pt(q.h,q.k)],
+      ["var(--vert)",q.a>0?"Minimum value":"Maximum value","the y-value of the vertex","y = "+fq(q.k)],
+      ["var(--altx)","Axis of symmetry","vertical line through the vertex","x = "+fq(q.h)],
+      ["var(--lin)","y-intercept","where x = 0: f(0) = c","(0, "+fq(q.c)+")"],
+      ["var(--alt)","x-intercepts (zeros)",q.roots.length? "where f(x) = 0" : "the graph never reaches y = 0",zs],
+      ["var(--hand)","P and partner P′","same height, mirror x-values",pt(x,y)+" ↔ "+pt(x2,y)]];
+    $("t1feat").innerHTML=rows.map(r=>`<div class="rel"><span class="dot" style="background:${r[0]}"></span><span class="nm">${r[1]}<em>${r[2]}</em></span><span class="val">${r[3]}</span></div>`).join("");
+    const xs=[]; for(let i=-3;i<=3;i++)xs.push(q.h+i);
+    const ys=xs.map(q.f), ls=xs.map(x=>2*x+1), L=M1.s.lin;
+    let h=`<table class="tv"><thead><tr><th>x</th><th>f(x)</th><th>1st diff</th><th>2nd diff</th>${L?'<th class="sep">2x + 1</th><th>1st diff</th>':""}</tr></thead><tbody>`;
+    xs.forEach((xv,i)=>{ const d1=i>0?ys[i]-ys[i-1]:null, d2=i>1?(ys[i]-ys[i-1])-(ys[i-1]-ys[i-2]):null;
+      const hl=Math.abs(xv-x)<1e-9||Math.abs(xv-x2)<1e-9;
+      h+=`<tr${hl?' class="hl"':""}><td>${fq(xv)}</td><td>${fq(ys[i])}</td><td class="d1">${d1==null?"":(d1>0?"+":"")+fq(d1)}</td><td class="d2">${d2==null?"":(d2>0?"+":"")+fq(d2)}</td>`+
+        (L?`<td class="sep lin">${fq(ls[i])}</td><td class="d1">${i>0?"+2":""}</td>`:"")+`</tr>`; });
+    $("t1tab").innerHTML=h+"</tbody></table>";
+    $("t1tabtxt").innerHTML=`<p>The <b>first differences</b> change by the same amount each step, so the <b>second differences are constant: ${fq(2*q.a)}</b> (always 2a when x goes up by 1). Constant second differences are the fingerprint of a quadratic.</p>`+
+      (L?`<p>For the linear function y = 2x + 1 the <b>first differences</b> are already constant (+2, the slope). Linear: constant 1st differences. Quadratic: constant 2nd differences.</p>`:`<p>Turn on <b>Compare linear</b> to see how a linear table is different. Notice the y-values repeat symmetrically around x = ${fq(q.h)}.</p>`);
+  }
+};
+
+/* ══════════════════════ TAB 2 · Vertex form ══════════════════════ */
+const M2={
+  tab:"Vertex form", lesson:"F-BF.B.3 · F-IF.C.8a", accent:"var(--yellow)",
+  title:()=>M2.s.mode==="puzzle"?"Graph puzzle: write the equation":"Transformations: y = a(x − h)² + k",
+  s:{a:1,h:2,k:-3,mode:"explore",ghost:true,zi:2,tg:null,res:null},
+  sl:{},
+  resnap(){ const s=M2.s; if(snap){ s.h=snapV(s.h,0.5); s.k=snapV(s.k,0.5); s.a=snapV(s.a,0.25);} },
+  newPuzzle(){
+    let a,h,k,d;
+    for(let n=0;n<200;n++){ a=pick([1,-1,2,-2,0.5,-0.5,3,-3]); h=rnd(-6,6); k=rnd(-5,5); d=Math.abs(a)<1?2:1;
+      if(Math.abs(k+a*d*d)<=7&&!(a===M2.s.a&&h===M2.s.h&&k===M2.s.k)) break; }
+    M2.s.tg={a,h,k,d}; M2.s.res=null;
+  },
+  bar(){
+    segBtns([["explore","Explore"],["puzzle","Graph puzzle"]],M2.s.mode,k=>{ M2.s.mode=k; if(k==="puzzle"&&!M2.s.tg)M2.newPuzzle(); render(); });
+    M2.sl.a=slider("a",-3,3,0.25,M2.s.a,v=>{M2.s.a=v;update();});
+    M2.sl.h=slider("h",-8,8,0.5,M2.s.h,v=>{M2.s.h=v;update();});
+    M2.sl.k=slider("k",-6,6,0.5,M2.s.k,v=>{M2.s.k=v;update();});
+    chk("Ghost y = x²",M2.s.ghost,v=>{M2.s.ghost=v;update();});
+    snapChk();
+    btn("Reset",()=>{Object.assign(M2.s,{a:1,h:0,k:0}); render();});
+    zoomBtns(M2);
+    spacer("Drag the vertex V and the shape point S");
+  },
+  sync(){ const s=M2.s; M2.sl.a&&M2.sl.a.set(s.a); M2.sl.h&&M2.sl.h.set(s.h); M2.sl.k&&M2.sl.k.set(s.k); },
+  drag(id,p){
+    const s=M2.s, w=S2W(p);
+    if(id==="V"){ const st=snap?0.5:0.1; s.h=clamp(snapV(w[0],st),-8,8); s.k=clamp(snapV(w[1],st),-6,6); }
+    if(id==="S"){ const st=snap?0.25:0.05; s.a=clamp(snapV(w[1]-s.k,st),-3,3); }
+    M2.sync();
+  },
+  draw(){
+    const s=M2.s; sqWin(0,0,ZOOM[s.zi]); const g=gridBg(), q=Qv(s.a,s.h,s.k);
+    if(s.ghost){ plotFn(g,x=>x*x,"#9AA8C7",2.4,"8 6"); sdot(g,W2S([0,0]),"#9AA8C7",4.5);
+      if(s.mode==="explore"&&(Math.abs(s.h)>1e-9||Math.abs(s.k)>1e-9)){
+        const a0=W2S([0,0]), a1=W2S([s.h,s.k]); sseg(g,a0,[a1[0],a0[1]],"#C4B5FD",2,"4 4"); sseg(g,[a1[0],a0[1]],a1,"#C4B5FD",2,"4 4");
+        if(Math.abs(s.h)>1e-9) stext(g,[(a0[0]+a1[0])/2,a0[1]+(s.k>0?14:-12)*FS],(s.h>0?"right ":"left ")+fq(Math.abs(s.h)),"sm","#7C3AED");
+        if(Math.abs(s.k)>1e-9) stext(g,[a1[0]+(s.h>=0?1:-1)*8*FS,(a0[1]+a1[1])/2],(s.k>0?"up ":"down ")+fq(Math.abs(s.k)),"sm","#7C3AED",s.h>=0?"start":"end"); } }
+    if(s.mode==="puzzle"&&s.tg){ const t=s.tg, tq=Qv(t.a,t.h,t.k); plotFn(g,tq.f,"var(--altx)",5,null);
+      [t.h-t.d,t.h,t.h+t.d].forEach(x=>sdot(g,W2S([x,tq.f(x)]),"var(--altx)",5.5)); }
+    if(Math.abs(s.a)<1e-12){ wseg(g,[WIN.x0,s.k],[WIN.x1,s.k],"var(--curve)",3.4); }
+    else plotFn(g,q.f,"var(--curve)",3.4);
+    // step pattern from the vertex
+    if(s.mode==="explore"&&Math.abs(s.a)>1e-12){ [1,-1,2,-2].forEach(dx=>{ const P=[s.h+dx,q.f(s.h+dx)]; if(inWin(P)) sdot(g,W2S(P),"var(--graphite)",4); });
+      const V=W2S([s.h,s.k]), P1=W2S([s.h+1,s.k]), P2=W2S([s.h+1,s.k+s.a]);
+      sseg(g,V,P1,"var(--lin)",2.2,"5 4"); sseg(g,P1,P2,"var(--lin)",2.2,"5 4");
+      stext(g,[P1[0]+6*FS,(P1[1]+P2[1])/2],(s.a>0?"up ":"down ")+fq(Math.abs(s.a)),"sm","#C2410C","start");
+    }
+    if(s.mode==="explore") featureMarks(g,q,{axis:Math.abs(s.a)>1e-12,short:true});
+    const V=W2S([s.h,s.k]); sgrab(g,W2S([s.h+1,s.k+s.a]),"S","var(--lin)");
+    sgrab(g,V,"V","var(--vert)");
+    smartLabel(g,V,[-1,s.a>=0?0.8:-0.8],"V"+pt(s.h,s.k),COL.vtx);
+    const S=W2S([s.h+1,s.k+s.a]); smartLabel(g,S,[1,s.a>=0?-0.4:0.4],"S","#C2410C");
+  },
+  panel(full){
+    const s=M2.s;
+    if(full||!$("t2eq")){
+      let h=`<div class="panel"><h3>Vertex form</h3><div class="pad">
+        <p>Every quadratic can be written in <span class="term">vertex form</span> y = a(x − h)² + k. It is the parent function y = x² after transformations, and the <b>vertex is (h, k)</b>.</p>
+        <div class="eq" id="t2eq"></div></div></div>`;
+      if(s.mode==="explore"){
+        h+=`<div class="panel"><h3>What each number does</h3><div id="t2rows"></div></div>
+        <div class="panel"><h3>Why is h “backwards”?</h3><div class="pad">
+          <p>In y = (x − 3)² the vertex is at <b>x = 3</b>, to the <b>right</b>, even though you see a minus sign. The vertex is where the squared part equals 0: x − 3 = 0 means x = 3.</p>
+          <p>So y = (x + 3)² = (x − (−3))² has h = −3 and moves <b>left</b> 3. The k outside the parentheses works the way it looks: + k moves up, − k moves down.</p></div></div>`+
+        tryPanel(`Set a = 1 and drag V. The step pattern from the vertex is always <b>over 1, up 1; over 2, up 4</b>. Now set a = 2: it becomes over 1, up 2; over 2, up 8. What is the pattern for a = −1/2?`);
+      } else {
+        h+=`<div class="panel"><h3>Graph puzzle</h3><div class="pad"><p>Write the equation of the <b style="color:#FF7AB0">pink parabola</b> in vertex form. Read the vertex (h, k) from the grid, then use one more marked point to find a.</p></div>
+          <label class="fld" for="t2in">Your equation</label><div class="fldwrap"><input type="text" id="t2in" autocomplete="off" spellcheck="false" placeholder="e.g. y = 2(x − 3)^2 + 1"></div>
+          <p class="fmt">Type ^2 or ² for squared. Any equivalent form is accepted.</p>
+          <div class="fldwrap" style="margin:14px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+            <button id="t2chk" class="go" type="button" style="flex:1 1 140px">Check</button>
+            <button id="t2new" class="ghost" type="button">New puzzle</button>
+            <button id="t2sol" class="ghost" type="button">Show answer</button></div>
+          <div id="t2fb"></div><div class="pad" id="t2match" style="padding-top:4px"></div></div>`+
+        tryPanel(`Use the sliders (or drag V and S) until your blue parabola lies exactly on the pink one. Then type the equation the sliders show. Does a negative a always mean a maximum?`);
+      }
+      side.innerHTML=h;
+      if(s.mode==="puzzle"){
+        const chkF=()=>{ const t=s.tg, tq=Qv(t.a,t.h,t.k), c=compile($("t2in").value);
+          if(!c||!c.usesX){ s.res=`<div class="verdict bad"><b>I can't read that.</b> Try something like y = −2(x + 1)^2 + 4.</div>`; M2.live(); return; }
+          if(sameFn(c.f,tq.f)){ s.res=`<div class="verdict good"><b>Correct!</b> y = ${vtxStr(t.a,t.h,t.k)}. Vertex (${fq(t.h)}, ${fq(t.k)}); from the vertex, over ${t.d} the graph goes ${t.a>0?"up":"down"} ${fq(Math.abs(t.a)*t.d*t.d)}, so a = ${fc(t.a)}.</div>`; }
+          else { const u=fitQuad(c.f); let hint="Find the vertex first; then step from the vertex to a marked point to find a.";
+            if(u&&Math.abs(u.a)>1e-12){ const uh=-u.b/(2*u.a), uk=c.f(uh);
+              if(near(uh,-t.h,1e-6)&&Math.abs(t.h)>1e-9&&near(uk,t.k,1e-6)) hint="The sign of h is flipped. A vertex at x = "+fq(t.h)+" needs (x "+(t.h>0?"−":"+")+" "+fq(Math.abs(t.h))+").";
+              else if(near(uh,t.h,1e-6)&&near(uk,t.k,1e-6)) hint="Your vertex is right! Now fix a: from the vertex, move over "+t.d+" — how far "+(t.a>0?"up":"down")+" does the graph go? Divide by "+(t.d*t.d)+".";
+              else if(near(u.a,t.a,1e-6)) hint="The shape (a) is right, but the vertex is off. Read the turning point again.";
+              else if(near(u.a,-t.a,1e-6)) hint="Check the direction: this parabola opens "+(t.a>0?"up, so a &gt; 0":"down, so a &lt; 0")+"."; }
+            s.res=`<div class="verdict bad"><b>Not quite.</b> ${hint}</div>`; }
+          M2.live(); };
+        $("t2chk").onclick=chkF; $("t2in").addEventListener("keydown",e=>{if(e.key==="Enter")chkF();});
+        $("t2new").onclick=()=>{ M2.newPuzzle(); render(); };
+        $("t2sol").onclick=()=>{ const t=s.tg; s.res=`<div class="verdict info"><b>Answer:</b> y = ${vtxStr(t.a,t.h,t.k)}. The vertex is (${fq(t.h)}, ${fq(t.k)}); moving ${t.d} right from the vertex the graph changes by ${fq(t.a*t.d*t.d)}, and ${fq(t.a*t.d*t.d)} ÷ ${t.d*t.d} = ${fc(t.a)} = a.</div>`; M2.live(); };
+      }
+    }
+    M2.live();
+  },
+  live(){
+    const s=M2.s, q=Qv(s.a,s.h,s.k);
+    $("t2eq").innerHTML= Math.abs(s.a)<1e-12? `y = 0(x − h)² + k = ${fq(s.k)}<small>a = 0 is not a quadratic: the graph is the horizontal line y = ${fq(s.k)}.</small>`
+      : `y = ${vtxStr(s.a,s.h,s.k)}<small>standard form: y = ${stdStr(q.a,q.b,q.c)} · vertex (${fq(s.h)}, ${fq(s.k)})</small>`;
+    if($("t2rows")){
+      const A=Math.abs(s.a);
+      const aTxt= A<1e-12? "a = 0: no longer a parabola" : (s.a<0?"reflected over the x-axis (opens down); ":"opens up; ")+(near(A,1)?"same shape as y = x²": A>1? "vertical stretch by "+fc(A)+" (narrower)" : "vertical compression by "+fc(A)+" (wider)");
+      const hTxt= Math.abs(s.h)<1e-9? "no horizontal shift" : (s.h>0? "shift right "+fq(s.h)+" — the equation shows (x − "+fq(s.h)+")" : "shift left "+fq(-s.h)+" — the equation shows (x + "+fq(-s.h)+")");
+      const kTxt= Math.abs(s.k)<1e-9? "no vertical shift" : (s.k>0? "shift up "+fq(s.k) : "shift down "+fq(-s.k));
+      const rows=[["var(--lin)","a = "+fc(s.a),aTxt],["var(--vert)","h = "+fq(s.h),hTxt],["var(--vert)","k = "+fq(s.k),kTxt],
+        ["var(--altx)","Axis & "+(s.a>0?"min":"max"),A<1e-12?"—":"x = "+fq(s.h)+"; "+(s.a>0?"minimum":"maximum")+" value "+fq(s.k)]];
+      $("t2rows").innerHTML=rows.map(r=>`<div class="rel"><span class="dot" style="background:${r[0]}"></span><span class="nm">${r[1]}<em>${r[2]}</em></span><span class="val"></span></div>`).join("");
+    }
+    if($("t2fb")){ $("t2fb").innerHTML=s.res||"";
+      const t=s.tg, m=t&&near(s.a,t.a)&&near(s.h,t.h)&&near(s.k,t.k);
+      $("t2match").innerHTML= m? `<p class="ok"><b>Your sliders match the pink parabola!</b> The sliders read y = ${vtxStr(s.a,s.h,s.k)}.</p>` : `<p style="color:var(--dim);font-size:14px">Slider parabola: y = ${Math.abs(s.a)<1e-12?fq(s.k):vtxStr(s.a,s.h,s.k)} — not a match yet.</p>`; }
+  }
+};
+
+/* ══════════════════════ TAB 3 · Three forms ══════════════════════ */
+const M3={
+  tab:"Three forms", lesson:"F-IF.C.8a · A-SSE.B.3", accent:"var(--lavender)",
+  title:()=>"Standard, vertex and factored form",
+  s:{mode:"zeros",a:1,r1:-1,r2:3,h:1,k:-4,conv:"s2f",zi:2,show:{std:true,vtx:true,fac:true}},
+  sl:null,
+  q(){ const s=M3.s; if(s.mode==="zeros"){ s.h=(s.r1+s.r2)/2; s.k=-s.a*Math.pow((s.r2-s.r1)/2,2); } return Qv(s.a,s.h,s.k); },
+  resnap(){ const s=M3.s; if(snap){ s.r1=Math.round(s.r1); s.r2=Math.round(s.r2); s.h=Math.round(s.h); s.k=Math.round(s.k); s.a=Math.round(s.a)||1; } },
+  bar(){
+    const row=document.createElement("div"); row.className="chiprow";
+    [["std","Standard → y-intercept","var(--lin)"],["vtx","Vertex → vertex","var(--vert)"],["fac","Factored → zeros","var(--alt)"]].forEach(([k,l,c])=>{
+      const b=document.createElement("button"); b.type="button"; b.style.setProperty("--c",c); b.textContent=l; b.setAttribute("aria-pressed",String(M3.s.show[k]));
+      b.onclick=()=>{ M3.s.show[k]=!M3.s.show[k]; b.setAttribute("aria-pressed",String(M3.s.show[k])); update(); }; row.appendChild(b); });
+    bar.appendChild(row);
+    segBtns([["zeros","Drag zeros"],["vertex","Drag vertex"]],M3.s.mode,k=>{ const s=M3.s, q=M3.q();
+      if(k==="zeros"){ if(q.roots.length===2&&(!snap||q.roots.every(isInt))){ s.r1=q.roots[0]; s.r2=q.roots[1]; } else if(q.roots.length===1&&(!snap||isInt(q.roots[0]))){ s.r1=s.r2=q.roots[0]; } else { s.r1=-1; s.r2=3; } }
+      s.mode=k; render(); });
+    M3.sl=slider("a",-3,3,1,M3.s.a,v=>{ if(v===0){ v=M3.s.a>0?-1:1; M3.sl.set(v); } M3.s.a=v; update(); });
+    snapChk();
+    btn("Reset",()=>{Object.assign(M3.s,{a:1,r1:-1,r2:3,h:1,k:-4}); render();});
+    zoomBtns(M3);
+    spacer(M3.s.mode==="zeros"?"Drag the zeros along the x-axis":"Drag the vertex V");
+  },
+  drag(id,p){
+    const s=M3.s, w=S2W(p), st=snap?1:0.1;
+    if(id==="R1"||id==="R2"){ const x=clamp(snapV(w[0],st),-10,10); if(id==="R1")s.r1=x; else s.r2=x; if(s.r1>s.r2){ const t=s.r1; s.r1=s.r2; s.r2=t; dragId=(id==="R1"?"R2":"R1"); } }
+    if(id==="V"){ s.h=clamp(snapV(w[0],st),-10,10); s.k=clamp(snapV(w[1],st),-7,7); }
+  },
+  draw(){
+    const s=M3.s, q=M3.q(); sqWin(0,0,ZOOM[s.zi]); const g=gridBg();
+    featureMarks(g,q,{axis:s.show.vtx,short:true});
+    plotFn(g,q.f,"var(--curve)",3.4);
+    featureMarks(g,q,{vertex:s.show.vtx,yint:s.show.std,zeros:s.show.fac});
+    if(s.mode==="zeros"){ const rs=[s.r1,s.r2]; rs.forEach((r,i)=>{ const P=W2S([r,0]); sgrab(g,P,i?"R2":"R1","var(--alt)"); }); }
+    else sgrab(g,W2S([s.h,s.k]),"V","var(--vert)");
+    if(!q.roots.length){ stext(g,[WIN.R-12,WIN.B-16*FS],"no x-intercepts: no real zeros","sm",COL.zero,"end"); }
+  },
+  panel(full){
+    if(full||!$("t3forms")){
+      side.innerHTML=`<div class="panel"><h3>One parabola, three forms</h3><div class="pad" style="padding-bottom:6px">
+        <p>The same quadratic function can be written three ways. Each form puts a different key feature right on display.</p></div>
+        <div class="fldwrap" id="t3forms"></div><div style="height:6px"></div></div>
+        <div class="panel"><h3>Convert between forms</h3>
+          <div class="segp" id="t3seg"></div><div class="pad" id="t3conv"></div></div>`+
+        tryPanel(`Drag the zeros to x = −4 and x = 2. Before looking, predict: the axis of symmetry is halfway between the zeros, at x = (−4 + 2)/2 = −1. Then set a = 2 — which features move, and which stay put?`);
+      const sg=$("t3seg");
+      [["s2f","Standard → factored"],["f2s","Factored → standard"],["vtx","Vertex from x = −b/2a"],["v2s","Vertex → standard"]].forEach(([k,l])=>{
+        const b=document.createElement("button"); b.type="button"; b.textContent=l; b.setAttribute("aria-pressed",String(M3.s.conv===k));
+        b.onclick=()=>{ M3.s.conv=k; [...sg.children].forEach(c=>c.setAttribute("aria-pressed",String(c===b))); M3.live(); }; sg.appendChild(b); });
+    }
+    M3.live();
+  },
+  live(){
+    const s=M3.s, q=M3.q(), ff=factoredForm(q);
+    const zs=q.roots.length? q.roots.map(fq).join(" and ") : "none";
+    $("t3forms").innerHTML=
+      `<div class="eq formc" style="border-left-color:var(--lin)"><span class="tag" style="color:#FDBA74">Standard form · y = ax² + bx + c</span>y = ${stdStr(q.a,q.b,q.c)}<small>Reveals the <b>y-intercept</b> (0, c) = (0, ${fq(q.c)}). Also: a &gt; 0 or a &lt; 0 tells which way it opens.</small></div>`+
+      `<div class="eq formc" style="border-left-color:var(--vert)"><span class="tag" style="color:#C4B5FD">Vertex form · y = a(x − h)² + k</span>y = ${vtxStr(q.a,q.h,q.k)}<small>Reveals the <b>vertex</b> (h, k) = ${pt(q.h,q.k)}, the axis x = ${fq(q.h)} and the ${q.a>0?"minimum":"maximum"} value ${fq(q.k)}.</small></div>`+
+      `<div class="eq formc" style="border-left-color:var(--alt)"><span class="tag" style="color:#6EE7B7">Factored form · y = a(x − r₁)(x − r₂)</span>${ff? "y = "+ff : "not possible over the real numbers"}<small>${q.roots.length? "Reveals the <b>zeros</b> (x-intercepts): x = "+zs+(allExact(q.roots)?"":" (approximate — irrational)")+"." : "This parabola has <b>no real zeros</b> — it never crosses the x-axis, so there are no real linear factors."}</small></div>`;
+    const a=q.a,b=q.b,c=q.c; let h="";
+    if(s.conv==="s2f"){
+      h+=`<p>Start from standard form and <b>factor</b>.</p><div class="eq">y = ${stdStr(a,b,c)}</div>`;
+      const FS_=factorSteps(a,b,c);
+      FS_.lines.forEach(L=>{ h+=`<p>${L.why}</p>`+(L.eq?`<div class="eq">y = ${L.eq}</div>`:""); });
+      if(FS_.F){ const rs=rootsF(FS_.F); h+=`<p>Each factor is 0 at a zero of the function: <b>x = ${rs.map(fc).join("</b> and <b>x = ")}</b>. These are the x-intercepts on the graph.</p>`; }
+      else if(![a,b,c].every(isInt)) h+=`<p>Turn on <b>Snap to grid</b> for integer coefficients.</p>`;
+    } else if(s.conv==="f2s"){
+      const F=factorInt(a,b,c);
+      if(!q.roots.length) h+=`<p>There is no factored form here (no real zeros). Drag the vertex below the x-axis${a<0?" — or above it, since a &lt; 0":""}… for a = ${fc(a)}, the vertex must be on the ${a>0?"lower":"upper"} side of the x-axis.</p>`;
+      else if(F){
+        const [[p,qq],[r,ss]]=F.fs, g=F.g;
+        h+=`<p>Start from factored form and <b>expand</b> (multiply every term of one factor by every term of the other).</p><div class="eq">y = ${facStr(F)}</div>`;
+        const t1=p*r, t2=p*ss, t3=qq*r, t4=qq*ss;
+        const f1=(p===1?"x":p+"x"), f2=(r===1?"x":r+"x");
+        h+=`<p>Multiply the binomials: (${linF(p,qq)})(${linF(r,ss)})</p><div class="eq">= ${f1}·${f2} + ${f1}·${pv(ss)} + ${pv(qq)}·${f2} + ${pv(qq)}·${pv(ss)}\n= ${term(t1,"x²",true)}${term(t2,"x",false)}${term(t3,"x",false)}${term(t4,"",false)||""}\n= ${stdStr(t1,t2+t3,t4)}</div>`;
+        if(g!==1) h+=`<p>Multiply by ${fc(g)}:</p><div class="eq">y = ${coefPre(g)}(${stdStr(t1,t2+t3,t4)}) = ${stdStr(a,b,c)}</div>`;
+        else h+=`<div class="eq">y = ${stdStr(a,b,c)}</div>`;
+        h+=`<p>The constant term c = ${fc(c)} is the y-intercept.</p>`;
+      } else {
+        const [r1,r2]=q.roots.length===2?q.roots:[q.roots[0],q.roots[0]];
+        h+=`<p>With zeros r₁ ≈ ${num(r1,2)} and r₂ ≈ ${num(r2,2)}:</p><div class="eq">y = a(x − r₁)(x − r₂) = a[x² − (r₁ + r₂)x + r₁r₂]\n  = ${fc(a)}[x² − (${num(r1+r2,2)})x + (${num(r1*r2,2)})]\n  = ${stdStr(a,b,c)}</div>`;
+      }
+    } else if(s.conv==="vtx"){
+      h+=`<p>From standard form y = ${stdStr(a,b,c)}, the axis of symmetry is</p><div class="eq">x = −b/(2a) = −(${fc(b)})/(2·${pv(a)}) = ${fc(-b)}/${fc(2*a)} = ${fc(q.h)}</div>`;
+      h+=`<p>Substitute to get the y-coordinate of the vertex:</p><div class="eq">f(${fc(q.h)}) = ${fc(a)}·${pv(q.h)}² ${b<0?"−":"+"} ${fc(Math.abs(b))}·${pv(q.h)} ${c<0?"−":"+"} ${fc(Math.abs(c))}\n       = ${fc(a*q.h*q.h)} ${b*q.h<0?"−":"+"} ${fc(Math.abs(b*q.h))} ${c<0?"−":"+"} ${fc(Math.abs(c))} = ${fc(q.k)}</div>`;
+      h+=`<p>Vertex <b>${pt(q.h,q.k)}</b>, so the vertex form is <b>y = ${vtxStr(a,q.h,q.k)}</b>. ${q.roots.length===2?`Check: the axis is halfway between the zeros, (${fq(q.roots[0])} + ${fq(q.roots[1])})/2 = ${fq(q.h)}.`:""}</p>`;
+    } else {
+      h+=`<p>Start from vertex form and <b>expand</b>: square the binomial, distribute a, then add k.</p>`;
+      h+=`<div class="eq">y = ${vtxStr(a,q.h,q.k)}\n  = ${coefPre(a)}(x² ${q.h>0?"−":"+"} ${fc(Math.abs(2*q.h))}x + ${fc(q.h*q.h)})${Math.abs(q.k)>1e-12?(q.k<0?" − ":" + ")+fc(Math.abs(q.k)):""}\n  = ${stdStr(a,b,a*q.h*q.h)}${Math.abs(q.k)>1e-12?(q.k<0?" − ":" + ")+fc(Math.abs(q.k)):""}\n  = ${stdStr(a,b,c)}</div>`;
+      h+=`<p>Remember (x − h)² = x² − 2hx + h², <b>not</b> x² + h². The middle term −2ah = ${fc(b)} = b.</p>`;
+    }
+    $("t3conv").innerHTML=h;
+  }
+};
+
+/* ══════════════════════ shared: solve-equation problems ══════════════════════ */
+function mkFactorProb(A,B,C,lhs,rhs,type){
+  const F=factorInt(A,B,C);
+  return {method:"factor",type,A,B,C,lhs,rhs,F,roots:F?rootsF(F):[],f:x=>A*x*x+B*x+C};
+}
+function mkSqrtProb(v,lhs,rhs,h,K,pre){
+  const roots= K>1e-12? [h-Math.sqrt(K),h+Math.sqrt(K)] : Math.abs(K)<1e-12? [h] : [];
+  return {method:"sqrt",type:"sqrt",v,lhs,rhs,h,K,pre,roots,f:x=>(x-h)*(x-h)};
+}
+const SOLVE_TYPES=[["mix","Mixed equations"],["tri","x² + bx + c = 0"],["ac","ax² + bx + c = 0"],["move","Not in = 0 form"],["gcf","Common factor"],["dos","Difference of squares"],["sqrt","Square roots: x² = k"]];
+function genSolve(type,chal){
+  if(type==="mix") type=pick(["tri","tri","ac","move","move","gcf","dos","sqrt","sqrt"]);
+  if(type==="tri"){ let r1,r2; do{ r1=rnd(-8,8); r2=rnd(-8,8);}while(r1===0||r2===0||r1===-r2||Math.abs(r1*r2)>60);
+    const B=-(r1+r2), C=r1*r2; return mkFactorProb(1,B,C,stdStr(1,B,C),"0",type); }
+  if(type==="ac"){ let p,q,s,B; do{ p=pick([2,3,5]); q=rnd(-7,7); s=rnd(-6,6); B=p*s+q; }while(q===0||s===0||gcd(p,q)!==1||B===0);
+    return mkFactorProb(p,B,q*s,stdStr(p,B,q*s),"0",type); }
+  if(type==="move"){ const v=pick([1,2,3]);
+    if(v===3){ const a=pick([2,3,4]), m=rnd(-6,6)||3; return mkFactorProb(a,-a*m,0,stdStr(a,0,0),stdStr(0,a*m,0),type); }
+    let r1,r2,B,C; do{ r1=rnd(-8,8); r2=rnd(-8,8); B=-(r1+r2); C=r1*r2; }while(r1===0||r2===0||B===0||Math.abs(C)>60);
+    if(v===1) return mkFactorProb(1,B,C,stdStr(1,B,0),fc(-C),type);
+    return mkFactorProb(1,B,C,"x²",stdStr(0,-B,-C),type); }
+  if(type==="gcf"){ const a=pick([1,1,2,3,4,5]), m=rnd(-9,9)||4; return mkFactorProb(a,a*m,0,stdStr(a,a*m,0),"0",type); }
+  if(type==="dos"){ if(Math.random()<0.7){ const n=rnd(1,10); return mkFactorProb(1,0,-n*n,stdStr(1,0,-n*n),"0",type); }
+    const n=pick([1,3,5,7]); return mkFactorProb(4,0,-n*n,stdStr(4,0,-n*n),"0",type); }
+  // square roots
+  const vs=chal? ["sq","ax","shift","add"] : ["sq","ax","shift","add","irr","neg"]; const v=pick(vs);
+  if(v==="sq"){ const n=rnd(2,12); return mkSqrtProb(v,"x²",String(n*n),0,n*n); }
+  if(v==="ax"){ const a=rnd(2,5), n=rnd(1,6); return mkSqrtProb(v,a+"x²",String(a*n*n),0,n*n,{a}); }
+  if(v==="add"){ const n=rnd(2,9), c=rnd(1,15); return mkSqrtProb(v,"x² + "+c,String(n*n+c),0,n*n,{c}); }
+  if(v==="shift"){ const h=rnd(-6,6)||2, n=rnd(1,6); return mkSqrtProb(v,binom(h)+"²",String(n*n),h,n*n); }
+  if(v==="irr"){ const k=pick([2,3,5,6,7,8,10,11,12,13,15,18,20]); return mkSqrtProb(v,"x²",String(k),0,k); }
+  const n=rnd(1,9); return mkSqrtProb("neg","x² + "+n,"0",0,-n,{c:n});
+}
+function rootStr(n){ // √n simplified (n positive integer)
+  let k=1,r=n; for(let i=Math.floor(Math.sqrt(n));i>1;i--){ if(n%(i*i)===0){k=i;r=n/(i*i);break;} }
+  if(r===1) return String(k); return (k>1?k:"")+"√"+r;
+}
+function solveSteps(pr){
+  const st=[];
+  if(pr.method==="factor"){
+    const {A,B,C}=pr, z=stdStr(A,B,C);
+    if(pr.rhs!=="0"){ const n=parseNum(pr.rhs); const how=isFinite(n)? (n<0?"add "+fc(-n)+" to":"subtract "+fc(n)+" from") : "subtract ("+pr.rhs+") from";
+      st.push({why:`<b>Rearrange</b> so one side is 0: ${how} both sides. (The zero product property only works when the product equals <b>zero</b>.)`,eq:z+" = 0"}); }
+    const fs=factorSteps(A,B,C);
+    fs.lines.forEach(L=>st.push({why:L.why,eq:L.eq?L.eq+" = 0":"",fac:true}));
+    if(fs.F){ const F=fs.F, facs=[], sols=[];
+      let coef=F.g; F.fs.forEach(([p,q])=>{ if(q===0) coef*=p; });
+      const mono=F.fs.filter(f=>f[1]===0).length;
+      if(mono) { facs.push((coefPre(coef)||"")+"x = 0"); sols.push("x = 0"); }
+      const bins=F.fs.filter(f=>f[1]!==0); const seen={};
+      bins.forEach(([p,q])=>{ const k=p+","+q; if(seen[k])return; seen[k]=1; facs.push(linF(p,q)+" = 0");
+        sols.push(p===1? "x = "+fc(-q) : `${p}x = ${fc(-q)} → x = ${fc(-q/p)}`); });
+      const dbl=bins.length===2&&bins[0][0]===bins[1][0]&&bins[0][1]===bins[1][1];
+      st.push({why:`<b>Zero product property:</b> if a product equals 0, then at least one factor equals 0. Set each factor equal to 0${Math.abs(coef)!==1&&!mono?" (the constant "+fc(coef)+" can never be 0)":""}.`,eq:facs.join("   or   ")});
+      st.push({why:"Solve each equation."+(dbl?" Both factors are the same, so there is one solution (a <b>double root</b>): the vertex touches the x-axis.":""),eq:sols.join("   or   ")});
+      const chk=pr.roots.map(r=>{ let t=(near(A,1)?"":fc(A)+"·")+pv(r)+"²"; if(B)t+=(B<0?" − ":" + ")+fc(Math.abs(B))+"·"+pv(r); if(C)t+=(C<0?" − ":" + ")+fc(Math.abs(C)); return `x = ${fc(r)}:  ${t} = ${fc(pr.f(r))} ✓`; });
+      st.push({why:`<b>Check.</b> The solutions are the <b>zeros</b> (x-intercepts) of y = ${z}. Substitute each one:`,eq:chk.join("\n"),done:true});
+    }
+    return st;
+  }
+  const {v,h,K,pre}=pr;
+  if(v==="ax") st.push({why:`Isolate x²: divide both sides by ${pre.a}.`,eq:"x² = "+K});
+  if(v==="add") st.push({why:`Isolate x²: subtract ${pre.c} from both sides.`,eq:"x² = "+K});
+  if(v==="neg"){ st.push({why:`Isolate x²: subtract ${pre.c} from both sides.`,eq:"x² = "+fc(K)});
+    st.push({why:"<b>No real number squared is negative</b> (a square is always ≥ 0). On the graph, the line y = "+fc(K)+" never meets y = x².",eq:"no real solutions",done:true}); return st; }
+  if(v==="shift"){
+    st.push({why:"Take the square root of both sides. Both "+Math.sqrt(K)+" and −"+Math.sqrt(K)+" square to "+K+", so write <b>±</b>.",eq:binom(h).replace(/[()]/g,"")+" = ±√"+K+" = ±"+Math.sqrt(K)});
+    st.push({why:`Solve both cases: add ${pv(h)} to both sides${h<0?" (that is, subtract "+fc(-h)+")":""}.`,eq:`x = ${fc(h)} + ${Math.sqrt(K)} = ${fc(h+Math.sqrt(K))}   or   x = ${fc(h)} − ${Math.sqrt(K)} = ${fc(h-Math.sqrt(K))}`,done:true});
+    return st; }
+  const r=Math.sqrt(K), ex=isInt(r);
+  st.push({why:`Take the square root of both sides. Both ${ex?r:"√"+K} and −${ex?r:"√"+K} square to ${K}, so there are <b>two</b> solutions: write <b>±</b>.`,eq:"x = ±√"+K+(ex?" = ±"+r:(rootStr(K)!=="√"+K?" = ±"+rootStr(K):""))});
+  st.push({why:ex?"The two solutions:":"√"+K+" is irrational, so give the exact answer (and an approximation):",eq:ex?`x = ${-r}   or   x = ${r}`.replace(/-/g,"−"):`x = −${rootStr(K)} ≈ ${num(-r,2)}   or   x = ${rootStr(K)} ≈ ${num(r,2)}`,done:true});
+  return st;
+}
+
+/* ══════════════════════ TAB 4 · Solving by factoring ══════════════════════ */
+const M4={
+  tab:"Solve by factoring", lesson:"A-REI.B.4b · A-SSE.B.3a", accent:"var(--mint)",
+  title:()=>"Solve: "+M4.s.pr.lhs+" = "+M4.s.pr.rhs,
+  s:{type:"mix",pr:null,step:0,lines:true,px:null},
+  newProb(){ M4.s.pr=genSolve(M4.s.type,false); M4.s.step=0; const p=M4.s.pr; M4.s.px=(p.roots.length?(p.roots[0]+(p.roots[1]!=null?p.roots[1]:p.roots[0]))/2:0)+1.5; },
+  bar(){
+    btn("New equation",()=>{M4.newProb();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Equation type");
+    SOLVE_TYPES.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=M4.s.type; sel.onchange=()=>{M4.s.type=sel.value;M4.newProb();render();}; bar.appendChild(sel);
+    btn("Next step",()=>{ const n=solveSteps(M4.s.pr).length; M4.s.step=Math.min(n,M4.s.step+1); update(); });
+    btn("Show all",()=>{ M4.s.step=solveSteps(M4.s.pr).length; update(); });
+    btn("Start over",()=>{ M4.s.step=0; update(); });
+    if(M4.s.pr.method==="factor") chk("Factor lines",M4.s.lines,v=>{M4.s.lines=v;update();});
+  },
+  drag(id,p){ let x=S2W(p)[0]; x=snap? snapV(x,0.5):Math.round(x*20)/20; M4.s.px=clamp(x,WIN.x0+0.2,WIN.x1-0.2); },
+  win(){ const pr=M4.s.pr;
+    if(pr.method==="factor"){ const q=Qs(pr.A,pr.B,pr.C); fitWin(pr.roots.concat([q.h]),[q.k,0],pr.f); }
+    else { const xs=pr.roots.length?pr.roots.concat([pr.h]):[pr.h-3,pr.h+3]; let xa=Math.min.apply(null,xs)-3, xb=Math.max.apply(null,xs)+3; xa=Math.min(xa,-1); xb=Math.max(xb,1); if(xb-xa<12){const c=(xa+xb)/2;xa=c-6;xb=c+6;}
+      const top=Math.max(pr.K,4)*1.35+1, bot=Math.min(pr.K,0)-Math.max(2,top*0.12); setWin(xa,xb,bot,top); } },
+  draw(){
+    const pr=M4.s.pr, n=solveSteps(pr).length, done=M4.s.step>=n; M4.win(); const g=gridBg();
+    if(pr.method==="factor"){
+      const F=pr.F, facIdx=solveSteps(pr).findIndex(s=>s.fac), showF=F&&M4.s.lines&&M4.s.step>facIdx&&facIdx>=0;
+      const lines=F? F.fs.map(([p,q],i)=>({f:x=>p*x+q,c:i?"var(--lin)":"var(--alt)",lab:linF(p,q)})) : [];
+      if(showF){ lines.forEach(L=>plotFn(g,L.f,L.c,2.2,"9 6")); }
+      plotFn(g,pr.f,"var(--curve)",3.4);
+      const s0=W2S([WIN.x1-0.3,pr.f(WIN.x1-0.3)]);
+      stext(g,[WIN.R-10,WIN.T+16*FS],"y = "+stdStr(pr.A,pr.B,pr.C),"sm",COL.curve,"end");
+      void s0;
+      if(done) pr.roots.forEach((r,i)=>{ const s=W2S([r,0]); sdot(g,s,"var(--alt)",7); smartLabel(g,s,[pr.roots.length>1?(i?1:-1):1,0.9],"x = "+fc(r),COL.zero); });
+      if(F){ // probe
+        const x=M4.s.px, y=pr.f(x), P=[x,y];
+        if(inWin(P,-0.01)){ const sp=W2S(P); sseg(g,W2S([x,0]),sp,"var(--hand)",1.8,"4 4");
+          sgrab(g,sp,"X");
+          let coef=F.g; const parts=[]; F.fs.forEach(([p,q])=>{ if(q===0){coef*=p; parts.push(["x",x]);} else parts.push(["("+linF(p,q)+")",p*x+q]); });
+          const txt=(Math.abs(coef)!==1?fc(coef)+"·":coef<0?"−":"")+parts.map(t=>pv(t[1],fq)).join("·")+" = "+fq(y);
+          smartLabel(g,sp,[x>((WIN.x0+WIN.x1)/2)?-1:1,pr.A>0&&y<0?0.8:-0.8],"x = "+fq(x)+": "+txt,"#C2410C"); }
+      }
+    } else {
+      plotFn(g,pr.f,"var(--curve)",3.4); wseg(g,[WIN.x0,pr.K],[WIN.x1,pr.K],"var(--lin)",2.6,"9 6");
+      stext(g,[WIN.L+10,W2S([0,pr.K])[1]-11*FS],"y = "+fc(pr.K),"sm","#C2410C","start");
+      stext(g,[WIN.R-10,WIN.T+16*FS],"y = "+(pr.h?binom(pr.h)+"²":"x²"),"sm",COL.curve,"end");
+      if(done) pr.roots.forEach((r,i)=>{ const s=W2S([r,pr.K]); sdot(g,s,"var(--alt)",7); smartLabel(g,s,[pr.roots.length>1?(i?1:-1):1,-0.7],"x = "+(isInt(r)?fc(r):num(r,2)),COL.zero); });
+    }
+  },
+  panel(full){
+    const pr=M4.s.pr;
+    if(full||!$("t4steps")){
+      side.innerHTML=`<div class="panel"><h3>The equation</h3><div class="pad"><div class="eq" style="font-size:17px">${pr.lhs} = ${pr.rhs}</div>
+        <p style="font-size:14px;color:var(--dim)">Press <b>Next step</b> to work through it. The graph shows the related function; the solutions appear on it at the end.</p></div></div>
+        <div class="panel"><h3>Solution steps</h3><ol class="stepl" id="t4steps"></ol></div>`+
+        (pr.method==="factor"?`<div class="panel"><h3>Zero product property</h3><div class="pad">
+          <p>If a · b = 0, then a = 0 or b = 0. A product can only be zero when one of its factors is zero — that's why we <b>factor</b> and why one side must be <b>0</b>.</p>
+          <p>Drag the orange point: the dashed lines are the factors. Wherever one factor line crosses the x-axis, the product (the parabola) is 0 too.</p><div class="eq" id="t4probe"></div></div></div>`
+        :`<div class="panel"><h3>Solving by square roots</h3><div class="pad">
+          <p>When the equation is just (something)² = k, undo the square with a square root. Because 3² = 9 <b>and</b> (−3)² = 9, a positive k gives <b>two</b> solutions, written ±√k.</p>
+          <p>On the graph, the solutions are where the parabola meets the horizontal line y = k: two points if k &gt; 0, one if k = 0, none if k &lt; 0.</p></div></div>`)+
+        tryPanel(pr.method==="factor"?`Before pressing Next step, predict the solutions from the graph's x-intercepts. Then drag the orange point to an x-intercept: which factor became 0?`:`Change the equation type to <b>Square roots</b> and get several. Which equations have no real solutions? How can you tell before solving?`);
+    }
+    M4.live();
+  },
+  live(){
+    const pr=M4.s.pr, st=solveSteps(pr), k=M4.s.step;
+    let h=`<li class="${k===0?"on":""}"><span class="sn">0</span><b>Start:</b><div class="eq">${pr.lhs} = ${pr.rhs}</div></li>`;
+    st.forEach((s,i)=>{ if(i<k) h+=`<li class="${i===k-1?"on":""}"><span class="sn">${i+1}</span>${s.why}${s.eq?`<div class="eq">${s.eq}</div>`:""}</li>`; });
+    if(k<st.length) h+=`<li class="wait"><span class="sn">${k+1}</span>${st.length-k} step${st.length-k>1?"s":""} to go — press Next step.</li>`;
+    else h+=`<li class="on" style="border-left-color:var(--mint)"><b class="ok">Solution${pr.roots.length>1?"s":""}: ${pr.roots.length? pr.roots.map(r=>"x = "+(isInt(r)||frac(r)?fc(r):num(r,2))).join(", ") : "none (no real solutions)"}</b></li>`;
+    $("t4steps").innerHTML=h;
+    if($("t4probe")&&pr.F){ const F=pr.F, x=M4.s.px; let coef=F.g; const rows=[];
+      F.fs.forEach(([p,q])=>{ if(q===0){ coef*=p; rows.push(["x",x]); } else rows.push([linF(p,q),p*x+q]); });
+      $("t4probe").innerHTML=`x = ${fq(x)}\n`+rows.map(r=>`${r[0]} = ${fq(r[1])}${Math.abs(r[1])<1e-9?"  ← zero!":""}`).join("\n")+`\nproduct${Math.abs(coef)!==1?" × "+fc(coef):coef<0?" × (−1)":""} = ${fq(pr.f(x))}`; }
+  }
+};
+
+/* ══════════════════════ TAB 5 · Modeling ══════════════════════ */
+const M5={
+  tab:"Modeling", lesson:"F-IF.B.4 · A-CED.A.1", accent:"var(--magenta)",
+  title:()=>M5.s.kind==="proj"?"Projectile motion: height vs. time":"Fencing a garden: maximize the area",
+  s:{kind:"proj",units:"ft",v0:64,h0:80,t:0,keys:true,P:40,wall:false,w:6},
+  raf:0, sl:null,
+  G(){ return M5.s.units==="ft"?16:4.9; },
+  model(){ const g=M5.G(), v=M5.s.v0, h0=M5.s.h0, tv=v/(2*g), hm=h0+v*v/(4*g), tl=(v+Math.sqrt(v*v+4*g*h0))/(2*g);
+    return {g,v,h0,tv,hm,tl,f:t=>-g*t*t+v*t+h0}; },
+  garden(){ const P=M5.s.P, wall=M5.s.wall, xm=P/2; const L=x=>wall? P-2*x : P/2-x; return {P,wall,xm,L,A:x=>x*L(x),xv:P/4,Am:wall?P*P/8:P*P/16}; },
+  stop(){ if(M5.raf){ cancelAnimationFrame(M5.raf); M5.raf=0; } },
+  launch(){
+    M5.stop(); const m=M5.model(); if(m.tl<=1e-9) return; const t0=performance.now();
+    const stepF=now=>{ const t=(now-t0)/1000; M5.s.t=Math.min(t,m.tl); update(); if(t<m.tl&&cur===4&&M5.s.kind==="proj") M5.raf=requestAnimationFrame(stepF); else M5.raf=0; };
+    M5.s.t=0; M5.raf=requestAnimationFrame(stepF);
+  },
+  bar(){
+    segBtns([["proj","Projectile"],["garden","Garden fence"]],M5.s.kind,k=>{M5.stop(); M5.s.kind=k; render();});
+    if(M5.s.kind==="proj"){
+      segBtns([["ft","feet · −16t²"],["m","meters · −4.9t²"]],M5.s.units,k=>{ M5.stop(); M5.s.units=k; if(k==="ft"){M5.s.v0=64;M5.s.h0=80;} else {M5.s.v0=20;M5.s.h0=25;} M5.s.t=0; render(); });
+      const ft=M5.s.units==="ft", u=ft?"ft/s":"m/s";
+      slider("v₀",0,ft?96:30,ft?4:1,M5.s.v0,v=>{M5.s.v0=v; M5.s.t=Math.min(M5.s.t,M5.model().tl); update();},v=>v+" "+u);
+      slider("h₀",0,ft?160:50,ft?4:1,M5.s.h0,v=>{M5.s.h0=v; M5.s.t=Math.min(M5.s.t,M5.model().tl); update();},v=>v+(ft?" ft":" m"));
+      btn("Launch ▶",()=>M5.launch(),"primary");
+      btn("Reset",()=>{M5.stop(); M5.s.t=0; update();});
+      chk("Key points",M5.s.keys,v=>{M5.s.keys=v;update();});
+      spacer("Drag the point along the curve");
+    } else {
+      slider("Fence",20,120,4,M5.s.P,v=>{M5.s.P=v; M5.s.w=clamp(M5.s.w,0,v/2); update();},v=>v+" ft");
+      segBtns([[false,"4 sides"],[true,"3 sides + wall"]],M5.s.wall,k=>{M5.s.wall=k; render();});
+      btn("Jump to max",()=>{ M5.s.w=M5.garden().xv; update(); });
+      snapChk();
+      spacer("Drag the point to change the width x");
+    }
+  },
+  drag(id,p){
+    const w=S2W(p)[0];
+    if(id==="T"){ M5.stop(); const m=M5.model(); M5.s.t=clamp(Math.round(w*20)/20,0,m.tl); }
+    if(id==="W"){ const G=M5.garden(); M5.s.w=clamp(snap?Math.round(w):Math.round(w*10)/10,0,G.xm); }
+  },
+  draw(){ if(M5.s.kind==="proj") M5.drawProj(); else M5.drawGarden(); },
+  drawProj(){
+    const m=M5.model(), ft=M5.s.units==="ft", U=ft?"ft":"m";
+    const tmax=Math.max(1,m.tl)*1.08, ymax=Math.max(m.hm,ft?10:4)*1.16;
+    setWin(0,tmax,0,ymax,[112,18,686,412]);
+    const g=gridBg({xn:"t (s)",yn:"h ("+U+")",leftOut:true,below:true});
+    // ball column
+    const gy=W2S([0,0])[1];
+    cv.appendChild(E("rect",{x:14,y:WIN.T,width:62,height:gy-WIN.T,rx:8,fill:"rgba(2,132,199,.05)",stroke:"#C9D6EE"}));
+    const top=W2S([0,m.h0])[1];
+    if(m.h0>0) cv.appendChild(E("rect",{x:26,y:top,width:38,height:gy-top,fill:"#CBD5E1",stroke:"#94A3B8"}));
+    cv.appendChild(E("line",{x1:8,y1:gy,x2:WIN.R,y2:gy,stroke:"#64748B","stroke-width":2.4}));
+    const tt=M5.s.t, hh=Math.max(0,m.f(tt)), by=W2S([0,hh])[1]-9;
+    if(M5.s.keys){ const vy=W2S([0,m.hm])[1]; cv.appendChild(E("line",{x1:14,y1:vy,x2:76,y2:vy,stroke:"#7C3AED","stroke-width":1.6,"stroke-dasharray":"4 3"})); }
+    cv.appendChild(E("circle",{cx:45,cy:by,r:9,fill:"#FF3D8A",stroke:"#fff","stroke-width":2}));
+    const lab=E("text",{x:45,y:WIN.T+14,class:"ax","text-anchor":"middle"}); lab.textContent="ball"; cv.appendChild(lab);
+    // curve
+    plotFn(g,m.f,"#93C5FD",2.4,null,0,m.tl);
+    plotFn(g,m.f,"var(--curve)",4,null,0,tt);
+    if(M5.s.keys){
+      const V=W2S([m.tv,m.hm]); if(m.v>0){ wseg(g,[m.tv,0],[m.tv,m.hm],COL.axis,1.8,"7 5"); sdot(g,V,"var(--vert)",6.5);
+        smartLabel(g,V,[1,-0.6],"max: "+num(m.hm,2)+" "+U+" at t = "+num(m.tv,2)+" s",COL.vtx); }
+      const Z=W2S([m.tl,0]); sdot(g,Z,"var(--alt)",6.5); smartLabel(g,Z,[-1,-1],"lands t ≈ "+num(m.tl,2)+" s",COL.zero);
+      if(m.h0>0) { const Y=W2S([0,m.h0]); sdot(g,Y,"var(--lin)",6); smartLabel(g,Y,[1,0.8],"h₀ = "+m.h0,COL.yint); }
+    }
+    const T=W2S([tt,m.f(tt)]); sgrab(g,T,"T");
+    smartLabel(g,T,[tt>tmax*0.6?-1:1,0.9],"("+num(tt,2)+" s, "+num(m.f(tt),1)+" "+U+")","#C2410C");
+  },
+  drawGarden(){
+    const G=M5.garden(), x=M5.s.w;
+    setWin(0,G.xm*1.06,0,G.Am*1.22,[64,18,430,412]);
+    const g=gridBg({xn:"x (ft)",yn:"A (ft²)",leftOut:true,below:true});
+    plotFn(g,G.A,"var(--curve)",3.4,null,0,G.xm);
+    wseg(g,[G.xv,0],[G.xv,G.Am],COL.axis,1.8,"7 5");
+    const V=W2S([G.xv,G.Am]); sdot(g,V,"var(--vert)",6.5); smartLabel(g,V,[0,-1],"max "+fq(G.Am)+" ft² at x = "+fq(G.xv),COL.vtx);
+    [0,G.xm].forEach((r,i)=>{ const s=W2S([r,0]); sdot(g,s,"var(--alt)",5.5); if(i) smartLabel(g,s,[-0.3,-1],"zero x = "+fq(r),COL.zero); });
+    const P=W2S([x,G.A(x)]); sgrab(g,P,"W"); smartLabel(g,P,[x>G.xv?1:-1,0.6],"("+fq(x)+", "+fq(G.A(x))+")","#C2410C");
+    // diagram
+    const bx=450, bw=236, byy=30, bh=380;
+    cv.appendChild(E("rect",{x:bx-6,y:byy-12,width:bw+12,height:bh+24,rx:12,fill:"rgba(5,150,105,.05)",stroke:"#C9D6EE"}));
+    const Lmax=G.wall?G.P:G.P/2, sc=Math.min((bw-50)/Lmax,(bh-120)/(G.P/2)), L=G.L(x);
+    const rw=Math.max(L*sc,1.5), rh=Math.max(x*sc,1.5), rx=bx+(bw-rw)/2, ry=byy+48+((bh-120)-rh)/2;
+    if(G.wall){ cv.appendChild(E("rect",{x:bx+6,y:ry-14,width:bw-12,height:10,fill:"#94A3B8"})); const t=E("text",{x:bx+bw/2,y:ry-20,class:"ax","text-anchor":"middle"}); t.textContent="wall (no fence needed)"; cv.appendChild(t); }
+    cv.appendChild(E("rect",{x:rx,y:ry,width:rw,height:rh,fill:"rgba(16,185,129,.25)",stroke:"#047857","stroke-width":3,"stroke-dasharray":G.wall?"0":"0"}));
+    if(G.wall) cv.appendChild(E("line",{x1:rx,y1:ry,x2:rx+rw,y2:ry,stroke:"#EEF4FF","stroke-width":4}));
+    const tl=(xx,yy,s,c,a)=>{ const t=E("text",{x:xx,y:yy,class:"sm","text-anchor":a||"middle",style:"fill:"+(c||"#22314F")}); t.textContent=s; cv.appendChild(t); };
+    tl(rx+rw/2,ry+rh+18*FS,"length = "+fq(L)+" ft","#047857");
+    tl(rx-6,ry+rh/2+4,"x = "+fq(x),"#C2410C","end");
+    tl(bx+bw/2,byy+14,"Fence: "+G.P+" ft"+(G.wall?" (3 sides)":" (4 sides)"),"#22314F");
+    tl(bx+bw/2,byy+bh-6,"Area = "+fq(G.A(x))+" ft²","#6D28D9");
+  },
+  panel(full){
+    const k=M5.s.kind;
+    if(full||!$("t5live")){
+      if(k==="proj"){
+        side.innerHTML=`<div class="panel"><h3>The model</h3><div class="pad">
+          <p>An object launched straight up with speed <b>v₀</b> from height <b>h₀</b> has height</p>
+          <div class="eq" id="t5eq"></div>
+          <p>The −16 (feet) or −4.9 (meters) is half the pull of gravity. The ball goes straight up and down — the parabola is a graph of <b>height vs. time</b>, not the ball's path.</p></div></div>
+          <div class="panel"><h3>Reading the graph</h3><div class="pad" id="t5live"></div></div>`+
+          tryPanel(`Set h₀ = 0. Now the zeros come from factoring: t(−16t + v₀) = 0. Predict the landing time for v₀ = 48 ft/s, then launch to check. What happens to the max height when you double v₀?`);
+      } else {
+        side.innerHTML=`<div class="panel"><h3>Writing the model</h3><div class="pad" id="t5eq"></div></div>
+          <div class="panel"><h3>Maximum area</h3><div class="pad" id="t5live"></div></div>`+
+          tryPanel(`With 4 sides the best rectangle is always a square. Switch to <b>3 sides + wall</b>: is the best garden still a square? Compare the two maximum areas for the same fence.`);
+      }
+    }
+    M5.live();
+  },
+  live(){
+    if(M5.s.kind==="proj"){
+      const m=M5.model(), ft=M5.s.units==="ft", U=ft?"ft":"m", g=m.g;
+      $("t5eq").innerHTML=`h(t) = −${g}t² + v₀t + h₀\nh(t) = ${stdStr(-g,m.v,m.h0,"t")}<small>t in seconds, h in ${ft?"feet":"meters"}</small>`;
+      let h=`<p><b>Maximum height = the vertex.</b> The axis of symmetry gives the time:</p><div class="eq">t = −b/(2a) = −${m.v}/(2·(−${g})) = ${num(m.tv,3)} s\nh(${num(m.tv,3)}) = ${num(m.hm,2)} ${U}</div>`;
+      if(m.h0===0&&m.v>0) h+=`<p><b>Landing time = the positive zero.</b> With h₀ = 0, factor:</p><div class="eq">−${g}t² + ${m.v}t = 0\nt(−${g}t + ${m.v}) = 0\nt = 0  or  t = ${m.v}/${g} = ${num(m.tl,3)} s</div><p>t = 0 is the launch; the ball lands at <b>${num(m.tl,2)} s</b>.</p>`;
+      else if(m.tl>0) h+=`<p><b>Landing time = the positive zero</b> of h(t). This one doesn't factor nicely, so read it from the graph (or use the quadratic formula, coming later in the unit):</p><div class="eq">${stdStr(-g,m.v,m.h0,"t")} = 0\nt = (−b − √(b² − 4ac))/(2a) ≈ ${num(m.tl,3)} s</div><p>The negative zero (≈ ${num((m.v-Math.sqrt(m.v*m.v+4*g*m.h0))/(2*g),2)} s) makes no sense here: the domain is 0 ≤ t ≤ ${num(m.tl,2)}.</p>`;
+      else h+=`<p>With v₀ = 0 and h₀ = 0 the ball never leaves the ground.</p>`;
+      h+=`<div class="rel" style="padding:10px 0"><span class="dot" style="background:var(--hand)"></span><span class="nm">At t = ${num(M5.s.t,2)} s<em>${M5.s.t<m.tv-1e-9?"rising":M5.s.t>m.tv+1e-9?"falling":"at the top"}</em></span><span class="val">h = ${num(m.f(M5.s.t),2)} ${U}</span></div>`;
+      $("t5live").innerHTML=h;
+    } else {
+      const G=M5.garden(), x=M5.s.w, P=G.P;
+      $("t5eq").innerHTML= G.wall?
+        `<p>${P} ft of fence makes <b>three</b> sides; a wall is the fourth. Let x = the width of each side touching the wall.</p><div class="eq">length = ${P} − 2x\nA(x) = x(${P} − 2x) = ${stdStr(-2,P,0)}</div><p>The domain is 0 &lt; x &lt; ${fq(P/2)} (both lengths must be positive).</p>`
+        : `<p>${P} ft of fence goes all the way around. Let x = the width. Two widths and two lengths use the fence, so 2x + 2L = ${P}.</p><div class="eq">length = ${P}/2 − x = ${fq(P/2)} − x\nA(x) = x(${fq(P/2)} − x) = ${stdStr(-1,P/2,0)}</div><p>The domain is 0 &lt; x &lt; ${fq(P/2)}.</p>`;
+      $("t5live").innerHTML=`<p>The model is already in <b>factored form</b>, so the zeros are x = 0 and x = ${fq(G.xm)}. The vertex is halfway between them:</p>
+        <div class="eq">x = (0 + ${fq(G.xm)})/2 = ${fq(G.xv)} ft\nA(${fq(G.xv)}) = ${fq(G.xv)} · ${fq(G.L(G.xv))} = ${fq(G.Am)} ft²</div>
+        <p>Best garden: <b>${fq(G.xv)} ft by ${fq(G.L(G.xv))} ft</b>${G.wall?"":" — a square"}.</p>
+        <div class="rel" style="padding:10px 0"><span class="dot" style="background:var(--hand)"></span><span class="nm">Your garden<em>${fq(x)} ft × ${fq(G.L(x))} ft</em></span><span class="val">${fq(G.A(x))} ft²</span></div>`;
+    }
+  }
+};
+
+/* ══════════════════════ TAB 6 · Challenge ══════════════════════ */
+const KINDS6=[["mix","Mixed practice"],["feat","Key features"],["solve","Solve by factoring"],["conv","Vertex → standard"],["word","Word problems"]];
+function genFeat(){
+  const src=pick(["eq","eq","graph"]), ask=pick(["vertex","axis","zeros","yint"]);
+  let a,r1,r2,q;
+  for(let n=0;n<500;n++){
+    a=pick(src==="graph"?[1,-1,2,-2,0.5,-0.5]:[1,-1,2,-2,3,-3,0.5,-0.5]);
+    r1=rnd(-8,6); r2=r1+2*rnd(src==="graph"?1:0,4);
+    const h=(r1+r2)/2, d=(r2-r1)/2; q=Qv(a,h,-a*d*d);
+    const lim=src==="graph"?7:12;
+    if(Math.abs(q.k)<=lim&&isInt(q.k)&&isInt(q.c)&&Math.abs(q.c)<=(src==="graph"?7:40)&&Math.abs(h)<=(src==="graph"?9:8)) break;
+  }
+  const form=src==="graph"?null:pick(Math.abs(a)<1?["vtx","fac"]:["std","vtx","fac"]);
+  const eq= form==="std"? stdStr(q.a,q.b,q.c) : form==="vtx"? vtxStr(q.a,q.h,q.k) : form==="fac"? (factorInt(q.a,q.b,q.c)?facStr(factorInt(q.a,q.b,q.c)):facRootsStr(q.a,q.roots)) : "";
+  const askT={vertex:"the <b>vertex</b>",axis:"the <b>axis of symmetry</b>",zeros:"the <b>zeros</b> (x-intercepts)",yint:"the <b>y-intercept</b>"}[ask];
+  const pr={kind:"feat",ask,src,form,q,eq};
+  pr.q_=src==="graph"? `Use the graph on the board. Find ${askT} of the parabola.` : `For the function below, find ${askT}.<span class="pe">y = ${eq}</span>`;
+  if(ask==="vertex"){ pr.fields=["x-coordinate h","y-coordinate k"]; pr.ans=[q.h,q.k]; pr.type="num"; }
+  if(ask==="axis"){ pr.fields=["x ="]; pr.ans=[q.h]; pr.type="num"; }
+  if(ask==="yint"){ pr.fields=["y-intercept (the y-value)"]; pr.ans=[q.c]; pr.type="num"; }
+  if(ask==="zeros"){ pr.fields=["zeros, as a list"]; pr.ans=q.roots.slice(); pr.type="list"; }
+  return pr;
+}
+function genProblem(kind){
+  if(kind==="mix") kind=pick(["feat","feat","solve","solve","conv","word"]);
+  if(kind==="feat") return genFeat();
+  if(kind==="solve"){ const s=genSolve("mix",true);
+    return {kind:"solve",s,type:"list",fields:["solutions, as a list"],ans:s.roots,q_:`Solve the equation. ${s.method==="factor"?"Factor and use the zero product property.":"Use square roots."}<span class="pe">${s.lhs} = ${s.rhs}</span>`}; }
+  if(kind==="conv"){ const a=pick([1,-1,2,-2,3,-3]), h=rnd(-6,6)||1, k=rnd(-9,9); const q=Qv(a,h,k);
+    return {kind:"conv",q,type:"expr",fields:["standard form: y ="],ans:[],q_:`Write the function in <b>standard form</b> y = ax² + bx + c.<span class="pe">y = ${vtxStr(a,h,k)}</span>`}; }
+  // word problems
+  const w=pick(["maxh","land","tmax","garden","maxhm"]);
+  if(w==="land"){ const T=rnd(2,6), s=pick([0,0,0,1,1,2].filter(v=>v<T)); const v0=16*(T-s), h0=16*T*s;
+    return {kind:"word",w,v0,h0,g:16,U:"ft",type:"num",fields:["landing time (seconds)"],ans:[T],tol:0.051,
+      q_:`A ball is thrown upward ${h0?"from a "+h0+"-foot platform":"from the ground"} at ${v0} ft/s. Its height is <span class="pe">h(t) = ${stdStr(-16,v0,h0,"t")}</span>After how many seconds does it hit the ground?`}; }
+  if(w==="maxh"||w==="tmax"){ const v0=pick([32,48,64,80,96]), h0=pick([0,0,16,32,48,64,100]); const tv=v0/32, hm=h0+v0*v0/64;
+    return {kind:"word",w,v0,h0,g:16,U:"ft",type:"num",fields:[w==="maxh"?"maximum height (feet)":"time of maximum height (seconds)"],ans:[w==="maxh"?hm:tv],tol:0.051,
+      q_:`A rocket is launched upward ${h0?"from "+h0+" ft above the ground":"from the ground"} at ${v0} ft/s. Its height is <span class="pe">h(t) = ${stdStr(-16,v0,h0,"t")}</span>${w==="maxh"?"What is its <b>maximum height</b>?":"<b>When</b> does it reach its maximum height?"}`}; }
+  if(w==="maxhm"){ const v0=pick([9.8,14.7,19.6,24.5]), h0=pick([0,2,5,10]); const tv=v0/9.8, hm=h0+v0*v0/19.6;
+    return {kind:"word",w,v0,h0,g:4.9,U:"m",type:"num",fields:["maximum height (meters)"],ans:[hm],tol:0.051,
+      q_:`A ball is kicked straight up ${h0?"from "+h0+" m above the ground":"from the ground"} at ${v0} m/s. Its height is <span class="pe">h(t) = ${stdStr(-4.9,v0,h0,"t")}</span>What is its <b>maximum height</b>, to the nearest tenth of a meter? (The top is at t = ${num(tv,2)} s.)`}; }
+  const P=4*rnd(6,40), wall=Math.random()<0.5, askA=Math.random()<0.6;
+  const xv=P/4, Am=wall?P*P/8:P*P/16;
+  return {kind:"word",w:"garden",P,wall,type:"num",fields:[askA?"maximum area (ft²)":"width x (ft)"],ans:[askA?Am:xv],tol:0.051,askA,
+    q_: wall? `A farmer has ${P} ft of fence to make a rectangular pen against a barn wall (the wall is one side, so only 3 sides need fence). Let x be the width of each side touching the wall, so A(x) = x(${P} − 2x). ${askA?"What is the <b>maximum area</b>?":"What width x gives the <b>maximum area</b>?"}`
+      : `You have ${P} ft of fence to enclose a rectangular garden on all 4 sides. With width x, the area is A(x) = x(${fq(P/2)} − x). ${askA?"What is the <b>maximum area</b>?":"What width x gives the <b>maximum area</b>?"}`};
+}
+function solText6(pr){
+  if(pr.kind==="feat"){ const q=pr.q; let t="";
+    if(pr.src==="graph") t+=`Read from the graph: vertex ${pt(q.h,q.k)}, axis x = ${fq(q.h)}, zeros ${q.roots.map(fq).join(" and ")}, y-intercept (0, ${fq(q.c)}).\n`;
+    else if(pr.form==="vtx"){ t+=`Vertex form y = a(x − h)² + k: vertex (h, k) = ${pt(q.h,q.k)}${q.h<0?"  (x + "+fq(-q.h)+" means h = "+fq(q.h)+")":""}\n`;
+      if(pr.ask==="zeros") t+=`0 = ${vtxStr(q.a,q.h,q.k)}\n${binom(q.h)}² = ${fc(-q.k/q.a)}\nx − ${pv(q.h)} = ±${fc(Math.sqrt(-q.k/q.a))}\nx = ${q.roots.map(fq).join(" or x = ")}\n`;
+      if(pr.ask==="yint") t+=`x = 0: y = ${fc(q.a)}(0 ${q.h>0?"−":"+"} ${fq(Math.abs(q.h))})² ${q.k<0?"−":"+"} ${fq(Math.abs(q.k))} = ${fq(q.c)}\n`;
+      if(pr.ask==="axis") t+=`Axis of symmetry: x = h = ${fq(q.h)}\n`; }
+    else if(pr.form==="std"){ t+=`Standard form: a = ${fc(q.a)}, b = ${fc(q.b)}, c = ${fc(q.c)}\n`;
+      if(pr.ask==="yint") t+=`y-intercept = c = ${fc(q.c)}, the point (0, ${fc(q.c)})\n`;
+      if(pr.ask==="vertex"||pr.ask==="axis") t+=`x = −b/(2a) = ${fc(-q.b)}/${fc(2*q.a)} = ${fq(q.h)}\n`+(pr.ask==="vertex"?`y = f(${fq(q.h)}) = ${fq(q.k)}  → vertex ${pt(q.h,q.k)}\n`:"");
+      if(pr.ask==="zeros"){ factorSteps(q.a,q.b,q.c).lines.forEach(L=>{ if(L.eq) t+=`0 = ${L.eq}\n`; }); t+=`zeros: x = ${q.roots.map(fq).join(" and x = ")}\n`; } }
+    else { t+=`Factored form shows the zeros: x = ${q.roots.map(fq).join(" and x = ")}\n`;
+      if(pr.ask==="axis"||pr.ask==="vertex") t+=`Axis halfway between the zeros: x = (${q.roots.map(fq).join(" + ")})/2 = ${fq(q.h)}\n`+(pr.ask==="vertex"?`y = f(${fq(q.h)}) = ${fq(q.k)}  → vertex ${pt(q.h,q.k)}\n`:"");
+      if(pr.ask==="yint") t+=`x = 0: y = ${pr.eq.replace(/x/g,"(0)")} = ${fq(q.c)}\n`; }
+    return t.trim(); }
+  if(pr.kind==="solve"){ return [pr.s.lhs+" = "+pr.s.rhs].concat(solveSteps(pr.s).filter(s=>s.eq).map(s=>s.eq)).join("\n"); }
+  if(pr.kind==="conv"){ const q=pr.q; return `y = ${vtxStr(q.a,q.h,q.k)}\n  = ${coefPre(q.a)}(x² ${q.h>0?"−":"+"} ${fc(Math.abs(2*q.h))}x + ${fc(q.h*q.h)})${q.k?(q.k<0?" − ":" + ")+Math.abs(q.k):""}\n  = ${stdStr(q.a,q.b,q.a*q.h*q.h)}${q.k?(q.k<0?" − ":" + ")+Math.abs(q.k):""}\n  = ${stdStr(q.a,q.b,q.c)}`; }
+  if(pr.w==="garden"){ const P=pr.P; return pr.wall? `A(x) = x(${P} − 2x); zeros x = 0 and x = ${fq(P/2)}\nvertex halfway: x = ${fq(P/4)} ft\nA(${fq(P/4)}) = ${fq(P/4)} · ${fq(P/2)} = ${fq(P*P/8)} ft²`
+    : `A(x) = x(${fq(P/2)} − x); zeros x = 0 and x = ${fq(P/2)}\nvertex halfway: x = ${fq(P/4)} ft (a square)\nA(${fq(P/4)}) = ${fq(P/4)} · ${fq(P/4)} = ${fq(P*P/16)} ft²`; }
+  const g=pr.g, v=pr.v0, h0=pr.h0, tv=v/(2*g), hm=h0+v*v/(4*g), U=pr.U;
+  if(pr.w==="land"){ const T=pr.ans[0];
+    return h0===0? `−16t² + ${v}t = 0\nt(−16t + ${v}) = 0\nt = 0 (launch)  or  t = ${v}/16 = ${fq(T)} s`
+      : `−16t² + ${v}t + ${h0} = 0\nDivide by −16:  ${stdStr(1,-v/16,-h0/16,"t")} = 0\n${facStr(factorInt(1,-v/16,-h0/16)).replace(/x/g,"t")} = 0\nt = ${fq(T)}  or  t = ${fq(T-v/16)} (negative: reject)\nLands at t = ${fq(T)} s`; }
+  return `t = −b/(2a) = −${v}/(2·(−${g})) = ${num(tv,3)} s\nh(${num(tv,3)}) = −${g}(${num(tv,3)})² + ${v}(${num(tv,3)}) + ${h0} = ${num(hm,2)} ${U}`;
+}
+function hint6(pr){
+  if(pr.kind==="feat"){ return {vertex:"In vertex form the vertex is (h, k) — watch the sign of h. In standard form use x = −b/(2a), then substitute. In factored form, average the zeros first.",
+    axis:"The axis of symmetry is the vertical line through the vertex: x = h. From factored form it's halfway between the zeros; from standard form it's x = −b/(2a).",
+    zeros:"Zeros are where y = 0. From factored form, set each factor to 0. From vertex form, solve a(x − h)² + k = 0 with square roots (±!).",
+    yint:"The y-intercept is where x = 0. Substitute 0 for x and simplify — in standard form it's just c."}[pr.ask]; }
+  if(pr.kind==="solve") return pr.s.method==="factor"? (pr.s.rhs!=="0"?"First move everything to one side so the equation equals 0. ":"")+"Factor, set each factor equal to 0, and solve each. List every solution, separated by a comma." : "Isolate the squared part, then take the square root of both sides — remember there are two solutions (±).";
+  if(pr.kind==="conv") return "Square the binomial first: (x − h)² = x² − 2hx + h². Then multiply every term by a, and finally add k.";
+  if(pr.w==="land") return "The ball hits the ground when h(t) = 0. Factor (divide by −16 first if that helps) and keep the positive solution.";
+  if(pr.w==="garden") return "Find the zeros of A(x) from its factored form; the maximum is at the vertex, halfway between them. Area = width × length.";
+  return pr.w==="tmax"? "The maximum is at the vertex: t = −b/(2a)." : "Find the time of the vertex with t = −b/(2a), then substitute that t into h(t).";
+}
+const M6={
+  tab:"Challenge", lesson:"F-IF.C.7a · A-REI.B.4b · F-IF.B.4", accent:"var(--coral)",
+  title:()=>"Practice: "+({feat:"key features",solve:"solve the equation",conv:"vertex form → standard form",word:"word problem"}[M6.s.pr?M6.s.pr.kind:"feat"]),
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false},
+  streakEl:null,
+  newProb(){ M6.s.pr=genProblem(M6.s.kind); M6.s.state="open"; M6.s.reveal=false; M6.s.tries=0; },
+  bar(){
+    btn("New problem",()=>{M6.newProb();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    KINDS6.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=M6.s.kind; sel.onchange=()=>{M6.s.kind=sel.value;M6.newProb();render();}; bar.appendChild(sel);
+    M6.streakEl=spacer(""); M6.upStreak();
+  },
+  upStreak(){ if(M6.streakEl)M6.streakEl.textContent="Streak "+M6.s.streak+" · Best "+M6.s.best+" · Solved "+M6.s.solved; },
+  draw(){
+    if(!M6.s.pr)M6.newProb();
+    const pr=M6.s.pr, show=M6.s.state==="right"||M6.s.reveal;
+    if(pr.kind==="feat"){ const q=pr.q;
+      if(pr.src==="graph") setWin(-11.5,11.5,-7.5,7.5); else fitWin(q.roots.concat([q.h,0]),[q.k,q.c],q.f);
+      const g=gridBg({gx:1,gy:WIN.ky>12?1:undefined});
+      if(pr.src==="graph"||show){ plotFn(g,q.f,"var(--curve)",3.4); }
+      if(show) featureMarks(g,q,{axis:true,vertex:true,yint:true,zeros:true,short:true});
+      else if(pr.src!=="graph") stext(g,[VW/2,VH/2-40],"The graph appears after you check.","big",null);
+      return; }
+    if(pr.kind==="solve"){ const s=pr.s;
+      if(s.method==="factor"){ const q=Qs(s.A,s.B,s.C); fitWin(s.roots.concat([q.h]),[q.k],s.f); }
+      else { const top=Math.max(s.K,4)*1.35+1; let xa=Math.min(s.h-6,s.roots[0]-3,-1), xb=Math.max(s.h+6,s.roots[s.roots.length-1]+3,1); setWin(xa,xb,-top*0.15,top); }
+      const g=gridBg();
+      if(show){ plotFn(g,s.f,"var(--curve)",3.4); const yv=s.method==="factor"?0:s.K;
+        if(s.method==="sqrt") wseg(g,[WIN.x0,s.K],[WIN.x1,s.K],"var(--lin)",2.4,"9 6");
+        s.roots.forEach((r,i)=>{ const p=W2S([r,yv]); sdot(g,p,"var(--alt)",7); smartLabel(g,p,[s.roots.length>1?(i?1:-1):1,0.9],"x = "+fq(r),COL.zero); });
+        stext(g,[WIN.R-10,WIN.T+16*FS],s.method==="factor"?"y = "+stdStr(s.A,s.B,s.C):"y = "+(s.h?binom(s.h)+"²":"x²")+" and y = "+s.K,"sm",COL.curve,"end"); }
+      else stext(g,[VW/2,VH/2-40],"Solutions appear on the graph after you check.","big",null);
+      return; }
+    if(pr.kind==="conv"){ const q=pr.q; fitWin([q.h,q.h-3,q.h+3],[q.k,q.c],q.f); const g=gridBg();
+      plotFn(g,q.f,"var(--curve)",3.4); featureMarks(g,q,{vertex:true,yint:show});
+      stext(g,[WIN.R-10,WIN.T+16*FS],"y = "+vtxStr(q.a,q.h,q.k),"sm",COL.curve,"end"); return; }
+    // word
+    if(pr.w==="garden"){ const P=pr.P, L=x=>pr.wall?P-2*x:P/2-x, A=x=>x*L(x), xm=P/2, Am=pr.wall?P*P/8:P*P/16;
+      setWin(0,xm*1.06,0,Am*1.25,[64,18,686,412]); const g=gridBg({xn:"x (ft)",yn:"A (ft²)",leftOut:true,below:true});
+      if(show){ plotFn(g,A,"var(--curve)",3.4,null,0,xm); const V=W2S([P/4,Am]); sdot(g,V,"var(--vert)",6.5); smartLabel(g,V,[0,-1],"max "+fq(Am)+" ft² at x = "+fq(P/4),COL.vtx); }
+      else stext(g,[(WIN.L+WIN.R)/2,VH/2-40],"The graph appears after you check.","big",null);
+      return; }
+    const g0=pr.g, v=pr.v0, h0=pr.h0, f=t=>-g0*t*t+v*t+h0, tl=(v+Math.sqrt(v*v+4*g0*h0))/(2*g0), tv=v/(2*g0), hm=f(tv);
+    setWin(0,tl*1.08,0,hm*1.18,[64,18,686,412]); const g=gridBg({xn:"t (s)",yn:"h ("+pr.U+")",leftOut:true,below:true});
+    if(show){ plotFn(g,f,"var(--curve)",3.4,null,0,tl); const V=W2S([tv,hm]); sdot(g,V,"var(--vert)",6.5); smartLabel(g,V,[1,-0.6],"max "+num(hm,2)+" "+pr.U+" at t = "+num(tv,2)+" s",COL.vtx);
+      const Z=W2S([tl,0]); sdot(g,Z,"var(--alt)",6.5); smartLabel(g,Z,[-1,-1],"lands t = "+num(tl,2)+" s",COL.zero); }
+    else stext(g,[(WIN.L+WIN.R)/2,VH/2-40],"The graph appears after you check.","big",null);
+  },
+  panel(full){
+    const pr=M6.s.pr;
+    if(!full&&$("chk"))return;
+    const ph=pr.type==="list"?"e.g. −2, 5":pr.type==="expr"?"e.g. 2x^2 − 12x + 13":"e.g. −3 or 7/2";
+    const fmt=pr.type==="list"?"List every solution separated by commas, in any order: <b>−2, 5</b>. Fractions (3/2) and √ (type sqrt(7) or √7) are fine. A double root can be entered once."
+      : pr.type==="expr"?"Type ^2 or ² for squared, e.g. <b>-2x^2 + 8x - 3</b>. Standard form has no parentheses."
+      : pr.kind==="feat"&&pr.ask==="vertex"?"Enter each coordinate as a number or fraction. You can also type the point, like <b>(3, −2)</b>, in the first box."
+      : "Enter a number, fraction like 7/2, or decimal (rounded to the nearest tenth is fine).";
+    side.innerHTML=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob">${pr.q_}</p></div>
+      <div class="ansrow">${pr.fields.map((f,i)=>`<div><label class="fld" for="ans${i}">${f}</label><input type="text" id="ans${i}" autocomplete="off" spellcheck="false" placeholder="${ph}"></div>`).join("")}</div>
+      <p class="fmt">${fmt}</p>
+      <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button>
+        <button id="sol" class="ghost" type="button">Show solution</button>
+      </div><div id="fb6"></div><div style="height:4px"></div></div>
+      <div class="panel"><h3>How it works</h3><div class="pad">
+      <p>Problems are generated at random: key features from an equation or a graph, solving by factoring or square roots, converting vertex form to standard form, and projectile / area word problems.</p>
+      <p>Get one right on the first try to grow your streak. A wrong answer resets it and gives you a hint — then try again.</p></div></div>`;
+    const ins=pr.fields.map((_,i)=>$("ans"+i)), fb=$("fb6");
+    const showSol=good=>{ fb.innerHTML=(good||"")+`<div class="fldwrap"><div class="eq">${solText6(pr)}</div></div>`; };
+    const win=()=>{ M6.s.state="right"; if(M6.s.tries===0&&!M6.s.reveal){ M6.s.streak++; M6.s.best=Math.max(M6.s.best,M6.s.streak); } M6.s.solved++; M6.upStreak();
+      clear(); M6.draw(); showSol(`<div class="verdict good"><b>Correct!</b> ${M6.s.tries||M6.s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+M6.s.streak+"."} Compare with the full work below, then press <b>New problem</b>.</div>`); ins.forEach(x=>x.disabled=true); };
+    const lose=msg=>{ M6.s.tries++; M6.s.streak=0; M6.upStreak(); fb.innerHTML=`<div class="verdict bad"><b>${msg||"Not quite."}</b> ${hint6(pr)}</div>`; };
+    const check=()=>{
+      if(M6.s.state==="right")return;
+      if(pr.type==="list"){ const L=parseList(ins[0].value);
+        if(!L||!L.length){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Type the solutions separated by commas, like −2, 5.</div>`; return; }
+        if(sameSet(L,pr.ans,0.011)) return win();
+        const ua=uniq(L,0.011), aa=uniq(pr.ans,0.011);
+        const someRight=ua.filter(v=>aa.some(a=>Math.abs(a-v)<0.011)).length;
+        return lose(someRight&&ua.length<aa.length?"Partly right — there's another solution.":someRight?"Some of those are right, but not all.":ua.length===aa.length&&ua.every((v,i)=>Math.abs(v+aa[aa.length-1-i])<0.011)?"Check your signs.":"Not quite."); }
+      if(pr.type==="expr"){ const c=compile(ins[0].value);
+        if(!c||!c.usesX){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Type an expression in x, like 2x^2 − 12x + 13.</div>`; return; }
+        if(sameFn(c.f,pr.q.f)){ if(/\([^)]*x/i.test(ins[0].value)){ fb.innerHTML=`<div class="verdict info"><b>That's equivalent</b>, but it still has parentheses. Expand it all the way to ax² + bx + c.</div>`; return; } return win(); }
+        const u=fitQuad(c.f); let m="Not quite.";
+        if(u&&near(u.a,pr.q.a,1e-6)&&near(u.b,pr.q.b,1e-6)) m="a and b are right — recheck the constant term (a·h² + k).";
+        else if(u&&near(u.a,pr.q.a,1e-6)&&near(u.c,pr.q.a*pr.q.h*pr.q.h,1e-6)) m="Close — you forgot to add k at the end.";
+        else if(u&&near(u.a,pr.q.a,1e-6)&&near(u.b,0,1e-6)) m="You're missing the middle term: (x − h)² ≠ x² + h².";
+        return lose(m); }
+      // numeric fields
+      let vals=ins.map(x=>parseNum(x.value));
+      if(pr.fields.length===2&&/,/.test(ins[0].value)){ const P=ins[0].value.replace(/[()]/g,"").split(","); vals=[parseNum(P[0]),parseNum(P[1])]; }
+      if(vals.some(v=>!isFinite(v))){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Use numbers, fractions like 7/3, or decimals.</div>`; return; }
+      const tol=pr.tol||0.011, okv=vals.map((v,i)=>Math.abs(v-pr.ans[i])<=Math.max(tol,Math.abs(pr.ans[i])*0.002));
+      if(okv.every(Boolean)) return win();
+      if(pr.kind==="feat"&&pr.ask==="vertex"&&okv[0]!==okv[1]) return lose("The "+(okv[0]?"y":"x")+"-coordinate is off.");
+      if(pr.kind==="feat"&&(pr.ask==="vertex"||pr.ask==="axis")&&near(vals[0],-pr.ans[0],0.011)&&Math.abs(pr.ans[0])>1e-9) return lose("Check the sign of h.");
+      lose();
+    };
+    $("chk").onclick=check;
+    ins.forEach(x=>x.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); }));
+    $("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){M6.s.streak=0;M6.upStreak();} clear(); M6.draw(); showSol(`<div class="verdict info"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
+function update(){ setFS(); const M=MODS[cur]; clear(); M.draw(); M.panel(false); }
+function render(){
+  setFS(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M4&&!M4.s.pr)M4.newProb();
+  if(M===M6&&!M6.s.pr)M6.newProb();
+  if(M===M2&&M2.s.mode==="puzzle"&&!M2.s.tg)M2.newPuzzle();
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
+  cv.setAttribute("aria-label",M.tab+" — "+M.title());
+  bar.innerHTML=""; M.bar();
+  clear(); M.draw(); M.panel(true);
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+function go(i,push){ M5.stop(); cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+// test hook (read-only view of the current challenge)
+window.__qlab={get pr(){return M6.s.pr;}, get p4(){return M4.s.pr;}};
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>

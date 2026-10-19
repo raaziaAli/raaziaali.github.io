@@ -1,0 +1,1226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exponential &amp; Logarithm Lab — Algebra 2 Unit 4</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M8 54C26 52 38 44 56 8' stroke='%2300E5FF' stroke-width='6' fill='none' stroke-linecap='round'/%3E%3Cpath d='M10 56C12 38 20 26 56 22' stroke='%23FF3D8A' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:1fr}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+
+  /* ── drawing ── */
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── shared lab additions ── */
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .bar button:focus-visible,.seg button:focus-visible,.go:focus-visible,.ghost:focus-visible,.mini:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px}
+  .rng input{accent-color:var(--accent);width:110px}
+  .rng output{min-width:16px;text-align:right;color:var(--accent)}
+  svg.canvas{-webkit-user-select:none;user-select:none}
+  svg.canvas text{pointer-events:none}
+  .sm{font-family:var(--mono);font-weight:600;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .ax{font-family:var(--mono);font-size:11px;fill:#7C8AAB}
+  .axn{font-family:var(--mono);font-size:12px;font-weight:700;fill:#5B6B8F}
+  @media (max-width:560px){ svg.canvas .sm{font-size:21px;stroke-width:5} svg.canvas .mk{font-size:27px} svg.canvas .num{font-size:22px} svg.canvas .ax{font-size:16px} svg.canvas .axn{font-size:17px} }
+  .stepl{list-style:none;margin:0;padding:6px 0}
+  .stepl li{padding:10px 20px;border-left:3px solid transparent;color:var(--dim);font-size:14.5px}
+  .stepl li.on{border-left-color:var(--accent);background:rgba(255,255,255,.05);color:#fff}
+  .stepl li.done{color:#CFCFEA}
+  .stepl li .sn{color:var(--accent);font-family:var(--mono);font-weight:700;margin-right:8px}
+  .stepl li b{color:#fff}
+  .stepl li .m{display:block;font-family:var(--mono);font-weight:600;color:#fff;font-size:14.5px;margin-top:4px}
+  .stepl li.hidden{color:#6F6F98;font-style:italic}
+  .ansrow{display:flex;gap:12px;padding:0 20px;flex-wrap:wrap}
+  .ansrow > div{flex:1 1 120px}
+  .ansrow label.fld{margin:14px 0 7px}
+  .prob{font-size:15.5px;color:#E7E9FA}
+  .prob b{color:#fff}
+  .big{font-family:var(--mono);font-weight:700;font-size:19px;color:#fff;line-height:1.8}
+  table.tbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}
+  table.tbl th{color:var(--accent);font-weight:600;text-align:right;padding:8px 10px;border-bottom:1px solid var(--edge);font-size:11.5px;letter-spacing:.05em;white-space:nowrap}
+  table.tbl td{padding:6px 10px;text-align:right;border-bottom:1px solid rgba(196,181,253,.10);color:#E7E9FA;white-space:nowrap}
+  table.tbl th:first-child,table.tbl td:first-child{text-align:left}
+  table.tbl tr.hi td{background:rgba(255,255,255,.09);color:#fff;font-weight:700}
+  table.tbl .rat{color:#7DD3FC} table.tbl .dif{color:#FDBA74}
+  .tblwrap{overflow-x:auto;padding:4px 6px 10px}
+  .eq .w{font-family:var(--ui);font-weight:400;font-size:13px;color:var(--dim)}
+  .mini{font-family:var(--ui);font-size:14px;font-weight:600;border:1px solid var(--edge);background:rgba(255,255,255,.06);
+    color:var(--text);padding:9px 15px;border-radius:100px;cursor:pointer}
+  .mini:hover{background:rgba(255,255,255,.13)}
+  .mini.pri{background:var(--accent);color:#0A0A1F;border-color:var(--accent)}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
+  .two{display:flex;gap:10px} .two > div{flex:1 1 0;min-width:0}
+  .two label.fld{margin:4px 0 6px}
+  .hint{font-size:13px;color:var(--dim);margin-top:6px}
+  .warn{color:#FDA4AF}
+  @media (max-width:560px){
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    .rng input{width:84px}
+    .bar{padding:13px 14px}
+    .pad{padding:14px 16px}
+    .board-head .lsn{white-space:normal}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Exponential &amp; Logarithm Lab</h1>
+    <div class="eyebrow">Algebra 2 · Unit 4 · Exponential &amp; Logarithmic Functions</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board" role="tabpanel">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Exponential and logarithm graph"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every graph is live and every number is computed from the current function — drag a point or move a slider and the work follows. Vocabulary follows Common Core / Eureka Math (EngageNY) Algebra II.
+    <div class="links"><a href="/algebra/">← Algebra courses</a><a href="/math/#algebra">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const EE=Math.E;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const isInt=v=>Math.abs(v-Math.round(v))<1e-9;
+const near=(a,b,e)=>Math.abs(a-b)<(e||1e-9);
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;};
+const minus=s=>String(s).replace(/-/g,"−");
+const lg=(x,b)=>Math.log(x)/Math.log(b);
+const unit=v=>{const l=Math.hypot(v[0],v[1])||1;return [v[0]/l,v[1]/l];};
+function num(v,dp){ dp=(dp==null?1:dp); const f=Math.pow(10,dp); let s=Math.round(v*f)/f; if(Object.is(s,-0)||Math.abs(s)<1e-12)s=0; return minus(String(s)); }
+function frac(v,maxD){
+  maxD=maxD||24; if(!isFinite(v))return null;
+  for(let d=1;d<=maxD;d++){ const n=Math.round(v*d);
+    if(Math.abs(n/d-v)<1e-9*Math.max(1,Math.abs(v))){ const g=gcd(n,d), N=n/g, D=d/g; return D===1? minus(String(N)) : minus(N+"/"+D); } }
+  return null;
+}
+function fmt(v){
+  if(!isFinite(v))return "undefined";
+  const a=Math.abs(v); let s;
+  if(a>=1e9) s=v.toExponential(3).replace("e+"," × 10^");
+  else if(a>=1e4) s=Math.round(v).toLocaleString("en-US");
+  else if(a>=100) s=String(Math.round(v*10)/10);
+  else if(a>=1||a===0) s=String(Math.round(v*100)/100);
+  else s=String(Number(v.toPrecision(3)));
+  if(s==="-0")s="0";
+  return minus(s);
+}
+const f4=v=>minus(String(+v.toFixed(4)));
+const fx=v=>{ const f=frac(v,12); return f!==null? f : fmt(v); };
+const fxa=v=>{ const f=frac(v,12); return f!==null? f : "≈ "+f4(v); };
+function money(v){ return (v<0?"−":"")+"$"+Math.abs(v).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function bName(b){ if(near(b,EE,1e-12))return "e"; const f=frac(b,4); if(f&&f.indexOf("/")>=0)return f; return minus(String(+b.toFixed(3))); }
+const baseH=b=>{ const s=bName(b); return s.indexOf("/")>=0?"("+s+")":s; };
+function logH(b){ if(near(b,10))return "log"; if(near(b,EE,1e-12))return "ln"; return "log<sub>"+bName(b)+"</sub>"; }
+function logS(b){ if(near(b,10))return "log"; if(near(b,EE,1e-12))return "ln"; return "log_{"+bName(b)+"}"; }
+const supH=(b,e)=>baseH(b)+"<sup>"+e+"</sup>";
+const supS=(b,e)=>baseH(b)+"^{"+e+"}";
+function linH(p,q,v){ v=v||"x"; if(near(p,0))return fx(q); let s=near(p,1)?v:near(p,-1)?"−"+v:fx(p)+v;
+  if(!near(q,0)) s+=(q>0?" + ":" − ")+fx(Math.abs(q)); return s; }
+const parX=s=>/[ +−\/]/.test(s.replace(/^−/,""))||s.indexOf("−")===0?"("+s+")":s;
+
+/* ══════════════════════ board / graph primitives ══════════════════════ */
+let W={x0:-1,x1:10,y0:-1,y1:10};
+const X=x=>(x-W.x0)/(W.x1-W.x0)*VW, Y=y=>VH-(y-W.y0)/(W.y1-W.y0)*VH;
+const P2=(x,y)=>[X(x),Y(y)];
+const IX=sx=>W.x0+sx/VW*(W.x1-W.x0), IY=sy=>W.y0+(VH-sy)/VH*(W.y1-W.y0);
+let FS=1, BOXES=[];
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild); BOXES=[];}
+function niceStep(range,target){ const raw=range/target, p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p; }
+function tickFmt(v,step,pre){
+  pre=pre||""; let s;
+  if(Math.abs(v)>=10000||(step>=1000&&Math.abs(v)>=1000)) s=String(+(v/1000).toFixed(step>=1000?(step%1000===0?0:1):2))+"k";
+  else { const dp=Math.max(0,-Math.floor(Math.log10(step)+1e-9)); s=v.toFixed(dp); }
+  return minus((v<0?"-":"")+pre+s.replace(/^-/,""));
+}
+function axes(o){
+  o=o||{};
+  const d=E("defs"); d.innerHTML='<clipPath id="fr"><rect width="'+VW+'" height="'+VH+'"/></clipPath>'; cv.appendChild(d);
+  cv.appendChild(E("rect",{width:VW,height:VH,fill:"rgba(255,255,255,0)"}));
+  const gg=E("g",{});
+  const sx=o.sx||niceStep(W.x1-W.x0,14*(FS>1?.7:1)), sy=o.sy||niceStep(W.y1-W.y0,10*(FS>1?.7:1));
+  const i0=Math.ceil(W.x0/sx-1e-9), i1=Math.floor(W.x1/sx+1e-9), j0=Math.ceil(W.y0/sy-1e-9), j1=Math.floor(W.y1/sy+1e-9);
+  for(let i=i0;i<=i1;i++){ const x=X(i*sx); gg.appendChild(E("line",{x1:x,y1:0,x2:x,y2:VH,style:"stroke:var(--grid)","stroke-width":1})); }
+  for(let j=j0;j<=j1;j++){ const y=Y(j*sy); gg.appendChild(E("line",{x1:0,y1:y,x2:VW,y2:y,style:"stroke:var(--grid)","stroke-width":1})); }
+  const hasY0=W.y0<=0&&W.y1>=0, hasX0=W.x0<=0&&W.x1>=0;
+  if(hasY0) gg.appendChild(E("line",{x1:0,y1:Y(0),x2:VW,y2:Y(0),stroke:"#8FA3C8","stroke-width":1.8}));
+  if(hasX0) gg.appendChild(E("line",{x1:X(0),y1:0,x2:X(0),y2:VH,stroke:"#8FA3C8","stroke-width":1.8}));
+  const pxX=Math.abs(X(sx)-X(0)), pxY=Math.abs(Y(0)-Y(sy));
+  const ex=pxX<36*FS?(pxX<18*FS?5:2):1, ey=pxY<22*FS?(pxY<11*FS?5:2):1;
+  const ly=clamp(hasY0?Y(0)+15*FS:VH-6,12*FS,VH-6);
+  for(let i=i0;i<=i1;i++){ if(i===0||i%ex)continue; const t=E("text",{x:X(i*sx),y:ly,class:"ax","text-anchor":"middle"}); t.textContent=tickFmt(i*sx,sx,o.xpre); gg.appendChild(t); }
+  let lx=hasX0?X(0)-6:4, anc=hasX0?"end":"start";
+  if(hasX0&&X(0)<40*FS){ lx=X(0)+6; anc="start"; }
+  for(let j=j0;j<=j1;j++){ if(j===0||j%ey)continue; const yy=Y(j*sy); if(yy<8||yy>VH-4)continue; const t=E("text",{x:lx,y:yy+4,class:"ax","text-anchor":anc}); t.textContent=tickFmt(j*sy,sy,o.ypre); gg.appendChild(t); }
+  if(hasX0&&hasY0){ const t=E("text",{x:X(0)-6,y:ly,class:"ax","text-anchor":"end"}); t.textContent="0"; gg.appendChild(t); }
+  if(hasY0){ const t=E("text",{x:VW-8,y:Y(0)-8,class:"axn","text-anchor":"end"}); t.textContent=o.xl||"x"; gg.appendChild(t); }
+  if(hasX0){ const t=E("text",{x:X(0)+8,y:16*FS,class:"axn"}); t.textContent=o.yl||"y"; gg.appendChild(t); }
+  cv.appendChild(gg);
+  const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
+}
+function plot(g,f,color,w,dash,xa,xb){
+  const a=xa==null?W.x0:Math.max(xa,W.x0), b=xb==null?W.x1:Math.min(xb,W.x1); if(b<=a)return;
+  const N=900, span=W.y1-W.y0, lo=W.y0-3*span, hi=W.y1+3*span; let d="", pen=false;
+  for(let i=0;i<=N;i++){ const x=a+(b-a)*i/N; let y=f(i===0&&xa!=null?x+1e-9:x);
+    if(!isFinite(y)||isNaN(y)){pen=false;continue;}
+    y=clamp(y,lo,hi); d+=(pen?"L":"M")+X(x).toFixed(2)+" "+Y(y).toFixed(2); pen=true; }
+  const at={d,fill:"none",style:"stroke:"+color,"stroke-width":w||3,"stroke-linecap":"round","stroke-linejoin":"round"};
+  if(dash)at["stroke-dasharray"]=dash; const p=E("path",at); g.appendChild(p); return p;
+}
+function wline(g,x1,y1,x2,y2,color,w,dash){
+  const a={x1:X(x1),y1:Y(y1),x2:X(x2),y2:Y(y2),style:"stroke:"+(color||"var(--graphite)"),"stroke-width":w||2,"stroke-linecap":"round"};
+  if(dash)a["stroke-dasharray"]=dash; const n=E("line",a); g.appendChild(n); return n;
+}
+function sdot(g,p,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:(r||5)*(FS>1?1.25:1),style:"fill:"+(color||"var(--ink)"),stroke:"#fff","stroke-width":2,"pointer-events":"none"})); }
+function sgrab(g,p,id,color){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:FS>1?26:16,class:"grab","data-drag":id})); sdot(g,p,color,6); }
+function rich(t,s){
+  String(s).split(/(\^\{[^}]*\}|_\{[^}]*\})/).forEach(p=>{ if(!p)return; let sh=null, txt=p;
+    if(p.slice(0,2)==="^{"){sh="super";txt=p.slice(2,-1);} else if(p.slice(0,2)==="_{"){sh="sub";txt=p.slice(2,-1);}
+    const ts=document.createElementNS(NS,"tspan"); ts.textContent=txt;
+    if(sh){ ts.setAttribute("baseline-shift",sh); ts.setAttribute("font-size","74%"); }
+    t.appendChild(ts); });
+}
+const plain=s=>String(s).replace(/[\^_]\{([^}]*)\}/g,"$1");
+function stext(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"sm","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("style","fill:"+color); rich(t,s); g.appendChild(t); return t;
+}
+const tw=s=>plain(s).length*8.2*FS+6;
+function lab(g,p,text,color,dir){
+  const w=tw(text), h=17*FS;
+  let cx=clamp(p[0],w/2+4,VW-w/2-4), cy=clamp(p[1],h/2+4,VH-h/2-4); const c0=cy;
+  for(const k of [0,1,-1,2,-2,3,-3,4]){ const y=clamp(c0+k*h*(dir||1),h/2+4,VH-h/2-4), b=[cx-w/2,y-h/2,cx+w/2,y+h/2];
+    if(!BOXES.some(q=>b[0]<q[2]&&b[2]>q[0]&&b[1]<q[3]&&b[3]>q[1])){ cy=y; break; } }
+  BOXES.push([cx-w/2,cy-h/2,cx+w/2,cy+h/2]);
+  return stext(g,[cx,cy],text,"sm",color);
+}
+function smartLabel(g,anchor,dir,text,color){
+  const w=tw(text), h=17*FS, d=unit(dir), off=13*FS;
+  return lab(g,[anchor[0]+d[0]*(off+w/2*Math.abs(d[0])), anchor[1]+d[1]*(off+h/2*Math.abs(d[1]))],text,color,d[1]>0?1:-1);
+}
+function legend(g,items,corner){
+  const lh=21*FS, w=Math.max.apply(null,items.map(it=>plain(it.text).length))*8.2*FS+48*FS, h=items.length*lh+12;
+  const x=corner[1]==="r"? VW-w-10 : (corner[2]?+corner.slice(2):60), y=corner[0]==="b"? VH-h-30*FS : 10;
+  g.appendChild(E("rect",{x,y,width:w,height:h,rx:10,fill:"rgba(255,255,255,.9)",stroke:"#CBD5E1","stroke-width":1}));
+  items.forEach((it,i)=>{ const yy=y+6+lh*(i+.5);
+    const a={x1:x+10,y1:yy,x2:x+34*FS,y2:yy,style:"stroke:"+it.color,"stroke-width":it.w||3.5,"stroke-linecap":"round"}; if(it.dash)a["stroke-dasharray"]=it.dash;
+    g.appendChild(E("line",a)); stext(g,[x+40*FS,yy],it.text,"sm",it.tc||"var(--ink)","start"); });
+  BOXES.push([x,y,x+w,y+h]);
+}
+function rightMark(g,c,u,v,s){ s=s||11;
+  const a=[c[0]+u[0]*s,c[1]+u[1]*s], b=[a[0]+v[0]*s,a[1]+v[1]*s], e=[c[0]+v[0]*s,c[1]+v[1]*s];
+  g.appendChild(E("polyline",{points:[a,b,e].map(p=>p.join(",")).join(" "),class:"rt"}));
+}
+const tryPanel=html=>`<div class="panel"><h3>Try this</h3><div class="pad">${html}</div></div>`;
+
+/* ══════════════════════ expression parser (answers) ══════════════════════ */
+const SUPC="⁰¹²³⁴⁵⁶⁷⁸⁹⁻", SUBC="₀₁₂₃₄₅₆₇₈₉";
+function tok(str){
+  let s=String(str).toLowerCase().replace(/[−–—]/g,"-").replace(/[×·∙⋅]/g,"*").replace(/÷/g,"/").replace(/\$/g,"").replace(/,/g,"");
+  s=s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+/g,m=>"^("+Array.from(m).map(c=>{const i=SUPC.indexOf(c);return i===10?"-":String(i);}).join("")+")");
+  s=s.replace(/[₀₁₂₃₄₅₆₇₈₉]+/g,m=>"_"+Array.from(m).map(c=>SUBC.indexOf(c)).join(""));
+  const T=[]; let i=0;
+  while(i<s.length){ const c=s[i];
+    if(/\s/.test(c)){i++;continue;}
+    if(/[0-9.]/.test(c)){ const m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)); if(!m)throw 0; T.push({t:"num",v:parseFloat(m[0])}); i+=m[0].length; continue; }
+    if(s.startsWith("sqrt",i)){T.push({t:"sqrt"});i+=4;continue;}
+    if(c==="√"){T.push({t:"sqrt"});i++;continue;}
+    if(s.startsWith("ln",i)){T.push({t:"log",b:EE});i+=2;continue;}
+    if(s.startsWith("log",i)){ i+=3; let b=10;
+      if(s[i]==="_"){ i++; if(s[i]==="e"){b=EE;i++;} else if(s[i]==="("||s[i]==="{"){ const j=s.indexOf(s[i]==="("?")":"}",i); if(j<0)throw 0; b=parseFloat(s.slice(i+1,j)); i=j+1; }
+        else { const m=/^\d+(\.\d+)?/.exec(s.slice(i)); if(!m)throw 0; b=parseFloat(m[0]); i+=m[0].length; } }
+      else { const m=/^\d+(\.\d+)?/.exec(s.slice(i)); if(m){ b=parseFloat(m[0]); i+=m[0].length; } }
+      if(!(b>0)||b===1)throw 0; T.push({t:"log",b}); continue; }
+    if(s.startsWith("pi",i)){T.push({t:"num",v:Math.PI});i+=2;continue;}
+    if(c==="π"){T.push({t:"num",v:Math.PI});i++;continue;}
+    if(c==="e"){T.push({t:"num",v:EE});i++;continue;}
+    if("xyz".indexOf(c)>=0){T.push({t:"var",n:c});i++;continue;}
+    if("+-*/^()".indexOf(c)>=0){T.push({t:c});i++;continue;}
+    throw 0;
+  }
+  return T;
+}
+function parseAST(str){
+  let T; try{T=tok(str);}catch(_){return null;} if(!T.length)return null;
+  let i=0; const pk=()=>T[i]?T[i].t:null;
+  function expr(){ let v=term(); while(pk()==="+"||pk()==="-"){ const o=T[i++].t; v={t:"bin",o,a:v,b:term()}; } return v; }
+  function term(){ let v=unary(); for(;;){ const c=pk();
+      if(c==="*"||c==="/"){ i++; v={t:"bin",o:c,a:v,b:unary()}; }
+      else if(c==="num"||c==="var"||c==="log"||c==="sqrt"||c==="("){ v={t:"bin",o:"*",a:v,b:power()}; }
+      else break; } return v; }
+  function unary(){ if(pk()==="-"){i++;return {t:"neg",a:unary()};} if(pk()==="+"){i++;return unary();} return power(); }
+  function power(){ const b=atom(); if(pk()==="^"){ i++; return {t:"bin",o:"^",a:b,b:unary()}; } return b; }
+  function atom(){ const k=T[i]; if(!k)throw 0;
+    if(k.t==="("){ i++; const v=expr(); if(pk()!==")")throw 0; i++; return {t:"par",a:v}; }
+    if(k.t==="num"){ i++; return {t:"num",v:k.v}; }
+    if(k.t==="var"){ i++; return {t:"var",n:k.n}; }
+    if(k.t==="sqrt"){ i++; return {t:"sqrt",a:power()}; }
+    if(k.t==="log"){ i++; return {t:"log",base:k.b,a:power()}; }
+    throw 0; }
+  try{ const v=expr(); if(i!==T.length)return null; return v; }catch(_){ return null; }
+}
+function evalAST(n,env){
+  switch(n.t){
+    case "num": return n.v;
+    case "var": return env&&n.n in env? env[n.n] : NaN;
+    case "par": return evalAST(n.a,env);
+    case "neg": return -evalAST(n.a,env);
+    case "sqrt": return Math.sqrt(evalAST(n.a,env));
+    case "log": return lg(evalAST(n.a,env),n.base);
+    case "bin": { const a=evalAST(n.a,env), b=evalAST(n.b,env);
+      return n.o==="+"?a+b:n.o==="-"?a-b:n.o==="*"?a*b:n.o==="/"?a/b:Math.pow(a,b); }
+  }
+  return NaN;
+}
+const unwrap=n=>{ while(n&&n.t==="par")n=n.a; return n; };
+function logNodes(n,out){ out=out||[]; if(!n)return out; if(n.t==="log")out.push(n); if(n.a&&typeof n.a==="object")logNodes(n.a,out); if(n.b&&typeof n.b==="object")logNodes(n.b,out); return out; }
+function parseNum(s){ const a=parseAST(s); if(!a)return NaN; return evalAST(a,{}); }
+
+/* ══════════════════════ drag plumbing & bar builders ══════════════════════ */
+let dragId=null, cur=0;
+function svgPt(e){ const m=cv.getScreenCTM(); if(!m)return [0,0]; const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); return [q.x,q.y]; }
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag;
+  if(id){ dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); }
+});
+cv.addEventListener("pointermove",e=>{ if(!dragId)return; const M=MODS[cur]; if(!M.drag)return; if(M.drag(dragId,svgPt(e))!==false)update(); });
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{ if(dragId){ dragId=null; update(); } }));
+
+function btn(label,fn,cls){ const b=document.createElement("button"); b.type="button"; b.textContent=label; if(cls)b.className=cls; b.onclick=fn; bar.appendChild(b); return b; }
+function segBtns(opts,val,fn,lbl){
+  const s=document.createElement("div"); s.className="seg"; s.setAttribute("role","group"); if(lbl)s.setAttribute("aria-label",lbl);
+  opts.forEach(([k,l])=>{ const b=document.createElement("button"); b.type="button"; b.innerHTML=l;
+    b.setAttribute("aria-pressed",String(val===k)); b.onclick=()=>fn(k); s.appendChild(b); });
+  bar.appendChild(s); return s;
+}
+function chk(label,val,fn){
+  const l=document.createElement("label"); l.className="chk";
+  const i=document.createElement("input"); i.type="checkbox"; i.checked=val; i.onchange=()=>fn(i.checked);
+  l.appendChild(i); l.appendChild(document.createTextNode(label)); bar.appendChild(l); return i;
+}
+function spacer(t){ const s=document.createElement("span"); s.className="spacer"; s.innerHTML=t; bar.appendChild(s); return s; }
+function slider(label,min,max,step,val,fn,ff){
+  ff=ff||(v=>String(v));
+  const l=document.createElement("label"); l.className="rng"; l.appendChild(document.createTextNode(label+" "));
+  const i=document.createElement("input"); i.type="range"; i.min=min; i.max=max; i.step=step; i.value=val; i.setAttribute("aria-label",label);
+  const o=document.createElement("output"); o.textContent=ff(val);
+  i.oninput=()=>{ o.textContent=ff(+i.value); fn(+i.value); };
+  l.appendChild(i); l.appendChild(o); bar.appendChild(l);
+  return {set(v){ i.value=v; o.textContent=ff(v); }};
+}
+function zoomBtns(fnOut,fnIn){ const a=btn("−",fnOut); a.setAttribute("aria-label","Zoom out"); a.title="Zoom out"; const b=btn("+",fnIn); b.setAttribute("aria-label","Zoom in"); b.title="Zoom in"; }
+
+/* ══════════════════════ TAB 1 · growth & decay ══════════════════════ */
+const M1={
+  tab:"Growth &amp; decay", lesson:"F-LE.A.1 · F-IF.C.7e · F-IF.C.8b", accent:"var(--cyan)",
+  title:()=>M1.b()>1?"Exponential growth vs. linear growth":"Exponential decay vs. linear change",
+  s:{a:2,mode:"g",rp:30,m:3,X:14,lin:true,marks:true,W:null},
+  ZX:[3,4,6,8,10,14,20,30,50],
+  b(){ return 1+(M1.s.mode==="g"?1:-1)*M1.s.rp/100; },
+  f(x){ return M1.s.a*Math.pow(M1.b(),x); },
+  L(x){ return M1.s.a+M1.s.m*x; },
+  fit(){ const s=M1.s; let hi=0;
+    for(let i=0;i<=240;i++){ const x=s.X*i/240; hi=Math.max(hi,M1.f(x)); if(s.lin)hi=Math.max(hi,M1.L(x)); }
+    hi=Math.min(Math.max(hi*1.12,1),1e8); return {x0:-s.X*0.11,x1:s.X,y0:-hi*0.1,y1:hi}; },
+  preset(mode){ const s=M1.s; s.mode=mode; if(mode==="g"){ s.a=2; s.rp=30; s.m=3; s.X=14; } else { s.a=20; s.rp=20; s.m=-2; s.X=14; } },
+  crossings(){ const out=[]; let pd=M1.f(0.02)-M1.L(0.02), px=0.02;
+    for(let i=1;i<=6000;i++){ const x=0.02+i*0.04, d=M1.f(x)-M1.L(x); if(!isFinite(d))break;
+      if(pd*d<0){ let a=px,b=x; for(let k=0;k<50;k++){ const m=(a+b)/2, dm=M1.f(m)-M1.L(m); if((M1.f(a)-M1.L(a))*dm<=0)b=m; else a=m; } out.push((a+b)/2); }
+      pd=d; px=x; } return out; },
+  bar(){ const s=M1.s;
+    segBtns([["g","Growth (b &gt; 1)"],["d","Decay (0 &lt; b &lt; 1)"]],s.mode,k=>{M1.preset(k);render();},"Growth or decay");
+    M1.sa=slider("a",0.5,50,0.5,s.a,v=>{s.a=v;update();});
+    M1.sr=slider("r %",1,s.mode==="g"?200:95,1,s.rp,v=>{s.rp=v;update();},v=>v+"%");
+    M1.sm=slider("linear slope m",-10,20,0.5,s.m,v=>{s.m=v;update();});
+    chk("Linear g(x)",s.lin,v=>{s.lin=v;update();});
+    chk(s.mode==="g"?"Doubling marks":"Half-life marks",s.marks,v=>{s.marks=v;update();});
+    zoomBtns(()=>{const i=M1.ZX.indexOf(s.X); s.X=M1.ZX[Math.min(M1.ZX.length-1,(i<0?5:i)+1)]; update();},
+             ()=>{const i=M1.ZX.indexOf(s.X); s.X=M1.ZX[Math.max(0,(i<0?5:i)-1)]; update();});
+    M1.sp=spacer("");
+  },
+  drag(id,p){ const s=M1.s;
+    if(id==="a"){ s.a=clamp(Math.round(IY(p[1])*2)/2,0.5,50); M1.sa&&M1.sa.set(s.a); return; }
+    if(id==="b"){ let b=IY(p[1])/s.a; b=clamp(b,0.05,3); let rp=Math.round(Math.abs(b-1)*100); const mode=b>=1?"g":"d";
+      if(rp<1)rp=1; if(mode==="d")rp=Math.min(rp,95);
+      if(mode!==s.mode){ s.mode=mode; s.rp=rp; render(); return false; }
+      s.rp=rp; M1.sr&&M1.sr.set(rp); return; }
+  },
+  draw(){ const s=M1.s; if(!dragId||!s.W)s.W=M1.fit(); W=s.W;
+    const g=axes({xl:"x",yl:"y"}), b=M1.b(), grow=b>1;
+    if(M1.sp)M1.sp.innerHTML="b = 1 "+(grow?"+":"−")+" "+(s.rp/100).toFixed(2)+" = "+f4(b);
+    legend(g,[{color:"var(--corr)",text:"f(x) = "+fmt(s.a)+" · "+f4(b)+"^{x}"}].concat(s.lin?[{color:"var(--lin)",text:"g(x) = "+fmt(s.a)+(s.m<0?" − ":" + ")+fmt(Math.abs(s.m))+"x"}]:[]),grow?"tl":"tr");
+    // asymptote
+    wline(g,W.x0,0,W.x1,0,"var(--unk)",2.2,"9 6");
+    lab(g,[X(W.x1)-92*FS,Y(0)-14*FS],"asymptote y = 0","var(--unk)");
+    if(s.lin) plot(g,x=>M1.L(x),"var(--lin)",3);
+    plot(g,x=>M1.f(x),"var(--corr)",3.6);
+    // doubling / half-life
+    const T=Math.log(2)/Math.abs(Math.log(b));
+    if(s.marks&&isFinite(T)&&X(T)-X(0)>34*FS){
+      for(let k=1;k<=8&&k*T<=W.x1;k++){ const x=k*T, y=M1.f(x); if(Y(y)<8)break;
+        wline(g,x,0,x,y,"var(--vert)",1.6,"4 4"); sdot(g,P2(x,y),"var(--vert)",4);
+        lab(g,[X(x),Y(y)-15*FS],grow?"×"+Math.pow(2,k):"×1/"+Math.pow(2,k),"#6D28D9"); }
+      const yb=Y(0)+(W.y1-W.y0>0?30*FS:20); wline(g,0,IY(yb),T,IY(yb),"var(--vert)",2.4);
+      lab(g,[X(T/2)+60*FS,yb+(FS>1?2:0)],(grow?"doubling time ≈ ":"half-life ≈ ")+f4(+T.toFixed(2)),"#6D28D9");
+    }
+    // crossings
+    if(s.lin){ const cr=M1.crossings(); cr.forEach((x,i)=>{ if(x>W.x1||x<0)return; const y=M1.f(x); sdot(g,P2(x,y),"var(--magenta)",6);
+      if(i===cr.length-1) smartLabel(g,P2(x,y),[1,0.6],"("+fmt(x)+", "+fmt(y)+")","#BE185D"); }); M1.cr=cr; }
+    // handles
+    const A=P2(0,s.a), B1=P2(1,s.a*b);
+    sgrab(g,A,"a","var(--corr)"); sgrab(g,B1,"b","var(--corr)");
+    smartLabel(g,A,[-1,-0.9],"(0, "+fmt(s.a)+")","#0369A1");
+    smartLabel(g,B1,[grow?-0.4:0.6,grow?-1:-1],"(1, "+fmt(s.a*b)+")","#0369A1");
+  },
+  panel(){ const s=M1.s, b=M1.b(), grow=b>1, T=Math.log(2)/Math.abs(Math.log(b)), r=s.rp/100;
+    let rows=""; for(let x=0;x<=8;x++){ const fv=M1.f(x), Lv=M1.L(x);
+      rows+=`<tr><td>${x}</td><td>${fmt(fv)}</td><td class="rat">${x?"×"+f4(fv/M1.f(x-1)):"—"}</td>${s.lin?`<td>${fmt(Lv)}</td><td class="dif">${x?(s.m<0?"−":"+")+fmt(Math.abs(Lv-M1.L(x-1))):"—"}</td>`:""}</tr>`; }
+    const cr=M1.cr||[]; let over="";
+    if(s.lin){
+      if(grow){ over=cr.length? `<p>The exponential <b>overtakes</b> the linear function for good at x ≈ <b>${fmt(cr[cr.length-1])}</b>${cr[cr.length-1]>s.X?" — zoom out (−) to see it":""}. A quantity that grows by a constant <b>factor</b> eventually exceeds one that grows by a constant <b>amount</b>, no matter how big the slope.</p>` : (s.m<=0?`<p>g(x) is not increasing, so f(x) stays above it for every x &gt; 0.</p>`:`<p>f(x) stays above g(x) for every x &gt; 0 here: the exponential is ahead from the start.</p>`); }
+      else over=`<p>The decay curve gets closer and closer to 0 but never reaches it. ${s.m<0?`The line hits 0 at x = ${fmt(-s.a/s.m)} and keeps going negative — the exponential never does.`:""}</p>`;
+    }
+    const half=Math.pow(b,0.5), per12=Math.pow(b,1/12);
+    side.innerHTML=`<div class="panel"><h3>The function</h3><div class="pad">
+      <p>In <span class="term">f(x) = a · b<sup>x</sup></span>, <b>a</b> is the initial value (the y-intercept) and <b>b</b> is the <b>growth factor</b>: every time x goes up by 1, the output is <b>multiplied</b> by b.</p>
+      <div class="eq">f(x) = a · b<sup>x</sup> = ${fmt(s.a)} · ${f4(b)}<sup>x</sup>\nb = 1 ${grow?"+":"−"} r = 1 ${grow?"+":"−"} ${r.toFixed(2)} = ${f4(b)}<small>${grow?"b &gt; 1: exponential growth — up "+s.rp+"% per unit of x.":"0 &lt; b &lt; 1: exponential decay — down "+s.rp+"% per unit of x."}</small></div>
+      <p>The percent rate r gives the factor: <b>growth b = 1 + r</b>, <b>decay b = 1 − r</b>. Drag the two orange handles: (0, a) sets the start, (1, ab) sets the factor.</p></div></div>
+    <div class="panel"><h3>Equal steps in x</h3><div class="tblwrap"><table class="tbl"><tr><th>x</th><th>f(x)</th><th>ratio</th>${s.lin?"<th>g(x)</th><th>diff</th>":""}</tr>${rows}</table></div>
+      <div class="pad" style="padding-top:4px"><p>Exponential: a <b>constant ratio</b> (×${f4(b)}) between consecutive outputs. Linear: a <b>constant difference</b> (${s.m<0?"−":"+"}${fmt(Math.abs(s.m))}).</p>${over}</div></div>
+    <div class="panel"><h3>Key features</h3><div class="pad">
+      <div class="eq">domain: all real numbers\nrange: y &gt; 0\nasymptote: y = 0\ny-intercept: (0, ${fmt(s.a)})\n${grow?"increasing":"decreasing"} on (−∞, ∞)\n${grow?"doubling time":"half-life"}: T = log 2 / log ${f4(grow?b:1/b)} ≈ ${f4(+T.toFixed(3))}<small>${grow?"Every "+fmt(T)+" units the output doubles.":"Every "+fmt(T)+" units the output is cut in half."}</small></div>
+      <p><b>Same function, different time unit</b> (F-IF.C.8b): ${f4(b)}<sup>x</sup> = (${f4(half)})<sup>2x</sup> = (${f4(per12)})<sup>12x</sup> — about ${fmt(Math.abs(half-1)*100)}% per half-unit, or ${fmt(Math.abs(per12-1)*100)}% per twelfth.</p></div></div>
+    ${tryPanel(`<p>1. With growth, set r = 10% and the line's slope to 10. The line wins at first — at what x does the exponential overtake? (Zoom out.)</p><p>2. Switch to decay. Find the r that makes the half-life exactly 1. Why is it 50%?</p>`)}`;
+  }
+};
+
+/* ══════════════════════ TAB 2 · compound interest & e ══════════════════════ */
+const NOPT=[["1","Yearly"],["2","Semiannual"],["4","Quarterly"],["12","Monthly"],["365","Daily"],["inf","Continuous"]];
+const NCOL={"1":"#F59E0B","2":"#10B981","4":"#0EA5E9","12":"#2563EB","365":"#DB2777","inf":"var(--vert)"};
+const M2={
+  tab:"Compound interest &amp; e", lesson:"F-LE.A.2 · A-SSE.B.3c", accent:"var(--mint)",
+  title:()=>"Compounding "+({"1":"annually","2":"semiannually","4":"quarterly","12":"monthly","365":"daily","inf":"continuously"})[M2.s.n],
+  s:{P:1000,rp:6,T:30,n:"12",t:10,all:false,steps:false},
+  A(t,nk){ const s=M2.s, r=s.rp/100; nk=nk||s.n; if(nk==="inf")return s.P*Math.exp(r*t); const n=+nk; return s.P*Math.pow(1+r/n,n*t); },
+  bar(){ const s=M2.s;
+    segBtns(NOPT,s.n,k=>{s.n=k;render();},"Compounding frequency");
+    slider("P $",100,10000,100,s.P,v=>{s.P=v;update();},v=>v.toLocaleString("en-US"));
+    slider("r",0.5,20,0.25,s.rp,v=>{s.rp=v;update();},v=>v+"%");
+    slider("years",5,50,1,s.T,v=>{s.T=v; s.t=Math.min(s.t,v); update();});
+    chk("Compare all",s.all,v=>{s.all=v;update();});
+    chk("Balance steps",s.steps,v=>{s.steps=v;update();});
+  },
+  drag(id,p){ if(id==="t"){ M2.s.t=clamp(Math.round(IX(p[0])*4)/4,0,M2.s.T); } },
+  draw(){ const s=M2.s, top=M2.A(s.T,"inf")*1.1;
+    W={x0:-s.T*0.08,x1:s.T,y0:-top*0.08,y1:top};
+    const g=axes({xl:"t (years)",yl:"A ($)",ypre:"$"});
+    if(s.all) NOPT.forEach(([k])=>{ if(k!==s.n&&k!=="inf") plot(g,t=>M2.A(t,k),NCOL[k],1.8); });
+    if(s.n!=="inf") plot(g,t=>M2.A(t,"inf"),"var(--vert)",2.6,"9 6");
+    const n=+s.n, r=s.rp/100;
+    if(s.steps&&s.n!=="inf"&&n<=12){
+      let d=""; const K=Math.floor(n*s.T);
+      for(let k=0;k<=K;k++){ const y=s.P*Math.pow(1+r/n,k), x0=k/n, x1=Math.min((k+1)/n,s.T);
+        d+=(k?"L":"M")+X(x0).toFixed(2)+" "+Y(y).toFixed(2)+"L"+X(x1).toFixed(2)+" "+Y(y).toFixed(2); }
+      g.appendChild(E("path",{d,fill:"none",style:"stroke:var(--alt)","stroke-width":2.4,"stroke-linejoin":"round"}));
+    }
+    plot(g,t=>M2.A(t),s.n==="inf"?"var(--vert)":NCOL[s.n],3.6);
+    const items=[{color:s.n==="inf"?"var(--vert)":NCOL[s.n],text:s.n==="inf"?"A = Pe^{rt}":"A = P(1 + r/"+n+")^{"+n+"t}"}];
+    if(s.n!=="inf")items.push({color:"var(--vert)",dash:"9 6",text:"A = Pe^{rt} (continuous)"});
+    if(s.steps&&s.n!=="inf"&&n<=12)items.push({color:"var(--alt)",text:"actual balance (steps)"});
+    if(s.all)items.push({color:"#94A3B8",w:2,text:"other frequencies"});
+    legend(g,items,"tl");
+    const A=M2.A(s.t), pA=P2(s.t,A);
+    wline(g,s.t,0,s.t,A,"var(--graphite)",1.5,"4 4"); wline(g,0,A,s.t,A,"var(--graphite)",1.5,"4 4");
+    if(s.n!=="inf"){ const Ac=M2.A(s.t,"inf"); sdot(g,P2(s.t,Ac),"var(--vert)",4); }
+    sgrab(g,pA,"t",s.n==="inf"?"var(--vert)":NCOL[s.n]);
+    smartLabel(g,pA,[-1,-1.3],"A("+fmt(s.t)+") = "+money(A),"var(--ink)");
+    if(s.n!=="inf") smartLabel(g,P2(s.t,M2.A(s.t,"inf")),[1,1.2],"Pe^{rt} = "+money(M2.A(s.t,"inf")),"#6D28D9");
+  },
+  panel(){ const s=M2.s, r=s.rp/100, A=M2.A(s.t), Ac=M2.A(s.t,"inf"), n=+s.n;
+    const rs=f4(r);
+    let sub= s.n==="inf"? `A = Pe<sup>rt</sup>\n  = ${s.P.toLocaleString()} · e<sup>${rs}·${fmt(s.t)}</sup>\n  = ${money(A)}`
+      : `A = P(1 + r/n)<sup>nt</sup>\n  = ${s.P.toLocaleString()}(1 + ${rs}/${n})<sup>${n}·${fmt(s.t)}</sup>\n  = ${s.P.toLocaleString()}(${f4(1+r/n)})<sup>${fmt(n*s.t)}</sup>\n  = ${money(A)}`;
+    let rows=""; NOPT.forEach(([k,l])=>{ const v=M2.A(s.t,k); rows+=`<tr class="${k===s.n?"hi":""}"><td>${l}</td><td>${k==="inf"?"∞":k}</td><td>${money(v)}</td><td>${k==="inf"?"—":"−"+money(Ac-v).slice(1)}</td></tr>`; });
+    let erows=""; [1,2,4,12,100,365,1000,10000,1000000].forEach(m=>{ erows+=`<tr><td>${m.toLocaleString()}</td><td>${Math.pow(1+1/m,m).toFixed(6)}</td></tr>`; });
+    const eff= s.n==="inf"? Math.exp(r)-1 : Math.pow(1+r/n,n)-1;
+    side.innerHTML=`<div class="panel"><h3>Compound interest</h3><div class="pad">
+      <p>Principal <b>P</b> earns annual rate <b>r</b>, compounded <b>n</b> times a year. Each period the balance is multiplied by (1 + r/n), and there are nt periods in t years.</p>
+      <div class="eq">${sub}<small>Drag the handle to change t. Rate as a decimal: ${s.rp}% = ${rs}.</small></div></div></div>
+    <div class="panel"><h3>As n → ∞ (t = ${fmt(s.t)} yr)</h3><div class="tblwrap"><table class="tbl"><tr><th>compounding</th><th>n</th><th>A</th><th>short of Pe<sup>rt</sup></th></tr>${rows}</table></div>
+      <div class="pad" style="padding-top:4px"><p>More frequent compounding earns more, but the gains shrink: the balances <b>approach Pe<sup>rt</sup> = ${money(Ac)}</b> and never pass it. That limit is <span class="term">continuous compounding</span>.</p></div></div>
+    <div class="panel"><h3>Where e comes from</h3><div class="tblwrap"><table class="tbl"><tr><th>n</th><th>(1 + 1/n)<sup>n</sup></th></tr>${erows}</table></div>
+      <div class="pad" style="padding-top:4px"><p>(1 + 1/n)<sup>n</sup> creeps up to <b>e ≈ 2.718281828…</b>, an irrational number like π. Writing m = n/r, (1 + r/n)<sup>nt</sup> = [(1 + 1/m)<sup>m</sup>]<sup>rt</sup> → e<sup>rt</sup>.</p></div></div>
+    <div class="panel"><h3>Rewriting the rate</h3><div class="pad">
+      <p>Exponent rules let you read the same balance per year (A-SSE.B.3c):</p>
+      <div class="eq">${s.n==="inf"?`Pe<sup>${rs}t</sup> = P(e<sup>${rs}</sup>)<sup>t</sup> = P(${f4(1+eff)})<sup>t</sup>`:`P(1 + ${rs}/${n})<sup>${n}t</sup> = P[(${f4(1+r/n)})<sup>${n}</sup>]<sup>t</sup> = P(${f4(1+eff)})<sup>t</sup>`}<small>Effective annual rate ≈ ${(eff*100).toFixed(3)}% (vs. the nominal ${s.rp}%).${s.n!=="inf"&&n>1?" Per period the factor is "+f4(1+r/n)+".":""}</small></div></div></div>
+    ${tryPanel(`<p>1. Turn on <b>Compare all</b>. At 6% for 30 years, how much more does monthly earn than yearly? How much more does continuous earn than daily?</p><p>2. Find the doubling time at 6% compounded continuously by dragging until A = $2,000. Compare with ln 2 / 0.06.</p>`)}`;
+  }
+};
+
+/* ══════════════════════ TAB 3 · logarithms as inverses ══════════════════════ */
+const M3={
+  tab:"Logs as inverses", lesson:"F-BF.B.4a · F-BF.B.5 · F-LE.A.4", accent:"var(--yellow)",
+  title:()=>"y = "+bName(M3.base())+"ˣ and y = "+plain(logS(M3.base()))+" x are inverses",
+  s:{bk:"2",cb:2.5,p:1.5,z:2,snap:true,cb2:"8",cy:"4"},
+  Z:[0.5,0.75,1,1.5,2.2],
+  base(){ const s=M3.s; return s.bk==="e"?EE:s.bk==="c"?s.cb:s.bk==="h"?0.5:+s.bk; },
+  win(){ const sc=46/M3.Z[M3.s.z]*(1); const ox=230, oy=262; return {x0:-ox/sc,x1:(VW-ox)/sc,y0:-(VH-oy)/sc,y1:oy/sc}; },
+  bar(){ const s=M3.s;
+    segBtns([["2","b = 2"],["e","b = e"],["3","b = 3"],["10","b = 10"],["h","b = ½"],["c","custom"]],s.bk,k=>{s.bk=k;render();},"Base");
+    slider("custom b",0.2,5,0.1,s.cb,v=>{ if(near(v,1))v=1.1; s.cb=v; if(s.bk!=="c"){s.bk="c";render();} else update(); },v=>v.toFixed(1));
+    chk("Snap to 0.5",s.snap,v=>{s.snap=v;update();});
+    zoomBtns(()=>{s.z=Math.min(M3.Z.length-1,s.z+1);update();},()=>{s.z=Math.max(0,s.z-1);update();});
+    spacer("Drag P or Q");
+  },
+  sn(p){ return M3.s.snap? Math.round(p*2)/2 : Math.round(p*100)/100; },
+  drag(id,pt){ const s=M3.s, b=M3.base();
+    if(id==="P"){ s.p=clamp(M3.sn(IX(pt[0])),W.x0,W.x1); return; }
+    if(id==="Q"){ const c=[IY(pt[1])]; const xx=IX(pt[0]); if(xx>0)c.push(lg(xx,b));
+      let best=null,bd=1e18; c.forEach(p=>{ const q=P2(Math.pow(b,p),p), d=Math.hypot(q[0]-pt[0],q[1]-pt[1]); if(d<bd){bd=d;best=p;} });
+      s.p=clamp(M3.sn(best),W.y0,W.y1); return; }
+  },
+  draw(){ const s=M3.s, b=M3.base(); W=M3.win();
+    const g=axes({sx:M3.Z[s.z]>1.4?2:1,sy:M3.Z[s.z]>1.4?2:1});
+    wline(g,Math.max(W.x0,W.y0),Math.max(W.x0,W.y0),Math.min(W.x1,W.y1),Math.min(W.x1,W.y1),"#94A3B8",2.2,"10 7");
+    wline(g,W.x0,0,W.x1,0,"var(--corr)",2,"3 6"); wline(g,0,W.y0,0,W.y1,"var(--lin)",2,"3 6");
+    plot(g,x=>Math.pow(b,x),"var(--corr)",3.6);
+    plot(g,x=>lg(x,b),"var(--lin)",3.6,null,0);
+    legend(g,[{color:"var(--corr)",text:"y = "+supS(b,"x")},{color:"var(--lin)",text:"y = "+logS(b)+" x"},{color:"#94A3B8",dash:"10 7",w:2.2,text:"y = x"}],"tr");
+    [[0,1],[1,b]].forEach(q=>sdot(g,P2(q[0],q[1]),"var(--corr)",3.5));
+    [[1,0],[b,1]].forEach(q=>sdot(g,P2(q[0],q[1]),"var(--lin)",3.5));
+    const py=Math.pow(b,s.p), P=P2(s.p,py), Q=P2(py,s.p), mid=[(P[0]+Q[0])/2,(P[1]+Q[1])/2];
+    const dist=Math.hypot(P[0]-Q[0],P[1]-Q[1]);
+    if(dist>4){ g.appendChild(E("line",{x1:P[0],y1:P[1],x2:Q[0],y2:Q[1],style:"stroke:var(--magenta)","stroke-width":2.4,"stroke-dasharray":"7 5"}));
+      sdot(g,mid,"var(--magenta)",4); const u=unit([P[0]-mid[0],P[1]-mid[1]]), v=unit([1,-1]); rightMark(g,mid,u,v,10); }
+    sgrab(g,P,"P","var(--corr)"); sgrab(g,Q,"Q","var(--lin)");
+    let dP=[P[0]-mid[0],P[1]-mid[1]]; if(dist<4)dP=[-1,-1]; const dQ=[-dP[0],-dP[1]];
+    smartLabel(g,P,dP,"P("+fmt(s.p)+", "+fmt(py)+")","#0369A1");
+    smartLabel(g,Q,dist<4?[1,1]:dQ,"Q("+fmt(py)+", "+fmt(s.p)+")","#C2410C");
+  },
+  convOut(){ const o=document.getElementById("cvout"); if(!o)return;
+    const b=parseNum(document.getElementById("cvb").value), y=parseNum(document.getElementById("cvy").value);
+    if(!(b>0)||near(b,1)||!isFinite(b)){ o.innerHTML=`<div class="verdict bad" style="margin:10px 0 0">The base must be positive and not 1.</div>`; return; }
+    if(!(y>0)||!isFinite(y)){ o.innerHTML=`<div class="verdict bad" style="margin:10px 0 0">log<sub>b</sub> y needs y &gt; 0 — no power of a positive base is zero or negative.</div>`; return; }
+    const x=lg(y,b), fxs=frac(x,12), ex=fxs!==null&&near(Math.pow(b,parseNum(fxs)),y,1e-9*Math.max(1,y));
+    const bs=document.getElementById("cvb").value.trim()||"b", ys=document.getElementById("cvy").value.trim()||"y";
+    const bh=near(b,EE,1e-12)?"e":minus(bs), xs=ex?fxs:"≈ "+f4(x);
+    let ment="";
+    for(let c=2;c<=12&&!ment;c++){ const m=lg(b,c), k=lg(y,c);
+      if(isInt(m)&&Math.abs(m)>.5&&isInt(Math.round(k*1e9)/1e9)&&near(k,Math.round(k),1e-9)){ const mm=Math.round(m), kk=Math.round(k);
+        ment=`Mentally: ${bh} = ${c}<sup>${minus(mm)}</sup> and ${minus(ys)} = ${c}<sup>${minus(kk)}</sup>.\n(${c}<sup>${minus(mm)}</sup>)<sup>x</sup> = ${c}<sup>${minus(kk)}</sup> → ${minus(mm)}x = ${minus(kk)} → x = ${fx(kk/mm)}`; } }
+    if(!ment) ment= ex? `${bh}<sup>${fxs}</sup> = ${minus(ys)}, so x = ${fxs}.` : `Not a rational power of ${bh}: estimate it. ${baseH(b)}<sup>${Math.floor(x)}</sup> = ${fmt(Math.pow(b,Math.floor(x)))} and ${baseH(b)}<sup>${Math.floor(x)+1}</sup> = ${fmt(Math.pow(b,Math.floor(x)+1))}, so x is between ${minus(Math.floor(x))} and ${minus(Math.floor(x)+1)}.`;
+    o.innerHTML=`<div class="eq">log<sub>${bh}</sub> ${parX(minus(ys))} = x   ⇔   ${bh.length>1?"("+bh+")":bh}<sup>x</sup> = ${minus(ys)}\nx = ${xs}\n\n${ment}\n\nChange of base:\nlog<sub>${bh}</sub> ${parX(minus(ys))} = log ${parX(minus(ys))} / log ${bh} = ${f4(Math.log10(y))} / ${f4(Math.log10(b))} ≈ ${f4(x)}\n           = ln ${parX(minus(ys))} / ln ${bh} = ${f4(Math.log(y))} / ${f4(Math.log(b))} ≈ ${f4(x)}</div>`;
+  },
+  panel(full){ const s=M3.s, b=M3.base(), py=Math.pow(b,s.p), B=logH(b);
+    const live=`<p><b>P</b> = (${fmt(s.p)}, ${fmt(py)}) is on y = ${supH(b,"x")}. Swap the coordinates and you get <b>Q</b> = (${fmt(py)}, ${fmt(s.p)}), which is on y = ${B} x. Swapping x and y reflects across the line <b>y = x</b>, so the segment PQ is perpendicular to y = x and cut in half by it.</p>
+      <div class="eq">${supH(b,fmt(s.p))} = ${fmt(py)}   ⇔   ${B} ${fmt(py)} = ${fmt(s.p)}<small>Exponential form ⇔ logarithmic form: the log <b>is</b> the exponent.</small></div>
+      <div class="eq">f(x) = ${supH(b,"x")}       f<sup>−1</sup>(x) = ${B} x\nf(f<sup>−1</sup>(x)) = ${supH(b,B+" x")} = x  (x &gt; 0)\nf<sup>−1</sup>(f(x)) = ${B} ${supH(b,"x")} = x<small>Domain and range trade places: ${supH(b,"x")} has domain ℝ, range y &gt; 0; ${B} x has domain x &gt; 0, range ℝ. The asymptote y = 0 becomes x = 0.</small></div>`;
+    let pw=""; for(let k=-2;k<=4;k++){ const v=Math.pow(b,k); pw+=`<tr><td>${minus(k)}</td><td>${supH(b,minus(k))}</td><td>${fx(v)}</td><td>${B} ${fx(v)} = ${minus(k)}</td></tr>`; }
+    if(!full&&document.getElementById("m3live")){ document.getElementById("m3live").innerHTML=live; document.getElementById("m3pw").innerHTML=`<table class="tbl"><tr><th>k</th><th>power</th><th>value</th><th>so</th></tr>${pw}</table>`; return; }
+    side.innerHTML=`<div class="panel"><h3>Inverse functions</h3><div class="pad" id="m3live">${live}</div></div>
+    <div class="panel"><h3>Log ⇔ exponent converter</h3><div class="pad">
+      <p>log<sub>b</sub> y asks: <b>“b to what power gives y?”</b> Type a base and a number (fractions like 1/8 are fine).</p>
+      <div class="two"><div><label class="fld" for="cvb">base b</label><input type="text" id="cvb" value="${s.cb2}" autocomplete="off" spellcheck="false"></div>
+      <div><label class="fld" for="cvy">number y</label><input type="text" id="cvy" value="${s.cy}" autocomplete="off" spellcheck="false"></div></div>
+      <div class="btnrow">${[["8","4"],["2","1/8"],["9","27"],["10","0.001"],["e","20"],["1/2","16"]].map(([u,v])=>`<button type="button" class="mini" data-cb="${u}" data-cy="${v}">log<sub>${u}</sub> ${v}</button>`).join("")}</div>
+      <div id="cvout"></div></div></div>
+    <div class="panel"><h3>Powers of ${bName(b)} → logs you can do mentally</h3><div class="tblwrap" id="m3pw"><table class="tbl"><tr><th>k</th><th>power</th><th>value</th><th>so</th></tr>${pw}</table></div></div>
+    ${tryPanel(`<p>1. With b = 2, drag P to (3, 8). Where is Q? Read off log<sub>2</sub> 8 from the graph.</p><p>2. Try b = ½. How are the two curves different now? Use the custom slider to find a base where y = b<sup>x</sup> touches the line y = x (hint: near 1.44).</p>`)}`;
+    const ib=document.getElementById("cvb"), iy=document.getElementById("cvy");
+    const go=()=>{ s.cb2=ib.value; s.cy=iy.value; M3.convOut(); };
+    ib.addEventListener("input",go); iy.addEventListener("input",go);
+    side.querySelectorAll("[data-cb]").forEach(bt=>bt.onclick=()=>{ ib.value=bt.dataset.cb; iy.value=bt.dataset.cy; go(); });
+    M3.convOut();
+  }
+};
+
+/* ══════════════════════ TAB 4 · log properties ══════════════════════ */
+const L2=logH(2), L3=logH(3), L5=logH(5), LG="log", LN="ln";
+const EXS=[
+  {k:"Expand",src:`${L2}(8x<sup>3</sup> / y)`,steps:[[`${L2}(8x<sup>3</sup>) − ${L2} y`,"Quotient rule: the log of a quotient is a difference of logs."],[`${L2} 8 + ${L2} x<sup>3</sup> − ${L2} y`,"Product rule: the log of a product is a sum of logs."],[`3 + 3 ${L2} x − ${L2} y`,"log₂ 8 = 3 because 2³ = 8. Power rule: the exponent 3 moves to the front."]],
+    f:(x,y)=>lg(8*x*x*x/y,2), g:(x,y)=>3+3*lg(x,2)-lg(y,2)},
+  {k:"Expand",src:`${LG}(100x<sup>2</sup>√y)`,steps:[[`${LG} 100 + ${LG} x<sup>2</sup> + ${LG} √y`,"Product rule (three factors, three logs)."],[`2 + ${LG} x<sup>2</sup> + ${LG} y<sup>1/2</sup>`,"log 100 = 2 because 10² = 100; √y = y<sup>1/2</sup>."],[`2 + 2 ${LG} x + ½ ${LG} y`,"Power rule on both."]],
+    f:(x,y)=>Math.log10(100*x*x*Math.sqrt(y)), g:(x,y)=>2+2*Math.log10(x)+0.5*Math.log10(y)},
+  {k:"Expand",src:`${LN}(x<sup>4</sup> / (y z<sup>2</sup>))`,steps:[[`${LN} x<sup>4</sup> − ${LN}(y z<sup>2</sup>)`,"Quotient rule."],[`${LN} x<sup>4</sup> − (${LN} y + ${LN} z<sup>2</sup>)`,"Product rule — keep the parentheses: the whole denominator is subtracted."],[`4 ${LN} x − ${LN} y − 2 ${LN} z`,"Power rule, then distribute the minus sign."]],
+    f:(x,y,z)=>Math.log(x**4/(y*z*z)), g:(x,y,z)=>4*Math.log(x)-Math.log(y)-2*Math.log(z)},
+  {k:"Expand",src:`${L5} √(x<sup>3</sup>y)`,steps:[[`${L5} (x<sup>3</sup>y)<sup>1/2</sup>`,"Rewrite the root as a power: √A = A<sup>1/2</sup>."],[`½ ${L5}(x<sup>3</sup>y)`,"Power rule."],[`½(${L5} x<sup>3</sup> + ${L5} y)`,"Product rule."],[`(3/2) ${L5} x + ½ ${L5} y`,"Power rule and distribute ½."]],
+    f:(x,y)=>lg(Math.sqrt(x**3*y),5), g:(x,y)=>1.5*lg(x,5)+0.5*lg(y,5)},
+  {k:"Condense",src:`2 ${LG} x + 3 ${LG} y − ${LG} z`,steps:[[`${LG} x<sup>2</sup> + ${LG} y<sup>3</sup> − ${LG} z`,"Power rule in reverse: coefficients become exponents."],[`${LG}(x<sup>2</sup>y<sup>3</sup>) − ${LG} z`,"Product rule in reverse: a sum of logs is the log of a product."],[`${LG}(x<sup>2</sup>y<sup>3</sup> / z)`,"Quotient rule in reverse."]],
+    f:(x,y,z)=>2*Math.log10(x)+3*Math.log10(y)-Math.log10(z), g:(x,y,z)=>Math.log10(x*x*y**3/z)},
+  {k:"Condense",src:`½ ${LN} x − 3 ${LN} y`,steps:[[`${LN} x<sup>1/2</sup> − ${LN} y<sup>3</sup>`,"Power rule in reverse."],[`${LN} √x − ${LN} y<sup>3</sup>`,"x<sup>1/2</sup> = √x."],[`${LN}(√x / y<sup>3</sup>)`,"Quotient rule in reverse."]],
+    f:(x,y)=>0.5*Math.log(x)-3*Math.log(y), g:(x,y)=>Math.log(Math.sqrt(x)/y**3)},
+  {k:"Condense",src:`${L2} x + ${L2}(x + 1) − 3`,steps:[[`${L2}(x(x + 1)) − 3`,"Product rule in reverse."],[`${L2}(x(x + 1)) − ${L2} 8`,"Write the constant as a log: 3 = log₂ 8 because 2³ = 8."],[`${L2}( x(x + 1) / 8 )`,"Quotient rule in reverse."]],
+    f:x=>lg(x,2)+lg(x+1,2)-3, g:x=>lg(x*(x+1)/8,2)},
+  {k:"Condense",src:`3 ${L3} x − 2 ${L3} y + 2`,steps:[[`${L3} x<sup>3</sup> − ${L3} y<sup>2</sup> + 2`,"Power rule in reverse."],[`${L3} x<sup>3</sup> − ${L3} y<sup>2</sup> + ${L3} 9`,"2 = log₃ 9 because 3² = 9."],[`${L3}(9x<sup>3</sup> / y<sup>2</sup>)`,"Product and quotient rules in reverse."]],
+    f:(x,y)=>3*lg(x,3)-2*lg(y,3)+2, g:(x,y)=>lg(9*x**3/(y*y),3)}
+];
+const M4={
+  tab:"Log properties", lesson:"F-LE.A.4 · A-SSE.A.2", accent:"var(--lavender)",
+  title:()=>({prod:"Product rule",quot:"Quotient rule",pow:"Power rule"})[M4.s.rule]+": heights on y = "+plain(logS(M4.base()))+" x",
+  s:{rule:"prod",bk:"2",M:2,N:4,k:3,ex:0,step:0,vals:[2.5,4,1.5],W:null},
+  base(){ return M4.s.bk==="e"?EE:+M4.s.bk; },
+  R(){ const s=M4.s; return s.rule==="prod"?s.M*s.N:s.rule==="quot"?s.M/s.N:Math.pow(s.M,s.k); },
+  XR:34,
+  bar(){ const s=M4.s;
+    segBtns([["prod","Product"],["quot","Quotient"],["pow","Power"]],s.rule,k=>{s.rule=k;s.W=null;render();},"Rule");
+    segBtns([["2","log₂"],["3","log₃"],["10","log"],["e","ln"]],s.bk,k=>{s.bk=k;s.W=null;render();},"Base");
+    if(s.rule==="pow") M4.sk=slider("k",-2,4,0.5,s.k,v=>{s.k=v;s.W=null;update();});
+    spacer(s.rule==="pow"?"Drag M":"Drag M and N");
+  },
+  drag(id,p){ const s=M4.s, v=clamp(Math.round(IX(p[0])*2)/2,0.5,8); if(id==="M")s.M=v; if(id==="N")s.N=v; },
+  fit(){ const b=M4.base(); let hi=lg(M4.XR,b)*1.2, lo=-hi*0.42; const R=M4.R(), lr=lg(R,b);
+    if(isFinite(lr)){ hi=Math.max(hi,lr*1.15); lo=Math.min(lo,lr*1.15); } return {x0:-M4.XR*0.06,x1:M4.XR,y0:lo,y1:hi}; },
+  draw(){ const s=M4.s, b=M4.base(); if(!dragId||!s.W)s.W=M4.fit(); W=s.W;
+    const g=axes({xl:"x",yl:"y"}), Ls=logS(b);
+    plot(g,x=>lg(x,b),"var(--graphite)",3.2,null,0);
+    const u=lg(s.M,b), v=lg(s.N,b), R=M4.R(), w=lg(R,b);
+    const bars=[[s.M,u,"var(--corr)","M"]]; if(s.rule!=="pow")bars.push([s.N,v,"var(--alt)","N"]);
+    const offR=R>W.x1*0.985;
+    if(!offR)bars.push([R,w,"var(--vert)","R"]);
+    bars.forEach(([x,h,c])=>{ wline(g,x,0,x,h,c,4); });
+    // stacked comparison bar
+    const xs=offR? W.x1-1.6 : (R+2.2<W.x1? R+1.6 : R-1.6);
+    const pc=(y0,y1,c,dx)=>{ g.appendChild(E("line",{x1:X(xs)+(dx||0),y1:Y(y0),x2:X(xs)+(dx||0),y2:Y(y1),style:"stroke:"+c,"stroke-width":9,"stroke-linecap":"butt"})); };
+    if(s.rule==="prod"){ pc(0,u,"var(--corr)"); pc(u,u+v,"var(--alt)"); }
+    else if(s.rule==="quot"){ pc(0,u,"var(--corr)",-6); pc(u,u-v,"var(--alt)",6); }
+    else { const k=s.k, n=Math.floor(Math.abs(k)+1e-9), sg=k<0?-1:1; let y=0;
+      for(let j=0;j<n;j++){ pc(y,y+sg*u,j%2?"#60A5FA":"var(--corr)"); y+=sg*u; }
+      const rem=Math.abs(k)-n; if(rem>1e-9){ pc(y,y+sg*u*rem,n%2?"#60A5FA":"var(--corr)"); } }
+    wline(g,offR?W.x0:Math.min(R,xs)-0.4,w,Math.max(R,xs)+0.6,w,"var(--vert)",1.6,"5 4");
+    const L=x=>Ls+" "+fmt(x);
+    sgrab(g,P2(s.M,u),"M","var(--corr)"); if(s.rule!=="pow")sgrab(g,P2(s.N,v),"N","var(--alt)");
+    if(!offR) sdot(g,P2(R,w),"var(--vert)",6);
+    smartLabel(g,P2(s.M,u),[-1,u>=0?-1:1],L(s.M)+" = "+fmt(u),"#0369A1");
+    if(s.rule!=="pow") smartLabel(g,P2(s.N,v),[1,v>=0?-1:1],L(s.N)+" = "+fmt(v),"#047857");
+    smartLabel(g,P2(offR?xs:R,w),[1,w>=0?-1:1],(offR?"R = "+fmt(R)+" (off board) → ":"")+L(R)+" = "+fmt(w),"#6D28D9");
+    const nm=s.rule==="prod"?"R = MN":s.rule==="quot"?"R = M/N":"R = M^{"+fmt(s.k)+"}";
+    lab(g,[VW-110*FS,VH-20*FS],"M = "+fmt(s.M)+(s.rule!=="pow"?", N = "+fmt(s.N):"")+", "+nm,"var(--ink)");
+  },
+  rulePanel(){ const s=M4.s, b=M4.base(), B=logH(b), u=lg(s.M,b), v=lg(s.N,b), R=M4.R(), w=lg(R,b), bh=baseH(b);
+    const M=fmt(s.M), N=fmt(s.N), k=fmt(s.k);
+    if(s.rule==="prod") return `<div class="eq">${B}(MN) = ${B} M + ${B} N\n${B}(${M} · ${N}) = ${B} ${fmt(R)} = ${f4(w)}\n${B} ${M} + ${B} ${N} = ${f4(u)} + ${f4(v)} = ${f4(u+v)} ✓<small>The purple height equals the blue height stacked on the green height.</small></div>
+      <p><b>Why:</b> let u = ${B} M and v = ${B} N, so ${bh}<sup>u</sup> = M and ${bh}<sup>v</sup> = N. Then MN = ${bh}<sup>u</sup> · ${bh}<sup>v</sup> = ${bh}<sup>u + v</sup> (add exponents when multiplying powers), so ${B}(MN) = u + v.</p>
+      <p class="warn"><b>Not a rule:</b> ${B}(M + N) = ${B} ${fmt(s.M+s.N)} = ${f4(lg(s.M+s.N,b))}, which is ${near(lg(s.M+s.N,b),u+v,1e-9)?"equal here only by coincidence":"not "+f4(u+v)}.</p>`;
+    if(s.rule==="quot") return `<div class="eq">${B}(M/N) = ${B} M − ${B} N\n${B}(${M}/${N}) = ${B} ${fmt(R)} = ${f4(w)}\n${B} ${M} − ${B} ${N} = ${f4(u)} − ${f4(v)} = ${f4(u-v)} ✓<small>Go up the blue height, then come down the green height.</small></div>
+      <p><b>Why:</b> with ${bh}<sup>u</sup> = M and ${bh}<sup>v</sup> = N, M/N = ${bh}<sup>u</sup> / ${bh}<sup>v</sup> = ${bh}<sup>u − v</sup> (subtract exponents when dividing), so ${B}(M/N) = u − v.</p>
+      <p class="warn"><b>Not a rule:</b> ${B} M / ${B} N = ${f4(u)} / ${f4(v)} = ${isFinite(u/v)?f4(u/v):"undefined"} — a quotient of logs is not the log of a quotient.</p>`;
+    return `<div class="eq">${B}(M<sup>k</sup>) = k · ${B} M\n${B}(${M}<sup>${k}</sup>) = ${B} ${fmt(R)} = ${f4(w)}\n${k} · ${B} ${M} = ${k} · ${f4(u)} = ${f4(s.k*u)} ✓<small>The purple height is ${k} copies of the blue height.</small></div>
+      <p><b>Why:</b> with ${bh}<sup>u</sup> = M, M<sup>k</sup> = (${bh}<sup>u</sup>)<sup>k</sup> = ${bh}<sup>ku</sup> (multiply exponents for a power of a power), so ${B}(M<sup>k</sup>) = ku.</p>
+      <p class="warn"><b>Watch out:</b> (${B} M)<sup>k</sup> = ${f4(Math.pow(u,s.k))} is a different thing — the exponent must be on M, inside the log.</p>`;
+  },
+  exRender(){ const s=M4.s, ex=EXS[s.ex], el=document.getElementById("m4ex"); if(!el)return;
+    let li=`<li class="done"><span class="sn">0</span><b>${ex.k}:</b><span class="m">${ex.src}</span></li>`;
+    ex.steps.forEach((st,i)=>{ li+= i<s.step? `<li class="${i===s.step-1?"on":"done"}"><span class="sn">${i+1}</span>${st[1]}<span class="m">= ${st[0]}</span></li>` : `<li class="hidden"><span class="sn">${i+1}</span>…</li>`; });
+    const [x,y,z]=s.vals, a=ex.f(x,y,z), c=ex.g(x,y,z), done=s.step>=ex.steps.length;
+    el.innerHTML=`<ol class="stepl">${li}</ol><div class="pad" style="padding-top:6px">
+      <div class="btnrow"><button type="button" class="mini" id="m4prev">◀ Back</button><button type="button" class="mini pri" id="m4next">Next step ▶</button><button type="button" class="mini" id="m4new">Next example</button></div>
+      ${done?`<div class="eq">Check with x = ${x}, y = ${y}, z = ${z}:\noriginal ≈ ${a.toFixed(6)}\nfinal    ≈ ${c.toFixed(6)}  ${near(a,c,1e-9)?"✓ equal":"✗"}<small>Equal values for random inputs are strong evidence the rewrite is right. <button type="button" class="mini" id="m4vals" style="margin-top:8px">New values</button></small></div>`:`<p class="hint">Example ${s.ex+1} of ${EXS.length}. Reveal each step and name the property before you look.</p>`}</div>`;
+    document.getElementById("m4prev").onclick=()=>{ s.step=Math.max(0,s.step-1); M4.exRender(); };
+    document.getElementById("m4next").onclick=()=>{ s.step=Math.min(ex.steps.length,s.step+1); M4.exRender(); };
+    document.getElementById("m4new").onclick=()=>{ s.ex=(s.ex+1)%EXS.length; s.step=0; M4.exRender(); };
+    const nv=document.getElementById("m4vals"); if(nv)nv.onclick=()=>{ s.vals=[0,0,0].map(()=>Math.round((1.2+Math.random()*8)*10)/10); M4.exRender(); };
+  },
+  panel(full){
+    if(!full&&document.getElementById("m4rule")){ document.getElementById("m4rule").innerHTML=M4.rulePanel(); return; }
+    side.innerHTML=`<div class="panel"><h3>${({prod:"Product rule",quot:"Quotient rule",pow:"Power rule"})[M4.s.rule]}</h3><div class="pad" id="m4rule">${M4.rulePanel()}</div></div>
+    <div class="panel"><h3>Expand &amp; condense, step by step</h3><div id="m4ex"></div></div>
+    ${tryPanel(`<p>1. Product rule, base 2: make M = 2 and N = 8. Before looking, predict log₂ 16. Now find two <b>other</b> values of M and N with the same product. Does the purple height change?</p><p>2. Power rule: set k = −1. What does the rule say about log(1/M)?</p>`)}`;
+    M4.exRender();
+  }
+};
+
+/* ══════════════════════ TAB 5 · solving & modeling ══════════════════════ */
+function powNum(c,K){ return K>=0? String(Math.pow(c,K)) : "1/"+Math.pow(c,-K); }
+function genExpCB(){
+  for(let guard=0;guard<400;guard++){
+    const c=pick([2,2,3,3,5]), mx=c===2?4:c===3?3:2, m1=rnd(1,mx), p1=pick([1,1,2,3,-1]), q1=rnd(-3,3);
+    const two=Math.random()<0.45; let m2=1,p2=0,q2=0,K=0,x;
+    if(two){ m2=rnd(1,mx); if(m2===m1)continue; p2=pick([1,1,2]); q2=rnd(-3,3); const den=m1*p1-m2*p2; if(den===0)continue; x=(m2*q2-m1*q1)/den; }
+    else { K=rnd(-4,c===2?7:4); if(K===0||Math.pow(c,Math.abs(K))>3125)continue; x=(K-m1*q1)/(m1*p1); }
+    const fs=frac(x,6); if(fs===null||Math.abs(x)>6)continue;
+    const B1=Math.pow(c,m1), B2=Math.pow(c,m2), e1=linH(p1,q1), e2=linH(p2,q2);
+    if(!two&&Math.pow(c,K)===B1&&p1===1&&q1===0)continue;
+    const lhs=`${B1}<sup>${e1}</sup>`, rhs=two?`${B2}<sup>${e2}</sup>`:powNum(c,K);
+    const steps=[];
+    steps.push({w:`Write both sides as powers of ${c}${m1>1?": "+B1+" = "+c+"<sup>"+m1+"</sup>":""}${two&&m2>1?", "+B2+" = "+c+"<sup>"+m2+"</sup>":""}${!two?", "+rhs+" = "+c+"<sup>"+minus(K)+"</sup>":""}.`,
+      m:`${m1>1?"("+c+"<sup>"+m1+"</sup>)":c}<sup>${e1}</sup> = ${two?(m2>1?"("+c+"<sup>"+m2+"</sup>)":c)+"<sup>"+e2+"</sup>":c+"<sup>"+minus(K)+"</sup>"}`});
+    const L1=linH(m1*p1,m1*q1), R1=two?linH(m2*p2,m2*q2):minus(K);
+    if(m1>1||(two&&m2>1)) steps.push({w:"Power of a power: multiply the exponents.",m:`${c}<sup>${L1}</sup> = ${c}<sup>${R1}</sup>`});
+    steps.push({w:`Same base ${c}, so the exponents must be equal (exponential functions are one-to-one).`,m:`${L1} = ${R1}`});
+    steps.push({w:"Solve the linear equation.",m:`x = ${fs}`});
+    steps.push({w:"Check by substituting.",m:`${B1}<sup>${fx(p1*x+q1)}</sup> = ${fmt(Math.pow(B1,p1*x+q1))}   and   ${two?B2+"<sup>"+fx(p2*x+q2)+"</sup> = "+fmt(Math.pow(B2,p2*x+q2)):rhs} ✓`});
+    const f1=t=>Math.pow(B1,p1*t+q1), f2=two?(t=>Math.pow(B2,p2*t+q2)):(()=>Math.pow(c,K));
+    return {type:"cb",html:`${lhs} = ${rhs}`,ans:x,exact:true,steps,f1,f2,given:{L:`${B1}**(${p1}*x+(${q1}))`,R:two?`${B2}**(${p2}*x+(${q2}))`:String(Math.pow(c,K))}};
+  }
+  return genExpCB();
+}
+function genExpLog(){
+  for(let guard=0;guard<400;guard++){
+    const form=pick(["A","A","B","C"]);
+    if(form==="A"){ const a=pick([1,2,3,4,5]), b=pick([2,3,5,6,7,1.5]), d=pick([0,0,-4,3,5,-2]); let c=rnd(8,120);
+      const v=(c-d)/a; if(v<=0)continue; const x=lg(v,b); if(isInt(x*1e6/1e6)&&near(x,Math.round(x),1e-6)||Math.abs(x)>7||Math.abs(x)<0.15)continue;
+      const lhs=`${a>1?a+" · ":""}${supH(b,"x")}${d? (d>0?" + "+d:" − "+(-d)):""}`;
+      const steps=[];
+      if(d||a>1) steps.push({w:`Isolate the power${d?": "+(d>0?"subtract "+d:"add "+(-d)):""}${a>1?(d?", then ":": ")+"divide by "+a:""}.`,m:`${supH(b,"x")} = ${fx(v)}`});
+      steps.push({w:"Take the log of both sides.",m:`log ${supH(b,"x")} = log ${fx(v)}`});
+      steps.push({w:"Power rule: the exponent comes down.",m:`x · log ${baseH(b)} = log ${fx(v)}`});
+      steps.push({w:"Divide by log "+bName(b)+" (this is the change-of-base formula).",m:`x = log ${fx(v)} / log ${baseH(b)} = ${f4(Math.log10(v))} / ${f4(Math.log10(b))} ≈ ${x.toFixed(4)}`});
+      steps.push({w:"Check.",m:`${a>1?a+" · ":""}${baseH(b)}<sup>${x.toFixed(4)}</sup>${d?(d>0?" + "+d:" − "+(-d)):""} ≈ ${fmt(a*Math.pow(b,x)+d)} ✓`});
+      return {type:"log",html:`${lhs} = ${c}`,ans:x,exact:false,steps,f1:t=>a*Math.pow(b,t)+d,f2:()=>c,given:{L:`${a}*${b}**x+(${d})`,R:String(c)}}; }
+    if(form==="B"){ const b=pick([2,3,4,5,7]), p=pick([1,2,3]), q=rnd(-3,3), c=rnd(5,90);
+      const Lv=lg(c,b), x=(Lv-q)/p; if(near(Lv,Math.round(Lv),1e-6)||Math.abs(x)>7)continue;
+      const e=linH(p,q);
+      const steps=[{w:"Take the log of both sides.",m:`log ${supH(b,"("+e+")")} = log ${c}`},
+        {w:"Power rule.",m:`(${e}) · log ${b} = log ${c}`},
+        {w:"Divide by log "+b+".",m:`${e} = log ${c} / log ${b} ≈ ${Lv.toFixed(4)}`}];
+      if(p!==1||q!==0) steps.push({w:"Solve the linear equation.",m:`x = (${Lv.toFixed(4)}${q?(q>0?" − "+q:" + "+(-q)):""})${p>1?" / "+p:""} ≈ ${x.toFixed(4)}`});
+      steps.push({w:"Check.",m:`${b}<sup>${(p*x+q).toFixed(4)}</sup> ≈ ${fmt(Math.pow(b,p*x+q))} ✓`});
+      return {type:"log",html:`${supH(b,e)} = ${c}`,ans:x,exact:false,steps,f1:t=>Math.pow(b,p*t+q),f2:()=>c,given:{L:`${b}**(${p}*x+(${q}))`,R:String(c)}}; }
+    const a=pick([2,3,4,5,10,50]), k=pick([0.2,0.3,0.5,1.5,2,0.05,0.8]), c=a*rnd(2,9)+rnd(1,a-1);
+    const x=Math.log(c/a)/k; if(Math.abs(x)>40)continue;
+    const steps=[{w:`Divide by ${a}.`,m:`e<sup>${k}x</sup> = ${fx(c/a)}`},
+      {w:"Take ln of both sides (ln is log base e, so ln e<sup>u</sup> = u).",m:`${k}x = ln ${fx(c/a)} ≈ ${Math.log(c/a).toFixed(4)}`},
+      {w:`Divide by ${k}.`,m:`x ≈ ${x.toFixed(4)}`},
+      {w:"Check.",m:`${a}e<sup>${(k*x).toFixed(4)}</sup> ≈ ${fmt(a*Math.exp(k*x))} ✓`}];
+    return {type:"log",html:`${a}e<sup>${k}x</sup> = ${c}`,ans:x,exact:false,steps,f1:t=>a*Math.exp(k*t),f2:()=>c,given:{L:`${a}*math.e**(${k}*x)`,R:String(c)}};
+  }
+  return genExpLog();
+}
+const xpq=q=>q===0?"x":q>0?"x + "+q:"x − "+(-q);
+function genLogEq(type){
+  type=type||pick(["one","two"]);
+  for(let guard=0;guard<400;guard++){
+    if(type==="one"){ const b=pick([2,3,5,10]), k=b===10?pick([1,2]):b===5?pick([1,2]):rnd(1,b===2?5:3), V=Math.pow(b,k), p=pick([1,2,3]), x0=rnd(-4,14), q=V-p*x0;
+      if(Math.abs(q)>40||x0===0)continue;
+      const arg=linH(p,q), dom=-q/p, B=logH(b);
+      const steps=[{w:"Domain: the argument of a log must be positive.",m:`${arg} &gt; 0  →  x &gt; ${fx(dom)}`},
+        {w:"Rewrite in exponential form: log<sub>b</sub> A = k means b<sup>k</sup> = A.",m:`${arg} = ${b}<sup>${k}</sup> = ${V}`},
+        {w:"Solve.",m:`${p>1?p+"x":"x"} = ${V}${q?(q>0?" − "+q:" + "+(-q)):""} = ${V-q}${p>1?"   →   x = "+fx(x0):""}`},
+        {w:"Check in the original equation.",m:`${B}(${fx(p*x0+q)}) = ${B} ${V} = ${k} ✓   (x = ${fx(x0)} &gt; ${fx(dom)})`}];
+      return {type:"one",html:`${B}(${arg}) = ${k}`,ans:x0,ext:null,steps,dom,k,f1:x=>lg(p*x+q,b),given:{L:`math.log(${p}*x+(${q}),${b})`,R:String(k)}}; }
+    const b=pick([2,2,3,10]), k=b===10?pick([1,2]):b===3?pick([2,3]):rnd(2,5), V=Math.pow(b,k);
+    const fs=[]; for(let m=1;m*m<V;m++)if(V%m===0)fs.push(m); if(!fs.length)continue;
+    let m=pick(fs), n=V/m; if(Math.random()<.5){const t=m;m=n;n=t;}
+    const s=rnd(1,9), p=m-s, q=n-s; if(p===q||Math.abs(p)>12||Math.abs(q)>12)continue;
+    const t=-(p+q)-s, B=logH(b), dom=Math.max(-p,-q);
+    const fac=r=>r===0?"x":r>0?"(x − "+r+")":"(x + "+(-r)+")";
+    const steps=[{w:"Domain: both arguments must be positive.",m:`${xpq(p)} &gt; 0 and ${xpq(q)} &gt; 0  →  x &gt; ${minus(dom)}`},
+      {w:"Product rule: a sum of logs is the log of a product.",m:`${B}[(${xpq(p)})(${xpq(q)})] = ${k}`},
+      {w:"Exponential form.",m:`(${xpq(p)})(${xpq(q)}) = ${b}<sup>${k}</sup> = ${V}`},
+      {w:"Multiply out and set equal to 0.",m:`x<sup>2</sup>${p+q?(p+q>0?" + ":" − ")+(Math.abs(p+q)===1?"":Math.abs(p+q))+"x":""}${p*q-V?(p*q-V>0?" + ":" − ")+Math.abs(p*q-V):""} = 0`},
+      {w:"Factor (or use the quadratic formula).",m:`${fac(s)}${fac(t)} = 0   →   x = ${s} or x = ${minus(t)}`},
+      {w:"Check each candidate against the domain.",m:`x = ${s}: ${s+p} &gt; 0 and ${s+q} &gt; 0 ✓\nx = ${minus(t)}: ${minus(t+p)} and ${minus(t+q)} — log of a negative ✗ extraneous`},
+      {w:"Solution.",m:`x = ${s}`}];
+    return {type:"two",html:`${B}(${xpq(p)}) + ${B}(${xpq(q)}) = ${k}`,ans:s,ext:t,steps,dom,k,f1:x=>lg(x+p,b)+lg(x+q,b),given:{L:`math.log(x+(${p}),${b})+math.log(x+(${q}),${b})`,R:String(k)}};
+  }
+  return genLogEq(type);
+}
+const SC={
+  pop:{name:"Town population",tu:"t (years)",yu:"people",C:0,a:12000,b:1.035,tmax:40,ymax:60000,pts:[[0,12000],[10,16900]],ts:[0,4,8,12,16,20,24,28],tsn:1,ysn:100,tg:40000,tp:30,
+    story:"A town had 12,000 people in year 0 and 16,900 in year 10."},
+  bac:{name:"Bacteria culture",tu:"t (hours)",yu:"cells",C:0,a:500,b:Math.pow(2,1/3),tmax:16,ymax:25000,pts:[[0,500],[3,1000]],ts:[0,2,4,6,8,10,12],tsn:0.5,ysn:50,tg:10000,tp:14,
+    story:"A culture starts with 500 cells and has 1,000 after 3 hours."},
+  cool:{name:"Cooling coffee",tu:"t (minutes)",yu:"°F",C:70,a:120,b:0.95,tmax:60,ymin:40,ymax:200,pts:[[0,190],[10,142]],ts:[0,5,10,15,20,30,40,50],tsn:1,ysn:1,tg:100,tp:45,
+    story:"Coffee at 190°F cools in a 70°F room; it is 142°F after 10 minutes. Newton's law: the <b>difference</b> T − 70 decays exponentially."},
+  dep:{name:"Car value",tu:"t (years)",yu:"dollars",C:0,a:28000,b:0.85,tmax:15,ymax:32000,pts:[[0,28000],[3,17200]],ts:[0,1,2,3,4,5,6,8,10],tsn:0.5,ysn:100,tg:8000,tp:10,
+    story:"A $28,000 car is worth $17,200 after 3 years."}
+};
+const M5={
+  tab:"Solving &amp; modeling", lesson:"F-LE.A.4 · A-CED.A.1", accent:"var(--magenta)",
+  title:()=>M5.s.mode==="exp"?"Solve an exponential equation":M5.s.mode==="log"?"Solve a logarithmic equation":"Model: "+SC[M5.s.sc].name,
+  s:{mode:"exp",et:"cb",lt:"two",ep:null,lp:null,step:0,sc:"pop",pts:null,data:null,reg:false,tp:30,tg:40000},
+  init(){ const s=M5.s; s.ep=genExpCB(); s.lp=genLogEq("two"); M5.setSc("pop"); },
+  setSc(k){ const s=M5.s, S=SC[k]; s.sc=k; s.pts=S.pts.map(p=>p.slice()); s.tp=S.tp; s.tg=S.tg; M5.newData(); },
+  newData(){ const s=M5.s, S=SC[s.sc]; s.data=S.ts.map(t=>{ const y=S.C+S.a*Math.pow(S.b,t)*(1+(Math.random()-.5)*0.08); return [t,Math.round(y/S.ysn)*S.ysn]; }); },
+  prob(){ return M5.s.mode==="exp"?M5.s.ep:M5.s.lp; },
+  bar(){ const s=M5.s;
+    segBtns([["exp","Exponential eq."],["log","Log eq."],["model","Modeling"]],s.mode,k=>{s.mode=k;s.step=0;render();},"Mode");
+    if(s.mode==="exp"){
+      segBtns([["cb","Common base"],["log","Use logs"]],s.et,k=>{s.et=k;s.ep=k==="cb"?genExpCB():genExpLog();s.step=0;render();},"Method");
+      btn("New equation",()=>{s.ep=s.et==="cb"?genExpCB():genExpLog();s.step=0;render();},"primary");
+    } else if(s.mode==="log"){
+      segBtns([["one","One log"],["two","Two logs"]],s.lt,k=>{s.lt=k;s.lp=genLogEq(k);s.step=0;render();},"Type");
+      btn("New equation",()=>{s.lp=genLogEq(s.lt);s.step=0;render();},"primary");
+    }
+    if(s.mode!=="model"){
+      btn("Next step",()=>{s.step=Math.min(M5.prob().steps.length,s.step+1);update();});
+      btn("Show all",()=>{s.step=M5.prob().steps.length;update();});
+      return;
+    }
+    const S=SC[s.sc], sel=document.createElement("select"); sel.setAttribute("aria-label","Scenario");
+    Object.keys(SC).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=SC[k].name;sel.appendChild(o);});
+    sel.value=s.sc; sel.onchange=()=>{M5.setSc(sel.value);render();}; bar.appendChild(sel);
+    chk("Fit to all data",s.reg,v=>{s.reg=v;update();});
+    btn("New data",()=>{M5.newData();update();});
+    slider("predict t",0,S.tmax,S.tsn,s.tp,v=>{s.tp=v;update();});
+    const lo=S.C+(S.ymax-S.C)*0.02;
+    slider("target",Math.ceil(lo/S.ysn)*S.ysn,S.ymax*0.98,S.ysn*(S.ysn<5?1:5),s.tg,v=>{s.tg=v;update();},v=>v.toLocaleString("en-US"));
+  },
+  fit(){ const s=M5.s, S=SC[s.sc], C=S.C;
+    if(s.reg){ const d=s.data.filter(p=>p[1]-C>0); const n=d.length; let sx=0,sy=0,sxx=0,sxy=0,syy=0;
+      d.forEach(([t,y])=>{ const l=Math.log(y-C); sx+=t; sy+=l; sxx+=t*t; sxy+=t*l; syy+=l*l; });
+      const m=(n*sxy-sx*sy)/(n*sxx-sx*sx), c=(sy-m*sx)/n, r=(n*sxy-sx*sy)/Math.sqrt((n*sxx-sx*sx)*(n*syy-sy*sy));
+      return {a:Math.exp(c),b:Math.exp(m),r2:r*r}; }
+    const [p,q]=s.pts; const b=Math.pow((q[1]-C)/(p[1]-C),1/(q[0]-p[0])); return {a:(p[1]-C)/Math.pow(b,p[0]),b};
+  },
+  drag(id,pt){ const s=M5.s;
+    if(s.mode!=="model")return false;
+    const S=SC[s.sc], i=id==="p0"?0:1, o=s.pts[1-i];
+    const t=clamp(Math.round(IX(pt[0])/S.tsn)*S.tsn,0,S.tmax), y=clamp(Math.round(IY(pt[1])/S.ysn)*S.ysn,S.C+S.ysn,S.ymax);
+    if(near(t,o[0]))return false; s.pts[i]=[t,y];
+  },
+  draw(){ const s=M5.s;
+    if(s.mode==="model") return M5.drawModel();
+    const pr=M5.prob(), done=s.step>=pr.steps.length;
+    if(s.mode==="exp"){
+      const x0=pr.ans, yv=pr.f2(x0), top=Math.max(yv*2.2,4);
+      W={x0:x0-5,x1:x0+5,y0:-top*0.1,y1:top};
+      const g=axes();
+      plot(g,pr.f1,"var(--corr)",3.4); plot(g,pr.f2,"var(--lin)",3.4);
+      legend(g,[{color:"var(--corr)",text:"y = left side"},{color:"var(--lin)",text:"y = right side"}],"tl");
+      if(done){ wline(g,x0,0,x0,yv,"var(--magenta)",1.8,"5 4"); sdot(g,P2(x0,yv),"var(--magenta)",7);
+        smartLabel(g,P2(x0,yv),[1,-1],"x = "+(pr.exact?fx(x0):"≈ "+x0.toFixed(4)),"#BE185D"); }
+      else lab(g,[VW/2,VH-24*FS],"The solution is where the graphs meet — finish the steps to mark it","#64748B");
+      return;
+    }
+    const x0=pr.ans, lo=Math.min(pr.ext!=null?pr.ext:pr.dom,pr.dom)-2.5, hi=Math.max(x0+4,pr.dom+6);
+    W={x0:lo,x1:hi,y0:Math.min(-2.5,pr.k-6),y1:pr.k+3};
+    const g=axes();
+    wline(g,pr.dom,W.y0,pr.dom,W.y1,"var(--unk)",1.8,"7 5");
+    lab(g,[X(pr.dom)+60*FS,22*FS],"domain: x > "+fx(pr.dom),"var(--unk)");
+    plot(g,pr.f1,"var(--corr)",3.4,null,pr.dom); plot(g,()=>pr.k,"var(--lin)",3.4);
+    legend(g,[{color:"var(--corr)",text:"y = left side"},{color:"var(--lin)",text:"y = "+pr.k}],"br");
+    if(done){ sdot(g,P2(x0,pr.k),"var(--magenta)",7); wline(g,x0,0,x0,pr.k,"var(--magenta)",1.8,"5 4");
+      smartLabel(g,P2(x0,pr.k),[1,-1],"x = "+fx(x0),"#BE185D");
+      if(pr.ext!=null){ const c=P2(pr.ext,0); g.appendChild(E("path",{d:`M${c[0]-8} ${c[1]-8}L${c[0]+8} ${c[1]+8}M${c[0]+8} ${c[1]-8}L${c[0]-8} ${c[1]+8}`,style:"stroke:var(--unk)","stroke-width":3.5}));
+        smartLabel(g,c,[0.3,-1],"x = "+minus(pr.ext)+" extraneous","var(--unk)"); } }
+  },
+  drawModel(){ const s=M5.s, S=SC[s.sc], F=M5.fit();
+    const yl=S.ymin!=null?S.ymin:-S.ymax*0.07;
+    W={x0:-S.tmax*0.09,x1:S.tmax,y0:yl,y1:S.ymax};
+    const g=axes({xl:S.tu,yl:S.yu,ypre:s.sc==="dep"?"$":""});
+    if(S.C){ wline(g,W.x0,S.C,W.x1,S.C,"var(--unk)",2,"8 6"); lab(g,[VW-100*FS,Y(S.C)+14*FS],"asymptote y = "+S.C,"var(--unk)"); }
+    const md=t=>S.C+F.a*Math.pow(F.b,t);
+    plot(g,md,"var(--corr)",3.4);
+    s.data.forEach(p=>sdot(g,P2(p[0],p[1]),"#94A3B8",4.5));
+    const yp=md(s.tp); wline(g,s.tp,yl,s.tp,yp,"var(--alt)",1.8,"5 4"); sdot(g,P2(s.tp,yp),"var(--alt)",6);
+    smartLabel(g,P2(s.tp,yp),[1,-1],"predict ("+fmt(s.tp)+", "+fmt(yp)+")","#047857");
+    wline(g,W.x0,s.tg,W.x1,s.tg,"var(--yellow)",2,"3 5");
+    const tt=lg((s.tg-S.C)/F.a,F.b);
+    if(isFinite(tt)&&tt>=W.x0&&tt<=W.x1){ sdot(g,P2(tt,s.tg),"#CA8A04",6); wline(g,tt,yl,tt,s.tg,"#CA8A04",1.6,"4 4"); smartLabel(g,P2(tt,s.tg),[-1,-1],"reaches "+fmt(s.tg)+" at t ≈ "+fmt(tt),"#A16207"); }
+    s.pts.forEach((p,i)=>{ sgrab(g,P2(p[0],p[1]),"p"+i,s.reg?"#94A3B8":"var(--hand)"); smartLabel(g,P2(p[0],p[1]),[i?1:-0.4,i?0.8:-1],"("+fmt(p[0])+", "+fmt(p[1])+")",s.reg?"#64748B":"#C2410C"); });
+    legend(g,[{color:"var(--corr)",text:"y = "+(S.C?S.C+" + ":"")+fmt(F.a)+"("+f4(F.b)+")^{t}"},{color:"#94A3B8",w:6,text:s.reg?"data (fit to all)":"data · drag the 2 orange points"}],S.b>1?"tl":"tr");
+  },
+  panel(){ const s=M5.s;
+    if(s.mode==="model") return M5.panelModel();
+    const pr=M5.prob(), n=pr.steps.length;
+    let li=`<li class="done"><span class="sn">0</span><b>Solve:</b><span class="m">${pr.html}</span></li>`;
+    pr.steps.forEach((st,i)=>{ li+= i<s.step? `<li class="${i===s.step-1?"on":"done"}"><span class="sn">${i+1}</span>${st.w}<span class="m">${st.m.replace(/\n/g,"<br>")}</span></li>` : `<li class="hidden"><span class="sn">${i+1}</span>…</li>`; });
+    const exp=s.mode==="exp";
+    side.innerHTML=`<div class="panel"><h3>Worked solution · ${s.step} of ${n} steps</h3><ol class="stepl">${li}</ol><div class="pad" style="padding-top:2px"><p class="hint">Use <b>Next step</b> under the graph. Try each step on paper first.</p></div></div>
+    <div class="panel"><h3>${exp?"Two strategies":"Logarithmic equations"}</h3><div class="pad">${exp?
+      `<p><b>Common base:</b> if both sides can be written as powers of the same base, set the exponents equal — b<sup>u</sup> = b<sup>v</sup> means u = v because b<sup>x</sup> is one-to-one.</p><p><b>Use logs:</b> otherwise isolate the power, take log (or ln) of both sides, and use the power rule to bring the variable down. The answer is usually irrational, so round at the end.</p>`
+      :`<p>Combine logs into a single log (product/quotient rules), rewrite in <b>exponential form</b>, then solve the resulting algebra.</p><p>Always check: a log is only defined for <b>positive</b> arguments. A solution of the rewritten equation that makes an argument zero or negative is <span class="term">extraneous</span> — it is not a solution of the original.</p>`}
+      <p>The graph is a check: the solution is the x-coordinate where y = left side meets y = right side.</p></div></div>
+    ${tryPanel(exp?`<p>Solve 8<sup>x</sup> = 4<sup>x + 1</sup> on paper by common base, then solve it again with logs. Do you get the same answer?</p>`:`<p>Before revealing step 5, predict which candidate will be extraneous using only the domain line on the graph.</p>`)}`;
+  },
+  panelModel(){ const s=M5.s, S=SC[s.sc], F=M5.fit(), C=S.C, [p,q]=s.pts;
+    const yy=v=>C?`(y − ${C})`:"y", dd=v=>C?fmt(v-C):fmt(v);
+    const mstr=`y = ${C?C+" + ":""}${fmt(F.a)}(${f4(F.b)})<sup>t</sup>`;
+    const pct=(F.b-1)*100, unitT=S.tu.replace(/t \((\w+)\)/,"$1").replace(/s$/,"");
+    let fitTxt;
+    if(s.reg) fitTxt=`<p>A calculator's <b>ExpReg</b> fits all the data at once by least squares on ln${C?"(y − "+C+")":" y"}: ln${C?"(y − "+C+")":" y"} = ln a + t · ln b is a line.</p><div class="eq">${mstr}\nr² ≈ ${F.r2.toFixed(4)}<small>r² near 1 means the exponential model fits well.</small></div>`;
+    else fitTxt=`<div class="eq">${C?"y − "+C+" = a · b<sup>t</sup>":"y = a · b<sup>t</sup>"}\n${dd(p[1])} = a · b<sup>${fmt(p[0])}</sup>\n${dd(q[1])} = a · b<sup>${fmt(q[0])}</sup>\n<span class="w">divide the equations:</span>\n${dd(q[1])}/${dd(p[1])} = b<sup>${fmt(q[0]-p[0])}</sup>\nb = (${f4((q[1]-C)/(p[1]-C))})<sup>1/${fmt(q[0]-p[0])}</sup> ≈ ${f4(F.b)}\na = ${dd(p[1])} / ${f4(F.b)}<sup>${fmt(p[0])}</sup> ≈ ${fmt(F.a)}\n${mstr}</div>`;
+    const yp=C+F.a*Math.pow(F.b,s.tp), tt=lg((s.tg-C)/F.a,F.b);
+    const tgt= isFinite(tt)? `<div class="eq">${C?C+" + ":""}${fmt(F.a)}(${f4(F.b)})<sup>t</sup> = ${fmt(s.tg)}\n(${f4(F.b)})<sup>t</sup> = ${C?"("+fmt(s.tg)+" − "+C+")":fmt(s.tg)} / ${fmt(F.a)} = ${f4((s.tg-C)/F.a)}\nt = log ${f4((s.tg-C)/F.a)} / log ${f4(F.b)} ≈ ${fmt(tt)} ${unitT}s${tt<0?"\n(negative: that was before t = 0)":""}</div>`
+      : `<p class="warn">The model never reaches ${fmt(s.tg)}${C?" — it only approaches "+C:""}.</p>`;
+    side.innerHTML=`<div class="panel"><h3>${S.name}</h3><div class="pad"><p>${S.story}</p>${fitTxt}
+      <p>b ${F.b>1?"&gt;":"&lt;"} 1: the model ${F.b>1?"grows":"decays"} about <b>${fmt(Math.abs(pct))}% per ${unitT}</b>${C?" (the gap to room temperature)":""}.</p></div></div>
+    <div class="panel"><h3>Predict and solve</h3><div class="pad">
+      <div class="eq">y(${fmt(s.tp)}) = ${C?C+" + ":""}${fmt(F.a)}(${f4(F.b)})<sup>${fmt(s.tp)}</sup> ≈ ${fmt(yp)} ${S.yu}</div>
+      <p><b>When does it reach ${fmt(s.tg)}?</b> Set the model equal to the target and solve with logs (A-CED.A.1):</p>${tgt}</div></div>
+    ${tryPanel(`<p>1. Drag the second orange point onto a different data point. How much does the prediction at t = ${fmt(s.tp)} change? Which two points give the best model?</p><p>2. Turn on <b>Fit to all data</b>. Is the regression model closer to your two-point model or not?</p>`)}`;
+  }
+};
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+function genEval(){
+  const [c,m]=pick([[2,1],[2,2],[2,3],[2,4],[3,1],[3,2],[3,3],[5,1],[5,2],[10,1],[6,1],[7,1]]), b=Math.pow(c,m);
+  let kk, argH, argV;
+  if(Math.random()<0.18){ const j=pick([1,3,5].filter(j=>Math.pow(c,j)<=3200)); kk=j/2; argV=Math.sqrt(Math.pow(c,j)); argH="√"+Math.pow(c,j); }
+  else { let k; do{ k=rnd(-3,c===2?10:c===10?5:5); }while(Math.pow(c,Math.abs(k))>100000||(k===m&&Math.random()<.7)); kk=k; argV=Math.pow(c,k); argH=powNum(c,k); }
+  const ans=kk/m, B=logH(b), ah=/[\/√]/.test(argH)?"("+argH+")":argH;
+  let sol=`<span class="w">Ask: ${b} to what power equals ${argH}?</span>\n`;
+  if(m>1||c!==b) sol+=`${b} = ${c}<sup>${m}</sup>   and   ${argH} = ${c}<sup>${fx(kk)}</sup>\n(${c}<sup>${m}</sup>)<sup>x</sup> = ${c}<sup>${fx(kk)}</sup>  →  ${m}x = ${fx(kk)}\n`;
+  else sol+=`${argH} = ${c}<sup>${fx(kk)}</sup>\n`;
+  sol+=`${B} ${ah} = ${fx(ans)}`;
+  const top=Math.max(argV*1.8,2.5), xa=Math.min(-3,ans-1.5), xb=Math.max(3,ans+1.5);
+  return {kind:"eval",q:`Evaluate <span class="big">${B} ${ah}</span>`,fields:["value"],ans:[ans],tol:0.006,ph:"e.g. −3 or 2/3",
+    hint:`Rewrite as an exponential equation: ${b}<sup>x</sup> = ${argH}. Try writing both ${b} and ${argH} as powers of ${c}. Negative exponents give fractions (b<sup>−1</sup> = 1/b), and √ is the exponent 1/2.`,
+    sol, given:{b,y:argV},
+    gr:{win:{x0:xa,x1:xb,y0:-top*0.08,y1:top},fns:[{f:x=>Math.pow(b,x),c:"var(--corr)",t:"y = "+supS(b,"x")},{f:()=>argV,c:"var(--lin)",t:"y = "+argH}],pt:[ans,argV,"("+fx(ans)+", "+argH+")"]}};
+}
+function genConvert(){
+  const sub=pick(["arg","base","exp"]);
+  if(sub==="arg"){ const [b,ks]=pick([[2,[-3,-2,-1,2,3,4,5,6]],[3,[-2,-1,2,3,4]],[4,[-1,2,3,0.5,1.5,2.5]],[5,[-1,2,3]],[9,[0.5,1.5,-0.5,2]],[8,[1/3,2/3,4/3,2,-1/3]],[16,[0.5,0.25,0.75,1.5]],[25,[0.5,1.5,-0.5]],[27,[1/3,2/3,4/3]],[10,[-2,-1,2,3,4]]]);
+    const k=pick(ks), x=Math.pow(b,k), B=logH(b);
+    return {kind:"convert",q:`Rewrite in exponential form, then solve for x:<br><span class="big">${B} x = ${fx(k)}</span>`,fields:["x"],ans:[x],tol:Math.max(0.006,x*1e-6),ph:"e.g. 81 or 1/9",
+      hint:`log<sub>b</sub> x = k means b<sup>k</sup> = x. So x = ${b}<sup>${fx(k)}</sup>. A fractional exponent 1/n is an nth root; a negative exponent is a reciprocal.`,
+      sol:`${B} x = ${fx(k)}   ⇔   x = ${b}<sup>${fx(k)}</sup>\nx = ${fx(x)}`,given:{sub,b,k},
+      gr:{win:{x0:-0.08*Math.max(x*1.6,4),x1:Math.max(x*1.6,4),y0:Math.min(-3,k-2),y1:Math.max(3,k+2)},fns:[{f:t=>lg(t,b),c:"var(--lin)",xa:0,t:"y = "+logS(b)+" x"},{f:()=>k,c:"var(--corr)",t:"y = "+fx(k)}],pt:[x,k,"("+fx(x)+", "+fx(k)+")"]}}; }
+  if(sub==="base"){ let bb,k,N,half=Math.random()<0.25;
+    if(half){ bb=pick([4,9,16,25,36,49,64,81,100]); k=0.5; N=Math.sqrt(bb); }
+    else { do{ bb=rnd(2,9); k=pick([2,3,4]); N=Math.pow(bb,k); }while(N>10000); }
+    return {kind:"convert",q:`Rewrite in exponential form, then solve for the base b:<br><span class="big">log<sub>b</sub> ${N} = ${fx(k)}</span>`,fields:["b"],ans:[bb],tol:0.006,ph:"a positive number",
+      hint:`log<sub>b</sub> ${N} = ${fx(k)} means b<sup>${fx(k)}</sup> = ${N}. ${half?"Square both sides.":"Take the "+(k===2?"square":k===3?"cube":"fourth")+" root of both sides."} Remember a base must be positive.`,
+      sol:`log<sub>b</sub> ${N} = ${fx(k)}   ⇔   b<sup>${fx(k)}</sup> = ${N}\nb = ${N}<sup>${fx(1/k)}</sup> = ${bb}`,given:{sub,N,k},
+      gr:{win:{x0:-1,x1:Math.max(bb*1.6,4),y0:-N*0.1,y1:N*1.7},fns:[{f:t=>t>=0?Math.pow(t,k):NaN,c:"var(--corr)",t:"y = b^{"+fx(k)+"}"},{f:()=>N,c:"var(--lin)",t:"y = "+N}],pt:[bb,N,"b = "+bb]}}; }
+  let b,N; do{ b=pick([2,3,4,5,6,7,1.5]); N=rnd(5,250); }while(isInt(lg(N,b)*1e8/1e8)&&near(lg(N,b),Math.round(lg(N,b)),1e-9));
+  const x=lg(N,b), B=logH(b);
+  return {kind:"convert",q:`Rewrite in logarithmic form and find x to the nearest hundredth:<br><span class="big">${supH(b,"x")} = ${N}</span>`,fields:["x"],ans:[x],tol:0.0075,ph:"e.g. 3.17",
+    hint:`b<sup>x</sup> = N means x = log<sub>b</sub> N. Calculators have log and ln, so use change of base: x = log ${N} / log ${bName(b)}.`,
+    sol:`${supH(b,"x")} = ${N}   ⇔   x = ${B} ${N}\nx = log ${N} / log ${bName(b)} = ${f4(Math.log10(N))} / ${f4(Math.log10(b))} ≈ ${x.toFixed(2)}`,given:{sub,b,N},
+    gr:{win:{x0:-1,x1:x+3,y0:-N*0.1,y1:N*1.6},fns:[{f:t=>Math.pow(b,t),c:"var(--corr)",t:"y = "+supS(b,"x")},{f:()=>N,c:"var(--lin)",t:"y = "+N}],pt:[x,N,"x ≈ "+x.toFixed(2)]}};
+}
+function genExpCon(){
+  const b=pick([2,3,5,10,EE]), intB=b!==EE, B=logH(b), Bt=near(b,10)?"log":b===EE?"ln":"log"+b;
+  const mode=pick(["expand","condense"]);
+  let p=rnd(1,4), q=rnd(0,3), r=rnd(0,3); if(q===0&&r===0)r=1;
+  const kc=intB&&Math.random()<0.55? pick([1,2,-1]) : 0, coef=Math.pow(b,kc), rad=mode==="expand"&&Math.random()<0.25&&q>0;
+  const pe=rad?p/2:p, qe=rad?q/2:q;
+  const v=(n,e)=>e===0?"":e===1?n:n+"<sup>"+e+"</sup>";
+  const coefH=kc===0?"":kc>0?String(coef):"";
+  const top=(coefH)+(rad?"√("+v("x",p)+v("y",q)+")":v("x",p)+v("y",q)), botParts=(kc<0?String(1/coef):"")+v("z",r);
+  const argH=botParts?`${top} / ${botParts.length>1&&/[a-z].*[a-z0-9]/.test(botParts)&&(kc<0&&r>0)?"("+botParts+")":botParts}`:top;
+  const f=(x,y,z)=>lg(coef*(rad?Math.sqrt(Math.pow(x,p)*Math.pow(y,q)):Math.pow(x,p)*Math.pow(y,q))/Math.pow(z,r),b);
+  const term=(c,n,first)=>{ if(c===0)return ""; const s=c<0?" − ":(first?"":" + "); const a=Math.abs(c); return s+(a===1?"":fx(a)+" ")+B+" "+n; };
+  let exp=""; if(kc)exp=minus(String(kc)); exp+=term(pe,"x",!kc); exp+=term(qe,"y",false); exp+=term(-r,"z",false);
+  if(mode==="expand"){
+    return {kind:"expcon",mode,q:`Expand completely (write as a sum/difference of logs with no products, quotients, powers or roots inside a log):<br><span class="big">${B}(${argH})</span>`,
+      fields:["expanded form"],expr:true,ph:`e.g. 2 + 3${Bt}(x) - ${Bt}(z)`,f,
+      hint:`Work outside in: quotient rule (− for the denominator), then product rule (+ for each factor), then the power rule (exponents become coefficients).${rad?" A square root is the exponent 1/2.":""}${kc?" Evaluate the log of the number: "+B+" "+fx(coef)+" = "+kc+".":""}`,
+      sol:`${B}(${argH})\n= ${exp}`,given:{mode,b,kc,coef,pe,qe,r},
+      gr:{win:{x0:-0.5,x1:8,y0:-6,y1:8},fns:[{f:x=>f(x,2,3),c:"var(--corr)",t:"original, y = 2, z = 3"}]}};
+  }
+  // condense: show expanded, ask for single log
+  let src=""; if(kc)src=minus(String(kc)); src+=term(p,"x",!kc); src+=term(q,"y",false); src+=term(-r,"z",false);
+  const ff=(x,y,z)=>kc+p*lg(x,b)+q*lg(y,b)-r*lg(z,b);
+  const cf=kc===0?"":kc>0?String(coef):"";
+  const num=cf+v("x",p)+v("y",q), den=(kc<0?String(1/coef):"")+v("z",r);
+  return {kind:"expcon",mode,q:`Condense to a single logarithm:<br><span class="big">${src}</span>`,fields:["single log"],expr:true,ph:`e.g. ${Bt}(x^2*y/z^3)`,f:ff,
+    hint:`Reverse the rules: coefficients become exponents (power rule), + terms multiply inside one log, − terms divide.${kc?" First write "+kc+" as a log: "+kc+" = "+B+" "+fx(coef)+".":""}`,
+    sol:`${src}\n= ${B}(${den?num+" / "+(den.length>1&&kc<0&&r>0?"("+den+")":den):num})`,given:{mode,b,kc,coef,pe:p,qe:q,r},
+    gr:{win:{x0:-0.5,x1:8,y0:-6,y1:8},fns:[{f:x=>ff(x,2,3),c:"var(--corr)",t:"original, y = 2, z = 3"}]}};
+}
+function solveGraph(pr,show){
+  const x0=pr.ans, yv=pr.f2(x0), top=Math.max(yv*2.2,4);
+  return {win:{x0:x0-5,x1:x0+5,y0:-top*0.1,y1:top},fns:[{f:pr.f1,c:"var(--corr)",t:"y = left side"},{f:pr.f2,c:"var(--lin)",t:"y = right side"}],pt:[x0,yv,"x "+(pr.exact?"= "+fx(x0):"≈ "+x0.toFixed(2))]};
+}
+function genSolveExp(){
+  const pr=Math.random()<0.5?genExpCB():genExpLog();
+  return {kind:"solveexp",q:`Solve for x${pr.exact?"":" (round to the nearest hundredth)"}:<br><span class="big">${pr.html}</span>`,fields:["x"],ans:[pr.ans],tol:pr.exact?0.006:0.0075,ph:pr.exact?"e.g. 3 or −5/2":"e.g. 1.89",
+    hint:pr.exact?`Write both sides as powers of the same base, multiply exponents (power of a power), then set the exponents equal.`:`Isolate the power first, then take log (or ln) of both sides and use the power rule to bring x down.`,
+    sol:pr.steps.map(s=>`<span class="w">${s.w}</span>\n${s.m}`).join("\n"),given:pr.given,gr:solveGraph(pr)};
+}
+function genSolveLog(){
+  const pr=genLogEq();
+  const top=pr.k+3;
+  return {kind:"solvelog",q:`Solve for x. Check for extraneous solutions.<br><span class="big">${pr.html}</span>`,fields:["x"],ans:[pr.ans],tol:0.006,ph:"one value",ext:pr.ext,
+    hint:pr.type==="one"?`Rewrite in exponential form: log<sub>b</sub>(A) = k means A = b<sup>k</sup>. Then solve the linear equation.`:`Combine with the product rule, rewrite in exponential form, and solve the quadratic. Then reject any candidate that makes an argument of a log negative.`,
+    sol:pr.steps.map(s=>`<span class="w">${s.w}</span>\n${s.m}`).join("\n"),given:pr.given,
+    gr:{win:{x0:Math.min(pr.ext!=null?pr.ext:pr.dom,pr.dom)-2.5,x1:Math.max(pr.ans+4,pr.dom+6),y0:Math.min(-2.5,pr.k-6),y1:top},
+      fns:[{f:pr.f1,c:"var(--corr)",xa:pr.dom,t:"y = left side"},{f:()=>pr.k,c:"var(--lin)",t:"y = "+pr.k}],pt:[pr.ans,pr.k,"x = "+fx(pr.ans)],vl:pr.dom}};
+}
+function genWord(){
+  const t=pick(["halfAmt","halfTime","comp","cont","double","dep"]);
+  if(t==="halfAmt"||t==="halfTime"){ const A0=pick([80,100,120,200,250,400,500]), [h,u]=pick([[3,"hours"],[5,"days"],[6,"hours"],[8,"days"],[12,"years"],[30,"years"]]);
+    const iso=pick(["isotope","tracer","sample"]);
+    if(t==="halfAmt"){ const tt=h*rnd(1,4)+rnd(1,h-1)*(h>3?1:0.5), A=A0*Math.pow(0.5,tt/h);
+      return {kind:"word",q:`A ${A0}-mg radioactive ${iso} has a half-life of ${h} ${u}. How many milligrams remain after ${fmt(tt)} ${u}? Round to the nearest hundredth.`,fields:["mg"],ans:[A],tol:0.0075,ph:"e.g. 37.16",
+        hint:`Half-life model: A = A₀(1/2)<sup>t/h</sup>, where h is the half-life. Here the exponent is ${fmt(tt)}/${h}.`,
+        sol:`A = A₀(1/2)<sup>t/h</sup>\n  = ${A0}(1/2)<sup>${fmt(tt)}/${h}</sup>\n  ≈ ${A.toFixed(2)} mg`,given:{w:t,A0,h,t:tt},
+        gr:{win:{x0:-tt*0.08,x1:Math.max(tt*1.5,h*3),y0:-A0*0.08,y1:A0*1.15},fns:[{f:x=>A0*Math.pow(0.5,x/h),c:"var(--corr)",t:"A = "+A0+"(1/2)^{t/"+h+"}"}],pt:[tt,A,"("+fmt(tt)+", "+A.toFixed(2)+")"],xl:"t ("+u+")",yl:"mg"}}; }
+    const tg=Math.round(A0*pick([0.4,0.3,0.2,0.15,0.1])), tt=h*lg(tg/A0,0.5);
+    return {kind:"word",q:`A ${A0}-mg radioactive ${iso} has a half-life of ${h} ${u}. How long until only ${tg} mg remain? Round to the nearest hundredth.`,fields:[u],ans:[tt],tol:0.0075,ph:"e.g. 13.93",
+      hint:`Set ${A0}(1/2)<sup>t/${h}</sup> = ${tg}. Divide by ${A0}, take logs of both sides, and solve for t.`,
+      sol:`${A0}(1/2)<sup>t/${h}</sup> = ${tg}\n(1/2)<sup>t/${h}</sup> = ${fx(tg/A0)}\n(t/${h}) · log(1/2) = log ${fx(tg/A0)}\nt = ${h} · log ${fx(tg/A0)} / log(1/2) ≈ ${tt.toFixed(2)} ${u}`,given:{w:t,A0,h,tg},
+      gr:{win:{x0:-tt*0.08,x1:tt*1.5,y0:-A0*0.08,y1:A0*1.15},fns:[{f:x=>A0*Math.pow(0.5,x/h),c:"var(--corr)",t:"A = "+A0+"(1/2)^{t/"+h+"}"},{f:()=>tg,c:"var(--lin)",t:"A = "+tg}],pt:[tt,tg,"t ≈ "+tt.toFixed(2)],xl:"t ("+u+")",yl:"mg"}}; }
+  if(t==="comp"||t==="cont"){ const P=pick([500,750,1000,1500,2000,2500,5000]), rp=pick([2.5,3,3.25,3.5,4,4.5,5,5.5,6]), r=rp/100, yrs=rnd(2,25);
+    if(t==="comp"){ const [n,nn]=pick([[1,"annually"],[2,"semiannually"],[4,"quarterly"],[12,"monthly"],[365,"daily"]]), A=P*Math.pow(1+r/n,n*yrs);
+      return {kind:"word",q:`$${P.toLocaleString()} is invested at ${rp}% interest compounded ${nn}. What is the balance after ${yrs} years? Round to the nearest cent.`,fields:["dollars"],ans:[A],tol:0.0075,ph:"e.g. 1819.40",
+        hint:`A = P(1 + r/n)<sup>nt</sup> with r = ${r} (as a decimal), n = ${n}, t = ${yrs}. Don't round (1 + r/n) — keep every digit until the end.`,
+        sol:`A = P(1 + r/n)<sup>nt</sup>\n  = ${P}(1 + ${r}/${n})<sup>${n}·${yrs}</sup>\n  = ${money(A)}`,given:{w:t,P,r,n,t:yrs},
+        gr:{win:{x0:-yrs*0.08,x1:yrs*1.3,y0:-A*0.08,y1:A*1.3},fns:[{f:x=>P*Math.pow(1+r/n,n*x),c:"var(--corr)",t:"A = "+P+"(1 + "+r+"/"+n+")^{"+n+"t}"}],pt:[yrs,A,money(A)],xl:"t (years)",yl:"A",ypre:"$"}}; }
+    const A=P*Math.exp(r*yrs);
+    return {kind:"word",q:`$${P.toLocaleString()} is invested at ${rp}% interest compounded continuously. What is the balance after ${yrs} years? Round to the nearest cent.`,fields:["dollars"],ans:[A],tol:0.0075,ph:"e.g. 1822.12",
+      hint:`Continuous compounding: A = Pe<sup>rt</sup> with r = ${r} and t = ${yrs}.`,
+      sol:`A = Pe<sup>rt</sup> = ${P}e<sup>${r}·${yrs}</sup> = ${P}e<sup>${f4(r*yrs)}</sup> = ${money(A)}`,given:{w:t,P,r,t:yrs},
+      gr:{win:{x0:-yrs*0.08,x1:yrs*1.3,y0:-A*0.08,y1:A*1.3},fns:[{f:x=>P*Math.exp(r*x),c:"var(--vert)",t:"A = "+P+"e^{"+r+"t}"}],pt:[yrs,A,money(A)],xl:"t (years)",yl:"A",ypre:"$"}}; }
+  if(t==="double"){ const rp=pick([3,4,4.5,5,6,7,8]), r=rp/100, cont=Math.random()<0.5, tt=cont?Math.log(2)/r:Math.log(2)/Math.log(1+r);
+    return {kind:"word",q:`How many years will it take an investment to double at ${rp}% interest compounded ${cont?"continuously":"annually"}? Round to the nearest hundredth.`,fields:["years"],ans:[tt],tol:0.0075,ph:"e.g. 11.90",
+      hint:cont?`Set Pe<sup>${r}t</sup> = 2P. The P's cancel: e<sup>${r}t</sup> = 2, so take ln of both sides.`:`Set P(1 + ${r})<sup>t</sup> = 2P. The P's cancel: ${f4(1+r)}<sup>t</sup> = 2. Take logs of both sides.`,
+      sol:cont?`e<sup>${r}t</sup> = 2\n${r}t = ln 2\nt = ln 2 / ${r} ≈ ${tt.toFixed(2)} years`:`(${f4(1+r)})<sup>t</sup> = 2\nt · log ${f4(1+r)} = log 2\nt = log 2 / log ${f4(1+r)} ≈ ${tt.toFixed(2)} years`,given:{w:t,r,cont},
+      gr:{win:{x0:-tt*0.08,x1:tt*1.5,y0:-0.2,y1:3.4},fns:[{f:x=>cont?Math.exp(r*x):Math.pow(1+r,x),c:"var(--corr)",t:"growth factor"},{f:()=>2,c:"var(--lin)",t:"y = 2 (doubled)"}],pt:[tt,2,"t ≈ "+tt.toFixed(2)],xl:"t (years)",yl:"× P"}}; }
+  const V0=pick([18000,22000,25000,30000,35000]), rp=pick([10,12,15,18,20]), r=rp/100, yrs=rnd(2,10), V=V0*Math.pow(1-r,yrs);
+  return {kind:"word",q:`A car bought for $${V0.toLocaleString()} loses ${rp}% of its value each year. What is it worth after ${yrs} years? Round to the nearest cent.`,fields:["dollars"],ans:[V],tol:0.0075,ph:"e.g. 9230.80",
+    hint:`Decay: the factor is b = 1 − r = ${f4(1-r)}. V = ${V0}(${f4(1-r)})<sup>t</sup>.`,
+    sol:`V = V₀(1 − r)<sup>t</sup>\n  = ${V0}(1 − ${r})<sup>${yrs}</sup>\n  = ${V0}(${f4(1-r)})<sup>${yrs}</sup>\n  = ${money(V)}`,given:{w:t,V0,r,t:yrs},
+    gr:{win:{x0:-yrs*0.12,x1:yrs*1.4,y0:-V0*0.08,y1:V0*1.12},fns:[{f:x=>V0*Math.pow(1-r,x),c:"var(--corr)",t:"V = "+V0+"("+f4(1-r)+")^{t}"}],pt:[yrs,V,money(V)],xl:"t (years)",yl:"V",ypre:"$"}};
+}
+const KINDS=[["mix","Mix"],["eval","Evaluate logs"],["convert","Convert forms"],["expcon","Expand / condense"],["solveexp","Exponential equations"],["solvelog","Log equations"],["word","Word problems"]];
+const GEN={eval:genEval,convert:genConvert,expcon:genExpCon,solveexp:genSolveExp,solvelog:genSolveLog,word:genWord};
+const M6={
+  tab:"Challenge", lesson:"F-LE.A.4 · F-BF.B.5 · A-SSE.A.2 · F-LE.A.2", accent:"var(--coral)",
+  title:()=>"Practice: "+({eval:"evaluate a logarithm",convert:"convert between forms",expcon:"expand or condense",solveexp:"exponential equation",solvelog:"logarithmic equation",word:"growth & decay word problem"})[M6.s.pr?M6.s.pr.kind:"eval"],
+  s:{kind:"mix",pr:null,streak:0,best:0,solved:0,tries:0,state:"open",reveal:false,mine:null},
+  streakEl:null,
+  newProb(){ const k=M6.s.kind==="mix"?pick(Object.keys(GEN)):M6.s.kind; M6.s.pr=GEN[k](); M6.s.state="open"; M6.s.reveal=false; M6.s.tries=0; M6.s.mine=null; },
+  bar(){
+    btn("New problem",()=>{M6.newProb();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    KINDS.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=M6.s.kind; sel.onchange=()=>{M6.s.kind=sel.value;M6.newProb();render();}; bar.appendChild(sel);
+    M6.streakEl=spacer(""); M6.upStreak();
+  },
+  upStreak(){ if(M6.streakEl)M6.streakEl.textContent="Streak "+M6.s.streak+" · Best "+M6.s.best+" · Solved "+M6.s.solved; },
+  draw(){
+    if(!M6.s.pr)M6.newProb();
+    const pr=M6.s.pr, G=pr.gr, show=M6.s.state==="right"||M6.s.reveal;
+    W=G.win; const g=axes({xl:G.xl,yl:G.yl,ypre:G.ypre});
+    if(G.vl!=null){ wline(g,G.vl,W.y0,G.vl,W.y1,"var(--unk)",1.8,"7 5"); }
+    G.fns.forEach(fn=>plot(g,fn.f,fn.c,3.4,null,fn.xa));
+    const items=G.fns.map(fn=>({color:fn.c,text:fn.t}));
+    if(M6.s.mine){ plot(g,M6.s.mine,"var(--magenta)",3,"9 6"); items.push({color:"var(--magenta)",dash:"9 6",text:"your answer"}); }
+    legend(g,items,pr.kind==="word"&&/decay|loses|half/.test(pr.q)?"tr":(pr.kind==="convert"&&pr.given.sub==="arg")?"br":"tl");
+    if(show&&G.pt){ const p=P2(G.pt[0],G.pt[1]); wline(g,G.pt[0],Math.max(W.y0,0),G.pt[0],G.pt[1],"var(--magenta)",1.6,"5 4"); sdot(g,p,"var(--magenta)",7); smartLabel(g,p,[1,-1],G.pt[2],"#BE185D"); }
+    if(show&&pr.ext!=null){ const c=P2(pr.ext,0); g.appendChild(E("path",{d:`M${c[0]-8} ${c[1]-8}L${c[0]+8} ${c[1]+8}M${c[0]+8} ${c[1]-8}L${c[0]-8} ${c[1]+8}`,style:"stroke:var(--unk)","stroke-width":3.5})); smartLabel(g,c,[0.3,1],"x = "+minus(pr.ext)+" extraneous","var(--unk)"); }
+    if(!show&&pr.kind!=="expcon") lab(g,[VW/2,VH-22*FS],"The answer will be marked on the graph","#64748B");
+  },
+  checkExpr(str){ const pr=M6.s.pr, ast=parseAST(str);
+    if(!ast)return {err:true};
+    const g=(x,y,z)=>evalAST(ast,{x,y,z});
+    let eq=true; for(let i=0;i<6;i++){ const x=1.3+Math.random()*6,y=1.3+Math.random()*6,z=1.3+Math.random()*6, a=pr.f(x,y,z), b=g(x,y,z);
+      if(!isFinite(b)||Math.abs(a-b)>1e-7*Math.max(1,Math.abs(a))){eq=false;break;} }
+    M6.s.mine=x=>g(x,2,3);
+    if(!eq)return {ok:false,why:"Your expression does not have the same value as the original (I tested random positive x, y, z) — compare the dashed pink graph with the blue one."};
+    const L=logNodes(ast);
+    if(pr.mode==="expand"){ const bad=L.filter(n=>{const a=unwrap(n.a); return !(a.t==="num"||a.t==="var");});
+      if(bad.length)return {ok:false,why:"The value is right, but it is not fully expanded: at least one log still has a product, quotient, power or root inside it."}; return {ok:true}; }
+    if(L.length!==1||unwrap(ast).t!=="log")return {ok:false,why:"The value is right, but the answer must be a <b>single</b> logarithm, like log₂(x³y / z) — nothing outside the log."};
+    return {ok:true};
+  },
+  panel(full){
+    const pr=M6.s.pr;
+    if(!full&&document.getElementById("chk"))return;
+    const fmtNote=pr.expr? `<p>Type an expression using <b>x, y, z</b>. Write logs as <b>log2(x)</b> or <b>log_2(x)</b>, <b>log(x)</b> for base 10, <b>ln(x)</b>; powers with ^ (x^3), roots as sqrt(x). It is checked by evaluating at random values <b>and</b> by its form.</p>`
+      : `<p>Type a number: integers, fractions like <b>−3/4</b>, or decimals. ${pr.tol<0.007&&pr.kind!=="word"?"Exact answers are expected; a decimal rounded to the hundredth also counts.":"Round to the nearest hundredth (or cent). $ signs and commas are fine."}</p>`;
+    side.innerHTML=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="prob" id="prob" data-kind="${pr.kind}" data-given='${JSON.stringify(pr.given).replace(/'/g,"&#39;")}'>${pr.q}</p></div>
+      <div class="ansrow">${pr.fields.map((f,i)=>`<div><label class="fld" for="ans${i}">${f}</label><input type="text" id="ans${i}" autocomplete="off" spellcheck="false" placeholder="${pr.ph}"></div>`).join("")}</div>
+      <div class="fldwrap" style="margin:16px 0 4px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="chk" class="go" type="button" style="flex:1 1 140px">Check answer</button>
+        <button id="sol" class="ghost" type="button">Show solution</button>
+      </div><div id="fb6"></div><div style="height:4px"></div></div>
+      <div class="panel"><h3>How answers are checked</h3><div class="pad">${fmtNote}
+      <p>A first-try correct answer grows your streak. A wrong answer resets it, gives you a hint, and lets you try again.</p></div></div>`;
+    const ins=pr.fields.map((_,i)=>document.getElementById("ans"+i)), fb=document.getElementById("fb6");
+    const showSol=good=>{ fb.innerHTML=(good||"")+`<div class="fldwrap"><div class="eq">${pr.sol}</div></div>`; };
+    const win=()=>{ M6.s.state="right"; if(M6.s.tries===0&&!M6.s.reveal){ M6.s.streak++; M6.s.best=Math.max(M6.s.best,M6.s.streak); } M6.s.solved++; M6.upStreak();
+      clear(); M6.draw(); showSol(`<div class="verdict good"><b>Correct!</b> ${M6.s.tries||M6.s.reveal?"Got there — the streak counts first-try answers only.":"Streak "+M6.s.streak+"."} Compare with the full work below, then press <b>New problem</b>.</div>`); ins.forEach(x=>x.disabled=true); };
+    const lose=msg=>{ M6.s.tries++; M6.s.streak=0; M6.upStreak(); fb.innerHTML=`<div class="verdict bad">${msg}</div>`; clear(); M6.draw(); };
+    const check=()=>{
+      if(M6.s.state==="right")return;
+      if(pr.expr){ const r=M6.checkExpr(ins[0].value);
+        if(r.err){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Example: <b>2 + 3log2(x) - log2(z)</b> or <b>log3(x^2*y/z)</b>.</div>`; return; }
+        if(r.ok)return win(); return lose(`<b>Not quite.</b> ${r.why} <br>${pr.hint}`); }
+      const vals=ins.map(x=>parseNum(x.value));
+      if(vals.some(v=>!isFinite(v))){ fb.innerHTML=`<div class="verdict bad"><b>I can't read that.</b> Use a number like 3, −2/3 or 4.17.</div>`; return; }
+      if(vals.every((v,i)=>Math.abs(v-pr.ans[i])<=pr.tol))return win();
+      if(pr.ext!=null&&Math.abs(vals[0]-pr.ext)<=pr.tol) return lose(`<b>That's the extraneous one.</b> x = ${minus(pr.ext)} solves the quadratic, but it makes an argument of a log negative, so it is not a solution of the original equation. Check the other candidate.`);
+      lose(`<b>Not quite.</b> ${pr.hint}`);
+    };
+    document.getElementById("chk").onclick=check;
+    ins.forEach(x=>x.addEventListener("keydown",e=>{ if(e.key==="Enter")check(); }));
+    document.getElementById("sol").onclick=()=>{ M6.s.reveal=true; if(M6.s.state!=="right"){M6.s.streak=0;M6.upStreak();} clear(); M6.draw(); showSol(`<div class="verdict bad" style="background:rgba(255,217,61,.10);border-color:rgba(255,217,61,.35);color:#FBEFC9"><b>Worked solution.</b> Study it, then press <b>New problem</b> and try one on your own.</div>`); };
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
+window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
+function update(){ setFS(); const M=MODS[cur]; clear(); M.draw(); M.panel(false); }
+function render(){
+  setFS(); const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M6&&!M6.s.pr)M6.newProb();
+  bLesson.textContent=M.lesson;
+  bar.innerHTML=""; M.bar();
+  clear(); M.draw(); M.panel(true);
+  bTitle.textContent=M.title();
+  cv.setAttribute("aria-label",M.tab.replace("&amp;","&")+" — "+M.title());
+  [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });
+}
+const _upd=update;
+function go(i,push){ cur=clamp(i,0,MODS.length-1); if(push){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} } render(); }
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab"); b.id="tabbtn-"+(i+1);
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.onkeydown=e=>{ if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); const j=(cur+(e.key==="ArrowRight"?1:-1)+MODS.length)%MODS.length; go(j,true); tabsEl.children[j].focus(); } };
+  tabsEl.appendChild(b);
+});
+// keep the board title in sync on live updates
+update=function(){ _upd(); bTitle.textContent=MODS[cur].title(); };
+M5.init();
+const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
+window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
+go(fromHash(),false);
+})();
+</script>
+</body>
+</html>
