@@ -254,7 +254,8 @@
   .vals label{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);display:block;margin-bottom:4px}
   .vals input{padding:10px 11px}
   .tf{font-family:var(--mono);font-weight:700}
-  @media (max-width:560px){ .steps td{padding:10px 12px} .inrow{padding:0 16px 6px} .vals{padding:4px 16px 8px} .bar input.opv{width:84px} }
+  .bar .seg{flex-wrap:wrap}
+  @media (max-width:560px){ .steps td{padding:10px 12px} .inrow{padding:0 16px 6px} .vals{padding:4px 16px 8px} .bar input.opv{width:84px} .bar .seg button{padding:9px 12px;font-size:14px} .bar button{padding:10px 14px} }
 </style>
 </head>
 <body>
@@ -696,7 +697,7 @@ const M1={
     g.appendChild(E("circle",{cx:P[0],cy:P[1],r:9,style:"fill:var(--yellow);stroke:var(--graphite)","stroke-width":2.5}));
     // level indicator
     const lv=Math.abs(s.ang)<0.3;
-    txt(g,350,298,lv?"balanced":"tipping…",{cls:"cap",color:lv?"#059669":"#DC2626"});
+    txt(g,350,298,lv?"balanced":"tipping…",{cls:"cap",color:lv?"#059669":"#DC2626",size:13*Math.min(FS,1.4)});
     [Lx,Rx].forEach((S,i)=>{ const e=ends[i]; const top=e[1]-28;
       ln(g,e[0],e[1],e[0],top+4,"var(--graphite)",4);
       g.appendChild(E("rect",{x:e[0]-112,y:top-4,width:224,height:9,rx:4,style:"fill:#8FA3C8;stroke:var(--graphite)","stroke-width":1.5}));
@@ -712,23 +713,23 @@ const M1={
       if(m.d===1&&m.n<=(isX?10:12)){ for(let i=0;i<m.n;i++)(neg?out.neg:out.pos).push({x:isX,lab:isX?(neg?"−x":"x"):(neg?"−1":"1")}); }
       else (neg?out.neg:out.pos).push({x:isX,lab:(neg?"−":"")+(isX?termAbs(m,"x"):fstr(m)),big:true}); };
     add(a,true); add(k,false); return out; },
-  pan(g,cx,top,S){ const it=M1.items(S); let x=cx-104, y=top, rowH=0; const gi=G(g);
+  pan(g,cx,top,S){ const it=M1.items(S), K=FS>1?1.4:1; let x=cx-104, y=top, rowH=0; const gi=G(g);
     // positives stack upward
-    it.pos.forEach(o=>{ const w=o.big?Math.max(o.x?36:28,o.lab.length*9+12):(o.x?34:24), h=o.x?32:22;
+    it.pos.forEach(o=>{ const w=K*(o.big?Math.max(o.x?36:28,o.lab.length*9+12):(o.x?34:24)), h=K*(o.x?32:22);
       if(x+w>cx+106){ x=cx-104; y-=rowH+3; rowH=0; }
       const r=E("rect",{x,y:y-h,width:w,height:h,rx:o.x?5:9,style:"fill:"+(o.x?"#7C3AED":"#EA580C")+";stroke:#fff","stroke-width":1.5}); gi.appendChild(r);
-      txt(gi,x+w/2,y-h/2+1,o.lab,{cls:"itm",size:o.x?15:12});
+      txt(gi,x+w/2,y-h/2+1,o.lab,{cls:"itm",size:K*(o.x?15:12)});
       x+=w+3; rowH=Math.max(rowH,h); });
     const topItems=y-rowH;
     // negatives: balloons tied to the pan
-    let bx=cx-96, by=Math.min(topItems-48,top-58); const gb=G(g);
-    it.neg.forEach(o=>{ const r=o.big?Math.max(18,o.lab.length*4.6+6):(o.x?17:13);
-      if(bx+r>cx+108){ bx=cx-96; by-=36; }
+    let bx=cx-100, by=Math.min(topItems-48*K,top-58*K); const gb=G(g);
+    it.neg.forEach(o=>{ const r=K*(o.big?Math.max(18,o.lab.length*4.6+6):(o.x?17:13));
+      if(bx+2*r>cx+110){ bx=cx-100; by-=2.3*r+6; }
       const X=bx+r; ln(gb,X,by+r,X+(cx-X)*0.15,top,"#94A3B8",1.2);
       gb.insertBefore(gb.lastChild,gb.firstChild);
       gb.appendChild(E("ellipse",{cx:X,cy:by,rx:r,ry:r*1.12,style:"fill:"+(o.x?"#DB2777":"#E11D48")+";stroke:#fff","stroke-width":1.5,opacity:.92}));
       gb.appendChild(E("path",{d:`M${X-3} ${by+r*1.12+4} L${X} ${by+r*1.12-1} L${X+3} ${by+r*1.12+4}Z`,style:"fill:"+(o.x?"#DB2777":"#E11D48")}));
-      txt(gb,X,by+1,o.lab,{cls:"itm",size:o.x?14:11});
+      txt(gb,X,by+1,o.lab,{cls:"itm",size:K*(o.x?14:11)});
       bx+=2*r+5; });
   },
   panel(full){
@@ -911,7 +912,7 @@ const M3={
     rows.forEach((r,i)=>{ const y=top+i*gap; sx=numberLine(g,y,s.lo,s.hi,r.lab); drawSet(g,y,sx,s.lo,s.hi,r.I,r.col,true);
       const inSet=inIv(r.I,s.t), truth=r.test==="all"?tr.all:tr.each[r.test];
       const ok=r.wrong?inSet===truth:truth;
-      txt(g,clamp(sx(s.t)+12,40,690),y+44,(r.wrong?(inSet?"shaded":"not shaded")+" but original is "+(truth?"TRUE":"FALSE")+(inSet!==truth?" ✗":" "):(truth?"TRUE ✓":"FALSE ✗")),{cls:"sm",anchor:sx(s.t)>480?"end":"start",color:r.wrong?(inSet!==truth?"#DC2626":"#64748B"):(ok?"#059669":"#DC2626")}); });
+      txt(g,sx(s.t)>350?sx(s.t)-12:sx(s.t)+12,y+44,(r.wrong?(inSet!==truth?(inSet?"shaded, but FALSE ✗":"not shaded, but TRUE ✗"):"agrees here"):(truth?"TRUE ✓":"FALSE ✗")),{cls:"sm",anchor:sx(s.t)>350?"end":"start",color:r.wrong?(inSet!==truth?"#DC2626":"#64748B"):(ok?"#059669":"#DC2626")}); });
     const X=sx(s.t), yb=top+(rows.length-1)*gap;
     ln(g,X,top-46,X,yb+30,"#7C3AED",2,"6 5");
     const gg=G(); grab(gg,X,top-50,"T","#7C3AED"); txt(gg,X,top-78,"T = "+num(s.t,1),{cls:"sm",color:"#6D28D9"});
@@ -1145,7 +1146,7 @@ const M5={
       g.appendChild(E("circle",{cx:V.sx(x),cy:V.sy(y),r:cnt>600?1.6:2.4,style:"fill:"+(ok?"#6D28D9":"#CBD5E1")})); }
     const lab=G();
     const xi=p[2]/p[0], yi=p[2]/p[1];
-    txt(lab,V.sx(xi),V.sy(0)-14,"("+fracStr(xi)+", 0)",{cls:"sm",color:"#6D28D9"}); txt(lab,V.sx(0)+8,V.sy(yi)-12,"(0, "+fracStr(yi)+")",{cls:"sm",anchor:"start",color:"#6D28D9"});
+    txt(lab,V.sx(xi)-8,V.sy(0)-30,"("+fracStr(xi)+", 0)",{cls:"sm",anchor:"end",color:"#6D28D9"}); txt(lab,V.sx(0)+8,V.sy(yi)-12,"(0, "+fracStr(yi)+")",{cls:"sm",anchor:"start",color:"#6D28D9"});
     const sym=OPG[sc.op]; txt(lab,680,26,`${p[0]}x + ${p[1]}y ${sym} ${p[2]},  x ≥ 0,  y ≥ 0`,{cls:"sm",anchor:"end",color:"#6D28D9"});
     const T=s.TW, cost=p[0]*T[0]+p[1]*T[1], ok=sc.op==="<="?cost<=p[2]:cost>=p[2];
     grab(lab,V.sx(T[0]),V.sy(T[1]),"T",ok?"#059669":"#DC2626",17);
@@ -1348,7 +1349,6 @@ const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp
 window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
 go(fromHash(),false);
 // test hook (read-only): expose current challenge problem for automated checks
-window.__eqlab={challenge:()=>M6.s.pr};
 })();
 </script>
 </body>

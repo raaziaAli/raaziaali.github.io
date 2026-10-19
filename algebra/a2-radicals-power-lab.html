@@ -246,6 +246,7 @@ function fr(v,maxD){ maxD=maxD||48; if(!isFinite(v))return null;
 function fx(v){ if(!isFinite(v))return "undefined"; const f=fr(v,48); if(f&&Math.abs(f[0])<1e9) return f[1]===1? minus(f[0]) : minus(f[0]+"/"+f[1]); return num(v,3); }
 function fxa(v){ const s=fx(v); return (s.indexOf("/")>=0||!isInt(v))&&fr(v,48)? s+" ≈ "+num(v,3) : s; }
 const exact=v=>!!fr(v,48);
+const eqv=v=>exact(v)? "= "+fx(v) : "≈ "+num(v,4);
 const h=s=>String(s).replace(/\^\{([^}]*)\}/g,"<sup>$1</sup>");      // markup → HTML
 const plain=s=>String(s).replace(/\^\{([^}]*)\}/g,"$1");
 function realPow(b,e){
@@ -425,7 +426,7 @@ function convertHTML(str){
     L.push(`= ${pre}(${R(n,B.s)})^{${m}}   ← ${bs}^{1/${n}} = ${R(n,B.s)}`);
     L.push(`= ${pre}${R(n,m===1?B.s:bs+"^{"+m+"}")}   ← same value: root and power commute`);
     if(B.num){ const r=rootN(B.v,n); if(!isFinite(r)) L.push(`${R(n,B.s)} is not a real number (even root of a negative).`);
-      else { const v=realPow(B.v,c.m/c.n); L.push(`Evaluate, root first: ${R(n,B.s)} = ${exact(r)?fx(r):"≈ "+num(r,4)}, so ${pre}(${exact(r)?fx(r):num(r,4)})^{${m}} = ${exact(v)?fx(v):"≈ "+num(v,4)}`); } }
+      else { const v=realPow(B.v,c.m/c.n); L.push(`Evaluate, root first: ${R(n,B.s)} ${eqv(r)}, so ${pre}(${exact(r)?fx(r):num(r,4)})^{${m}} ${eqv(v)}`); } }
     return `<p><b>Exponent → radical form</b></p><div class="eq">${h(L.join("\n"))}<small>The denominator ${n} becomes the index of the root; the numerator ${Math.abs(c.m)} stays a power.</small></div>`;
   } else {
     const m=c.m, n=c.n, g=gcd(m,n);
@@ -507,7 +508,7 @@ const M1={
     const n=s.n, m=s.m, b=s.b, bs=b<0?"("+fx(b)+")":fx(b);
     const r=rootN(b,n);
     let w=`(x^{1/${n}})^{${n}} = x^{${n}/${n}} = x^{1}\n`;
-    if(isFinite(r)) w+=`With x = ${fx(b)}: ${R(n,bs)} = ${exact(r)?fx(r):"≈ "+num(r,4)}, and (${exact(r)?fx(r):num(r,4)})^{${n}} = ${fx(Math.pow(r,n))} ✓`;
+    if(isFinite(r)) w+=`With x = ${fx(b)}: ${R(n,bs)} ${eqv(r)}, and (${exact(r)?fx(r):num(r,4)})^{${n}} = ${fx(Math.pow(r,n))} ✓`;
     else w+=`With x = ${fx(b)}: no real number raised to the even power ${n} is negative, so ${bs}^{1/${n}} is not real.`;
     document.getElementById("m1why").innerHTML=h(w);
     let e=`${bs}^{${m}/${n}}`;
@@ -516,9 +517,9 @@ const M1={
     else{
       const mm=Math.abs(m), pre=m<0?"1 / ":"", rs=exact(r)?fx(r):num(r,4), v=realPow(b,m/n);
       if(m<0) e+=` = 1 / ${bs}^{${mm}/${n}}`;
-      e+=`\nRoot first:   ${pre}(${R(n,bs)})^{${mm}} = ${pre}(${rs})^{${mm}} = ${exact(v)?fx(v):"≈ "+num(v,4)}`;
+      e+=`\nRoot first:   ${pre}(${R(n,bs)})^{${mm}} = ${pre}(${rs})^{${mm}} ${eqv(v)}`;
       const big=Math.pow(b,mm), rb=rootN(big,n);
-      e+=`\nPower first:  ${pre}${R(n,bs+"^{"+mm+"}")} = ${pre}${R(n,num(big,3))} = ${exact(v)?fx(v):"≈ "+num(v,4)}`;
+      e+=`\nPower first:  ${pre}${R(n,bs+"^{"+mm+"}")} = ${pre}${R(n,num(big,3))} ${eqv(v)}`;
       if(isFinite(rb)&&!near(rb,Math.abs(realPow(b,mm/n)),1e-6*Math.max(1,rb))) e+=`  ⚠ even index: ${R(n,num(big,3))} = ${num(rb,4)}, but ${R(n,bs)} wasn't real`;
       const g=gcd(m,n); if(g>1&&b<0) e+=`\n${m}/${n} reduces to ${m/g}/${n/g}; for negative bases always reduce first.`;
       e+=`<small>Root first, the biggest number you handle is ${num(Math.max(Math.abs(b),Math.abs(Math.pow(r,mm))),3)}; power first it is ${num(Math.abs(big),3)}.</small>`;
@@ -932,7 +933,7 @@ function solvePow(q){
     S.push({t:`<b>Raise</b> both sides to the reciprocal power ${minus(rec)}`,m:`(x^{${m}/${n}})^{${minus(rec)}} = ${wrapB(fx(v))}^{${minus(rec)}}\nx^{1} = ${wrapB(fx(v))}^{${minus(rec)}}`+(evenM?`\n± because x and −x give the same even power`:"")});
     let ev=`${wrapB(fx(Math.abs(v)))}^{${minus(n+"/"+m)}} = (${R(Math.abs(m),fx(Math.abs(v)))})^{${m<0?-n:n}}`;
     if(Math.abs(m)===1) ev=`${wrapB(fx(Math.abs(v)))}^{${minus(n+"/"+m)}}`;
-    ev+=` = ${Math.abs(m)>1?"("+(exact(root)?fx(root):num(root,4))+")^{"+(m<0?-n:n)+"} = ":""}${exact(mag)?fx(mag):"≈ "+num(mag,4)}`;
+    ev+=` ${Math.abs(m)>1?(exact(root)?"= ":"≈ ")+"("+(exact(root)?fx(root):num(root,4))+")^{"+(m<0?-n:n)+"} ":""}${eqv(mag)}`;
     S.push({t:"<b>Evaluate</b> (root first)",m:ev});
     sols= evenM? [-mag,mag] : [v<0?-mag:mag];
     S.push({t:"<b>Check</b>",m:sols.map(x=>{ const l=q.a*realPow(x,q.m/q.n)+q.b; return `x = ${fxa(x)}: ${q.a!==1?fx(q.a)+"·":""}(${fx(x)})^{${q.m}/${q.n}}${q.b?(q.b<0?" − ":" + ")+fx(Math.abs(q.b)):""} = ${fxa(l)} ${Math.abs(l-q.c)<1e-7*Math.max(1,Math.abs(q.c))?"✓":"✗"}`; }).join("\n")});
@@ -1207,7 +1208,6 @@ const M6={
 
 /* ══════════════════════ controller ══════════════════════ */
 const MODS=[M1,M2,M3,M4,M5,M6];
-window.__radLab={M6,MODS};
 function setFS(){ FS=(window.innerWidth<=560)?1.55:1; }
 window.addEventListener("resize",()=>{ const o=FS; setFS(); if(o!==FS)update(); });
 function update(){ setFS(); const M=MODS[cur]; clear(); clipN=0; M.draw(); M.panel(false); }

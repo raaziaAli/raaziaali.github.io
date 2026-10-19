@@ -1318,7 +1318,6 @@ MODS.forEach((M,i)=>{
 const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
 window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
 // test hook (read-only view of the current challenge)
-window.__qlab={get pr(){return M6.s.pr;}, get p4(){return M4.s.pr;}};
 go(fromHash(),false);
 })();
 </script>

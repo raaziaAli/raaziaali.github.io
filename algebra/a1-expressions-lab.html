@@ -377,7 +377,7 @@ function parse(src,table){
 }
 function normalize(n){
   if(n.k==="bin"||n.k==="pow"){ const a=normalize(n.a), b=normalize(n.b); return (a===n.a&&b===n.b)?n:Object.assign({},n,{a,b}); }
-  if(n.k==="neg"){ const a=normalize(n.a); if(a.k==="lit")return L(rNeg(a.v),{dec:a.dec,from:a.id}); return a===n.a?n:Object.assign({},n,{a}); }
+  if(n.k==="neg"){ const a=normalize(n.a); if(a.k==="lit"&&!a.sub)return L(rNeg(a.v),{dec:a.dec,from:a.id}); return a===n.a?n:Object.assign({},n,{a}); }
   if(n.k==="grp"){ const a=normalize(n.a); if(a.k==="lit")return a; return a===n.a?n:Object.assign({},n,{a}); }
   return n;
 }
@@ -410,9 +410,8 @@ function evalF(n,env){
 function equiv(A,B,anyVar){
   let good=0;
   for(let t=0;t<9;t++){
-    const env={x:Math.random()*7-3.3,y:Math.random()*7-3.1,n:Math.random()*7-3.2};
-    if(anyVar)env._any=env.n;
-    const a=evalF(A,env), b=evalF(B,anyVar?{_any:env.n,n:env.n}:env);
+    const env=anyVar?{_any:Math.random()*7-3.2}:{x:Math.random()*7-3.3,y:Math.random()*7-3.1,n:Math.random()*7-3.2};
+    const a=evalF(A,env), b=evalF(B,env);
     if(!isFinite(a)&&!isFinite(b))continue;
     if(!isFinite(a)||!isFinite(b))return false;
     if(Math.abs(a-b)>1e-7*Math.max(1,Math.abs(a),Math.abs(b)))return false;
@@ -526,7 +525,7 @@ function readyNodes(root,spans){
     if(n.k==="grp"){ walk(n.a,depth+1,n.a); return; }
     if(n.k==="bin"||n.k==="pow"){ walk(n.a,depth,inner); walk(n.b,depth,inner);
       if(n.a.k==="lit"&&n.b.k==="lit")out.push({n,depth,inner,pos:spans[n.id][0]}); }
-    else if(n.k==="neg")walk(n.a,depth,inner);
+    else if(n.k==="neg"){ walk(n.a,depth,inner); if(n.a.k==="lit")out.push({n,depth,inner,pos:spans[n.id][0]}); }
   })(root,0,root);
   return out;
 }
@@ -537,31 +536,34 @@ const isMD=o=>o.k==="bin"&&(o.op==="*"||o.op==="/"), isAS=o=>o.k==="bin"&&(o.op=
 function stepOnce(root,table,dec,mode,tk){
   const spans=tk.spans;
   const rd=readyNodes(root,spans); if(!rd.length)return null;
-  const rank=n=>n.k==="pow"?RANKP:table[n.op];
+  const rank=n=>n.k==="pow"||n.k==="neg"?RANKP:table[n.op];
   rd.sort((p,q)=>q.depth-p.depth||rank(q.n)-rank(p.n)||p.pos-q.pos);
-  const c=rd[0], n=c.n, A=n.a.v, B=n.b.v;
-  const V= n.k==="pow"? rPow(A,B) : {"+":rAdd,"-":rSub,"*":rMul,"/":rDiv}[n.op](A,B);
+  const c=rd[0], n=c.n, A=n.a.v, B=n.b?n.b.v:null;
+  const V= n.k==="neg"? rNeg(A) : n.k==="pow"? rPow(A,B) : {"+":rAdd,"-":rSub,"*":rMul,"/":rDiv}[n.op](A,B);
   const lit=L(V,{dec:n.a.dec||n.b.dec});
   const next=normalize(replaceId(root,n.id,lit));
-  const D=dec||lit.dec, aS=rStr(A,D), bS=rStr(B,D), vS=rStr(V,D);
+  const D=dec||lit.dec, aS=rStr(A,D), bS=B?rStr(B,D):"", vS=rStr(V,D);
   const pa=s=>s.indexOf("−")===0||s.indexOf("/")>0?"("+s+")":s;
   let detail, dHTML;
-  if(n.k==="pow"){
+  if(n.k==="neg"){ detail="−"+pa(aS)+" = "+vS; dHTML=esc(detail); }
+  else if(n.k==="pow"){
     const e=B.n, rep=(B.d===1&&e>=2&&e<=4&&A.d===1)? " = "+Array(e).fill(pa(aS)).join(" · ") : "";
     detail=pa(aS)+supStr(bS)+rep+" = "+vS; dHTML=esc(pa(aS))+"<sup>"+esc(bS)+"</sup>"+esc(rep+" = "+vS);
   } else { const sy=n.imp?"·":(n.sym==="/"?"÷":(n.sym||OPSYM[n.op])); detail=aS+" "+sy+" "+pa(bS)+" = "+vS; dHTML=esc(detail); }
   // reason
-  const opPos=o=>o.k==="pow"?spans[o.b.id][0]:spans[o.a.id][1];
+  const opPos=o=>o.k==="pow"?spans[o.b.id][0]:(o.k==="neg"?spans[o.id][0]:spans[o.a.id][1]);
   const ops=levelOps(c.inner).filter(o=>o!==n);
-  const where=c.depth>0? "Work inside the innermost grouping symbols first. " : "";
+  const where=c.depth>0? "Work inside the innermost grouping symbols first — " : "";
   let why="", bad=false;
   if(mode==="m1"&&isAS(n)&&ops.some(isMD)){ why="MISTAKE: adding or subtracting before the × or ÷ in the same part of the expression."; bad=true; }
   else if(mode==="m2"&&n.op==="*"&&ops.some(o=>o.k==="bin"&&o.op==="/"&&opPos(o)<opPos(n))){ why="MISTAKE: multiplying before the ÷ on its left — PEMDAS does not mean × always comes before ÷."; bad=true; }
   else if(mode==="m2"&&n.op==="+"&&ops.some(o=>o.k==="bin"&&o.op==="-"&&opPos(o)<opPos(n))){ why="MISTAKE: adding before the − on its left — + and − have equal rank, so go left to right."; bad=true; }
+  else if(n.k==="neg") why="The opposite of "+aS+" is "+vS+".";
   else if(n.k==="pow") why="Exponents come before ×, ÷, + and −.";
   else if(isMD(n)) why= ops.some(isMD)? "× and ÷ have equal rank, so work left to right — this one comes first." : (ops.some(isAS)? "Multiplication and division come before addition and subtraction." : "Multiply or divide.");
-  else why= ops.some(isAS)? "Only + and − are left here. They have equal rank, so work left to right." : (c.depth>0?"This is the last operation inside the grouping symbols.":"This is the last operation.");
-  return {target:n.id,hi:parentGrp(root,n.id)||n.id,c,lit,next,detail,dHTML,why:(bad?"":where)+why,bad};
+  else why= ops.some(isAS)? "Only + and − are left here. They have equal rank, so work left to right." : (c.depth>0?"Simplify inside the grouping symbols.":"This is the last operation.");
+  if(where&&!bad)why=where+why.charAt(0).toLowerCase()+why.slice(1);
+  return {target:n.id,hi:parentGrp(root,n.id)||n.id,c,lit,next,detail,dHTML,why,bad};
 }
 function runSeq(root,table,dec,mode){
   const S=[]; let cur=root, res=null; S.err=null;
@@ -579,8 +581,9 @@ const seqValue=S=>{ const r=S[S.length-1].root; return r.k==="lit"?r.v:null; };
 function ladderHTML(S,k,dec){ // ordered list of steps (side panel)
   return '<ol class="stepl">'+S.map((st,i)=>{
     if(k!=null&&i>k)return "";
-    const marks=[]; if(st.resId!=null&&st.spans[st.resId])marks.push([...st.spans[st.resId],"res"]);
-    if(st.step&&(k==null||i===k))marks.push(st.spans[st.step.hi]);
+    const marks=[]; const hs=st.step&&(k==null||i===k)?st.spans[st.step.hi]:null;
+    if(st.resId!=null&&st.spans[st.resId]){ const rs=st.spans[st.resId]; if(!hs||rs[1]<=hs[0]||rs[0]>=hs[1])marks.push([...rs,"res"]); }
+    if(hs)marks.push(hs);
     const on=(k!=null&&i===k)?"on":(k!=null&&i<k?"done":"");
     const body=st.step? `<b>${st.step.dHTML}</b> — ${esc(st.step.why)}` : (S.err?`<span class="no">${esc(S.err)}</span>`:"Done — a single number is left.");
     return `<li class="${on}"><span class="xp">${i?"= ":""}${tokHTML(st.T,marks)}</span><span class="sn">${st.step?"Step "+(i+1):"✓"}</span>${body}</li>`;
@@ -749,7 +752,7 @@ const TL=76, TU=22, TRAYW=178;
 const MAT={x:192,y:10,w:498,h:440};
 const TDIM={x2:[TL,TL],x:[TL,TU],"1":[TU,TU]};
 const TCOL={x2:["#60A5FA","#1D4ED8"],x:["#34D399","#047857"],"1":["#FCD34D","#B45309"]}, NCOL=["#F87171","#B91C1C"];
-const TSRC=[["x2",1,16,44],["x2",-1,98,44],["x",1,16,160],["x",-1,98,160],["1",1,43,226],["1",-1,125,226]];
+const TSRC=[["x2",1,16,66],["x2",-1,98,66],["x",1,16,178],["x",-1,98,178],["1",1,43,236],["1",-1,125,236]];
 let TID=1;
 const P2={tiles:[],target:null,showSimp:true,flash:[],msg:""};
 let raf=0;
@@ -853,7 +856,7 @@ const M2={
     const g=E("g",{}); cv.appendChild(g);
     g.appendChild(E("rect",{x:6,y:6,width:TRAYW-6,height:448,rx:14,fill:"#EEF2FB",stroke:"#C9D5EC"}));
     stext(g,[TRAYW/2+3,24],"TILE TRAY","lab",null,"middle");
-    TSRC.forEach(([tp,sg,x,y])=>{ stext(g,[x+TL/2,y-9],(sg>0?"+":"−")+(tp==="x2"?"x²":(tp==="x"?"x":"1")),"sm",sg>0?TCOL[tp][1]:NCOL[1]); drawTile(g,{type:tp,sgn:sg},x,y,1,true); });
+    TSRC.forEach(([tp,sg,x,y])=>{ stext(g,[x+TDIM[tp][0]/2,y-10],(sg>0?"+":"−")+(tp==="x2"?"x²":(tp==="x"?"x":"1")),"sm",sg>0?TCOL[tp][1]:NCOL[1]); drawTile(g,{type:tp,sgn:sg},x,y,1,true); });
     g.appendChild(E("rect",{x:18,y:282,width:142,height:160,rx:12,fill:"none",stroke:"#9AA8C7","stroke-width":1.6,"stroke-dasharray":"6 5"}));
     ["Drag tiles onto","the mat.","","Drag a tile back","here to remove it."].forEach((s,i)=>stext(g,[89,314+i*22],s,"cap","#5B6B8C","middle",13.5));
     g.appendChild(E("rect",{x:MAT.x,y:MAT.y,width:MAT.w,height:MAT.h,rx:14,fill:"rgba(255,255,255,.65)",stroke:"#C9D5EC"}));
@@ -887,8 +890,8 @@ const P3={mode:"var",a:3,b:4,c:2,xl:3.5,A:12,B:18,f:1,fneg:false,sc:30};
 const X3=118, Y3=76;
 function dims3(){
   if(P3.mode==="gcf"){ const f=(P3.fneg?-1:1)*P3.f, q1=P3.A/f, q2=P3.B/f, XV=1.5, w1=Math.abs(q1)*XV, w2=Math.abs(q2);
-    const s=Math.min(30,540/(w1+w2),250/P3.f); return {f,q1,q2,w1,w2,h:P3.f,s}; }
-  return {w1:P3.mode==="num"?P3.b:P3.xl,w2:Math.abs(P3.c),h:Math.abs(P3.a),s:30};
+    const s=Math.min(44,540/(w1+w2),250/P3.f); return {f,q1,q2,w1,w2,h:P3.f,s}; }
+  const w1=P3.mode==="num"?P3.b:P3.xl, w2=Math.abs(P3.c), h=Math.abs(P3.a); return {w1,w2,h,s:Math.min(44,540/(w1+w2),250/h)};
 }
 function newGcf(){ let k,p,q; do{ k=pick([2,2,3,3,4,5,6,7]); p=rnd(1,6); q=rnd(1,9); }while(gcd(p,q)!==1||k*p>36||k*q>48);
   const sp=Math.random()<.3?-1:1, sq=Math.random()<.35?-1:1; P3.A=k*p*sp; P3.B=k*q*sq; P3.f=1; P3.fneg=false; }
@@ -896,9 +899,9 @@ const sgn3=v=>v<0?"−":"+";
 function eqLines3(){
   const a=P3.a, c=P3.c, fa=minus(a);
   if(P3.mode==="num"){ const b=P3.b;
-    return [`${fa}(${b} ${sgn3(c)} ${Math.abs(c)}) = ${fa}·${b} + ${fa}·${par(c)}`, `= ${minus(a*b)} ${sgn3(a*c)} ${Math.abs(a*c)} = ${minus(a*b+a*c)}`, `Check: ${fa}·${b+c} = ${minus(a*(b+c))} ✓`]; }
+    return [`${fa}(${b} ${sgn3(c)} ${Math.abs(c)}) = ${fa}·${b} + ${par(a)}·${par(c)}`, `= ${minus(a*b)} ${sgn3(a*c)} ${Math.abs(a*c)} = ${minus(a*b+a*c)}`, `Check: ${fa}·${b+c} = ${minus(a*(b+c))} ✓`]; }
   if(P3.mode==="var"){ const lhs=(a===-1?"−":(a===1?"":fa))+`(x ${sgn3(c)} ${Math.abs(c)})`;
-    return [`${lhs} = ${fa}·x + ${fa}·${par(c)}`, `= ${polyStr([a*c,a])}`, a<0?"A negative factor changes the sign of every term.":"Multiply the outside factor by every term inside."]; }
+    return [`${lhs} = ${fa}·x + ${par(a)}·${par(c)}`, `= ${polyStr([a*c,a])}`, a<0?"A negative factor changes the sign of every term.":"Multiply the outside factor by every term inside."]; }
   const d=dims3(), ok=Number.isInteger(d.q1)&&Number.isInteger(d.q2), G=gcd(P3.A,P3.B);
   const lhs=polyStr([P3.B,P3.A]);
   const inner=ok?polyStr([d.q2,d.q1]):`${frac(d.q1)}x ${sgn3(d.q2)} ${frac(Math.abs(d.q2))}`;
@@ -956,22 +959,22 @@ const M3={
       stext(g,[(X3+x1)/2,Y3-44],"(any length)","ax",null,"middle",12*Math.min(FS,1.4)); }
     // area labels
     let a1,a2;
-    if(P3.mode==="num"){ a1=`${fa}·${P3.b} = ${minus(P3.a*P3.b)}`; a2=`${fa}·${par(P3.c)} = ${minus(P3.a*P3.c)}`; }
-    else if(P3.mode==="var"){ a1=polyStr([0,P3.a]); a2=`${fa}·${par(P3.c)} = ${minus(P3.a*P3.c)}`; }
+    if(P3.mode==="num"){ a1=`${fa}·${P3.b} = ${minus(P3.a*P3.b)}`; a2=`${par(P3.a)}·${par(P3.c)} = ${minus(P3.a*P3.c)}`; }
+    else if(P3.mode==="var"){ a1=polyStr([0,P3.a]); a2=`${par(P3.a)}·${par(P3.c)} = ${minus(P3.a*P3.c)}`; }
     else { a1=polyStr([0,P3.A]); a2=minus(P3.B); }
     const fit=(str,w)=>str.length*(FS>1?24:17)*0.6<w-8;
     let below=0;
     [[a1,X3,x1,s1],[a2,x1,x2,s2]].forEach(([str,xa,xb,sg])=>{
       const col=sg>0?"#0C4A6E":"#9F1239";
-      if(fit(str,xb-xa)&&yb-Y3>=26)stext(g,[(xa+xb)/2,(Y3+yb)/2],str,"num",col,"middle",FS>1?24:17);
+      if(fit(str,xb-xa-30)&&yb-Y3>=60)stext(g,[(xa+xb)/2,Y3+(yb-Y3)*0.27+6],str,"num",col,"middle",FS>1?24:17);
       else { stext(g,[(xa+xb)/2,yb+22+below*24],str,"num",col,"middle",FS>1?22:16); below++; } });
     // handles
     const hd=(x,y,id)=>{ g.appendChild(E("circle",{cx:x,cy:y,r:FS>1?24:14,class:"grab","data-drag":id})); g.appendChild(E("circle",{cx:x,cy:y,r:5,fill:"#FF6B35",stroke:"#fff","stroke-width":2,"pointer-events":"none"})); };
     if(!gcf){ hd(x1,(Y3+yb)/2,"w1"); hd(x2,(Y3+yb)/2,"w2"); }
     hd((X3+x2)/2,yb,"h");
     // equations
-    const EL=eqLines3(), ey=Math.max(yb+30+below*24,360);
-    EL.forEach((l,i)=>{ if(l)stext(g,[350,ey+i*30],l,i===2?"cap":"num",i===2?"#475569":(gcf&&!ok&&i===1?"#BE123C":"#14213D"),"middle",i===2?14:(l.length>44?15:18)); });
+    const EL=eqLines3(), ey=Math.max(yb+30+below*24,FS>1?340:360);
+    EL.forEach((l,i)=>{ if(l)stext(g,[350,ey+i*30],l,i===2?"cap":"num",i===2?"#475569":(gcf&&!ok&&i===1?"#BE123C":"#14213D"),"middle",(i===2?14:(l.length>44?15:18))*Math.min(FS,1.35)); });
   },
   panel(full){
     const EL=eqLines3();
@@ -985,7 +988,7 @@ const M3={
         <p>Factoring is the distributive property <b>backwards</b>: we know the area and look for the side lengths.</p>
         <dl class="kv"><dt>${A}</dt><dd>${fA.join(", ")}</dd><dt>${B}</dt><dd>${fB.join(", ")}</dd><dt>common</dt><dd>${com.map(v=>v===G?`<b class="ok">${v}</b>`:v).join(", ")}</dd></dl>
         <div class="eq">${esc(EL[0])}<small>${esc(EL[1])}</small></div>
-        ${ok&&Math.abs(d.f)===G?`<div class="verdict good" style="margin:12px 0 0"><b>Fully factored.</b> Inside the parentheses, ${esc(polyStr([d.q2,d.q1]))} has no common factor other than 1. Check by distributing: ${minus(d.f)}·${esc(polyStr([0,d.q1]))} = ${esc(polyStr([0,P3.A]))} and ${minus(d.f)}·${par(d.q2)} = ${minus(P3.B)}.</div>`:""}
+        ${ok&&Math.abs(d.f)===G?`<div class="verdict good" style="margin:12px 0 0"><b>Fully factored.</b> Inside the parentheses, ${esc(polyStr([d.q2,d.q1]))} has no common factor other than 1. Check by distributing: ${par(d.f)}·${d.q1<0?"("+esc(polyStr([0,d.q1]))+")":esc(polyStr([0,d.q1]))} = ${esc(polyStr([0,P3.A]))} and ${par(d.f)}·${par(d.q2)} = ${minus(P3.B)}.</div>`:""}
         ${!ok?`<div class="verdict bad" style="margin:12px 0 0">The sides would not be whole numbers — <b>${Math.abs(d.f)}</b> does not divide both coefficients.</div>`:""}
         <p style="margin-top:11px">${P3.A<0?"The first term is negative, so it is common to factor out a <b>negative</b> GCF — every sign inside flips.":"Turn on “Factor out a negative” to see how every sign inside flips."}</p></div></div>`;
     } else {
@@ -1012,7 +1015,7 @@ function compute4(){
   try{ const pr=parse(P4.src,T0); const vs=[...varsOf(pr.root)].filter(v=>v!=="x"&&v!=="y");
     if(vs.length)throw "Use only the variables x and y here (found “"+vs.join(", ")+"”).";
     P4.root=pr.root; P4.dec=pr.dec;
-    const sub=subst(pr.root,{x:R(P4.x),y:R(P4.y)});
+    const sub=normalize(subst(pr.root,{x:R(P4.x),y:R(P4.y)}));
     P4.S=runSeq(sub,T0,pr.dec,"ok");
   }catch(e){ P4.err=String(e); P4.S=null; }
 }
@@ -1213,13 +1216,13 @@ const M5={
   draw(){
     if(!P5.it)M5.newItem();
     if(M5.sp)M5.sp.textContent="Streak "+P5.streak+" · Best "+P5.best;
-    const g=E("g",{}); cv.appendChild(g), it=P5.it;
+    const g=E("g",{}); cv.appendChild(g); const it=P5.it;
     stext(g,[30,28],"TRANSLATE INTO AN ALGEBRAIC EXPRESSION — USE n FOR THE NUMBER","lab",null,"start");
     const words=phraseSegs(it.p.charAt(0).toUpperCase()+it.p.slice(1),it.kw);
     const fs=FS>1?36:(it.p.length>60?24:30), maxW=640; let x=30, y=86; const lh=fs*1.45, cw=fs*0.56;
-    let t=E("text",{x:30,y,class:"cap","font-size":fs,"font-weight":600}); g.appendChild(t);
+    let t=E("text",{x:30,y,class:"cap",style:"font-size:"+fs+"px;font-weight:600"}); g.appendChild(t);
     words.forEach(o=>{ const w=(o.w.length+1)*cw;
-      if(x+w>30+maxW){ x=30; y+=lh; t=E("text",{x:30,y,class:"cap","font-size":fs,"font-weight":600}); g.appendChild(t); }
+      if(x+w>30+maxW){ x=30; y+=lh; t=E("text",{x:30,y,class:"cap",style:"font-size:"+fs+"px;font-weight:600"}); g.appendChild(t); }
       const ts=E("tspan",{}); ts.textContent=o.w+" "; ts.setAttribute("style","fill:"+(o.m===1?"#DB2777":(o.m===2?"#7C3AED":"#14213D"))+(o.m?";text-decoration:underline":""));
       t.appendChild(ts); x+=w; });
     let ky=y+56;
@@ -1237,7 +1240,7 @@ const M5={
   panel(){
     const it=P5.it;
     let h=`<div class="panel"><h3>Which expression matches?</h3><div class="choices">${it.choices.map((c,i)=>{
-      let cls=""; if(P5.picked!=null&&(i===P5.picked||(c.ok&&P5.state!=="open")))cls=c.ok?"right":"wrong";
+      let cls=""; if((P5.picked!=null&&i===P5.picked)||(c.ok&&(P5.state==="right"||P5.state==="shown")))cls=c.ok?"right":"wrong";
       return `<button type="button" class="choice ${cls}" data-i="${i}">${exprHTML(c.r)}</button>`; }).join("")}</div>
       <label class="fld" for="w5">…or type it yourself</label>
       <div class="ansrow"><div><input type="text" id="w5" autocomplete="off" spellcheck="false" placeholder="e.g. 2n − 5"></div></div>
@@ -1316,7 +1319,7 @@ function genProblem(kind){
     const a=rnd(2,6), b=rnd(2,7), c=rnd(1,9);
     pr.src=pick([`${a}x^2 − ${b}y`,`${a}(x + ${b}) − y`,`x^2 + ${a}xy − ${b}`,`(x − y)^2 + ${a}`,`${a}x − ${b}y + ${c}`,`−x^2 + ${a}y`,`${a}y − x^2 + ${c}`,`(x + ${a})(y − ${b})`]);
     pr.x=rnz(-5,5); pr.y=rnz(-5,5); pr.root=parse(pr.src).root;
-    pr.S=runSeq(subst(pr.root,{x:R(pr.x),y:R(pr.y)}),T0,false,"ok"); const v=seqValue(pr.S); pr.ans=v.n/v.d;
+    pr.S=runSeq(normalize(subst(pr.root,{x:R(pr.x),y:R(pr.y)})),T0,false,"ok"); const v=seqValue(pr.S); pr.ans=v.n/v.d;
     pr.q=`Evaluate <span class="xm">${srcHTML(pr.src)}</span> for <b>x = ${minus(pr.x)}</b> and <b>y = ${minus(pr.y)}</b>.`; pr.ph="e.g. −14"; pr.fmt="Type a number.";
   }
   if(kind==="words"){

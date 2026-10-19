@@ -1234,7 +1234,6 @@ MODS.forEach(M=>M.init&&M.init());
 const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
 window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
 go(fromHash(),false);
-window.__lab={M1,M2,M3,M4,M5,M6,summary,linreg};
 })();
 </script>
 </body>

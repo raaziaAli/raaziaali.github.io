@@ -1369,7 +1369,6 @@ MODS.forEach((M,i)=>{
 M3.init(); M5.newCtx("ferris");
 const fromHash=()=>{ const m=/^#tab-(\d+)$/.exec(location.hash); return m? clamp(+m[1]-1,0,MODS.length-1) : 0; };
 window.addEventListener("hashchange",()=>{ const i=fromHash(); if(i!==cur)go(i,false); });
-window.__trigLab={M6,MODS,parseAns};
 go(fromHash(),false);
 })();
 </script>
