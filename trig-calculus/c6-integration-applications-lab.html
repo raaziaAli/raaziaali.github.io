@@ -1041,7 +1041,7 @@ const M1={
       h+=`<div class="fldwrap"><div class="eq">`+I.pieces.map((P,i)=>{
         const body=P.ivd.map(J=>"["+bDescTxt(R,J.R,true)+" − ("+bDescTxt(R,J.L,true)+")]").join(" + ");
         return `${npc>1?"A"+(i+1)+" = ":"A = "}${intH(nb(P.c),nb(P.d),body,"d"+ov)}\n     ${P.exact?eqx(P.val):"≈ "+num(P.val,4)}`; }).join("\n")+
-        (npc>1? `\nA ${eqx(tot)}`:"")+`<small>Check with ${sameDir?"":"the other strip direction"}: ${eqx(natTot)}${Math.abs(natTot-tot)<1e-4?" ✓ same area":""}</small></div></div>`;
+        (npc>1? `\nA ${eqx(tot)}`:"")+`<small>Check with ${sameDir?"":"the other strip direction"}: ${exv(natTot)}${Math.abs(natTot-tot)<1e-4?" ✓ same area":""}</small></div></div>`;
     }
     const st=M1.strip(R);
     if(st){ const L=st.segs.reduce((q,sg)=>q+sg[1]-sg[0],0);
@@ -1079,7 +1079,7 @@ function straddles(R,ax,k){
 const offAst=(a,k)=>simp(S("-",a,NN(k)));       // a − k
 const koffAst=(a,k)=>simp(S("-",NN(k),a));      // k − a
 const isZeroAst=a=>a[0]==="n"&&Math.abs(a[1])<1e-12;
-function sq(a,html){ const s=html?H(a):pp(a); return (a[0]==="v"||a[0]==="n"&&a[1]>=0||a[0]==="f")? s+(html?"<sup>2</sup>":"²") : "("+s+")"+(html?"<sup>2</sup>":"²"); }
+function sq(a,html){ const s=html?H(a):pp(a); return (a[0]==="v"||a[0]==="n"&&a[1]>=0||(a[0]==="f"&&!/^(sqrt|cbrt)$/.test(a[1])))? s+(html?"<sup>2</sup>":"²") : "("+s+")"+(html?"<sup>2</sup>":"²"); }
 function axisName(ax,k){ if(ax==="h") return Math.abs(k)<1e-12? "the x-axis" : "y = "+nb(k); return Math.abs(k)<1e-12? "the y-axis" : "x = "+nb(k); }
 function regionWorld(R){ const out=[]; natPieces(R).forEach(P=>{ const N=40, pts=[];
     for(let i=0;i<=N;i++){ const u=P.p+(P.q-P.p)*i/N; pts.push([u,P.top.f(u),0]); }
@@ -1176,7 +1176,7 @@ const M2={
     const rep=M2.repInfo(R);
     side.innerHTML=panelH("Set up the integral",`<div class="pad"><p>Rotate the region about <b>${axisName(ax,k)}</b>. Slices ⊥ to the axis are <b>${what}</b>, so integrate in <b>${ax==="h"?"x":"y"}</b>.</p></div>
       <div class="fldwrap"><div class="eq">${eq}</div></div>
-      <div class="pad" style="padding-top:0">${rep}<p class="mini">Check with shells: ${eqx(Vs)}${Math.abs(Vs-V)<1e-5*Math.max(1,V)?" ✓ same volume":""}</p>
+      <div class="pad" style="padding-top:0">${rep}<p class="mini">Check with shells: ${exv(Vs)}${Math.abs(Vs-V)<1e-5*Math.max(1,V)?" ✓ same volume":""}</p>
       <span class="bigv">V ${eqx(V)}</span>${bad?`<p class="err" style="margin:10px 0 0">The axis passes through the region, so the slices are not true washers. Move k to the region's edge or outside it.</p>`:""}</div>`)+
       panelH("The idea",`<div class="pad"><p>Cut the solid ⊥ to the axis. Each slice is a <b>disk</b> (area πR²) or, if there is a gap at the axis, a <b>washer</b> (area πR² − πr²). Thickness is dx for a horizontal axis, dy for a vertical axis.</p>
         <p><b>R</b> is the distance from the axis to the <b>far</b> edge, <b>r</b> to the <b>near</b> edge. Rotating about y = k? Then R = (curve) − k or k − (curve), whichever is positive.</p>
@@ -1331,7 +1331,7 @@ const M3={
       side.innerHTML=panelH("Set up the integral",`<div class="pad"><p>Rotate about <b>${axisName(ax,k)}</b>. Shells are cylinders <b>parallel</b> to the axis, so slice parallel to it and integrate in <b>${ax==="v"?"x":"y"}</b>.</p></div>
         <div class="fldwrap"><div class="eq">${eq}</div></div>
         <div class="pad" style="padding-top:0">${r?`<p><b>Yellow shell</b> at ${ax==="v"?"x":"y"} = ${num(r.pos,3)}: r = ${num(r.r,3)}, h = ${num(r.h,3)}. Unrolled it is a slab ≈ 2π(${num(r.r,2)})·(${num(r.h,2)})·Δ${ax==="v"?"x":"y"} = ${num(2*PI*r.r*r.h,3)}·Δ${ax==="v"?"x":"y"}.</p>`:""}
-        <p class="mini">Check with washers: ${eqx(Vw)}${Math.abs(Vw-V)<1e-5*Math.max(1,V)?" ✓ same volume":""}</p><span class="bigv">V ${eqx(V)}</span></div>`)+
+        <p class="mini">Check with washers: ${exv(Vw)}${Math.abs(Vw-V)<1e-5*Math.max(1,V)?" ✓ same volume":""}</p><span class="bigv">V ${eqx(V)}</span></div>`)+
         panelH("The idea",`<div class="pad"><p>Instead of slicing across the axis, wrap the region in thin <b>cylindrical shells</b> around it. Cut a shell and unroll it (drag <b>Unroll</b>): it becomes an almost flat slab.</p>
           <p>The slab's length is the circumference <b>2πr</b>, its height is <b>h</b>, and its thickness is <b>dx</b>. Add up all the slabs.</p>
           <p>Shells shine when washers would need you to solve for x, or to split the integral.</p>

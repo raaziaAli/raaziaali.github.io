@@ -525,6 +525,7 @@ function axes(v,opt){
   if(v.Y(0)>=v.T&&v.Y(0)<=v.T+v.H) gg.appendChild(E("line",{x1:v.L,y1:v.Y(0),x2:v.L+v.W,y2:v.Y(0),stroke:"#8FA3C8","stroke-width":1.8}));
   if(v.X(0)>=v.L&&v.X(0)<=v.L+v.W) gg.appendChild(E("line",{x1:v.X(0),y1:v.T,x2:v.X(0),y2:v.T+v.H,stroke:"#8FA3C8","stroke-width":1.8}));
   const xl=E("text",{x:v.L+v.W-8,y:clamp(y0-7,v.T+14,v.T+v.H-6),class:"ax","text-anchor":"end"}); xl.textContent=opt.xn||"x"; gg.appendChild(xl);
+  if(opt.title)v.hasTitle=true;
   if(opt.title){ const tt=E("text",{x:v.L+10,y:v.T+18*FS,class:"sm","text-anchor":"start",style:"fill:"+(opt.tc||"var(--ink)")}); tt.textContent=opt.title; cv.appendChild(tt); }
   const g=E("g",{"clip-path":"url(#"+id+")"}); cv.appendChild(g); return g;
 }
@@ -568,7 +569,8 @@ function blabel(g,v,p,s,color,anchor,cls){
 // readout lines in the top-left corner of a view (drawn on top, unclipped)
 function readout(v,lines,right){
   const g=E("g",{}); cv.appendChild(g);
-  lines.forEach((ln,i)=>{ const y=v.T+(18+i*19)*FS; if(right)stext(g,[v.L+v.W-12,y],ln[0],"sm",ln[1],"end"); else stext(g,[v.L+12,y],ln[0],"sm",ln[1],"start"); });
+  const off=(right&&v.hasTitle&&FS>1)?1:0;
+  lines.forEach((ln,i)=>{ const y=v.T+(18+(i+off)*19)*FS; if(right)stext(g,[v.L+v.W-12,y],ln[0],"sm",ln[1],"end"); else stext(g,[v.L+12,y],ln[0],"sm",ln[1],"start"); });
 }
 function axisHandle(g,v,x,id,label,color){
   const py=clamp(v.Y(0),v.T+16,v.T+v.H-16), px=v.X(x);
@@ -1515,9 +1517,9 @@ function update(){ setFS(); const M=MODS[cur]; clear(); M.draw(); M.panel(false)
 function render(){
   setFS(); const M=MODS[cur];
   document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  if(M===M6&&!M6.s.pr)M6.newProb();
   bTitle.textContent=M.title(); bLesson.textContent=M.lesson;
   cv.setAttribute("aria-label",M.tab+" — "+M.title());
-  if(M===M6&&!M6.s.pr)M6.newProb();
   bar.innerHTML=""; M.bar();
   clear(); M.draw(); M.panel(true);
   [...tabsEl.children].forEach((b,i)=>{ b.setAttribute("aria-selected",String(i===cur)); b.tabIndex=i===cur?0:-1; });

@@ -493,7 +493,7 @@ function qstr(q,keep){ // keep: show unreduced denominator
   const parts=[]; [[a,""],[b,"√2"],[c,"√3"],[d,"√6"]].forEach(([k,r])=>{ if(!k)return; parts.push({k,r}); });
   if(!parts.length)return "0";
   // put positive terms first for readability
-  parts.sort((u,v)=>(v.k>0)-(u.k>0));
+  const RO={"√6":3,"√3":2,"√2":1,"":0}; parts.sort((u,v)=>((v.k>0)-(u.k>0))||(RO[v.r]-RO[u.r]));
   let top=""; parts.forEach((t,i)=>{ const ak=Math.abs(t.k), body=(ak===1&&t.r?"":ak)+t.r;
     top+= i===0? (t.k<0?"−":"")+body : (t.k<0?" − ":" + ")+body; });
   if(den===1)return top;
@@ -553,11 +553,11 @@ const angSnap=(a,step)=>step? Math.round(a/step)*step : Math.round(a);
 const angFrom=(cx,cy,p)=>norm(Math.atan2(-(p[1]-cy),p[0]-cx)/D2R);
 
 /* exact-looking value from a number whose square is rational: ±√(p/q) simplified */
-function ratApprox(v,maxd){ maxd=maxd||600; for(let d=1;d<=maxd;d++){ const n=Math.round(v*d); if(Math.abs(n/d-v)<1e-9*Math.max(1,Math.abs(v)))return [n,d]; } return null; }
+function ratApprox(v,maxd){ maxd=maxd||600; const cands=[1,2,3,4,5,6,8,9,10,12,13,15,16,17,18,20,24,25,32,36,49,50,64,72,81,100,144,169,225,289,576,625,841,961,1225,1681,2401,4096]; for(const d of cands){ if(d>maxd)break; const n=Math.round(v*d); if(Math.abs(n/d-v)<1e-9*Math.max(1,Math.abs(v)))return [n,d]; } for(let d=1;d<=maxd;d++){ const n=Math.round(v*d); if(Math.abs(n/d-v)<1e-9*Math.max(1,Math.abs(v)))return [n,d]; } return null; }
 function sqExact(w){
   if(!isFinite(w)||Math.abs(w)>1e9)return "undefined";
   if(Math.abs(w)<1e-12)return "0";
-  const r=ratApprox(w*w,600); if(!r)return num(w,4);
+  const r=ratApprox(w*w,5000); if(!r)return num(w,4);
   const [n,d]=r, g=gcd(n,d);
   const s=radFrac(1,(n/g)*(d/g),d/g);
   return (w<0?"−":"")+s;
@@ -667,7 +667,7 @@ const M1={
     f.value=M1.s.given; v.value=M1.s.val; q.value=M1.s.quad;
     const run=()=>{ M1.s.given=f.value; M1.s.val=v.value; M1.s.quad=q.value; const out=document.getElementById("g1out"); const r=sixFrom(f.value,v.value,+q.value);
       if(r.err){ out.innerHTML=`<div class="verdict bad">${r.err}</div>`; return; }
-      M1.s.th=r.deg; clear(); M1.draw(); M1.panelLive();
+      M1.s.th=Math.round(r.deg); clear(); M1.draw(); M1.panelLive();
       out.innerHTML=`<div class="six">${["sin","cos","tan","csc","sec","cot"].map(k=>`<div><span>${k} θ</span><b>${r.vals[k]}</b></div>`).join("")}</div><div class="fldwrap"><div class="eq">${r.work}</div></div>`; };
     document.getElementById("g1go").onclick=run; v.addEventListener("keydown",e=>{if(e.key==="Enter")run();});
   },
@@ -709,7 +709,7 @@ function sixFrom(fn,str,quad){
   if(Math.abs(x)<1e-12||Math.abs(y)<1e-12) return {err:"<b>That value puts θ on an axis</b> (a quadrantal angle), so it is not inside a quadrant. Try a value strictly between the extremes."};
   work+=`\ntan θ = sin θ / cos θ,  then reciprocals:\ncsc θ = 1/sin θ,  sec θ = 1/cos θ,  cot θ = 1/tan θ`;
   const vals={sin:exA(y),cos:exA(x),tan:exA(y/x),csc:exA(1/y),sec:exA(1/x),cot:exA(x/y)};
-  return {vals,work,deg:Math.round(norm(Math.atan2(y,x)/D2R)*10)/10};
+  return {vals,work,x,y,deg:Math.round(norm(Math.atan2(y,x)/D2R)*10)/10};
 }
 
 /* ══════════════════════ TAB 2 · Verifying identities ══════════════════════ */
@@ -1049,9 +1049,9 @@ tan(θ/2) = (1 − cos θ)/sin θ<small>The ± is not "both". Choose the sign fr
     f.value=M4.s.given; v.value=M4.s.val; q.value=M4.s.quad;
     const run=()=>{ M4.s.given=f.value; M4.s.val=v.value; M4.s.quad=q.value; const out=document.getElementById("g4out");
       const r=sixFrom(f.value,v.value,+q.value); if(r.err){ out.innerHTML=`<div class="verdict bad">${r.err}</div>`; return; }
-      const th=r.deg*D2R, s=Math.sin(th), c=Math.cos(th), hq=quadOf(r.deg/2);
+      const s=r.y, c=r.x, th=Math.atan2(s,c)<0?Math.atan2(s,c)+TAU:Math.atan2(s,c), hq=quadOf(th/D2R/2);
       const hs=Math.sqrt((1-c)/2), hc=(Math.cos(th/2)<0?-1:1)*Math.sqrt((1+c)/2);
-      const fr=v=>frac(v,2000)||num(v,4);
+      const fr=v=>frac(v,5000)||num(v,4);
       out.innerHTML=`<div class="fldwrap"><div class="eq">sin θ = ${exA(s)},  cos θ = ${exA(c)}   (θ ≈ ${num(r.deg,2)}°)
 sin 2θ = 2 sin θ cos θ = ${exA(2*s*c)}
 cos 2θ = cos²θ − sin²θ = ${exA(c*c-s*s)}
@@ -1248,7 +1248,8 @@ function gen6(kind){
       pr.sol=`${fn==="sin"?"cos":"sin"} θ = ${fn==="sin"?(sx>0?"+":"−"):(sy>0?"+":"−")}√(1 − (${frac(given,100)})²) = ${frac(fn==="sin"?c:s,100)}   (sign from Quadrant ${QN[q-1]})
 sin 2θ = 2 sin θ cos θ = 2(${frac(s,100)})(${frac(c,100)}) = ${frac(S2,2000)}
 cos 2θ = cos²θ − sin²θ = ${frac(c*c,2000)} − ${frac(s*s,2000)} = ${frac(C2,2000)}
-tan 2θ = sin 2θ / cos 2θ = ${frac(S2/C2,5000)||num(S2/C2,4)}`;
+tan 2θ = sin 2θ / cos 2θ = ${frac(S2/C2,5000)||num(S2/C2,4)}
+So ${want} = ${frac(pr.ans,5000)} ≈ ${num(pr.ans,4)}`;
       pr.exact=frac(pr.ans,5000)||num(pr.ans,4);
       pr.hint=`First find ${fn==="sin"?"cos":"sin"} θ with sin²θ + cos²θ = 1, using the quadrant for its sign. Then use the double-angle formula.`;
     }

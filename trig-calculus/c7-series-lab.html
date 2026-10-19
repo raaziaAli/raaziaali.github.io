@@ -395,8 +395,8 @@ function mkPlot(g,x,y,w,h,x0,x1,y0,y1,o){
     if(pref==="left"||ax+w2>x+w-4){ ax=sx-10; an="end"; if(ax-w2<x+4){ax=clamp(sx,x+w2/2+4,x+w-w2/2-4);an="middle";} }
     let ay=sy-(pref==="below"?-16*FS:14*FS); ay=clamp(ay,y+hh+14*FS,y+h-hh/2-2);
     return stext(P.top,[ax,ay],txt,"sm",color,an); };
-  P.edge=(v,txt,color,above)=>{ if(!isFinite(v)||v<y0||v>y1)return; const sy=P.Y(v)+(above===false?13*FS:-9*FS);
-    return stext(P.top,[x+w-6,clamp(sy,y+30*FS,y+h-8)],txt,"sm",color,"end"); };
+  P.edge=(v,txt,color,above)=>{ if(!isFinite(v)||v<y0||v>y1)return; let sy=P.Y(v)+(above===false?13*FS:-9*FS);
+    if(sy<y+(o.legendZone||62)*FS)sy=P.Y(v)+13*FS; return stext(P.top,[x+w-6,clamp(sy,y+30*FS,y+h-8)],txt,"sm",color,"end"); };
   return P;
 }
 function autoRange(vals,inc){
@@ -438,9 +438,9 @@ function pairPlots(g,list,n0,N,cur,o){
     [L,R].forEach(P=>P.vl(cur,"var(--hand)","5 4",1.6));
     list.forEach((s,k)=>{ const i=cur-n0, tv2=D[k].t[i], Sv2=D[k].S[i];
       L.dot(cur,tv2,s.color,rr+2.6); R.dot(cur,Sv2,s.color,rr+2.6);
-      if(!o.noCurLbl){
-        if(isFinite(tv2))L.label(L.X(cur),clamp(L.Y(tv2),L.y,L.y+L.h),(s.lab?s.lab(cur):(s.sym||"a")+sbN(cur))+" = "+fmt(tv2,3),s.color,k?"below":null);
-        R.label(R.X(cur),clamp(R.Y(Sv2),R.y,R.y+R.h),(s.Ssym||"S")+sbN(cur)+" = "+fmt(Sv2,4),s.color,k?"below":null); } });
+      if(!o.noCurLbl){ const dy=(FS>1?40:31)+k*(FS>1?22:17);
+        if(isFinite(tv2))stext(L.top,[L.x+8,L.y+dy],(s.lab?s.lab(cur):(s.sym||"a")+sbN(cur))+" = "+fmt(tv2,3),"sm",s.color,"start");
+        stext(R.top,[R.x+8,R.y+dy],(s.Ssym||"S")+sbN(cur)+" = "+fmt(Sv2,4),"sm",s.color,"start"); } });
     sgrab(g,[L.X(cur),L.y+L.h],"cur"); sgrab(g,[R.X(cur),R.y+R.h],"cur");
   }
   return {L,R,D};
@@ -533,8 +533,8 @@ const M1={
     if(s.ex==="harm"){
       const T=s.T, H=harmCount(T);
       o.preR=(R)=>{ R.fn(x=>Math.log(x)+GAMMA,1,N+0.6,"var(--lavender)",2,"6 5"); };
-      o.post=(L,R)=>{ stext(R.top,[R.x+8,R.y+(FS>1?40:31)],"dashed: ln n + γ","sm","#6D28D9","start");
-        stext(R.top,[R.x+8,R.y+(FS>1?62:49)],"pass "+T+" needs N = "+(H.exact?"":"≈ ")+H.N.toLocaleString("en-US"),"sm","#C0185F","start"); };
+      o.post=(L,R)=>{ stext(R.top,[R.x+R.w-8,R.y+R.h-(FS>1?52:40)],"dashed: ln n + γ","sm","#6D28D9","end");
+        stext(R.top,[R.x+R.w-8,R.y+R.h-(FS>1?28:22)],"pass "+T+": N = "+(H.exact?"":"≈ ")+H.N.toLocaleString("en-US"),"sm","#C0185F","end"); };
     }
     const list=[{a:S1.a,color:"var(--corr)",limA:S1.limA,limS:isFinite(S1.S)?S1.S:null,limStxt:isFinite(S1.S)?"S = "+fxa(S1.S,400):null}];
     M1.pl=pairPlots(g,list,1,N,s.cur,o);
