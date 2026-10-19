@@ -150,6 +150,9 @@
   @media (prefers-reduced-motion:reduce){.draw,.pop{transition:none!important}}
   footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim);
     display:flex;gap:18px;flex-wrap:wrap}
+
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
 </style>
 
 <div class="wrap">
@@ -886,6 +889,8 @@ function drawEl(e,g){
 }
 
 /* ============================ interface =========================== */
+if(new URLSearchParams(location.search).has('embed')) document.body.classList.add('embed');
+{const m=/^#tab-(\d+)$/.exec(location.hash); if(m){const i=+m[1]-1; if(i>=0&&i<MODULES.length) modIndex=i;}}
 function renderTabs(){
   tabsEl.innerHTML='';
   MODULES.forEach((m,i)=>{
@@ -893,7 +898,7 @@ function renderTabs(){
     b.setAttribute('role','tab');
     b.setAttribute('aria-selected',i===modIndex);
     b.innerHTML='<span class="n">'+(i+1)+'</span>'+m.tab;
-    b.onclick=()=>{modIndex=i;reset();};
+    b.onclick=()=>{modIndex=i;history.replaceState(null,'','#tab-'+(i+1));reset();};
     tabsEl.appendChild(b);
   });
 }
