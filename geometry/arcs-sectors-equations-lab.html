@@ -1,0 +1,1245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arcs, Sectors &amp; Circle Equations — Geometry Unit 3</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='%2300E5FF' stroke-width='5'/%3E%3Cpath d='M32 32 L52 32 A20 20 0 0 0 42 14.7 Z' fill='%23FF3D8A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;overflow-x:hidden;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:minmax(0,1fr)}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none;user-select:none;-webkit-user-select:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .bar button:focus-visible,.seg button:focus-visible,.go:focus-visible,.ghost:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .seg{display:inline-flex;gap:6px}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar select{width:auto;max-width:260px;padding:9px 12px;border-radius:100px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar label.rng{display:inline-flex;align-items:center;gap:10px;font-size:14.5px;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 16px}
+  .bar label.rng input{accent-color:var(--accent);width:150px;max-width:38vw}
+  .bar label.rng b{font-family:var(--mono);font-size:13.5px;min-width:58px;color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:14px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict b{color:#fff}
+  .verdict .eq{margin:10px 0 2px;font-size:13.5px}
+
+  /* lab-specific */
+  .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:0 20px}
+  .grid4 label{display:block;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--accent);margin-bottom:5px;letter-spacing:.06em}
+  .grid4 input{padding:10px 9px}
+  .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:0 20px}
+  .grid2 label{display:block;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--accent);margin-bottom:5px;letter-spacing:.06em}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;padding:14px 20px 18px}
+  .btnrow .go{width:auto;flex:1 1 140px;padding:12px}
+  .btnrow .ghost{flex:1 1 120px;padding:12px}
+  .conv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;padding:0 20px 6px}
+  .conv .out{font-family:var(--mono);font-size:14px;font-weight:700;color:#fff;white-space:nowrap}
+  .steplist{list-style:none;margin:0;padding:6px 0 8px}
+  .steplist li{padding:12px 20px;border-bottom:1px solid rgba(196,181,253,.11)}
+  .steplist li:last-child{border-bottom:none}
+  .steplist li .h{font-size:13.5px;color:var(--dim);display:block;margin-bottom:4px}
+  .steplist li .h b{color:var(--accent);font-family:var(--mono);margin-right:6px}
+  .steplist li .m{font-family:var(--mono);font-size:14px;font-weight:600;color:#fff;overflow-x:auto;white-space:pre-wrap}
+  .steplist li.hidden{opacity:.35}
+  .steplist li.hidden .m{filter:blur(4px)}
+  .prompt{font-size:16px;color:#E8E8FA;line-height:1.6}
+  .prompt .q{font-family:var(--mono);font-weight:700;color:#fff;font-size:15.5px;display:block;margin-top:8px;overflow-x:auto}
+  .hint{font-size:13px;color:var(--dim);padding:6px 20px 0}
+  table.kv{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.kv td{padding:9px 20px;border-bottom:1px solid rgba(196,181,253,.11)}
+  table.kv td:last-child{text-align:right;font-family:var(--mono);font-weight:700;color:#fff;white-space:nowrap}
+  table.kv tr:last-child td{border-bottom:none}
+  table.kv .sw{display:inline-block;width:11px;height:11px;border-radius:11px;margin-right:9px;vertical-align:-1px}
+
+  /* ── drawing ── */
+  .line{stroke:var(--graphite);stroke-width:2.8;fill:none;stroke-linecap:round}
+  .thin{stroke:var(--graphite);stroke-width:1.8;fill:none}
+  .aux{stroke:var(--corr);stroke-width:2.4;fill:none;stroke-dasharray:9 6}
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:16px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .sm{font-family:var(--mono);font-weight:600;font-size:13px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .tick{font-family:var(--mono);font-weight:600;font-size:11px;fill:#64748B;paint-order:stroke;stroke:#fff;stroke-width:3}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  .gl{stroke:#DCE6F7;stroke-width:1}
+  .ax{stroke:#7C8BA8;stroke-width:1.6}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  @media (max-width:600px){
+    .wrap{padding:18px 12px 50px}
+    .masthead .eyebrow{margin-left:0;text-align:left}
+    nav.tabs button{padding:9px 14px;font-size:14px}
+    .board-head .lsn{margin-left:0}
+    .bar{padding:12px 14px}
+    .bar .spacer{margin-left:0;width:100%}
+    .grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Arcs &amp; Sectors Lab</h1>
+    <div class="eyebrow">Geometry · Unit 3 · Polygons &amp; Circles</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 460" role="img" aria-label="Circle figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Arcs, Sectors &amp; Circle Equations — every figure is live and every measure is computed from the drawing. Drag the dashed orange handles and the numbers follow.
+    <div class="links"><a href="/geometry/">← Geometry course</a><a href="/math/#geometry">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=460;
+const cv=document.getElementById("cv"), bar=document.getElementById("bar"),
+      side=document.getElementById("side"), tabsEl=document.getElementById("tabs"),
+      bTitle=document.getElementById("bTitle"), bLesson=document.getElementById("bLesson");
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+
+const PI=Math.PI, TAU=2*Math.PI, D2R=PI/180;
+const norm=d=>((d%360)+360)%360;
+const PT=(c,r,deg)=>[c[0]+r*Math.cos(deg*D2R), c[1]-r*Math.sin(deg*D2R)];
+const angOf=(c,p)=>norm(Math.atan2(-(p[1]-c[1]), p[0]-c[0])/D2R);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const lerp=(a,b,t)=>a+(b-a)*t;
+const ease=t=>t*t*(3-2*t);
+const MINUS="−";
+// number → display string, up to d decimals, trailing zeros trimmed, typographic minus
+function fx(v,d){
+  if(d===undefined)d=1;
+  const m=Math.pow(10,d); let s=(Math.round(v*m)/m).toFixed(d);
+  if(s.indexOf(".")>=0)s=s.replace(/0+$/,"").replace(/\.$/,"");
+  if(s==="-0")s="0";
+  return s.replace("-",MINUS);
+}
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;}
+function toRat(x,maxDen){
+  maxDen=maxDen||2000;
+  for(let d=1;d<=maxDen;d++){const n=Math.round(x*d); if(Math.abs(n-x*d)<1e-7*d){const g=gcd(n,d);return [n/g,d/g];}}
+  return null;
+}
+function fracStr(n,d){const g=gcd(n,d);n/=g;d/=g;if(d<0){n=-n;d=-d;}return d===1? fx(n,0) : fx(n,0)+"/"+d;}
+// coefficient c → "cπ" written exactly
+function piStr(c){
+  const r=toRat(c);
+  if(!r) return fx(c,3)+"π";
+  const n=r[0], d=r[1];
+  if(n===0) return "0";
+  const an=Math.abs(n);
+  return (n<0?MINUS:"")+(an===1?"":an)+"π"+(d>1?"/"+d:"");
+}
+// exact radical for √v (v ≥ 0)
+function rootStr(v){
+  if(v<0) return null;
+  const n=Math.round(v);
+  if(Math.abs(v-n)<1e-9){
+    const s=Math.round(Math.sqrt(n)); if(s*s===n) return String(s);
+    let out=1, inn=n;
+    for(let f=2;f*f<=inn;f++){while(inn%(f*f)===0){inn/=f*f;out*=f;}}
+    return (out>1?out:"")+"√"+inn;
+  }
+  const r=toRat(v,100);
+  if(r){ const sq=Math.round(Math.sqrt(r[1])); if(sq*sq===r[1]){ const a=rootStr(r[0]); if(a) return (a.indexOf("√")<0? fracStr(+a,sq) : "("+a+")/"+sq); } }
+  return fx(Math.sqrt(v),3);
+}
+const isSq=v=>{const s=Math.round(Math.sqrt(Math.max(0,v)));return Math.abs(s*s-v)<1e-9;};
+// (x − c)²
+function sqTerm(v,c){
+  if(Math.abs(c)<1e-9) return v+"²";
+  return "("+v+(c>0?" "+MINUS+" ":" + ")+fx(Math.abs(c),3)+")²";
+}
+// polynomial from [coef, var] pairs
+function poly(terms){
+  let s="";
+  terms.forEach(([c,v])=>{
+    if(Math.abs(c)<1e-9) return;
+    const a=Math.abs(c), body=(v && Math.abs(a-1)<1e-9)? v : fx(a,3)+v;
+    if(!s) s=(c<0?MINUS:"")+body;
+    else s+=(c<0?" "+MINUS+" ":" + ")+body;
+  });
+  return s||"0";
+}
+const pt2=(x,y)=>"("+fx(x,2)+", "+fx(y,2)+")";
+
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+function bg(noGrid){
+  const d=E("defs");
+  d.innerHTML='<pattern id="g" width="32" height="32" patternUnits="userSpaceOnUse">'+
+    '<path d="M32 0H0V32" fill="none" stroke="var(--grid)" stroke-width="1" opacity="0.75"/></pattern>'+
+    '<clipPath id="fr"><rect width="'+VW+'" height="'+VH+'"/></clipPath>';
+  cv.appendChild(d);
+  if(!noGrid) cv.appendChild(E("rect",{width:VW,height:VH,fill:"url(#g)"}));
+  const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
+}
+function seg(g,p,q,cls,extra){ const l=E("line",{x1:p[0],y1:p[1],x2:q[0],y2:q[1],class:cls||"line"}); if(extra)for(const k in extra)l.setAttribute(k,extra[k]); g.appendChild(l); return l;}
+function dot(g,p,r,fill){ const c=E("circle",{cx:p[0],cy:p[1],r:r||5,class:"dot"}); if(fill)c.setAttribute("fill",fill); g.appendChild(c); return c;}
+function txt(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"mk","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("fill",color);
+  t.textContent=s; g.appendChild(t); return t;
+}
+function grab(g,p,id,fill){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:17,class:"grab","data-drag":id})); const d=dot(g,p,5.5,fill); d.setAttribute("data-drag",id); d.style.cursor="grab"; }
+// arc path (ccw in math sense) from a1 to a2 degrees
+function arcD(c,r,a1,a2,move){
+  let sw=a2-a1;
+  if(sw>=359.999){
+    const m=PT(c,r,a1+180), s=PT(c,r,a1);
+    return (move===false?"L ":"M ")+s[0]+" "+s[1]+" A "+r+" "+r+" 0 0 0 "+m[0]+" "+m[1]+" A "+r+" "+r+" 0 0 0 "+s[0]+" "+s[1];
+  }
+  const s=PT(c,r,a1), e=PT(c,r,a2);
+  return (move===false?"L ":"M ")+s[0]+" "+s[1]+" A "+r+" "+r+" 0 "+(sw>180?1:0)+" 0 "+e[0]+" "+e[1];
+}
+function sectorD(c,r,a1,a2){
+  if(a2-a1>=359.999) return arcD(c,r,a1,a2)+" Z";
+  return "M "+c[0]+" "+c[1]+" "+arcD(c,r,a1,a2,false)+" Z";
+}
+function path(g,d,attrs){const p=E("path",Object.assign({d:d},attrs||{}));g.appendChild(p);return p;}
+function rightMark(g,V,u,v,size){ // V vertex, u & v unit screen vectors along legs
+  size=size||11;
+  const p1=[V[0]+u[0]*size,V[1]+u[1]*size], p3=[V[0]+v[0]*size,V[1]+v[1]*size], p2=[p1[0]+v[0]*size,p1[1]+v[1]*size];
+  g.appendChild(E("polyline",{points:[p1,p2,p3].map(p=>p.join(",")).join(" "),class:"rt"}));
+}
+// constant-curvature curve in math coords (y up): start S, heading phi (rad), curvature k, length L
+function bent(S,phi,k,L,n){
+  const out=[]; n=n||60;
+  for(let i=0;i<=n;i++){
+    const t=L*i/n;
+    if(Math.abs(k)<1e-9) out.push([S[0]+t*Math.cos(phi), S[1]+t*Math.sin(phi)]);
+    else out.push([S[0]+(Math.sin(phi+k*t)-Math.sin(phi))/k, S[1]+(Math.cos(phi)-Math.cos(phi+k*t))/k]);
+  }
+  return out;
+}
+const polyD=(pts,C)=>"M "+pts.map(p=>(C[0]+p[0]).toFixed(2)+" "+(C[1]-p[1]).toFixed(2)).join(" L ");
+// keep an angle handle continuous so it can reach 360 without flipping to 0
+function contAngle(prev,a,min){
+  min=min||1;
+  if(prev>270&&a<90) return 360;
+  if(prev<90&&a>270) return min;
+  return clamp(a,min,360);
+}
+const snapA=(a,on,step)=>on? clamp(Math.round(a/step)*step,step,360) : clamp(Math.round(a),1,360);
+
+/* ── expression parser: numbers, π/pi, sqrt/√, x, y, + − × ÷ ^ ( ) and implicit multiplication ── */
+function tokenize(src){
+  let s=String(src).toLowerCase()
+    .replace(/[−–—]/g,"-").replace(/[×·⋅]/g,"*").replace(/÷/g,"/")
+    .replace(/°/g," ")
+    .replace(/\b(cm|in|ft|m|units?)(\^2|²)?(?![a-z])/g," ")
+    .replace(/\b(degrees?|deg|radians?|rads?|sq)\b/g," ")
+    .replace(/π/g," pi ").replace(/√/g," sqrt ").replace(/²/g,"^2").replace(/³/g,"^3");
+  const toks=[], re=/\s*(\d+\.?\d*|\.\d+|pi|sqrt|x|y|[-+*/^()=])/y;
+  re.lastIndex=0;
+  while(re.lastIndex<s.length){
+    if(/^\s*$/.test(s.slice(re.lastIndex)))break;
+    const m=re.exec(s); if(!m) throw new Error("bad");
+    toks.push(m[1]);
+  }
+  // implicit multiplication
+  const out=[]; const val=t=>/^[\d.]/.test(t)||t==="pi"||t==="x"||t==="y"||t===")";
+  const start=t=>/^[\d.]/.test(t)||t==="pi"||t==="x"||t==="y"||t==="("||t==="sqrt";
+  toks.forEach((t,i)=>{ if(i>0&&val(toks[i-1])&&start(t)) out.push("*"); out.push(t); });
+  return out;
+}
+function parseTokens(t){
+  let i=0;
+  const peek=()=>t[i], next=()=>t[i++];
+  function expr(){ let a=term(); while(peek()==="+"||peek()==="-"){const op=next(), b=term(), A=a; a= op==="+"? (e=>A(e)+b(e)) : (e=>A(e)-b(e));} return a; }
+  function term(){ let a=unary(); while(peek()==="*"||peek()==="/"){const op=next(), b=unary(), A=a; a= op==="*"? (e=>A(e)*b(e)) : (e=>A(e)/b(e));} return a; }
+  function unary(){ if(peek()==="-"){next();const a=unary();return e=>-a(e);} if(peek()==="+"){next();return unary();} return power(); }
+  function power(){ const a=primary(); if(peek()==="^"){next();const b=unary();return e=>Math.pow(a(e),b(e));} return a; }
+  function primary(){
+    const k=next();
+    if(k===undefined) throw new Error("end");
+    if(/^[\d.]/.test(k)){const v=parseFloat(k); if(isNaN(v))throw new Error("num"); return ()=>v;}
+    if(k==="pi") return ()=>PI;
+    if(k==="x") return e=>e.x;
+    if(k==="y") return e=>e.y;
+    if(k==="sqrt"){ const a=power(); return e=>Math.sqrt(a(e)); }
+    if(k==="("){ const a=expr(); if(next()!==")") throw new Error("paren"); return a; }
+    throw new Error("tok");
+  }
+  const f=expr();
+  if(i!==t.length) throw new Error("trail");
+  return f;
+}
+function evalNum(src){
+  try{ const t=tokenize(src); if(!t.length||t.indexOf("=")>=0||t.indexOf("x")>=0||t.indexOf("y")>=0) return NaN;
+    const v=parseTokens(t)({}); return isFinite(v)? v : NaN; }catch(e){ return NaN; }
+}
+function parseEquation(src){
+  try{
+    const t=tokenize(src); const k=t.indexOf("=");
+    if(k<0||t.indexOf("=",k+1)>=0) return null;
+    const L=parseTokens(t.slice(0,k)), R=parseTokens(t.slice(k+1));
+    return e=>L(e)-R(e);
+  }catch(e){ return null; }
+}
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null;
+function svgPt(e){
+  const m=cv.getScreenCTM(); if(!m) return [0,0];
+  const p=cv.createSVGPoint(); p.x=e.clientX; p.y=e.clientY;
+  const q=p.matrixTransform(m.inverse()); return [q.x,q.y];
+}
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.getAttribute&&e.target.getAttribute("data-drag"); if(!id)return;
+  dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault();
+  if(M().dragStart) M().dragStart(id);
+});
+cv.addEventListener("pointermove",e=>{
+  if(!dragId||!M().drag)return;
+  M().drag(dragId,svgPt(e)); redraw();
+});
+["pointerup","pointercancel"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+
+/* ══════════════════════ animation ══════════════════════ */
+let animTok=0;
+function stopAnim(){animTok++;}
+function tween(dur,step,done){
+  const tok=++animTok, t0=performance.now();
+  function f(now){ if(tok!==animTok)return; const t=Math.min(1,(now-t0)/dur); step(t); if(t<1)requestAnimationFrame(f); else if(done)done(); }
+  requestAnimationFrame(f);
+}
+function loop(step){
+  const tok=++animTok; let last=performance.now();
+  function f(now){ if(tok!==animTok)return; step(Math.min(.05,(now-last)/1000)); last=now; requestAnimationFrame(f); }
+  requestAnimationFrame(f);
+}
+
+/* ══════════════════════ bar widgets ══════════════════════ */
+function btn(text,cls,on){const b=document.createElement("button");b.type="button";b.textContent=text;if(cls)b.className=cls;b.onclick=on;bar.appendChild(b);return b;}
+function chk(label,val,on){
+  const l=document.createElement("label");l.className="chk";
+  const i=document.createElement("input");i.type="checkbox";i.checked=!!val;i.onchange=()=>on(i.checked);
+  l.appendChild(i);l.appendChild(document.createTextNode(label));bar.appendChild(l);return i;
+}
+function slider(label,min,max,step,val,on,f){
+  const l=document.createElement("label");l.className="rng";
+  const s=document.createElement("span");s.textContent=label;
+  const i=document.createElement("input");i.type="range";i.min=min;i.max=max;i.step=step;i.value=val;i.setAttribute("aria-label",label);
+  const o=document.createElement("b");o.textContent=f(val);
+  i.oninput=()=>{const v=+i.value;o.textContent=f(v);on(v);};
+  l.appendChild(s);l.appendChild(i);l.appendChild(o);bar.appendChild(l);return i;
+}
+function segBtns(opts,val,on){
+  const w=document.createElement("div");w.className="seg";
+  opts.forEach(([k,lab])=>{const b=document.createElement("button");b.type="button";b.textContent=lab;b.setAttribute("aria-pressed",val===k);
+    b.onclick=()=>{[...w.children].forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");on(k);};w.appendChild(b);});
+  bar.appendChild(w);return w;
+}
+function spacer(t){const s=document.createElement("span");s.className="spacer";s.textContent=t;bar.appendChild(s);return s;}
+const $=id=>document.getElementById(id);
+
+/* ══════════════════════ coordinate grid (tabs 4–6) ══════════════════════ */
+const U=25, O=[350,230];
+const toPx=(x,y)=>[O[0]+x*U, O[1]-y*U];
+const fromPx=p=>[(p[0]-O[0])/U,(O[1]-p[1])/U];
+function coordGrid(g){
+  for(let x=-14;x<=14;x++){const a=toPx(x,0)[0]; seg(g,[a,0],[a,VH],"gl");}
+  for(let y=-9;y<=9;y++){const b=toPx(0,y)[1]; seg(g,[0,b],[VW,b],"gl");}
+  seg(g,[0,O[1]],[VW,O[1]],"ax"); seg(g,[O[0],0],[O[0],VH],"ax");
+  for(let x=-12;x<=12;x+=2){ if(!x)continue; const p=toPx(x,0); txt(g,[p[0],p[1]+13],fx(x,0),"tick"); }
+  for(let y=-8;y<=8;y+=2){ if(!y)continue; const p=toPx(0,y); txt(g,[p[0]-6,p[1]],fx(y,0),"tick",null,"end"); }
+  txt(g,[VW-10,O[1]-11],"x","sm","#64748B","end"); txt(g,[O[0]+12,12],"y","sm","#64748B","start");
+}
+
+/* ══════════════════════ TAB 1 · arc length ══════════════════════ */
+const T1={
+  tab:"Arc length", lsn:"G-C.B.5", accent:"var(--cyan)",
+  title:()=>"Arc length is a fraction of the circumference",
+  aria:"Circle with a central angle; the intercepted arc can be unrolled onto a centimetre ruler",
+  s:{r:5, th:120, u:0, target:0, snap:false},
+  geo(){ const r=this.s.r, k=Math.min(30,620/(TAU*r)); return {r:r,k:k,R:r*k,C:[350,190],X0:40,Y:396}; },
+  bar(){
+    const s=this.s;
+    slider("radius",2,10,0.5,s.r,v=>{s.r=v;redraw();},v=>"r = "+fx(v,1));
+    btn(s.target? "Roll it back" : "Unroll the arc","primary",function(){ T1.unroll(this); });
+    chk("Snap 15°",s.snap,v=>{s.snap=v; if(v){s.th=snapA(s.th,true,15);redraw();}});
+    spacer("Drag the orange handle");
+  },
+  unroll(b){
+    const s=this.s; s.target=s.target?0:1; const from=s.u, to=s.target;
+    if(b) b.textContent=s.target? "Roll it back" : "Unroll the arc";
+    tween(1400,t=>{s.u=lerp(from,to,ease(t));redraw();});
+  },
+  draw(){
+    const s=this.s, G=this.geo(), g=bg(), C=G.C, R=G.R, th=s.th;
+    // ruler
+    g.appendChild(E("rect",{x:28,y:G.Y,width:654,height:36,rx:5,fill:"#FFF6D6",stroke:"#C9A227","stroke-width":1.4}));
+    const lab=[1,2,5,10].find(n=>n*G.k>=30)||10;
+    for(let i=0;;i++){
+      const x=G.X0+i*G.k; if(x>662)break;
+      const big=i%lab===0;
+      seg(g,[x,G.Y],[x,G.Y+(big?12:7)],"thin",{"stroke-width":big?1.6:1,stroke:"#7A6418"});
+      if(big&&x<650) txt(g,[x,G.Y+24],String(i),"tick",null,"middle");
+      if(G.k>=16){const hx=x+G.k/2; if(hx<676) seg(g,[hx,G.Y],[hx,G.Y+4],"thin",{"stroke-width":.8,stroke:"#7A6418"});}
+    }
+    txt(g,[672,G.Y+24],"cm","tick",null,"end");
+    // circumference marker
+    const Cpx=TAU*R, ce=G.X0+Cpx;
+    seg(g,[G.X0,G.Y-7],[ce,G.Y-7],"thin",{stroke:"var(--vert)","stroke-dasharray":"5 4","stroke-width":2});
+    seg(g,[ce,G.Y-14],[ce,G.Y+36],"thin",{stroke:"var(--vert)","stroke-width":2});
+    txt(g,[Math.min(ce,680),G.Y+50],"C = 2πr ≈ "+fx(TAU*s.r,1),"sm","var(--vert)",ce>560?"end":"middle");
+    // sector + circle
+    path(g,sectorD(C,R,0,th),{fill:"var(--cyan)","fill-opacity":.10,stroke:"none"});
+    g.appendChild(E("circle",{cx:C[0],cy:C[1],r:R,class:"thin"}));
+    seg(g,C,PT(C,R,0),"line"); seg(g,C,PT(C,R,th),"line");
+    // angle mark
+    const am=Math.min(24,R*0.34);
+    path(g,sectorD(C,am,0,th),{fill:"var(--vert)","fill-opacity":.18,stroke:"var(--vert)","stroke-width":1.6});
+    txt(g,PT(C,am+17,th/2),fx(th,0)+"°","sm","var(--vert)");
+    // arc
+    if(s.u<=0.001){
+      path(g,arcD(C,R,0,th),{fill:"none",stroke:"var(--lin)","stroke-width":6,"stroke-linecap":"round"});
+      const lp=PT(C,R+26,th/2);
+      txt(g,lp,"s ≈ "+fx(th/360*TAU*s.r,1),"num","var(--lin)",(th/2>100&&th/2<260)?"end":(th/2<80||th/2>280)?"start":"middle");
+    } else {
+      path(g,arcD(C,R,0,th),{fill:"none",stroke:"var(--lin)","stroke-width":3,"stroke-dasharray":"3 6",opacity:.6});
+      const u=s.u, L=th*D2R*R;
+      const startM=[R,0], endM=[G.X0-C[0], C[1]-(G.Y-3)];
+      const S=[lerp(startM[0],endM[0],u), lerp(startM[1],endM[1],u)];
+      const pts=bent(S, lerp(PI/2,0,u), (1-u)/R, L, 80);
+      path(g,polyD(pts,C),{fill:"none",stroke:"var(--lin)","stroke-width":6,"stroke-linecap":"round"});
+      if(u>0.98){
+        const x1=G.X0+L; seg(g,[x1,G.Y-16],[x1,G.Y+2],"thin",{stroke:"var(--lin)","stroke-width":2});
+        txt(g,[clamp(G.X0+L/2,90,610),G.Y-24],"s ≈ "+fx(th/360*TAU*s.r,1)+" cm","num","var(--lin)");
+      }
+    }
+    // labels
+    txt(g,[C[0]+R/2,C[1]+15],"r = "+fx(s.r,1),"sm","var(--graphite)");
+    dot(g,C,4.5); txt(g,[C[0]-12,C[1]+14],"O","sm","var(--ink)");
+    grab(g,PT(C,R,th),"A");
+  },
+  drag(id,p){
+    const s=this.s, G=this.geo();
+    s.th=snapA(contAngle(s.th,angOf(G.C,p),1),s.snap,15);
+  },
+  panel(){
+    side.innerHTML=`<div class="panel"><h3>Live measurements</h3><div id="t1live"></div></div>
+      <div class="panel"><h3>Proportional reasoning</h3><div class="pad" id="t1prop"></div></div>
+      <div class="panel"><h3>The big idea</h3><div class="pad">
+        <p>An arc has two different "sizes". Its <span class="term">arc measure</span> is in degrees and equals its central angle. Its <span class="term">arc length</span> is a distance — how long the curve would be if you straightened it out.</p>
+        <p>A central angle of θ° takes the fraction <b>θ/360</b> of the whole turn, so the arc takes the same fraction of the whole circumference, 2πr.</p>
+        <div class="eq">arc length = (θ / 360) · 2πr<small>θ is the central angle in degrees, r is the radius</small></div>
+        <p>Press <b>Unroll the arc</b> to lay it flat on the ruler next to the whole circumference (the purple mark).</p>
+      </div></div>
+      <div class="panel"><h3>Try this</h3><div class="pad">
+        <p>Set r = 6 and drag the angle to 90°. Predict the arc length before you look. Now double the angle to 180° — what happens to s? Put the angle back to 90° and double the radius instead. Which change doubles s, and why does each one work?</p>
+      </div></div>`;
+  },
+  live(){
+    const s=this.s, r=s.r, th=s.th, C=TAU*r, a=th/360*C, f=fracStr(th,360);
+    $("t1live").innerHTML=`<table class="kv">
+      <tr><td>central angle θ</td><td>${fx(th,0)}°</td></tr>
+      <tr><td>radius r</td><td>${fx(r,1)} cm</td></tr>
+      <tr><td>circumference 2πr</td><td>${piStr(2*r)} ≈ ${fx(C,2)} cm</td></tr>
+      <tr><td><span class="sw" style="background:var(--lin)"></span>arc length s</td><td>${piStr(th*r/180)} ≈ ${fx(a,2)} cm</td></tr></table>`;
+    $("t1prop").innerHTML=`<p>The arc is the same fraction of the circle as the angle is of 360°:</p>
+      <div class="eq">s / 2πr = θ / 360
+s / ${fx(C,2)} = ${fx(th,0)} / 360${f.indexOf("/")>0? " = "+f : ""}
+s = ${f==="1"? "" : f+" · "}${fx(C,2)} ≈ ${fx(a,2)} cm</div>
+      <p>Exactly: s = (${fx(th,0)}/360)·2π(${fx(r,1)}) = <b>${piStr(th*r/180)}</b> cm.</p>`;
+  }
+};
+
+/* ══════════════════════ TAB 2 · radians ══════════════════════ */
+const T2={
+  tab:"Radians", lsn:"G-C.B.5", accent:"var(--lavender)",
+  title:()=>T2.s.wrap? "How many radii fit around a circle?" : "Same angle, similar arcs: s ∕ r is constant",
+  aria:"Four concentric circles with the same central angle; arc length divided by radius is the radian measure",
+  s:{th:60, snap:false, wrap:false, w:0},
+  C:[228,232], UNIT:46, COLS:["var(--corr)","var(--alt)","var(--lin)","var(--altx)"],
+  bar(){
+    const s=this.s;
+    btn(s.wrap? "Back to the arcs" : "Wrap radii around","primary",()=>{ s.wrap=!s.wrap; render(); if(s.wrap) this.play(); });
+    if(s.wrap) btn("Replay","",()=>this.play());
+    chk("Snap 15°",s.snap,v=>{s.snap=v; if(v){s.th=snapA(s.th,true,15);redraw();}});
+    spacer(s.wrap? "Each piece is exactly one radius long" : "Drag the orange handle");
+  },
+  play(){ const s=this.s; s.w=0; tween(8200,t=>{s.w=t*7;redraw();}); },
+  draw(){
+    const s=this.s, g=bg(), C=this.C, U2=this.UNIT, Rout=4*U2;
+    if(!s.wrap){
+      const th=s.th;
+      for(let i=4;i>=1;i--){
+        const R=i*U2;
+        g.appendChild(E("circle",{cx:C[0],cy:C[1],r:R,class:"thin",opacity:.55}));
+        path(g,arcD(C,R,0,th),{fill:"none",stroke:this.COLS[i-1],"stroke-width":5.5,"stroke-linecap":"round"});
+      }
+      seg(g,C,PT(C,Rout+8,0),"line"); seg(g,C,PT(C,Rout+8,th),"line");
+      for(let i=1;i<=4;i++){ const p=PT(C,i*U2,0); dot(g,p,3.5,this.COLS[i-1]); txt(g,[p[0]-U2/2,p[1]+14],"1","tick"); }
+      const am=16; path(g,sectorD(C,am,0,th),{fill:"var(--vert)","fill-opacity":.2,stroke:"var(--vert)","stroke-width":1.4});
+      txt(g,PT(C,am+20,th/2),fx(th,0)+"°","sm","var(--vert)");
+      grab(g,PT(C,Rout,th),"A");
+      // table
+      const X=452, rad=th*D2R;
+      g.appendChild(E("rect",{x:X-14,y:42,width:248,height:224,rx:12,fill:"#fff",stroke:"#C7D2E8"}));
+      txt(g,[X+10,66],"r","sm","#475569","start"); txt(g,[X+70,66],"arc s","sm","#475569","start"); txt(g,[X+160,66],"s ÷ r","sm","#475569","start");
+      seg(g,[X-4,80],[X+226,80],"thin",{stroke:"#C7D2E8","stroke-width":1});
+      for(let i=1;i<=4;i++){
+        const y=80+i*36-10;
+        g.appendChild(E("circle",{cx:X,cy:y,r:5,fill:this.COLS[i-1]}));
+        txt(g,[X+12,y],String(i),"num","var(--ink)","start");
+        txt(g,[X+70,y],fx(i*rad,3),"num",this.COLS[i-1],"start");
+        txt(g,[X+160,y],fx(rad,3),"num","var(--vert)","start");
+      }
+      txt(g,[X+110,300],"θ = "+fx(rad,3)+" rad","num","var(--vert)");
+      txt(g,[X+110,326],"= "+piStr(th/180)+" rad","num","var(--vert)");
+    } else {
+      const w=s.w, R=Rout;
+      g.appendChild(E("circle",{cx:C[0],cy:C[1],r:R,class:"line"}));
+      seg(g,C,PT(C,R,0),"line",{stroke:"var(--lin)","stroke-width":4});
+      txt(g,[C[0]+R/2,C[1]+15],"r","num","var(--lin)");
+      dot(g,C,4.5);
+      const total=TAU; let laid=0;
+      for(let i=0;i<7;i++){
+        const len=Math.min(1,total-i); if(len<=0)break;
+        const tl=clamp(w-i,0,1); if(tl<=0)break;
+        const col=i===6?"var(--altx)":(i%2?"var(--corr)":"var(--lin)");
+        const a=i; // start angle (rad)
+        const kap=ease(clamp(tl*1.4,0,1))/R;
+        const lift=(1-ease(clamp(tl*1.4,0,1)))*30;
+        const S=[(R+lift)*Math.cos(a),(R+lift)*Math.sin(a)];
+        const pts=bent(S,a+PI/2,kap,len*R,50);
+        path(g,polyD(pts,C),{fill:"none",stroke:col,"stroke-width":7,"stroke-linecap":"butt"});
+        const st=PT(C,R,a/D2R); seg(g,PT(C,R-9,a/D2R),PT(C,R+9,a/D2R),"thin",{"stroke-width":2});
+        if(tl>=0.72){
+          laid=i+len;
+          txt(g,PT(C,R+26,(a+len/2)/D2R),i===6? "0.28" : String(i+1),"num",col);
+          if(i<6) seg(g,C,PT(C,R,(a+1)/D2R),"thin",{opacity:.35,"stroke-dasharray":"4 4"});
+        }
+        void st;
+      }
+      // 1-radian wedge
+      if(w>0.8){
+        path(g,sectorD(C,30,0,1/D2R),{fill:"var(--vert)","fill-opacity":.2,stroke:"var(--vert)","stroke-width":1.4});
+        txt(g,PT(C,48,28.6),"1 rad","sm","var(--vert)");
+      }
+      const X=474;
+      g.appendChild(E("rect",{x:X-14,y:60,width:228,height:200,rx:12,fill:"#fff",stroke:"#C7D2E8"}));
+      txt(g,[X+100,94],"radius-length pieces","sm","#475569");
+      txt(g,[X+100,140],fx(laid,2),"mk","var(--lin)").setAttribute("font-size","38");
+      txt(g,[X+100,190],laid>6.2? "≈ 2π ≈ 6.28" : "laid around …","num","var(--vert)");
+      txt(g,[X+100,228],"360° = 2π radians","sm","var(--ink)");
+      txt(g,[X+100,300],"1 radian ≈ 57.3°","num","var(--vert)");
+    }
+  },
+  drag(id,p){ const s=this.s; s.th=snapA(contAngle(s.th,angOf(this.C,p),1),s.snap,15); },
+  panel(){
+    side.innerHTML=`<div class="panel"><h3>Live: the angle in both units</h3><div id="t2live"></div></div>
+      <div class="panel"><h3>Why s ∕ r works as a measure</h3><div class="pad">
+        <p><b>All circles are similar.</b> A dilation centered at O maps the small circle onto any bigger one and maps each arc onto the matching arc — every length is multiplied by the same scale factor.</p>
+        <p>So, for a fixed central angle, <b>arc length is proportional to the radius</b>: double r and s doubles. The ratio s ∕ r does not depend on which circle you use — it depends only on the angle. That ratio is the angle's <span class="term">radian measure</span>.</p>
+        <div class="eq">θ (in radians) = s / r
+360° = 2π rad   so   180° = π rad<small>One radian is the angle whose arc is exactly one radius long.</small></div>
+        <p>Press <b>Wrap radii around</b>: copies of the radius bend onto the circle. Six fit, with a little left over — 2π ≈ 6.28 of them.</p>
+      </div></div>
+      <div class="panel"><h3>Degree ↔ radian converter</h3>
+        <label class="fld" for="cDeg">degrees → radians</label>
+        <div class="conv"><input type="text" id="cDeg" value="135" inputmode="decimal" aria-label="degrees"><span class="out" id="cDegOut"></span></div>
+        <label class="fld" for="cRad">radians → degrees</label>
+        <div class="conv"><input type="text" id="cRad" value="5π/6" aria-label="radians"><span class="out" id="cRadOut"></span></div>
+        <p class="hint" style="padding-bottom:16px">Type radians as 2, 1.5, π/3, 3pi/4 … Multiply degrees by π/180; multiply radians by 180/π.</p>
+      </div>
+      <div class="panel"><h3>Try this</h3><div class="pad">
+        <p>Snap to 15° and find the angle whose radian measure is <b>π/2</b>, then <b>π</b>. Next, without snapping, find the angle where s ∕ r ≈ <b>1.000</b>. What is that angle in degrees? Check it against 180/π.</p>
+      </div></div>`;
+    const cd=$("cDeg"), cr=$("cRad");
+    const upd=()=>{
+      const d=evalNum(cd.value);
+      $("cDegOut").textContent=isNaN(d)? "—" : "= "+piStr(d/180)+" ≈ "+fx(d*D2R,4);
+      const r=evalNum(cr.value);
+      const exact=/π|pi/i.test(cr.value);
+      $("cRadOut").textContent=isNaN(r)? "—" : (exact? "= "+fx(r/D2R,3)+"°" : "≈ "+fx(r/D2R,2)+"°");
+    };
+    cd.oninput=upd; cr.oninput=upd; upd();
+  },
+  live(){
+    const th=this.s.th, rad=th*D2R;
+    $("t2live").innerHTML=`<table class="kv">
+      <tr><td>degrees</td><td>${fx(th,0)}°</td></tr>
+      <tr><td>radians, exact</td><td>${fx(th,0)}·π/180 = ${piStr(th/180)}</td></tr>
+      <tr><td>radians, decimal</td><td>≈ ${fx(rad,4)}</td></tr>
+      <tr><td><span class="sw" style="background:var(--altx)"></span>outer arc (r = 4)</td><td>s = 4θ ≈ ${fx(4*rad,3)}</td></tr></table>`;
+  }
+};
+
+/* ══════════════════════ TAB 3 · sector area ══════════════════════ */
+const T3={
+  tab:"Sector area", lsn:"G-C.B.5", accent:"var(--mint)",
+  title:()=>T3.s.mode==="seg"? "Segment = sector − triangle" : "A sector is a fraction of the disk",
+  aria:"Circle with a shaded sector or segment and a pie showing the fraction of the whole disk",
+  s:{r:6, th:100, snap:false, mode:"sec"},
+  C:[222,235], K:17,
+  bar(){
+    const s=this.s;
+    slider("radius",2,10,0.5,s.r,v=>{s.r=v;redraw();},v=>"r = "+fx(v,1));
+    segBtns([["sec","Sector"],["seg","Segment"]],s.mode,k=>{s.mode=k;bTitle.textContent=this.title();redraw();});
+    chk("Snap 15°",s.snap,v=>{s.snap=v; if(v){s.th=snapA(s.th,true,15);redraw();}});
+    spacer("Drag the orange handle");
+  },
+  vals(){
+    const s=this.s, r=s.r, th=s.th, rad=th*D2R;
+    const sec=th/360*PI*r*r, tri=0.5*r*r*Math.sin(rad), sg=0.5*r*r*(rad-Math.sin(rad));
+    return {r:r,th:th,rad:rad,sec:sec,tri:tri,sg:sg,disk:PI*r*r};
+  },
+  draw(){
+    const s=this.s, g=bg(), C=this.C, R=s.r*this.K, v=this.vals(), th=s.th;
+    const A=PT(C,R,0), B=PT(C,R,th);
+    g.appendChild(E("circle",{cx:C[0],cy:C[1],r:R,fill:"#fff","fill-opacity":.6,class:"thin"}));
+    if(s.mode==="sec"){
+      path(g,sectorD(C,R,0,th),{fill:"var(--alt)","fill-opacity":.32,stroke:"var(--alt)","stroke-width":2.6});
+    } else {
+      path(g,sectorD(C,R,0,th),{fill:"none",stroke:"var(--alt)","stroke-width":1.4,"stroke-dasharray":"5 4"});
+      if(th<359.9){
+        path(g,"M "+C.join(" ")+" L "+A.join(" ")+" L "+B.join(" ")+" Z",{fill:"var(--vert)","fill-opacity":.13,stroke:"var(--vert)","stroke-width":2,"stroke-dasharray":"6 4"});
+        path(g,arcD(C,R,0,th)+" Z",{fill:"var(--altx)","fill-opacity":.36,stroke:"var(--altx)","stroke-width":2.6});
+      } else path(g,sectorD(C,R,0,th),{fill:"var(--altx)","fill-opacity":.36,stroke:"var(--altx)","stroke-width":2.6});
+    }
+    seg(g,C,A,"line"); seg(g,C,B,"line");
+    const am=Math.min(24,R*0.3);
+    path(g,sectorD(C,am,0,th),{fill:"none",stroke:"var(--vert)","stroke-width":1.6});
+    txt(g,PT(C,am+17,th/2),fx(th,0)+"°","sm","var(--vert)");
+    txt(g,[C[0]+R/2,C[1]+15],"r = "+fx(s.r,1),"sm","var(--graphite)");
+    const mid=th/2, anc=(mid>100&&mid<260)?"end":(mid<80||mid>280)?"start":"middle";
+    if(s.mode==="sec"){
+      if(R>60&&th>=40) txt(g,PT(C,R*0.62,mid),"≈ "+fx(v.sec,1),"num","var(--alt)");
+      else txt(g,PT(C,R+22,mid),"A ≈ "+fx(v.sec,1),"num","var(--alt)",anc);
+    } else {
+      const lab="segment ≈ "+fx(v.sg,1), lp=PT(C,R+22,mid);
+      if(anc==="start") lp[0]=Math.min(lp[0],428-lab.length*9.8);
+      else if(anc==="middle") lp[0]=Math.min(lp[0],428-lab.length*4.9);
+      txt(g,lp,lab,"num","var(--altx)",anc);
+    }
+    dot(g,C,4.5); txt(g,[C[0]-12,C[1]+14],"O","sm","var(--ink)");
+    grab(g,B,"A");
+    // pie fill
+    const P=[566,138], pr=74, shade=s.mode==="sec"? v.sec : v.sg, col=s.mode==="sec"?"var(--alt)":"var(--altx)";
+    g.appendChild(E("rect",{x:440,y:28,width:250,height:338,rx:14,fill:"#fff",stroke:"#C7D2E8"}));
+    txt(g,[P[0],48],"fraction of the whole disk","sm","#475569");
+    g.appendChild(E("circle",{cx:P[0],cy:P[1],r:pr,fill:"#EEF2FA",stroke:"#94A3B8","stroke-width":1.4}));
+    if(s.mode==="sec") path(g,sectorD(P,pr,0,th),{fill:col,"fill-opacity":.55,stroke:col,"stroke-width":1.6});
+    else if(th<359.9){ path(g,arcD(P,pr,0,th)+" Z",{fill:col,"fill-opacity":.55,stroke:col,"stroke-width":1.6}); }
+    else path(g,sectorD(P,pr,0,th),{fill:col,"fill-opacity":.55,stroke:col,"stroke-width":1.6});
+    const pct=shade/v.disk;
+    txt(g,[P[0],238],s.mode==="sec"? fx(th,0)+"/360 = "+fracStr(th,360) : "≈ "+fx(pct*100,1)+"% of the disk","num",col);
+    const bx=458,bw=216,by=262;
+    g.appendChild(E("rect",{x:bx,y:by,width:bw,height:18,rx:9,fill:"#EEF2FA",stroke:"#94A3B8"}));
+    g.appendChild(E("rect",{x:bx,y:by,width:Math.max(0,bw*pct),height:18,rx:9,fill:col,"fill-opacity":.75}));
+    txt(g,[P[0],302],(s.mode==="sec"?"sector":"segment")+" ≈ "+fx(shade,2),"sm",col);
+    txt(g,[P[0],324],"disk πr² ≈ "+fx(v.disk,2),"sm","#475569");
+    txt(g,[P[0],346],"square units","tick");
+  },
+  drag(id,p){ const s=this.s; s.th=snapA(contAngle(s.th,angOf(this.C,p),1),s.snap,15); },
+  panel(){
+    side.innerHTML=`<div class="panel"><h3>Live measurements</h3><div id="t3live"></div></div>
+      <div class="panel"><h3>The big idea</h3><div class="pad" id="t3idea"></div></div>
+      <div class="panel"><h3>Try this</h3><div class="pad">
+        <p>Set r = 4. Which central angle makes a sector with area exactly <b>4π</b> ≈ 12.57? Predict with the formula, then drag to check.</p>
+        <p>Switch to <b>Segment</b> and drag θ from 10° up to 350°. When is the segment almost the whole sector? When is it a tiny sliver? What happens to the triangle at exactly 180°?</p>
+      </div></div>`;
+  },
+  live(){
+    const v=this.vals(), s=this.s, f=fracStr(v.th,360);
+    $("t3live").innerHTML=`<table class="kv">
+      <tr><td>θ</td><td>${fx(v.th,0)}° = ${piStr(v.th/180)} rad</td></tr>
+      <tr><td>radius r</td><td>${fx(v.r,1)}</td></tr>
+      <tr><td>disk area πr²</td><td>${piStr(v.r*v.r)} ≈ ${fx(v.disk,2)}</td></tr>
+      <tr><td><span class="sw" style="background:var(--alt)"></span>sector area</td><td>${piStr(v.th*v.r*v.r/360)} ≈ ${fx(v.sec,2)}</td></tr>
+      <tr><td><span class="sw" style="background:var(--vert)"></span>triangle ½r² sin θ</td><td>${fx(v.tri,2)}</td></tr>
+      <tr><td><span class="sw" style="background:var(--altx)"></span>segment</td><td>≈ ${fx(v.sg,2)}</td></tr></table>`;
+    $("t3idea").innerHTML= s.mode==="sec"? `
+      <p>A <span class="term">sector</span> is the region bounded by two radii and their arc — a slice of pie. A central angle of θ° takes θ/360 of the full turn, so the sector takes θ/360 of the disk's area πr².</p>
+      <div class="eq">sector area = (θ / 360) · πr²
+= ½ r² θ   (θ in radians)<small>Right now: (${fx(v.th,0)}/360)·π(${fx(v.r,1)})² = ${f==="1"?"":f+" · "}${fx(v.disk,2)} ≈ ${fx(v.sec,2)}</small></div>
+      <p>The radian version comes from the same proportion: θ/2π of the disk is (θ/2π)·πr² = ½r²θ. Compare it with arc length s = rθ.</p>` : `
+      <p>A <span class="term">segment</span> is the region between a chord and its arc. Take the sector and cut away triangle OAB (two radii and the chord).</p>
+      <div class="eq">segment = sector − triangle
+= (θ/360)·πr² − ½ r² sin θ
+= ½ r² (θ − sin θ)   (θ in radians)</div>
+      <p>The triangle has two sides of length r with the angle θ between them, so its area is ½·r·r·sin θ (base r, height r sin θ). Past 180° the chord is on the other side of O: sin θ is negative, so the formula <b>adds</b> the triangle — exactly what the picture shows.</p>`;
+  }
+};
+
+/* ══════════════════════ TAB 4 · equation of a circle ══════════════════════ */
+const T4={
+  tab:"Equation of a circle", lsn:"G-GPE.A.1", accent:"var(--yellow)",
+  title:()=>"Derive (x − h)² + (y − k)² = r² from Pythagoras",
+  aria:"Coordinate grid with a circle, its center, and a right triangle from the center to a point P on the circle",
+  s:{h:2,k:1,R:[5,5],phi:215,snap:true,play:false},
+  rr(){ const s=this.s; return Math.hypot(s.R[0]-s.h,s.R[1]-s.k); },
+  P(){ const s=this.s, r=this.rr(); return [s.h+r*Math.cos(s.phi*D2R), s.k+r*Math.sin(s.phi*D2R)]; },
+  bar(){
+    const s=this.s;
+    btn(s.play?"Pause P":"Move P around","primary",function(){ s.play=!s.play; this.textContent=s.play?"Pause P":"Move P around"; if(s.play) loop(dt=>{s.phi=norm(s.phi+dt*40);redraw();}); else stopAnim(); });
+    chk("Snap to grid",s.snap,v=>{s.snap=v; if(v){s.h=Math.round(s.h);s.k=Math.round(s.k);s.R=[Math.round(s.R[0]),Math.round(s.R[1])];redraw();}});
+    spacer("Drag C, R or P");
+  },
+  draw(){
+    const s=this.s, g=bg(true); coordGrid(g);
+    const r=this.rr(), Cp=toPx(s.h,s.k), P=this.P(), Pp=toPx(P[0],P[1]), F=toPx(P[0],s.k);
+    g.appendChild(E("circle",{cx:Cp[0],cy:Cp[1],r:r*U,fill:"var(--yellow)","fill-opacity":.08,stroke:"var(--corr)","stroke-width":3}));
+    // radius to R
+    seg(g,Cp,toPx(s.R[0],s.R[1]),"thin",{"stroke-dasharray":"5 5",opacity:.6});
+    // right triangle
+    const dx=P[0]-s.h, dy=P[1]-s.k;
+    if(Math.abs(dx)>0.05&&Math.abs(dy)>0.05){
+      path(g,"M "+Cp.join(" ")+" L "+F.join(" ")+" L "+Pp.join(" ")+" Z",{fill:"var(--vert)","fill-opacity":.08,stroke:"none"});
+      rightMark(g,F,[-Math.sign(dx),0],[0,Math.sign(dy)*-1]);
+    }
+    seg(g,Cp,F,"line",{stroke:"var(--lin)","stroke-width":3.4});
+    seg(g,F,Pp,"line",{stroke:"var(--corr)","stroke-width":3.4});
+    seg(g,Cp,Pp,"line",{stroke:"var(--vert)","stroke-width":3.4});
+    // leg labels
+    if(Math.abs(dx)>1.2){ const lx="|x − h| = "+fx(Math.abs(dx),1), long=Math.abs(F[0]-Cp[0])>130;
+      txt(g,long? [(Cp[0]+F[0])/2,Cp[1]+(dy>0?18:-16)] : [F[0]+(dx>0?10:-10),Cp[1]+(dy>0?18:-16)],lx,"sm","var(--lin)",long?"middle":(dx>0?"start":"end")); }
+    if(Math.abs(dy)>1.2) txt(g,[F[0]+(dx>0?8:-8),(F[1]+Pp[1])/2],"|y − k| = "+fx(Math.abs(dy),1),"sm","var(--corr)",dx>0?"start":"end");
+    const hm=[(Cp[0]+Pp[0])/2,(Cp[1]+Pp[1])/2], nx=-(Pp[1]-Cp[1]), ny=(Pp[0]-Cp[0]), nl=Math.hypot(nx,ny)||1;
+    const side=(nx*(F[0]-Cp[0])+ny*(F[1]-Cp[1]))>0?-1:1;
+    txt(g,[hm[0]+side*nx/nl*16,hm[1]+side*ny/nl*16],"r","num","var(--vert)");
+    // points
+    const Rp=toPx(s.R[0],s.R[1]);
+    grab(g,Rp,"R","var(--corr)");
+    const nearP=Math.hypot(Pp[0]-Rp[0],Pp[1]-Rp[1])<70;
+    if(!nearP) txt(g,[Rp[0]+14,Rp[1]-16],"R"+pt2(s.R[0],s.R[1]),"sm","var(--corr)","start");
+    grab(g,Cp,"C");
+    { const ca=norm(s.phi+180), cp=PT(Cp,24,ca);
+      txt(g,cp,"C"+pt2(s.h,s.k),"sm","var(--ink)",(ca>100&&ca<260)?"end":(ca<80||ca>280)?"start":"middle"); }
+    grab(g,Pp,"P","var(--vert)");
+    const pa=s.phi;
+    txt(g,PT(Pp,26,pa),"P(x, y) = "+pt2(P[0],P[1]),"sm","var(--vert)",(pa>100&&pa<260)?"end":(pa<80||pa>280)?"start":"middle");
+  },
+  drag(id,p){
+    const s=this.s, q=fromPx(p), sn=v=>s.snap? Math.round(v) : Math.round(v*10)/10;
+    if(id==="C"){ const nh=clamp(sn(q[0]),-12,12), nk=clamp(sn(q[1]),-8,8); s.R=[s.R[0]+nh-s.h,s.R[1]+nk-s.k]; s.h=nh; s.k=nk; }
+    else if(id==="R"){ const n=[clamp(sn(q[0]),-13,13),clamp(sn(q[1]),-9,9)]; if(Math.hypot(n[0]-s.h,n[1]-s.k)>=0.9) s.R=n; }
+    else if(id==="P"){ s.phi=Math.round(angOf(toPx(s.h,s.k),p)); }
+  },
+  panel(){
+    side.innerHTML=`<div class="panel"><h3>Derivation, live</h3><ol class="steplist" id="t4d"></ol></div>
+      <div class="panel"><h3>Both forms of the equation</h3><div class="pad" id="t4f"></div></div>
+      <div class="panel"><h3>The big idea</h3><div class="pad">
+        <p>A circle is the set of all points at distance r from its center. To turn that sentence into an equation, take any point P(x, y) on the circle and drop a right triangle from the center C(h, k).</p>
+        <p>The legs are the horizontal and vertical changes, |x − h| and |y − k|; the hypotenuse is the radius. The <b>Pythagorean theorem</b> says leg² + leg² = hypotenuse² — and that is the equation. Squaring removes the absolute values.</p>
+      </div></div>
+      <div class="panel"><h3>Try this</h3><div class="pad">
+        <p>Put the center at the origin. What does the equation become? Now move the center to (−3, 4) without changing r. Which signs flip in the standard form, and why does "x − (−3)" become "x + 3"?</p>
+        <p>Find a circle whose radius is not a whole number even though C and R are on grid points. What is r² then?</p>
+      </div></div>`;
+  },
+  live(){
+    const s=this.s, r2=Math.pow(s.R[0]-s.h,2)+Math.pow(s.R[1]-s.k,2), P=this.P(), dx=P[0]-s.h, dy=P[1]-s.k;
+    const rS=rootStr(Math.round(r2*1e6)/1e6);
+    const stdL=sqTerm("x",s.h)+" + "+sqTerm("y",s.k);
+    $("t4d").innerHTML=`
+      <li><span class="h"><b>1</b>P is on the circle exactly when CP = r</span><span class="m">C = ${pt2(s.h,s.k)},  r = ${rS}${rS.indexOf("√")>=0?" ≈ "+fx(Math.sqrt(r2),2):""}</span></li>
+      <li><span class="h"><b>2</b>Legs of the right triangle</span><span class="m"><span style="color:#FDBA74">|x − h| = ${fx(Math.abs(dx),2)}</span>   <span style="color:#7DD3FC">|y − k| = ${fx(Math.abs(dy),2)}</span></span></li>
+      <li><span class="h"><b>3</b>Pythagorean theorem: leg² + leg² = hyp²</span><span class="m">${fx(dx*dx,2)} + ${fx(dy*dy,2)} = ${fx(dx*dx+dy*dy,2)} = r²</span></li>
+      <li><span class="h"><b>4</b>This holds for every P on the circle, so</span><span class="m">(x − h)² + (y − k)² = r²
+${stdL} = ${fx(r2,2)}</span></li>`;
+    const D=-2*s.h, Ee=-2*s.k, F=s.h*s.h+s.k*s.k-r2;
+    $("t4f").innerHTML=`<p><b>Standard form</b> (center–radius form) — read C and r right off it:</p>
+      <div class="eq">${stdL} = ${fx(r2,2)}</div>
+      <p><b>General form</b> — square out each binomial and collect everything on one side:</p>
+      <div class="eq">${poly([[1,"x²"],[D,"x"],[s.h*s.h,""]])} + ${poly([[1,"y²"],[Ee,"y"],[s.k*s.k,""]])} = ${fx(r2,2)}
+${poly([[1,"x²"],[1,"y²"],[D,"x"],[Ee,"y"],[F,""]])} = 0<small>D = −2h, E = −2k, F = h² + k² − r²</small></div>`;
+  }
+};
+
+/* ══════════════════════ TAB 5 · completing the square ══════════════════════ */
+const T5={
+  tab:"Completing the square", lsn:"G-GPE.A.1 · G-GPE.B.4", accent:"var(--magenta)",
+  title:()=>"From general form to center and radius",
+  aria:"Coordinate grid that plots the circle found by completing the square, with a test point to classify",
+  s:{A:1,D:-6,E:4,F:-12,step:0,T:[4,3],snap:true},
+  calc(){
+    const s=this.s, a=s.A||1, d=s.D/a, e=s.E/a, f=s.F/a, h=-d/2, k=-e/2, rhs=-f+d*d/4+e*e/4;
+    return {a:a,d:d,e:e,f:f,h:h,k:k,rhs:rhs};
+  },
+  nSteps(){ return (this.s.A!==1?1:0)+4; },
+  random(){
+    const s=this.s, h=rnd(-6,6), k=rnd(-4,4), r2=pick([4,9,16,25,9,16,5,10,13,20,8,18]);
+    const a=pick([1,1,1,1,2,3]);
+    s.A=a; s.D=-2*h*a; s.E=-2*k*a; s.F=(h*h+k*k-r2)*a; s.step=0;
+  },
+  bar(){
+    btn("Next step","primary",()=>{ this.s.step=Math.min(this.nSteps(),this.s.step+1); this.refresh(); });
+    btn("Show all","",()=>{ this.s.step=this.nSteps(); this.refresh(); });
+    btn("Random equation","",()=>{ this.random(); this.fillInputs(); this.refresh(); });
+    chk("Snap test point",this.s.snap,v=>{this.s.snap=v;});
+    spacer("");
+  },
+  refresh(){ redraw(); this.steps(); },
+  fillInputs(){ const s=this.s; ["A","D","E","F"].forEach(k=>{$("in"+k).value=s[k];}); },
+  draw(){
+    const s=this.s, g=bg(true), c=this.calc(); coordGrid(g);
+    const done=s.step>=this.nSteps();
+    if(done&&c.rhs>0){
+      const Cp=toPx(c.h,c.k), r=Math.sqrt(c.rhs);
+      g.appendChild(E("circle",{cx:Cp[0],cy:Cp[1],r:r*U,fill:"var(--magenta)","fill-opacity":.07,stroke:"var(--altx)","stroke-width":3}));
+      seg(g,Cp,toPx(c.h+r,c.k),"line",{stroke:"var(--vert)"});
+      txt(g,toPx(c.h+r/2,c.k+0.55),"r = "+rootStr(Math.round(c.rhs*1e6)/1e6),"sm","var(--vert)");
+      dot(g,Cp,5);
+      txt(g,[Cp[0]-10,Cp[1]-16],"("+fx(c.h,2)+", "+fx(c.k,2)+")","sm","var(--ink)","end");
+      if(Math.abs(c.h)+r>14||Math.abs(c.k)+r>9) txt(g,[16,20],"part of the circle is off the grid","sm","var(--unk)","start");
+    } else if(done&&Math.abs(c.rhs)<1e-9){
+      const Cp=toPx(c.h,c.k); dot(g,Cp,6,"var(--altx)"); txt(g,[Cp[0]+10,Cp[1]-16],"a single point","sm","var(--altx)","start");
+    } else if(!done){
+      txt(g,[16,20],"Complete every step to plot the circle","sm","#64748B","start");
+    } else txt(g,[16,20],"r² < 0 — no points satisfy this equation","sm","var(--unk)","start");
+    // test point
+    const st=this.status(), col={on:"var(--alt)",inside:"var(--corr)",outside:"var(--unk)"}[st.cls];
+    const Tp=toPx(s.T[0],s.T[1]);
+    grab(g,Tp,"T",col);
+    txt(g,[Tp[0]+14,Tp[1]-17],"Q"+pt2(s.T[0],s.T[1])+" "+st.cls,"sm",col,Tp[0]>560?"end":"start");
+  },
+  status(){
+    const s=this.s, c=this.calc(), x=s.T[0], y=s.T[1];
+    const val=x*x+y*y+c.d*x+c.e*y+c.f, dist2=(x-c.h)*(x-c.h)+(y-c.k)*(y-c.k);
+    const cls=Math.abs(val)<1e-9? "on" : val<0? "inside" : "outside";
+    return {val:val,dist2:dist2,cls:cls};
+  },
+  drag(id,p){ const s=this.s, q=fromPx(p), sn=v=>s.snap? Math.round(v) : Math.round(v*10)/10; s.T=[clamp(sn(q[0]),-13,13),clamp(sn(q[1]),-9,9)]; },
+  panel(){
+    side.innerHTML=`<div class="panel"><h3>Enter the general form</h3>
+        <div class="pad" style="padding-bottom:8px"><div class="eq" id="t5eq" style="margin:0"></div></div>
+        <div class="grid4">
+          <div><label for="inA">A</label><input type="number" id="inA" step="any"></div>
+          <div><label for="inD">D</label><input type="number" id="inD" step="any"></div>
+          <div><label for="inE">E</label><input type="number" id="inE" step="any"></div>
+          <div><label for="inF">F</label><input type="number" id="inF" step="any"></div>
+        </div>
+        <p class="hint">A x² + A y² + D x + E y + F = 0 (A is the shared coefficient of x² and y²; usually 1)</p>
+        <div class="btnrow"><button type="button" class="go" id="t5use">Use this equation</button></div>
+      </div>
+      <div class="panel"><h3>Completing the square, step by step</h3><ol class="steplist" id="t5steps"></ol></div>
+      <div class="panel"><h3>Is point Q on, inside or outside?</h3>
+        <div class="grid2" style="padding-top:14px">
+          <div><label for="tX">x</label><input type="number" id="tX" step="any"></div>
+          <div><label for="tY">y</label><input type="number" id="tY" step="any"></div>
+        </div>
+        <div class="btnrow"><button type="button" class="go" id="t5chk">Check by substitution</button></div>
+        <div id="t5pt"></div>
+        <p class="hint" style="padding-bottom:16px">Or drag Q on the grid.</p>
+      </div>
+      <div class="panel"><h3>Try this</h3><div class="pad">
+        <p>Enter x² + y² − 10x + 4y + 29 = 0. What happens in the last step, and what does the graph look like? Now change F to 30. Why is there no circle at all?</p>
+        <p>Drag Q until the substitution value is exactly 0. Where is Q?</p>
+      </div></div>`;
+    this.fillInputs();
+    $("t5use").onclick=()=>{
+      const v=k=>parseFloat($("in"+k).value);
+      const A=v("A"), D=v("D"), Ee=v("E"), F=v("F");
+      if([A,D,Ee,F].some(isNaN)||A===0){ $("t5steps").innerHTML='<li><div class="verdict bad" style="margin:0">Enter numbers for A, D, E and F (A cannot be 0).</div></li>'; return; }
+      Object.assign(this.s,{A:A,D:D,E:Ee,F:F,step:0}); this.refresh();
+    };
+    $("t5chk").onclick=()=>{
+      const x=parseFloat($("tX").value), y=parseFloat($("tY").value);
+      if(isNaN(x)||isNaN(y)) return;
+      this.s.T=[x,y]; this.refresh();
+    };
+    [$("tX"),$("tY")].forEach(i=>i.addEventListener("keydown",e=>{if(e.key==="Enter")$("t5chk").click();}));
+    this.steps();
+  },
+  steps(){
+    const s=this.s, c=this.calc(), n=this.nSteps(), L=[];
+    const gen=poly([[s.A,"x²"],[s.A,"y²"],[s.D,"x"],[s.E,"y"],[s.F,""]])+" = 0";
+    $("t5eq").textContent=gen;
+    if(s.A!==1) L.push(["Divide every term by "+fx(s.A,3)+" so x² and y² have coefficient 1", poly([[1,"x²"],[1,"y²"],[c.d,"x"],[c.e,"y"],[c.f,""]])+" = 0"]);
+    const hx=c.d/2, hy=c.e/2;
+    L.push(["Group the x-terms and the y-terms; move the constant", "("+poly([[1,"x²"],[c.d,"x"]])+") + ("+poly([[1,"y²"],[c.e,"y"]])+") = "+fx(-c.f,3)]);
+    L.push(["Add (half the x-coefficient)² and (half the y-coefficient)² to BOTH sides",
+      "("+poly([[1,"x²"],[c.d,"x"],[hx*hx,""]])+") + ("+poly([[1,"y²"],[c.e,"y"],[hy*hy,""]])+")\n   = "+fx(-c.f,3)+" + "+fx(hx*hx,3)+" + "+fx(hy*hy,3)]);
+    L.push(["Factor each perfect-square trinomial", sqTerm("x",c.h)+" + "+sqTerm("y",c.k)+" = "+fx(c.rhs,3)]);
+    let last;
+    if(c.rhs>1e-9){ const rs=rootStr(Math.round(c.rhs*1e6)/1e6); last="center ("+fx(c.h,3)+", "+fx(c.k,3)+"),  r = √"+fx(c.rhs,3)+(rs!=="√"+fx(c.rhs,3)? " = "+rs : "")+(rs.indexOf("√")>=0? " ≈ "+fx(Math.sqrt(c.rhs),3) : ""); }
+    else if(Math.abs(c.rhs)<1e-9) last="r² = 0: the graph is the single point ("+fx(c.h,3)+", "+fx(c.k,3)+") — not a circle";
+    else last="r² = "+fx(c.rhs,3)+" < 0: a sum of squares can't be negative, so there is no graph";
+    L.push(["Compare with (x − h)² + (y − k)² = r²", last]);
+    $("t5steps").innerHTML=L.map((x,i)=>`<li class="${i<s.step?"":"hidden"}"><span class="h"><b>${i+1}</b>${x[0]}</span><span class="m">${i<s.step? x[1] : "•••"}</span></li>`).join("");
+    const sp=bar.querySelector(".spacer"); if(sp) sp.textContent="step "+s.step+" of "+n;
+    this.ptPanel();
+  },
+  ptPanel(){
+    const s=this.s, c=this.calc(), st=this.status(), x=s.T[0], y=s.T[1];
+    if($("tX")&&document.activeElement!==$("tX")) $("tX").value=x;
+    if($("tY")&&document.activeElement!==$("tY")) $("tY").value=y;
+    const word={on:"<b>on</b> the circle",inside:"<b>inside</b> the circle",outside:"<b>outside</b> the circle"}[st.cls];
+    const sub=`(${fx(x,2)})² + (${fx(y,2)})²${c.d? " "+(c.d<0?MINUS:"+")+" "+fx(Math.abs(c.d),3)+"("+fx(x,2)+")":""}${c.e? " "+(c.e<0?MINUS:"+")+" "+fx(Math.abs(c.e),3)+"("+fx(y,2)+")":""}${c.f? " "+(c.f<0?MINUS:"+")+" "+fx(Math.abs(c.f),3):""}`;
+    const el=$("t5pt"); if(!el) return;
+    const ok=c.rhs>0;
+    el.innerHTML=`<div class="verdict ${st.cls==="outside"?"bad":"good"}">Q${pt2(x,y)} is ${ok?word:"— (no circle: r² ≤ 0)"}.
+      <div class="eq">${sub}
+= ${fx(st.val,3)}  ${st.cls==="on"?"= 0":st.val<0?"&lt; 0":"&gt; 0"}</div>
+      Distance check: (x − h)² + (y − k)² = ${fx(st.dist2,3)} ${st.cls==="on"?"=":st.val<0?"&lt;":"&gt;"} r² = ${fx(c.rhs,3)}</div>`;
+  },
+  live(){ this.ptPanel(); }
+};
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+const ANGS=[30,40,45,60,72,80,90,100,120,135,150,160,200,210,225,240,270,300,315,330];
+const RADS=[[1,6],[1,4],[1,3],[1,2],[2,3],[3,4],[5,6],[1,1],[7,6],[5,4],[4,3],[3,2],[5,3],[7,4],[11,6]];
+const radStr=q=>piStr(q[0]/q[1]);
+const tolOK=(v,a)=>Math.abs(v-a)<=Math.max(0.05,0.006*Math.abs(a));
+function numCheck(ans){ return vals=>{ const v=evalNum(vals[0]); if(isNaN(v)) return {err:"I couldn't read that. Type a number like 10.47, or use π, e.g. 10π/3 or 10pi/3."}; return {ok:tolOK(v,ans)}; }; }
+function genArc(){
+  const r=rnd(2,12);
+  if(Math.random()<0.7){
+    const th=pick(ANGS), ans=th/360*TAU*r, f=fracStr(th,360);
+    return {kind:"Arc length", fig:{type:"circ",th:th,r:r,show:"arc",lab:th+"°"},
+      prompt:`A circle has radius <b>${r} cm</b>. Find the length of the arc intercepted by a central angle of <b>${th}°</b>.`,
+      inputs:[{label:"arc length (cm)",ph:"e.g. 10pi/3 or 10.47"}], check:numCheck(ans),
+      answer:`${piStr(th*r/180)} ≈ ${fx(ans,2)} cm`,
+      work:`s = (θ/360)·2πr = (${th}/360)·2π(${r}) = ${f}·${piStr(2*r)} = ${piStr(th*r/180)} ≈ ${fx(ans,2)} cm`};
+  }
+  const q=pick(RADS), th=q[0]/q[1]*PI, ans=r*th;
+  return {kind:"Arc length (radians)", fig:{type:"circ",th:th/D2R,r:r,show:"arc",lab:radStr(q)},
+    prompt:`In a circle of radius <b>${r} cm</b>, a central angle measures <b>${radStr(q)} radians</b>. How long is the intercepted arc?`,
+    inputs:[{label:"arc length (cm)",ph:"e.g. 4π or 12.57"}], check:numCheck(ans),
+    answer:`${piStr(r*q[0]/q[1])} ≈ ${fx(ans,2)} cm`,
+    work:`With radians, s = rθ = ${r} · ${radStr(q)} = ${piStr(r*q[0]/q[1])} ≈ ${fx(ans,2)} cm`};
+}
+function genSector(){
+  const r=rnd(2,12);
+  if(Math.random()<0.7){
+    const th=pick(ANGS), ans=th/360*PI*r*r, f=fracStr(th,360);
+    return {kind:"Sector area", fig:{type:"circ",th:th,r:r,show:"sec",lab:th+"°"},
+      prompt:`Find the area of a sector with central angle <b>${th}°</b> in a circle of radius <b>${r} cm</b>.`,
+      inputs:[{label:"sector area (cm²)",ph:"e.g. 12π or 37.7"}], check:numCheck(ans),
+      answer:`${piStr(th*r*r/360)} ≈ ${fx(ans,2)} cm²`,
+      work:`A = (θ/360)·πr² = (${th}/360)·π(${r})² = ${f}·${piStr(r*r)} = ${piStr(th*r*r/360)} ≈ ${fx(ans,2)} cm²`};
+  }
+  const q=pick(RADS), th=q[0]/q[1]*PI, ans=0.5*r*r*th;
+  return {kind:"Sector area (radians)", fig:{type:"circ",th:th/D2R,r:r,show:"sec",lab:radStr(q)},
+    prompt:`A sector of a circle with radius <b>${r} cm</b> has a central angle of <b>${radStr(q)} radians</b>. Find its area.`,
+    inputs:[{label:"sector area (cm²)",ph:"e.g. 6π or 18.85"}], check:numCheck(ans),
+    answer:`${piStr(r*r*q[0]/q[1]/2)} ≈ ${fx(ans,2)} cm²`,
+    work:`With radians, A = ½r²θ = ½ · ${r*r} · ${radStr(q)} = ${piStr(r*r*q[0]/q[1]/2)} ≈ ${fx(ans,2)} cm²`};
+}
+function genConvert(){
+  if(Math.random()<0.5){
+    const th=pick([15,20,30,36,40,45,60,72,75,90,108,120,135,150,180,210,225,240,270,300,315,330,360,450,540]), ans=th*D2R;
+    return {kind:"Degrees → radians", fig:{type:"ang",th:th,lab:th+"°"},
+      prompt:`Convert <b>${th}°</b> to radians. Give an exact answer in terms of π.`,
+      inputs:[{label:"radians",ph:"e.g. 3π/4"}], check:numCheck(ans),
+      answer:`${piStr(th/180)} rad`, work:`Multiply by π/180: ${th} · π/180 = ${piStr(th/180)} ≈ ${fx(ans,3)} rad`};
+  }
+  if(Math.random()<0.8){
+    const q=pick(RADS.concat([[2,1],[5,2],[3,1]])), ans=q[0]/q[1]*180;
+    return {kind:"Radians → degrees", fig:{type:"ang",th:ans,lab:radStr(q)},
+      prompt:`Convert <b>${radStr(q)} radians</b> to degrees.`,
+      inputs:[{label:"degrees",ph:"e.g. 150"}], check:numCheck(ans),
+      answer:`${fx(ans,2)}°`, work:`Multiply by 180/π: ${radStr(q)} · 180/π = ${fx(ans,2)}° (the π's cancel).`};
+  }
+  const v=pick([1,2,3,1.5,2.5,0.5,4]), ans=v/D2R;
+  return {kind:"Radians → degrees", fig:{type:"ang",th:ans,lab:v+" rad"},
+    prompt:`An angle measures <b>${v} radian${v===1?"":"s"}</b> (no π!). Convert it to degrees, to the nearest tenth.`,
+    inputs:[{label:"degrees",ph:"e.g. 114.6"}], check:numCheck(ans),
+    answer:`≈ ${fx(ans,1)}°`, work:`Multiply by 180/π: ${v} · 180/π ≈ ${fx(ans,2)}°. One radian ≈ 57.3°.`};
+}
+function genEquation(){
+  const h=rnd(-6,6), k=rnd(-4,4);
+  let r2, given, fig;
+  const mode=pick(["r","r","root","pt"]);
+  if(mode==="r"){ const r=rnd(1,5); r2=r*r; given=`center <b>(${fx(h,0)}, ${fx(k,0)})</b> and radius <b>${r}</b>`; fig={type:"grid",h:h,k:k,r:r}; }
+  else if(mode==="root"){ r2=pick([2,3,5,6,7,8,10,11,12,13]); given=`center <b>(${fx(h,0)}, ${fx(k,0)})</b> and radius <b>${rootStr(r2)}</b>`; fig={type:"grid",h:h,k:k,r:Math.sqrt(r2)}; }
+  else { const v=pick([[3,4],[4,3],[-3,4],[4,-3],[0,5],[-4,-3],[2,1],[1,-2],[-2,3],[3,0],[2,2],[-1,3]]); const P=[h+v[0],k+v[1]]; r2=v[0]*v[0]+v[1]*v[1];
+    given=`center <b>(${fx(h,0)}, ${fx(k,0)})</b> that passes through the point <b>(${fx(P[0],0)}, ${fx(P[1],0)})</b>`; fig={type:"grid",h:h,k:k,P:P}; }
+  const std=sqTerm("x",h)+" + "+sqTerm("y",k)+" = "+r2;
+  const g=(x,y)=>(x-h)*(x-h)+(y-k)*(y-k)-r2;
+  return {kind:"Write the equation", fig:fig,
+    prompt:`Write an equation of the circle with ${given}.`,
+    inputs:[{label:"equation",ph:"(x − 3)^2 + (y + 2)^2 = 25",wide:true}],
+    check:vals=>{
+      const f=parseEquation(vals[0]);
+      if(!f) return {err:"I couldn't read that equation. Write it like (x-3)^2 + (y+2)^2 = 25 — use ^2 or ² for squares, and include one = sign."};
+      const P=[[0.37,1.91],[-2.3,0.7],[4.1,-3.3],[1.7,5.2],[-6.1,-2.9],[9.3,4.4]];
+      let q=null, ok=true;
+      P.forEach(([x,y])=>{ const gv=g(x,y); if(Math.abs(gv)<1e-3) return; const fv=f({x:x,y:y}); if(!isFinite(fv)){ok=false;return;} const qq=fv/gv; if(q===null)q=qq; else if(Math.abs(qq-q)>1e-6*Math.max(1,Math.abs(q))) ok=false; });
+      return {ok:ok&&q!==null&&Math.abs(q)>1e-9};
+    },
+    answer:std,
+    work: mode==="pt"? `The radius is the distance from the center to the point: r² = (${fx(fig.P[0],0)} − ${fx(h,0)})² + (${fx(fig.P[1],0)} − ${fx(k,0)})² = ${r2}. So ${std}. (You don't need r itself — the equation uses r².)`
+      : `Substitute h = ${fx(h,0)}, k = ${fx(k,0)}, r² = ${r2} into (x − h)² + (y − k)² = r². Careful with signs: x − (${fx(h,0)}) ${h<0?"becomes x + "+(-h):""}. So ${std}.`};
+}
+function genGeneral(){
+  const h=rnd(-6,6), k=rnd(-4,4), r2=pick([1,4,9,16,25,36,5,8,10,13,20]);
+  const D=-2*h, Ee=-2*k, F=h*h+k*k-r2;
+  const eq=poly([[1,"x²"],[1,"y²"],[D,"x"],[Ee,"y"],[F,""]])+" = 0";
+  const r=Math.sqrt(r2);
+  return {kind:"Center & radius from general form", fig:{type:"grid",hide:true,h:h,k:k,r:r},
+    prompt:`Find the center and radius of the circle<span class="q">${eq}</span>`,
+    inputs:[{label:"h (center x)",ph:"h"},{label:"k (center y)",ph:"k"},{label:"radius r",ph:"e.g. 5 or √13"}],
+    check:vals=>{ const a=evalNum(vals[0]), b=evalNum(vals[1]), c=evalNum(vals[2]);
+      if(isNaN(a)||isNaN(b)||isNaN(c)) return {err:"Fill in all three boxes with numbers. For a radius like √13 type sqrt(13) or √13."};
+      return {ok:Math.abs(a-h)<0.01&&Math.abs(b-k)<0.01&&Math.abs(c-r)<=0.02, part:[Math.abs(a-h)<0.01,Math.abs(b-k)<0.01,Math.abs(c-r)<=0.02]}; },
+    answer:`center (${fx(h,0)}, ${fx(k,0)}), r = ${rootStr(r2)}${isSq(r2)?"":" ≈ "+fx(r,2)}`,
+    work:`Group and complete the square: (x² ${D<0?"−":"+"} ${Math.abs(D)}x + ${h*h}) + (y² ${Ee<0?"−":"+"} ${Math.abs(Ee)}y + ${k*k}) = ${-F} + ${h*h} + ${k*k}, so ${sqTerm("x",h)} + ${sqTerm("y",k)} = ${r2}. Center (${fx(h,0)}, ${fx(k,0)}) — note the sign flip — and r = √${r2}${isSq(r2)?" = "+r:""}.`};
+}
+const GENS={arc:genArc,sector:genSector,convert:genConvert,equation:genEquation,general:genGeneral};
+const T6={
+  tab:"Challenge", lsn:"G-C.B.5 · G-GPE.A.1", accent:"var(--coral)",
+  title:()=>T6.s.p? T6.s.p.kind : "Challenge",
+  aria:"Figure for the current challenge problem",
+  s:{p:null,checked:false,solved:false,streak:0,best:0,right:0,tries:0,type:"mix"},
+  newP(){ const t=this.s.type==="mix"? pick(Object.keys(GENS)) : this.s.type; this.s.p=GENS[t](); this.s.checked=false; this.s.solved=false; },
+  score(){ const s=this.s; return "streak "+s.streak+" · best "+s.best+" · "+s.right+"/"+s.tries+" correct"; },
+  bar(){
+    btn("New problem","primary",()=>{ this.newP(); render(); });
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    [["mix","Mixed practice"],["arc","Arc length"],["sector","Sector area"],["convert","Degrees ↔ radians"],["equation","Write the equation"],["general","Center & radius"]].forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=this.s.type; sel.onchange=()=>{this.s.type=sel.value;this.newP();render();};
+    bar.appendChild(sel);
+    spacer(this.score());
+  },
+  draw(){
+    if(!this.s.p) this.newP();
+    const f=this.s.p.fig;
+    if(f.type==="grid"){
+      const g=bg(true); coordGrid(g);
+      const Cp=toPx(f.h,f.k);
+      const reveal=!f.hide||this.s.checked;
+      if(reveal){
+        const r=f.r!==undefined? f.r : Math.hypot(f.P[0]-f.h,f.P[1]-f.k);
+        g.appendChild(E("circle",{cx:Cp[0],cy:Cp[1],r:r*U,fill:"var(--coral)","fill-opacity":.07,stroke:"var(--altx)","stroke-width":3,"stroke-dasharray":f.hide||this.s.solved?"":"8 6"}));
+        if(f.P){ const Pp=toPx(f.P[0],f.P[1]); seg(g,Cp,Pp,"line",{stroke:"var(--vert)"}); dot(g,Pp,5.5,"var(--vert)"); txt(g,[Pp[0]+10,Pp[1]-16],"("+fx(f.P[0],0)+", "+fx(f.P[1],0)+")","sm","var(--vert)","start"); }
+        else { seg(g,Cp,toPx(f.h+r,f.k),"line",{stroke:"var(--vert)"}); txt(g,toPx(f.h+r/2,f.k+0.6),"r","num","var(--vert)"); }
+        dot(g,Cp,5.5); txt(g,[Cp[0]-10,Cp[1]-16],"("+fx(f.h,0)+", "+fx(f.k,0)+")","sm","var(--ink)","end");
+      } else txt(g,[350,40],"Where is the center? How big is the circle?","num","#64748B");
+      return;
+    }
+    const g=bg(), C=[350,232];
+    if(f.type==="circ"){
+      const R=165, th=f.th;
+      g.appendChild(E("circle",{cx:C[0],cy:C[1],r:R,class:"thin"}));
+      if(f.show==="sec") path(g,sectorD(C,R,0,th),{fill:"var(--alt)","fill-opacity":.3,stroke:"var(--alt)","stroke-width":2.4});
+      else path(g,arcD(C,R,0,th),{fill:"none",stroke:"var(--lin)","stroke-width":6,"stroke-linecap":"round"});
+      seg(g,C,PT(C,R,0),"line"); seg(g,C,PT(C,R,th),"line");
+      path(g,sectorD(C,26,0,th),{fill:"var(--vert)","fill-opacity":.18,stroke:"var(--vert)","stroke-width":1.6});
+      txt(g,PT(C,52,th/2),f.lab,"num","var(--vert)");
+      txt(g,[C[0]+R/2,C[1]+16],"r = "+f.r,"num","var(--graphite)");
+      const mid=th/2;
+      txt(g,PT(C,f.show==="sec"?R*0.66:R+26,f.show==="sec"&&th<50?mid:mid),f.show==="sec"?"A = ?":"s = ?","num",f.show==="sec"?"var(--alt)":"var(--lin)",f.show==="sec"?"middle":(mid>100&&mid<260)?"end":(mid<80||mid>280)?"start":"middle");
+      dot(g,C,4.5);
+    } else {
+      const R=150, th=f.th, turns=Math.floor((th-0.001)/360);
+      g.appendChild(E("circle",{cx:C[0],cy:C[1],r:R,class:"thin",opacity:.4}));
+      seg(g,C,PT(C,R+20,0),"line"); seg(g,C,PT(C,R+20,th),"line");
+      const t=th-turns*360;
+      path(g,arcD(C,48,0,t),{fill:"none",stroke:"var(--vert)","stroke-width":3});
+      if(turns>0) path(g,arcD(C,62,0,359.99),{fill:"none",stroke:"var(--vert)","stroke-width":2,"stroke-dasharray":"4 4"});
+      txt(g,PT(C,92,Math.max(t,20)/2),f.lab+" = ?","num","var(--vert)");
+      dot(g,C,4.5);
+    }
+  },
+  panel(){
+    const p=this.s.p;
+    side.innerHTML=`<div class="panel"><h3>${p.kind}</h3>
+      <div class="pad"><div class="prompt">${p.prompt}</div></div>
+      ${p.inputs.map((inp,i)=>`<label class="fld" for="ans${i}">${inp.label}</label><div class="fldwrap"><input type="text" id="ans${i}" placeholder="${inp.ph}" autocomplete="off" spellcheck="false"></div>`).join("")}
+      <div class="btnrow"><button type="button" class="go" id="chk">Check my answer</button><button type="button" class="ghost" id="reveal">Show solution</button></div>
+      <div id="fb"></div></div>
+      <div class="panel"><h3>Typing answers</h3><div class="pad">
+        <p>Exact or decimal both work. For π type <b>π</b> or <b>pi</b>: <b>6pi</b>, <b>6π</b>, <b>3π/2</b>, <b>(5/4)pi</b>. Decimals within about half a percent are accepted, so round to the hundredth.</p>
+        <p>Square roots: <b>sqrt(13)</b> or <b>√13</b>. Equations: <b>(x-3)^2 + (y+2)^2 = 25</b> — any equivalent form counts, even general form.</p>
+      </div></div>
+      <div class="panel"><h3>Formula card</h3><div class="pad"><div class="eq" style="margin:0">s = (θ/360)·2πr = rθ
+A = (θ/360)·πr² = ½r²θ
+π rad = 180°
+(x − h)² + (y − k)² = r²<small>θ written with "rad" means radians.</small></div></div></div>`;
+    const go=()=>this.check();
+    $("chk").onclick=go;
+    $("reveal").onclick=()=>{
+      if(!this.s.checked){ this.s.checked=true; this.s.tries++; this.s.streak=0; this.updScore(); }
+      $("fb").innerHTML=`<div class="verdict bad"><b>Solution:</b> ${p.answer}<div class="eq">${p.work}</div>Press <b>New problem</b> for another.</div>`;
+      redraw();
+    };
+    p.inputs.forEach((_,i)=>$("ans"+i).addEventListener("keydown",e=>{if(e.key==="Enter")go();}));
+  },
+  updScore(){ const sp=bar.querySelector(".spacer"); if(sp) sp.textContent=this.score(); },
+  check(){
+    const s=this.s, p=s.p, vals=p.inputs.map((_,i)=>$("ans"+i).value.trim());
+    if(vals.some(v=>!v)){ $("fb").innerHTML='<div class="verdict bad">Type an answer in every box first.</div>'; return; }
+    const r=p.check(vals);
+    if(r.err){ $("fb").innerHTML=`<div class="verdict bad">${r.err}</div>`; return; }
+    if(!s.checked){ s.checked=true; s.tries++; if(r.ok){s.right++;s.streak++;s.best=Math.max(s.best,s.streak);} else s.streak=0; this.updScore(); }
+    if(r.ok) s.solved=true;
+    let extra="";
+    if(!r.ok&&r.part){ const nm=["h","k","r"]; extra=" Correct so far: "+nm.filter((_,i)=>r.part[i]).join(", ")+(r.part.some(x=>x)?"":"none")+"."; }
+    $("fb").innerHTML= r.ok
+      ? `<div class="verdict good"><b>Correct!</b> ${p.answer}.<div class="eq">${p.work}</div></div>`
+      : `<div class="verdict bad"><b>Not yet.</b>${extra} Here is the method:<div class="eq">${p.work}</div>The answer is <b>${p.answer}</b>. Try the next one!</div>`;
+    redraw();
+  }
+};
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[T1,T2,T3,T4,T5,T6];
+let cur=0;
+const M=()=>MODS[cur];
+function redraw(){ clear(); M().draw(); if(M().live) M().live(); }
+function render(){
+  stopAnim(); dragId=null;
+  const m=M();
+  if(m===T1){ T1.s.u=T1.s.target; }
+  if(m===T2&&T2.s.wrap&&T2.s.w<7){ T2.s.w=7; }
+  if(m===T4) T4.s.play=false;
+  if(m===T6&&!T6.s.p) T6.newP();
+  document.documentElement.style.setProperty("--accent",m.accent||"var(--cyan)");
+  bTitle.textContent=m.title(); bLesson.textContent=m.lsn;
+  cv.setAttribute("aria-label",m.aria);
+  bar.innerHTML=""; m.bar();
+  side.innerHTML=""; m.panel();
+  redraw();
+  [...tabsEl.children].forEach((b,i)=>{b.setAttribute("aria-selected",i===cur);b.tabIndex=i===cur?0:-1;});
+}
+MODS.forEach((m,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab");
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+m.tab;
+  b.onclick=()=>{ cur=i; try{history.replaceState(null,"","#tab-"+(i+1));}catch(e){location.hash="tab-"+(i+1);} render(); };
+  b.addEventListener("keydown",e=>{
+    if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ const n=(i+(e.key==="ArrowRight"?1:MODS.length-1))%MODS.length; tabsEl.children[n].click(); tabsEl.children[n].focus(); }
+  });
+  tabsEl.appendChild(b);
+});
+function fromHash(){ const m=/tab-(\d+)/.exec(location.hash); if(m){ const n=clamp(parseInt(m[1],10)-1,0,MODS.length-1); if(n!==cur||!bar.firstChild){cur=n;render();return true;} } return false; }
+window.addEventListener("hashchange",fromHash);
+if(!fromHash()) render();
+})();
+</script>
+</body>
+</html>
