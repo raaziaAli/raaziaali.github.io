@@ -1343,7 +1343,6 @@ if(new URLSearchParams(location.search).has("embed")) document.body.classList.ad
 function fromHash(){const m=/^#tab-(\d+)$/.exec(location.hash);return m?(+m[1])-1:null;}
 window.addEventListener("hashchange",()=>{const h=fromHash();if(h!=null&&h!==cur)go(h,false);});
 const h0=fromHash(); go(h0==null?0:h0,false);
-if(new URLSearchParams(location.search).has("selftest")) window.__vl={T7:T7,parseAns:parseAns,T5:T5,M5:M5};
 })();
 </script>
 </body>

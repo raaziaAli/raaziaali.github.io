@@ -1251,7 +1251,6 @@ cv.addEventListener("pointermove",e=>{if(!dragId)return; const M=MODS[cur]; if(!
 ["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
 
 if(new URLSearchParams(location.search).has("embed"))document.body.classList.add("embed");
-if(new URLSearchParams(location.search).has("test"))window.__AL={get p(){return S6.p;}};
 function fromHash(){const m=/^#tab-(\d+)$/.exec(location.hash); if(m){const i=+m[1]-1; if(i>=0&&i<MODS.length){cur=i;return true;}} return false;}
 fromHash();
 MODS.forEach((M,i)=>{

@@ -1538,7 +1538,6 @@ MODS.forEach((M,i)=>{
 function fromHash(){const m=/^#tab-(\d+)$/.exec(location.hash);if(m){const n=clamp(parseInt(m[1],10)-1,0,MODS.length-1);if(n!==cur){cur=n;}return true;}return false;}
 fromHash();
 window.addEventListener("hashchange",()=>{if(fromHash())render();});
-window.__tcl={answer:()=>T6.s.p&&T6.s.p.ans,kind:()=>T6.s.p&&T6.s.p.kind,T1:T1,T2:T2};
 render();
 })();
 </script>
