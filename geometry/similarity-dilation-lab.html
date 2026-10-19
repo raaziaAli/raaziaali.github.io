@@ -1,0 +1,1341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rigid Motions Lab — Geometry Unit 2</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A1F'/%3E%3Cpath d='M10 50 L26 18 L34 50Z' fill='none' stroke='%2300E5FF' stroke-width='4'/%3E%3Cpath d='M30 50 L46 18 L54 50Z' fill='none' stroke='%23FF3D8A' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A1F; --bg-lift:#13132B; --card:#1C1C3A; --card-2:#242449;
+    --cyan:#00E5FF; --magenta:#FF3D8A; --yellow:#FFD93D; --lavender:#C4B5FD;
+    --coral:#FF6B6B; --mint:#5EEAD4;
+    --accent:var(--cyan);
+    --text:#F8F9FF; --dim:#A5A5C9; --edge:rgba(196,181,253,.20);
+
+    --board:#FFFFFF; --grid:#DCE6F7;
+    --ink:#14213D; --graphite:#22314F;
+    --vert:#7C3AED; --lin:#EA580C; --corr:#0284C7; --alt:#059669;
+    --altx:#DB2777; --same:#DC2626; --samex:#0891B2;
+    --unk:#E11D48; --hand:#FF6B35;
+
+    --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+    --ui:"DM Sans",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--ui);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at 12% 8%,rgba(0,229,255,.13),transparent 55%),
+               radial-gradient(ellipse at 88% 22%,rgba(255,61,138,.12),transparent 55%),
+               radial-gradient(ellipse at 50% 105%,rgba(196,181,253,.10),transparent 60%);}
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 70px;position:relative;z-index:1}
+
+  header.masthead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .mark{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,38px);margin:0;letter-spacing:-.01em;
+    background:linear-gradient(92deg,var(--cyan),var(--lavender) 55%,var(--magenta));
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .masthead .eyebrow{margin-left:auto;text-align:right;
+    border:1px solid var(--edge);border-radius:100px;padding:7px 15px;background:rgba(255,255,255,.03)}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}
+  nav.tabs button{
+    font-family:var(--ui);font-size:15px;font-weight:500;
+    background:var(--card);color:var(--dim);border:1px solid var(--edge);border-radius:100px;
+    padding:11px 19px;cursor:pointer;transition:transform .16s,color .16s,box-shadow .16s,background .16s;
+  }
+  nav.tabs button:hover{color:#fff;transform:translateY(-2px);background:var(--card-2)}
+  nav.tabs button[aria-selected="true"]{
+    color:#0A0A1F;background:var(--accent);border-color:var(--accent);font-weight:700;
+    box-shadow:0 0 26px -4px var(--accent);
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.6;margin-right:9px}
+  nav.tabs button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(330px,1fr);gap:22px;align-items:start}
+  @media (max-width:960px){.stage{grid-template-columns:minmax(0,1fr)}}
+
+  .board{background:var(--card);border:1px solid var(--edge);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .board-head{display:flex;align-items:center;gap:12px;padding:16px 20px;flex-wrap:wrap;
+    background:linear-gradient(90deg,var(--card-2),var(--card));border-bottom:1px solid var(--edge)}
+  .board-head h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0;color:#fff;line-height:1.3}
+  .board-head .lsn{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;
+    color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:5px 13px;white-space:nowrap}
+  svg.canvas{display:block;width:100%;height:auto;background:linear-gradient(170deg,#FFFFFF 0%,#EEF4FF 100%);touch-action:none;user-select:none;-webkit-user-select:none}
+
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:15px 20px;background:var(--card-2);border-top:1px solid var(--edge)}
+  .bar button,.seg button{font-family:var(--ui);font-size:14.5px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(255,255,255,.06);color:var(--text);padding:10px 17px;border-radius:100px;cursor:pointer;transition:.16s}
+  .bar button:hover,.seg button:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+  .bar button.primary{background:var(--accent);color:#0A0A1F;border-color:var(--accent);box-shadow:0 0 22px -6px var(--accent)}
+  .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#0A0A1F;border-color:var(--accent);font-weight:700}
+  .bar label.chk{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text);cursor:pointer;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:9px 16px}
+  .bar label.chk:hover{background:rgba(255,255,255,.1)}
+  .bar label.chk input{accent-color:var(--accent);width:17px;height:17px}
+  .bar .spacer{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .bar select{width:auto;max-width:340px}
+  .note{margin:0 20px 16px;padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.55;
+    background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .note b{color:#fff}
+
+  .panel{border:1px solid var(--edge);border-radius:18px;background:var(--card);margin-bottom:16px;overflow:hidden}
+  .panel h3{margin:0;padding:15px 20px;font-family:var(--display);font-weight:600;font-size:14px;
+    letter-spacing:.01em;color:#fff;background:linear-gradient(90deg,var(--card-2),transparent);
+    border-bottom:1px solid var(--edge)}
+  .pad{padding:16px 20px;font-size:15px;color:#CFCFEA}
+  .pad p{margin:0 0 11px} .pad p:last-child{margin-bottom:0}
+  .pad b{color:#fff;font-weight:700}
+  .term{font-weight:700;color:var(--accent)}
+
+  .eq{font-family:var(--mono);font-size:14.5px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);
+    border:1px solid var(--edge);border-left:4px solid var(--accent);padding:13px 15px;margin:12px 0;
+    border-radius:0 12px 12px 0;overflow-x:auto;white-space:pre-wrap;line-height:1.75}
+  .eq small{display:block;font-family:var(--ui);font-size:13px;font-weight:400;color:var(--dim);margin-top:7px}
+  .panel > .eq{margin:16px 20px}
+
+  .rel{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+    padding:13px 20px;border-bottom:1px solid rgba(196,181,253,.12);font-size:15px}
+  .rel:last-child{border-bottom:none}
+  .rel .dot{width:13px;height:13px;border-radius:13px}
+  .rel .nm{color:#fff;font-weight:500}
+  .rel .nm em{font-style:normal;color:var(--dim);font-size:13px;display:block;font-weight:400}
+  .rel .val{font-family:var(--mono);font-size:13.5px;font-weight:600;white-space:nowrap;text-align:right}
+  .ok{color:var(--mint)} .no{color:var(--coral)}
+
+  select,input[type=number],input[type=text]{
+    font-family:var(--ui);font-size:15px;background:#0F0F26;color:#fff;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 13px;width:100%;}
+  select:focus,input:focus{outline:3px solid var(--accent);outline-offset:1px}
+  label.fld{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin:16px 20px 7px}
+  .fldwrap{padding:0 20px}
+  .go{width:100%;font-family:var(--ui);font-size:16px;font-weight:700;background:var(--accent);color:#0A0A1F;
+    border:none;padding:14px;border-radius:100px;cursor:pointer;box-shadow:0 0 26px -6px var(--accent);transition:.16s}
+  .go:hover{transform:translateY(-2px)}
+  .ghost{font-family:var(--ui);font-size:15px;font-weight:600;background:transparent;color:var(--dim);
+    border:1px solid var(--edge);padding:11px 18px;border-radius:100px;cursor:pointer}
+  .ghost:hover{color:#fff}
+  .verdict{margin:16px 20px;padding:14px 16px;border-radius:14px;font-size:15px;line-height:1.6}
+  .verdict.good{background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.45);color:#D7FBF3}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4);color:#FFDCDA}
+  .verdict.info{background:rgba(255,217,61,.10);border:1px solid rgba(255,217,61,.35);color:#FBEFC9}
+  .verdict b{color:#fff}
+
+  /* ── drawing ── */
+  .mk{font-family:var(--display);font-weight:600;font-size:20px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .num{font-family:var(--mono);font-weight:700;font-size:15px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .dot{fill:var(--ink);stroke:#fff;stroke-width:2}
+  .grab{fill:rgba(255,107,53,.20);stroke:var(--hand);stroke-width:2;stroke-dasharray:4 3;cursor:grab}
+  .grab:hover{fill:rgba(255,107,53,.35)}
+  .rt{stroke:var(--graphite);stroke-width:1.8;fill:none;opacity:.9}
+  footer.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--edge);font-size:14px;color:var(--dim)}
+
+  /* ── Rigid Motions Lab extensions ── */
+  .vl{font-family:var(--display);font-weight:600;font-size:17px;paint-order:stroke;stroke:#fff;stroke-width:5;stroke-linejoin:round}
+  .cl{font-family:var(--mono);font-weight:600;font-size:11.5px;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+  .tk{font-family:var(--mono);font-size:10.5px;fill:#7A8AAD}
+  footer.foot a{color:var(--cyan);text-decoration:none;font-weight:600}
+  footer.foot a:hover{text-decoration:underline}
+  footer.foot .links{display:flex;gap:20px;flex-wrap:wrap;margin-top:8px}
+  body.embed header.masthead, body.embed footer.foot{display:none}
+  body.embed .wrap{padding:10px}
+  .bar button:focus-visible,.seg button:focus-visible,.go:focus-visible,.ghost:focus-visible,.opt:focus-visible,.xbtn:focus-visible,footer.foot a:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+  .rng{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13.5px;font-weight:600;color:var(--text);
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);border-radius:100px;padding:7px 15px;max-width:100%}
+  .rng input{accent-color:var(--accent);width:170px;max-width:42vw}
+  .rng span{min-width:64px;white-space:nowrap}
+  table.meas{width:100%;border-collapse:collapse;font-size:14px}
+  table.meas th{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);
+    text-align:left;padding:12px 20px 6px;font-weight:600}
+  table.meas td{padding:8px 20px;border-top:1px solid rgba(196,181,253,.11);font-family:var(--mono);font-size:13.5px;color:#fff;white-space:nowrap}
+  table.meas td:first-child{font-family:var(--ui);color:#CFCFEA;white-space:normal}
+  .steprow{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:8px 10px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(196,181,253,.12)}
+  .steprow:first-child{padding-top:0}
+  .steprow .sn{font-family:var(--mono);font-weight:700;font-size:15px}
+  .steprow .params{grid-column:2/4;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:14px;color:var(--dim)}
+  .steprow .params label{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12.5px}
+  input.sm,select.sm{width:72px;padding:8px 9px;font-size:14px;border-radius:10px}
+  select.sm.wide{width:auto}
+  .xbtn{font-family:var(--ui);font-size:18px;line-height:1;width:34px;height:34px;border-radius:34px;border:1px solid var(--edge);
+    background:transparent;color:var(--dim);cursor:pointer}
+  .xbtn:hover{color:#fff;border-color:var(--coral)}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap}
+  .opt{display:block;width:100%;text-align:left;font-family:var(--ui);font-size:15px;font-weight:500;background:rgba(255,255,255,.04);
+    color:#E7E9FA;border:1px solid var(--edge);border-radius:14px;padding:12px 15px;margin:0 0 9px;cursor:pointer;transition:.15s}
+  .opt:hover{background:rgba(255,255,255,.09)}
+  .opt[aria-pressed="true"]{border-color:var(--accent);background:rgba(255,255,255,.1);box-shadow:inset 3px 0 0 var(--accent);color:#fff}
+  .opt.right{border-color:var(--mint);box-shadow:inset 3px 0 0 var(--mint)}
+  .opt.wrong{border-color:var(--coral);box-shadow:inset 3px 0 0 var(--coral)}
+  .q{font-size:16px;color:#fff;line-height:1.55}
+  .inrow{display:flex;gap:12px;padding:0 20px}
+  .inrow > div{flex:1;min-width:0}
+  .inrow label.fld{margin-left:0;margin-right:0}
+  .pad ul{margin:0 0 10px;padding-left:20px} .pad li{margin:3px 0}
+  .key{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  @media (max-width:520px){
+    .wrap{padding:16px 12px 50px}
+    .bar{padding:12px 14px}
+    .board-head{padding:13px 14px}
+    .board-head .lsn{margin-left:0}
+    .pad{padding:14px 16px}
+    .rel{padding:12px 16px}
+    table.meas th,table.meas td{padding-left:14px;padding-right:14px}
+    .bar .spacer{margin-left:0;width:100%}
+    nav.tabs button{padding:9px 14px;font-size:14px}
+  }
+  .sl{font-family:var(--mono);font-weight:700;font-size:13.5px;paint-order:stroke;stroke:#fff;stroke-width:4.5;stroke-linejoin:round}
+  .tblwrap{overflow-x:auto}
+  .rng input[type=number].sm{width:74px;padding:6px 8px;font-size:13.5px;border-radius:9px}
+  .rng .lbl{min-width:0;color:var(--dim)}
+  ol.seq{margin:0;padding:4px 20px 14px 40px;font-size:14.5px;color:#DDDDF2}
+  ol.seq li{padding:5px 0} ol.seq li::marker{color:var(--accent);font-weight:700}
+  ol.seq li b{color:#fff}
+  .big{font-family:var(--mono);font-size:22px;font-weight:700;color:#fff}
+  @media (max-width:520px){ .rng input[type=range]{width:120px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Similarity &amp; Dilation Lab</h1>
+    <div class="eyebrow">Geometry · Unit 2 · Triangles, Congruence &amp; Similarity</div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Lessons"></nav>
+  <div class="stage">
+    <section class="board">
+      <div class="board-head">
+        <h2 id="bTitle">—</h2>
+        <span class="lsn" id="bLesson"></span>
+      </div>
+      <svg class="canvas" id="cv" viewBox="0 0 700 500" role="img" aria-label="Similarity figure"></svg>
+      <div class="bar" id="bar"></div>
+    </section>
+    <aside id="side"></aside>
+  </div>
+  <footer class="foot">Every figure is live and every measure is computed from the drawing — drag a point and the ratios follow. Vocabulary follows Common Core G-SRT and Eureka Math / EngageNY Geometry Module 2.
+    <div class="links"><a href="/geometry/">← Geometry course</a><a href="/math/#geometry">Mrs. Ali's Classroom</a></div>
+  </footer>
+</div>
+<script>
+(function(){
+"use strict";
+/* ══════════════════════ helpers ══════════════════════ */
+const NS="http://www.w3.org/2000/svg";
+const VW=700, VH=500, U=25, OX=350, OY=250, PU=25;
+const $=id=>document.getElementById(id);
+const cv=$("cv"), bar=$("bar"), side=$("side"), tabsEl=$("tabs"), bTitle=$("bTitle"), bLesson=$("bLesson");
+
+const D2R=Math.PI/180;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const r1=v=>Math.round(v*10)/10;
+const fmt=v=>{const s=r1(v); return (Math.abs(s-Math.round(s))<0.05? String(Math.round(s)) : s.toFixed(1));};
+const fm=v=>fmt(v).replace("-","−");
+const f2=v=>{const s=Math.round(v*100)/100; return String(s).replace("-","−");};
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const pstr=p=>"("+fm(p[0])+", "+fm(p[1])+")";
+const S=p=>[OX+p[0]*U, OY-p[1]*U];
+const Wd=q=>[(q[0]-OX)/U, (OY-q[1])/U];
+const add=(p,q)=>[p[0]+q[0],p[1]+q[1]], sub=(p,q)=>[p[0]-q[0],p[1]-q[1]], mul=(p,k)=>[p[0]*k,p[1]*k];
+const dist=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1]);
+const unit=v=>{const l=Math.hypot(v[0],v[1])||1;return [v[0]/l,v[1]/l];};
+const cen=P=>{let x=0,y=0;P.forEach(p=>{x+=p[0];y+=p[1];});return [x/P.length,y/P.length];};
+const lerp=(p,q,t)=>[p[0]+(q[0]-p[0])*t, p[1]+(q[1]-p[1])*t];
+const cross=(u,v)=>u[0]*v[1]-u[1]*v[0];
+function angAt(V,P,Q){const a=unit(sub(P,V)),b=unit(sub(Q,V));return Math.acos(clamp(a[0]*b[0]+a[1]*b[1],-1,1))/D2R;}
+const dil=(p,c,k)=>[c[0]+k*(p[0]-c[0]), c[1]+k*(p[1]-c[1])];
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a||1;};
+const isInt=v=>Math.abs(v-Math.round(v))<1e-9;
+function frac(n,d){
+  if(Math.abs(d)<1e-12) return "undefined";
+  if(isInt(n)&&isInt(d)){
+    n=Math.round(n); d=Math.round(d); if(d<0){n=-n;d=-d;}
+    const g=gcd(n,d); n/=g; d/=g;
+    return d===1? fm(n) : (n<0?"−":"")+Math.abs(n)+"/"+d;
+  }
+  return fm(n/d);
+}
+function kstr(k){ // scale factor as a friendly fraction when possible
+  for(const d of [1,2,3,4,5,8]){ if(isInt(k*d)) return frac(Math.round(k*d),d); }
+  return f2(k);
+}
+const term=(name,v)=>Math.abs(v)<1e-9? name : name+(v>0?" + ":" − ")+fm(Math.abs(v));
+function parseNum(s){
+  s=String(s).trim().replace(/−/g,"-").replace(/\s+/g,"");
+  if(s==="")return NaN;
+  const m=/^(-?\d*\.?\d+)\/(-?\d*\.?\d+)$/.exec(s);
+  if(m) return parseFloat(m[1])/parseFloat(m[2]);
+  return /^-?\d*\.?\d+$/.test(s)? parseFloat(s) : NaN;
+}
+const NAMES="ABCDEFGHIJ".split("");
+const COL={pre:"#0284C7",img:"#DB2777",ln:"#7C3AED",ink:"#22314F",tgt:"#64748B",gold:"#D97706",grn:"#059669",org:"#EA580C",red:"#DC2626",teal:"#0891B2"};
+const ST={snap:true};
+
+/* ══════════════════════ svg primitives ══════════════════════ */
+function E(tag,attrs){const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+function clear(){while(cv.firstChild)cv.removeChild(cv.firstChild);}
+function defs(){
+  const d=E("defs");
+  d.innerHTML='<clipPath id="fr"><rect width="'+VW+'" height="'+VH+'"/></clipPath>'+
+    '<pattern id="pg" width="25" height="25" patternUnits="userSpaceOnUse"><path d="M25 0H0V25" fill="none" stroke="#DCE6F7" stroke-width="1"/></pattern>'+
+    '<marker id="arS" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0 0.5L10 5L0 9.5z" fill="#D97706"/></marker>'+
+    '<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E0F2FE"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>';
+  cv.appendChild(d);
+}
+function plain(){
+  defs();
+  cv.appendChild(E("rect",{width:VW,height:VH,fill:"url(#pg)"}));
+  const g=E("g",{"clip-path":"url(#fr)"}); cv.appendChild(g); return g;
+}
+function grid(){
+  const g=plain();
+  g.appendChild(E("line",{x1:0,y1:OY,x2:VW,y2:OY,stroke:"#8796B8","stroke-width":1.6}));
+  g.appendChild(E("line",{x1:OX,y1:0,x2:OX,y2:VH,stroke:"#8796B8","stroke-width":1.6}));
+  for(let x=-12;x<=12;x+=2){ if(!x)continue; const s=S([x,0]);
+    g.appendChild(E("line",{x1:s[0],y1:OY-4,x2:s[0],y2:OY+4,stroke:"#8796B8","stroke-width":1.4}));
+    txt(g,[s[0],OY+15],fm(x),"tk",null,"middle"); }
+  for(let y=-8;y<=8;y+=2){ if(!y)continue; const s=S([0,y]);
+    g.appendChild(E("line",{x1:OX-4,y1:s[1],x2:OX+4,y2:s[1],stroke:"#8796B8","stroke-width":1.4}));
+    txt(g,[OX-8,s[1]+1],fm(y),"tk",null,"end"); }
+  txt(g,[VW-12,OY-12],"x","tk"); txt(g,[OX+12,12],"y","tk");
+  return g;
+}
+function txt(g,p,s,cls,color,anchor){
+  const t=E("text",{x:p[0],y:p[1],class:cls||"mk","text-anchor":anchor||"middle","dominant-baseline":"middle"});
+  if(color)t.setAttribute("fill",color);
+  t.textContent=s; g.appendChild(t); return t;
+}
+function seg(g,p,q,o){
+  o=o||{};
+  const l=E("line",{x1:p[0],y1:p[1],x2:q[0],y2:q[1],stroke:o.stroke||COL.ink,"stroke-width":o.w||2,"stroke-linecap":"round"});
+  if(o.dash)l.setAttribute("stroke-dasharray",o.dash);
+  if(o.marker)l.setAttribute("marker-end","url(#"+o.marker+")");
+  if(o.op!=null)l.setAttribute("opacity",o.op);
+  g.appendChild(l); return l;
+}
+function poly(g,pts,o){
+  const el=E("polygon",{points:pts.map(p=>p[0].toFixed(2)+","+p[1].toFixed(2)).join(" "),
+    fill:o.fill||"none","fill-opacity":o.fo==null?0.16:o.fo,stroke:o.stroke||"none","stroke-width":o.w||2.8,"stroke-linejoin":"round"});
+  if(o.dash)el.setAttribute("stroke-dasharray",o.dash);
+  if(o.op!=null)el.setAttribute("opacity",o.op);
+  g.appendChild(el);
+  if(!o.nodots) pts.forEach(p=>{const c=E("circle",{cx:p[0],cy:p[1],r:4,fill:o.stroke,stroke:"#fff","stroke-width":1.5});if(o.op!=null)c.setAttribute("opacity",o.op);g.appendChild(c);});
+}
+function labelsS(g,ptsS,names,color,off){
+  const c=cen(ptsS);
+  ptsS.forEach((p,i)=>{
+    let d=sub(p,c); if(Math.hypot(d[0],d[1])<1e-6)d=[0,-1]; d=unit(d);
+    txt(g,add(p,mul(d,off)),names[i],"vl",color);
+  });
+}
+function grab(g,p,id){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:17,class:"grab","data-drag":id})); }
+function cdot(g,p,color,r){ g.appendChild(E("circle",{cx:p[0],cy:p[1],r:r||5,fill:color||COL.ink,stroke:"#fff","stroke-width":2})); }
+function fullLineS(g,a,b,o){ const u=unit(sub(b,a)); return seg(g,sub(a,mul(u,1800)),add(a,mul(u,1800)),o); }
+function rightMarkS(g,m,u,w,s){
+  s=s||11;
+  const p1=add(m,mul(u,s)), p3=add(m,mul(w,s)), p2=add(p1,mul(w,s));
+  g.appendChild(E("polyline",{points:[p1,p2,p3].map(p=>p.join(",")).join(" "),class:"rt"}));
+}
+// angle wedge at V between rays VP and VQ (screen coords), n arcs
+function angArc(g,V,P,Q,r,color,o){
+  o=o||{};
+  const a1=Math.atan2(P[1]-V[1],P[0]-V[0]); let d=Math.atan2(Q[1]-V[1],Q[0]-V[0])-a1;
+  while(d>Math.PI)d-=2*Math.PI; while(d<=-Math.PI)d+=2*Math.PI;
+  const sw=d>0?1:0, n=o.n||1;
+  const pt=(rr,a)=>[V[0]+rr*Math.cos(a),V[1]+rr*Math.sin(a)];
+  const s=pt(r,a1), e=pt(r,a1+d);
+  g.appendChild(E("path",{d:"M"+V[0]+" "+V[1]+"L"+s[0]+" "+s[1]+"A"+r+" "+r+" 0 0 "+sw+" "+e[0]+" "+e[1]+"Z",fill:color,"fill-opacity":o.fo==null?0.18:o.fo,stroke:"none"}));
+  for(let j=0;j<n;j++){ const rr=r-j*5, s2=pt(rr,a1), e2=pt(rr,a1+d);
+    g.appendChild(E("path",{d:"M"+s2[0]+" "+s2[1]+"A"+rr+" "+rr+" 0 0 "+sw+" "+e2[0]+" "+e2[1],fill:"none",stroke:color,"stroke-width":2})); }
+  if(o.label){ const lp=pt(r+(o.lr||15),a1+d/2); txt(g,lp,o.label,"sl",color); }
+}
+// side length label outside the polygon
+function sideLab(g,p,q,c,text,color,off){
+  const m=mul(add(p,q),.5); let n=unit(sub(m,c));
+  const d=unit(sub(q,p)), nn=[-d[1],d[0]]; if(nn[0]*n[0]+nn[1]*n[1]<0){n=[-nn[0],-nn[1]];} else n=nn;
+  txt(g,add(m,mul(n,off||15)),text,"sl",color||COL.ink);
+}
+function ticks(g,p,q,k,color){
+  const m=mul(add(p,q),.5), d=unit(sub(q,p)), n=[-d[1],d[0]];
+  for(let j=0;j<k;j++){ const c=add(m,mul(d,(j-(k-1)/2)*5)); seg(g,add(c,mul(n,6)),sub(c,mul(n,6)),{stroke:color,w:2}); }
+}
+function arrowTick(g,p,q,k,color){ // parallel marks
+  const m=mul(add(p,q),.5), d=unit(sub(q,p)), n=[-d[1],d[0]];
+  for(let j=0;j<k;j++){ const c=add(m,mul(d,(j-(k-1)/2)*8));
+    g.appendChild(E("polyline",{points:[add(sub(c,mul(d,6)),mul(n,6)),c,sub(sub(c,mul(d,6)),mul(n,6))].map(p=>p.join(",")).join(" "),fill:"none",stroke:color,"stroke-width":2.2})); }
+}
+
+/* ══════════════════════ drag plumbing ══════════════════════ */
+let dragId=null;
+function svgPt(e){
+  const pt=cv.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY;
+  const m=cv.getScreenCTM(); if(!m) return [0,0];
+  const q=pt.matrixTransform(m.inverse()); return [q.x,q.y];
+}
+cv.addEventListener("pointerdown",e=>{
+  const id=e.target.dataset&&e.target.dataset.drag; if(!id)return;
+  dragId=id; try{cv.setPointerCapture(e.pointerId);}catch(_){}
+  e.preventDefault();
+});
+cv.addEventListener("pointermove",e=>{
+  if(!dragId)return; const M=MODS[cur]; if(!M.drag)return;
+  M.drag(dragId,svgPt(e)); refresh();
+});
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{
+  if(dragId){ dragId=null; const M=MODS[cur]; if(M.dragEnd){M.dragEnd();refresh();} }
+}));
+function dragW(q,lim){
+  lim=lim||[13,9];
+  let p=Wd(q);
+  p=ST.snap? [Math.round(p[0]),Math.round(p[1])] : [Math.round(p[0]*10)/10,Math.round(p[1]*10)/10];
+  return [clamp(p[0],-lim[0],lim[0]),clamp(p[1],-lim[1],lim[1])];
+}
+const inBox=(p,x0,y0,x1,y1)=>[clamp(p[0],x0,x1),clamp(p[1],y0,y1)];
+
+/* ══════════════════════ bar helpers ══════════════════════ */
+function btn(label,fn,cls){const b=document.createElement("button");b.type="button";b.textContent=label;if(cls)b.className=cls;b.onclick=fn;bar.appendChild(b);return b;}
+function segBtns(opts,curv,fn,label){
+  const s=document.createElement("div");s.className="seg";s.setAttribute("role","group");if(label)s.setAttribute("aria-label",label);
+  opts.forEach(([k,l])=>{const b=document.createElement("button");b.type="button";b.textContent=l;b.dataset.k=k;
+    b.setAttribute("aria-pressed",String(k===curv));b.onclick=()=>fn(k);s.appendChild(b);});
+  bar.appendChild(s);return s;
+}
+function chk(label,obj,key,fn){
+  const l=document.createElement("label");l.className="chk";
+  const i=document.createElement("input");i.type="checkbox";i.checked=!!obj[key];
+  i.onchange=()=>{obj[key]=i.checked;(fn||refresh)();};
+  l.appendChild(i);l.appendChild(document.createTextNode(label));bar.appendChild(l);return i;
+}
+function spacer(text,id){const s=document.createElement("span");s.className="spacer";if(id)s.id=id;s.textContent=text;bar.appendChild(s);return s;}
+function range(min,max,step,val,show,fn,aria,typed){
+  const l=document.createElement("label");l.className="rng";
+  const o=document.createElement("span");o.textContent=show(val);
+  const r=document.createElement("input");r.type="range";r.min=min;r.max=max;r.step=step;r.value=val;r.setAttribute("aria-label",aria);
+  l.appendChild(o);l.appendChild(r);
+  let n=null;
+  if(typed){ n=document.createElement("input"); n.type="number"; n.className="sm"; n.step="any"; n.min=min; n.max=max; n.value=val; n.setAttribute("aria-label",aria+" (type a value)"); l.appendChild(n);
+    n.oninput=()=>{const v0=parseFloat(n.value); if(isNaN(v0))return; const v=fn(clamp(v0,+min,+max)); r.value=v; o.textContent=show(v);}; }
+  r.oninput=()=>{const v=fn(+r.value);o.textContent=show(v); if(n)n.value=v;};
+  bar.appendChild(l);
+  return {r:r,n:n,o:o,set(v){r.value=v;o.textContent=show(v);if(n)n.value=v;}};
+}
+const okv=b=>b?'<span class="ok">✓</span>':'<span class="no">✗</span>';
+function relRow(color,nm,em,val){
+  return '<div class="rel"><span class="dot" style="background:'+color+'"></span><span class="nm">'+nm+(em?'<em>'+em+'</em>':'')+'</span><span class="val">'+val+'</span></div>';
+}
+function tryPanel(html){return '<div class="panel"><h3>Try this</h3><div class="pad">'+html+'</div></div>';}
+
+/* best place along a world line for its label, away from the given points */
+function lineLabelPos(a,b,avoid){
+  const d=unit(sub(b,a)); let best=null,bs=-1;
+  for(let t=-40;t<=40;t+=0.5){
+    const p=add(a,mul(d,t)); if(Math.abs(p[0])>12.4||Math.abs(p[1])>8.6)continue;
+    let m=1e9; avoid.forEach(q=>{m=Math.min(m,dist(p,q));});
+    m=Math.min(m,13-Math.abs(p[0]),9.4-Math.abs(p[1]));
+    if(m>bs){bs=m;best=p;}
+  }
+  if(!best)return null;
+  return add(best,mul([-d[1],d[0]],0.75));
+}
+
+/* ══════════════════════ TAB 1 · dilations ══════════════════════ */
+const T1D=()=>({O:[-4,-2],n:3,P:{3:[[-2,-1],[1,-2],[0,1]],4:[[-3,-1],[0,-2],[1,1],[-2,1]]},k:2,L:[[-8,1],[-2,4]],line:true,rays:true});
+let T1=T1D();
+const M1={
+  tab:"Dilations", lesson:"G-SRT.A.1a · A.1b", accent:"var(--cyan)",
+  title:()=>"Dilate a figure from a center O", aria:"Coordinate grid showing a polygon, its dilation from center O, rays from O, and a line with its image",
+  bar(){
+    segBtns([["3","Triangle"],["4","Quadrilateral"]],String(T1.n),k=>{T1.n=+k;render();},"Shape");
+    M1.kr=range(-3,3,0.25,T1.k,v=>"k = "+f2(v),v=>{T1.k=v;refresh();return v;},"Scale factor k",true);
+    chk("Rays from O",T1,"rays"); chk("Line ℓ",T1,"line");
+    btn("Put ℓ through O",()=>{
+      const O=T1.O; let d=[3,2]; const ok=v=>{const a=add(O,v),b=sub(O,v);return Math.abs(a[0])<=13&&Math.abs(b[0])<=13&&Math.abs(a[1])<=9&&Math.abs(b[1])<=9;};
+      for(const v of [[3,2],[-3,2],[2,-3],[2,1],[1,2],[1,1],[1,-1]]){ if(ok(v)){d=v;break;} }
+      T1.L=[add(O,d),sub(O,d)]; T1.line=true; render();});
+    btn("Reset",()=>{T1=T1D();render();});
+    chk("Snap to grid",ST,"snap",()=>{});
+    spacer("Drag O, the vertices, or the two ends of ℓ");
+  },
+  draw(){
+    const g=grid(), O=T1.O, k=T1.k, P=T1.P[T1.n], I=P.map(p=>dil(p,O,k)), nm=NAMES.slice(0,P.length), Os=S(O);
+    const k0=Math.abs(k)<1e-9;
+    if(T1.line){
+      const a=T1.L[0], b=T1.L[1], as=S(a), bs=S(b);
+      fullLineS(g,as,bs,{stroke:COL.ln,w:2.6});
+      const avoid=P.concat(I,[O]);
+      const lp=lineLabelPos(a,b,avoid); if(lp) txt(g,S(lp),"ℓ","vl",COL.ln);
+      if(!k0){ const a2=dil(a,O,k), b2=dil(b,O,k);
+        fullLineS(g,S(a2),S(b2),{stroke:COL.gold,w:2.6,dash:"11 7"});
+        const through=Math.abs(cross(sub(b,a),sub(O,a)))<1e-9;
+        if(!through){ const lp2=lineLabelPos(a2,b2,avoid); if(lp2) txt(g,S(lp2),"ℓ′","vl",COL.gold); }
+        else if(lp) txt(g,add(S(lp),[22,0]),"= ℓ′","vl",COL.gold);
+        cdot(g,S(a2),COL.gold,4); cdot(g,S(b2),COL.gold,4);
+      }
+      cdot(g,as,COL.ln,5); cdot(g,bs,COL.ln,5);
+    }
+    if(T1.rays) P.forEach((p,i)=>{
+      const q=I[i]; if(dist(p,O)<1e-9)return;
+      const u=unit(sub(S(p),Os));
+      if(k>=0){ const far=dist(O,p)>=dist(O,q)?S(p):S(q); seg(g,Os,add(far,mul(u,34)),{stroke:COL.ink,w:1.5,dash:"5 5",op:.75}); }
+      else seg(g,sub(S(q),mul(u,30)),add(S(p),mul(u,30)),{stroke:COL.ink,w:1.5,dash:"5 5",op:.75});
+    });
+    // OA and OA′ emphasis
+    if(dist(P[0],O)>1e-9){
+      const As=S(P[0]), Is=S(I[0]), n=unit(sub(As,Os)), nn=[-n[1],n[0]];
+      if(!k0){ seg(g,Os,Is,{stroke:COL.img,w:4,op:.55}); }
+      seg(g,Os,As,{stroke:COL.pre,w:4,op:.55});
+      const mA=mul(add(Os,As),.5), mI=mul(add(Os,Is),.5);
+      txt(g,add(mA,mul(nn,-16)),"OA = "+fm(dist(O,P[0])),"sl",COL.pre);
+      if(!k0) txt(g,add(mI,mul(nn,16)),"OA′ = "+fm(dist(O,I[0])),"sl",COL.img);
+    }
+    poly(g,P.map(S),{fill:COL.pre,stroke:COL.pre});
+    if(!k0){ poly(g,I.map(S),{fill:COL.img,stroke:COL.img}); labelsS(g,I.map(S),nm.map(s=>s+"′"),COL.img,17); }
+    labelsS(g,P.map(S),nm,COL.pre,17);
+    cdot(g,Os,COL.ink,6); txt(g,[Os[0]-14,Os[1]+16],"O","vl",COL.ink);
+    P.forEach((p,i)=>grab(g,S(p),"v"+i));
+    grab(g,Os,"O");
+    if(T1.line){ grab(g,S(T1.L[0]),"L0"); grab(g,S(T1.L[1]),"L1"); }
+  },
+  drag(id,q){
+    const p=dragW(q);
+    if(id==="O") T1.O=p;
+    else if(id==="L0"||id==="L1"){const i=+id[1]; if(dist(p,T1.L[1-i])<0.9)return; T1.L[i]=p;}
+    else T1.P[T1.n][+id.slice(1)]=p;
+  },
+  panel(){
+    side.innerHTML=`<div class="panel"><h3>The rule</h3><div class="eq" id="t1rule"></div><div class="tblwrap" id="t1tab"></div></div>
+    <div class="panel"><h3>What a dilation does</h3><div id="t1chk"></div></div>
+    <div class="panel"><h3>The idea</h3><div class="pad">
+      <p>A <span class="term">dilation</span> with center O and scale factor k sends each point P to P′ on ray OP so that <b>OP′ = k · OP</b>. The center is the one point that does not move.</p>
+      <p><b>G-SRT.A.1a:</b> a line that does <b>not</b> pass through the center is taken to a <b>parallel</b> line; a line through the center is taken to <b>itself</b>. Watch the gold dashed ℓ′.</p>
+      <p><b>G-SRT.A.1b:</b> every segment is stretched or shrunk by the same factor: A′B′ = |k| · AB. If |k| &gt; 1 the image is an <span class="term">enlargement</span>; if 0 &lt; |k| &lt; 1 it is a <span class="term">reduction</span>.</p>
+      <div class="eq">center (a, b):  (x, y) → (a + k(x − a), b + k(y − b))
+center origin:  (x, y) → (kx, ky)</div>
+    </div></div>
+    <div class="panel"><h3>Negative scale factors</h3><div class="pad">
+      <p>When k &lt; 0, P′ lands on the ray <b>opposite</b> to ray OP, on the far side of O, at distance |k| · OP. The image is turned upside down.</p>
+      <p>A dilation by a negative k is the same as a dilation by |k| followed by a 180° rotation about O. (Eureka Math defines dilations with k &gt; 0; k = 0 is not a dilation at all, because every point collapses onto O.)</p>
+    </div></div>`+
+    tryPanel(`<p>Set k = 1/2 and drag O onto vertex A. Which point stays put? Now drag O far away: does the image's shape change, or only its position?</p>
+      <p>Press <b>Put ℓ through O</b>, then drag one end of ℓ off the center. Explain, using the rays, why ℓ′ becomes parallel to ℓ.</p>`);
+  },
+  live(){
+    const O=T1.O, k=T1.k, P=T1.P[T1.n], I=P.map(p=>dil(p,O,k)), nm=NAMES.slice(0,P.length), k0=Math.abs(k)<1e-9;
+    const atO=Math.abs(O[0])<1e-9&&Math.abs(O[1])<1e-9, ks=f2(k);
+    $("t1rule").innerHTML=(atO? "(x, y) → ("+ks+"x, "+ks+"y)" :
+      "(x, y) → ("+fm(O[0])+" + "+ks+"("+term("x",-O[0])+"), "+fm(O[1])+" + "+ks+"("+term("y",-O[1])+"))")+
+      "<small>center O = "+pstr(O)+" · scale factor k = "+ks+(k0?" — k = 0 sends every point to O, so it is not a dilation.":(k<0?" — negative: images land on the opposite side of O.":Math.abs(k)>1?" — enlargement":Math.abs(k)<1?" — reduction":" — k = 1 is the identity"))+"</small>";
+    let h='<table class="meas"><tr><th>Point</th><th>Pre-image</th><th>Image</th><th>OP</th><th>OP′</th></tr>';
+    P.forEach((p,i)=>{h+="<tr><td>"+nm[i]+" → "+nm[i]+"′</td><td>"+pstr(p)+"</td><td>"+pstr(I[i])+"</td><td>"+fm(dist(O,p))+"</td><td>"+fm(dist(O,I[i]))+"</td></tr>";});
+    $("t1tab").innerHTML=h+"</table>";
+    let c="";
+    const dA=dist(O,P[0]);
+    c+=relRow(COL.img,"OA′ = |k| · OA",dA<1e-9?"A is the center, so A′ = A":fm(dist(O,I[0]))+" = "+f2(Math.abs(k))+" × "+fm(dA),okv(true));
+    const n=P.length; let sl=[];
+    for(let i=0;i<n;i++){const j=(i+1)%n; sl.push(nm[i]+nm[j]+" = "+fm(dist(P[i],P[j]))+" → "+fm(dist(I[i],I[j])));}
+    const r0=dist(I[0],I[1])/dist(P[0],P[1]);
+    c+=relRow(COL.pre,"Every side × |k|",sl.join(" · "),"ratio "+f2(r0)+" "+okv(Math.abs(r0-Math.abs(k))<1e-6));
+    if(T1.line&&!k0){
+      const a=T1.L[0], b=T1.L[1], d=sub(b,a), through=Math.abs(cross(d,sub(O,a)))<1e-9;
+      const slope=Math.abs(d[0])<1e-9?"undefined":frac(d[1],d[0]);
+      c+=relRow(COL.ln,"Line ℓ → ℓ′",through?"ℓ passes through O, so ℓ′ is the same line":"ℓ misses O, so ℓ′ is a different line with the same slope",
+        "slope "+slope+(through?" · same line":" · ∥ ")+" "+okv(true));
+    }
+    c+=relRow(COL.ink,"Angles preserved","∠A = "+fm(angAt(P[0],P[n-1],P[1]))+"°, ∠A′ = "+(k0?"—":fm(angAt(I[0],I[n-1],I[1]))+"°"),okv(!k0));
+    $("t1chk").innerHTML=c;
+  }
+};
+
+/* ══════════════════════ TAB 2 · similarity transformations ══════════════════════ */
+const REFS=[["none","no reflection"],["h","horizontal line through A₁"],["v","vertical line through A₁"],["d1","line of slope 1 through A₁"],["d2","line of slope −1 through A₁"]];
+function rot90(p,c,deg){ const d=sub(p,c), t=((deg%360)+360)%360;
+  const r=t===0?d:t===90?[-d[1],d[0]]:t===180?[-d[0],-d[1]]:[d[1],-d[0]]; return add(c,r); }
+function reflAbout(p,c,ref){ const d=sub(p,c);
+  if(ref==="h")return add(c,[d[0],-d[1]]); if(ref==="v")return add(c,[-d[0],d[1]]);
+  if(ref==="d1")return add(c,[d[1],d[0]]); if(ref==="d2")return add(c,[-d[1],-d[0]]); return p.slice(); }
+function t2apply(P,s){
+  const D=P.map(p=>dil(p,[s.cx,s.cy],s.k)), A1=D[0];
+  const R=D.map(p=>rot90(p,A1,s.rot)), F=R.map(p=>reflAbout(p,A1,s.ref)), T=F.map(p=>[p[0]+s.a,p[1]+s.b]);
+  return {D:D,R:R,F:F,T:T,A1:A1};
+}
+const triOK=(P,minSide,minAng)=>{ for(let i=0;i<3;i++){ if(dist(P[i],P[(i+1)%3])<minSide)return false; if(angAt(P[i],P[(i+1)%3],P[(i+2)%3])<minAng)return false;} return true; };
+const inGrid=(P,m)=>P.every(p=>Math.abs(p[0])<=12-(m||0)&&Math.abs(p[1])<=8-(m||0));
+function genT2(){
+  for(let t=0;t<2000;t++){
+    const k=pick([0.5,1.5,2,2,3]);
+    const vals=k===3?[-2,-1,0,1,2]:k===2?[-3,-2,-1,0,1,2,3]:k===1.5?[-4,-2,0,2,4]:[-6,-4,-2,0,2,4,6];
+    const rB=[pick(vals),pick(vals)], rC=[pick(vals),pick(vals)];
+    const rel=[[0,0],rB,rC]; if(!triOK(rel,1.9,28))continue;
+    if(!triOK(rel.map(p=>mul(p,k)),1.9,28))continue;
+    const A=[rnd(-11,11),rnd(-7,7)], pre=rel.map(p=>add(p,A)); if(!inGrid(pre,0.5))continue;
+    const rot=pick([0,90,90,180,270,270]), ref=Math.random()<0.35?pick(["h","v","d1","d2"]):"none";
+    if(rot===0&&ref==="none"&&Math.random()<0.7)continue;
+    const Tp=[rnd(-11,11),rnd(-7,7)], base={cx:A[0],cy:A[1],k:k,rot:rot,ref:ref,a:0,b:0};
+    const tmp=t2apply(pre,base); const sol=Object.assign({},base,{a:Tp[0]-tmp.A1[0],b:Tp[1]-tmp.A1[1]});
+    const tgt=t2apply(pre,sol).T; if(!inGrid(tgt,0.5))continue;
+    if(dist(cen(pre),cen(tgt))<7)continue;
+    let near=false; pre.forEach(p=>tgt.forEach(q=>{if(dist(p,q)<2.2)near=true;})); if(near)continue;
+    return {pre:pre,tgt:tgt,sol:sol};
+  }
+  const pre=[[-9,-2],[-6,-2],[-9,2]]; const sol={cx:-9,cy:-2,k:2,rot:90,ref:"none",a:12,b:-2};
+  return {pre:pre,tgt:t2apply(pre,sol).T,sol:sol};
+}
+const T2U=()=>({cx:0,cy:0,k:1,rot:0,ref:"none",a:0,b:0});
+let T2={pz:null,u:T2U(),solved:0};
+const M2={
+  tab:"Similarity transformations", lesson:"G-SRT.A.2", accent:"var(--lavender)",
+  title:()=>"Map △ABC onto △DEF", aria:"Coordinate grid with triangle ABC, a target similar triangle DEF, and the image of ABC under the chosen similarity transformation",
+  bar(){
+    btn("New puzzle",()=>{T2.pz=genT2();T2.u=T2U();render();},"primary");
+    btn("Show a solution",()=>{T2.u=Object.assign({},T2.pz.sol);render();});
+    btn("Reset steps",()=>{T2.u=T2U();render();});
+    chk("Snap center",ST,"snap",()=>{});
+    spacer("Drag the dilation center ✛");
+  },
+  draw(){
+    if(!T2.pz)T2.pz=genT2();
+    const g=grid(), pz=T2.pz, u=T2.u, R=t2apply(pz.pre,u), tg=pz.tgt;
+    poly(g,tg.map(S),{fill:COL.tgt,stroke:COL.tgt,dash:"8 6",fo:0.08});
+    labelsS(g,tg.map(S),["D","E","F"],COL.tgt,17);
+    const moved=u.rot!==0||u.ref!=="none"||Math.abs(u.a)>1e-9||Math.abs(u.b)>1e-9;
+    if(Math.abs(u.k-1)>1e-9&&moved){ poly(g,R.D.map(S),{stroke:COL.img,w:1.6,dash:"4 4",fo:0,nodots:true,op:.8}); }
+    poly(g,pz.pre.map(S),{fill:COL.pre,stroke:COL.pre});
+    labelsS(g,pz.pre.map(S),["A","B","C"],COL.pre,17);
+    poly(g,R.T.map(S),{fill:COL.gold,stroke:COL.gold,fo:0.2});
+    labelsS(g,R.T.map(S),["A′","B′","C′"],COL.gold,18);
+    if(u.rot!==0||u.ref!=="none"){ const a1=S(R.A1); g.appendChild(E("circle",{cx:a1[0],cy:a1[1],r:7,fill:"none",stroke:COL.img,"stroke-width":2})); txt(g,[a1[0]+16,a1[1]-14],"A₁","sl",COL.img); }
+    const cs=S([u.cx,u.cy]);
+    seg(g,[cs[0]-8,cs[1]],[cs[0]+8,cs[1]],{stroke:COL.ink,w:2.4}); seg(g,[cs[0],cs[1]-8],[cs[0],cs[1]+8],{stroke:COL.ink,w:2.4});
+    txt(g,[cs[0]-14,cs[1]+17],"P","vl",COL.ink);
+    grab(g,cs,"c");
+  },
+  drag(id,q){ const p=dragW(q); T2.u.cx=p[0]; T2.u.cy=p[1]; },
+  panel(){
+    const u=T2.u;
+    const refOpts=REFS.map(r=>'<option value="'+r[0]+'"'+(u.ref===r[0]?" selected":"")+'>'+r[1]+'</option>').join("");
+    side.innerHTML=`<div class="panel"><h3>Your similarity transformation</h3><div class="pad">
+      <ol class="seq" style="padding-left:20px">
+       <li><b>Dilate</b> from center P with scale factor k
+         <div class="btnrow" style="margin-top:6px;align-items:center;font-family:var(--mono);font-size:13px">P = ( <input class="sm" id="u_cx" type="number" step="1" value="${u.cx}" aria-label="Dilation center x"> , <input class="sm" id="u_cy" type="number" step="1" value="${u.cy}" aria-label="Dilation center y"> ) &nbsp; k = <input class="sm" id="u_k" type="number" step="0.5" value="${u.k}" aria-label="Scale factor"></div></li>
+       <li><b>Rotate</b> counterclockwise about A₁ (where A lands after step 1)
+         <div class="seg" id="u_rot" role="group" aria-label="Rotation angle" style="margin-top:6px">${[0,90,180,270].map(a=>'<button type="button" data-a="'+a+'" aria-pressed="'+(u.rot===a)+'">'+a+'°</button>').join("")}</div></li>
+       <li><b>Reflect</b> across <select class="sm wide" id="u_ref" aria-label="Line of reflection" style="margin-top:6px">${refOpts}</select></li>
+       <li><b>Translate</b> along ⟨a, b⟩
+         <div class="btnrow" style="margin-top:6px;align-items:center;font-family:var(--mono);font-size:13px">a = <input class="sm" id="u_a" type="number" step="1" value="${u.a}" aria-label="Translation a"> b = <input class="sm" id="u_b" type="number" step="1" value="${u.b}" aria-label="Translation b"></div></li>
+      </ol></div><div id="t2v"></div></div>
+    <div class="panel"><h3>Corresponding parts</h3><div class="tblwrap" id="t2tab"></div></div>
+    <div class="panel"><h3>The definition</h3><div class="pad">
+      <p>Two figures are <span class="term">similar</span> if there is a <span class="term">similarity transformation</span> taking one onto the other: a dilation followed by a sequence of rigid motions (translations, rotations, reflections), in any order.</p>
+      <p>Rigid motions keep every length and angle. The dilation multiplies every length by the same k and keeps every angle. So similar figures have <b>all corresponding angles equal</b> and <b>all corresponding sides in the same ratio</b> (G-SRT.A.2).</p>
+      <div class="eq">△ABC ~ △DEF  ⇔  ∠A = ∠D, ∠B = ∠E, ∠C = ∠F
+           and  DE/AB = EF/BC = FD/CA = k</div>
+    </div></div>`+
+    tryPanel(`<p>First make the image the right <b>size</b>: compare DE with AB to find k. Then fix the <b>turn</b> and <b>flip</b>, and slide it into place last.</p>
+      <p>Solved it? Drag the center P somewhere else. Can you re-solve it by changing only the translation? Why does that always work?</p>`);
+    const rd=()=>{const v=id=>{const x=parseFloat($(id).value);return isNaN(x)?0:x;};
+      T2.u.cx=v("u_cx");T2.u.cy=v("u_cy");const kk=parseFloat($("u_k").value);T2.u.k=isNaN(kk)?1:kk;T2.u.a=v("u_a");T2.u.b=v("u_b");T2.u.ref=$("u_ref").value;refresh();};
+    ["u_cx","u_cy","u_k","u_a","u_b"].forEach(id=>$(id).addEventListener("input",rd));
+    $("u_ref").addEventListener("change",rd);
+    side.querySelectorAll("#u_rot button").forEach(b=>b.onclick=()=>{T2.u.rot=+b.dataset.a;
+      side.querySelectorAll("#u_rot button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));refresh();});
+  },
+  live(){
+    const pz=T2.pz, u=T2.u, I=t2apply(pz.pre,u).T, P=pz.pre, D=pz.tgt;
+    if(document.activeElement!==$("u_cx"))$("u_cx").value=u.cx;
+    if(document.activeElement!==$("u_cy"))$("u_cy").value=u.cy;
+    const A=["A","B","C"], Dn=["D","E","F"];
+    let h='<table class="meas"><tr><th>Angle</th><th>△ABC</th><th>△A′B′C′</th><th>△DEF</th></tr>';
+    for(let i=0;i<3;i++){const j=(i+1)%3,l=(i+2)%3;
+      h+="<tr><td>∠"+A[i]+" · ∠"+A[i]+"′ · ∠"+Dn[i]+"</td><td>"+fm(angAt(P[i],P[j],P[l]))+"°</td><td>"+(Math.abs(u.k)<1e-9?"—":fm(angAt(I[i],I[j],I[l]))+"°")+"</td><td>"+fm(angAt(D[i],D[j],D[l]))+"°</td></tr>";}
+    h+='<tr><th>Side</th><th>△ABC</th><th>image ÷ pre</th><th>target ÷ pre</th></tr>';
+    for(let i=0;i<3;i++){const j=(i+1)%3, s0=dist(P[i],P[j]);
+      h+="<tr><td>"+A[i]+A[j]+" → "+A[i]+"′"+A[j]+"′ · "+Dn[i]+Dn[j]+"</td><td>"+fm(s0)+"</td><td>"+f2(dist(I[i],I[j])/s0)+"</td><td>"+f2(dist(D[i],D[j])/s0)+"</td></tr>";}
+    $("t2tab").innerHTML=h+"</table>";
+    const match=I.every((p,i)=>dist(p,D[i])<1e-6), kT=dist(D[0],D[1])/dist(P[0],P[1]);
+    let v;
+    if(match) v='<div class="verdict good"><b>△A′B′C′ lands exactly on △DEF.</b> You found a similarity transformation, so △ABC ~ △DEF with scale factor '+kstr(kT)+'. Every angle matched and every side was multiplied by the same number.</div>';
+    else if(Math.abs(Math.abs(u.k)-kT)>1e-6) v='<div class="verdict info"><b>Size first.</b> DE ÷ AB = '+f2(kT)+', so the dilation must use a scale factor with that size. Right now A′B′ ÷ AB = '+f2(Math.abs(u.k))+'.</div>';
+    else v='<div class="verdict info"><b>The size is right</b> — A′B′C′ is congruent to DEF. Now fix the turn and flip so A′→D, B′→E, C′→F, then translate. A′ is at '+pstr(I[0])+'; D is at '+pstr(D[0])+'.</div>';
+    $("t2v").innerHTML=v;
+  }
+};
+
+/* ══════════════════════ TAB 3 · AA, SAS~, SSS~ ══════════════════════ */
+const T3D=()=>({mode:"AA",A:52,B:64,bases:[3,4.5,6.5],P:[[60,430],[250,430],[120,290]],k:[1.5,1.5,1.5],frz:null});
+let T3=T3D();
+const U3=24;
+function triFromAngles(A,B){ // base 1 along +x, apex up (screen y negative)
+  const C=180-A-B, b=Math.sin(B*D2R)/Math.sin(C*D2R);
+  return [b*Math.cos(A*D2R), b*Math.sin(A*D2R)]; // x, height
+}
+function aaLayout(bases){
+  const ap=triFromAngles(T3.A,T3.B), mnx=Math.min(0,ap[0]), mxx=Math.max(1,ap[0]);
+  let cur0=26; const out=[]; let maxH=0;
+  bases.forEach(b=>{
+    const x0=cur0-mnx*b*U3, yb=452;
+    const L=[x0,yb], R=[x0+b*U3,yb], Ap=[x0+ap[0]*b*U3, yb-ap[1]*b*U3];
+    out.push({L:L,R:R,C:Ap,start:cur0,span:(1-mnx)*U3});
+    cur0=x0+mxx*b*U3+44; maxH=Math.max(maxH,ap[1]*b*U3);
+  });
+  return {tris:out,fits:cur0-44<=684&&maxH<=380};
+}
+function fitAA(){ let n=0; while(!aaLayout(T3.bases).fits&&n<200){ T3.bases=T3.bases.map(b=>Math.max(0.6,b*0.96)); n++; } }
+function sssBuild(){
+  const P=T3.P, k=T3.k, c0=dist(P[0],P[1]), a0=dist(P[1],P[2]), b0=dist(P[2],P[0]);
+  let c,a,b;
+  if(T3.mode==="SAS"){ c=k[0]*c0; b=k[1]*b0; const Aang=angAt(P[0],P[1],P[2])*D2R; a=Math.sqrt(b*b+c*c-2*b*c*Math.cos(Aang)); }
+  else { c=k[0]*c0; a=k[1]*a0; b=k[2]*b0; }
+  const cosA=(b*b+c*c-a*a)/(2*b*c);
+  if(!(Math.abs(cosA)<1-1e-9)) return null;
+  const Aa=Math.acos(cosA);
+  const u=unit(sub(P[1],P[0])), sgn=cross(sub(P[1],P[0]),sub(P[2],P[0]))>0?1:-1;
+  const rot=(v,t)=>[v[0]*Math.cos(t)-v[1]*Math.sin(t), v[0]*Math.sin(t)+v[1]*Math.cos(t)];
+  let Q=[[0,0],mul(u,c),mul(rot(u,sgn*Aa),b)];
+  const xs=Q.map(p=>p[0]), ys=Q.map(p=>p[1]);
+  const off=[525-(Math.min(...xs)+Math.max(...xs))/2, 262-(Math.min(...ys)+Math.max(...ys))/2];
+  Q=Q.map(p=>add(p,off));
+  return Q;
+}
+const M3={
+  tab:"AA similarity", lesson:"G-SRT.A.3", accent:"var(--yellow)",
+  title:()=>({AA:"Two angles are enough: AA similarity",SAS:"SAS similarity",SSS:"SSS similarity"}[T3.mode]),
+  aria:"Triangles drawn with matching angles or proportional sides, with live side lengths",
+  bar(){
+    segBtns([["AA","AA~"],["SAS","SAS~"],["SSS","SSS~"]],T3.mode,k=>{T3.mode=k;render();},"Similarity criterion");
+    if(T3.mode==="AA"){
+      M3.ra=range(15,130,1,T3.A,v=>"∠A = "+v+"°",v=>{T3.A=v; if(T3.A+T3.B>165){T3.B=165-T3.A;M3.rb.set(T3.B);} fitAA(); refresh(); return v;},"Angle A");
+      M3.rb=range(15,130,1,T3.B,v=>"∠B = "+v+"°",v=>{T3.B=v; if(T3.A+T3.B>165){T3.A=165-T3.B;M3.ra.set(T3.A);} fitAA(); refresh(); return v;},"Angle B");
+      spacer("Drag the right end of any base to resize");
+    } else {
+      const n=T3.mode==="SAS"?2:3, lab=T3.mode==="SAS"?["A′B′ ÷ AB","A′C′ ÷ AC"]:["A′B′ ÷ AB","B′C′ ÷ BC","C′A′ ÷ CA"];
+      M3.rk=[];
+      for(let i=0;i<n;i++) M3.rk.push(range(0.5,2,0.05,T3.k[i],v=>lab[i]+" = "+f2(v),v=>{T3.k[i]=v;refresh();return v;},"Ratio "+lab[i]));
+      btn("Make proportional",()=>{for(let i=1;i<3;i++)T3.k[i]=T3.k[0];render();});
+      spacer("Drag A, B, C of the left triangle");
+    }
+    btn("Reset",()=>{const m=T3.mode;T3=T3D();T3.mode=m;render();});
+  },
+  draw(){
+    const g=plain();
+    if(T3.mode==="AA"){
+      fitAA();
+      const Lt=aaLayout(T3.bases).tris, NM=[["A","B","C"],["D","E","F"],["G","H","I"]], col=[COL.pre,COL.img,COL.grn];
+      Lt.forEach((t,i)=>{
+        const pts=[t.L,t.R,t.C], c=cen(pts);
+        poly(g,pts,{fill:col[i],stroke:col[i],fo:0.1});
+        angArc(g,t.L,t.R,t.C,22,COL.org,{n:1});
+        angArc(g,t.R,t.C,t.L,22,COL.ln,{n:2});
+        angArc(g,t.C,t.L,t.R,16,COL.teal,{n:3,fo:0.1});
+        labelsS(g,pts,NM[i],col[i],18);
+        const b=T3.bases[i], ap=triFromAngles(T3.A,T3.B), C=180-T3.A-T3.B;
+        const sL=b*ap[1]/Math.sin(T3.A*D2R), sR=b*Math.sin(T3.A*D2R)/Math.sin(C*D2R);
+        sideLab(g,t.L,t.R,c,fm(b),COL.ink,14);
+        sideLab(g,t.L,t.C,c,fm(sL),COL.ink,15);
+        sideLab(g,t.R,t.C,c,fm(sR),COL.ink,15);
+        grab(g,t.R,"b"+i);
+      });
+      txt(g,[350,28],"∠A = ∠D = ∠G = "+T3.A+"°   ·   ∠B = ∠E = ∠H = "+T3.B+"°","sl",COL.ink);
+    } else {
+      const P=T3.P, Q=sssBuild(), c=cen(P);
+      seg(g,[338,30],[338,480],{stroke:"#B8C4DE",w:1.4,dash:"4 6"});
+      poly(g,P,{fill:COL.pre,stroke:COL.pre});
+      labelsS(g,P,["A","B","C"],COL.pre,18);
+      sideLab(g,P[0],P[1],c,fm(dist(P[0],P[1])/U3),COL.ink); sideLab(g,P[1],P[2],c,fm(dist(P[1],P[2])/U3),COL.ink); sideLab(g,P[2],P[0],c,fm(dist(P[2],P[0])/U3),COL.ink);
+      angArc(g,P[0],P[1],P[2],24,COL.org,{label:fm(angAt(P[0],P[1],P[2]))+"°",lr:16});
+      if(T3.mode==="SSS"){ angArc(g,P[1],P[2],P[0],20,COL.ln,{n:2}); angArc(g,P[2],P[0],P[1],18,COL.teal,{n:3}); }
+      if(Q){
+        const cq=cen(Q);
+        poly(g,Q,{fill:COL.img,stroke:COL.img});
+        labelsS(g,Q,["A′","B′","C′"],COL.img,19);
+        sideLab(g,Q[0],Q[1],cq,fm(dist(Q[0],Q[1])/U3),COL.ink); sideLab(g,Q[1],Q[2],cq,fm(dist(Q[1],Q[2])/U3),COL.ink); sideLab(g,Q[2],Q[0],cq,fm(dist(Q[2],Q[0])/U3),COL.ink);
+        angArc(g,Q[0],Q[1],Q[2],24,COL.org,{label:fm(angAt(Q[0],Q[1],Q[2]))+"°",lr:16});
+        if(T3.mode==="SSS"){ angArc(g,Q[1],Q[2],Q[0],20,COL.ln,{n:2}); angArc(g,Q[2],Q[0],Q[1],18,COL.teal,{n:3}); }
+      } else txt(g,[525,250],"These three lengths cannot form a triangle","sl",COL.red);
+      P.forEach((p,i)=>grab(g,p,"p"+i));
+    }
+  },
+  drag(id,q){
+    if(T3.mode==="AA"){
+      const i=+id[1]; if(!T3.frz)T3.frz=aaLayout(T3.bases).tris.map(t=>({start:t.start,span:t.span}));
+      const f=T3.frz[i], nb=clamp((q[0]-f.start)/f.span,0.8,12);
+      const old=T3.bases[i]; T3.bases[i]=Math.round(nb*10)/10;
+      if(!aaLayout(T3.bases).fits)T3.bases[i]=old;
+    } else {
+      const i=+id[1], old=T3.P[i]; T3.P[i]=inBox(q,24,40,316,470);
+      const P=T3.P; let bad=false;
+      for(let j=0;j<3;j++){const s=dist(P[j],P[(j+1)%3])/U3; if(s<1.5||s>7)bad=true; if(angAt(P[j],P[(j+1)%3],P[(j+2)%3])<12)bad=true;}
+      if(bad)T3.P[i]=old;
+    }
+  },
+  dragEnd(){ T3.frz=null; },
+  panel(){
+    const m=T3.mode;
+    const idea= m==="AA"?`<p><b>Angle-Angle (AA) criterion:</b> if two angles of one triangle are equal to two angles of another, the triangles are similar.</p>
+        <p>Why two is enough: the third angle is forced, 180° minus the other two. And a dilation of △ABC by DE ÷ AB lands on a triangle that is congruent to △DEF by ASA. So a dilation followed by a rigid motion maps one onto the other.</p>
+        <div class="eq">∠A = ∠D and ∠B = ∠E  ⇒  △ABC ~ △DEF<small>Resize any triangle: the angles never change, so the side ratios stay equal.</small></div>`
+      : m==="SAS"?`<p><b>SAS similarity:</b> if two pairs of sides are proportional and the <b>included</b> angles are equal, the triangles are similar.</p>
+        <p>The right triangle copies ∠A exactly. Move the two sliders apart and the third side's ratio drifts, and so do ∠B and ∠C. Set them equal and everything lines up.</p>
+        <div class="eq">A′B′/AB = A′C′/AC and ∠A′ = ∠A  ⇒  △A′B′C′ ~ △ABC</div>`
+      :`<p><b>SSS similarity:</b> if all three pairs of corresponding sides are in the same ratio, the triangles are similar. You never need to measure an angle.</p>
+        <p>Each slider scales one side of △ABC. When all three ratios match, the angle marks show the angles match too. When they don't, the shape changes. If the lengths break the triangle inequality, no triangle exists at all.</p>
+        <div class="eq">A′B′/AB = B′C′/BC = C′A′/CA  ⇒  △A′B′C′ ~ △ABC</div>`;
+    side.innerHTML=`<div class="panel"><h3>Live measurements</h3><div class="tblwrap" id="t3tab"></div><div id="t3v"></div></div>
+      <div class="panel"><h3>The idea</h3><div class="pad">${idea}</div></div>`+
+      tryPanel(m==="AA"?`<p>Make ∠A = 90°. Are all right triangles similar? (Look at the ratios as you change ∠B.) Then make ∠A = ∠B. What kind of triangles are these?</p><p>Why isn't "AAA" a separate criterion?</p>`
+        : m==="SAS"?`<p>Set both ratios to 2. What is B′C′ ÷ BC? Now set them to 2 and 1.5. Which angles change, and which one can't?</p>`
+        : `<p>Set ratios 2, 2, 2: list the three angle pairs. Now try 2, 2, 1.5. Is the new triangle still similar? Find a set of ratios that makes no triangle at all.</p>`);
+  },
+  live(){
+    let h='<table class="meas">', v="";
+    if(T3.mode==="AA"){
+      const ap=triFromAngles(T3.A,T3.B), C=180-T3.A-T3.B, NM=[["A","B","C"],["D","E","F"],["G","H","I"]];
+      const sides=T3.bases.map(b=>[b, b*Math.sin(T3.A*D2R)/Math.sin(C*D2R), b*ap[1]/Math.sin(T3.A*D2R)]);
+      h+='<tr><th>Triangle</th><th>base</th><th>right side</th><th>left side</th><th>ratio</th></tr>';
+      sides.forEach((s,i)=>{const n=NM[i];
+        h+="<tr><td>△"+n.join("")+"</td><td>"+fm(s[0])+"</td><td>"+fm(s[1])+"</td><td>"+fm(s[2])+"</td><td>"+(i? "× "+f2(s[0]/sides[0][0]) : "1")+"</td></tr>";});
+      h+="</table>";
+      const r=sides.map(s=>[s[0]/sides[0][0],s[1]/sides[0][1],s[2]/sides[0][2]]);
+      h+=relRow(COL.teal,"Third angle forced","∠C = ∠F = ∠I = 180° − "+T3.A+"° − "+T3.B+"°",fm(C)+"°");
+      h+=relRow(COL.img,"△DEF vs △ABC","DE/AB, EF/BC, FD/CA",r[1].map(f2).join(" · ")+" "+okv(true));
+      h+=relRow(COL.grn,"△GHI vs △ABC","GH/AB, HI/BC, IG/CA",r[2].map(f2).join(" · ")+" "+okv(true));
+      v='<div class="verdict good"><b>All three triangles are similar.</b> △ABC ~ △DEF ~ △GHI by AA: the sides change size, but every ratio of corresponding sides is the same within each pair.</div>';
+    } else {
+      const P=T3.P, Q=sssBuild(), A=["A","B","C"];
+      h+='<tr><th>Part</th><th>△ABC</th><th>△A′B′C′</th><th>ratio</th></tr>';
+      const rs=[];
+      for(let i=0;i<3;i++){const j=(i+1)%3, s0=dist(P[i],P[j])/U3, s1=Q?dist(Q[i],Q[j])/U3:NaN; rs.push(s1/s0);
+        h+="<tr><td>"+A[i]+A[j]+"</td><td>"+fm(s0)+"</td><td>"+(Q?fm(s1):"—")+"</td><td>"+(Q?f2(s1/s0):"—")+"</td></tr>";}
+      const ang=[];
+      for(let i=0;i<3;i++){const a0=angAt(P[i],P[(i+1)%3],P[(i+2)%3]), a1=Q?angAt(Q[i],Q[(i+1)%3],Q[(i+2)%3]):NaN; ang.push(Math.abs(a0-a1));
+        h+="<tr><td>∠"+A[i]+"</td><td>"+fm(a0)+"°</td><td>"+(Q?fm(a1)+"°":"—")+"</td><td>"+(Q?(Math.abs(a0-a1)<0.05?"equal":"differ"):"—")+"</td></tr>";}
+      h+="</table>";
+      const sim=Q&&Math.max(...rs)-Math.min(...rs)<1e-6;
+      if(!Q) v='<div class="verdict bad"><b>No triangle.</b> The longest of the three new lengths is at least the sum of the other two, so the triangle inequality fails.</div>';
+      else if(sim) v='<div class="verdict good"><b>Similar by '+(T3.mode==="SAS"?"SAS~":"SSS~")+'.</b> '+(T3.mode==="SAS"?"Two sides are scaled by the same factor and the included angle is equal, so ":"All three sides are scaled by the same factor, so ")+'△A′B′C′ ~ △ABC with scale factor '+f2(rs[0])+'. The angles are equal, as they must be.</div>';
+      else v='<div class="verdict bad"><b>Not similar.</b> The side ratios are '+rs.map(f2).join(", ")+'. They are not all equal, and at least one pair of angles differs. Press <b>Make proportional</b> to fix it.</div>';
+    }
+    $("t3tab").innerHTML=h; $("t3v").innerHTML=v;
+  }
+};
+
+/* ══════════════════════ TAB 4 · side-splitter & proportions ══════════════════════ */
+const T4D=()=>({mode:"par",A:[300,62],B:[80,440],C:[620,440],t:0.4,u:0.55,pa:[11,8],hl:"all"});
+let T4=T4D();
+const L4=(p,q)=>dist(p,q)/PU;
+function projT(P,A,B){const d=sub(B,A);return ((P[0]-A[0])*d[0]+(P[1]-A[1])*d[1])/(d[0]*d[0]+d[1]*d[1]);}
+function pyth4(){
+  const C=[90,440], a=T4.pa[0], b=T4.pa[1], B=[C[0]+a*PU,C[1]], A=[C[0],C[1]-b*PU];
+  const t=projT(C,B,A), D=lerp(B,A,t);
+  return {A:A,B:B,C:C,D:D,a:a,b:b,c:L4(A,B),p:L4(B,D),q:L4(A,D),h:L4(C,D)};
+}
+const M4={
+  tab:"Side-splitter & proportions", lesson:"G-SRT.B.4", accent:"var(--mint)",
+  title:()=>({par:"Triangle Side-Splitter Theorem",conv:"The converse: is DE ∥ BC?",bis:"Angle Bisector Theorem",pyth:"Pythagorean theorem by similarity"}[T4.mode]),
+  aria:"Triangle with a segment parallel to one side, and live proportions",
+  bar(){
+    segBtns([["par","Side splitter"],["conv","Converse"],["bis","Angle bisector"],["pyth","Pythagorean proof"]],T4.mode,k=>{T4.mode=k;render();},"Investigation");
+    if(T4.mode==="conv") btn("Make DE ∥ BC",()=>{T4.u=T4.t;refresh();});
+    if(T4.mode==="pyth") segBtns([["all","All three"],["cbd","△CBD"],["acd","△ACD"]],T4.hl,k=>{T4.hl=k;render();},"Highlight");
+    btn("Reset",()=>{const m=T4.mode;T4=T4D();T4.mode=m;render();});
+    spacer(T4.mode==="pyth"?"Drag A or B to change the legs":T4.mode==="bis"?"Drag A, B or C":"Drag A, B, C, D"+(T4.mode==="conv"?" and E":""));
+  },
+  draw(){
+    const g=plain(), m=T4.mode;
+    if(m==="pyth"){
+      const P=pyth4(), hl=T4.hl;
+      if(hl==="all"||hl==="cbd") poly(g,[P.C,P.B,P.D],{fill:COL.org,fo:hl==="cbd"?0.3:0.16,nodots:true});
+      if(hl==="all"||hl==="acd") poly(g,[P.A,P.C,P.D],{fill:COL.ln,fo:hl==="acd"?0.3:0.16,nodots:true});
+      poly(g,[P.A,P.B,P.C],{stroke:COL.ink,fo:0,w:2.8});
+      seg(g,P.C,P.D,{stroke:COL.grn,w:2.4,dash:"7 5"});
+      rightMarkS(g,P.C,[1,0],[0,-1],14);
+      rightMarkS(g,P.D,unit(sub(P.B,P.D)),unit(sub(P.C,P.D)),11);
+      angArc(g,P.B,P.A,P.C,30,COL.org,{n:1}); angArc(g,P.C,P.D,P.A,30,COL.org,{n:1,fo:0.08});
+      angArc(g,P.A,P.C,P.B,30,COL.ln,{n:2}); angArc(g,P.C,P.B,P.D,36,COL.ln,{n:2,fo:0.08});
+      const c=cen([P.A,P.B,P.C]);
+      labelsS(g,[P.A,P.B,P.C],["A","B","C"],COL.ink,18);
+      txt(g,add(P.D,mul(unit(sub(P.D,P.C)),18)),"D","vl",COL.grn);
+      txt(g,[(P.B[0]+P.C[0])/2,P.C[1]+20],"a = "+fm(P.a),"sl",COL.org);
+      txt(g,[P.C[0]-12,(P.A[1]+P.C[1])/2],"b = "+fm(P.b),"sl",COL.ln,"end");
+      const nAB=unit([P.A[1]-P.B[1],P.B[0]-P.A[0]]);
+      const nOut=(nAB[0]*(c[0]-P.D[0])+nAB[1]*(c[1]-P.D[1]))>0?mul(nAB,-1):nAB;
+      txt(g,add(lerp(P.B,P.D,0.5),mul(nOut,16)),"p = "+fm(P.p),"sl",COL.org);
+      txt(g,add(lerp(P.A,P.D,0.5),mul(nOut,16)),"q = "+fm(P.q),"sl",COL.ln);
+      txt(g,add(lerp(P.C,P.D,0.55),mul(unit(sub(P.B,P.D)),-14)),"h","sl",COL.grn);
+      grab(g,P.A,"pA"); grab(g,P.B,"pB");
+      return;
+    }
+    const A=T4.A,B=T4.B,C=T4.C, c=cen([A,B,C]);
+    poly(g,[A,B,C],{fill:COL.pre,stroke:COL.ink,fo:0.06});
+    labelsS(g,[A,B,C],["A","B","C"],COL.ink,18);
+    if(m==="par"||m==="conv"){
+      const t=T4.t, u=m==="par"?T4.t:T4.u, D=lerp(A,B,t), E=lerp(A,C,u);
+      const par=Math.abs(t-u)<1e-9;
+      if(par){ poly(g,[A,D,E],{fill:COL.img,fo:0.14,nodots:true}); arrowTick(g,D,E,1,COL.img); arrowTick(g,B,C,1,COL.img); }
+      fullLineS(g,D,E,{stroke:par?COL.img:COL.org,w:1.4,op:.35,dash:"3 6"});
+      seg(g,D,E,{stroke:par?COL.img:COL.org,w:3});
+      // lengths along sides
+      sideLab(g,A,D,c,fm(L4(A,D)),COL.pre,16); sideLab(g,D,B,c,fm(L4(D,B)),COL.grn,16);
+      sideLab(g,A,E,c,fm(L4(A,E)),COL.pre,16); sideLab(g,E,C,c,fm(L4(E,C)),COL.grn,16);
+      ticks(g,A,D,1,COL.pre); ticks(g,A,E,1,COL.pre);
+      cdot(g,D,COL.ink,5); cdot(g,E,COL.ink,5);
+      txt(g,add(D,[-18,-4]),"D","vl",COL.ink); txt(g,add(E,[18,-4]),"E","vl",COL.ink);
+      if(par){ angArc(g,D,A,E,0.001,COL.img); angArc(g,D,B,E,20,COL.org,{n:1,fo:0.1}); angArc(g,B,D,C,20,COL.org,{n:1,fo:0.1}); }
+      grab(g,D,"D"); if(m==="conv")grab(g,E,"E");
+    } else {
+      const ab=dist(A,B), ac=dist(A,C), D=lerp(B,C,ab/(ab+ac));
+      seg(g,A,D,{stroke:COL.img,w:3});
+      angArc(g,A,B,D,40,COL.org,{n:1}); angArc(g,A,D,C,46,COL.org,{n:2});
+      sideLab(g,A,B,c,"AB = "+fm(L4(A,B)),COL.pre,18); sideLab(g,A,C,c,"AC = "+fm(L4(A,C)),COL.pre,18);
+      txt(g,[(B[0]+D[0])/2,(B[1]+D[1])/2+(c[1]<B[1]?-18:20)],"BD = "+fm(L4(B,D)),"sl",COL.grn);
+      txt(g,[(C[0]+D[0])/2,(C[1]+D[1])/2+(c[1]<C[1]?-18:20)],"DC = "+fm(L4(D,C)),"sl",COL.grn);
+      cdot(g,D,COL.img,5); txt(g,add(D,mul(unit(sub(D,A)),20)),"D","vl",COL.img);
+    }
+    grab(g,A,"A"); grab(g,B,"B"); grab(g,C,"C");
+  },
+  drag(id,q){
+    if(id==="pA"){ T4.pa[1]=clamp(Math.round((440-q[1])/PU*2)/2,2,15.5); return; }
+    if(id==="pB"){ T4.pa[0]=clamp(Math.round((q[0]-90)/PU*2)/2,2,23); return; }
+    if(id==="D"||id==="E"){
+      const A=T4.A, P=id==="D"?T4.B:T4.C; let t=clamp(projT(q,A,P),0.1,0.9);
+      if(id==="D"){ if(T4.mode==="conv"&&Math.abs(t-T4.u)<0.012)t=T4.u; T4.t=t; }
+      else { if(Math.abs(t-T4.t)<0.012)t=T4.t; T4.u=t; }
+      return;
+    }
+    const old=T4[id]; T4[id]=inBox(q,24,24,676,476);
+    const P=[T4.A,T4.B,T4.C]; for(let j=0;j<3;j++){ if(angAt(P[j],P[(j+1)%3],P[(j+2)%3])<14||dist(P[j],P[(j+1)%3])<110){T4[id]=old;return;} }
+  },
+  panel(){
+    const m=T4.mode; let idea,tr;
+    if(m==="par"){ idea=`<p><b>Triangle Side-Splitter Theorem:</b> a segment that splits two sides of a triangle and is <b>parallel</b> to the third side splits those sides <b>proportionally</b>.</p>
+        <p>Why: DE ∥ BC makes corresponding angles ∠ADE = ∠ABC, and ∠A is shared, so △ADE ~ △ABC by AA. Then AD/AB = AE/AC. Subtract from 1 and flip, and you get AD/DB = AE/EC.</p>
+        <div class="eq">DE ∥ BC  ⇒  AD/DB = AE/EC
+also     AD/AB = AE/AC = DE/BC</div>`;
+      tr=`<p>Drag D until AD/DB = 1. Where is D? DE is then a <span class="term">midsegment</span>. Check that DE = ½ BC.</p><p>Drag A far to one side. Does the proportion still hold?</p>`; }
+    else if(m==="conv"){ idea=`<p><b>Converse:</b> if a segment splits two sides of a triangle proportionally, then it is parallel to the third side.</p>
+        <p>D and E now move independently. The segment DE is parallel to BC <b>exactly when</b> the two ratios agree. That is a quick test for parallel lines that needs no angle measuring.</p>
+        <div class="eq">AD/DB = AE/EC  ⇒  DE ∥ BC</div>`;
+      tr=`<p>Drag E slowly toward D's level and watch the angle between DE and BC shrink to 0° at the moment the ratios match. Then drag B: does DE stay parallel? Why?</p>`; }
+    else if(m==="bis"){ idea=`<p><b>Angle Bisector Theorem:</b> the bisector of an angle of a triangle splits the opposite side into two pieces in the same ratio as the two sides that form the angle.</p>
+        <p>Proof idea: draw a line through C parallel to AD, meeting ray BA at a point X. Parallel lines make △AXC isosceles, so AX = AC. Then the Side-Splitter Theorem in △BXC gives BD/DC = BA/AX = AB/AC.</p>
+        <div class="eq">AD bisects ∠A  ⇒  BD/DC = AB/AC</div>`;
+      tr=`<p>Make AB = AC (isosceles). Where does D fall? Now make AB twice AC: what is BD/DC?</p>`; }
+    else { idea=`<p>Drop the altitude from the right angle C to the hypotenuse, meeting it at D. It cuts the right triangle into <b>two smaller triangles, and both are similar to the original</b>, by AA (each shares an acute angle with △ABC and has a right angle).</p>
+        <p>△ABC ~ △CBD gives a/c = p/a, so a² = c·p. △ABC ~ △ACD gives b/c = q/b, so b² = c·q. Add them: a² + b² = c(p + q) = c·c = c².</p>
+        <div class="eq">a² = c·p    b² = c·q    h² = p·q
+a² + b² = c(p + q) = c²</div>`;
+      tr=`<p>Highlight △CBD and match its angles to △ABC. Then set a = b. Where does D land, and what is h?</p><p>Make a = 6, b = 8. Predict c, p and q before you read them.</p>`; }
+    side.innerHTML=`<div class="panel"><h3>Live proportions</h3><div id="t4eq" class="eq" style="margin:16px 20px"></div><div id="t4chk"></div></div>
+      <div class="panel"><h3>The idea</h3><div class="pad">${idea}</div></div>`+tryPanel(tr);
+  },
+  live(){
+    const m=T4.mode; let e="",c="";
+    if(m==="pyth"){
+      const P=pyth4();
+      e="a² = "+fm(P.a*P.a)+"   c·p = "+f2(P.c)+" × "+f2(P.p)+" = "+fm(P.c*P.p)+"\nb² = "+fm(P.b*P.b)+"   c·q = "+f2(P.c)+" × "+f2(P.q)+" = "+fm(P.c*P.q)+"\nh² = "+fm(P.h*P.h)+"   p·q = "+fm(P.p*P.q)+
+        "\na² + b² = "+fm(P.a*P.a+P.b*P.b)+" = c² = "+fm(P.c*P.c)+"<small>c = AB = "+f2(P.c)+" · p = BD · q = AD · h = CD</small>";
+      c+=relRow(COL.org,"△ABC ~ △CBD","share ∠B; ∠C = ∠D = 90°","a/c = p/a = "+f2(P.a/P.c)+" "+okv(true));
+      c+=relRow(COL.ln,"△ABC ~ △ACD","share ∠A; ∠C = ∠D = 90°","b/c = q/b = "+f2(P.b/P.c)+" "+okv(true));
+      c+=relRow(COL.grn,"△CBD ~ △ACD","both similar to △ABC","h/p = q/h = "+f2(P.h/P.p)+" "+okv(true));
+    } else if(m==="bis"){
+      const A=T4.A,B=T4.B,C=T4.C, ab=dist(A,B), ac=dist(A,C), D=lerp(B,C,ab/(ab+ac));
+      e="BD/DC = "+f2(L4(B,D))+" / "+f2(L4(D,C))+" = "+f2(L4(B,D)/L4(D,C))+"\nAB/AC = "+f2(L4(A,B))+" / "+f2(L4(A,C))+" = "+f2(ab/ac);
+      c+=relRow(COL.org,"∠BAD = ∠DAC",fm(angAt(A,B,D))+"° and "+fm(angAt(A,D,C))+"°",okv(true));
+      c+=relRow(COL.grn,"BD/DC = AB/AC","the bisector splits BC in the ratio of the sides",f2(ab/ac)+" "+okv(true));
+    } else {
+      const A=T4.A,B=T4.B,C=T4.C,t=T4.t,u=m==="par"?t:T4.u, D=lerp(A,B,t), E=lerp(A,C,u);
+      const r1v=L4(A,D)/L4(D,B), r2v=L4(A,E)/L4(E,C), par=Math.abs(t-u)<1e-9;
+      const ang=Math.acos(clamp(Math.abs(unit(sub(E,D))[0]*unit(sub(C,B))[0]+unit(sub(E,D))[1]*unit(sub(C,B))[1]),0,1))/D2R;
+      e="AD/DB = "+f2(L4(A,D))+" / "+f2(L4(D,B))+" = "+f2(r1v)+"\nAE/EC = "+f2(L4(A,E))+" / "+f2(L4(E,C))+" = "+f2(r2v)+
+        (par?"\nDE/BC = "+f2(L4(D,E))+" / "+f2(L4(B,C))+" = "+f2(L4(D,E)/L4(B,C))+" = AD/AB":"");
+      c+=relRow(COL.pre,"Ratios equal?","AD/DB vs AE/EC",(par?"equal ":"differ ")+okv(par));
+      c+=relRow(par?COL.img:COL.org,"DE ∥ BC?","angle between DE and BC = "+fm(ang)+"°",par?"parallel "+okv(true):"not parallel "+okv(false));
+      if(par) c+=relRow(COL.img,"△ADE ~ △ABC","AA: ∠A shared, ∠ADE = ∠ABC (corresponding)","k = "+f2(t)+" "+okv(true));
+    }
+    $("t4eq").innerHTML=e; $("t4chk").innerHTML=c;
+  }
+};
+
+/* ══════════════════════ TAB 5 · applications ══════════════════════ */
+const GY=452, PXM=25, TX=96, XB=600;
+const T5D=()=>({mode:"shadow",H:9,th:40,hp:1.7,xp:520,hide:true, xp2:120,he:1.6,Hb:12,xm:300});
+let T5=T5D();
+const tShadowMax=()=>(690-TX)/PXM;
+function drawTree(g,x,H){
+  const top=GY-H*PXM;
+  g.appendChild(E("rect",{x:x-5,y:GY-H*PXM*0.32,width:10,height:H*PXM*0.32,fill:"#8B5E3C"}));
+  const w=H*PXM*0.24;
+  for(let j=0;j<3;j++){ const y0=GY-H*PXM*(0.25+0.22*j), y1=top+H*PXM*0.25*(2-j)*0.42;
+    g.appendChild(E("polygon",{points:(x-w*(1-0.2*j))+","+y0+" "+x+","+(j===2?top:y1-20)+" "+(x+w*(1-0.2*j))+","+y0,fill:"#16A34A",opacity:0.85-0.1*j})); }
+}
+function drawPerson(g,x,h,col){
+  const H=h*PXM, top=GY-H, hr=H*0.09;
+  g.appendChild(E("circle",{cx:x,cy:top+hr,r:hr,fill:col}));
+  seg(g,[x,top+2*hr],[x,GY-H*0.45],{stroke:col,w:3});
+  seg(g,[x,GY-H*0.45],[x-H*0.13,GY],{stroke:col,w:3}); seg(g,[x,GY-H*0.45],[x+H*0.13,GY],{stroke:col,w:3});
+  seg(g,[x-H*0.17,top+H*0.36],[x+H*0.17,top+H*0.36],{stroke:col,w:3});
+}
+function ground(g){
+  g.appendChild(E("rect",{x:0,y:0,width:VW,height:GY,fill:"url(#sky)",opacity:0.75}));
+  g.appendChild(E("rect",{x:0,y:GY,width:VW,height:VH-GY,fill:"#E7D9C4"}));
+  seg(g,[0,GY],[VW,GY],{stroke:"#7C6A55",w:2.4});
+}
+function dimLine(g,p,q,label,col,off){
+  const d=unit(sub(q,p)), n=[-d[1],d[0]], a=add(p,mul(n,off)), b=add(q,mul(n,off));
+  seg(g,a,b,{stroke:col,w:1.6}); seg(g,add(a,mul(n,-5)),add(a,mul(n,5)),{stroke:col,w:1.6}); seg(g,add(b,mul(n,-5)),add(b,mul(n,5)),{stroke:col,w:1.6});
+  txt(g,add(mul(add(a,b),.5),mul(n,off>0?12:-12)),label,"sl",col);
+}
+function mirrorGeom(){
+  const d1=(T5.xm-T5.xp2)/PXM, d2=(XB-T5.xm)/PXM, hit=d1*T5.Hb/d2;
+  return {d1:d1,d2:d2,hit:hit,aligned:Math.abs(hit-T5.he)<0.005};
+}
+const M5={
+  tab:"Applications", lesson:"G-SRT.B.5 · G-MG.A.3", accent:"var(--magenta)",
+  title:()=>T5.mode==="shadow"?"Measure a tree with shadows":"Measure a building with a mirror",
+  aria:"Indirect measurement scene with similar right triangles",
+  bar(){
+    segBtns([["shadow","Shadows"],["mirror","Mirror"]],T5.mode,k=>{T5.mode=k;render();},"Scene");
+    if(T5.mode==="shadow"){
+      M5.rt=range(20,70,1,T5.th,v=>"sun "+v+"°",v=>{T5.th=Math.max(v,Math.ceil(Math.atan(T5.H/tShadowMax())/D2R));fitPerson();refresh();return T5.th;},"Sun elevation angle");
+      chk("Hide tree height",T5,"hide");
+      spacer("Drag the sun, the treetop, the person");
+    } else {
+      btn("Aim the mirror",()=>{T5.xm=T5.xp2+(XB-T5.xp2)*T5.he/(T5.he+T5.Hb);refresh();},"primary");
+      chk("Hide building height",T5,"hide");
+      spacer("Drag the mirror, the person, the eye, the roof");
+    }
+    btn("Reset",()=>{const m=T5.mode;T5=T5D();T5.mode=m;render();});
+  },
+  draw(){
+    const g=plain(); ground(g);
+    if(T5.mode==="shadow"){
+      const th=T5.th*D2R, H=T5.H, st=H/Math.tan(th), sp=T5.hp/Math.tan(th);
+      const top=[TX,GY-H*PXM], tip=[TX+st*PXM,GY], pTop=[T5.xp,GY-T5.hp*PXM], pTip=[T5.xp+sp*PXM,GY];
+      const dir=unit([-Math.cos(th),-Math.sin(th)]);
+      // sun
+      const sun=[350+330*dir[0],GY+330*dir[1]];
+      for(let j=-3;j<=3;j++){ const o=mul([-dir[1],dir[0]],j*60); seg(g,add(sun,o),add(add(sun,o),mul(dir,-900)),{stroke:"#F59E0B",w:1,op:.25,dash:"2 8"}); }
+      g.appendChild(E("circle",{cx:sun[0],cy:sun[1],r:24,fill:"#FCD34D",stroke:"#F59E0B","stroke-width":3}));
+      poly(g,[[TX,GY],top,tip],{fill:COL.grn,fo:0.15,nodots:true});
+      poly(g,[[T5.xp,GY],pTop,pTip],{fill:COL.img,fo:0.2,nodots:true});
+      seg(g,[TX,GY],tip,{stroke:"#334155",w:6,op:.55}); seg(g,[T5.xp,GY],pTip,{stroke:"#334155",w:6,op:.55});
+      drawTree(g,TX,H); drawPerson(g,T5.xp,T5.hp,COL.img);
+      seg(g,add(top,mul(dir,60)),tip,{stroke:"#F59E0B",w:2.4}); seg(g,add(pTop,mul(dir,60)),pTip,{stroke:"#F59E0B",w:2.4});
+      angArc(g,tip,top,[TX,GY],34,COL.gold,{label:T5.th+"°",lr:16}); angArc(g,pTip,pTop,[T5.xp,GY],26,COL.gold,{});
+      rightMarkS(g,[TX,GY],[1,0],[0,-1],12); rightMarkS(g,[T5.xp,GY],[1,0],[0,-1],10);
+      dimLine(g,[TX,GY],tip,"tree shadow "+fm(st)+" m",COL.grn,-30);
+      dimLine(g,[T5.xp,GY],pTip,fm(sp)+" m",COL.img,-30);
+      txt(g,[TX+14,top[1]-14],"H = "+(T5.hide?"?":fm(H)+" m"),"sl",COL.grn,"start");
+      txt(g,[T5.xp-10,pTop[1]-14],fm(T5.hp)+" m","sl",COL.img,"end");
+      grab(g,top,"tree"); grab(g,pTop,"ph"); grab(g,[T5.xp,GY],"px"); grab(g,sun,"sun");
+    } else {
+      const M=mirrorGeom(), roof=[XB,GY-T5.Hb*PXM], eye=[T5.xp2,GY-T5.he*PXM], mir=[T5.xm,GY];
+      g.appendChild(E("rect",{x:XB,y:roof[1],width:80,height:T5.Hb*PXM,fill:"#94A3B8",stroke:"#475569","stroke-width":2}));
+      for(let y=roof[1]+14;y<GY-24;y+=34)for(let x=XB+12;x<XB+70;x+=26) g.appendChild(E("rect",{x:x,y:y,width:14,height:18,fill:"#E0F2FE",opacity:.85}));
+      drawPerson(g,T5.xp2,T5.he+0.12,COL.img);
+      poly(g,[[XB,GY],roof,mir],{fill:COL.grn,fo:0.13,nodots:true});
+      if(M.aligned) poly(g,[[T5.xp2,GY],eye,mir],{fill:COL.img,fo:0.2,nodots:true});
+      const hitP=[T5.xp2,GY-M.hit*PXM];
+      seg(g,roof,mir,{stroke:COL.gold,w:2.6,marker:"arS"}); seg(g,mir,hitP,{stroke:COL.gold,w:2.6,marker:"arS"});
+      seg(g,mir,[T5.xm,GY-120],{stroke:COL.ink,w:1.4,dash:"4 5",op:.6});
+      angArc(g,mir,[T5.xm-50,GY],hitP,30,COL.org,{n:1}); angArc(g,mir,[T5.xm+50,GY],roof,30,COL.org,{n:1});
+      g.appendChild(E("rect",{x:T5.xm-14,y:GY-3,width:28,height:6,fill:"#22D3EE",stroke:"#0E7490","stroke-width":1.5}));
+      cdot(g,eye,M.aligned?COL.grn:COL.red,5);
+      if(!M.aligned&&hitP[1]>0) g.appendChild(E("circle",{cx:hitP[0],cy:hitP[1],r:6,fill:"none",stroke:COL.gold,"stroke-width":2}));
+      rightMarkS(g,[XB,GY],[-1,0],[0,-1],12); rightMarkS(g,[T5.xp2,GY],[1,0],[0,-1],10);
+      dimLine(g,[T5.xp2,GY],mir,fm(M.d1)+" m",COL.img,-28);
+      dimLine(g,mir,[XB,GY],fm(M.d2)+" m",COL.grn,-28);
+      txt(g,[XB+40,roof[1]-16],"H = "+(T5.hide?"?":fm(T5.Hb)+" m"),"sl",COL.grn);
+      txt(g,[T5.xp2-12,eye[1]],"eye "+fm(T5.he)+" m","sl",COL.img,"end");
+      txt(g,[T5.xm,GY+30],"mirror","sl","#0E7490");
+      grab(g,mir,"m"); grab(g,eye,"eye"); grab(g,[T5.xp2,GY],"p2"); grab(g,roof,"roof");
+    }
+  },
+  drag(id,q){
+    if(id==="sun"){ let a=Math.atan2(GY-q[1],350-q[0])/D2R; a=clamp(Math.round(a),20,70);
+      T5.th=Math.max(a,Math.ceil(Math.atan(T5.H/tShadowMax())/D2R)); fitPerson(); if(M5.rt)M5.rt.set(T5.th); return; }
+    if(id==="tree"){ let H=Math.round((GY-q[1])/PXM*10)/10; H=clamp(H,3,16); if(H/Math.tan(T5.th*D2R)>tShadowMax())H=Math.floor(tShadowMax()*Math.tan(T5.th*D2R)*10)/10; T5.H=H; return; }
+    if(id==="ph"){ T5.hp=clamp(Math.round((GY-q[1])/PXM*10)/10,1,2.4); fitPerson(); return; }
+    if(id==="px"){ T5.xp=clamp(q[0],TX+40,680); fitPerson(); return; }
+    if(id==="m"){ T5.xm=clamp(q[0],T5.xp2+20,XB-20);
+      const ex=T5.xp2+(XB-T5.xp2)*T5.he/(T5.he+T5.Hb); if(Math.abs(T5.xm-ex)<3)T5.xm=ex; return; }
+    if(id==="eye"){ T5.he=clamp(Math.round((GY-q[1])/PXM*10)/10,1,2.2); return; }
+    if(id==="p2"){ T5.xp2=clamp(q[0],30,T5.xm-20); return; }
+    if(id==="roof"){ T5.Hb=clamp(Math.round((GY-q[1])/PXM*10)/10,4,16.5); return; }
+  },
+  panel(){
+    const sh=T5.mode==="shadow";
+    side.innerHTML=`<div class="panel"><h3>Solve for the unknown height</h3><div class="eq" id="t5eq" style="margin:16px 20px"></div><div id="t5v"></div></div>
+      <div class="panel"><h3>Why the triangles are similar</h3><div class="pad">${sh?
+       `<p>The sun is so far away that its rays arrive <b>parallel</b>. Each upright object, its shadow and a sun ray form a right triangle.</p>
+        <p>Both triangles have a right angle at the ground, and the angle at the shadow tip is the sun's angle of elevation in both (corresponding angles, parallel rays). So the triangles are similar by <b>AA</b> and their sides are proportional (G-SRT.B.5).</p>
+        <div class="eq">tree height / tree shadow = person height / person shadow</div>`
+       :`<p>Light bounces off a flat mirror at the same angle it arrives: the <b>angle of incidence equals the angle of reflection</b>. You see the roof in the mirror only when the reflected ray reaches your eye.</p>
+        <p>At that moment the two triangles each have a right angle and an equal angle at the mirror, so they are similar by <b>AA</b>.</p>
+        <div class="eq">building height / d₂ = eye height / d₁</div>`}
+       <p>This is <span class="term">indirect measurement</span>: you find a length you can't reach from lengths you can (G-MG.A.3 — modeling with geometry).</p></div></div>`+
+      tryPanel(sh?`<p>Keep the hidden height hidden. Measure the shadows, solve for H, then uncheck the box to see if you were right.</p><p>Drag the sun. Why does the answer for H stay the same even though both shadows change?</p>`
+        :`<p>Drag the mirror until the eye dot turns green (or press <b>Aim the mirror</b>), then solve for H before you uncheck the box.</p><p>Step closer to the mirror. Which way must the mirror move to keep the roof in view?</p>`);
+  },
+  live(){
+    let e,v;
+    if(T5.mode==="shadow"){
+      const th=T5.th*D2R, st=T5.H/Math.tan(th), sp=T5.hp/Math.tan(th), Hs=T5.hp*r1(st)/r1(sp);
+      e="H / "+fm(st)+" = "+fm(T5.hp)+" / "+fm(sp)+"\nH = "+fm(T5.hp)+" × "+fm(st)+" ÷ "+fm(sp)+"\nH ≈ "+f2(Hs)+" m<small>Using the rounded measurements shown on the figure. Exact tree height: "+(T5.hide?"hidden":fm(T5.H)+" m")+".</small>";
+      v='<div class="verdict '+(T5.hide?"info":"good")+'">'+(T5.hide?'<b>Prediction: about '+fm(Hs)+' m.</b> Uncheck “Hide tree height” to compare.':'<b>The proportion works.</b> Predicted '+fm(Hs)+' m; actual '+fm(T5.H)+' m (any gap is only rounding).')+'</div>';
+    } else {
+      const M=mirrorGeom(), Hs=T5.he*r1(M.d2)/r1(M.d1);
+      if(M.aligned){
+        e="H / "+fm(M.d2)+" = "+fm(T5.he)+" / "+fm(M.d1)+"\nH = "+fm(T5.he)+" × "+fm(M.d2)+" ÷ "+fm(M.d1)+"\nH ≈ "+f2(Hs)+" m<small>Exact building height: "+(T5.hide?"hidden":fm(T5.Hb)+" m")+".</small>";
+        v='<div class="verdict good"><b>The person sees the roof in the mirror.</b> The reflected ray hits the eye, so the two right triangles are similar and the proportion gives H ≈ '+fm(Hs)+' m.</div>';
+      } else {
+        e="reflected ray reaches the person at "+fm(M.hit)+" m\neye is at "+fm(T5.he)+" m<small>The proportion only applies once the ray reaches the eye.</small>";
+        v='<div class="verdict bad"><b>Not lined up yet.</b> The ray arrives '+(M.hit>T5.he?"above":"below")+' the eye. Move the mirror '+(M.hit>T5.he?"toward the building":"toward the person")+'.</div>';
+      }
+    }
+    $("t5eq").innerHTML=e; $("t5v").innerHTML=v;
+  }
+};
+function fitPerson(){ const sp=T5.hp/Math.tan(T5.th*D2R); if(T5.xp+sp*PXM>690)T5.xp=Math.max(TX+40,690-sp*PXM); }
+
+/* ══════════════════════ TAB 6 · challenge ══════════════════════ */
+let T6={kind:"any",p:null,checked:false,streak:0,best:0,right:0,total:0};
+const NICE_TRI=[[4,5,6],[3,5,7],[5,6,8],[4,6,7],[6,7,9],[5,7,8],[3,4,5],[6,8,9]];
+function triPts(a,b,c){ // sides a=BC, b=CA, c=AB; A at origin, B on +x, C above
+  const x=(b*b+c*c-a*a)/(2*c), y=Math.sqrt(Math.max(0,b*b-x*x)); return [[0,0],[c,0],[x,y]];
+}
+function genDil(){
+  for(let t=0;t<500;t++){
+    const atO=Math.random()<0.55, C=atO?[0,0]:[rnd(-5,5),rnd(-4,4)], k=pick([2,3,0.5,-1,-2,1.5,-0.5,0.25]);
+    const mlt=k===0.25?4:(k===0.5||k===1.5||k===-0.5)?2:1;
+    const P=[C[0]+mlt*rnd(-4,4),C[1]+mlt*rnd(-3,3)]; if(dist(P,C)<1.5)continue;
+    const I=dil(P,C,k); if(!inGrid([P,I],0))continue;
+    return {kind:"xy",fig:"dil",C:C,P:P,ans:I,k:k,
+      q:"A dilation with center "+(atO?"the origin O":"C"+pstr(C))+" and scale factor k = "+kstr(k)+" maps P"+pstr(P)+" to P′. Find the coordinates of P′.",
+      explain:"P′ = C + k(P − C). Here P − C = ⟨"+fm(P[0]-C[0])+", "+fm(P[1]-C[1])+"⟩, times "+kstr(k)+" is ⟨"+fm(I[0]-C[0])+", "+fm(I[1]-C[1])+"⟩, so P′ = <b>"+pstr(I)+"</b>."+(k<0?" A negative k puts P′ on the opposite side of the center.":"")};
+  }
+  return genDil();
+}
+function genScale(){
+  if(Math.random()<0.5){
+    for(let t=0;t<500;t++){
+      const C=[rnd(-4,4),rnd(-3,3)], k=pick([2,3,0.5,-2,1.5,-1,1/3]);
+      const mlt=k===0.5||k===1.5?2:k===1/3?3:1, A=[C[0]+mlt*rnd(-3,3),C[1]+mlt*rnd(-2,2)]; if(dist(A,C)<1.5)continue;
+      const I=dil(A,C,k); if(!inGrid([A,I],0))continue;
+      return {kind:"num",fig:"scale",C:C,P:A,ans:k,ans2:I,
+        q:"A dilation centered at C"+pstr(C)+" maps A"+pstr(A)+" to A′"+pstr(I)+". What is the scale factor k? (Fractions like 1/2 are fine.)",
+        explain:"Compare the vectors from the center: A − C = ⟨"+fm(A[0]-C[0])+", "+fm(A[1]-C[1])+"⟩ and A′ − C = ⟨"+fm(I[0]-C[0])+", "+fm(I[1]-C[1])+"⟩. The second is <b>"+kstr(k)+"</b> times the first"+(k<0?" (negative: A′ is on the opposite side of C)":"")+"."};
+    }
+  }
+  const s=pick(NICE_TRI), k=pick([1.5,2,2.5,3,0.5]), big=s.map(x=>x*k);
+  const i=rnd(0,2), nm=["BC","CA","AB"], nm2=["EF","FD","DE"];
+  return {kind:"num",fig:"sim",s:s,k:k,lab1:s.map(String),lab2:big.map(x=>fm(x)),ans:k,
+    q:"△ABC ~ △DEF as shown. What is the scale factor from △ABC to △DEF?",
+    explain:"Divide corresponding sides, image over pre-image: "+nm2[i]+" ÷ "+nm[i]+" = "+fm(big[i])+" ÷ "+s[i]+" = <b>"+kstr(k)+"</b>."+(k<1?" A scale factor less than 1 means △DEF is a reduction.":"")};
+}
+function genSimX(){
+  const s=pick(NICE_TRI), k=pick([1.5,2,2.5,3]), big=s.map(x=>x*k), nm=["BC","CA","AB"], nm2=["EF","FD","DE"];
+  const known=rnd(0,2); let un=rnd(0,2); while(un===known)un=rnd(0,2);
+  const lab1=s.map(String), lab2=big.map(x=>fm(x));
+  if(Math.random()<0.5){
+    lab2[un]="x"; lab1[3-known-un]="";  lab2[3-known-un]="";
+    return {kind:"num",fig:"sim",s:s,k:k,lab1:lab1,lab2:lab2,ans:big[un],
+      q:"△ABC ~ △DEF. Find x.",
+      explain:"The scale factor is "+nm2[known]+" ÷ "+nm[known]+" = "+fm(big[known])+" ÷ "+s[known]+" = "+kstr(k)+". So x = "+nm2[un]+" = "+kstr(k)+" × "+s[un]+" = <b>"+fm(big[un])+"</b>."};
+  }
+  // algebraic: side expressed as m·x + n
+  let m=0,n=0,x=0;
+  for(let t=0;t<200;t++){ m=rnd(1,3); n=rnd(-3,4); x=(big[un]-n)/m; if(isInt(x)&&x>0&&n!==0)break; }
+  if(!(isInt(x)&&x>0)){ m=1; n=0; x=big[un]; }
+  const expr=(m===1?"":m)+"x"+(n?(n>0?" + "+n:" − "+(-n)):"");
+  lab2[un]=expr; lab1[3-known-un]=""; lab2[3-known-un]="";
+  return {kind:"num",fig:"sim",s:s,k:k,lab1:lab1,lab2:lab2,ans:x,
+    q:"△ABC ~ △DEF. Solve for x.",
+    explain:"Set up the proportion "+nm2[un]+"/"+nm[un]+" = "+nm2[known]+"/"+nm[known]+": ("+expr+")/"+s[un]+" = "+fm(big[known])+"/"+s[known]+". Cross-multiply: "+expr+" = "+fm(big[un])+", so x = <b>"+fm(x)+"</b>."};
+}
+function genSplit(){
+  for(let t=0;t<300;t++){
+    const a=rnd(2,9), b=rnd(2,9), c=rnd(2,12), x=c*b/a; if(!isInt(x*2)||x>20||a===b)continue;
+    const v=rnd(0,1);
+    if(v===0) return {kind:"num",fig:"split",lab:[String(a),String(b),String(c),"x"],ans:x,frac:a/(a+b),
+      q:"In △ABC, DE ∥ BC with D on AB and E on AC. AD = "+a+", DB = "+b+", AE = "+c+". Find EC = x.",
+      explain:"Side-Splitter Theorem: AD/DB = AE/EC, so "+a+"/"+b+" = "+c+"/x. Cross-multiply: "+a+"x = "+(b*c)+", so x = <b>"+fm(x)+"</b>."};
+    const ab=a+b, ac=c+x; if(!isInt(ac*2))continue;
+    return {kind:"num",fig:"split",lab:[String(a),"",String(c),""],labAB:String(ab),labAC:"x",ans:ac,frac:a/(a+b),
+      q:"In △ABC, DE ∥ BC. AD = "+a+", AB = "+ab+", AE = "+c+". Find AC = x.",
+      explain:"△ADE ~ △ABC (AA), so AD/AB = AE/AC: "+a+"/"+ab+" = "+c+"/x. Then x = "+c+" × "+ab+" ÷ "+a+" = <b>"+fm(ac)+"</b>."};
+  }
+  return genSplit();
+}
+function genInd(){
+  if(Math.random()<0.55){
+    const hp=pick([5,5.5,6,6.5]), sp=pick([2,2.5,3,4,4.5]), k=pick([4,5,6,7,8]), S2=sp*k, H=hp*k;
+    return {kind:"num",fig:"shadow",hp:hp,sp:sp,S2:S2,H:H,ans:H,
+      q:"A "+fm(hp)+"-foot-tall student casts a shadow "+fm(sp)+" feet long. At the same time, a flagpole casts a shadow "+fm(S2)+" feet long. How tall is the flagpole, in feet?",
+      explain:"The sun's rays are parallel, so the triangles are similar (AA). H/"+fm(S2)+" = "+fm(hp)+"/"+fm(sp)+", so H = "+fm(hp)+" × "+fm(S2)+" ÷ "+fm(sp)+" = <b>"+fm(H)+" ft</b>."};
+  }
+  const he=pick([1.5,1.6,1.8]), d1=pick([2,2.5,3,4]), k=pick([5,6,7,8,10]), d2=d1*k, H=r1(he*k);
+  return {kind:"num",fig:"mirror",he:he,d1:d1,d2:d2,H:H,ans:he*k,
+    q:"To find the height of a building, Maya puts a mirror on the ground "+fm(d2)+" m from the building. She stands "+fm(d1)+" m from the mirror and sees the top of the building in it. Her eyes are "+fm(he)+" m above the ground. How tall is the building, in meters?",
+    explain:"Angle of incidence = angle of reflection, and both triangles have a right angle, so they are similar (AA). H/"+fm(d2)+" = "+fm(he)+"/"+fm(d1)+", so H = "+fm(he)+" × "+fm(d2)+" ÷ "+fm(d1)+" = <b>"+fm(he*k)+" m</b>."};
+}
+const KINDS=[["any","Mixed problems"],["dil","Image under a dilation"],["scale","Find the scale factor"],["simx","Solve for x in similar triangles"],["split","Side-splitter proportions"],["ind","Indirect measurement"]];
+function newProblem(){
+  const k=T6.kind==="any"?pick(["dil","scale","simx","simx","split","ind"]):T6.kind;
+  T6.p=k==="dil"?genDil():k==="scale"?genScale():k==="simx"?genSimX():k==="split"?genSplit():genInd();
+  T6.checked=false;
+}
+function score6(){return "streak "+T6.streak+" · best "+T6.best+" · "+T6.right+"/"+T6.total+" correct";}
+function drawSimPair(g,p){
+  const P1=triPts(p.s[0],p.s[1],p.s[2]), P2=triPts(p.s[0]*p.k,p.s[1]*p.k,p.s[2]*p.k);
+  const w1=Math.max(...P1.map(q=>q[0]))-Math.min(0,...P1.map(q=>q[0])), w2=Math.max(...P2.map(q=>q[0]))-Math.min(0,...P2.map(q=>q[0]));
+  const h1=Math.max(...P1.map(q=>q[1])), h2=Math.max(...P2.map(q=>q[1]));
+  const sc=Math.min(560/(w1+w2), 380/Math.max(h1,h2));
+  const x1=50-Math.min(0,...P1.map(q=>q[0]))*sc, x2=x1+(w1)*sc+50-Math.min(0,...P2.map(q=>q[0]))*sc+Math.min(0,...P1.map(q=>q[0]))*sc;
+  const T=(q,x0)=>[x0+q[0]*sc,450-q[1]*sc];
+  const A=P1.map(q=>T(q,x1)), B=P2.map(q=>T(q,x2));
+  [[A,COL.pre,["A","B","C"],p.lab1],[B,COL.img,["D","E","F"],p.lab2]].forEach(([Q,col,nm,lab])=>{
+    const c=cen(Q); poly(g,Q,{fill:col,stroke:col});
+    labelsS(g,Q,nm,col,18);
+    angArc(g,Q[0],Q[1],Q[2],20,COL.org,{n:1}); angArc(g,Q[1],Q[2],Q[0],20,COL.ln,{n:2});
+    if(lab[0])sideLab(g,Q[1],Q[2],c,lab[0],COL.ink,16); if(lab[1])sideLab(g,Q[2],Q[0],c,lab[1],COL.ink,16); if(lab[2])sideLab(g,Q[0],Q[1],c,lab[2],COL.ink,16);
+  });
+  txt(g,[350,30],"△ABC ~ △DEF","sl",COL.ink);
+}
+const M6={
+  tab:"Challenge", lesson:"G-SRT.A.1 · A.2 · B.4 · B.5", accent:"var(--coral)",
+  title:()=>"Challenge: similarity & dilations", aria:"Practice problem figure",
+  bar(){
+    btn("New problem",()=>{newProblem();render();},"primary");
+    const sel=document.createElement("select"); sel.setAttribute("aria-label","Problem type");
+    KINDS.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l;sel.appendChild(o);});
+    sel.value=T6.kind; sel.onchange=()=>{T6.kind=sel.value;newProblem();render();}; bar.appendChild(sel);
+    spacer(score6(),"sp6");
+  },
+  draw(){
+    if(!T6.p)newProblem();
+    const p=T6.p;
+    if(p.fig==="dil"||p.fig==="scale"){
+      const g=grid(), Cs=S(p.C), Ps=S(p.P), I=p.fig==="dil"?p.ans:p.ans2, Is=S(I);
+      if(p.fig==="scale"||T6.checked){ const u=unit(sub(Is,Cs)); seg(g,Cs,add(Is,mul(u,10)),{stroke:COL.ink,w:1.5,dash:"5 5",op:.7}); if(p.k<0)seg(g,Cs,Ps,{stroke:COL.ink,w:1.5,dash:"5 5",op:.7}); }
+      cdot(g,Cs,COL.ink,6); txt(g,[Cs[0]-14,Cs[1]+17],(Math.abs(p.C[0])+Math.abs(p.C[1])<1e-9&&p.fig==="dil")?"O":"C","vl",COL.ink);
+      cdot(g,Ps,COL.pre,6); txt(g,[Ps[0],Ps[1]-18],(p.fig==="dil"?"P":"A")+pstr(p.P),"num",COL.pre);
+      if(p.fig==="scale"||T6.checked){ cdot(g,Is,COL.img,6); txt(g,[Is[0],Is[1]+(Is[1]>Ps[1]?20:-18)],(p.fig==="dil"?"P′":"A′")+pstr(I),"num",COL.img); }
+    } else if(p.fig==="sim"){ const g=plain(); drawSimPair(g,p); }
+    else if(p.fig==="split"){
+      const g=plain(), A=[300,60], B=[90,450], C=[620,450], D=lerp(A,B,p.frac), E=lerp(A,C,p.frac), c=cen([A,B,C]);
+      poly(g,[A,B,C],{fill:COL.pre,stroke:COL.ink,fo:0.06}); seg(g,D,E,{stroke:COL.img,w:3});
+      arrowTick(g,D,E,1,COL.img); arrowTick(g,B,C,1,COL.img);
+      labelsS(g,[A,B,C],["A","B","C"],COL.ink,18); cdot(g,D,COL.ink,5); cdot(g,E,COL.ink,5);
+      txt(g,add(D,[-18,-4]),"D","vl",COL.ink); txt(g,add(E,[18,-4]),"E","vl",COL.ink);
+      const L=p.lab; if(L[0])sideLab(g,A,D,c,L[0],COL.ink,16); if(L[1])sideLab(g,D,B,c,L[1],COL.ink,16); if(L[2])sideLab(g,A,E,c,L[2],COL.ink,16); if(L[3])sideLab(g,E,C,c,L[3],COL.img,16);
+      if(p.labAB){ const n=unit([A[1]-B[1],B[0]-A[0]]), o=(n[0]*(c[0]-A[0])+n[1]*(c[1]-A[1]))>0?mul(n,-1):n; dimLine(g,A,B,"AB = "+p.labAB,COL.grn,o[0]<0?28:-28); }
+      if(p.labAC){ dimLine(g,A,C,"AC = "+p.labAC,COL.img,-28); }
+    } else if(p.fig==="shadow"){
+      const g=plain(); ground(g);
+      const sc=Math.min(18,260/p.H), sc2=sc;
+      const fx=110, top=[fx,GY-p.H*sc], tip=[fx+p.S2*sc2,GY];
+      poly(g,[[fx,GY],top,tip],{fill:COL.grn,stroke:COL.grn,fo:0.12,w:2});
+      seg(g,[fx,GY],top,{stroke:"#475569",w:5});
+      const px=Math.min(560,Math.max(tip[0]+60,420)), ps=60/p.hp, ptop=[px,GY-p.hp*ps], ptip=[px+p.sp*ps,GY];
+      poly(g,[[px,GY],ptop,ptip],{fill:COL.img,stroke:COL.img,fo:0.15,w:2});
+      dimLine(g,[fx,GY],tip,fm(p.S2)+" ft",COL.grn,-26); dimLine(g,[px,GY],ptip,fm(p.sp)+" ft",COL.img,-26);
+      txt(g,[fx-10,(GY+top[1])/2],T6.checked?fm(p.H)+" ft":"H","sl",COL.grn,"end"); txt(g,[px-10,(GY+ptop[1])/2],fm(p.hp)+" ft","sl",COL.img,"end");
+      txt(g,[350,30],"Not to scale: the student's triangle is enlarged","tk",null,"middle");
+    } else {
+      const g=plain(); ground(g);
+      const tot=p.d1+p.d2, sc=600/tot, xp=50, xm=xp+p.d1*sc, xb=xm+p.d2*sc, hs=Math.min(sc,340/p.H);
+      const eye=[xp,GY-p.he*hs*Math.max(1,30/(p.he*hs))], roof=[xb,GY-p.H*hs];
+      poly(g,[[xb,GY],roof,[xm,GY]],{fill:COL.grn,stroke:COL.grn,fo:0.12,w:2});
+      poly(g,[[xp,GY],eye,[xm,GY]],{fill:COL.img,stroke:COL.img,fo:0.15,w:2});
+      g.appendChild(E("rect",{x:xm-12,y:GY-3,width:24,height:6,fill:"#22D3EE",stroke:"#0E7490"}));
+      dimLine(g,[xp,GY],[xm,GY],fm(p.d1)+" m",COL.img,-26); dimLine(g,[xm,GY],[xb,GY],fm(p.d2)+" m",COL.grn,-26);
+      txt(g,[xp+10,(GY+eye[1])/2],fm(p.he)+" m","sl",COL.img,"start"); txt(g,[xb-10,(GY+roof[1])/2],T6.checked?fm(p.ans)+" m":"H","sl",COL.grn,"end");
+      txt(g,[350,30],"Not to scale","tk",null,"middle");
+    }
+  },
+  panel(){
+    const p=T6.p;
+    const inp=p.kind==="xy"? `<div class="inrow"><div><label class="fld" for="a6x">x′</label><input type="text" id="a6x" inputmode="decimal" autocomplete="off"></div><div><label class="fld" for="a6y">y′</label><input type="text" id="a6y" inputmode="decimal" autocomplete="off"></div></div>`
+      : `<label class="fld" for="a6">Your answer</label><div class="fldwrap"><input type="text" id="a6" inputmode="decimal" autocomplete="off"></div>`;
+    side.innerHTML=`<div class="panel"><h3>Problem</h3><div class="pad"><p class="q">${p.q}</p></div>${inp}
+      <div class="fldwrap" style="margin:16px 0"><button type="button" class="go" id="chk6">Check my answer</button></div>
+      <div id="fb6"></div></div>
+      <div class="panel"><h3>Tools to remember</h3><div class="pad">
+        <div class="eq">dilation, center C, factor k:  P′ = C + k(P − C)
+center at origin:  (x, y) → (kx, ky)
+scale factor = image length ÷ pre-image length
+side splitter (DE ∥ BC):  AD/DB = AE/EC
+indirect measurement:  height/shadow = height/shadow</div>
+        <p>Decimals within 0.05 count as correct, and fractions such as 3/2 are accepted.</p>
+      </div></div>`;
+    $("chk6").onclick=check6;
+    side.querySelectorAll("input").forEach(i=>i.addEventListener("keydown",e=>{if(e.key==="Enter")check6();}));
+  }
+};
+const close=(v,a)=>Math.abs(v-a)<=Math.max(0.051,Math.abs(a)*0.002);
+function check6(){
+  const p=T6.p, fb=$("fb6"); let ok;
+  if(p.kind==="xy"){
+    const x=parseNum($("a6x").value), y=parseNum($("a6y").value);
+    if(isNaN(x)||isNaN(y)){fb.innerHTML='<div class="verdict bad">Enter both coordinates of P′.</div>';return;}
+    ok=close(x,p.ans[0])&&close(y,p.ans[1]);
+  } else {
+    const v=parseNum($("a6").value);
+    if(isNaN(v)){fb.innerHTML='<div class="verdict bad">Enter a number (a fraction like 3/2 is fine).</div>';return;}
+    ok=close(v,p.ans);
+  }
+  if(!T6.checked){T6.checked=true;T6.total++;if(ok){T6.right++;T6.streak++;T6.best=Math.max(T6.best,T6.streak);}else T6.streak=0;$("sp6").textContent=score6();}
+  clear(); M6.draw();
+  fb.innerHTML=ok? '<div class="verdict good"><b>Correct.</b> '+p.explain+'<div class="btnrow" style="margin-top:12px"><button type="button" class="ghost" id="next6">Next problem →</button></div></div>'
+    : '<div class="verdict bad"><b>Not yet.</b> '+p.explain+'<div class="btnrow" style="margin-top:12px"><button type="button" class="ghost" id="next6">Try a new one →</button></div></div>';
+  $("next6").onclick=()=>{newProblem();render();};
+}
+
+/* ══════════════════════ controller ══════════════════════ */
+const MODS=[M1,M2,M3,M4,M5,M6];
+let cur=0;
+function refresh(){ clear(); MODS[cur].draw(); if(MODS[cur].live)MODS[cur].live(); }
+function render(){
+  dragId=null;
+  const M=MODS[cur];
+  document.documentElement.style.setProperty("--accent",M.accent||"var(--cyan)");
+  bTitle.textContent=M.title(); bLesson.textContent=M.lesson; cv.setAttribute("aria-label",M.aria);
+  if(M===M6&&!T6.p)newProblem();
+  if(M===M2&&!T2.pz)T2.pz=genT2();
+  clear(); M.draw();
+  bar.innerHTML=""; M.bar();
+  M.panel(); if(M.live)M.live();
+  [...tabsEl.children].forEach((b,i)=>{b.setAttribute("aria-selected",String(i===cur));b.tabIndex=i===cur?0:-1;});
+}
+function go(i,updateHash){
+  cur=clamp(i,0,MODS.length-1); render();
+  if(updateHash){ try{history.replaceState(null,"","#tab-"+(cur+1));}catch(_){location.hash="tab-"+(cur+1);} }
+}
+MODS.forEach((M,i)=>{
+  const b=document.createElement("button"); b.type="button"; b.setAttribute("role","tab");
+  b.innerHTML='<span class="n">'+String(i+1).padStart(2,"0")+'</span>'+M.tab;
+  b.onclick=()=>go(i,true);
+  b.addEventListener("keydown",e=>{
+    if(e.key==="ArrowRight"||e.key==="ArrowLeft"){const j=(cur+(e.key==="ArrowRight"?1:MODS.length-1))%MODS.length;go(j,true);tabsEl.children[j].focus();}
+  });
+  tabsEl.appendChild(b);
+});
+if(new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed");
+function fromHash(){const m=/^#tab-(\d+)$/.exec(location.hash);return m?(+m[1])-1:null;}
+window.addEventListener("hashchange",()=>{const h=fromHash();if(h!=null&&h!==cur)go(h,false);});
+const h0=fromHash(); go(h0==null?0:h0,false);
+if(new URLSearchParams(location.search).has("selftest")) window.__sdl={T1:()=>T1,T2:()=>T2,T6:()=>T6};
+})();
+</script>
+</body>
+</html>

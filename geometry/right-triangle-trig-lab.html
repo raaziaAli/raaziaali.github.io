@@ -371,7 +371,7 @@ cv.addEventListener("pointermove",e=>{
   if(!dragId)return; const M=MODS[cur]; if(!M.drag)return;
   M.drag(dragId,svgPt(e)); redraw();
 });
-["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{dragId=null;}));
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>cv.addEventListener(ev,()=>{const was=dragId; dragId=null; if(was&&MODS[cur]===M3&&T3.mode==="pyth") redraw();}));
 
 /* ══════════════════════ animation ══════════════════════ */
 let animId=null;
@@ -406,7 +406,7 @@ const key=c=>'<span class="key" style="background:'+c+'"></span>';
 const pill=(c,t)=>'<span class="pill" style="background:'+c+'33;color:'+c+';border:1px solid '+c+'88">'+t+'</span>';
 
 /* ══════════════════════ TAB 1 · ratios from similarity ══════════════════════ */
-const T1D=()=>({th:35,ref:"A",h:[3.2,5.4,7.9]});
+const T1D=()=>({th:35,ref:"A",h:[4.6,7.8,11.4]});
 let T1=T1D();
 const U1=48, A1=[64,384], TC=["#059669","#EA580C","#0891B2"], SUBS=["₁","₂","₃"];
 function t1max(th){return Math.min(520/cosD(th),330/sinD(th))/U1;}
@@ -440,7 +440,7 @@ const M1={
     txt(g,[A1[0]-18,A1[1]+6],"A","vl");
     tris.forEach(t=>{
       txt(g,[t.C[0],A1[1]+19],"C"+SUBS[t.k],"vl",TC[t.k]);
-      txt(g,PT(t.B,19,th+90),"B"+SUBS[t.k],"vl",TC[t.k]);
+      txt(g,PT(t.B,28,th+100),"B"+SUBS[t.k],"vl",TC[t.k]);
       const my=(t.B[1]+t.C[1])/2;
       txt(g,[t.C[0]+8,my],f2(t.vert),"num",refA?COL.opp:COL.adj,"start");
       if(t===big) txt(g,[t.C[0]+8,my+18],refA?"opposite":"adjacent","sm",refA?COL.opp:COL.adj,"start");
@@ -577,21 +577,25 @@ cos θ = sin(90° − θ)<small>The "co" in cosine means complement: the cosine 
 /* ══════════════════════ TAB 3 · Pythagorean theorem & special right triangles ══════════════════════ */
 const T3D=()=>({mode:"pyth",a:3,b:4,s45:4,s30:3,snap:true});
 let T3=T3D();
-const U3=20;
-function t3pyth(){
-  const a=T3.a,b=T3.b,u=U3;
-  const C=[350-b*u/2,230+a*u/2], B=[C[0],C[1]-a*u], A=[C[0]+b*u,C[1]];
-  const n=[a*u,-b*u];
-  return {a,b,c:Math.hypot(a,b),C,B,A,
-    sqA:[C,B,[B[0]-a*u,B[1]],[C[0]-a*u,C[1]]],
-    sqB:[C,A,[A[0],A[1]+b*u],[C[0],C[1]+b*u]],
-    sqC:[B,A,add(A,n),add(B,n)]};
+let F3=null;
+function t3fit(){ // world (y-up, C at origin) → screen; frozen while dragging
+  const a=T3.a,b=T3.b, W=2*a+b, H=a+2*b, k=Math.min(600/W,390/H,40);
+  F3={k:k, ox:350-b/2*k, oy:240+a/2*k};
 }
-function gridIn(g,P0,P1,P3,len1,len3,color){
+function t3pyth(){
+  if(!F3||!dragId) t3fit();
+  const a=T3.a,b=T3.b,k=F3.k, S=p=>[F3.ox+p[0]*k, F3.oy-p[1]*k];
+  const C=S([0,0]), B=S([0,a]), A=S([b,0]);
+  return {a,b,c:Math.hypot(a,b),C,B,A,k,
+    sqA:[C,B,S([-a,a]),S([-a,0])],
+    sqB:[C,A,S([b,-b]),S([0,-b])],
+    sqC:[B,A,S([b+a,b]),S([a,a+b])]};
+}
+function gridIn(g,P0,P1,P3,len1,len3,color,u){
   // unit grid lines in a square with corner P0, edges to P1 (length len1) and P3 (len3), world units
   const d1=unit(sub(P1,P0)), d3=unit(sub(P3,P0));
-  for(let i=1;i<len1-1e-6;i++){const s=add(P0,mul(d1,i*U3)); seg(g,s,add(s,mul(d3,len3*U3)),{stroke:color,w:1,op:.45});}
-  for(let j=1;j<len3-1e-6;j++){const s=add(P0,mul(d3,j*U3)); seg(g,s,add(s,mul(d1,len1*U3)),{stroke:color,w:1,op:.45});}
+  for(let i=1;i<len1-1e-6;i++){const s=add(P0,mul(d1,i*u)); seg(g,s,add(s,mul(d3,len3*u)),{stroke:color,w:1,op:.45});}
+  for(let j=1;j<len3-1e-6;j++){const s=add(P0,mul(d3,j*u)); seg(g,s,add(s,mul(d1,len1*u)),{stroke:color,w:1,op:.45});}
 }
 function t3_45(){const s=T3.s45,u=40; const A=[350-s*u/2,230+s*u/2], B=[A[0]+s*u,A[1]], C=[B[0],A[1]-s*u], D=[A[0],C[1]]; return {s,A,B,C,D,d:s*Math.SQRT2};}
 function t3_30(){const s=T3.s30,u=34; const M=[350,402], B=[350-s*u,402], C=[350+s*u,402], A=[350,402-s*Math.sqrt(3)*u]; return {s,A,B,C,M,h:s*Math.sqrt(3)};}
@@ -615,20 +619,18 @@ const M3={
       poly(g,P.sqA,{fill:COL.opp,fo:.14,stroke:COL.opp,w:2});
       poly(g,P.sqB,{fill:COL.adj,fo:.14,stroke:COL.adj,w:2});
       poly(g,P.sqC,{fill:COL.hyp,fo:.14,stroke:COL.hyp,w:2});
-      gridIn(g,P.C,P.B,P.sqA[3],P.a,P.a,COL.opp);
-      gridIn(g,P.C,P.A,P.sqB[3],P.b,P.b,COL.adj);
-      gridIn(g,P.B,P.A,P.sqC[3],P.c,P.c,COL.hyp);
+      gridIn(g,P.C,P.B,P.sqA[3],P.a,P.a,COL.opp,P.k);
+      gridIn(g,P.C,P.A,P.sqB[3],P.b,P.b,COL.adj,P.k);
+      gridIn(g,P.B,P.A,P.sqC[3],P.c,P.c,COL.hyp,P.k);
       const T=[P.A,P.B,P.C], Ct=cen(T);
       poly(g,T,{fill:"#FDE68A",fo:.9,stroke:COL.ink,w:2.6});
       rmark(g,P.C,P.A,P.B,11);
-      txt(g,cen(P.sqA),"a² = "+g2(P.a*P.a),"num",COL.opp);
-      txt(g,cen(P.sqB),"b² = "+g2(P.b*P.b),"num",COL.adj);
-      txt(g,cen(P.sqC),"c² = "+g2(P.c*P.c),"num",COL.hyp);
-      sideLabel(g,P.C,P.B,"a = "+fm(P.a),COL.opp,Ct,-8,"sm");
-      sideLabel(g,P.C,P.A,"b = "+fm(P.b),COL.adj,Ct,-12,"sm");
+      const two=(q,l1,l2,c)=>{txt(g,[q[0],q[1]-9],l1,"sm",c);txt(g,[q[0],q[1]+9],l2,"num",c);};
+      two(cen(P.sqA),"a = "+fm(P.a),"a² = "+g2(P.a*P.a),COL.opp);
+      two(cen(P.sqB),"b = "+fm(P.b),"b² = "+g2(P.b*P.b),COL.adj);
+      two(cen(P.sqC),"c ≈ "+f2(P.c),"c² = "+g2(P.c*P.c),COL.hyp);
       vlab(g,P.A,Ct,"A",null,22); vlab(g,P.B,Ct,"B",null,22); txt(g,[P.C[0]+12,P.C[1]+14],"C","vl");
       grab(g,P.A,"A","Drag A"); grab(g,P.B,"B","Drag B");
-      const ext=sideLabel; void ext;
       txt(g,[18,24],"c = √(a² + b²) = "+f2(P.c),"num",COL.hyp,"start");
     } else if(T3.mode==="s45"){
       const S=t3_45(), Tc=cen([S.A,S.B,S.C]);
@@ -668,8 +670,9 @@ const M3={
   drag(id,p){
     if(T3.mode==="pyth"){
       const sn=v=>T3.snap?snapTo(v,0.5):Math.round(v*10)/10;
-      if(id==="A") T3.b=clamp(sn(2*(p[0]-350)/U3),1,7);
-      if(id==="B") T3.a=clamp(sn(2*(230-p[1])/U3),1,7);
+      if(!F3) t3fit();
+      if(id==="A") T3.b=clamp(sn((p[0]-F3.ox)/F3.k),1,8);
+      if(id==="B") T3.a=clamp(sn((F3.oy-p[1])/F3.k),1,8);
     } else if(T3.mode==="s45"){
       T3.s45=clamp(Math.round(((p[0]-350)+(230-p[1]))/40),1,8);
     } else {
@@ -947,10 +950,10 @@ const SCENES={
     g.appendChild(E("rect",{x:Xr,y:top[1],width:VW-Xr,height:GY-top[1],fill:"#E2E8F0",stroke:"#64748B","stroke-width":1.6}));
     poly(g,[foot,[Xr,GY],top],{fill:"#A8A29E",fo:.9,stroke:"#57534E",w:1.8});
     const rl=sub(top,foot), n=unit([rl[1],-rl[0]]);
-    const r0=add(foot,mul(n,-26)), r1_=add(top,mul(n,-26));
+    const r0=add(foot,mul(n,26)), r1_=add(top,mul(n,26));
     seg(g,add(foot,mul(n,-0)),r0,{stroke:"#475569",w:1.4,op:.0});
     seg(g,[r0[0],r0[1]],[r1_[0],r1_[1]],{stroke:"#475569",w:2,op:.8});
-    for(let t=0;t<=1.0001;t+=0.25){const a=add(foot,mul(rl,t)); seg(g,a,add(a,mul(n,-26)),{stroke:"#475569",w:1.4,op:.8});}
+    for(let t=0;t<=1.0001;t+=0.25){const a=add(foot,mul(rl,t)); seg(g,a,add(a,mul(n,26)),{stroke:"#475569",w:1.4,op:.8});}
     return {lo:foot,corner:[Xr,GY],hi:top,depSide:-1,
       v:{nm:"rise",val:P.rise}, h:{nm:"run",val:P.run}, s:{nm:"ramp"}};
   }
@@ -971,11 +974,11 @@ function elevOverlay(g,S,o){
     // parallel marks on the two horizontals
     const chev=(p,d)=>pathD(g,"M"+(p[0]-d*6)+" "+(p[1]-5)+"L"+(p[0]+d*2)+" "+p[1]+"L"+(p[0]-d*6)+" "+(p[1]+5),{stroke:COL.ink,w:1.8});
     chev([hi[0]+dir*len*0.8,hi[1]],dir); chev([lo[0]+(corner[0]-lo[0])*0.35,lo[1]],dir);
-    if(o.captions) txt(g,[hi[0]+dir*len*0.62,hi[1]-14],"angle of depression","cap",COL.ang2);
+    if(o.captions) txt(g,[hi[0]+dir*(len+8),hi[1]],"angle of depression","cap",COL.ang2,dir>0?"start":"end");
   }
   if(o.captions&&o.elev!==false){
     const cx=clamp(lo[0],80,VW-80);
-    txt(g,[cx,Math.min(VH-12,lo[1]+(lo[1]<GY-4?GY-lo[1]+26:28))],"angle of elevation","cap",COL.ang);
+    txt(g,[cx,Math.min(VH-10,lo[1]+(lo[1]<GY-4?GY-lo[1]+26:(lo[0]>corner[0]?42:28)))],"angle of elevation","cap",COL.ang);
   }
   sideLabel(g,corner,hi,o.vLab,COL.opp,Ct,o.voff||14);
   sideLabel(g,lo,corner,o.hLab,COL.adj,Ct,o.hoff||14);
@@ -985,7 +988,7 @@ function elevOverlay(g,S,o){
 /* ══════════════════════ TAB 5 · angles of elevation & depression ══════════════════════ */
 const T5D=()=>({scene:"light",light:{H:45,d:110},bldg:{H:24,d:30,e:1.6},kite:{x:70,y:48,e:1},ramp:{run:9,rise:1.2},dep:true,anim:false,phase:0,t0:0});
 let T5=T5D();
-const K5={light:2,bldg:9,kite:4.5,ramp:34}, X5={light:92,bldg:540,kite:80,ramp:620};
+const K5={light:3.1,bldg:9,kite:4.5,ramp:34}, X5={light:92,bldg:540,kite:80,ramp:620};
 function t5vals(){
   const s=T5.scene, P=T5[s];
   if(s==="light") return {v:P.H,h:P.d};
@@ -998,7 +1001,7 @@ function animStep(now){
   if(!T5.anim) return;
   const t=(now-T5.t0)/1000, s=T5.scene, P=T5[s], w=Math.cos(t*0.55);
   T5.phase=t*2.2;
-  if(s==="light") P.d=145+120*w;
+  if(s==="light") P.d=105+72*w;
   else if(s==="bldg") P.d=28+22*w;
   else if(s==="kite"){const L=Math.hypot(P.x,P.y-P.e), th=45+22*Math.sin(t*0.55); P.x=L*cosD(th); P.y=clamp(P.e+L*sinD(th),4,75); P.x=clamp(P.x,6,120);}
   else P.run=8.5+7*w;
@@ -1014,17 +1017,17 @@ const M5={
       if(T5.anim){stopAnim();return;}
       T5.anim=true; b.textContent="❚❚ Pause"; T5.t0=performance.now(); animId=requestAnimationFrame(animStep);
     },"primary"); b.id="anim5";
-    chk("Show depression",T5,"dep");
+    if(T5.scene!=="ramp") chk("Show depression",T5,"dep");
     btn("Reset",()=>{stopAnim();const s=T5.scene;T5[s]=T5D()[s];render();});
   },
   draw(){
     const g=plain(true), s=T5.scene, P=T5[s], k=K5[s];
     const S=SCENES[s](g,P,k,X5[s],T5.phase);
     const v=t5vals(), th=atanD(v.v/v.h), L=Math.hypot(v.v,v.h);
-    elevOverlay(g,S,{dep:T5.dep,captions:true,elevLabel:dg(th),depLabel:dg(th),
+    elevOverlay(g,S,{dep:T5.dep&&s!=="ramp",captions:true,elevLabel:dg(th),depLabel:dg(th),
       vLab:[S.v.nm,g2(v.v)+" m"],hLab:[S.h.nm+" "+g2(v.h)+" m"],sLab:[S.s.nm,g2(L)+" m"],
       voff:s==="light"?26:s==="bldg"?-10:14,hoff:s==="light"?22:s==="bldg"?12:28,
-      re:s==="ramp"?70:46,rd:s==="ramp"?60:44});
+      re:s==="ramp"?110:46,rd:s==="ramp"?110:44});
     if(s==="light"){grab(g,S.lo,"lo","Drag the boat"); grab(g,S.hi,"hi","Drag the top of the lighthouse");}
     else if(s==="bldg"){grab(g,[S.lo[0],GY-8],"lo","Drag the observer"); grab(g,S.hi,"hi","Drag the top of the building");}
     else if(s==="kite") grab(g,S.hi,"hi","Drag the kite");
@@ -1032,7 +1035,7 @@ const M5={
   },
   drag(id,p){
     const s=T5.scene, P=T5[s], k=K5[s], X=X5[s];
-    if(s==="light"){ if(id==="lo") P.d=clamp(Math.round((p[0]-X)/k),10,270); else P.H=clamp(Math.round((GY-p[1])/k),15,95); }
+    if(s==="light"){ if(id==="lo") P.d=clamp(Math.round((p[0]-X)/k),30,180); else P.H=clamp(Math.round((GY-p[1])/k),15,110); }
     else if(s==="bldg"){ if(id==="lo") P.d=clamp(Math.round((X-p[0])/k*2)/2,4,52); else P.H=clamp(Math.round((GY-p[1])/k*2)/2,6,36); }
     else if(s==="kite"){ P.x=clamp(Math.round((p[0]-X)/k),6,120); P.y=clamp(Math.round((GY-p[1])/k),4,75); }
     else { if(id==="lo") P.run=clamp(Math.round((X-p[0])/k*10)/10,1,16); else P.rise=clamp(Math.round((GY-p[1])/k*20)/20,0.2,3.5); }
@@ -1267,7 +1270,7 @@ const M6={
     }
     const g=plain(), f=p.fig;
     const T=rtFig(g,f.adj,f.opp,f);
-    if(T6.checked) txt(g,[350,24],(p.kind==="angle"?"θ ≈ ":p.kind==="cofn"?"answer: ":"x = ")+p.show+(p.kind==="side"||p.kind==="special"&&p.exact&&!/^\d+$/.test(p.show)?"  ≈ "+f2(p.ans):""),"big",COL.fnd);
+    if(T6.checked) txt(g,[350,24],(p.kind==="angle"?"θ ≈ ":p.kind==="cofn"?"answer: ":"x = ")+p.show+(p.kind==="special"&&/√/.test(p.show)?"  ≈ "+f2(p.ans):""),"big",COL.fnd);
     void T;
   },
   panel(){
