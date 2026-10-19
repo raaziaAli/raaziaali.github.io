@@ -933,9 +933,7 @@ const M3={
     ["Distance PQ","PQ² = (cos A − cos B)² + (sin A − sin B)²\n = cos²A + sin²A + cos²B + sin²B − 2cos A cos B − 2 sin A sin B\n = 2 − 2(cos A cos B + sin A sin B)"],
     ["Distance RS","RS² = (cos(A − B) − 1)² + sin²(A − B)\n = cos²(A − B) + sin²(A − B) − 2cos(A − B) + 1\n = 2 − 2cos(A − B)"],
     ["Set equal","PQ² = RS², so 2 − 2(cos A cos B + sin A sin B) = 2 − 2cos(A − B).\nTherefore cos(A − B) = cos A cos B + sin A sin B."],
-    ["The rest follow","Replace B with −B
-(cos(−B) = cos B, sin(−B) = −sin B):\n  cos(A + B) = cos A cos B − sin A sin B\nUse sin θ = cos(90° − θ):\n  sin(A ± B) = sin A cos B ± cos A sin B\nDivide sin by cos:\n  tan(A ± B) = (tan A ± tan B)
-              / (1 ∓ tan A tan B)"]
+    ["The rest follow","Replace B with −B\n(cos(−B) = cos B, sin(−B) = −sin B):\n  cos(A + B) = cos A cos B − sin A sin B\nUse sin θ = cos(90° − θ):\n  sin(A ± B) = sin A cos B ± cos A sin B\nDivide sin by cos:\n  tan(A ± B) = (tan A ± tan B)\n              / (1 ∓ tan A tan B)"]
   ],
   drag(id,p){ const a=Math.round(angFrom(id==="B"||id==="A"?180:520,240,p)); if(id==="A")M3.s.A=a; else M3.s.B=a; },
   draw(){
